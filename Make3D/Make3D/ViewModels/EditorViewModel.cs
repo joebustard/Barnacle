@@ -22,6 +22,8 @@ namespace Make3D.ViewModels
         Point3D CameraBackPos = new Point3D(0, 20, -80);
         Point3D CameraRightPos = new Point3D(80, 20, 0);
         Point3D CameraLeftPos = new Point3D(-80, 20, 00);
+        Point3D CameraTopPos = new Point3D(0, 80, 1);
+        Point3D CameraBottomPos = new Point3D(0, -80, -1);
         Point3D CameraLookObject = new Point3D(0, 0, 0);
         Point3D CameraScrollDelta = new Point3D(1, 1, 0);
         double cameraHomeDistance;
@@ -495,11 +497,26 @@ namespace Make3D.ViewModels
         {
 
             CameraPos = CameraRightPos;
-            CameraScrollDelta = new Point3D(0, 1, -11);
+            CameraScrollDelta = new Point3D(0, 1, -1);
             LookToCenter();
             zoomPercent = 100;
         }
+        private void TopCamera()
+        {
 
+            CameraPos = CameraTopPos;
+            CameraScrollDelta = new Point3D(1, 0, 1);
+            LookToCenter();
+            zoomPercent = 100;
+        }
+        private void BottomCamera()
+        {
+
+            CameraPos = CameraBottomPos;
+            CameraScrollDelta = new Point3D(-1, 0, -1);
+            LookToCenter();
+            zoomPercent = 100;
+        }
         private void LookToCenter()
         {
             lookDirection.X = -CameraPos.X;
@@ -678,6 +695,16 @@ namespace Make3D.ViewModels
                     }
                     break;
 
+                case "CameraTop":
+                    {
+                       TopCamera();
+                    }
+                    break;
+                case "CameraBottom":
+                    {
+                        BottomCamera();
+                    }
+                    break;
                 case "CameraLookCenter":
                     {
                         LookToCenter();

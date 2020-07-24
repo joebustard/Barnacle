@@ -30,6 +30,12 @@
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLeft" ToolTip="Move the camera to the default left position and point it at the centre of the world." Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/View.png" />
             </Button>
+            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraTop" ToolTip="Move the camera to the default top position and point it at the centre of the world." Margin="0,0,2,2">
+                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+            </Button>
+            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraBottom" ToolTip="Move the camera to the default bottom position and point it at the centre of the world." Margin="0,0,2,2">
+                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+            </Button>
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLookCenter" ToolTip="Point the camera at the centre of the world." Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/View.png" />
             </Button>

@@ -12,6 +12,17 @@ namespace Make3D.ViewModels
    internal class CameraViewModel : BaseViewModel, INotifyPropertyChanged
     {
 
+        private int buttonAreaHeight;
+        public int ButtonAreaHeight
+        {
+            get { return buttonAreaHeight; }
+            set {  if (buttonAreaHeight != value)
+                {
+                    buttonAreaHeight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public ICommand CameraCommand { get; set; }
         private Visibility cameraPaletteVisible;
         public Visibility CameraPaletteVisible
@@ -35,6 +46,7 @@ namespace Make3D.ViewModels
         {
             CameraCommand = new RelayCommand(OnCameraCommand);
             NotificationManager.Subscribe("CameraPaletteVisible", OnCameraPaletteVisibleChanged);
+            ButtonAreaHeight = 6 * 35;
         }
 
         private void OnCameraCommand(object obj)
