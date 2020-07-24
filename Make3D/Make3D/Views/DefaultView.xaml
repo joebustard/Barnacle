@@ -1,0 +1,220 @@
+﻿<UserControl x:Class="Make3D.Views.DefaultView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             
+             xmlns:Views="clr-namespace:Make3D.Views"
+          xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
+             xmlns:local="clr-namespace:Make3D.Views"
+             xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.DataContext>
+        <ViewModels:DefaultViewModel />
+    </UserControl.DataContext>
+    <Grid ScrollViewer.CanContentScroll="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="140" />
+            <RowDefinition />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <Custom:Ribbon  x:Name="MainRibbon" Grid.Row="0"  MinHeight="100">
+            <Custom:Ribbon.QuickAccessToolBar>
+                <Custom:RibbonQuickAccessToolBar>
+                    <Custom:RibbonButton x:Name="New" SmallImageSource="/images/buttons/new_file.png" Command="{Binding NewCommand}" />
+                    <Custom:RibbonButton x:Name="Open" SmallImageSource="/images/buttons/human_document_open.png" Command="{Binding OpenCommand}" />
+                    <Custom:RibbonButton x:Name="SaveButton" SmallImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveCommand}" />
+                    <Custom:RibbonButton x:Name="SaveItAs" SmallImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveAsCommand}" />
+                    <Custom:RibbonButton x:Name="Undo" SmallImageSource="/images/buttons/edit_undo.png" Command="{Binding UndoCommand}" />
+                    <Custom:RibbonButton x:Name="Redo" SmallImageSource="/images/buttons/edit_redo.png" Command="{Binding RedoCommand}" />
+                </Custom:RibbonQuickAccessToolBar>
+            </Custom:Ribbon.QuickAccessToolBar>
+            <Custom:Ribbon.ApplicationMenu>
+                <Custom:RibbonApplicationMenu KeyTip="f">
+                    <Custom:RibbonApplicationMenu.AuxiliaryPaneContent>
+                        <Grid VerticalAlignment="Stretch"
+							HorizontalAlignment="Stretch">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0">
+                                <TextBlock Text="Recent Items"
+									FontWeight="Bold"
+									Margin="5" />
+                            </Border>
+                            <ItemsControl Grid.Row="1" ItemsSource="{Binding RecentFilesList}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Custom:RibbonApplicationMenuItem Header="{Binding Name}"
+                                             Command="{Binding DataContext.OpenRecentFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                         CommandParameter="{Binding Path}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Grid>
+                    </Custom:RibbonApplicationMenu.AuxiliaryPaneContent>
+                    <Custom:RibbonApplicationMenuItem x:Name="New1"  Header="New" ImageSource="/images/buttons/new_file.png" Command="{Binding NewCommand}" />
+                    <Custom:RibbonApplicationMenuItem x:Name="Open1" Header="Open" ImageSource="/images/buttons/human_document_open.png" Command="{Binding OpenCommand}" />
+                    <Custom:RibbonApplicationMenuItem x:Name="Save1" Header="Save" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveCommand}" />
+                    <Custom:RibbonApplicationMenuItem x:Name="Save2" Header="Save As" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveAsCommand}" />
+                 <!--   <Custom:RibbonApplicationMenuItem Header="Print" ImageSource="/images/buttons/Printer.png" Command="{Binding PrintCommand}" />
+                    <Custom:RibbonApplicationMenuItem Header="Print Preview" ImageSource="/images/buttons/Printer.png" Command="{Binding ViewCommand}" CommandParameter="PrintPreview" />
+-->
+                    <Custom:RibbonApplicationMenuItem Header="Exit" ImageSource="/images/buttons/exit.png" Command="{Binding ExitCommand}" />
+                </Custom:RibbonApplicationMenu>
+            </Custom:Ribbon.ApplicationMenu>
+
+            <Custom:RibbonTab Name="HomeTab1" Header="Home">
+                <Custom:RibbonGroup Name="ClipboardGroup" Header="Clipboard" LargeImageSource="/Make3D;component/Images/Buttons/clipboard.png">
+                    <Custom:RibbonButton x:Name="CopyButton" Label="Cut" Command="{Binding CutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                    <Custom:RibbonButton x:Name="CutButton" Label="Copy" Command="{Binding CopyCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                    <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
+                </Custom:RibbonGroup>
+
+                <Custom:RibbonGroup Name="SelectionGroup" Header="Selection" LargeImageSource="/Make3D;component/Images/Buttons/SelectAll.png">
+                    <Custom:RibbonButton x:Name="SelectAllButton" Label="All" Command="{Binding SelectCommand}" CommandParameter="All" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectAll.png" ToolTip="Select All" />
+                    <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectClear.png" ToolTip="Select All" />
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="StyleGroup" Header="Colours" LargeImageSource="/Make3D;component/Images/Buttons/colours.png">
+                   
+                </Custom:RibbonGroup>
+
+                <Custom:RibbonGroup Name="TextGroup" Header="Text" LargeImageSource="/Make3D;component/Images/Buttons/BigText.png">
+                    <ComboBox x:Name="FontFamilySelector"
+          ItemsSource="{Binding SystemFonts}"
+          HorizontalAlignment="Left"
+          Margin="0,0,0,0"
+          VerticalAlignment="Top" Text="{Binding SelectedFont}">
+                        <ComboBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Width="150" />
+                            </ItemsPanelTemplate>
+                        </ComboBox.ItemsPanel>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Height="24">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="3"
+                           Text="{Binding}" FontFamily="{Binding}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <StackPanel Orientation="Horizontal">
+                        <Custom:RibbonToggleButton  IsChecked="{Binding BoldChecked}" Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Label="B" FontWeight="Bold" />
+                        <Custom:RibbonToggleButton  IsChecked="{Binding ItalicChecked}" Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Label="I" FontStyle="Italic" FontWeight="Bold" />
+                        <Custom:RibbonToggleButton  IsChecked="{Binding UnderlineChecked}" Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Label="U"  FontWeight="Bold" />
+                        <ComboBox Width="45" Height="20" Text="{Binding FontSize}">
+                            <ListBoxItem Content="8" />
+                            <ListBoxItem Content="10" />
+                            <ListBoxItem Content="12" />
+                            <ListBoxItem Content="14" />
+                            <ListBoxItem Content="16" />
+                            <ListBoxItem Content="22" />
+                            <ListBoxItem Content="32" />
+                            <ListBoxItem Content="72" />
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="L" IsChecked="{Binding LeftTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Left.png" />
+                        <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="C" IsChecked="{Binding CenterTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Center.png" />
+                        <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="R" IsChecked="{Binding RightTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Right.png" />
+                    </StackPanel>
+                </Custom:RibbonGroup>
+
+                <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
+                    <Custom:RibbonMenuButton x:Name="Alignment" Label="Align">
+                        <Custom:RibbonButton x:Name="LeftAlignment" Label="Left" Command="{Binding AlignCommand}" CommandParameter="Left" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="RightAlignment" Label="Right" Command="{Binding AlignCommand}" CommandParameter="Right" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="TopAlignment" Label="Top" Command="{Binding AlignCommand}" CommandParameter="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="BottomAlignment" Label="Bottom" Command="{Binding AlignCommand}" CommandParameter="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton x:Name="MarginAlignment" Label="Margin Align">
+                        <Custom:RibbonButton x:Name="LeftMarginAlignment" Label="Left" Command="{Binding AlignCommand}" CommandParameter="LeftMargin" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="CenterMarginAlignment" Label="Center" Command="{Binding AlignCommand}" CommandParameter="CenterMargin" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="RightMarginAlignment" Label="Right" Command="{Binding AlignCommand}" CommandParameter="RightMargin" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="TopMarginAlignment" Label="Top" Command="{Binding AlignCommand}" CommandParameter="TopMargin" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="BottomMarginAlignment" Label="Bottom" Command="{Binding AlignCommand}" CommandParameter="BottomMargin" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton x:Name="Distibution" Label="Distribution">
+                        <Custom:RibbonButton x:Name="VEvenAlignment" Label="Vertical Selection" Command="{Binding AlignCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the highest and lowest" />
+                        <Custom:RibbonButton x:Name="HEvenAlignment" Label="Horizontal Selection" Command="{Binding AlignCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the left most and right most" />
+                        <Custom:RibbonButton x:Name="VPageAlignment" Label="Vertical Page" Command="{Binding AlignCommand}" CommandParameter="VerticalPage" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the top sand bottom margins" />
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton x:Name="Size" Label="Size">
+                        <Custom:RibbonButton x:Name="SameWidth" Label="Same Width" Command="{Binding SizeCommand}" CommandParameter="SameWidth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="SameHeight" Label="Same Height" Command="{Binding SizeCommand}" CommandParameter="SameHeight" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="SameBoth" Label="Same Width and Height" Command="{Binding SizeCommand}" CommandParameter="SameBoth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton x:Name="Group" Label="Group">
+                        <Custom:RibbonButton x:Name="GroupSelected" Label="Group" Command="{Binding GroupCommand}" CommandParameter="Group" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonSeparator />
+                        <Custom:RibbonButton x:Name="SaveSelected" Label="Save Group" Command="{Binding GroupCommand}" CommandParameter="Save" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="LoadGroupButton" Label="Load Group" Command="{Binding GroupCommand}" CommandParameter="Load" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                    </Custom:RibbonMenuButton>
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Make3D;component/Images/Buttons/question1.png">
+                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                </Custom:RibbonGroup>
+            </Custom:RibbonTab>
+            <Custom:RibbonTab Name="ViewTab1" Header="View">
+                <Custom:RibbonGroup Name="ZoomGroup" Header="Zoom">
+                    <Custom:RibbonButton x:Name="ZoomOutButton" Label="Zoom Out" Command="{Binding ZoomOutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ZoomInButton" Label="Zoom In" Command="{Binding ZoomInCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="Zoom100Button" Label="100%" Command="{Binding Zoom100Command}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                  
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="ShowGroup" Header="Show">
+                    <Custom:RibbonCheckBox x:Name="ShowGrid" Label="Grid" IsChecked="{Binding ShowGridChecked}" />
+                    <Custom:RibbonCheckBox x:Name="ShowMargin" Label="Margins" IsChecked="{Binding ShowMarginsChecked}" />
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="OptionGroup" Header="Options">
+                    <Custom:RibbonCheckBox x:Name="SnapMargin" Label="Margin Snap" IsChecked="{Binding SnapMarginChecked}" ToolTip="Snap new staves and tabs to left margin"/>
+                </Custom:RibbonGroup>
+
+            </Custom:RibbonTab>
+        </Custom:Ribbon>
+        <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
+            <DockPanel LastChildFill="True">
+                <StackPanel Width="76">
+                <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
+                <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
+                </StackPanel>
+                <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
+                    <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}"  />
+                </ScrollViewer>
+            </DockPanel>
+        </Grid>
+        <StatusBar Grid.Row="2">
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="400" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="120" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Content="{Binding StatusBlockText1}" Grid.Column="0" />
+            <Separator Grid.Column="1" />
+            <StatusBarItem Content="{Binding StatusBlockText2}" Grid.Column="2" />
+            <Separator Grid.Column="3" />
+            <StatusBarItem Content="{Binding StatusBlockText3}" Grid.Column="4" HorizontalAlignment="Right" />
+
+            <StatusBarItem Width="120" />
+        </StatusBar>
+    </Grid>
+</UserControl>

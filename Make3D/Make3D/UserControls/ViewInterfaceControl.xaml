@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Make3D.UserControls.ViewInterfaceControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Make3D.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800" Background="Transparent">
+    <Border BorderBrush="#FFA39BF5" Padding="20,20,8,20" BorderThickness="2,1,2,2" CornerRadius="20" >
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="White" Offset="0.142"/>
+                <GradientStop Color="#FF09DCF1" Offset="0.887"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Border.ContextMenu>
+            <ContextMenu>
+            <MenuItem Header="Add View" Command="{Binding AddViewCommand}" />
+            </ContextMenu>
+        </Border.ContextMenu>
+        <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="4*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+                
+            </Grid.RowDefinitions>
+            <TextBox x:Name="ViewName" HorizontalAlignment="Stretch" Grid.Row="0" TextAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding Name}" Margin="4,4,4,4"/>
+            <TextBox x:Name="ViewDescription" HorizontalAlignment="Stretch" Grid.Row="1" TextAlignment="Center" HorizontalContentAlignment="Center" Text="{Binding Description}" Margin="4,4,4,4"/>
+        </Grid>
+        </ScrollViewer>
+    </Border>
+</UserControl>
