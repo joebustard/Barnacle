@@ -2,14 +2,8 @@
 using Make3D.Models;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -18,29 +12,25 @@ namespace Make3D.ViewModels
 {
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
-        Point3D CameraHomePos = new Point3D(0, 20, 80);
-        Point3D CameraBackPos = new Point3D(0, 20, -80);
-        Point3D CameraRightPos = new Point3D(80, 20, 0);
-        Point3D CameraLeftPos = new Point3D(-80, 20, 00);
-        Point3D CameraTopPos = new Point3D(0, 80, 1);
-        Point3D CameraBottomPos = new Point3D(0, -80, -1);
-        Point3D CameraLookObject = new Point3D(0, 0, 0);
-        Point3D CameraScrollDelta = new Point3D(1, 1, 0);
-        double cameraHomeDistance;
-        double onePercentZoom;
-        double zoomPercent = 100;
-        Point3D cameraPos;
-        CameraModes cameraMode;
+        private Point3D CameraHomePos = new Point3D(0, 20, 80);
+        private Point3D CameraBackPos = new Point3D(0, 20, -80);
+        private Point3D CameraRightPos = new Point3D(80, 20, 0);
+        private Point3D CameraLeftPos = new Point3D(-80, 20, 00);
+        private Point3D CameraTopPos = new Point3D(0, 80, 1);
+        private Point3D CameraBottomPos = new Point3D(0, -80, -1);
+        private Point3D CameraLookObject = new Point3D(0, 0, 0);
+        private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
+        private double cameraHomeDistance;
+        private double onePercentZoom;
+        private double zoomPercent = 100;
+        private Point3D cameraPos;
+        private CameraModes cameraMode;
         private GeometryModel3D floor;
-        Vector3DCollection floorNormals;
-
-        Point3DCollection floorObjectVertices;
-
-        Int32Collection floorTriangleIndices;
-
-        Point lastMouse;
-
-        Vector3D lookDirection;
+        private Vector3DCollection floorNormals;
+        private Point3DCollection floorObjectVertices;
+        private Int32Collection floorTriangleIndices;
+        private Point lastMouse;
+        private Vector3D lookDirection;
 
         private Model3DCollection modelItems;
 
@@ -49,6 +39,7 @@ namespace Make3D.ViewModels
         private Bounds3D allBounds;
 
         private ObjectAdorner selectedObjectAdorner;
+        private double cameraDistance;
 
         public EditorViewModel()
         {
@@ -77,12 +68,26 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("AddObject", OnAddObject);
             NotificationManager.Subscribe("Refresh", OnRefresh);
             NotificationManager.Subscribe("NewDocument", OnNewDocument);
-
+            NotificationManager.Subscribe("Remesh", OnRemesh);
             NotificationManager.Subscribe("Select", Select);
+            CalculateCameraDistance();
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
             allBounds.Adjust(new Point3D(0, 0, 0));
+        }
+
+        private void CalculateCameraDistance()
+        {
+            cameraDistance = Math.Sqrt((cameraPos.X * cameraPos.X) +
+        (cameraPos.Y * cameraPos.Y) +
+        (cameraPos.Z * cameraPos.Z)
+        );
+        }
+
+        private void OnRemesh(object param)
+        {
+            throw new NotImplementedException();
         }
 
         private void ZoomReset(object param)
@@ -92,7 +97,7 @@ namespace Make3D.ViewModels
             zoomPercent = 100;
         }
 
-        enum CameraModes
+        private enum CameraModes
         {
             None,
             CameraMove,
@@ -116,8 +121,8 @@ namespace Make3D.ViewModels
         public GeometryModel3D Floor
         {
             get { return floor; }
-
         }
+
         public Point3DCollection FloorObjectVertices
         {
             get { return floorObjectVertices; }
@@ -137,7 +142,7 @@ namespace Make3D.ViewModels
             {
                 double x = 30.0; // floor width / 2
                 double z = 30.0; // floor length / 2
-                double floorDepth = -.1; // give the floor some depth so it's not a 2 dimensional plane 
+                double floorDepth = -.1; // give the floor some depth so it's not a 2 dimensional plane
 
                 Point3DCollection points = new Point3DCollection(20);
                 Point3D point;
@@ -198,9 +203,7 @@ namespace Make3D.ViewModels
        14, 15, 16, 17, 19, 17, 18, 19 };
 
                 return new Int32Collection(indices);
-
             }
-
         }
 
         public Int32Collection FloorTriangleIndices
@@ -241,7 +244,8 @@ namespace Make3D.ViewModels
                 }
             }
         }
-        Vector3DCollection FloorNormals
+
+        private Vector3DCollection FloorNormals
         {
             get { return floorNormals; }
             set
@@ -279,7 +283,6 @@ namespace Make3D.ViewModels
                         md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
                     }
                 }
-
             }
             selectedItems.Clear();
         }
@@ -291,24 +294,31 @@ namespace Make3D.ViewModels
 
         internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e) == true)
             {
-                if (cameraMode == CameraModes.CameraMove)
+                lastMouse = newPos;
+            }
+            else
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    MoveCameraDelta(lastMouse, newPos);
-                    lastMouse = newPos;
-                }
-                else if (cameraMode == CameraModes.CameraMoveLookCenter)
-                {
-                    MoveCameraDelta(lastMouse, newPos);
-                    LookToCenter();
-                    lastMouse = newPos;
-                }
-                else if (cameraMode == CameraModes.CameraMoveLookObject)
-                {
-                    MoveCameraDelta(lastMouse, newPos);
-                    LookToObject();
-                    lastMouse = newPos;
+                    if (cameraMode == CameraModes.CameraMove)
+                    {
+                        MoveCameraDelta(lastMouse, newPos);
+                        lastMouse = newPos;
+                    }
+                    else if (cameraMode == CameraModes.CameraMoveLookCenter)
+                    {
+                        MoveCameraDelta(lastMouse, newPos);
+                        LookToCenter();
+                        lastMouse = newPos;
+                    }
+                    else if (cameraMode == CameraModes.CameraMoveLookObject)
+                    {
+                        MoveCameraDelta(lastMouse, newPos);
+                        LookToObject();
+                        lastMouse = newPos;
+                    }
                 }
             }
         }
@@ -325,72 +335,92 @@ namespace Make3D.ViewModels
 
         internal void MouseUp(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
         {
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.MouseUp();
+            }
             ReportCameraPosition();
         }
 
         internal void MouseWheel(MouseWheelEventArgs e)
         {
-
         }
 
         internal void Select(GeometryModel3D geo, bool append = false)
         {
             bool handled = false;
-            if (selectedObjectAdorner != null)
+            /*
+            // if user has just clicked on floor then delect everything
+            if (geo.Geometry == Floor.Geometry)
             {
-                handled = selectedObjectAdorner.Select(geo);
-            }
-            if (!handled)
-            {
-
-                if (!append)
+                if (selectedObjectAdorner != null)
                 {
-                    RestoreUnselectedColours();
-                    selectedItems.Clear();
-
-                    foreach (Object3D ob in Document.Content)
-                    {
-                        if (ob.Mesh == geo.Geometry)
-                        {
-                            geo.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
-                            selectedItems.Add(ob);
-                        }
-
-                    }
-                    if (selectedItems.Count > 0)
-                    {
-                        CameraLookObject = selectedItems[0].Position;
-                        RemoveObjectAdorner();
-                        GenerateSelectionBox(selectedItems[0]);
-                    }
-                    NotifyPropertyChanged("ModelItems");
+                    // remove the currnt visible elements of the adorner
+                    RemoveObjectAdorner();
+                    DeselectAll();
                 }
-                else
+                handled = true;
+            }
+            else
+            */
+            {
+                if (selectedObjectAdorner != null)
                 {
-                    foreach (Object3D ob in Document.Content)
+                    handled = selectedObjectAdorner.Select(geo, cameraDistance);
+                }
+                if (!handled)
+                {
+                    CheckIfContentSelected(geo, append);
+                }
+            }
+        }
+
+        private void CheckIfContentSelected(GeometryModel3D geo, bool append)
+        {
+            if (!append)
+            {
+                RestoreUnselectedColours();
+                selectedItems.Clear();
+
+                foreach (Object3D ob in Document.Content)
+                {
+                    if (ob.Mesh == geo.Geometry)
                     {
-                        if (ob.Mesh == geo.Geometry)
-                        {
-                            geo.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
-                            selectedItems.Add(ob);
-                            if( selectedObjectAdorner != null)
-                            {
-                                // remove the currnt visible elements of the adorner
-                                RemoveObjectAdorner();
-                                // append the the object to the existing list of 
-                                selectedObjectAdorner.AdornObject(ob);
-
-                                // update the display
-                                foreach (Model3D md in selectedObjectAdorner.Adornments)
-                                {
-                                    modelItems.Add(md);
-                                }
-                                NotifyPropertyChanged("ModelItems");
-                            }
-                        }
-
+                        geo.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                        selectedItems.Add(ob);
                     }
+                }
+                if (selectedItems.Count > 0)
+                {
+                    CameraLookObject = selectedItems[0].Position;
+                    RemoveObjectAdorner();
+                    GenerateSelectionBox(selectedItems[0]);
+                }
+                NotifyPropertyChanged("ModelItems");
+            }
+            else
+            {
+                foreach (Object3D ob in Document.Content)
+                {
+                    if (ob.Mesh == geo.Geometry)
+                    {
+                        geo.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                        selectedItems.Add(ob);
+                        if (selectedObjectAdorner != null)
+                        {
+                            // remove the currnt visible elements of the adorner
+                            RemoveObjectAdorner();
+                            // append the the object to the existing list of
+                            selectedObjectAdorner.AdornObject(ob);
 
+                            // update the display
+                            foreach (Model3D md in selectedObjectAdorner.Adornments)
+                            {
+                                modelItems.Add(md);
+                            }
+                            NotifyPropertyChanged("ModelItems");
+                        }
+                    }
                 }
             }
         }
@@ -409,7 +439,6 @@ namespace Make3D.ViewModels
                         }
                     }
                 }
-
             }
         }
 
@@ -426,7 +455,6 @@ namespace Make3D.ViewModels
 
         private void GenerateSelectionBox(Object3D object3D)
         {
-
             selectedObjectAdorner = new ObjectAdorner();
             selectedObjectAdorner.AdornObject(object3D);
 
@@ -459,7 +487,7 @@ namespace Make3D.ViewModels
 
             DiffuseMaterial mt = new DiffuseMaterial();
             mt.Color = Colors.LightGray;
-            mt.Brush = new SolidColorBrush( Color.FromArgb(60,200,200,200));
+            mt.Brush = new SolidColorBrush(Color.FromArgb(60, 200, 200, 200));
             gm.Material = mt;
 
             DiffuseMaterial mtb = new DiffuseMaterial();
@@ -471,52 +499,52 @@ namespace Make3D.ViewModels
 
         private void HomeCamera()
         {
-
             CameraPos = CameraHomePos;
             CameraScrollDelta = new Point3D(1, 1, 0);
             LookToCenter();
             zoomPercent = 100;
         }
+
         private void LeftCamera()
         {
-
             CameraPos = CameraLeftPos;
             CameraScrollDelta = new Point3D(0, 1, 1);
             LookToCenter();
             zoomPercent = 100;
         }
+
         private void BackCamera()
         {
-
             CameraPos = CameraBackPos;
             CameraScrollDelta = new Point3D(-1, 1, 0);
             LookToCenter();
             zoomPercent = 100;
         }
+
         private void RightCamera()
         {
-
             CameraPos = CameraRightPos;
             CameraScrollDelta = new Point3D(0, 1, -1);
             LookToCenter();
             zoomPercent = 100;
         }
+
         private void TopCamera()
         {
-
             CameraPos = CameraTopPos;
             CameraScrollDelta = new Point3D(1, 0, 1);
             LookToCenter();
             zoomPercent = 100;
         }
+
         private void BottomCamera()
         {
-
             CameraPos = CameraBottomPos;
             CameraScrollDelta = new Point3D(-1, 0, -1);
             LookToCenter();
             zoomPercent = 100;
         }
+
         private void LookToCenter()
         {
             lookDirection.X = -CameraPos.X;
@@ -537,19 +565,19 @@ namespace Make3D.ViewModels
             cameraPos.X -= dx;
             cameraPos.Y -= dy;
             cameraPos.Z -= dz;
+            CalculateCameraDistance();
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
-
         }
+
         private void OnAddObject(object param)
         {
             string pth = AppDomain.CurrentDomain.BaseDirectory;
             string obType = param.ToString();
             obType = obType.ToLower();
-            string mod = "";
             Color color = Colors.Beige;
             Object3D obj = new Object3D();
-           
+
             DeselectAll();
             obj.Name = "Object_" + Document.Content.Count.ToString();
             obj.Description = obType;
@@ -563,7 +591,6 @@ namespace Make3D.ViewModels
             {
                 case "box":
                     {
-
                         PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Pink);
                     }
@@ -571,7 +598,6 @@ namespace Make3D.ViewModels
 
                 case "sphere":
                     {
-
                         PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.CadetBlue);
                     }
@@ -579,8 +605,6 @@ namespace Make3D.ViewModels
 
                 case "cylinder":
                     {
-
-
                         PrimitiveGenerator.GenerateCylinder(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Orange);
                     }
@@ -588,7 +612,6 @@ namespace Make3D.ViewModels
 
                 case "roof":
                     {
-
                         PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Green);
                     }
@@ -596,7 +619,6 @@ namespace Make3D.ViewModels
 
                 case "roundroof":
                     {
-
                         PrimitiveGenerator.GenerateRoundRoof(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Aquamarine);
                     }
@@ -604,11 +626,11 @@ namespace Make3D.ViewModels
 
                 case "cone":
                     {
-
                         PrimitiveGenerator.GenerateCone(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Purple);
                     }
                     break;
+
                 case "pyramid":
                     {
                         PrimitiveGenerator.GeneratePyramid(ref pnts, ref indices, ref normals);
@@ -643,6 +665,7 @@ namespace Make3D.ViewModels
                         AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Magenta);
                     }
                     break;
+
                 default:
                     {
                         //   obj.LoadObject(pth + obType+".txt");
@@ -655,7 +678,6 @@ namespace Make3D.ViewModels
             Document.Content.Add(obj);
             modelItems.Add(gm);
             NotifyPropertyChanged("ModelItems");
-
         }
 
         private void AddPrimitiveToObject(Object3D obj, Point3DCollection pnts, Int32Collection indices, Vector3DCollection normals, Color c)
@@ -679,16 +701,19 @@ namespace Make3D.ViewModels
                         HomeCamera();
                     }
                     break;
+
                 case "CameraBack":
                     {
                         BackCamera();
                     }
                     break;
+
                 case "CameraLeft":
                     {
                         LeftCamera();
                     }
                     break;
+
                 case "CameraRight":
                     {
                         RightCamera();
@@ -697,20 +722,23 @@ namespace Make3D.ViewModels
 
                 case "CameraTop":
                     {
-                       TopCamera();
+                        TopCamera();
                     }
                     break;
+
                 case "CameraBottom":
                     {
                         BottomCamera();
                     }
                     break;
+
                 case "CameraLookCenter":
                     {
                         LookToCenter();
                         ReportCameraPosition();
                     }
                     break;
+
                 case "CameraMove":
                     {
                         cameraMode = CameraModes.CameraMove;
@@ -723,15 +751,14 @@ namespace Make3D.ViewModels
                     }
                     break;
 
-
                 case "CameraMoveLookObject":
                     {
                         cameraMode = CameraModes.CameraMoveLookObject;
                     }
                     break;
+
                 default:
                     break;
-
             }
             ReportCameraPosition();
         }
@@ -767,7 +794,6 @@ namespace Make3D.ViewModels
             {
                 SelectAll();
             }
-
         }
 
         private void SelectAll()
@@ -785,6 +811,7 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         private void Zoom(double v)
         {
             cameraPos.X += (v * LookDirection.X * onePercentZoom);

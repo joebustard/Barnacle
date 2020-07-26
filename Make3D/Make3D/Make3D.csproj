@@ -57,7 +57,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Views\ObjectAdorner.cs" />
-    <Compile Include="Adorners\SizeAdorner.cs" />
     <Compile Include="Models\Bounds3D.cs" />
     <Compile Include="Models\IcoSphereCreator.cs" />
     <Compile Include="Models\Object3D.cs" />
@@ -215,6 +214,8 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Adorners\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
