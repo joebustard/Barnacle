@@ -344,6 +344,14 @@ namespace Make3D.ViewModels
 
         internal void MouseWheel(MouseWheelEventArgs e)
         {
+            if (e.Delta > 0)
+            {
+                ZoomIn(null);
+            }
+            else
+            {
+                ZoomOut(null);
+            }
         }
 
         internal void Select(GeometryModel3D geo, bool append = false)
