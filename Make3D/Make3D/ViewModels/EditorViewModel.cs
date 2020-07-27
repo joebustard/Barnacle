@@ -12,6 +12,7 @@ namespace Make3D.ViewModels
 {
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private PolarCamera camera;
         private Point3D CameraHomePos = new Point3D(0, 20, 80);
         private Point3D CameraBackPos = new Point3D(0, 20, -80);
         private Point3D CameraRightPos = new Point3D(80, 20, 0);
@@ -23,8 +24,10 @@ namespace Make3D.ViewModels
         private double cameraHomeDistance;
         private double onePercentZoom;
         private double zoomPercent = 100;
-        private Point3D cameraPos;
+
+        //     private Point3D cameraPos;
         private CameraModes cameraMode;
+
         private GeometryModel3D floor;
         private Vector3DCollection floorNormals;
         private Point3DCollection floorObjectVertices;
@@ -45,7 +48,7 @@ namespace Make3D.ViewModels
         {
             FloorObjectVertices = FloorPoints3D;
             FloorTriangleIndices = FloorPointsIndices;
-
+            camera = new PolarCamera();
             CameraPos = new Point3D();
             CameraPos = CameraHomePos;
             cameraHomeDistance = Math.Sqrt((CameraHomePos.X * CameraHomePos.X) +
@@ -70,20 +73,29 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("NewDocument", OnNewDocument);
             NotificationManager.Subscribe("Remesh", OnRemesh);
             NotificationManager.Subscribe("Select", Select);
-            CalculateCameraDistance();
+
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
             allBounds.Adjust(new Point3D(0, 0, 0));
         }
 
-        private void CalculateCameraDistance()
+        /*
+        private void CalculateCameraPlane()
         {
-            cameraDistance = Math.Sqrt((cameraPos.X * cameraPos.X) +
-        (cameraPos.Y * cameraPos.Y) +
-        (cameraPos.Z * cameraPos.Z)
-        );
+            if (cameraDistance > 0)
+            {
+                double theta = Math.Acos(cameraPos.Z / cameraDistance);
+                double phi = Math.Atan2(cameraPos.Y, cameraPos.X);
+                Vector3D t = new Vector3D();
+                t.X = Math.Sin(theta) * Math.Cos(phi);
+                t.Y = Math.Sin(theta) * Math.Sin(phi);
+                t.Z = Math.Cos(theta);
+                t.Normalize();
+                cameraPlane = t;
+            }
         }
+        */
 
         private void OnRemesh(object param)
         {
@@ -107,14 +119,16 @@ namespace Make3D.ViewModels
 
         public Point3D CameraPos
         {
-            get { return cameraPos; }
+            get { return camera.CameraPos; }
             set
             {
-                if (cameraPos != value)
-                {
-                    cameraPos = value;
-                    NotifyPropertyChanged();
-                }
+                /*
+                    if (cameraPos != value)
+                    {
+                        cameraPos = value;
+                        NotifyPropertyChanged();
+                    }
+                    */
             }
         }
 
@@ -325,9 +339,9 @@ namespace Make3D.ViewModels
 
         private void LookToObject()
         {
-            Vector3D v = new Vector3D(CameraLookObject.X - cameraPos.X,
-                  CameraLookObject.Y - cameraPos.Y,
-                  CameraLookObject.Z - cameraPos.Z);
+            Vector3D v = new Vector3D(CameraLookObject.X - camera.CameraPos.X,
+                  CameraLookObject.Y - camera.CameraPos.Y,
+                  CameraLookObject.Z - camera.CameraPos.Z);
             v.Normalize();
             LookDirection = v;
             NotifyPropertyChanged("LookDirection");
@@ -374,7 +388,7 @@ namespace Make3D.ViewModels
             {
                 if (selectedObjectAdorner != null)
                 {
-                    handled = selectedObjectAdorner.Select(geo, cameraDistance);
+                    handled = selectedObjectAdorner.Select(geo, camera.Distance);
                 }
                 if (!handled)
                 {
@@ -567,13 +581,17 @@ namespace Make3D.ViewModels
             double dx = newPos.X - lastMouse.X;
             double dy = newPos.Y - lastMouse.Y;
             double dz = newPos.X - lastMouse.X;
+            /*
             dx = dx * CameraScrollDelta.X;
             dy = dy * CameraScrollDelta.Y;
             dz = dz * CameraScrollDelta.Z;
+
             cameraPos.X -= dx;
             cameraPos.Y -= dy;
             cameraPos.Z -= dz;
             CalculateCameraDistance();
+            */
+            camera.Move(dx, dy);
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
         }
@@ -785,7 +803,7 @@ namespace Make3D.ViewModels
 
         private void ReportCameraPosition()
         {
-            String s = $"Camera ({cameraPos.X:F2},{cameraPos.Y:F2},{cameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
+            String s = $"Camera ({camera.CameraPos.X:F2},{camera.CameraPos.Y:F2},{camera.CameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
             NotificationManager.Notify("SetStatusText1", s);
         }
 
@@ -822,9 +840,12 @@ namespace Make3D.ViewModels
 
         private void Zoom(double v)
         {
-            cameraPos.X += (v * LookDirection.X * onePercentZoom);
-            cameraPos.Y += (v * LookDirection.Y * onePercentZoom);
-            cameraPos.Z += (v * LookDirection.Z * onePercentZoom);
+            /*
+                cameraPos.X += (v * LookDirection.X * onePercentZoom);
+                cameraPos.Y += (v * LookDirection.Y * onePercentZoom);
+                cameraPos.Z += (v * LookDirection.Z * onePercentZoom);
+                */
+            camera.Zoom(v);
             zoomPercent += v;
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");

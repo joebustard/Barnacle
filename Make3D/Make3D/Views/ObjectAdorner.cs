@@ -14,6 +14,7 @@ namespace Make3D.Adorners
         private List<Object3D> thumbs;
         private List<Object3D> taggedObjects;
         private Object3D box;
+        private bool boxSelected;
         private Object3D selectedThumb;
         private double cameraDistance;
 
@@ -38,6 +39,7 @@ namespace Make3D.Adorners
         public void AdornObject(Object3D obj)
         {
             selectedThumb = null;
+            boxSelected = false;
             taggedObjects.Add(obj);
             GenerateAdornments();
         }
@@ -125,13 +127,21 @@ namespace Make3D.Adorners
         {
             bool handled = false;
             this.cameraDistance = cameraDistance;
-            foreach (Object3D thumb in thumbs)
+            if (box.Mesh == geo.Geometry)
             {
-                if (thumb.Mesh == geo.Geometry)
+                handled = true;
+                boxSelected = true;
+            }
+            else
+            {
+                foreach (Object3D thumb in thumbs)
                 {
-                    handled = true;
-                    selectedThumb = thumb;
-                    break;
+                    if (thumb.Mesh == geo.Geometry)
+                    {
+                        handled = true;
+                        selectedThumb = thumb;
+                        break;
+                    }
                 }
             }
             return handled;
@@ -140,96 +150,133 @@ namespace Make3D.Adorners
         internal bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e)
         {
             bool handled = false;
-            if (selectedThumb != null)
+            if (boxSelected)
             {
                 handled = true;
-                double deltaX = (newPos.X - lastPos.X) / cameraDistance;
-                double deltaY = (newPos.Y - lastPos.Y) / cameraDistance;
-                Point3D scaleChange = new Point3D(0, 0, 0);
-                Point3D positionChange = new Point3D(0, 0, 0);
-                switch (selectedThumb.Name.ToLower())
+                MouseMoveBox(lastPos, newPos);
+            }
+            else
+            {
+                if (selectedThumb != null)
                 {
-                    case "rightthumb":
-                        {
-                            scaleChange.X = deltaX;
-                        }
-                        break;
-
-                    case "leftthumb":
-                        {
-                            scaleChange.X = deltaX;
-                        }
-                        break;
-
-                    case "topthumb":
-                        {
-                            scaleChange.Y = deltaY;
-                        }
-                        break;
-
-                    case "bottomthumb":
-                        {
-                            scaleChange.Y = -deltaY;
-                        }
-                        break;
-
-                    case "frontthumb":
-                        {
-                            positionChange.X = deltaX;
-                            positionChange.Y = -deltaY;
-                        }
-                        break;
-
-                    case "backthumb":
-                        {
-                            positionChange.X = -deltaX;
-                            positionChange.Y = -deltaY;
-                        }
-                        break;
+                    handled = true;
+                    MouseMoveThumb(lastPos, newPos);
                 }
-                foreach (Object3D obj in taggedObjects)
-                {
-                    if (obj.Scale.X + scaleChange.X > 0)
-                    {
-                        obj.Scale.X += scaleChange.X;
-                    }
-                    if (obj.Scale.Y + scaleChange.Y > 0)
-                    {
-                        obj.Scale.Y += scaleChange.Y;
-                    }
-                    if (obj.Scale.Z + scaleChange.Z > 0)
-                    {
-                        obj.Scale.Z += scaleChange.Z;
-                    }
-                    obj.Position = new Point3D(obj.Position.X + positionChange.X,
-                    obj.Position.Y + positionChange.Y,
-                    obj.Position.Z + positionChange.Z);
-                    obj.Remesh();
-                }
-                if (box.Scale.X + scaleChange.X > 0)
-                {
-                    box.Scale.X += scaleChange.X;
-                }
-                if (box.Scale.Y + scaleChange.Y > 0)
-                {
-                    box.Scale.Y += scaleChange.Y;
-                }
-                if (box.Scale.Z + scaleChange.Z > 0)
-                {
-                    box.Scale.Z += scaleChange.Z;
-                }
-                box.Position = new Point3D(box.Position.X + positionChange.X,
-                box.Position.Y + positionChange.Y,
-                box.Position.Z + positionChange.Z);
-                box.Remesh();
-                MoveThumb(box.Position, box.Scale.X / 2, 0, 0, "RightThumb");
-                MoveThumb(box.Position, -box.Scale.X / 2, 0, 0, "LeftThumb");
-                MoveThumb(box.Position, 0, box.Scale.Y / 2, 0, "TopThumb");
-                MoveThumb(box.Position, 0, -box.Scale.Y / 2, 0, "BottomThumb");
-                MoveThumb(box.Position, 0, 0, box.Scale.Z / 2, "FrontThumb");
-                MoveThumb(box.Position, 0, 0, -box.Scale.Z / 2, "BackThumb");
             }
             return handled;
+        }
+
+        private void MouseMoveBox(Point lastPos, Point newPos)
+        {
+            double deltaX = (newPos.X - lastPos.X) / cameraDistance;
+            double deltaY = (newPos.Y - lastPos.Y) / cameraDistance;
+            Point3D positionChange = new Point3D(deltaX, -deltaY, 0);
+            box.Position = new Point3D(box.Position.X + positionChange.X,
+box.Position.Y + positionChange.Y,
+box.Position.Z + positionChange.Z);
+            box.Remesh();
+            foreach (Object3D obj in taggedObjects)
+            {
+                obj.Position = new Point3D(obj.Position.X + positionChange.X,
+                obj.Position.Y + positionChange.Y,
+                obj.Position.Z + positionChange.Z);
+                obj.Remesh();
+            }
+            MoveThumb(box.Position, box.Scale.X / 2, 0, 0, "RightThumb");
+            MoveThumb(box.Position, -box.Scale.X / 2, 0, 0, "LeftThumb");
+            MoveThumb(box.Position, 0, box.Scale.Y / 2, 0, "TopThumb");
+            MoveThumb(box.Position, 0, -box.Scale.Y / 2, 0, "BottomThumb");
+            MoveThumb(box.Position, 0, 0, box.Scale.Z / 2, "FrontThumb");
+            MoveThumb(box.Position, 0, 0, -box.Scale.Z / 2, "BackThumb");
+        }
+
+        private void MouseMoveThumb(Point lastPos, Point newPos)
+        {
+            double deltaX = (newPos.X - lastPos.X) / cameraDistance;
+            double deltaY = (newPos.Y - lastPos.Y) / cameraDistance;
+            Point3D scaleChange = new Point3D(0, 0, 0);
+            Point3D positionChange = new Point3D(0, 0, 0);
+            switch (selectedThumb.Name.ToLower())
+            {
+                case "rightthumb":
+                    {
+                        scaleChange.X = deltaX;
+                    }
+                    break;
+
+                case "leftthumb":
+                    {
+                        scaleChange.X = -deltaX;
+                    }
+                    break;
+
+                case "topthumb":
+                    {
+                        scaleChange.Y = -deltaY;
+                    }
+                    break;
+
+                case "bottomthumb":
+                    {
+                        scaleChange.Y = -deltaY;
+                    }
+                    break;
+
+                case "frontthumb":
+                    {
+                        //positionChange.X = deltaX;
+                        //positionChange.Y = -deltaY;
+                    }
+                    break;
+
+                case "backthumb":
+                    {
+                        //positionChange.X = -deltaX;
+                        //positionChange.Y = -deltaY;
+                    }
+                    break;
+            }
+            foreach (Object3D obj in taggedObjects)
+            {
+                if (obj.Scale.X + scaleChange.X > 0)
+                {
+                    obj.Scale.X += scaleChange.X;
+                }
+                if (obj.Scale.Y + scaleChange.Y > 0)
+                {
+                    obj.Scale.Y += scaleChange.Y;
+                }
+                if (obj.Scale.Z + scaleChange.Z > 0)
+                {
+                    obj.Scale.Z += scaleChange.Z;
+                }
+                obj.Position = new Point3D(obj.Position.X + positionChange.X,
+                obj.Position.Y + positionChange.Y,
+                obj.Position.Z + positionChange.Z);
+                obj.Remesh();
+            }
+            if (box.Scale.X + scaleChange.X > 0)
+            {
+                box.Scale.X += scaleChange.X;
+            }
+            if (box.Scale.Y + scaleChange.Y > 0)
+            {
+                box.Scale.Y += scaleChange.Y;
+            }
+            if (box.Scale.Z + scaleChange.Z > 0)
+            {
+                box.Scale.Z += scaleChange.Z;
+            }
+            box.Position = new Point3D(box.Position.X + positionChange.X,
+            box.Position.Y + positionChange.Y,
+            box.Position.Z + positionChange.Z);
+            box.Remesh();
+            MoveThumb(box.Position, box.Scale.X / 2, 0, 0, "RightThumb");
+            MoveThumb(box.Position, -box.Scale.X / 2, 0, 0, "LeftThumb");
+            MoveThumb(box.Position, 0, box.Scale.Y / 2, 0, "TopThumb");
+            MoveThumb(box.Position, 0, -box.Scale.Y / 2, 0, "BottomThumb");
+            MoveThumb(box.Position, 0, 0, box.Scale.Z / 2, "FrontThumb");
+            MoveThumb(box.Position, 0, 0, -box.Scale.Z / 2, "BackThumb");
         }
 
         private void MoveThumb(Point3D p, double v1, double v2, double v3, string name)
@@ -248,6 +295,7 @@ namespace Make3D.Adorners
         internal void MouseUp()
         {
             selectedThumb = null;
+            boxSelected = false;
         }
     }
 }
