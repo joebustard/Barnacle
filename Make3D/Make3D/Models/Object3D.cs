@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -12,7 +9,6 @@ namespace Make3D.Models
 {
     public class Object3D
     {
-
         public string Name { get; set; }
         public string Description { get; set; }
         public Color Color { get; set; }
@@ -22,17 +18,18 @@ namespace Make3D.Models
         public Scale3D Scale { get; set; }
 
         private Bounds3D absoluteBounds;
+
         public Bounds3D AbsoluteBounds
         {
             get { return absoluteBounds; }
             set { absoluteBounds = value; }
         }
 
-
         // This mesh is used by the view to display the object
-        // Its vertices are absolute, i.e. have been translated 
+        // Its vertices are absolute, i.e. have been translated
         // and rotated etc.
         private MeshGeometry3D mesh;
+
         public MeshGeometry3D Mesh
         {
             get { return mesh; }
@@ -41,10 +38,10 @@ namespace Make3D.Models
                 if (mesh != value)
                 {
                     mesh = value;
-
                 }
             }
         }
+
         public Object3D()
         {
             mesh = new MeshGeometry3D();
@@ -57,30 +54,39 @@ namespace Make3D.Models
             Position = new Point3D();
             absoluteBounds = new Bounds3D();
         }
-        Point3DCollection relativeObjectVertices;
+
+        private Point3DCollection relativeObjectVertices;
+
         public Point3DCollection RelativeObjectVertices
         {
             get { return relativeObjectVertices; }
             set { relativeObjectVertices = value; }
         }
-        Point3DCollection absoluteObjectVertices;
+
+        private Point3DCollection absoluteObjectVertices;
+
         public Point3DCollection AbsoluteObjectVertices
         {
             get { return absoluteObjectVertices; }
             set { absoluteObjectVertices = value; }
         }
-        Int32Collection triangleIndices;
+
+        private Int32Collection triangleIndices;
+
         public Int32Collection TriangleIndices
         {
             get { return triangleIndices; }
             set { triangleIndices = value; }
         }
-        Vector3DCollection normals;
+
+        private Vector3DCollection normals;
+
         public Vector3DCollection Normals
         {
             get { return normals; }
             set { normals = value; }
         }
+
         private void MoveToFloor()
         {
             double minY = double.MaxValue;
@@ -166,11 +172,9 @@ namespace Make3D.Models
                                     {
                                         int pi = Convert.ToInt32(words[j]);
                                         indices.Add(pi);
-                                        Point3D pn = new Point3D();
                                         cx += relativeObjectVertices[pi].X;
                                         cy += relativeObjectVertices[pi].Y;
                                         cz += relativeObjectVertices[pi].Z;
-
                                     }
                                     cx = cx / indices.Count;
                                     cy = cy / indices.Count;
@@ -179,13 +183,11 @@ namespace Make3D.Models
                                     int id = relativeObjectVertices.Count - 1;
                                     for (int j = 0; j < indices.Count - 1; j++)
                                     {
-
                                         triangleIndices.Add(indices[j]);
                                         triangleIndices.Add(indices[j + 1]);
                                         triangleIndices.Add(id);
                                     }
                                 }
-
                             }
                         }
                     }
@@ -204,9 +206,9 @@ namespace Make3D.Models
             // centered on 0,0,0
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
             Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-            foreach ( Point3D pt in relativeObjectVertices)
+            foreach (Point3D pt in relativeObjectVertices)
             {
-                if ( pt .X < min.X)
+                if (pt.X < min.X)
                 {
                     min.X = pt.X;
                 }
@@ -235,7 +237,7 @@ namespace Make3D.Models
 
             double scaleX = 1.0;
             double dx = max.X - min.X;
-            if ( dx > 0)
+            if (dx > 0)
             {
                 scaleX /= dx;
             }
@@ -255,12 +257,12 @@ namespace Make3D.Models
 
             for (int i = 0; i < relativeObjectVertices.Count; i++)
             {
-                Point3D moved = new Point3D( relativeObjectVertices[i].X - min.X,
+                Point3D moved = new Point3D(relativeObjectVertices[i].X - min.X,
                                              relativeObjectVertices[i].Y - min.Y,
                                              relativeObjectVertices[i].Z - min.Z);
-                moved.X *= scaleX ;
-                moved.Y *= scaleY ;
-                moved.Z *= scaleZ ;
+                moved.X *= scaleX;
+                moved.Y *= scaleY;
+                moved.Z *= scaleZ;
 
                 moved.X -= 0.5;
                 moved.Y -= 0.5;
@@ -269,14 +271,14 @@ namespace Make3D.Models
             }
 
             // generate some c# !!
-            
+
             File.WriteAllText("C:\\tmp\\t.txt", "");
-            foreach( Point3D p in relativeObjectVertices)
+            foreach (Point3D p in relativeObjectVertices)
             {
-               File.AppendAllText ("C:\\tmp\\t.txt",$" pnts.Add( new Point3D( {p.X:F3},{p.Y:F3},{p.Z:F3}));");
+                File.AppendAllText("C:\\tmp\\t.txt", $" pnts.Add( new Point3D( {p.X:F3},{p.Y:F3},{p.Z:F3}));");
                 File.AppendAllText("C:\\tmp\\t.txt", "\r\n");
             }
-            foreach( int f in TriangleIndices)
+            foreach (int f in TriangleIndices)
             {
                 File.AppendAllText("C:\\tmp\\t.txt", $"indices.Add({f});");
                 File.AppendAllText("C:\\tmp\\t.txt", "\r\n");
@@ -287,7 +289,7 @@ namespace Make3D.Models
         {
             absoluteObjectVertices.Clear();
             absoluteBounds = new Bounds3D();
-            foreach( Point3D rp in relativeObjectVertices)
+            foreach (Point3D rp in relativeObjectVertices)
             {
                 Point3D ap = new Point3D();
                 ap.X = Position.X + (rp.X * Scale.X);
@@ -301,7 +303,7 @@ namespace Make3D.Models
         private void AdjustBounds(Point3D ap)
         {
             Point3D l = absoluteBounds.Lower;
-            if ( ap.X < l.X)
+            if (ap.X < l.X)
             {
                 l.X = ap.X;
             }
@@ -362,5 +364,11 @@ namespace Make3D.Models
             mesh.TriangleIndices = triangleIndices;
             mesh.Normals = normals;
         }
+
+        internal void Remesh()
+        {
+            RelativeToAbsolute();
+            SetMesh();
+        }
     }
-    }
+}

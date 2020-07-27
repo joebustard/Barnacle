@@ -1,20 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Make3D.ViewModels;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Make3D.Adorners;
-using Make3D.ViewModels;
 
 namespace Make3D.Views
 {
@@ -23,9 +12,10 @@ namespace Make3D.Views
     /// </summary>
     public partial class EditorView : UserControl
     {
-        EditorViewModel vm;
-        Point lastMousePos;
-        GeometryModel3D lastHitModel;
+        private EditorViewModel vm;
+        private Point lastMousePos;
+        private GeometryModel3D lastHitModel;
+
         public EditorView()
         {
             InitializeComponent();
@@ -36,7 +26,6 @@ namespace Make3D.Views
 
         public void UpdateDisplay(object obj)
         {
-
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -44,15 +33,15 @@ namespace Make3D.Views
             bool shift = false;
             lastHitModel = null;
             HitTest(sender, e);
-            if ( Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+            if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
                 shift = true;
             }
-                lastMousePos = e.GetPosition(this);
+            lastMousePos = e.GetPosition(this);
             vm.MouseDown(lastMousePos, e);
-            if ( lastHitModel != null)
+            if (lastHitModel != null)
             {
-                vm.Select(lastHitModel,shift);
+                vm.Select(lastHitModel, shift);
             }
         }
 
@@ -65,13 +54,14 @@ namespace Make3D.Views
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
             lastMousePos = e.GetPosition(this);
-            vm.MouseUp(lastMousePos,e);
+            vm.MouseUp(lastMousePos, e);
         }
 
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             vm.MouseWheel(e);
         }
+
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
         {
             Point mouseposition = args.GetPosition(viewport3D1);
@@ -96,12 +86,10 @@ namespace Make3D.Views
                 if (rayMeshResult != null)
                 {
                     GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-                    if (hitgeo != vm.Floor  && lastHitModel == null)
+                    if (lastHitModel == null)
                     {
                         // UpdateResultInfo(rayMeshResult);
                         lastHitModel = hitgeo;
-                        
-                        
                     }
                     result = HitTestResultBehavior.Stop;
                 }
@@ -109,7 +97,5 @@ namespace Make3D.Views
 
             return result;
         }
-
-
     }
 }
