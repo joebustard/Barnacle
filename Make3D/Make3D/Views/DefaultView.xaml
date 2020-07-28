@@ -1,14 +1,14 @@
 ﻿<UserControl x:Class="Make3D.Views.DefaultView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+
              xmlns:Views="clr-namespace:Make3D.Views"
           xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              xmlns:local="clr-namespace:Make3D.Views"
              xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <ViewModels:DefaultViewModel />
@@ -59,7 +59,7 @@
                     <Custom:RibbonApplicationMenuItem x:Name="Open1" Header="Open" ImageSource="/images/buttons/human_document_open.png" Command="{Binding OpenCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save1" Header="Save" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save2" Header="Save As" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveAsCommand}" />
-                 <!--   <Custom:RibbonApplicationMenuItem Header="Print" ImageSource="/images/buttons/Printer.png" Command="{Binding PrintCommand}" />
+                    <!--   <Custom:RibbonApplicationMenuItem Header="Print" ImageSource="/images/buttons/Printer.png" Command="{Binding PrintCommand}" />
                     <Custom:RibbonApplicationMenuItem Header="Print Preview" ImageSource="/images/buttons/Printer.png" Command="{Binding ViewCommand}" CommandParameter="PrintPreview" />
 -->
                     <Custom:RibbonApplicationMenuItem Header="Exit" ImageSource="/images/buttons/exit.png" Command="{Binding ExitCommand}" />
@@ -78,7 +78,6 @@
                     <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectClear.png" ToolTip="Select All" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="StyleGroup" Header="Colours" LargeImageSource="/Make3D;component/Images/Buttons/colours.png">
-                   
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="TextGroup" Header="Text" LargeImageSource="/Make3D;component/Images/Buttons/BigText.png">
@@ -171,26 +170,26 @@
                     <Custom:RibbonButton x:Name="ZoomOutButton" Label="Zoom Out" Command="{Binding ZoomOutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="ZoomInButton" Label="Zoom In" Command="{Binding ZoomInCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="Zoom100Button" Label="100%" Command="{Binding Zoom100Command}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                  
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ShowGroup" Header="Show">
                     <Custom:RibbonCheckBox x:Name="ShowGrid" Label="Grid" IsChecked="{Binding ShowGridChecked}" />
                     <Custom:RibbonCheckBox x:Name="ShowMargin" Label="Margins" IsChecked="{Binding ShowMarginsChecked}" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="OptionGroup" Header="Options">
-                    <Custom:RibbonCheckBox x:Name="SnapMargin" Label="Margin Snap" IsChecked="{Binding SnapMarginChecked}" ToolTip="Snap new staves and tabs to left margin"/>
+                    <Custom:RibbonCheckBox x:Name="SnapMargin" Label="Margin Snap" IsChecked="{Binding SnapMarginChecked}" ToolTip="Snap new staves and tabs to left margin" />
                 </Custom:RibbonGroup>
-
             </Custom:RibbonTab>
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <DockPanel LastChildFill="True">
+
                 <StackPanel Width="76">
-                <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
-                <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
+                    <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
+                    <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
                 </StackPanel>
-                <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
-                    <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}"  />
+
+                <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+                    <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
                 </ScrollViewer>
             </DockPanel>
         </Grid>

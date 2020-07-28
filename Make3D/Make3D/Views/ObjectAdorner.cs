@@ -129,20 +129,23 @@ namespace Make3D.Adorners
         {
             bool handled = false;
             this.cameraDistance = cameraDistance;
-            if (box.Mesh == geo.Geometry)
+            if (box != null)
             {
-                handled = true;
-                boxSelected = true;
-            }
-            else
-            {
-                foreach (Object3D thumb in thumbs)
+                if (box.Mesh == geo.Geometry)
                 {
-                    if (thumb.Mesh == geo.Geometry)
+                    handled = true;
+                    boxSelected = true;
+                }
+                else
+                {
+                    foreach (Object3D thumb in thumbs)
                     {
-                        handled = true;
-                        selectedThumb = thumb;
-                        break;
+                        if (thumb.Mesh == geo.Geometry)
+                        {
+                            handled = true;
+                            selectedThumb = thumb;
+                            break;
+                        }
                     }
                 }
             }
@@ -174,8 +177,8 @@ namespace Make3D.Adorners
             double deltaY = (newPos.Y - lastPos.Y) / cameraDistance;
             Point3D positionChange = new Point3D(deltaX, -deltaY, 0);
             box.Position = new Point3D(box.Position.X + positionChange.X,
-box.Position.Y + positionChange.Y,
-box.Position.Z + positionChange.Z);
+                                        box.Position.Y + positionChange.Y,
+                                        box.Position.Z + positionChange.Z);
             box.Remesh();
             foreach (Object3D obj in taggedObjects)
             {

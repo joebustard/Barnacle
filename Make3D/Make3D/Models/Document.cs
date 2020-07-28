@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 
@@ -15,13 +12,13 @@ namespace Make3D.Models
         private string caption;
 
         public List<Object3D> Content;
+
         public string Caption
         {
             get { return caption; }
             set { caption = value; }
         }
 
- 
         internal void Clear()
         {
             FilePath = "";
@@ -75,15 +72,21 @@ namespace Make3D.Models
 
         public virtual void Read(string file)
         {
-
             try
             {
+                Content.Clear();
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
                 XmlNode docNode = doc.SelectSingleNode("Document");
 
-                XmlNodeList nodes = docNode.SelectNodes("Page");
-
+                XmlNodeList nodes = docNode.SelectNodes("obj");
+                foreach (XmlNode nd in nodes)
+                {
+                    Object3D obj = new Object3D();
+                    obj.Read(nd);
+                    obj.SetMesh();
+                    Content.Add(obj);
+                }
             }
             catch (Exception ex)
             {
@@ -104,13 +107,14 @@ namespace Make3D.Models
         {
             XmlDocument doc = new XmlDocument();
             XmlElement docNode = doc.CreateElement("Document");
-            foreach( Object3D ob in Content)
+            foreach (Object3D ob in Content)
             {
                 ob.Write(doc, docNode);
             }
             doc.AppendChild(docNode);
             doc.Save(file);
         }
+
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)

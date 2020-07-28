@@ -15,8 +15,9 @@ namespace Make3D.Models
 
         public Point3D Position { get; set; }
 
+        public Point3D Rotation { get; set; }
         public Scale3D Scale { get; set; }
-
+        public string PrimType { get; set; }
         private Bounds3D absoluteBounds;
 
         public Bounds3D AbsoluteBounds
@@ -52,7 +53,9 @@ namespace Make3D.Models
             Color = Colors.Red;
             Scale = new Scale3D();
             Position = new Point3D();
+            Rotation = new Point3D();
             absoluteBounds = new Bounds3D();
+            PrimType = "";
         }
 
         private Point3DCollection relativeObjectVertices;
@@ -333,6 +336,45 @@ namespace Make3D.Models
             absoluteBounds.Upper = u;
         }
 
+        internal void Read(XmlNode nd)
+        {
+            XmlElement ele = nd as XmlElement;
+            Name = ele.GetAttribute("Name");
+            Description = ele.GetAttribute("Description");
+            string cl = ele.GetAttribute("Colour");
+            this.Color = (Color)ColorConverter.ConvertFromString(cl);
+            PrimType = ele.GetAttribute("Primitive");
+            XmlNode pn = nd.SelectSingleNode("Position");
+            Point3D p = new Point3D();
+            p.X = GetDouble(pn, "X");
+            p.Y = GetDouble(pn, "Y");
+            p.Z = GetDouble(pn, "Z");
+            Position = p;
+
+            XmlNode sn = nd.SelectSingleNode("Scale");
+            Scale3D sc = new Scale3D();
+            sc.X = GetDouble(sn, "X");
+            sc.Y = GetDouble(sn, "Y");
+            sc.Z = GetDouble(sn, "Z");
+            Scale = sc;
+
+            XmlNode rt = nd.SelectSingleNode("Rotate");
+            Point3D r = new Point3D();
+            r.X = GetDouble(pn, "X");
+            r.Y = GetDouble(pn, "Y");
+            r.Z = GetDouble(pn, "Z");
+            Rotation = r;
+
+            BuildPrimitive(PrimType);
+        }
+
+        private double GetDouble(XmlNode pn, string v)
+        {
+            XmlElement el = pn as XmlElement;
+            string val = el.GetAttribute(v);
+            return Convert.ToDouble(val);
+        }
+
         internal void Write(XmlDocument doc, XmlElement docNode)
         {
             XmlElement ele = doc.CreateElement("obj");
@@ -340,6 +382,26 @@ namespace Make3D.Models
             ele.SetAttribute("Name", Name);
             ele.SetAttribute("Description", Description);
             ele.SetAttribute("Colour", Color.ToString());
+            ele.SetAttribute("Primitive", PrimType);
+            XmlElement pos = doc.CreateElement("Position");
+            pos.SetAttribute("X", Position.X.ToString());
+            pos.SetAttribute("Y", Position.Y.ToString());
+            pos.SetAttribute("Z", Position.Z.ToString());
+            ele.AppendChild(pos);
+
+            XmlElement scl = doc.CreateElement("Scale");
+            scl.SetAttribute("X", Scale.X.ToString());
+            scl.SetAttribute("Y", Scale.Y.ToString());
+            scl.SetAttribute("Z", Scale.Z.ToString());
+            ele.AppendChild(scl);
+
+            XmlElement rot = doc.CreateElement("Rotation");
+            rot.SetAttribute("X", Scale.X.ToString());
+            rot.SetAttribute("Y", Scale.Y.ToString());
+            rot.SetAttribute("Z", Scale.Z.ToString());
+            ele.AppendChild(scl);
+
+            /*
             foreach (Point3D p in relativeObjectVertices)
             {
                 XmlElement ep = doc.CreateElement("v");
@@ -356,6 +418,7 @@ namespace Make3D.Models
                 f.SetAttribute("p3", triangleIndices[i + 2].ToString());
                 ele.AppendChild(f);
             }
+            */
         }
 
         internal void SetMesh()
@@ -369,6 +432,109 @@ namespace Make3D.Models
         {
             RelativeToAbsolute();
             SetMesh();
+        }
+
+        internal void BuildPrimitive(string obType)
+        {
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection indices = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimType = obType;
+            switch (obType.ToLower())
+            {
+                case "box":
+                    {
+                        PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Pink);
+                    }
+                    break;
+
+                case "sphere":
+                    {
+                        PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
+                    }
+                    break;
+
+                case "cylinder":
+                    {
+                        PrimitiveGenerator.GenerateCylinder(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Orange);
+                    }
+                    break;
+
+                case "roof":
+                    {
+                        PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Green);
+                    }
+                    break;
+
+                case "roundroof":
+                    {
+                        PrimitiveGenerator.GenerateRoundRoof(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Aquamarine);
+                    }
+                    break;
+
+                case "cone":
+                    {
+                        PrimitiveGenerator.GenerateCone(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Purple);
+                    }
+                    break;
+
+                case "pyramid":
+                    {
+                        PrimitiveGenerator.GeneratePyramid(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Yellow);
+                    }
+                    break;
+
+                case "torus":
+                    {
+                        PrimitiveGenerator.GenerateTorus(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.MistyRose);
+                    }
+                    break;
+
+                case "cap":
+                    {
+                        PrimitiveGenerator.GenerateCap(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.LimeGreen);
+                    }
+                    break;
+
+                case "polygon":
+                    {
+                        PrimitiveGenerator.GeneratePolygon(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.LightYellow);
+                    }
+                    break;
+
+                case "tube":
+                    {
+                        PrimitiveGenerator.GenerateTube(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Magenta);
+                    }
+                    break;
+
+                default:
+                    {
+                        //   obj.LoadObject(pth + obType+".txt");
+                    }
+                    break;
+            }
+        }
+
+        private void AddPrimitiveToObject(Point3DCollection pnts, Int32Collection indices, Vector3DCollection normals, Color c)
+        {
+            RelativeObjectVertices = pnts;
+            TriangleIndices = indices;
+            Normals = normals;
+            RelativeToAbsolute();
+            SetMesh();
+            Color = c;
         }
     }
 }

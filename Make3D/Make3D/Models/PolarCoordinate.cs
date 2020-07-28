@@ -4,26 +4,46 @@ namespace Make3D.Models
 {
     internal class PolarCoordinate
     {
-        const double TwoPI = Math.PI * 2.0;
-        double phi;
+        private const double TwoPI = Math.PI * 2.0;
+        private double phi;
+
         public double Phi
-            
+
         {
-            get {return phi; }
+            get { return phi; }
             set
             {
                 phi = value;
                 if (phi < 0.001)
                 {
-                    phi =0.001 ;
+                    phi = phi + TwoPI;
                 }
                 if (phi > TwoPI)
                 {
-                    phi = TwoPI;
+                    phi = phi - TwoPI;
                 }
             }
         }
-        public double Theta { get; set; }
+
+        private double theta;
+
+        public double Theta
+        {
+            get { return theta; }
+            set
+            {
+                theta = value;
+                if (theta <= 0)
+                {
+                    theta = theta + TwoPI;
+                }
+                if (theta > TwoPI)
+                {
+                    theta = theta - TwoPI;
+                }
+            }
+        }
+
         public double Rho { get; set; }
 
         public PolarCoordinate(double t, double p, double r)

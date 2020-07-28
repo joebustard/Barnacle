@@ -16,7 +16,7 @@ namespace Make3D.ViewModels
 
         private Point3D CameraLookObject = new Point3D(0, 0, 0);
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
-        private double cameraHomeDistance;
+
         private double onePercentZoom;
         private double zoomPercent = 100;
 
@@ -45,7 +45,7 @@ namespace Make3D.ViewModels
             FloorTriangleIndices = FloorPointsIndices;
             camera = new PolarCamera();
 
-            onePercentZoom = cameraHomeDistance / 100.0;
+            onePercentZoom = camera.Distance / 100.0;
             LookToCenter();
 
             cameraMode = CameraModes.CameraMoveLookCenter;
@@ -112,7 +112,7 @@ namespace Make3D.ViewModels
             get { return camera.CameraPos; }
             set
             {
-                        NotifyPropertyChanged();
+                NotifyPropertyChanged();
             }
         }
 
@@ -258,12 +258,14 @@ namespace Make3D.ViewModels
 
         public void RegenerateDisplayList()
         {
+            allBounds = new Bounds3D();
             modelItems.Clear();
-            modelItems.Add(GetFloor());
+            modelItems.Add(floor);
             foreach (Object3D ob in Document.Content)
             {
                 GeometryModel3D gm = GetMesh(ob);
                 modelItems.Add(gm);
+                allBounds += ob.AbsoluteBounds;
             }
 
             NotifyPropertyChanged("ModelItems");
@@ -456,6 +458,7 @@ namespace Make3D.ViewModels
                 {
                     modelItems.Remove(md);
                 }
+                selectedObjectAdorner.Clear();
             }
         }
 
@@ -588,114 +591,17 @@ namespace Make3D.ViewModels
             DeselectAll();
             obj.Name = "Object_" + Document.Content.Count.ToString();
             obj.Description = obType;
-            Point3DCollection pnts = new Point3DCollection();
-            Int32Collection indices = new Int32Collection();
-            Vector3DCollection normals = new Vector3DCollection();
+
             obj.Scale = new Scale3D(5, 5, 5);
             obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
-
-            switch (obType)
-            {
-                case "box":
-                    {
-                        PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Pink);
-                    }
-                    break;
-
-                case "sphere":
-                    {
-                        PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.CadetBlue);
-                    }
-                    break;
-
-                case "cylinder":
-                    {
-                        PrimitiveGenerator.GenerateCylinder(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Orange);
-                    }
-                    break;
-
-                case "roof":
-                    {
-                        PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Green);
-                    }
-                    break;
-
-                case "roundroof":
-                    {
-                        PrimitiveGenerator.GenerateRoundRoof(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Aquamarine);
-                    }
-                    break;
-
-                case "cone":
-                    {
-                        PrimitiveGenerator.GenerateCone(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Purple);
-                    }
-                    break;
-
-                case "pyramid":
-                    {
-                        PrimitiveGenerator.GeneratePyramid(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Yellow);
-                    }
-                    break;
-
-                case "torus":
-                    {
-                        PrimitiveGenerator.GenerateTorus(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.MistyRose);
-                    }
-                    break;
-
-                case "cap":
-                    {
-                        PrimitiveGenerator.GenerateCap(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.LimeGreen);
-                    }
-                    break;
-
-                case "polygon":
-                    {
-                        PrimitiveGenerator.GeneratePolygon(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.LightYellow);
-                    }
-                    break;
-
-                case "tube":
-                    {
-                        PrimitiveGenerator.GenerateTube(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(obj, pnts, indices, normals, Colors.Magenta);
-                    }
-                    break;
-
-                default:
-                    {
-                        //   obj.LoadObject(pth + obType+".txt");
-                    }
-                    break;
-            }
+            obj.BuildPrimitive(obType);
+            allBounds += obj.AbsoluteBounds;
 
             GeometryModel3D gm = GetMesh(obj);
 
             Document.Content.Add(obj);
             modelItems.Add(gm);
             NotifyPropertyChanged("ModelItems");
-        }
-
-        private void AddPrimitiveToObject(Object3D obj, Point3DCollection pnts, Int32Collection indices, Vector3DCollection normals, Color c)
-        {
-            obj.RelativeObjectVertices = pnts;
-            obj.TriangleIndices = indices;
-            obj.Normals = normals;
-            obj.RelativeToAbsolute();
-            obj.SetMesh();
-            obj.Color = c;
-            allBounds += obj.AbsoluteBounds;
         }
 
         private void OnCameraCommand(object param)
@@ -821,11 +727,6 @@ namespace Make3D.ViewModels
 
         private void Zoom(double v)
         {
-            /*
-                cameraPos.X += (v * LookDirection.X * onePercentZoom);
-                cameraPos.Y += (v * LookDirection.Y * onePercentZoom);
-                cameraPos.Z += (v * LookDirection.Z * onePercentZoom);
-                */
             camera.Zoom(v);
             zoomPercent += v;
             ReportCameraPosition();

@@ -1,20 +1,9 @@
-﻿using Microsoft.Win32;
+﻿using Make3D.ViewModels;
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Make3D.ViewModels;
 
 namespace Make3D.Views
 {
@@ -57,9 +46,11 @@ namespace Make3D.Views
             if (dlg.ShowDialog() == true)
             {
                 BaseViewModel.Document.Load(dlg.FileName);
+                NotificationManager.Notify("Refresh", null);
                 //   UndoManager.Clear();
             }
         }
+
         private void OpenRecentFile(object sender)
         {
             string f = sender.ToString();
@@ -73,6 +64,7 @@ namespace Make3D.Views
                 MessageBox.Show("Can't find:" + f);
             }
         }
+
         private void SaveAsFile(object sender)
         {
             SaveFileDialog dlg = new SaveFileDialog();
@@ -94,6 +86,7 @@ namespace Make3D.Views
                 BaseViewModel.Document.Save(BaseViewModel.Document.FilePath);
             }
         }
+
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             Scroller.Width = MyGrid.Width;
