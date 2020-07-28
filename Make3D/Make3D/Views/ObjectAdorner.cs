@@ -25,6 +25,7 @@ namespace Make3D.Adorners
             thumbs = new List<Object3D>();
             selectedThumb = null;
             box = null;
+            boxSelected = false;
         }
 
         public void Clear()
@@ -34,6 +35,7 @@ namespace Make3D.Adorners
             thumbs.Clear();
             selectedThumb = null;
             box = null;
+            boxSelected = false;
         }
 
         public void AdornObject(Object3D obj)

@@ -27,7 +27,12 @@ namespace Make3D.Models
         public PolarCamera()
         {
             homeDistance = 80;
-            polarFrontHome = new PolarCoordinate(0.4, 0.4, homeDistance);
+            polarFrontHome = new PolarCoordinate(Math.PI / 2, Math.PI / 2, homeDistance);
+            polarBackHome = new PolarCoordinate(Math.PI / 2, -Math.PI / 2, homeDistance);
+            polarRightHome = new PolarCoordinate(0.0, Math.PI / 2, homeDistance);
+            polarLeftHome = new PolarCoordinate(0.0, -Math.PI / 2, homeDistance);
+            polarTopHome = new PolarCoordinate(1.571  , 0.01, homeDistance);
+            polarBottomHome = new PolarCoordinate(Math.PI/2,-Math.PI /2, homeDistance);
             distance = homeDistance;
             polarPos = polarFrontHome;
             ConvertPolarTo3D();
@@ -36,9 +41,10 @@ namespace Make3D.Models
         private void ConvertPolarTo3D()
         {
             double x = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Cos(polarPos.Theta);
-            double y = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
-            double z = polarPos.Rho * Math.Cos(polarPos.Phi);
+            double z = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
+            double y = polarPos.Rho * Math.Cos(polarPos.Phi);
             cameraPos = new Point3D(x, y, z);
+            distance = polarPos.Rho;
         }
 
         internal void Zoom(double v)
@@ -54,22 +60,58 @@ namespace Make3D.Models
 
         internal void Move(double dx, double dy)
         {
-            double dt = 0.0;
-            if (dx < -5)
-            {
-                dt = -0.1;
-            }
-            if (dx > 5)
-            {
-                dt = 0.1;
-            }
+            double dt = dx  * 0.01;
+            double dp = dy * 0.01;
 
-            polarPos.Phi += dt;
-            System.Diagnostics.Debug.WriteLine("phi " + polarPos.Phi.ToString());
-            if (polarPos.Phi < -Math.PI)
+            if (Math.Abs(dt) >= 0.01 || Math.Abs(dp) >= 0.01)
+
             {
-                polarPos.Phi += Math.PI * 2.0;
+                polarPos.Theta += dt;
+                polarPos.Phi += dp;
+                polarPos.Dump();
+                /*
+                if (polarPos.Phi < -2.0 * Math.PI)
+                {
+                    polarPos.Phi += Math.PI * 2.0;
+                }
+                if (polarPos.Phi > -2.0 * Math.PI)
+                {
+                    polarPos.Phi -= Math.PI * 2.0;
+                }
+                */
+                ConvertPolarTo3D();
             }
+        }
+
+        internal void HomeFront()
+        {
+            polarPos = polarFrontHome;
+            ConvertPolarTo3D();
+        }
+
+        internal void HomeBack()
+        {
+            polarPos = polarBackHome;
+            ConvertPolarTo3D();
+        }
+        internal void HomeRight()
+        {
+            polarPos = polarRightHome;
+            ConvertPolarTo3D();
+        }
+        internal void HomeLeft()
+        {
+            polarPos = polarLeftHome;
+            ConvertPolarTo3D();
+        }
+        internal void HomeTop()
+        {
+            polarPos = polarTopHome;
+            ConvertPolarTo3D();
+        }
+        internal void HomeBottom()
+        {
+            polarPos = polarBottomHome;
             ConvertPolarTo3D();
         }
     }

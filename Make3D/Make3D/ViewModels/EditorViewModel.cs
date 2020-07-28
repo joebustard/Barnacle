@@ -13,12 +13,7 @@ namespace Make3D.ViewModels
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private PolarCamera camera;
-        private Point3D CameraHomePos = new Point3D(0, 20, 80);
-        private Point3D CameraBackPos = new Point3D(0, 20, -80);
-        private Point3D CameraRightPos = new Point3D(80, 20, 0);
-        private Point3D CameraLeftPos = new Point3D(-80, 20, 00);
-        private Point3D CameraTopPos = new Point3D(0, 80, 1);
-        private Point3D CameraBottomPos = new Point3D(0, -80, -1);
+
         private Point3D CameraLookObject = new Point3D(0, 0, 0);
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
         private double cameraHomeDistance;
@@ -49,16 +44,11 @@ namespace Make3D.ViewModels
             FloorObjectVertices = FloorPoints3D;
             FloorTriangleIndices = FloorPointsIndices;
             camera = new PolarCamera();
-            CameraPos = new Point3D();
-            CameraPos = CameraHomePos;
-            cameraHomeDistance = Math.Sqrt((CameraHomePos.X * CameraHomePos.X) +
-                (CameraHomePos.Y * CameraHomePos.Y) +
-                (CameraHomePos.Z * CameraHomePos.Z)
-                );
+
             onePercentZoom = cameraHomeDistance / 100.0;
             LookToCenter();
 
-            cameraMode = CameraModes.None;
+            cameraMode = CameraModes.CameraMoveLookCenter;
             //  LoadObject("teapot.obj");
 
             modelItems = new Model3DCollection();
@@ -122,13 +112,7 @@ namespace Make3D.ViewModels
             get { return camera.CameraPos; }
             set
             {
-                /*
-                    if (cameraPos != value)
-                    {
-                        cameraPos = value;
                         NotifyPropertyChanged();
-                    }
-                    */
             }
         }
 
@@ -521,7 +505,8 @@ namespace Make3D.ViewModels
 
         private void HomeCamera()
         {
-            CameraPos = CameraHomePos;
+            camera.HomeFront();
+            NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(1, 1, 0);
             LookToCenter();
             zoomPercent = 100;
@@ -529,7 +514,8 @@ namespace Make3D.ViewModels
 
         private void LeftCamera()
         {
-            CameraPos = CameraLeftPos;
+            camera.HomeLeft();
+            NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(0, 1, 1);
             LookToCenter();
             zoomPercent = 100;
@@ -537,7 +523,8 @@ namespace Make3D.ViewModels
 
         private void BackCamera()
         {
-            CameraPos = CameraBackPos;
+            camera.HomeBack();
+            NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(-1, 1, 0);
             LookToCenter();
             zoomPercent = 100;
@@ -545,7 +532,8 @@ namespace Make3D.ViewModels
 
         private void RightCamera()
         {
-            CameraPos = CameraRightPos;
+            camera.HomeRight();
+            NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(0, 1, -1);
             LookToCenter();
             zoomPercent = 100;
@@ -553,7 +541,8 @@ namespace Make3D.ViewModels
 
         private void TopCamera()
         {
-            CameraPos = CameraTopPos;
+            camera.HomeTop();
+            NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(1, 0, 1);
             LookToCenter();
             zoomPercent = 100;
@@ -561,7 +550,8 @@ namespace Make3D.ViewModels
 
         private void BottomCamera()
         {
-            CameraPos = CameraBottomPos;
+            camera.HomeBottom();
+            NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(-1, 0, -1);
             LookToCenter();
             zoomPercent = 100;
@@ -569,9 +559,9 @@ namespace Make3D.ViewModels
 
         private void LookToCenter()
         {
-            lookDirection.X = -CameraPos.X;
-            lookDirection.Y = -CameraPos.Y;
-            lookDirection.Z = -CameraPos.Z;
+            lookDirection.X = -camera.CameraPos.X;
+            lookDirection.Y = -camera.CameraPos.Y;
+            lookDirection.Z = -camera.CameraPos.Z;
             lookDirection.Normalize();
             NotifyPropertyChanged("LookDirection");
         }
@@ -581,16 +571,7 @@ namespace Make3D.ViewModels
             double dx = newPos.X - lastMouse.X;
             double dy = newPos.Y - lastMouse.Y;
             double dz = newPos.X - lastMouse.X;
-            /*
-            dx = dx * CameraScrollDelta.X;
-            dy = dy * CameraScrollDelta.Y;
-            dz = dz * CameraScrollDelta.Z;
 
-            cameraPos.X -= dx;
-            cameraPos.Y -= dy;
-            cameraPos.Z -= dz;
-            CalculateCameraDistance();
-            */
             camera.Move(dx, dy);
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
