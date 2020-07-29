@@ -37,7 +37,7 @@ namespace Make3D.ViewModels
         private Bounds3D allBounds;
 
         private ObjectAdorner selectedObjectAdorner;
-        private double cameraDistance;
+       
 
         public EditorViewModel()
         {
@@ -285,6 +285,7 @@ namespace Make3D.ViewModels
                 }
             }
             selectedItems.Clear();
+            NotificationManager.Notify("ObjectSelected", null);
         }
 
         internal void MouseDown(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
@@ -396,6 +397,7 @@ namespace Make3D.ViewModels
                     {
                         geo.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
                         selectedItems.Add(ob);
+                        break;
                     }
                 }
                 if (selectedItems.Count > 0)
@@ -403,11 +405,13 @@ namespace Make3D.ViewModels
                     CameraLookObject = selectedItems[0].Position;
                     RemoveObjectAdorner();
                     GenerateSelectionBox(selectedItems[0]);
+                    NotificationManager.Notify("ObjectSelected", selectedItems[0]);
                 }
                 NotifyPropertyChanged("ModelItems");
             }
             else
             {
+                NotificationManager.Notify("ObjectSelected", null);
                 foreach (Object3D ob in Document.Content)
                 {
                     if (ob.Mesh == geo.Geometry)

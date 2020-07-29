@@ -58,6 +58,7 @@
     </ApplicationDefinition>
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
+    <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
     <Compile Include="Views\ObjectAdorner.cs" />
     <Compile Include="Models\Bounds3D.cs" />
     <Compile Include="Models\IcoSphereCreator.cs" />
@@ -93,6 +94,9 @@
     <Compile Include="Views\ObjectPalette.xaml.cs">
       <DependentUpon>ObjectPalette.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ObjectPropertiesView.xaml.cs">
+      <DependentUpon>ObjectPropertiesView.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -126,6 +130,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ObjectPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ObjectPropertiesView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

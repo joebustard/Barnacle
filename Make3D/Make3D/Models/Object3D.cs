@@ -13,7 +13,22 @@ namespace Make3D.Models
         public string Description { get; set; }
         public Color Color { get; set; }
 
-        public Point3D Position { get; set; }
+        private Point3D position;
+        public Point3D Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                if ( position != value )
+                {
+                    position = value;
+                    Remesh();
+                }
+            }
+        }
 
         public Point3D Rotation { get; set; }
         public Scale3D Scale { get; set; }

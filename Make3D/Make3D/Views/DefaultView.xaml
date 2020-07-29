@@ -182,15 +182,17 @@
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <DockPanel LastChildFill="True">
-
-                <StackPanel Width="76">
+                <ScrollViewer>
+                <StackPanel Width="75">
                     <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
                     <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
                 </StackPanel>
-
+                </ScrollViewer>
+                <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
                 <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                     <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
                 </ScrollViewer>
+                
             </DockPanel>
         </Grid>
         <StatusBar Grid.Row="2">

@@ -1,0 +1,59 @@
+﻿<UserControl x:Class="Make3D.Views.ObjectPropertiesView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Make3D.Views"
+             xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="75">
+    <UserControl.DataContext>
+        <ViewModels:ObjectPropertiesViewModel />
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="50"/>
+        </Grid.ColumnDefinitions>
+        <Label Grid.Row="0"  Grid.ColumnSpan="2" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Position</Label>
+        <Label Grid.Row="1"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" FontSize="9" Text="{Binding PositionX}"/>
+        
+        <Label Grid.Row="2"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
+        <TextBox Grid.Row="2" Grid.Column="1" FontSize="9" Text="{Binding PositionY}"/>
+        
+        <Label Grid.Row="3"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
+        <TextBox Grid.Row="3" Grid.Column="1" FontSize="9" Text="{Binding PositionZ}"/>
+
+        <Label Grid.Row="4"  Grid.ColumnSpan="2" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Size</Label>
+        <Label Grid.Row="5"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">L(X)</Label>
+        <Label Grid.Row="6"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">H(Y)</Label>
+        <Label Grid.Row="7"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">W(Z)</Label>
+
+        <Label Grid.Row="8"  Grid.ColumnSpan="2" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Rotation</Label>
+        <Label Grid.Row="9"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
+        <Label Grid.Row="10"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
+        <Label Grid.Row="11"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
+    </Grid>
+</UserControl>
