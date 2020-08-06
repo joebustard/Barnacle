@@ -1,17 +1,12 @@
 ﻿using Make3D.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.ViewModels
 {
-    class ObjectPropertiesViewModel : BaseViewModel, INotifyPropertyChanged
+    internal class ObjectPropertiesViewModel : BaseViewModel, INotifyPropertyChanged
     {
-
         public String PositionX
         {
             get
@@ -28,10 +23,10 @@ namespace Make3D.ViewModels
 
             set
             {
-                if ( selectedObject != null )
+                if (selectedObject != null)
                 {
                     double v = GetDouble(value);
-                    if( selectedObject.Position.X != v)
+                    if (selectedObject.Position.X != v)
                     {
                         Point3D p = selectedObject.Position;
                         Point3D p2 = new Point3D(v, p.Y, p.Z);
@@ -74,7 +69,6 @@ namespace Make3D.ViewModels
             }
         }
 
-
         public String PositionZ
         {
             get
@@ -105,6 +99,193 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
+        public String ScaleX
+        {
+            get
+            {
+                if (selectedObject != null)
+                {
+                    return selectedObject.Scale.X.ToString("F3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            set
+            {
+                if (selectedObject != null)
+                {
+                    double v = GetDouble(value);
+                    if (selectedObject.Scale.X != v)
+                    {
+                        Scale3D p = selectedObject.Scale;
+                        Scale3D p2 = new Scale3D(v, p.Y, p.Z);
+                        selectedObject.Scale = p2;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
+        public String ScaleY
+        {
+            get
+            {
+                if (selectedObject != null)
+                {
+                    return selectedObject.Scale.Y.ToString("F3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            set
+            {
+                if (selectedObject != null)
+                {
+                    double v = GetDouble(value);
+                    if (selectedObject.Scale.Y != v)
+                    {
+                        Scale3D p = selectedObject.Scale;
+                        Scale3D p2 = new Scale3D(p.X, v, p.Z);
+                        selectedObject.Scale = p2;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
+        public String ScaleZ
+        {
+            get
+            {
+                if (selectedObject != null)
+                {
+                    return selectedObject.Scale.Z.ToString("F3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            set
+            {
+                if (selectedObject != null)
+                {
+                    double v = GetDouble(value);
+                    if (selectedObject.Scale.Z != v)
+                    {
+                        Scale3D p = selectedObject.Scale;
+                        Scale3D p2 = new Scale3D(p.X, p.Y, v);
+                        selectedObject.Scale = p2;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
+        public String RotationX
+        {
+            get
+            {
+                if (selectedObject != null)
+                {
+                    return selectedObject.Rotation.X.ToString("F3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            set
+            {
+                if (selectedObject != null)
+                {
+                    double v = GetDouble(value);
+                    if (selectedObject.Rotation.X != v)
+                    {
+                        Point3D p = selectedObject.Rotation;
+                        Point3D p2 = new Point3D(v, p.Y, p.Z);
+                        selectedObject.Rotation = p2;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
+        public String RotationY
+        {
+            get
+            {
+                if (selectedObject != null)
+                {
+                    return selectedObject.Rotation.Y.ToString("F3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            set
+            {
+                if (selectedObject != null)
+                {
+                    double v = GetDouble(value);
+                    if (selectedObject.Rotation.Y != v)
+                    {
+                        Point3D p = selectedObject.Rotation;
+                        Point3D p2 = new Point3D(p.X, v, p.Z);
+                        selectedObject.Rotation = p2;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
+        public String RotationZ
+        {
+            get
+            {
+                if (selectedObject != null)
+                {
+                    return selectedObject.Rotation.Z.ToString("F3");
+                }
+                else
+                {
+                    return "";
+                }
+            }
+
+            set
+            {
+                if (selectedObject != null)
+                {
+                    double v = GetDouble(value);
+                    if (selectedObject.Rotation.Z != v)
+                    {
+                        Point3D p = selectedObject.Rotation;
+                        Point3D p2 = new Point3D(p.X, p.Y, v);
+                        selectedObject.Rotation = p2;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
         private double GetDouble(string value)
         {
             double res = 0.0;
@@ -114,12 +295,12 @@ namespace Make3D.ViewModels
             }
             catch
             {
-
             }
             return res;
         }
 
         private Object3D selectedObject;
+
         public ObjectPropertiesViewModel()
         {
             selectedObject = null;
@@ -133,6 +314,14 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");
             NotifyPropertyChanged("PositionZ");
+
+            NotifyPropertyChanged("ScaleX");
+            NotifyPropertyChanged("ScaleY");
+            NotifyPropertyChanged("ScaleZ");
+
+            NotifyPropertyChanged("RotationX");
+            NotifyPropertyChanged("RotationY");
+            NotifyPropertyChanged("RotationZ");
         }
     }
 }

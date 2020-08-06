@@ -13,6 +13,12 @@ namespace Make3D.Adorners
         public Model3DCollection Adornments { get { return adornments; } }
         private List<Object3D> thumbs;
         private List<Object3D> taggedObjects;
+
+        public List<Object3D> SelectedObjects
+        {
+            get { return taggedObjects; }
+        }
+
         private Object3D box;
         private bool boxSelected;
         private Object3D selectedThumb;
@@ -49,6 +55,7 @@ namespace Make3D.Adorners
         private void GenerateAdornments()
         {
             adornments.Clear();
+            thumbs.Clear();
             Bounds3D bnds = new Bounds3D();
             foreach (Object3D obj in taggedObjects)
             {
@@ -111,6 +118,11 @@ namespace Make3D.Adorners
             thumb.SetMesh();
             thumbs.Add(thumb);
             adornments.Add(GetMesh(thumb));
+        }
+
+        internal int NumberOfSelectedObjects()
+        {
+            return taggedObjects.Count;
         }
 
         private static GeometryModel3D GetMesh(Object3D obj)

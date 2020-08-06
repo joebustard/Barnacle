@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -14,6 +15,7 @@ namespace Make3D.Models
         public Color Color { get; set; }
 
         private Point3D position;
+
         public Point3D Position
         {
             get
@@ -22,7 +24,7 @@ namespace Make3D.Models
             }
             set
             {
-                if ( position != value )
+                if (position != value)
                 {
                     position = value;
                     Remesh();
@@ -30,10 +32,44 @@ namespace Make3D.Models
             }
         }
 
-        public Point3D Rotation { get; set; }
-        public Scale3D Scale { get; set; }
+        public Point3D rotation;
+
+        public Point3D Rotation
+        {
+            get
+            {
+                return rotation;
+            }
+            set
+            {
+                if (rotation != value)
+                {
+                    rotation = value;
+                    Remesh();
+                }
+            }
+        }
+
+        private Scale3D scale;
+
+        public Scale3D Scale
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                if (scale != value)
+                {
+                    scale = value;
+                    Remesh();
+                }
+            }
+        }
+
         public string PrimType { get; set; }
-        private Bounds3D absoluteBounds;
+        protected Bounds3D absoluteBounds;
 
         public Bounds3D AbsoluteBounds
         {
@@ -60,17 +96,25 @@ namespace Make3D.Models
 
         public Object3D()
         {
-            mesh = new MeshGeometry3D();
-            relativeObjectVertices = new Point3DCollection();
-            absoluteObjectVertices = new Point3DCollection();
-            triangleIndices = new Int32Collection();
-            normals = new Vector3DCollection();
-            Color = Colors.Red;
-            Scale = new Scale3D();
-            Position = new Point3D();
-            Rotation = new Point3D();
-            absoluteBounds = new Bounds3D();
-            PrimType = "";
+            try
+            {
+                mesh = new MeshGeometry3D();
+                relativeObjectVertices = new Point3DCollection();
+                absoluteObjectVertices = new Point3DCollection();
+                triangleIndices = new Int32Collection();
+                normals = new Vector3DCollection();
+                Color = Colors.Red;
+                scale = new Scale3D();
+                Position = new Point3D();
+                Rotation = new Point3D();
+                absoluteBounds = new Bounds3D();
+                PrimType = "";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                System.Diagnostics.Debug.WriteLine(ex.StackTrace);
+            }
         }
 
         private Point3DCollection relativeObjectVertices;
@@ -305,17 +349,60 @@ namespace Make3D.Models
 
         public void RelativeToAbsolute()
         {
-            absoluteObjectVertices.Clear();
-            absoluteBounds = new Bounds3D();
-            foreach (Point3D rp in relativeObjectVertices)
+            if (absoluteObjectVertices != null)
             {
-                Point3D ap = new Point3D();
-                ap.X = Position.X + (rp.X * Scale.X);
-                ap.Y = Position.Y + (rp.Y * Scale.Y);
-                ap.Z = Position.Z + (rp.Z * Scale.Z);
-                AdjustBounds(ap);
-                absoluteObjectVertices.Add(ap);
+                absoluteObjectVertices.Clear();
+                absoluteBounds = new Bounds3D();
+                double r1 = DegreesToRad(Rotation.Y);
+                double r2 = DegreesToRad(Rotation.Z);
+                double r3 = DegreesToRad(Rotation.X);
+
+                var cosa = Math.Cos(r2);
+                var sina = Math.Sin(r2);
+
+                var cosb = Math.Cos(r1);
+                var sinb = Math.Sin(r1);
+
+                var cosc = Math.Cos(r3);
+                var sinc = Math.Sin(r3);
+
+                var Axx = cosa * cosb;
+                var Axy = cosa * sinb * sinc - sina * cosc;
+                var Axz = cosa * sinb * cosc + sina * sinc;
+
+                var Ayx = sina * cosb;
+                var Ayy = sina * sinb * sinc + cosa * cosc;
+                var Ayz = sina * sinb * cosc - cosa * sinc;
+
+                var Azx = -sinb;
+                var Azy = cosb * sinc;
+                var Azz = cosb * cosc;
+                foreach (Point3D cp in relativeObjectVertices)
+                {
+                    Point3D rp = new Point3D();
+                    rp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
+                    rp.Y = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
+                    rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
+                    Point3D ap = new Point3D();
+                    ap.X = Position.X + (rp.X * Scale.X);
+                    ap.Y = Position.Y + (rp.Y * Scale.Y);
+                    ap.Z = Position.Z + (rp.Z * Scale.Z);
+                    AdjustBounds(ap);
+                    absoluteObjectVertices.Add(ap);
+                }
             }
+        }
+
+        private double DegreesToRad(double x)
+        {
+            return ((x / 360.0) * Math.PI * 2);
+        }
+
+        private Point3D Rotate(Point3D cp)
+        {
+            Point3D res = new Point3D();
+
+            return res;
         }
 
         private void AdjustBounds(Point3D ap)
@@ -443,7 +530,7 @@ namespace Make3D.Models
             mesh.Normals = normals;
         }
 
-        internal void Remesh()
+        internal virtual void Remesh()
         {
             RelativeToAbsolute();
             SetMesh();

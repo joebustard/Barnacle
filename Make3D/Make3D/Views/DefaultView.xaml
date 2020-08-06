@@ -154,7 +154,12 @@
                         <Custom:RibbonButton x:Name="SameBoth" Label="Same Width and Height" Command="{Binding SizeCommand}" CommandParameter="SameBoth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Group" Label="Group">
-                        <Custom:RibbonButton x:Name="GroupSelected" Label="Group" Command="{Binding GroupCommand}" CommandParameter="Group" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupUnion" Label="Group Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+
+                        <Custom:RibbonButton x:Name="GroupDifference" Label="Group Difference" Command="{Binding GroupCommand}" CommandParameter="GroupDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+
+                        <Custom:RibbonButton x:Name="GroupIntersection" Label="Group Intersection" Command="{Binding GroupCommand}" CommandParameter="GroupIntersection" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+
                         <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                         <Custom:RibbonSeparator />
                         <Custom:RibbonButton x:Name="SaveSelected" Label="Save Group" Command="{Binding GroupCommand}" CommandParameter="Save" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
@@ -183,16 +188,15 @@
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <DockPanel LastChildFill="True">
                 <ScrollViewer>
-                <StackPanel Width="75">
-                    <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
-                    <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
-                </StackPanel>
+                    <StackPanel Width="75">
+                        <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
+                        <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
+                    </StackPanel>
                 </ScrollViewer>
-                <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch"/>
+                <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch" />
                 <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                     <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
                 </ScrollViewer>
-                
             </DockPanel>
         </Grid>
         <StatusBar Grid.Row="2">

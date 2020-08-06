@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace Make3D
 {
-
     public delegate void RXMessage(object param);
 
     public static class NotificationManager
@@ -39,8 +36,9 @@ namespace Make3D
                         {
                             df.observer(param);
                         }
-                        catch
+                        catch (Exception ex)
                         {
+                            MessageBox.Show(ex.Message);
                         }
                     }
                 }

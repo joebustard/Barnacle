@@ -123,6 +123,14 @@ namespace Make3D.Models
             }
         }
 
+        internal void ReplaceObjectsByGroup(Group3D grp)
+        {
+            Content.Remove(grp.LeftObject);
+            Content.Remove(grp.RightObject);
+            Content.Add(grp);
+            Dirty = true;
+        }
+
         public Document()
         {
             Clear();

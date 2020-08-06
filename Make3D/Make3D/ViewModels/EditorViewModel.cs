@@ -37,7 +37,6 @@ namespace Make3D.ViewModels
         private Bounds3D allBounds;
 
         private ObjectAdorner selectedObjectAdorner;
-       
 
         public EditorViewModel()
         {
@@ -63,11 +62,50 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("NewDocument", OnNewDocument);
             NotificationManager.Subscribe("Remesh", OnRemesh);
             NotificationManager.Subscribe("Select", Select);
+            NotificationManager.Subscribe("Group", OnGroup);
 
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
             allBounds.Adjust(new Point3D(0, 0, 0));
+        }
+
+        private void OnGroup(object param)
+        {
+            string s = param.ToString().ToLower();
+            if (MakeGroup3D(s))
+            {
+                RegenerateDisplayList();
+            }
+        }
+
+        private bool MakeGroup3D(string s)
+        {
+            bool res = false;
+            if (SelectionCanMakeGroup())
+            {
+                Group3D grp = new Group3D();
+                grp.LeftObject = selectedObjectAdorner.SelectedObjects[0];
+                grp.RightObject = selectedObjectAdorner.SelectedObjects[1];
+                grp.PrimType = s;
+                grp.Init();
+                Document.ReplaceObjectsByGroup(grp);
+                res = true;
+            }
+            return res;
+        }
+
+        private bool SelectionCanMakeGroup()
+        {
+            bool res = false;
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 2)
+                {
+                    res = true;
+                }
+            }
+            return res;
         }
 
         /*
@@ -462,7 +500,6 @@ namespace Make3D.ViewModels
                 {
                     modelItems.Remove(md);
                 }
-                selectedObjectAdorner.Clear();
             }
         }
 
@@ -487,6 +524,7 @@ namespace Make3D.ViewModels
             mt.Color = obj.Color;
             mt.Brush = new SolidColorBrush(obj.Color);
             gm.Material = mt;
+            gm.BackMaterial = mt;
             return gm;
         }
 

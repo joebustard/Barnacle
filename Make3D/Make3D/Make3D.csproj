@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
@@ -226,6 +227,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Adorners\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSGLib\CSGLib.csproj">
+      <Project>{CB0CAFAC-72AB-4D29-A570-D6F97519BBD3}</Project>
+      <Name>CSGLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
