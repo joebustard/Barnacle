@@ -2,7 +2,7 @@
 
 using System.Windows.Media.Media3D;
 
-namespace Net3dBool
+namespace CSGLib
 {
     public static class Vector3DExtensions
     {

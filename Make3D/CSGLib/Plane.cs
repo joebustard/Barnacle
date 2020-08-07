@@ -31,7 +31,7 @@ either expressed or implied, of the FreeBSD Project.
 
 using System.Windows.Media.Media3D;
 
-namespace Net3dBool
+namespace CSGLib
 {
     public class Plane
     {

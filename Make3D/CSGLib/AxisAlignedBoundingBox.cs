@@ -32,7 +32,7 @@ using System.Windows.Media.Media3D;
 
 //using OpenToolkit.Mathematics;
 
-namespace Net3dBool
+namespace CSGLib
 {
     public class AxisAlignedBoundingBox
     {

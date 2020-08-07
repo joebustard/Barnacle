@@ -1,4 +1,4 @@
-﻿using Net3dBool;
+﻿using CSGLib;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
@@ -51,6 +51,8 @@ namespace Make3D.Models
             if (leftObject != null && rightObject != null)
             {
                 Position = new Point3D(leftObject.Position.X, leftObject.Position.Y, leftObject.Position.Z);
+
+                // this is wrong, should join objects then divide bounds of new object somehow
                 Scale = new Scale3D(leftObject.Scale.X + rightObject.Scale.X,
                 leftObject.Scale.Y + rightObject.Scale.Y,
                 leftObject.Scale.Z + rightObject.Scale.Z);
@@ -63,8 +65,10 @@ namespace Make3D.Models
             absoluteBounds = new Bounds3D();
             leftObject.RelativeToAbsolute();
             rightObject.RelativeToAbsolute();
-            leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices);
-            rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices);
+            Logger.Log("Left Solid\r\n============\r\n");
+            leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, true);
+            Logger.Log("Right Solid\r\n============\r\n");
+            rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices,true);
             modeller = new BooleanModeller(leftSolid, rightSolid);
             Solid result = null;
             switch (PrimType)

@@ -634,7 +634,7 @@ namespace Make3D.ViewModels
             obj.Name = "Object_" + Document.Content.Count.ToString();
             obj.Description = obType;
 
-            obj.Scale = new Scale3D(5, 5, 5);
+            obj.Scale = new Scale3D(1, 1, 1);
             obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
             obj.BuildPrimitive(obType);
             allBounds += obj.AbsoluteBounds;

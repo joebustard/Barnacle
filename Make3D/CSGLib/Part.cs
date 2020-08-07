@@ -29,7 +29,7 @@ SIGGRAPH Proceedings, 1986, p.161.
 original author: Danilo Balby Silva Castanheira (danbalby@yahoo.com)
 
 Ported from Java to C# by Sebastian Loncar, Web: http://www.loncar.de
-Project: https://github.com/Arakis/Net3dBool
+Project: https://github.com/Arakis/CSGLib
 
 Optimized and refactored by: Lars Brubaker (larsbrubaker@matterhackers.com)
 Project: https://github.com/MatterHackers/agg-sharp (an included library)
@@ -39,7 +39,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
-namespace Net3dBool
+namespace CSGLib
 {
     /// <summary>
     /// Data structure about a 3d solid to apply boolean operations in it.

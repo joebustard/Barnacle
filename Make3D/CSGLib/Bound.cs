@@ -29,7 +29,7 @@ SIGGRAPH Proceedings, 1986, p.161.
 original author: Danilo Balby Silva Castanheira (danbalby@yahoo.com)
 
 Ported from Java to C# by Sebastian Loncar, Web: http://www.loncar.de
-Project: https://github.com/Arakis/Net3dBool
+Project: https://github.com/Arakis/CSGLib
 
 Optimized and refactored by: Lars Brubaker (larsbrubaker@matterhackers.com)
 Project: https://github.com/MatterHackers/agg-sharp (an included library)
@@ -40,7 +40,7 @@ using System.Windows.Media.Media3D;
 
 //using OpenToolkit.Mathematics;
 
-namespace Net3dBool
+namespace CSGLib
 {
     /// <summary>
     /// Representation of a bound - the extremes of a 3d component for each coordinate.

@@ -48,6 +48,7 @@
     <Compile Include="Bound.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="Line.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Part.cs" />
     <Compile Include="Plane.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

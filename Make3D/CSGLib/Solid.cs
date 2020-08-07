@@ -29,7 +29,7 @@ SIGGRAPH Proceedings, 1986, p.161.
 original author: Danilo Balby Silva Castanheira (danbalby@yahoo.com)
 
 Ported from Java to C# by Sebastian Loncar, Web: http://www.loncar.de
-Project: https://github.com/Arakis/Net3dBool
+Project: https://github.com/Arakis/CSGLib
 
 Optimized and refactored by: Lars Brubaker (larsbrubaker@matterhackers.com)
 Project: https://github.com/MatterHackers/agg-sharp (an included library)
@@ -41,7 +41,7 @@ using System.Windows.Media.Media3D;
 
 //using OpenToolkit.Mathematics;
 
-namespace Net3dBool
+namespace CSGLib
 {
     /// <summary>
     /// Class representing a 3D solid.
@@ -72,9 +72,11 @@ namespace Net3dBool
         * @param colors array of colors defining the vertices colors
         */
 
-        public Solid(Point3DCollection vertices, Int32Collection indices)
+        public Solid(Point3DCollection vertices, Int32Collection indices, bool switchWindingOrder)
             : this()
         {
+            Logger.Log($"Number Of vertice {vertices.Count}\r\n");
+            Logger.Log($"Number Of indices {indices.Count}\r\n");
             Vertices = new Vector3D[vertices.Count];
             Indices = new int[indices.Count];
             if (indices.Count != 0)
@@ -82,14 +84,33 @@ namespace Net3dBool
                 for (int i = 0; i < vertices.Count; i++)
                 {
                     Vertices[i] = new Vector3D(vertices[i].X, vertices[i].Y, vertices[i].Z);
+                    Logger.Log($"Vertex {i}, {Vertices[i].X},{Vertices[i].Y},{Vertices[i].Z}\r\n");
                 }
-                for (int i = 0; i < indices.Count; i++)
+                int face = 0;
+                for (int i = 0; i < indices.Count; i+=3)
                 {
+
                     Indices[i] = indices[i];
+                    if (switchWindingOrder)
+                    {
+                        Indices[i + 1] = indices[i + 2];
+                        Indices[i + 2] = indices[i + 1];
+                    }
+                    else
+                    {
+                        Indices[i+1] = indices[i+1];
+                        Indices[i+2] = indices[i+2];
+                    }
+                    Logger.Log($"Face {face}\r\n");
+                    Logger.Log($" {Vertices[Indices[i]].X},{Vertices[Indices[i]].Y},{Vertices[Indices[i]].Z}\r\n");
+                    Logger.Log($" {Vertices[Indices[i+1]].X},{Vertices[Indices[i+1]].Y},{Vertices[Indices[i+1]].Z}\r\n");
+                    Logger.Log($" {Vertices[Indices[i+2]].X},{Vertices[Indices[i+2]].Y},{Vertices[Indices[i+2]].Z}\r\n\r\n");
+                    face++;
                 }
 
                 DefineGeometry();
             }
+            
         }
 
         public Solid(Vector3D[] vertices, int[] indices)

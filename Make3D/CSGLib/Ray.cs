@@ -41,7 +41,7 @@ using System.Windows.Media.Media3D;
 
 //using OpenToolkit.Mathematics;
 
-namespace Net3dBool
+namespace CSGLib
 {
     [Flags]
     public enum IntersectionType { None = 0, FrontFace = 1, BackFace = 2, Both = FrontFace | BackFace };
