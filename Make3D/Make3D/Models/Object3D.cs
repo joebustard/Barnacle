@@ -438,7 +438,7 @@ namespace Make3D.Models
             absoluteBounds.Upper = u;
         }
 
-        internal void Read(XmlNode nd)
+        internal virtual void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
             Name = ele.GetAttribute("Name");
@@ -460,24 +460,24 @@ namespace Make3D.Models
             sc.Z = GetDouble(sn, "Z");
             Scale = sc;
 
-            XmlNode rt = nd.SelectSingleNode("Rotate");
+            XmlNode rt = nd.SelectSingleNode("Rotation");
             Point3D r = new Point3D();
-            r.X = GetDouble(pn, "X");
-            r.Y = GetDouble(pn, "Y");
-            r.Z = GetDouble(pn, "Z");
+            r.X = GetDouble(rt, "X");
+            r.Y = GetDouble(rt, "Y");
+            r.Z = GetDouble(rt, "Z");
             Rotation = r;
 
             BuildPrimitive(PrimType);
         }
 
-        private double GetDouble(XmlNode pn, string v)
+        protected double GetDouble(XmlNode pn, string v)
         {
             XmlElement el = pn as XmlElement;
             string val = el.GetAttribute(v);
             return Convert.ToDouble(val);
         }
 
-        internal void Write(XmlDocument doc, XmlElement docNode)
+        internal virtual void Write(XmlDocument doc, XmlElement docNode)
         {
             XmlElement ele = doc.CreateElement("obj");
             docNode.AppendChild(ele);
@@ -498,29 +498,10 @@ namespace Make3D.Models
             ele.AppendChild(scl);
 
             XmlElement rot = doc.CreateElement("Rotation");
-            rot.SetAttribute("X", Scale.X.ToString());
-            rot.SetAttribute("Y", Scale.Y.ToString());
-            rot.SetAttribute("Z", Scale.Z.ToString());
-            ele.AppendChild(scl);
-
-            /*
-            foreach (Point3D p in relativeObjectVertices)
-            {
-                XmlElement ep = doc.CreateElement("v");
-                ep.SetAttribute("x", p.X.ToString());
-                ep.SetAttribute("y", p.Y.ToString());
-                ep.SetAttribute("z", p.Z.ToString());
-                ele.AppendChild(ep);
-            }
-            for (int i = 0; i < triangleIndices.Count; i += 3)
-            {
-                XmlElement f = doc.CreateElement("f");
-                f.SetAttribute("p1", triangleIndices[i].ToString());
-                f.SetAttribute("p2", triangleIndices[i + 1].ToString());
-                f.SetAttribute("p3", triangleIndices[i + 2].ToString());
-                ele.AppendChild(f);
-            }
-            */
+            rot.SetAttribute("X", Rotation.X.ToString());
+            rot.SetAttribute("Y", Rotation.Y.ToString());
+            rot.SetAttribute("Z", Rotation.Z.ToString());
+            ele.AppendChild(rot);
         }
 
         internal void SetMesh()

@@ -154,7 +154,7 @@ namespace CSGLib
 
         public override string ToString()
         {
-            return "(" + _Position.X + ", " + _Position.Y + ", " + _Position.Z + ")";
+            return $"({_Position.X:F3},{_Position.Y:F3}, {_Position.Z:F3})";
         }
 
         /**

@@ -157,7 +157,12 @@ namespace CSGLib
 
             double B = Vector3D.AngleBetween(xy, xz);
 
-            return a * c * Math.Sin(B) / 2d;
+            return a * c * Math.Sin(DegreesToRad(B)) / 2d;
+        }
+
+        private double DegreesToRad(double d)
+        {
+            return (d * 3.1415962 / 180.0);
         }
 
         public Bound GetBound()

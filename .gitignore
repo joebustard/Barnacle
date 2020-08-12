@@ -373,3 +373,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 >>>>>>> 8c6560f07322c55dcc6547169fee07f6caf320e2
+Make3D/Make3D/obj/Debug/Views/DefaultView.g.i.cs

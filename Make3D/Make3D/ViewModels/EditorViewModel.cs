@@ -524,7 +524,10 @@ namespace Make3D.ViewModels
             mt.Color = obj.Color;
             mt.Brush = new SolidColorBrush(obj.Color);
             gm.Material = mt;
-            gm.BackMaterial = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = Colors.CornflowerBlue;
+            mtb.Brush = new SolidColorBrush(Colors.CornflowerBlue);
+            gm.BackMaterial = mtb;
             return gm;
         }
 

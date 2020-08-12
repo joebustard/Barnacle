@@ -71,7 +71,9 @@ namespace CSGLib
             Object2 = new Part(solid2);
 
             //split the faces so that none of them intercepts each other
+            //Logger.Log("Split Faces ob1 (ob2)\r\n");
             Object1.SplitFaces(Object2);
+            // Logger.Log("Split Faces ob2 (ob1)\r\n");
             Object2.SplitFaces(Object1);
 
             //classify faces as being inside or outside the other solid

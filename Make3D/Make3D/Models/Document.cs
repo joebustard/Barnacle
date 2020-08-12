@@ -79,13 +79,25 @@ namespace Make3D.Models
                 doc.Load(file);
                 XmlNode docNode = doc.SelectSingleNode("Document");
 
-                XmlNodeList nodes = docNode.SelectNodes("obj");
+                XmlNodeList nodes = docNode.ChildNodes;
                 foreach (XmlNode nd in nodes)
                 {
-                    Object3D obj = new Object3D();
-                    obj.Read(nd);
-                    obj.SetMesh();
-                    Content.Add(obj);
+                    if (nd.Name == "obj")
+                    {
+                        Object3D obj = new Object3D();
+                        obj.Read(nd);
+
+                        obj.SetMesh();
+                        Content.Add(obj);
+                    }
+                    if (nd.Name == "groupobj")
+                    {
+                        Group3D obj = new Group3D();
+                        obj.Read(nd);
+
+                        obj.SetMesh();
+                        Content.Add(obj);
+                    }
                 }
             }
             catch (Exception ex)

@@ -269,6 +269,14 @@ namespace CSGLib
                                 //if all the signs are zero, the planes are coplanar
                                 //if all the signs are positive or negative, the planes do not intersect
                                 //if the signs are not equal...
+                                //if ((signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3) && signFace1Vert1 == 0)
+                                //{
+                                //    Logger.Log("  Coplanar\r\n");
+                                //}
+                                //if ((signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3))
+                                //{
+                                //    Logger.Log("  No Interception\r\n");
+                                //}
                                 if (!(signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3))
                                 {
                                     //distance from the face2 vertices to the face1 plane
@@ -334,6 +342,9 @@ namespace CSGLib
                                     }
                                 }
                             }
+                            else
+                            {
+                            }
                         }
                     }
                 }
@@ -349,6 +360,11 @@ namespace CSGLib
         /// <returns></returns>
         private Face AddFace(Vertex v1, Vertex v2, Vertex v3)
         {
+            //  Logger.Log("AddFace\r\n");
+            //    Logger.Log(v1.ToString() + "\r\n");
+            //    Logger.Log(v2.ToString() + "\r\n");
+            //Logger.Log(v3.ToString() + "\r\n");
+
             if (!(v1.Equals(v2) || v1.Equals(v3) || v2.Equals(v3)))
             {
                 Face face = new Face(v1, v2, v3);
@@ -359,11 +375,13 @@ namespace CSGLib
                 }
                 else
                 {
+                    Logger.Log("Reject Adding face with invalid area\r\n");
                     return null;
                 }
             }
             else
             {
+                Logger.Log("Reject Adding invalid face\r\n");
                 return null;
             }
         }
@@ -406,6 +424,7 @@ namespace CSGLib
         /// <param name="linedVertex">linedVertex what vertex is more lined with the interersection found</param>
         private void BreakFaceInFive(int facePos, Vector3D newPos1, Vector3D newPos2, int linedVertex)
         {
+            // Logger.Log("BreakFaceInFive\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -447,6 +466,7 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for the split</param>
         private void BreakFaceInFour(int facePos, Vector3D newPos1, Vector3D newPos2, Vertex endVertex)
         {
+            //  Logger.Log("BreakFaceInFour\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -485,6 +505,7 @@ namespace CSGLib
         /// <param name="splitEdge">edge that will be split</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos1, Vector3D newPos2, int splitEdge)
         {
+            // Logger.Log("BreakFaceInThree EDGE EDGE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -519,6 +540,7 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for the split</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos, Vertex endVertex)
         {
+            // Logger.Log("BreakFaceInThree VERTEX-FACE-FACE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -554,6 +576,7 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for the new faces creation</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos1, Vector3D newPos2, Vertex startVertex, Vertex endVertex)
         {
+            //  Logger.Log("BreakFaceInThree EDGE FACE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -605,6 +628,7 @@ namespace CSGLib
         /// <param name="newPos">new vertex position</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos)
         {
+            //Logger.Log("BreakFaceInThree FACE FACE FACE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -623,6 +647,7 @@ namespace CSGLib
         /// <param name="splitEdge">edge that will be split</param>
         private void BreakFaceInTwo(int facePos, Vector3D newPos, int splitEdge)
         {
+            // Logger.Log("BreakFaceInTwo VERTEX EDGE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -653,6 +678,7 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for splitting</param>
         private void BreakFaceInTwo(int facePos, Vector3D newPos, Vertex endVertex)
         {
+            //  Logger.Log("BreakFaceInThree VERTEX FACE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -697,6 +723,7 @@ namespace CSGLib
         /// <param name="segment2">segment representing the intersection of other face with the plane of the current face plane</param>
         private void SplitFace(int facePos, Segment segment1, Segment segment2)
         {
+            // Logger.Log("SplitFace\r\n");
             Vector3D startPos, endPos;
             int startType, endType, middleType;
             double startDist, endDist;
@@ -843,6 +870,7 @@ namespace CSGLib
             //FACE-FACE-FACE
             else if (startType == Segment.FACE && endType == Segment.FACE)
             {
+                //  Logger.Log("FACE FACE FACE\r\n");
                 Vector3D segmentVector = new Vector3D(startPos.X - endPos.X, startPos.Y - endPos.Y, startPos.Z - endPos.Z);
 
                 //if the intersection segment is a point only...

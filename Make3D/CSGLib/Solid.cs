@@ -62,6 +62,27 @@ namespace CSGLib
             SetInitialFeatures();
         }
 
+        public void DumpResult()
+        {
+            Logger.Log("Results\r\n======\r\n");
+            Logger.Log($"Number Of vertice {Vertices.Length}\r\n");
+            Logger.Log($"Number Of indices {Indices.Length}\r\n");
+
+            for (int i = 0; i < Vertices.Length; i++)
+            {
+                Logger.Log($"Vertex {i}, {Vertices[i].X:F3},{Vertices[i].Y:F3},{Vertices[i].Z:F3}\r\n");
+            }
+            int face = 0;
+            for (int i = 0; i < Indices.Length; i += 3)
+            {
+                Logger.Log($"Face {face}\r\n");
+                Logger.Log($" {Vertices[Indices[i]].X},{Vertices[Indices[i]].Y},{Vertices[Indices[i]].Z}\r\n");
+                Logger.Log($" {Vertices[Indices[i + 1]].X},{Vertices[Indices[i + 1]].Y},{Vertices[Indices[i + 1]].Z}\r\n");
+                Logger.Log($" {Vertices[Indices[i + 2]].X},{Vertices[Indices[i + 2]].Y},{Vertices[Indices[i + 2]].Z}\r\n\r\n");
+                face++;
+            }
+        }
+
         /**
         * Construct a solid based on data arrays. An exception may occur in the case of
         * abnormal arrays (indices making references to inexistent vertices, there are less
@@ -75,8 +96,8 @@ namespace CSGLib
         public Solid(Point3DCollection vertices, Int32Collection indices, bool switchWindingOrder)
             : this()
         {
-            Logger.Log($"Number Of vertice {vertices.Count}\r\n");
-            Logger.Log($"Number Of indices {indices.Count}\r\n");
+            //     Logger.Log($"Number Of vertice {vertices.Count}\r\n");
+            //      Logger.Log($"Number Of indices {indices.Count}\r\n");
             Vertices = new Vector3D[vertices.Count];
             Indices = new int[indices.Count];
             if (indices.Count != 0)
@@ -84,12 +105,11 @@ namespace CSGLib
                 for (int i = 0; i < vertices.Count; i++)
                 {
                     Vertices[i] = new Vector3D(vertices[i].X, vertices[i].Y, vertices[i].Z);
-                    Logger.Log($"Vertex {i}, {Vertices[i].X},{Vertices[i].Y},{Vertices[i].Z}\r\n");
+                    //               Logger.Log($"Vertex {i}, {Vertices[i].X},{Vertices[i].Y},{Vertices[i].Z}\r\n");
                 }
                 int face = 0;
-                for (int i = 0; i < indices.Count; i+=3)
+                for (int i = 0; i < indices.Count; i += 3)
                 {
-
                     Indices[i] = indices[i];
                     if (switchWindingOrder)
                     {
@@ -98,19 +118,18 @@ namespace CSGLib
                     }
                     else
                     {
-                        Indices[i+1] = indices[i+1];
-                        Indices[i+2] = indices[i+2];
+                        Indices[i + 1] = indices[i + 1];
+                        Indices[i + 2] = indices[i + 2];
                     }
-                    Logger.Log($"Face {face}\r\n");
-                    Logger.Log($" {Vertices[Indices[i]].X},{Vertices[Indices[i]].Y},{Vertices[Indices[i]].Z}\r\n");
-                    Logger.Log($" {Vertices[Indices[i+1]].X},{Vertices[Indices[i+1]].Y},{Vertices[Indices[i+1]].Z}\r\n");
-                    Logger.Log($" {Vertices[Indices[i+2]].X},{Vertices[Indices[i+2]].Y},{Vertices[Indices[i+2]].Z}\r\n\r\n");
+                    //Logger.Log($"Face {face}\r\n");
+                    //         Logger.Log($" {Vertices[Indices[i]].X:F3},{Vertices[Indices[i]].Y:F3},{Vertices[Indices[i]].Z:F3}\r\n");
+                    //          Logger.Log($" {Vertices[Indices[i + 1]].X:F3},{Vertices[Indices[i + 1]].Y:F3},{Vertices[Indices[i + 1]].Z:F3}\r\n");
+                    //          Logger.Log($" {Vertices[Indices[i + 2]].X:F3},{Vertices[Indices[i + 2]].Y:F3},{Vertices[Indices[i + 2]].Z:F3}\r\n\r\n");
                     face++;
                 }
 
                 DefineGeometry();
             }
-            
         }
 
         public Solid(Vector3D[] vertices, int[] indices)
