@@ -13,12 +13,35 @@ namespace Make3D.ViewModels
     internal class MainWindowViewModel : BaseViewModel, INotifyPropertyChanged
     {
 
-        internal MainWindowViewModel()
+        private string caption;
+        public string Caption
         {
+            get
+            {
+                return caption;
+            }
+            set
+            {
+                if ( caption != value)
+                {
+                    caption = value;
+                    NotifyPropertyChanged();
+                }
+            }
 
         }
+        internal MainWindowViewModel()
+        {
+            Caption = Document.Caption;
+            base.PropertyChanged += MainWindowViewModel_PropertyChanged;
+        }
 
-
-
+        private void MainWindowViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if ( e.PropertyName == "Caption")
+            {
+                Caption = Document.Caption;
+            }
+        }
     }
 }

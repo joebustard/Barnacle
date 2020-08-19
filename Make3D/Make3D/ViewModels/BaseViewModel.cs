@@ -21,7 +21,7 @@ namespace Make3D.ViewModels
         }
 
         // only one document shared between all the views
-        protected static Document document = new Document();
+        protected static Document document;
 
         public static Document Document
         {
@@ -86,6 +86,22 @@ namespace Make3D.ViewModels
             }
         }
      
+        public BaseViewModel()
+        {
+            if ( document == null )
+            {
+                document = new Document();
+            }
+            document.PropertyChanged += Document_PropertyChanged;
+        }
+
+        private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if ( e.PropertyName == "Caption")
+            {
+                NotifyPropertyChanged("Caption");
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

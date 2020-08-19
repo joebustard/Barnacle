@@ -58,8 +58,11 @@
     </ApplicationDefinition>
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />
+    <Compile Include="Models\ObjectClipboard.cs" />
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
+    <Compile Include="Models\ProjectSettings.cs" />
+    <Compile Include="Models\STLExporter.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
     <Compile Include="Views\ObjectAdorner.cs" />
     <Compile Include="Models\Bounds3D.cs" />
@@ -207,26 +210,6 @@
     <Resource Include="Images\Buttons\View.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="cap.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="parabaloid.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="polygon.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="pyramid.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="torus.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="tube.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Adorners\" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +217,17 @@
       <Project>{CB0CAFAC-72AB-4D29-A570-D6F97519BBD3}</Project>
       <Name>CSGLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\Cap.png" />
+    <Resource Include="Images\Buttons\Cone.png" />
+    <Resource Include="Images\Buttons\Cylinder.png" />
+    <Resource Include="Images\Buttons\Polygon.png" />
+    <Resource Include="Images\Buttons\Pyramid.png" />
+    <Resource Include="Images\Buttons\Roof.png" />
+    <Resource Include="Images\Buttons\RoundRoof.png" />
+    <Resource Include="Images\Buttons\Torus.png" />
+    <Resource Include="Images\Buttons\Tube.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

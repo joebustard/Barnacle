@@ -63,50 +63,153 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Remesh", OnRemesh);
             NotificationManager.Subscribe("Select", Select);
             NotificationManager.Subscribe("Group", OnGroup);
-
+            NotificationManager.Subscribe("Cut", OnCut);
+            NotificationManager.Subscribe("Copy", OnCopy);
+            NotificationManager.Subscribe("Paste", OnPaste);
+            NotificationManager.Subscribe("Export", OnExport);
+            NotificationManager.Subscribe("MoveObjectToFloor", OnMoveObjectToFloor);
+            NotificationManager.Subscribe("MoveObjectToCentre", OnMoveObjectToCentre);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
             allBounds.Adjust(new Point3D(0, 0, 0));
         }
 
+        private void OnPaste(object param)
+        {
+            if (ObjectClipboard.HasItems())
+            {
+                selectedObjectAdorner.Clear();
+                foreach (Object3D cl in ObjectClipboard.Items)
+                {
+                    Object3D o = cl.Clone();
+                    o.Name = Document.NextName;
+
+                    
+                    if (o is Group3D)
+                    {
+                        (o as Group3D).Init();
+                    }
+                    o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width/2 , 0, 0);
+                    o.Remesh();
+                    o.MoveToFloor();
+                    allBounds += o.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(o);
+                    Document.Content.Add(o);
+                    Document.Dirty = true;
+                    modelItems.Add(gm);
+                }
+
+                RegenerateDisplayList();
+            }
+        }
+
+        private void OnCopy(object param)
+        {
+            if (selectedObjectAdorner != null)
+            {
+                ObjectClipboard.Clear();
+                foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
+                {
+                    ObjectClipboard.Add(o);
+                }
+            }
+        }
+
+        private void OnMoveObjectToFloor(object param)
+        {
+            Object3D prm = param as Object3D;
+            prm.MoveToFloor();
+            selectedObjectAdorner.Clear();
+            RegenerateDisplayList();
+        }
+
+        private void OnMoveObjectToCentre(object param)
+        {
+            Object3D prm = param as Object3D;
+            prm.MoveToCentre();
+            selectedObjectAdorner.Clear();
+            RegenerateDisplayList();
+        }
+        private void OnExport(object param)
+        {
+            Document.Export(param.ToString());
+        }
+
+        private void OnCut(object param)
+        {
+            if (selectedObjectAdorner != null)
+            {
+                ObjectClipboard.Clear();
+                foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
+                {
+                    ObjectClipboard.Add(o);
+                    Document.DeleteObject(o);
+                }
+                selectedObjectAdorner.Clear();
+                RegenerateDisplayList();
+            }
+        }
+
         private void OnGroup(object param)
         {
             string s = param.ToString().ToLower();
+            if (s == "ungroup")
+            {
+                if (BreakGroup())
+                {
+                    selectedObjectAdorner.Clear();
+                    RegenerateDisplayList();
+                }
+            }
+            else
             if (MakeGroup3D(s))
             {
                 RegenerateDisplayList();
             }
         }
 
-        private bool MakeGroup3D(string s)
-        {
-            bool res = false;
-            if (SelectionCanMakeGroup())
-            {
-                Group3D grp = new Group3D();
-                grp.LeftObject = selectedObjectAdorner.SelectedObjects[0];
-                grp.RightObject = selectedObjectAdorner.SelectedObjects[1];
-                grp.PrimType = s;
-                grp.Init();
-                Document.ReplaceObjectsByGroup(grp);
-                res = true;
-            }
-            return res;
-        }
-
-        private bool SelectionCanMakeGroup()
+        private bool BreakGroup()
         {
             bool res = false;
             if (selectedObjectAdorner != null)
             {
-                if (selectedObjectAdorner.NumberOfSelectedObjects() == 2)
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1 && selectedObjectAdorner.SelectedObjects[0] is Group3D)
                 {
+                    Group3D grp = selectedObjectAdorner.SelectedObjects[0] as Group3D;
+                    Document.SplitGroup(grp);
+
                     res = true;
                 }
             }
             return res;
         }
+
+        private bool MakeGroup3D(string s)
+        {
+            bool res = false;
+            if (selectedObjectAdorner.NumberOfSelectedObjects() >= 2)
+            {
+                Object3D leftie = selectedObjectAdorner.SelectedObjects[0];
+                int i = 1;
+                while (i < selectedObjectAdorner.NumberOfSelectedObjects())
+                {
+                    Group3D grp = new Group3D();
+                    grp.Name = Document.NextName;
+                    grp.LeftObject = leftie;
+                    grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
+                    grp.PrimType = s;
+                    grp.Init();
+                    Document.ReplaceObjectsByGroup(grp);
+                    leftie = grp;
+                    i++;
+                    res = true;
+                }
+            }
+            return res;
+        }
+
+
 
         /*
         private void CalculateCameraPlane()
@@ -176,8 +279,8 @@ namespace Make3D.ViewModels
         {
             get
             {
-                double x = 30.0; // floor width / 2
-                double z = 30.0; // floor length / 2
+                double x = 100.0; // floor width / 2
+                double z = 100.0; // floor length / 2
                 double floorDepth = -.1; // give the floor some depth so it's not a 2 dimensional plane
 
                 Point3DCollection points = new Point3DCollection(20);
@@ -297,6 +400,7 @@ namespace Make3D.ViewModels
         public void RegenerateDisplayList()
         {
             allBounds = new Bounds3D();
+            allBounds.Zero();
             modelItems.Clear();
             modelItems.Add(floor);
             foreach (Object3D ob in Document.Content)
@@ -413,7 +517,7 @@ namespace Make3D.ViewModels
             {
                 if (selectedObjectAdorner != null)
                 {
-                    handled = selectedObjectAdorner.Select(geo, camera.Distance);
+                    handled = selectedObjectAdorner.Select(geo);
                 }
                 if (!handled)
                 {
@@ -505,7 +609,7 @@ namespace Make3D.ViewModels
 
         private void GenerateSelectionBox(Object3D object3D)
         {
-            selectedObjectAdorner = new ObjectAdorner();
+            selectedObjectAdorner = new ObjectAdorner( camera);
             selectedObjectAdorner.AdornObject(object3D);
 
             foreach (Model3D md in selectedObjectAdorner.Adornments)
@@ -624,7 +728,12 @@ namespace Make3D.ViewModels
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
         }
-
+        // some of the primitives need to be rotated when they are first created so they match the
+        // orientaion shown on the icons
+        private static string[] rotatedPrimitives =
+        {
+            "roof","cone","pyramid","roundroof","cap","polygon"
+        };
         private void OnAddObject(object param)
         {
             string pth = AppDomain.CurrentDomain.BaseDirectory;
@@ -634,17 +743,26 @@ namespace Make3D.ViewModels
             Object3D obj = new Object3D();
 
             DeselectAll();
-            obj.Name = "Object_" + Document.Content.Count.ToString();
+            obj.Name = Document.NextName;
             obj.Description = obType;
 
-            obj.Scale = new Scale3D(1, 1, 1);
+            obj.Scale = new Scale3D(20, 20, 20);
             obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
             obj.BuildPrimitive(obType);
+            for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+            {
+                if (rotatedPrimitives[i] == obType)
+                {
+                    obj.Rotation = new Point3D(-90.0, 0, 0);
+                    break;
+                }
+            }
             allBounds += obj.AbsoluteBounds;
 
             GeometryModel3D gm = GetMesh(obj);
 
             Document.Content.Add(obj);
+            Document.Dirty = true;
             modelItems.Add(gm);
             NotifyPropertyChanged("ModelItems");
         }
@@ -756,10 +874,21 @@ namespace Make3D.ViewModels
 
         private void SelectAll()
         {
+            NotificationManager.Notify("ObjectSelected", null);
+            if (selectedObjectAdorner != null)
+            {
+                // remove the currnt visible elements of the adorner
+                RemoveObjectAdorner();
+            }
+
+            selectedObjectAdorner = new ObjectAdorner( camera);
             selectedItems.Clear();
             foreach (Object3D ob in Document.Content)
             {
                 selectedItems.Add(ob);
+                // append the the object to the existing list of
+                selectedObjectAdorner.AdornObject(ob);
+
             }
             foreach (GeometryModel3D gm in modelItems)
             {
@@ -768,7 +897,15 @@ namespace Make3D.ViewModels
                     gm.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
                 }
             }
+            // update the display
+            foreach (Model3D md in selectedObjectAdorner.Adornments)
+            {
+                modelItems.Add(md);
+            }
+
+
         }
+
 
         private void Zoom(double v)
         {

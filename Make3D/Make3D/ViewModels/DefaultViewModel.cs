@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -61,6 +62,7 @@ namespace Make3D.ViewModels
             SizeCommand = new RelayCommand(OnSize);
             GroupCommand = new RelayCommand(OnGroup);
             SelectCommand = new RelayCommand(OnSelect);
+            ExportCommand = new RelayCommand(OnExport);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
 
             showGridChecked = false;
@@ -79,7 +81,7 @@ namespace Make3D.ViewModels
             snapMarginChecked = true;
             StatusBlockText1 = "Status Text 1";
             StatusBlockText2 = "Snap Margin On";
-            if (recentFilesList == null)
+            if (recentFilesList != null)
             {
                 LoadMru();
             }
@@ -95,6 +97,11 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetTextAlignment", SetTextAlignment);
             NotificationManager.Subscribe("SetStatusText1", SetStatusText1);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnExport(object obj)
+        {
+            NotificationManager.Notify("Export", obj);
         }
 
         private void SetStatusText1(object param)
@@ -146,7 +153,7 @@ namespace Make3D.ViewModels
                     recentFilesList.RemoveAt(recentFilesList.Count - 1);
                 }
                 SaveMru();
-                //  CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+                CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
             }
         }
         private void SaveMru()
@@ -333,6 +340,7 @@ namespace Make3D.ViewModels
 
         public ICommand SaveAsCommand { get; set; }
         public ICommand SaveCommand { get; set; }
+        public ICommand ExportCommand { get; set; }
         public ICommand SelectCommand { get; set; }
         public bool ShowGridChecked
         {

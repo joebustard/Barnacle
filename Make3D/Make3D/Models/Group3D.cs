@@ -7,6 +7,7 @@ namespace Make3D.Models
 {
     public class Group3D : Object3D
     {
+        Scale3D groupScale;
         private BooleanModeller modeller;
         private Object3D leftObject;
 
@@ -46,6 +47,7 @@ namespace Make3D.Models
 
             rightObject = null;
             rightSolid = null;
+
         }
 
         internal void Init()
@@ -55,12 +57,69 @@ namespace Make3D.Models
                 Position = new Point3D(leftObject.Position.X, leftObject.Position.Y, leftObject.Position.Z);
 
                 // this is wrong, should join objects then divide bounds of new object somehow
-                Scale = new Scale3D(1, 1, 1);
+                //Scale = new Scale3D(1, 1, 1);
                 Color = leftObject.Color;
                 PerformOperation();
+
             }
         }
+        private void GetScaleFromAbsoluteExtent()
+        {
 
+            // a quick function to convert the coordinates of an object read in, into a unit sized object
+            // centered on 0,0,0
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            foreach (Point3D pt in AbsoluteObjectVertices)
+            {
+                if (pt.X < min.X)
+                {
+                    min.X = pt.X;
+                }
+                if (pt.Y < min.Y)
+                {
+                    min.Y = pt.Y;
+                }
+                if (pt.Z < min.Z)
+                {
+                    min.Z = pt.Z;
+                }
+
+                if (pt.X > max.X)
+                {
+                    max.X = pt.X;
+                }
+                if (pt.Y > max.Y)
+                {
+                    max.Y = pt.Y;
+                }
+                if (pt.Z > max.Z)
+                {
+                    max.Z = pt.Z;
+                }
+            }
+
+            double scaleX = 1.0;
+            double dx = max.X - min.X;
+            if (dx > 0)
+            {
+                scaleX = dx;
+            }
+            double scaleY = 1.0;
+            double dY = max.Y - min.Y;
+            if (dY > 0)
+            {
+                scaleY = dY;
+            }
+
+            double scaleZ = 1.0;
+            double dZ = max.Z - min.Z;
+            if (dZ > 0)
+            {
+                scaleZ = dZ;
+            }
+            groupScale = new Scale3D(scaleX, scaleY, scaleZ);
+        }
         internal void PerformOperation()
         {
             absoluteBounds = new Bounds3D();
@@ -68,8 +127,12 @@ namespace Make3D.Models
             rightObject.RelativeToAbsolute();
             Logger.Log("Left Solid\r\n============\r\n");
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
+            // The original objects have their own  scale that is taken into account by their own RelativeToAbsolutes
+            // But the combined object may have been scaled too so take that into acccount now
+          //  leftSolid.Scale(Scale.X, Scale.Y, Scale.Z);
             Logger.Log("Right Solid\r\n============\r\n");
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
+          //  rightSolid.Scale(Scale.X, Scale.Y, Scale.Z);
             modeller = new BooleanModeller(leftSolid, rightSolid);
             Solid result = null;
             switch (PrimType)
@@ -116,12 +179,17 @@ namespace Make3D.Models
 
         private void AbsoluteToRelative()
         {
+            GetScaleFromAbsoluteExtent();
+
             RelativeObjectVertices = new Point3DCollection();
             foreach (Point3D pnt in AbsoluteObjectVertices)
             {
-                Point3D p = new Point3D(pnt.X - Position.X, pnt.Y - Position.Y, pnt.Z - Position.Z);
+               // Point3D p = new Point3D((pnt.X / groupScale.X) , (pnt.Y / groupScale.Y), (pnt.Z / groupScale.Z) );
+                Point3D p = new Point3D((pnt.X - Position.X) / groupScale.X, (pnt.Y  - Position.Y)/ groupScale.Y, (pnt.Z - Position.Z) / groupScale.Z);
                 RelativeObjectVertices.Add(p);
             }
+            scale = groupScale;
+
         }
 
         internal override void Remesh()
@@ -177,7 +245,9 @@ namespace Make3D.Models
                 }
             }
 
-            PerformOperation();
+            Init();
+            Position = p;
+            Scale = sc;
         }
 
         private Object3D ReadObject(XmlNode nd)
@@ -228,6 +298,40 @@ namespace Make3D.Models
             ele.AppendChild(rot);
             leftObject.Write(doc, ele);
             rightObject.Write(doc, ele);
+        }
+
+        public override Object3D Clone()
+        {
+            Group3D res = new Group3D();
+            res.Name = "";
+            res.primType = this.primType;
+            res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
+            res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
+            res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
+            res.Color = this.Color;
+            res.leftObject = this.leftObject.Clone();
+            res.rightObject = this.rightObject.Clone();
+            res.RelativeObjectVertices = new Point3DCollection();
+            foreach( Point3D po in this.RelativeObjectVertices)
+            {
+                Point3D pn = new Point3D(po.X, po.Y, po.Z);
+                res.RelativeObjectVertices.Add(po);
+            }
+            res.AbsoluteObjectVertices = new Point3DCollection();
+            foreach (Point3D po in this.AbsoluteObjectVertices)
+            {
+                Point3D pn = new Point3D(po.X, po.Y, po.Z);
+                res.AbsoluteObjectVertices.Add(po);
+            }
+            res.AbsoluteBounds = new Bounds3D();
+            res.AbsoluteBounds.Lower = new Point3D(this.AbsoluteBounds.Lower.X, this.AbsoluteBounds.Lower.Y, this.AbsoluteBounds.Lower.Z);
+            res.AbsoluteBounds.Upper = new Point3D(this.AbsoluteBounds.Upper.X, this.AbsoluteBounds.Upper.Y, this.AbsoluteBounds.Upper.Z);
+            res.TriangleIndices = new Int32Collection();
+            for (int i = 0; i < TriangleIndices.Count; i++)
+            {
+               res.TriangleIndices.Add(this.TriangleIndices[i]);
+            }
+            return res;
         }
     }
 }

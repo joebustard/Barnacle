@@ -10,13 +10,28 @@ namespace Make3D.Models
     internal class Document : INotifyPropertyChanged
     {
         private string caption;
-
+        private static int nextId;
+        public static String NextName
+        {
+            get
+            {
+                nextId++;
+                return "Object_" + nextId.ToString();
+            }
+        }
         public List<Object3D> Content;
 
         public string Caption
         {
             get { return caption; }
-            set { caption = value; }
+            set
+            {
+                if (caption != value)
+                {
+                    caption = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         internal void Clear()
@@ -27,7 +42,7 @@ namespace Make3D.Models
             Extension = ".txt";
             caption = "untitled";
             Content = new List<Object3D>();
-
+            nextId = 0;
             Dirty = false;
         }
 
@@ -67,7 +82,7 @@ namespace Make3D.Models
             FileName = System.IO.Path.GetFileName(fileName);
 
             Dirty = false;
-            caption = FileName;
+            Caption = FileName;
         }
 
         public virtual void Read(string file)
@@ -78,7 +93,11 @@ namespace Make3D.Models
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
                 XmlNode docNode = doc.SelectSingleNode("Document");
-
+                XmlElement docele = docNode as XmlElement;
+                if ( docele != null)
+                {
+                    GetInt(docele, "NextId", ref nextId, 0);
+                }
                 XmlNodeList nodes = docNode.ChildNodes;
                 foreach (XmlNode nd in nodes)
                 {
@@ -106,12 +125,49 @@ namespace Make3D.Models
             }
         }
 
+        internal void Export(string v)
+        {
+            if (v=="STL")
+            {
+                STLExporter exp = new STLExporter();
+                if (FileName == "")
+                {
+                    exp.Export("C:\\tmp\\test.stl", Content);
+                }
+                else
+                {
+                    string expName = System.IO.Path.ChangeExtension(FilePath, "stl");
+                    exp.Export(expName, Content);
+                    MessageBox.Show("Model exported to " + expName);
+                }
+            }
+        }
+
+        internal void DeleteObject(Object3D o)
+        {
+            Content.Remove(o);
+            Dirty = true;
+        }
+
+        private void GetInt(XmlElement docele, string nm, ref int res, int v)
+        {
+            res = v;
+            if ( docele.HasAttribute(nm))
+            {
+                string s = docele.GetAttribute(nm);
+                if (s != "")
+                {
+                    res = Convert.ToInt32(s);
+                }
+            }
+        }
+
         public void Save(string fileName)
         {
             Write(fileName);
             FilePath = fileName;
             FileName = System.IO.Path.GetFileName(fileName);
-            caption = FileName;
+            Caption = FileName;
             Dirty = false;
         }
 
@@ -119,12 +175,26 @@ namespace Make3D.Models
         {
             XmlDocument doc = new XmlDocument();
             XmlElement docNode = doc.CreateElement("Document");
+            docNode.SetAttribute("NextId", nextId.ToString());
             foreach (Object3D ob in Content)
             {
                 ob.Write(doc, docNode);
             }
             doc.AppendChild(docNode);
             doc.Save(file);
+        }
+
+        internal void SplitGroup(Group3D grp)
+        {
+            Content.Remove(grp);
+            Content.Add(grp.LeftObject);
+            Content.Add(grp.RightObject);
+            Dirty = true;
+        }
+
+        internal void Add(Object3D leftObject)
+        {
+            
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -146,6 +216,12 @@ namespace Make3D.Models
         public Document()
         {
             Clear();
+            NotificationManager.Subscribe("DocDirty", OnDocDirty);
+        }
+
+        private void OnDocDirty(object param)
+        {
+            Dirty = true;
         }
     }
 }

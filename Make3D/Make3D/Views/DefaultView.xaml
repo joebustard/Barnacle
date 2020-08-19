@@ -79,7 +79,7 @@
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="StyleGroup" Header="Colours" LargeImageSource="/Make3D;component/Images/Buttons/colours.png">
                 </Custom:RibbonGroup>
-
+<!--
                 <Custom:RibbonGroup Name="TextGroup" Header="Text" LargeImageSource="/Make3D;component/Images/Buttons/BigText.png">
                     <ComboBox x:Name="FontFamilySelector"
           ItemsSource="{Binding SystemFonts}"
@@ -128,7 +128,16 @@
                         <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="R" IsChecked="{Binding RightTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Right.png" />
                     </StackPanel>
                 </Custom:RibbonGroup>
-
+-->
+                <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
+                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding ProjectCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                    <Custom:RibbonMenuButton x:Name="Export" Label="Export">
+                        <Custom:RibbonButton x:Name="STL" Label="STL" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="Obj" Label="Obj" Command="{Binding ExportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="Gcode" Label="GCode" Command="{Binding ExportCommand}" CommandParameter="GCODE" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+          
+                    </Custom:RibbonMenuButton>
+                </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
                     <Custom:RibbonMenuButton x:Name="Alignment" Label="Align">
                         <Custom:RibbonButton x:Name="LeftAlignment" Label="Left" Command="{Binding AlignCommand}" CommandParameter="Left" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />

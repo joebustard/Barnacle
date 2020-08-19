@@ -1,4 +1,5 @@
 ﻿using Make3D.Models;
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
@@ -22,10 +23,11 @@ namespace Make3D.Adorners
         private Object3D box;
         private bool boxSelected;
         private Object3D selectedThumb;
-        private double cameraDistance;
+        internal PolarCamera Camera { get; set; }
 
-        public ObjectAdorner()
+        public ObjectAdorner( PolarCamera camera)
         {
+            Camera = camera;
             adornments = new Model3DCollection();
             taggedObjects = new List<Object3D>();
             thumbs = new List<Object3D>();
@@ -86,6 +88,10 @@ namespace Make3D.Adorners
             box.SetMesh();
             adornments.Add(GetMesh(box));
             double thumbSize = 1;
+            if ( box.Scale.X >10 && box.Scale.Y > 10 && box.Scale.Z > 10)
+            {
+                thumbSize = box.Scale.X / 10.0;
+            }
             CreateThumb(position, thumbSize, box.Scale.X / 2, 0, 0, Colors.White, "RightThumb");
             CreateThumb(position, thumbSize, -box.Scale.X / 2, 0, 0, Colors.White, "LeftThumb");
             CreateThumb(position, thumbSize, 0, box.Scale.Y / 2, 0, Colors.White, "TopThumb");
@@ -137,10 +143,10 @@ namespace Make3D.Adorners
             return gm;
         }
 
-        internal bool Select(GeometryModel3D geo, double cameraDistance)
+        internal bool Select(GeometryModel3D geo)
         {
             bool handled = false;
-            this.cameraDistance = cameraDistance;
+          
             if (box != null)
             {
                 if (box.Mesh == geo.Geometry)
@@ -185,9 +191,10 @@ namespace Make3D.Adorners
 
         private void MouseMoveBox(Point lastPos, Point newPos)
         {
-            double deltaX = (newPos.X - lastPos.X) / cameraDistance;
-            double deltaY = (newPos.Y - lastPos.Y) / cameraDistance;
-            Point3D positionChange = new Point3D(deltaX, -deltaY, 0);
+            double dr = Math.Sqrt(Camera.Distance);
+            double deltaX = (newPos.X - lastPos.X) / dr;
+            double deltaY = -(newPos.Y - lastPos.Y) / dr;
+            Point3D positionChange = new Point3D(Camera.DragDelta.X * deltaX, Camera.DragDelta.Y * deltaY, Camera.DragDelta.Z * deltaX);
             box.Position = new Point3D(box.Position.X + positionChange.X,
                                         box.Position.Y + positionChange.Y,
                                         box.Position.Z + positionChange.Z);
@@ -205,12 +212,14 @@ namespace Make3D.Adorners
             MoveThumb(box.Position, 0, -box.Scale.Y / 2, 0, "BottomThumb");
             MoveThumb(box.Position, 0, 0, box.Scale.Z / 2, "FrontThumb");
             MoveThumb(box.Position, 0, 0, -box.Scale.Z / 2, "BackThumb");
+            NotificationManager.Notify("DocDirty", null);
         }
 
         private void MouseMoveThumb(Point lastPos, Point newPos)
         {
-            double deltaX = (newPos.X - lastPos.X) / cameraDistance;
-            double deltaY = (newPos.Y - lastPos.Y) / cameraDistance;
+            double dr = Math.Sqrt(Camera.Distance);
+            double deltaX = (newPos.X - lastPos.X) / dr;
+            double deltaY = (newPos.Y - lastPos.Y) / dr;
             Point3D scaleChange = new Point3D(0, 0, 0);
             Point3D positionChange = new Point3D(0, 0, 0);
             switch (selectedThumb.Name.ToLower())

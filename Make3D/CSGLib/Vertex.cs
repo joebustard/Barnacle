@@ -55,8 +55,8 @@ namespace CSGLib
         private Status _Status;
 
         /** tolerance value to test equalities */
-        private static readonly double EqualityTolerance = 1e-5f;
-
+        //private static readonly double EqualityTolerance = 1e-5f;
+        private static readonly double EqualityTolerance = 1e-8f;
         //----------------------------------CONSTRUCTORS--------------------------------//
 
         /**

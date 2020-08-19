@@ -28,33 +28,33 @@
             </Button>
 
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Cylinder" ToolTip="Add a cylinder object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Cylinder.png" />
             </Button>
 
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Roof" ToolTip="Add a roof object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Roof.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Cone" ToolTip="Add a cone object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Cone.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Pyramid.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="RoundRoof" ToolTip="Add a round roof object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/RoundRoof.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Torus" ToolTip="Add a torus object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Torus.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Cap" ToolTip="Add a cap object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Cap.png" />
             </Button>
 
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Polygon" ToolTip="Add a polygon object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Polygon.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Tube" ToolTip="Add a tube object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/Tube.png" />
             </Button>
         </UniformGrid>
     </Grid>

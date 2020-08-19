@@ -1,6 +1,7 @@
 ﻿using Make3D.Models;
 using System;
 using System.ComponentModel;
+using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.ViewModels
@@ -124,6 +125,7 @@ namespace Make3D.ViewModels
                         Scale3D p = selectedObject.Scale;
                         Scale3D p2 = new Scale3D(v, p.Y, p.Z);
                         selectedObject.Scale = p2;
+                        selectedObject.Remesh();
                         NotifyPropertyChanged();
                         NotificationManager.Notify("Refresh", null);
                     }
@@ -155,6 +157,7 @@ namespace Make3D.ViewModels
                         Scale3D p = selectedObject.Scale;
                         Scale3D p2 = new Scale3D(p.X, v, p.Z);
                         selectedObject.Scale = p2;
+                        selectedObject.Remesh();
                         NotifyPropertyChanged();
                         NotificationManager.Notify("Refresh", null);
                     }
@@ -186,6 +189,7 @@ namespace Make3D.ViewModels
                         Scale3D p = selectedObject.Scale;
                         Scale3D p2 = new Scale3D(p.X, p.Y, v);
                         selectedObject.Scale = p2;
+                        selectedObject.Remesh();
                         NotifyPropertyChanged();
                         NotificationManager.Notify("Refresh", null);
                     }
@@ -217,6 +221,7 @@ namespace Make3D.ViewModels
                         Point3D p = selectedObject.Rotation;
                         Point3D p2 = new Point3D(v, p.Y, p.Z);
                         selectedObject.Rotation = p2;
+                        selectedObject.Remesh();
                         NotifyPropertyChanged();
                         NotificationManager.Notify("Refresh", null);
                     }
@@ -248,6 +253,7 @@ namespace Make3D.ViewModels
                         Point3D p = selectedObject.Rotation;
                         Point3D p2 = new Point3D(p.X, v, p.Z);
                         selectedObject.Rotation = p2;
+                        selectedObject.Remesh();
                         NotifyPropertyChanged();
                         NotificationManager.Notify("Refresh", null);
                     }
@@ -279,6 +285,7 @@ namespace Make3D.ViewModels
                         Point3D p = selectedObject.Rotation;
                         Point3D p2 = new Point3D(p.X, p.Y, v);
                         selectedObject.Rotation = p2;
+                        selectedObject.Remesh();
                         NotifyPropertyChanged();
                         NotificationManager.Notify("Refresh", null);
                     }
@@ -301,13 +308,32 @@ namespace Make3D.ViewModels
 
         private Object3D selectedObject;
 
+        public ICommand MoveToFloorCommand { get; set; }
+        public ICommand MoveToCentreCommand { get; set; }
         public ObjectPropertiesViewModel()
         {
             selectedObject = null;
 
+            MoveToFloorCommand = new RelayCommand(OnMoveToFloor);
+            MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
             NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
         }
 
+        private void OnMoveToFloor(object obj)
+        {
+            if (selectedObject != null)
+            {
+                NotificationManager.Notify("MoveObjectToFloor", selectedObject);
+            }
+        }
+
+        private void OnMoveToCentre(object obj)
+        {
+            if (selectedObject != null)
+            {
+                NotificationManager.Notify("MoveObjectToCentre", selectedObject);
+            }
+        }
         private void OnObjectSelected(object param)
         {
             selectedObject = param as Object3D;

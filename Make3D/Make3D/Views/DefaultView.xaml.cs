@@ -57,6 +57,7 @@ namespace Make3D.Views
             if (File.Exists(f))
             {
                 BaseViewModel.Document.Load(f);
+                NotificationManager.Notify("Refresh", null);
                 // UndoManager.Clear();
             }
             else

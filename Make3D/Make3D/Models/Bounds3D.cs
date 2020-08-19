@@ -22,6 +22,11 @@ namespace Make3D.Models
             get { return upper; }
             set { upper = value; }
         }
+
+        public double Width
+        { get { return Upper.X - Lower.X; }
+        }
+
         public Bounds3D()
         {
             lower.X = double.MaxValue;
@@ -33,6 +38,16 @@ namespace Make3D.Models
             upper.Z = double.MinValue;
         }
 
+        public void Zero()
+        {
+            lower.X = 0;
+            lower.Y = 0;
+            lower.Z = 0;
+
+            upper.X = 0;
+            upper.Y = 0;
+            upper.Z = 0;
+        }
         public static  Bounds3D operator+ (Bounds3D a, Bounds3D b)
         {
             Bounds3D res = a;
