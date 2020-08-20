@@ -69,10 +69,71 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Export", OnExport);
             NotificationManager.Subscribe("MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("MoveObjectToCentre", OnMoveObjectToCentre);
+            NotificationManager.Subscribe("Alignment", OnAlignment);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
             allBounds.Adjust(new Point3D(0, 0, 0));
+        }
+
+        private void OnAlignment(object param)
+        {
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 1)
+            {
+                string s = param.ToString();
+                AlignSelectedObjects(s);
+                selectedObjectAdorner.Refresh();
+                RegenerateDisplayList();
+            }
+        }
+
+        private void AlignSelectedObjects(string s)
+        {
+            // adorner  should already have the bounds of the selected objects
+            foreach ( Object3D ob in selectedObjectAdorner.SelectedObjects)
+            {
+                double dAbsX = 0;
+                double dAbsY = 0;
+                double dAbsZ = 0;
+                switch (s)
+                {
+                    case "Left":
+                        {
+                            dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - selectedObjectAdorner.Bounds.Lower.X);
+                            ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
+                        }
+                        break;
+
+                    case "Right":
+                        {
+                            dAbsX = ob.Position.X + (selectedObjectAdorner.Bounds.Upper.X - ob.AbsoluteBounds.Upper.X);
+                            ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
+                        }
+                        break;
+
+                    case "Top":
+                        {
+                            dAbsY = ob.Position.Y + (selectedObjectAdorner.Bounds.Upper.Y - ob.AbsoluteBounds.Upper.Y);
+                            ob.Position = new Point3D(ob.Position.X,dAbsY,  ob.Position.Z);
+                        }
+                        break;
+                        
+
+                    case "Bottom":
+                        {
+                            dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - selectedObjectAdorner.Bounds.Lower.Y);
+                            ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
+                        }
+                        break;
+                        
+
+                    case "Floor":
+                        {
+                            ob.MoveToFloor();
+                        }
+                        break;
+                }
+            }
         }
 
         private void OnPaste(object param)

@@ -24,7 +24,11 @@ namespace Make3D.Adorners
         private bool boxSelected;
         private Object3D selectedThumb;
         internal PolarCamera Camera { get; set; }
-
+        private Bounds3D bounds;
+        public Bounds3D Bounds
+        {
+            get { return bounds; }
+        }
         public ObjectAdorner( PolarCamera camera)
         {
             Camera = camera;
@@ -34,6 +38,7 @@ namespace Make3D.Adorners
             selectedThumb = null;
             box = null;
             boxSelected = false;
+            bounds = new Bounds3D();
         }
 
         public void Clear()
@@ -44,6 +49,7 @@ namespace Make3D.Adorners
             selectedThumb = null;
             box = null;
             boxSelected = false;
+            bounds = new Bounds3D();
         }
 
         public void AdornObject(Object3D obj)
@@ -53,18 +59,21 @@ namespace Make3D.Adorners
             taggedObjects.Add(obj);
             GenerateAdornments();
         }
-
+        public void Refresh()
+        {
+            GenerateAdornments();
+        }
         private void GenerateAdornments()
         {
             adornments.Clear();
             thumbs.Clear();
-            Bounds3D bnds = new Bounds3D();
+            bounds = new Bounds3D();
             foreach (Object3D obj in taggedObjects)
             {
-                bnds += obj.AbsoluteBounds;
+                bounds += obj.AbsoluteBounds;
             }
-            Point3D midp = bnds.MidPoint();
-            Point3D size = bnds.Size();
+            Point3D midp = bounds.MidPoint();
+            Point3D size = bounds.Size();
             CreateAdornments(midp, size);
         }
 
