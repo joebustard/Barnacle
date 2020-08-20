@@ -59,6 +59,7 @@
                     <Custom:RibbonApplicationMenuItem x:Name="Open1" Header="Open" ImageSource="/images/buttons/human_document_open.png" Command="{Binding OpenCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save1" Header="Save" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save2" Header="Save As" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveAsCommand}" />
+                    <Custom:RibbonApplicationMenuItem x:Name="Insert" Header="Insert" ImageSource="/images/buttons/human_document_open.png" Command="{Binding InsertCommand}" />
                     <!--   <Custom:RibbonApplicationMenuItem Header="Print" ImageSource="/images/buttons/Printer.png" Command="{Binding PrintCommand}" />
                     <Custom:RibbonApplicationMenuItem Header="Print Preview" ImageSource="/images/buttons/Printer.png" Command="{Binding ViewCommand}" CommandParameter="PrintPreview" />
 -->

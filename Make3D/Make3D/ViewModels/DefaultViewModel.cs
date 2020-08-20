@@ -45,6 +45,7 @@ namespace Make3D.ViewModels
             OpenRecentFileCommand = new RelayCommand(OnOpenRecent);
             SaveCommand = new RelayCommand(OnSave);
             SaveAsCommand = new RelayCommand(OnSaveAs);
+            InsertCommand = new RelayCommand(OnInsert);
 
             //  UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
@@ -97,6 +98,11 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetTextAlignment", SetTextAlignment);
             NotificationManager.Subscribe("SetStatusText1", SetStatusText1);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnInsert(object obj)
+        {
+            NotificationManager.Notify("InsertFile", obj);
         }
 
         private void OnExport(object obj)
@@ -462,6 +468,7 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand InsertCommand { get; set; }
         public ICommand UndoCommand { get; set; }
         public ICommand Zoom100Command { get; set; }
         public ICommand ZoomInCommand { get; set; }

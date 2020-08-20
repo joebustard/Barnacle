@@ -85,18 +85,33 @@ namespace Make3D.Models
             Caption = FileName;
         }
 
-        public virtual void Read(string file)
+        internal void InsertFile(string fileName)
+        {
+            Read(fileName, false);
+
+
+            Dirty = false;
+            
+        }
+
+        public virtual void Read(string file, bool clearFirst = true)
         {
             try
             {
-                Content.Clear();
+                if (clearFirst)
+                {
+                    Content.Clear();
+                }
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
                 XmlNode docNode = doc.SelectSingleNode("Document");
-                XmlElement docele = docNode as XmlElement;
-                if ( docele != null)
+                if (clearFirst)
                 {
-                    GetInt(docele, "NextId", ref nextId, 0);
+                    XmlElement docele = docNode as XmlElement;
+                    if (docele != null)
+                    {
+                        GetInt(docele, "NextId", ref nextId, 0);
+                    }
                 }
                 XmlNodeList nodes = docNode.ChildNodes;
                 foreach (XmlNode nd in nodes)

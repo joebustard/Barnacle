@@ -18,6 +18,7 @@ namespace Make3D.Views
             NotificationManager.Subscribe("SaveAsFile", SaveAsFile);
             NotificationManager.Subscribe("SaveFile", SaveFile);
             NotificationManager.Subscribe("OpenFile", OpenFile);
+            NotificationManager.Subscribe("InsertFile", InsertFile);
             NotificationManager.Subscribe("OpenRecentFile", OpenRecentFile);
             NotificationManager.Subscribe("CheckExit", CheckExit);
         }
@@ -51,6 +52,17 @@ namespace Make3D.Views
             }
         }
 
+        private void InsertFile(object sender)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = BaseViewModel.Document.FileFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                BaseViewModel.Document.InsertFile(dlg.FileName);
+                NotificationManager.Notify("Refresh", null);
+                //   UndoManager.Clear();
+            }
+        }
         private void OpenRecentFile(object sender)
         {
             string f = sender.ToString();
