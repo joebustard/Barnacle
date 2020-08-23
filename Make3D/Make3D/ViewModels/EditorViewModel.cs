@@ -66,6 +66,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Cut", OnCut);
             NotificationManager.Subscribe("Copy", OnCopy);
             NotificationManager.Subscribe("Paste", OnPaste);
+            NotificationManager.Subscribe("DoMultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("Export", OnExport);
             NotificationManager.Subscribe("MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("MoveObjectToCentre", OnMoveObjectToCentre);
@@ -90,11 +91,10 @@ namespace Make3D.ViewModels
         private void AlignSelectedObjects(string s)
         {
             // adorner  should already have the bounds of the selected objects
-            foreach ( Object3D ob in selectedObjectAdorner.SelectedObjects)
+            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
             {
                 double dAbsX = 0;
                 double dAbsY = 0;
-                double dAbsZ = 0;
                 switch (s)
                 {
                     case "Left":
@@ -114,10 +114,9 @@ namespace Make3D.ViewModels
                     case "Top":
                         {
                             dAbsY = ob.Position.Y + (selectedObjectAdorner.Bounds.Upper.Y - ob.AbsoluteBounds.Upper.Y);
-                            ob.Position = new Point3D(ob.Position.X,dAbsY,  ob.Position.Z);
+                            ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
                         }
                         break;
-                        
 
                     case "Bottom":
                         {
@@ -125,7 +124,6 @@ namespace Make3D.ViewModels
                             ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
                         }
                         break;
-                        
 
                     case "Floor":
                         {
@@ -133,6 +131,64 @@ namespace Make3D.ViewModels
                         }
                         break;
                 }
+            }
+        }
+
+        internal void KeyUp(Key key, bool shift, bool ctrl)
+        {
+            switch (key)
+            {
+                case Key.Up:
+                    {
+                        if (shift)
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                        }
+                        else
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                        }
+                    }
+                    break;
+
+                case Key.Down:
+                    {
+                        if (shift)
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                        }
+                        else
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                        }
+                    }
+                    break;
+
+                case Key.Left:
+                    {
+                        if (shift)
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                        }
+                        else
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                        }
+                    }
+                    break;
+
+                case Key.Right:
+                    {
+                        if (shift)
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                        }
+                        else
+                        {
+                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                        }
+                    }
+                    break;
             }
         }
 
@@ -146,12 +202,11 @@ namespace Make3D.ViewModels
                     Object3D o = cl.Clone();
                     o.Name = Document.NextName;
 
-                    
                     if (o is Group3D)
                     {
                         (o as Group3D).Init();
                     }
-                    o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width/2 , 0, 0);
+                    o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2, 0, 0);
                     o.Remesh();
                     o.MoveToFloor();
                     allBounds += o.AbsoluteBounds;
@@ -162,6 +217,54 @@ namespace Make3D.ViewModels
                 }
 
                 RegenerateDisplayList();
+            }
+        }
+
+        private void OnMultiPaste(object param)
+        {
+            MultiPasteConfig cfg = param as MultiPasteConfig;
+            if (cfg != null)
+            {
+                if (ObjectClipboard.HasItems())
+                {
+                    selectedObjectAdorner.Clear();
+                    for (int i = 0; i < cfg.Repeats; i++)
+                    {
+                        foreach (Object3D cl in ObjectClipboard.Items)
+                        {
+                            Object3D o = cl.Clone();
+                            o.Name = Document.NextName;
+
+                            if (o is Group3D)
+                            {
+                                (o as Group3D).Init();
+                            }
+
+                            if (cfg.Direction == "X")
+                            {
+                                o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2 + cfg.Spacing, 0, 0);
+                            }
+                            if (cfg.Direction == "Y")
+                            {
+                                o.Position = new Point3D(0, allBounds.Upper.Y + o.AbsoluteBounds.Height / 2 + cfg.Spacing, 0);
+                            }
+                            if (cfg.Direction == "Z")
+                            {
+                                o.Position = new Point3D(0, 0, allBounds.Upper.Z + o.AbsoluteBounds.Depth / 2 + cfg.Spacing);
+                            }
+
+                            //o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2, 0, 0);
+                            o.Remesh();
+                            //o.MoveToFloor();
+                            allBounds.Add(o.AbsoluteBounds);
+                            GeometryModel3D gm = GetMesh(o);
+                            Document.Content.Add(o);
+                            Document.Dirty = true;
+                            modelItems.Add(gm);
+                        }
+                    }
+                    RegenerateDisplayList();
+                }
             }
         }
 
@@ -192,6 +295,7 @@ namespace Make3D.ViewModels
             selectedObjectAdorner.Clear();
             RegenerateDisplayList();
         }
+
         private void OnExport(object param)
         {
             Document.Export(param.ToString());
@@ -215,6 +319,15 @@ namespace Make3D.ViewModels
         private void OnGroup(object param)
         {
             string s = param.ToString().ToLower();
+            if (s == "mesh")
+            {
+                if (GroupToMesh())
+                {
+                    selectedObjectAdorner.Clear();
+                    RegenerateDisplayList();
+                }
+            }
+            else
             if (s == "ungroup")
             {
                 if (BreakGroup())
@@ -228,6 +341,22 @@ namespace Make3D.ViewModels
             {
                 RegenerateDisplayList();
             }
+        }
+
+        private bool GroupToMesh()
+        {
+            bool res = false;
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1 && selectedObjectAdorner.SelectedObjects[0] is Group3D)
+                {
+                    Group3D grp = selectedObjectAdorner.SelectedObjects[0] as Group3D;
+                    Document.GroupToMesh(grp);
+
+                    res = true;
+                }
+            }
+            return res;
         }
 
         private bool BreakGroup()
@@ -269,8 +398,6 @@ namespace Make3D.ViewModels
             }
             return res;
         }
-
-
 
         /*
         private void CalculateCameraPlane()
@@ -474,23 +601,6 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("ModelItems");
         }
 
-        internal void DeselectAll()
-        {
-            RemoveObjectAdorner();
-            foreach (Object3D ob in selectedItems)
-            {
-                foreach (GeometryModel3D md in modelItems)
-                {
-                    if (ob.Mesh == md.Geometry)
-                    {
-                        md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
-                    }
-                }
-            }
-            selectedItems.Clear();
-            NotificationManager.Notify("ObjectSelected", null);
-        }
-
         internal void MouseDown(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
         {
             lastMouse = lastMousePos;
@@ -670,7 +780,7 @@ namespace Make3D.ViewModels
 
         private void GenerateSelectionBox(Object3D object3D)
         {
-            selectedObjectAdorner = new ObjectAdorner( camera);
+            selectedObjectAdorner = new ObjectAdorner(camera);
             selectedObjectAdorner.AdornObject(object3D);
 
             foreach (Model3D md in selectedObjectAdorner.Adornments)
@@ -789,12 +899,14 @@ namespace Make3D.ViewModels
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
         }
+
         // some of the primitives need to be rotated when they are first created so they match the
         // orientaion shown on the icons
         private static string[] rotatedPrimitives =
         {
             "roof","cone","pyramid","roundroof","cap","polygon"
         };
+
         private void OnAddObject(object param)
         {
             string pth = AppDomain.CurrentDomain.BaseDirectory;
@@ -931,42 +1043,133 @@ namespace Make3D.ViewModels
             {
                 SelectAll();
             }
+            else
+            if (s == "first")
+            {
+                SelectFirst();
+            }
+            else
+            if (s == "next")
+            {
+                SelectNext();
+            }
         }
 
-        private void SelectAll()
+        internal void DeselectAll()
         {
-            NotificationManager.Notify("ObjectSelected", null);
-            if (selectedObjectAdorner != null)
-            {
-                // remove the currnt visible elements of the adorner
-                RemoveObjectAdorner();
-            }
-
-            selectedObjectAdorner = new ObjectAdorner( camera);
+            RemoveObjectAdorner();
+            ResetSelectionColours();
             selectedItems.Clear();
-            foreach (Object3D ob in Document.Content)
-            {
-                selectedItems.Add(ob);
-                // append the the object to the existing list of
-                selectedObjectAdorner.AdornObject(ob);
+            NotificationManager.Notify("ObjectSelected", null);
+        }
 
-            }
-            foreach (GeometryModel3D gm in modelItems)
+        private void ResetSelectionColours()
+        {
+            foreach (Object3D ob in selectedItems)
             {
-                if (gm != floor)
+                foreach (GeometryModel3D md in modelItems)
                 {
-                    gm.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                    if (ob.Mesh == md.Geometry)
+                    {
+                        md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
+                    }
                 }
             }
+        }
+
+        private void SetSelectionColours()
+        {
+            foreach (Object3D ob in selectedItems)
+            {
+                foreach (GeometryModel3D md in modelItems)
+                {
+                    if (ob.Mesh == md.Geometry)
+                    {
+                        md.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                    }
+                }
+            }
+        }
+
+        private void SelectNext()
+        {
+            if (selectedItems.Count == 1)
+            {
+                ResetSelectionColours();
+                Object3D sel = selectedItems[0];
+
+                Object3D nxt = null;
+                if (sel != null)
+                {
+                    for (int i = 0; i < Document.Content.Count - 1; i++)
+                    {
+                        if (Document.Content[i] == sel)
+                        {
+                            nxt = Document.Content[i + 1];
+                        }
+                    }
+                    if (nxt == null)
+                    {
+                        nxt = Document.Content[0];
+                    }
+                }
+                ResetSelection();
+
+                selectedItems.Add(nxt);
+                selectedObjectAdorner.AdornObject(nxt);
+                NotificationManager.Notify("ObjectSelected", nxt);
+                UpdateSelectionDisplay();
+            }
+        }
+
+        private void SelectFirst()
+        {
+            ResetSelection();
+            if (Document.Content.Count > 0)
+            {
+                Object3D ob = Document.Content[0];
+                selectedItems.Add(ob);
+                selectedObjectAdorner.AdornObject(ob);
+                NotificationManager.Notify("ObjectSelected", ob);
+            }
+            UpdateSelectionDisplay();
+        }
+
+        private void UpdateSelectionDisplay()
+        {
+            SetSelectionColours();
             // update the display
             foreach (Model3D md in selectedObjectAdorner.Adornments)
             {
                 modelItems.Add(md);
             }
-
-
         }
 
+        private void ResetSelection()
+        {
+            ResetSelectionColours();
+            NotificationManager.Notify("ObjectSelected", null);
+            if (selectedObjectAdorner != null)
+            {
+                // remove the current visible elements of the adorner
+                RemoveObjectAdorner();
+            }
+
+            selectedObjectAdorner = new ObjectAdorner(camera);
+            selectedItems.Clear();
+        }
+
+        private void SelectAll()
+        {
+            ResetSelection();
+            foreach (Object3D ob in Document.Content)
+            {
+                selectedItems.Add(ob);
+                // append the the object to the existing list of
+                selectedObjectAdorner.AdornObject(ob);
+            }
+            UpdateSelectionDisplay();
+        }
 
         private void Zoom(double v)
         {

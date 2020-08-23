@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
@@ -15,9 +13,8 @@ using System.Windows.Media;
 
 namespace Make3D.ViewModels
 {
-    class DefaultViewModel : BaseViewModel, INotifyPropertyChanged
+    internal class DefaultViewModel : BaseViewModel, INotifyPropertyChanged
     {
-
         private static Control subView;
         private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
         private bool boldChecked;
@@ -32,11 +29,11 @@ namespace Make3D.ViewModels
         private bool showGridChecked;
         private bool showMarginsChecked;
         private bool snapMarginChecked;
- 
 
         private SubViewManager subViewMan;
         private Visibility toolPaletteVisible;
         private bool underLineChecked;
+
         public DefaultViewModel()
         {
             subViewMan = new SubViewManager();
@@ -51,6 +48,7 @@ namespace Make3D.ViewModels
             //   RedoCommand = new RelayCommand(OnRedo);
             CopyCommand = new RelayCommand(OnCopy);
             PasteCommand = new RelayCommand(OnPaste);
+            MultiPasteCommand = new RelayCommand(OnMultiPaste);
             CutCommand = new RelayCommand(OnCut);
             //  ViewCommand = new RelayCommand(OnView);
             AddCommand = new RelayCommand(OnAdd);
@@ -117,7 +115,6 @@ namespace Make3D.ViewModels
 
         private void OnNew(object obj)
         {
-
             BaseViewModel.Document.Clear();
             Caption = BaseViewModel.Document.Caption;
             NotificationManager.Notify("NewDocument", null);
@@ -126,18 +123,17 @@ namespace Make3D.ViewModels
 
         private void OnOpen(object obj)
         {
-
             NotificationManager.Notify("OpenFile", null);
             Caption = BaseViewModel.Document.Caption;
         }
 
         private void OnSave(object obj)
         {
-
             NotificationManager.Notify("SaveFile", null);
             Caption = BaseViewModel.Document.Caption;
             UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
+
         private void UpdateRecentFiles(string fileName)
         {
             bool found = false;
@@ -162,6 +158,7 @@ namespace Make3D.ViewModels
                 CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
             }
         }
+
         private void SaveMru()
         {
             String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
@@ -198,6 +195,7 @@ namespace Make3D.ViewModels
         public ICommand AddCommand { get; set; }
         public ICommand AddPageCommand { get; set; }
         public ICommand AlignCommand { get; set; }
+
         public bool BoldChecked
         {
             get
@@ -214,7 +212,6 @@ namespace Make3D.ViewModels
                 }
             }
         }
-
 
         public String Caption
         {
@@ -252,6 +249,7 @@ namespace Make3D.ViewModels
         public ICommand CutCommand { get; set; }
         public ICommand DoNothingCommand { get; set; }
         public ICommand ExitCommand { get; set; }
+
         public String FontSize
         {
             get
@@ -270,6 +268,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand GroupCommand { get; set; }
+
         public bool ItalicChecked
         {
             get
@@ -308,8 +307,10 @@ namespace Make3D.ViewModels
         public ICommand OpenRecentFileCommand { get; set; }
         public ICommand PageCommand { get; set; }
         public ICommand PasteCommand { get; set; }
+        public ICommand MultiPasteCommand { get; set; }
         public ICommand PrintCommand { get; set; }
         public ICommand PrintPreviewCommand { get; set; }
+
         public List<MruEntry> RecentFilesList
         {
             get
@@ -328,6 +329,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand RedoCommand { get; set; }
+
         public bool RightTextAlignment
         {
             get
@@ -348,6 +350,7 @@ namespace Make3D.ViewModels
         public ICommand SaveCommand { get; set; }
         public ICommand ExportCommand { get; set; }
         public ICommand SelectCommand { get; set; }
+
         public bool ShowGridChecked
         {
             get
@@ -383,6 +386,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand SizeCommand { get; set; }
+
         public bool SnapMarginChecked
         {
             get
@@ -408,8 +412,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        
-
         public Control SubView
         {
             get
@@ -422,7 +424,6 @@ namespace Make3D.ViewModels
                 {
                     subView = value;
                     NotifyPropertyChanged();
-
                 }
             }
         }
@@ -433,6 +434,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand TextAlignmentCommand { get; set; }
+
         public Visibility ToolPaletteVisible
         {
             get
@@ -473,6 +475,7 @@ namespace Make3D.ViewModels
         public ICommand Zoom100Command { get; set; }
         public ICommand ZoomInCommand { get; set; }
         public ICommand ZoomOutCommand { get; set; }
+
         public void LoadSystemFonts()
         {
             _systemFonts.Clear();
@@ -487,6 +490,7 @@ namespace Make3D.ViewModels
         {
             MainRibbon = mainRibbon;
         }
+
         private string AbbreviatePath(string fileName, int max)
         {
             string result = "";
@@ -542,7 +546,6 @@ namespace Make3D.ViewModels
 
         private void OnExit(object obj)
         {
-
             if (BaseViewModel.Document.Dirty)
             {
                 NotificationManager.Notify("CheckExit", null);
@@ -573,6 +576,11 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("Paste", null);
         }
 
+        private void OnMultiPaste(object obj)
+        {
+            NotificationManager.Notify("MultiPaste", null);
+        }
+
         private void OnPrint(object obj)
         {
             NotificationManager.Notify("Print", null);
@@ -580,13 +588,11 @@ namespace Make3D.ViewModels
 
         private void OnRedo(object obj)
         {
-
             NotificationManager.Notify("Redo", null);
         }
 
         private void OnSaveAs(object obj)
         {
-
             NotificationManager.Notify("SaveAsFile", null);
             Caption = BaseViewModel.Document.Caption;
             UpdateRecentFiles(BaseViewModel.Document.FilePath);
@@ -610,10 +616,8 @@ namespace Make3D.ViewModels
 
         private void OnUndo(object obj)
         {
-
             NotificationManager.Notify("Undo", null);
         }
-
 
         private void OnView(object obj)
         {
@@ -681,8 +685,6 @@ namespace Make3D.ViewModels
             UnderlineChecked = b;
         }
 
-      
-
         private void SetTextAlignment(object param)
         {
             TextAlignment ta = (TextAlignment)param;
@@ -707,11 +709,13 @@ namespace Make3D.ViewModels
                     break;
             }
         }
+
         private static string statusBlockText1;
 
         private static string statusBlockText2;
 
         private static string statusBlockText3;
+
         public String StatusBlockText1
         {
             get
@@ -746,8 +750,6 @@ namespace Make3D.ViewModels
             }
         }
 
-
-
         public String StatusBlockText3
         {
             get
@@ -764,6 +766,5 @@ namespace Make3D.ViewModels
                 }
             }
         }
-
     }
 }

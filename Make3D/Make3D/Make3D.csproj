@@ -56,14 +56,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />
+    <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectSettings.cs" />
     <Compile Include="Models\STLExporter.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
+    <Compile Include="Views\MultiPasteDlg.xaml.cs">
+      <DependentUpon>MultiPasteDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ObjectAdorner.cs" />
     <Compile Include="Models\Bounds3D.cs" />
     <Compile Include="Models\IcoSphereCreator.cs" />
@@ -131,6 +136,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MultiPasteDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

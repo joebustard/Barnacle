@@ -25,11 +25,13 @@ namespace Make3D.Adorners
         private Object3D selectedThumb;
         internal PolarCamera Camera { get; set; }
         private Bounds3D bounds;
+
         public Bounds3D Bounds
         {
             get { return bounds; }
         }
-        public ObjectAdorner( PolarCamera camera)
+
+        public ObjectAdorner(PolarCamera camera)
         {
             Camera = camera;
             adornments = new Model3DCollection();
@@ -59,10 +61,12 @@ namespace Make3D.Adorners
             taggedObjects.Add(obj);
             GenerateAdornments();
         }
+
         public void Refresh()
         {
             GenerateAdornments();
         }
+
         private void GenerateAdornments()
         {
             adornments.Clear();
@@ -97,7 +101,7 @@ namespace Make3D.Adorners
             box.SetMesh();
             adornments.Add(GetMesh(box));
             double thumbSize = 1;
-            if ( box.Scale.X >10 && box.Scale.Y > 10 && box.Scale.Z > 10)
+            if (box.Scale.X > 10 && box.Scale.Y > 10 && box.Scale.Z > 10)
             {
                 thumbSize = box.Scale.X / 10.0;
             }
@@ -155,7 +159,7 @@ namespace Make3D.Adorners
         internal bool Select(GeometryModel3D geo)
         {
             bool handled = false;
-          
+
             if (box != null)
             {
                 if (box.Mesh == geo.Geometry)
@@ -177,6 +181,36 @@ namespace Make3D.Adorners
                 }
             }
             return handled;
+        }
+
+        internal void Nudge(Adorner.NudgeDirection dir, double v)
+        {
+            switch (dir)
+            {
+                case Adorner.NudgeDirection.Left:
+                    {
+                        MoveBox(-v, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Right:
+                    {
+                        MoveBox(v, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Up:
+                    {
+                        MoveBox(0, v);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Down:
+                    {
+                        MoveBox(0, -v);
+                    }
+                    break;
+            }
         }
 
         internal bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e)
@@ -203,6 +237,11 @@ namespace Make3D.Adorners
             double dr = Math.Sqrt(Camera.Distance);
             double deltaX = (newPos.X - lastPos.X) / dr;
             double deltaY = -(newPos.Y - lastPos.Y) / dr;
+            MoveBox(deltaX, deltaY);
+        }
+
+        private void MoveBox(double deltaX, double deltaY)
+        {
             Point3D positionChange = new Point3D(Camera.DragDelta.X * deltaX, Camera.DragDelta.Y * deltaY, Camera.DragDelta.Z * deltaX);
             box.Position = new Point3D(box.Position.X + positionChange.X,
                                         box.Position.Y + positionChange.Y,

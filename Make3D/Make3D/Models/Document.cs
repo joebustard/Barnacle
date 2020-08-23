@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media.Media3D;
 using System.Xml;
 
 namespace Make3D.Models
@@ -11,6 +12,7 @@ namespace Make3D.Models
     {
         private string caption;
         private static int nextId;
+
         public static String NextName
         {
             get
@@ -19,6 +21,7 @@ namespace Make3D.Models
                 return "Object_" + nextId.ToString();
             }
         }
+
         public List<Object3D> Content;
 
         public string Caption
@@ -89,9 +92,7 @@ namespace Make3D.Models
         {
             Read(fileName, false);
 
-
             Dirty = false;
-            
         }
 
         public virtual void Read(string file, bool clearFirst = true)
@@ -142,7 +143,7 @@ namespace Make3D.Models
 
         internal void Export(string v)
         {
-            if (v=="STL")
+            if (v == "STL")
             {
                 STLExporter exp = new STLExporter();
                 if (FileName == "")
@@ -167,7 +168,7 @@ namespace Make3D.Models
         private void GetInt(XmlElement docele, string nm, ref int res, int v)
         {
             res = v;
-            if ( docele.HasAttribute(nm))
+            if (docele.HasAttribute(nm))
             {
                 string s = docele.GetAttribute(nm);
                 if (s != "")
@@ -209,7 +210,6 @@ namespace Make3D.Models
 
         internal void Add(Object3D leftObject)
         {
-            
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -236,6 +236,32 @@ namespace Make3D.Models
 
         private void OnDocDirty(object param)
         {
+            Dirty = true;
+        }
+
+        internal void GroupToMesh(Group3D grp)
+        {
+            Object3D neo = new Object3D();
+            neo.Name = grp.Name;
+            neo.Description = grp.Description;
+            neo.PrimType = "Mesh";
+            neo.Color = grp.Color;
+            neo.Scale = new Scale3D(grp.Scale.X, grp.Scale.Y, grp.Scale.Z);
+            neo.Rotation = new Point3D(grp.Rotation.X, grp.Rotation.Y, grp.Rotation.Z);
+            neo.Position = new Point3D(grp.Position.X, grp.Position.Y, grp.Position.Z);
+            neo.RelativeObjectVertices = grp.RelativeObjectVertices;
+            grp.RelativeObjectVertices = null;
+            neo.TriangleIndices = grp.TriangleIndices;
+            grp.TriangleIndices = null;
+            neo.AbsoluteObjectVertices = grp.AbsoluteObjectVertices;
+            grp.AbsoluteObjectVertices = null;
+            neo.AbsoluteBounds = grp.AbsoluteBounds;
+            grp.AbsoluteBounds = null;
+            Content.Remove(grp);
+            neo.SetMesh();
+
+            Content.Add(neo);
+
             Dirty = true;
         }
     }

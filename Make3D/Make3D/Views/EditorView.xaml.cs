@@ -1,4 +1,6 @@
-﻿using Make3D.ViewModels;
+﻿using Make3D.Models;
+using Make3D.ViewModels;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,8 +22,47 @@ namespace Make3D.Views
         {
             InitializeComponent();
             NotificationManager.Subscribe("UpdateDisplay", UpdateDisplay);
+            NotificationManager.Subscribe("MultiPaste", OnMultiPaste);
+            NotificationManager.Subscribe("KeyUp", OnKeyUp);
             UpdateDisplay(null);
             vm = DataContext as EditorViewModel;
+        }
+
+        private void OnKeyUp(object param)
+        {
+            KeyEventArgs e = param as KeyEventArgs;
+            vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+                  Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+        }
+
+        private void OnMultiPaste(object param)
+        {
+            MultiPasteDlg dlg = new MultiPasteDlg();
+            if (dlg.ShowDialog() == true)
+            {
+                try
+                {
+                    MultiPasteConfig cfg = new MultiPasteConfig();
+                    cfg.Repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
+                    cfg.Spacing = Convert.ToDouble(dlg.SpaceBox.Text);
+                    if (dlg.DirectionX.IsChecked == true)
+                    {
+                        cfg.Direction = "X";
+                    }
+                    if (dlg.DirectionY.IsChecked == true)
+                    {
+                        cfg.Direction = "Y";
+                    }
+                    if (dlg.DirectionZ.IsChecked == true)
+                    {
+                        cfg.Direction = "Z";
+                    }
+                    NotificationManager.Notify("DoMultiPaste", cfg);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         public void UpdateDisplay(object obj)
@@ -96,6 +137,12 @@ namespace Make3D.Views
             }
 
             return result;
+        }
+
+        private void UserControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+                             Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
         }
     }
 }

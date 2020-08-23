@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
+﻿using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
     public class Bounds3D
     {
         private Point3D lower;
+
         public Point3D Lower
         {
             get { return lower; }
@@ -17,6 +13,7 @@ namespace Make3D.Models
         }
 
         private Point3D upper;
+
         public Point3D Upper
         {
             get { return upper; }
@@ -24,8 +21,12 @@ namespace Make3D.Models
         }
 
         public double Width
-        { get { return Upper.X - Lower.X; }
+        {
+            get { return Upper.X - Lower.X; }
         }
+
+        public double Height { get { return Upper.Y - Lower.Y; } }
+        public double Depth { get { return Upper.Z - Lower.Z; } }
 
         public Bounds3D()
         {
@@ -48,7 +49,8 @@ namespace Make3D.Models
             upper.Y = 0;
             upper.Z = 0;
         }
-        public static  Bounds3D operator+ (Bounds3D a, Bounds3D b)
+
+        public static Bounds3D operator +(Bounds3D a, Bounds3D b)
         {
             Bounds3D res = a;
             res.Adjust(b.Lower);
@@ -58,7 +60,6 @@ namespace Make3D.Models
 
         public void Adjust(Point3D ap)
         {
-            
             if (ap.X < lower.X)
             {
                 lower.X = ap.X;
@@ -72,7 +73,6 @@ namespace Make3D.Models
                 lower.Z = ap.Z;
             }
 
-           
             if (ap.X > upper.X)
             {
                 upper.X = ap.X;
@@ -85,7 +85,6 @@ namespace Make3D.Models
             {
                 upper.Z = ap.Z;
             }
-           
         }
 
         internal Point3D MidPoint()
@@ -104,6 +103,12 @@ namespace Make3D.Models
             res.Y = upper.Y - lower.Y;
             res.Z = upper.Z - lower.Z;
             return res;
+        }
+
+        internal void Add(Bounds3D b)
+        {
+            Adjust(b.Lower);
+            Adjust(b.Upper);
         }
     }
 }

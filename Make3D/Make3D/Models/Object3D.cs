@@ -1,11 +1,11 @@
-﻿using System;
+﻿using CSGLib;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
-using CSGLib;
 
 namespace Make3D.Models
 {
@@ -14,6 +14,7 @@ namespace Make3D.Models
         public Point3D rotation;
         protected Bounds3D absoluteBounds;
         private Point3DCollection absoluteObjectVertices;
+
         // This mesh is used by the view to display the object
         // Its vertices are absolute, i.e. have been translated
         // and rotated etc.
@@ -63,6 +64,7 @@ namespace Make3D.Models
 
         public Color Color { get; set; }
         public string Description { get; set; }
+
         public MeshGeometry3D Mesh
         {
             get { return mesh; }
@@ -76,6 +78,7 @@ namespace Make3D.Models
         }
 
         public string Name { get; set; }
+
         public Vector3DCollection Normals
         {
             get { return normals; }
@@ -97,6 +100,7 @@ namespace Make3D.Models
                 }
             }
         }
+
         public string PrimType { get => primType; set => primType = value; }
 
         public Point3DCollection RelativeObjectVertices
@@ -120,6 +124,7 @@ namespace Make3D.Models
                 }
             }
         }
+
         public Scale3D Scale
         {
             get
@@ -457,6 +462,7 @@ namespace Make3D.Models
             }
             return faces;
         }
+
         internal virtual void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -485,8 +491,38 @@ namespace Make3D.Models
             r.Y = GetDouble(rt, "Y");
             r.Z = GetDouble(rt, "Z");
             Rotation = r;
+            if (PrimType != "Mesh")
+            {
+                BuildPrimitive(PrimType);
+            }
+            else
+            {
+                relativeObjectVertices = new Point3DCollection();
+                XmlNodeList vtl = nd.SelectNodes("v");
+                foreach (XmlNode vn in vtl)
+                {
+                    XmlElement el = vn as XmlElement;
+                    Point3D pv = new Point3D();
+                    pv.X = GetDouble(el, "X");
+                    pv.Y = GetDouble(el, "Y");
+                    pv.Z = GetDouble(el, "Z");
+                    relativeObjectVertices.Add(pv);
+                }
 
-            BuildPrimitive(PrimType);
+                triangleIndices = new Int32Collection();
+                XmlNodeList ftl = nd.SelectNodes("f");
+                foreach (XmlNode vn in ftl)
+                {
+                    XmlElement el = vn as XmlElement;
+                    string tri = el.GetAttribute("v");
+                    String[] words = tri.Split(',');
+                    triangleIndices.Add(Convert.ToInt32(words[0]));
+                    triangleIndices.Add(Convert.ToInt32(words[1]));
+                    triangleIndices.Add(Convert.ToInt32(words[2]));
+                }
+                RelativeToAbsolute();
+                SetMesh();
+            }
         }
 
         internal virtual void Remesh()
@@ -527,6 +563,25 @@ namespace Make3D.Models
             rot.SetAttribute("Y", Rotation.Y.ToString());
             rot.SetAttribute("Z", Rotation.Z.ToString());
             ele.AppendChild(rot);
+            if (PrimType == "Mesh")
+            {
+                foreach (Point3D v in relativeObjectVertices)
+                {
+                    XmlElement vertEle = doc.CreateElement("v");
+                    vertEle.SetAttribute("X", v.X.ToString("F5"));
+                    vertEle.SetAttribute("Y", v.Y.ToString("F5"));
+                    vertEle.SetAttribute("Z", v.Z.ToString("F5"));
+                    ele.AppendChild(vertEle);
+                }
+                for (int i = 0; i < triangleIndices.Count; i += 3)
+                {
+                    XmlElement faceEle = doc.CreateElement("f");
+                    faceEle.SetAttribute("v", triangleIndices[i].ToString() + "," +
+                                              triangleIndices[i + 1].ToString() + "," +
+                                              triangleIndices[i + 2].ToString());
+                    ele.AppendChild(faceEle);
+                }
+            }
         }
 
         protected double GetDouble(XmlNode pn, string v)
@@ -685,7 +740,7 @@ namespace Make3D.Models
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.Color = this.Color;
             res.BuildPrimitive(res.primType);
-            
+
             return res;
         }
     }

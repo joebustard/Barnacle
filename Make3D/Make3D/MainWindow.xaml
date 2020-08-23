@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         xmlns:Views="clr-namespace:Make3D.Views"
         xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
-        Title="{Binding Caption}" Height="450" Width="800">
+        Title="{Binding Caption}" Height="450" Width="800" KeyUp="Window_KeyUp">
     <Window.DataContext>
         <ViewModels:MainWindowViewModel />
     </Window.DataContext>
