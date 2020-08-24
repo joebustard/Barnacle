@@ -24,8 +24,19 @@ namespace Make3D.Views
             NotificationManager.Subscribe("UpdateDisplay", UpdateDisplay);
             NotificationManager.Subscribe("MultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("KeyUp", OnKeyUp);
+            NotificationManager.Subscribe("Settings", OnSettings);
             UpdateDisplay(null);
+
             vm = DataContext as EditorViewModel;
+        }
+
+        private void OnSettings(object param)
+        {
+            Settings dlg = new Settings();
+            if ( dlg.ShowDialog()==true)
+            {
+
+            }
         }
 
         private void OnKeyUp(object param)

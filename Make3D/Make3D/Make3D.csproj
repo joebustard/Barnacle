@@ -64,8 +64,10 @@
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectSettings.cs" />
+    <Compile Include="Models\ModelScales.cs" />
     <Compile Include="Models\STLExporter.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Views\MultiPasteDlg.xaml.cs">
       <DependentUpon>MultiPasteDlg.xaml</DependentUpon>
     </Compile>
@@ -106,6 +108,9 @@
     </Compile>
     <Compile Include="Views\ObjectPropertiesView.xaml.cs">
       <DependentUpon>ObjectPropertiesView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings.xaml.cs">
+      <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -148,6 +153,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ObjectPropertiesView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -237,6 +246,12 @@
     <Resource Include="Images\Buttons\RoundRoof.png" />
     <Resource Include="Images\Buttons\Torus.png" />
     <Resource Include="Images\Buttons\Tube.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\RightAngle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\Pointy.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

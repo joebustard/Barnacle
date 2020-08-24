@@ -56,6 +56,13 @@
             <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Tube" ToolTip="Add a tube object" Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/Tube.png" />
             </Button>
+            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="RightAngle" ToolTip="Add a right angle object" Margin="0,0,2,2">
+                <Image Source="/Make3D;component/Images/Buttons/RightAngle.png" />
+            </Button>
+
+            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Pointy" ToolTip="Add a  pointy object" Margin="0,0,2,2">
+                <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
+            </Button>
         </UniformGrid>
     </Grid>
 </UserControl>

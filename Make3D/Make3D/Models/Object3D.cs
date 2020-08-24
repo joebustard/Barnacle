@@ -432,6 +432,18 @@ namespace Make3D.Models
                     }
                     break;
 
+                case "rightangle":
+                    {
+                        PrimitiveGenerator.GenerateRightAngle(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals,  Color.FromRgb(0x00, 0xAB, 0xEF));
+                    }
+                    break;
+                case "pointy":
+                    {
+                        PrimitiveGenerator.GeneratePointy(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0xEF, 0xAB, 0x00));
+                    }
+                    break;
                 default:
                     {
                         //   obj.LoadObject(pth + obType+".txt");

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -8,8 +9,11 @@ using System.Xml;
 
 namespace Make3D.Models
 {
+    
     internal class Document : INotifyPropertyChanged
     {
+
+        public ProjectSettings ProjectSettings { get; set;  }
         private string caption;
         private static int nextId;
 
@@ -43,8 +47,9 @@ namespace Make3D.Models
             FileFilter = "Text Files (*.txt)|*.txt";
             FileName = "Untitled";
             Extension = ".txt";
-            caption = "untitled";
+            Caption = "untitled";
             Content = new List<Object3D>();
+            ProjectSettings = new ProjectSettings();
             nextId = 0;
             Dirty = false;
         }
@@ -117,6 +122,13 @@ namespace Make3D.Models
                 XmlNodeList nodes = docNode.ChildNodes;
                 foreach (XmlNode nd in nodes)
                 {
+                    if (nd.Name == "Settings")
+                    {
+                       ProjectSettings prj = new ProjectSettings();
+                        prj.Read(nd);
+
+                        ProjectSettings = prj;
+                    }
                     if (nd.Name == "obj")
                     {
                         Object3D obj = new Object3D();
@@ -192,6 +204,7 @@ namespace Make3D.Models
             XmlDocument doc = new XmlDocument();
             XmlElement docNode = doc.CreateElement("Document");
             docNode.SetAttribute("NextId", nextId.ToString());
+            ProjectSettings.Write(doc, docNode);
             foreach (Object3D ob in Content)
             {
                 ob.Write(doc, docNode);
@@ -230,8 +243,14 @@ namespace Make3D.Models
 
         public Document()
         {
+            ModelScales.Initialise();
             Clear();
             NotificationManager.Subscribe("DocDirty", OnDocDirty);
+            if ( File.Exists("C:\\tmp\\tinker.obj"))
+            {
+                Object3D tmp = new Object3D();
+                tmp.LoadObject("C:\\tmp\\tinker.obj");
+            }
         }
 
         private void OnDocDirty(object param)

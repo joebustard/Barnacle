@@ -189,6 +189,11 @@ namespace Make3D.ViewModels
                         }
                     }
                     break;
+                case Key.Delete:
+                    {
+                        OnCut(null);
+                    }
+                    break;
             }
         }
 
@@ -904,7 +909,7 @@ namespace Make3D.ViewModels
         // orientaion shown on the icons
         private static string[] rotatedPrimitives =
         {
-            "roof","cone","pyramid","roundroof","cap","polygon"
+            "roof","cone","pyramid","roundroof","cap","polygon","rightangle"
         };
 
         private void OnAddObject(object param)

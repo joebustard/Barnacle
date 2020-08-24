@@ -62,6 +62,7 @@ namespace Make3D.ViewModels
             GroupCommand = new RelayCommand(OnGroup);
             SelectCommand = new RelayCommand(OnSelect);
             ExportCommand = new RelayCommand(OnExport);
+            SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
 
             showGridChecked = false;
@@ -96,6 +97,11 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetTextAlignment", SetTextAlignment);
             NotificationManager.Subscribe("SetStatusText1", SetStatusText1);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnSettings(object obj)
+        {
+            NotificationManager.Notify("Settings", null);
         }
 
         private void OnInsert(object obj)
@@ -349,6 +355,7 @@ namespace Make3D.ViewModels
         public ICommand SaveAsCommand { get; set; }
         public ICommand SaveCommand { get; set; }
         public ICommand ExportCommand { get; set; }
+        public ICommand SettingsCommand { get; set; }
         public ICommand SelectCommand { get; set; }
 
         public bool ShowGridChecked

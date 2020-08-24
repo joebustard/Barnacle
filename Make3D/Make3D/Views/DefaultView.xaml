@@ -138,7 +138,7 @@
                 </Custom:RibbonGroup>
 -->
                 <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
-                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding ProjectCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                     <Custom:RibbonMenuButton x:Name="Export" Label="Export">
                         <Custom:RibbonButton x:Name="STL" Label="STL" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                         <Custom:RibbonButton x:Name="Obj" Label="Obj" Command="{Binding ExportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
