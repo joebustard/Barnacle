@@ -160,7 +160,7 @@ namespace CSGLib
 #if DEBUG
                 throw new InvalidOperationException();
 #else
-				return Vector3.Zero;
+                return new Vector3D(0, 0, 0);
 #endif
             }
 

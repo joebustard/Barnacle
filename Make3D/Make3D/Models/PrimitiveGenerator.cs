@@ -1,23 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
-    class PrimitiveGenerator
+    internal class PrimitiveGenerator
     {
-        public static  void GenerateSphere( ref Point3DCollection points, ref Int32Collection triangleIndices, ref Vector3DCollection normals)
+        public static void GenerateSphere(ref Point3DCollection points, ref Int32Collection triangleIndices, ref Vector3DCollection normals)
         {
             IcoSphereCreator ico = new IcoSphereCreator();
             ico.Create(3, ref points, ref triangleIndices);
             normals = new Vector3DCollection();
-            foreach( Point3D p in points)
+            foreach (Point3D p in points)
             {
-                
                 Vector3D v = new Vector3D(p.X, p.Y, p.Z);
                 v.Normalize();
                 normals.Add(v);
@@ -27,37 +21,33 @@ namespace Make3D.Models
         internal static void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();
-            pnts.Add(new Point3D(-0.5 , -0.5 , -0.5 ));
-            pnts.Add(new Point3D(0.5 , -0.5 , -0.5 ));
-            pnts.Add(new Point3D(0.5 , -0.5 , 0.5 ));
-            pnts.Add(new Point3D(-0.5 , -0.5 , 0.5 ));
-            pnts.Add(new Point3D(-0.5 , 0.5 , -0.5 ));
-            pnts.Add(new Point3D(0.5 , 0.5 , -0.5 ));
-            pnts.Add(new Point3D(0.5 , 0.5 , 0.5 ));
-            pnts.Add(new Point3D(-0.5 ,0.5 , 0.5 ));
+            pnts.Add(new Point3D(-0.5, -0.5, -0.5));
+            pnts.Add(new Point3D(0.5, -0.5, -0.5));
+            pnts.Add(new Point3D(0.5, -0.5, 0.5));
+            pnts.Add(new Point3D(-0.5, -0.5, 0.5));
+            pnts.Add(new Point3D(-0.5, 0.5, -0.5));
+            pnts.Add(new Point3D(0.5, 0.5, -0.5));
+            pnts.Add(new Point3D(0.5, 0.5, 0.5));
+            pnts.Add(new Point3D(-0.5, 0.5, 0.5));
 
-           
             indices = new Int32Collection();
-            AddTriangle(indices, 3,2,6);
-            AddTriangle(indices, 3,6,7);
+            AddTriangle(indices, 3, 2, 6);
+            AddTriangle(indices, 3, 6, 7);
 
-            AddTriangle(indices,2,1,5);
-            AddTriangle(indices, 2,5,6);
+            AddTriangle(indices, 2, 1, 5);
+            AddTriangle(indices, 2, 5, 6);
 
-            AddTriangle(indices, 1,0,4);
-            AddTriangle(indices, 1,4,5);
+            AddTriangle(indices, 1, 0, 4);
+            AddTriangle(indices, 1, 4, 5);
 
-            AddTriangle(indices, 0,3,7);
-            AddTriangle(indices, 0,7,4);
+            AddTriangle(indices, 0, 3, 7);
+            AddTriangle(indices, 0, 7, 4);
 
-            AddTriangle(indices, 7,6,5);
-            AddTriangle(indices, 7,5,4);
+            AddTriangle(indices, 7, 6, 5);
+            AddTriangle(indices, 7, 5, 4);
 
-            AddTriangle(indices, 2,3,0);
-            AddTriangle(indices, 2,0,1);
-
-
-
+            AddTriangle(indices, 2, 3, 0);
+            AddTriangle(indices, 2, 0, 1);
         }
 
         private static void AddTriangle(Int32Collection indices, int v1, int v2, int v3)
@@ -374,6 +364,7 @@ namespace Make3D.Models
             indices.Add(1);
             indices.Add(5);
             indices.Add(2);
+            SwitchInsideOut(indices);
         }
 
         internal static void GenerateRightAngle(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
@@ -408,7 +399,9 @@ namespace Make3D.Models
             indices.Add(1);
             indices.Add(4);
             indices.Add(3);
+            SwitchInsideOut(indices);
         }
+
         internal static void GenerateCone(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();
@@ -575,7 +568,7 @@ namespace Make3D.Models
             indices.Add(6);
             indices.Add(5);
             indices.Add(2);
-
+            SwitchInsideOut(indices);
         }
 
         internal static void GenerateRoundRoof(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
@@ -650,393 +643,436 @@ namespace Make3D.Models
             indices.Add(15);
             indices.Add(14);
             indices.Add(30);
-            indices.Add(14);
-            indices.Add(17);
-            indices.Add(30);
-            indices.Add(17);
-            indices.Add(19);
-            indices.Add(30);
-            indices.Add(7);
-            indices.Add(30);
-            indices.Add(19);
-            indices.Add(19);
-            indices.Add(27);
-            indices.Add(7);
-            indices.Add(6);
-            indices.Add(7);
-            indices.Add(27);
-            indices.Add(2);
-            indices.Add(1);
-            indices.Add(42);
-            indices.Add(8);
-            indices.Add(0);
-            indices.Add(18);
-            indices.Add(26);
-            indices.Add(28);
-            indices.Add(34);
-            indices.Add(22);
-            indices.Add(23);
-            indices.Add(11);
-            indices.Add(11);
-            indices.Add(12);
-            indices.Add(22);
-            indices.Add(20);
-            indices.Add(22);
-            indices.Add(12);
-            indices.Add(13);
-            indices.Add(20);
-            indices.Add(12);
-            indices.Add(10);
-            indices.Add(11);
-            indices.Add(23);
-            indices.Add(23);
-            indices.Add(24);
-            indices.Add(10);
-            indices.Add(9);
-            indices.Add(10);
-            indices.Add(24);
-            indices.Add(24);
-            indices.Add(25);
-            indices.Add(9);
-            indices.Add(8);
-            indices.Add(9);
-            indices.Add(25);
-            indices.Add(8);
-            indices.Add(25);
-            indices.Add(29);
-            indices.Add(15);
-            indices.Add(21);
-            indices.Add(32);
-            indices.Add(27);
-            indices.Add(63);
-            indices.Add(33);
-            indices.Add(8);
-            indices.Add(38);
-            indices.Add(0);
-            indices.Add(36);
-            indices.Add(40);
-            indices.Add(2);
-            indices.Add(1);
-            indices.Add(2);
-            indices.Add(40);
-            indices.Add(40);
-            indices.Add(43);
-            indices.Add(1);
-            indices.Add(2);
-            indices.Add(3);
-            indices.Add(36);
-            indices.Add(0);
-            indices.Add(1);
-            indices.Add(43);
-            indices.Add(43);
-            indices.Add(44);
-            indices.Add(0);
-            indices.Add(18);
-            indices.Add(0);
-            indices.Add(44);
-            indices.Add(44);
-            indices.Add(31);
-            indices.Add(18);
-            indices.Add(58);
-            indices.Add(18);
-            indices.Add(31);
-            indices.Add(31);
-            indices.Add(46);
-            indices.Add(58);
-            indices.Add(57);
-            indices.Add(58);
-            indices.Add(46);
-            indices.Add(44);
-            indices.Add(29);
-            indices.Add(31);
-            indices.Add(14);
-            indices.Add(15);
-            indices.Add(41);
-            indices.Add(32);
-            indices.Add(41);
-            indices.Add(15);
-            indices.Add(63);
-            indices.Add(34);
-            indices.Add(33);
-            indices.Add(46);
-            indices.Add(50);
-            indices.Add(57);
-            indices.Add(39);
-            indices.Add(45);
-            indices.Add(43);
-            indices.Add(38);
-            indices.Add(42);
-            indices.Add(0);
-            indices.Add(25);
-            indices.Add(46);
-            indices.Add(31);
-            indices.Add(25);
-            indices.Add(31);
-            indices.Add(29);
-            indices.Add(34);
-            indices.Add(28);
-            indices.Add(35);
-            indices.Add(45);
-            indices.Add(48);
-            indices.Add(43);
-            indices.Add(41);
-            indices.Add(47);
-            indices.Add(17);
-            indices.Add(41);
-            indices.Add(17);
-            indices.Add(14);
-            indices.Add(36);
-            indices.Add(35);
-            indices.Add(37);
-            indices.Add(28);
-            indices.Add(37);
-            indices.Add(35);
-            indices.Add(2);
-            indices.Add(42);
-            indices.Add(49);
-            indices.Add(24);
-            indices.Add(50);
-            indices.Add(46);
-            indices.Add(24);
-            indices.Add(46);
-            indices.Add(25);
-            indices.Add(44);
-            indices.Add(48);
-            indices.Add(29);
-            indices.Add(37);
-            indices.Add(39);
-            indices.Add(40);
-            indices.Add(37);
-            indices.Add(40);
-            indices.Add(36);
-            indices.Add(19);
-            indices.Add(17);
-            indices.Add(51);
-            indices.Add(47);
-            indices.Add(51);
-            indices.Add(17);
-            indices.Add(49);
-            indices.Add(52);
-            indices.Add(3);
-            indices.Add(49);
-            indices.Add(3);
-            indices.Add(2);
-            indices.Add(23);
-            indices.Add(53);
-            indices.Add(50);
-            indices.Add(23);
-            indices.Add(50);
-            indices.Add(24);
-            indices.Add(6);
-            indices.Add(16);
-            indices.Add(7);
-            indices.Add(22);
-            indices.Add(60);
-            indices.Add(53);
-            indices.Add(22);
-            indices.Add(53);
-            indices.Add(23);
-            indices.Add(27);
-            indices.Add(19);
-            indices.Add(59);
-            indices.Add(51);
-            indices.Add(59);
-            indices.Add(19);
-            indices.Add(4);
-            indices.Add(3);
-            indices.Add(61);
-            indices.Add(52);
-            indices.Add(61);
-            indices.Add(3);
-            indices.Add(4);
-            indices.Add(5);
-            indices.Add(34);
-            indices.Add(33);
-            indices.Add(34);
-            indices.Add(5);
-            indices.Add(34);
-            indices.Add(35);
-            indices.Add(4);
-            indices.Add(5);
-            indices.Add(6);
-            indices.Add(33);
-            indices.Add(27);
-            indices.Add(33);
-            indices.Add(6);
-            indices.Add(3);
-            indices.Add(4);
-            indices.Add(35);
-            indices.Add(35);
-            indices.Add(36);
-            indices.Add(3);
-            indices.Add(56);
-            indices.Add(57);
-            indices.Add(50);
-            indices.Add(50);
-            indices.Add(53);
-            indices.Add(56);
-            indices.Add(55);
-            indices.Add(56);
-            indices.Add(53);
-            indices.Add(53);
-            indices.Add(60);
-            indices.Add(55);
-            indices.Add(54);
-            indices.Add(55);
-            indices.Add(60);
-            indices.Add(54);
-            indices.Add(60);
-            indices.Add(62);
-            indices.Add(62);
-            indices.Add(20);
-            indices.Add(13);
-            indices.Add(62);
-            indices.Add(13);
-            indices.Add(54);
-            indices.Add(20);
-            indices.Add(62);
-            indices.Add(60);
-            indices.Add(20);
-            indices.Add(60);
-            indices.Add(22);
-            indices.Add(42);
-            indices.Add(1);
-            indices.Add(0);
-            indices.Add(30);
-            indices.Add(16);
-            indices.Add(21);
-            indices.Add(7);
-            indices.Add(16);
-            indices.Add(30);
-            indices.Add(59);
-            indices.Add(63);
-            indices.Add(27);
-            indices.Add(4);
-            indices.Add(61);
-            indices.Add(5);
-            indices.Add(64);
-            indices.Add(5);
-            indices.Add(61);
-            indices.Add(39);
-            indices.Add(43);
-            indices.Add(40);
-            indices.Add(21);
-            indices.Add(15);
-            indices.Add(30);
-            indices.Add(34);
-            indices.Add(63);
-            indices.Add(26);
-            indices.Add(48);
-            indices.Add(44);
-            indices.Add(43);
-            indices.Add(64);
-            indices.Add(65);
-            indices.Add(6);
-            indices.Add(64);
-            indices.Add(6);
-            indices.Add(5);
-            indices.Add(52);
-            indices.Add(49);
-            indices.Add(39);
-            indices.Add(45);
-            indices.Add(39);
-            indices.Add(49);
-            indices.Add(49);
-            indices.Add(42);
-            indices.Add(45);
-            indices.Add(48);
-            indices.Add(45);
-            indices.Add(42);
-            indices.Add(42);
-            indices.Add(38);
-            indices.Add(48);
-            indices.Add(29);
-            indices.Add(48);
-            indices.Add(38);
-            indices.Add(8);
-            indices.Add(29);
-            indices.Add(38);
-            indices.Add(39);
-            indices.Add(37);
-            indices.Add(52);
-            indices.Add(12);
-            indices.Add(55);
-            indices.Add(54);
-            indices.Add(12);
-            indices.Add(54);
-            indices.Add(13);
-            indices.Add(65);
-            indices.Add(16);
-            indices.Add(6);
-            indices.Add(11);
-            indices.Add(56);
-            indices.Add(55);
-            indices.Add(11);
-            indices.Add(55);
-            indices.Add(12);
-            indices.Add(10);
-            indices.Add(57);
-            indices.Add(56);
-            indices.Add(10);
-            indices.Add(56);
-            indices.Add(11);
-            indices.Add(9);
-            indices.Add(58);
-            indices.Add(57);
-            indices.Add(9);
-            indices.Add(57);
-            indices.Add(10);
-            indices.Add(47);
-            indices.Add(41);
-            indices.Add(51);
-            indices.Add(41);
-            indices.Add(32);
-            indices.Add(51);
-            indices.Add(32);
-            indices.Add(21);
-            indices.Add(51);
-            indices.Add(59);
-            indices.Add(51);
-            indices.Add(21);
-            indices.Add(21);
-            indices.Add(16);
-            indices.Add(59);
-            indices.Add(63);
-            indices.Add(59);
-            indices.Add(16);
-            indices.Add(16);
-            indices.Add(65);
-            indices.Add(63);
-            indices.Add(26);
-            indices.Add(63);
-            indices.Add(65);
-            indices.Add(37);
-            indices.Add(28);
-            indices.Add(61);
-            indices.Add(61);
-            indices.Add(52);
-            indices.Add(37);
-            indices.Add(65);
-            indices.Add(64);
-            indices.Add(26);
-            indices.Add(8);
-            indices.Add(18);
-            indices.Add(58);
-            indices.Add(8);
-            indices.Add(58);
-            indices.Add(9);
-            indices.Add(28);
-            indices.Add(26);
-            indices.Add(64);
-            indices.Add(64);
-            indices.Add(61);
-            indices.Add(28);
 
+            indices.Add(14);
+            indices.Add(17);
+            indices.Add(30);
+
+            indices.Add(17);
+            indices.Add(19);
+            indices.Add(30);
+
+            indices.Add(7);
+            indices.Add(30);
+            indices.Add(19);
+
+            indices.Add(19);
+            indices.Add(27);
+            indices.Add(7);
+
+            indices.Add(6);
+            indices.Add(7);
+            indices.Add(27);
+
+            indices.Add(2);
+            indices.Add(1);
+            indices.Add(42);
+
+            indices.Add(8);
+            indices.Add(0);
+            indices.Add(18);
+
+            indices.Add(26);
+            indices.Add(28);
+            indices.Add(34);
+
+            indices.Add(22);
+            indices.Add(23);
+            indices.Add(11);
+
+            indices.Add(11);
+            indices.Add(12);
+            indices.Add(22);
+
+            indices.Add(20);
+            indices.Add(22);
+            indices.Add(12);
+
+            indices.Add(13);
+            indices.Add(20);
+            indices.Add(12);
+
+            indices.Add(10);
+            indices.Add(11);
+            indices.Add(23);
+
+            indices.Add(23);
+            indices.Add(24);
+            indices.Add(10);
+
+            indices.Add(9);
+            indices.Add(10);
+            indices.Add(24);
+
+            indices.Add(24);
+            indices.Add(25);
+            indices.Add(9);
+
+            indices.Add(8);
+            indices.Add(9);
+            indices.Add(25);
+
+            indices.Add(8);
+            indices.Add(25);
+            indices.Add(29);
+
+            indices.Add(15);
+            indices.Add(21);
+            indices.Add(32);
+
+            indices.Add(27);
+            indices.Add(63);
+            indices.Add(33);
+
+            indices.Add(8);
+            indices.Add(38);
+            indices.Add(0);
+
+            indices.Add(36);
+            indices.Add(40);
+            indices.Add(2);
+
+            indices.Add(1);
+            indices.Add(2);
+            indices.Add(40);
+
+            indices.Add(40);
+            indices.Add(43);
+            indices.Add(1);
+
+            indices.Add(2);
+            indices.Add(3);
+            indices.Add(36);
+
+            indices.Add(0);
+            indices.Add(1);
+            indices.Add(43);
+
+            indices.Add(43);
+            indices.Add(44);
+            indices.Add(0);
+
+            indices.Add(18);
+            indices.Add(0);
+            indices.Add(44);
+
+            indices.Add(44);
+            indices.Add(31);
+            indices.Add(18);
+
+            indices.Add(58);
+            indices.Add(18);
+            indices.Add(31);
+
+            indices.Add(31);
+            indices.Add(46);
+            indices.Add(58);
+
+            indices.Add(57);
+            indices.Add(58);
+            indices.Add(46);
+            indices.Add(44);
+            indices.Add(29);
+            indices.Add(31);
+            indices.Add(14);
+            indices.Add(15);
+            indices.Add(41);
+            indices.Add(32);
+            indices.Add(41);
+            indices.Add(15);
+            indices.Add(63);
+            indices.Add(34);
+            indices.Add(33);
+            indices.Add(46);
+            indices.Add(50);
+            indices.Add(57);
+            indices.Add(39);
+            indices.Add(45);
+            indices.Add(43);
+            indices.Add(38);
+            indices.Add(42);
+            indices.Add(0);
+            indices.Add(25);
+            indices.Add(46);
+            indices.Add(31);
+            indices.Add(25);
+            indices.Add(31);
+            indices.Add(29);
+            indices.Add(34);
+            indices.Add(28);
+            indices.Add(35);
+            indices.Add(45);
+            indices.Add(48);
+            indices.Add(43);
+            indices.Add(41);
+            indices.Add(47);
+            indices.Add(17);
+            indices.Add(41);
+            indices.Add(17);
+            indices.Add(14);
+            indices.Add(36);
+            indices.Add(35);
+            indices.Add(37);
+            indices.Add(28);
+            indices.Add(37);
+            indices.Add(35);
+            indices.Add(2);
+            indices.Add(42);
+            indices.Add(49);
+            indices.Add(24);
+            indices.Add(50);
+            indices.Add(46);
+            indices.Add(24);
+            indices.Add(46);
+            indices.Add(25);
+            indices.Add(44);
+            indices.Add(48);
+            indices.Add(29);
+            indices.Add(37);
+            indices.Add(39);
+            indices.Add(40);
+            indices.Add(37);
+            indices.Add(40);
+            indices.Add(36);
+            indices.Add(19);
+            indices.Add(17);
+            indices.Add(51);
+            indices.Add(47);
+            indices.Add(51);
+            indices.Add(17);
+            indices.Add(49);
+            indices.Add(52);
+            indices.Add(3);
+            indices.Add(49);
+            indices.Add(3);
+            indices.Add(2);
+            indices.Add(23);
+            indices.Add(53);
+            indices.Add(50);
+            indices.Add(23);
+            indices.Add(50);
+            indices.Add(24);
+            indices.Add(6);
+            indices.Add(16);
+            indices.Add(7);
+            indices.Add(22);
+            indices.Add(60);
+            indices.Add(53);
+            indices.Add(22);
+            indices.Add(53);
+            indices.Add(23);
+            indices.Add(27);
+            indices.Add(19);
+            indices.Add(59);
+            indices.Add(51);
+            indices.Add(59);
+            indices.Add(19);
+            indices.Add(4);
+            indices.Add(3);
+            indices.Add(61);
+            indices.Add(52);
+            indices.Add(61);
+            indices.Add(3);
+            indices.Add(4);
+            indices.Add(5);
+            indices.Add(34);
+            indices.Add(33);
+            indices.Add(34);
+            indices.Add(5);
+            indices.Add(34);
+            indices.Add(35);
+            indices.Add(4);
+            indices.Add(5);
+            indices.Add(6);
+            indices.Add(33);
+            indices.Add(27);
+            indices.Add(33);
+            indices.Add(6);
+            indices.Add(3);
+            indices.Add(4);
+            indices.Add(35);
+            indices.Add(35);
+            indices.Add(36);
+            indices.Add(3);
+            indices.Add(56);
+            indices.Add(57);
+            indices.Add(50);
+            indices.Add(50);
+            indices.Add(53);
+            indices.Add(56);
+            indices.Add(55);
+            indices.Add(56);
+            indices.Add(53);
+            indices.Add(53);
+            indices.Add(60);
+            indices.Add(55);
+            indices.Add(54);
+            indices.Add(55);
+            indices.Add(60);
+            indices.Add(54);
+            indices.Add(60);
+            indices.Add(62);
+            indices.Add(62);
+            indices.Add(20);
+            indices.Add(13);
+            indices.Add(62);
+            indices.Add(13);
+            indices.Add(54);
+            indices.Add(20);
+            indices.Add(62);
+            indices.Add(60);
+            indices.Add(20);
+            indices.Add(60);
+            indices.Add(22);
+            indices.Add(42);
+            indices.Add(1);
+            indices.Add(0);
+            indices.Add(30);
+            indices.Add(16);
+            indices.Add(21);
+            indices.Add(7);
+            indices.Add(16);
+            indices.Add(30);
+            indices.Add(59);
+            indices.Add(63);
+            indices.Add(27);
+            indices.Add(4);
+            indices.Add(61);
+            indices.Add(5);
+            indices.Add(64);
+            indices.Add(5);
+            indices.Add(61);
+            indices.Add(39);
+            indices.Add(43);
+            indices.Add(40);
+            indices.Add(21);
+            indices.Add(15);
+            indices.Add(30);
+            indices.Add(34);
+            indices.Add(63);
+            indices.Add(26);
+            indices.Add(48);
+            indices.Add(44);
+            indices.Add(43);
+            indices.Add(64);
+            indices.Add(65);
+            indices.Add(6);
+            indices.Add(64);
+            indices.Add(6);
+            indices.Add(5);
+            indices.Add(52);
+            indices.Add(49);
+            indices.Add(39);
+            indices.Add(45);
+            indices.Add(39);
+            indices.Add(49);
+            indices.Add(49);
+            indices.Add(42);
+            indices.Add(45);
+            indices.Add(48);
+            indices.Add(45);
+            indices.Add(42);
+            indices.Add(42);
+            indices.Add(38);
+            indices.Add(48);
+            indices.Add(29);
+            indices.Add(48);
+            indices.Add(38);
+            indices.Add(8);
+            indices.Add(29);
+            indices.Add(38);
+            indices.Add(39);
+            indices.Add(37);
+            indices.Add(52);
+            indices.Add(12);
+            indices.Add(55);
+            indices.Add(54);
+            indices.Add(12);
+            indices.Add(54);
+            indices.Add(13);
+            indices.Add(65);
+            indices.Add(16);
+            indices.Add(6);
+            indices.Add(11);
+            indices.Add(56);
+            indices.Add(55);
+            indices.Add(11);
+            indices.Add(55);
+            indices.Add(12);
+            indices.Add(10);
+            indices.Add(57);
+            indices.Add(56);
+            indices.Add(10);
+            indices.Add(56);
+            indices.Add(11);
+            indices.Add(9);
+            indices.Add(58);
+            indices.Add(57);
+            indices.Add(9);
+            indices.Add(57);
+            indices.Add(10);
+            indices.Add(47);
+            indices.Add(41);
+            indices.Add(51);
+            indices.Add(41);
+            indices.Add(32);
+            indices.Add(51);
+            indices.Add(32);
+            indices.Add(21);
+            indices.Add(51);
+            indices.Add(59);
+            indices.Add(51);
+            indices.Add(21);
+            indices.Add(21);
+            indices.Add(16);
+            indices.Add(59);
+            indices.Add(63);
+            indices.Add(59);
+            indices.Add(16);
+            indices.Add(16);
+            indices.Add(65);
+            indices.Add(63);
+            indices.Add(26);
+            indices.Add(63);
+            indices.Add(65);
+            indices.Add(37);
+            indices.Add(28);
+            indices.Add(61);
+            indices.Add(61);
+            indices.Add(52);
+            indices.Add(37);
+            indices.Add(65);
+            indices.Add(64);
+            indices.Add(26);
+            indices.Add(8);
+            indices.Add(18);
+            indices.Add(58);
+            indices.Add(8);
+            indices.Add(58);
+            indices.Add(9);
+            indices.Add(28);
+            indices.Add(26);
+            indices.Add(64);
+            indices.Add(64);
+            indices.Add(61);
+            indices.Add(28);
+            SwitchInsideOut(indices);
         }
+
+        private static void SwitchInsideOut(Int32Collection indices)
+        {
+            for (int i = 0; i < indices.Count; i += 3)
+            {
+                int tmp = indices[i + 1];
+                indices[i + 1] = indices[i + 2];
+                indices[i + 2] = tmp;
+            }
+        }
+
         internal static void Generate(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
-            
         }
+
         internal static void GeneratePyramid(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts.Add(new Point3D(0.000, 0.000, 0.500));
@@ -1062,8 +1098,9 @@ namespace Make3D.Models
             indices.Add(4);
             indices.Add(1);
             indices.Add(0);
-
+            SwitchInsideOut(indices);
         }
+
         internal static void GenerateTorus(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts.Add(new Point3D(0.250, 0.433, 0.000));
@@ -3754,8 +3791,8 @@ namespace Make3D.Models
             indices.Add(94);
             indices.Add(221);
             indices.Add(93);
-
         }
+
         internal static void GenerateCap(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts.Add(new Point3D(0.433, 0.250, -0.500));
@@ -8289,7 +8326,7 @@ namespace Make3D.Models
             indices.Add(4);
             indices.Add(640);
             indices.Add(119);
-
+            SwitchInsideOut(indices);
         }
 
         internal static void GeneratePolygon(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
@@ -8366,8 +8403,9 @@ namespace Make3D.Models
             indices.Add(10);
             indices.Add(3);
             indices.Add(9);
-
+            SwitchInsideOut(indices);
         }
+
         internal static void GenerateTube(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts.Add(new Point3D(-0.097, 0.362, -0.500));
@@ -9042,12 +9080,10 @@ namespace Make3D.Models
             indices.Add(11);
             indices.Add(37);
             indices.Add(24);
-
         }
 
         internal static void GeneratePointy(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
-
             pnts.Add(new Point3D(-0.405, 0.309, -0.154));
             pnts.Add(new Point3D(0.405, 0.309, -0.154));
             pnts.Add(new Point3D(-0.214, 0.309, -0.154));
@@ -9190,7 +9226,7 @@ namespace Make3D.Models
             indices.Add(19);
             indices.Add(14);
             indices.Add(8);
-
+            SwitchInsideOut(indices);
         }
     }
 }

@@ -7,7 +7,9 @@
             Left,
             Right,
             Up,
-            Down
+            Down,
+            Forward,
+            Back
         }
     }
 }

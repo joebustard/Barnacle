@@ -7,6 +7,7 @@ namespace Make3D.Models
         public String Direction { get; set; }
         public int Repeats { get; set; }
         public double Spacing { get; set; }
+        public double AlternatingOffset { get; internal set; }
 
         public MultiPasteConfig()
         {

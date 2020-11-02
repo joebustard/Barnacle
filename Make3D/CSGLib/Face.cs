@@ -49,6 +49,7 @@ namespace CSGLib
     /// </summary>
     public class Face //: IPrimitive
     {
+        public int SplitLevel { get; set; }
         /** first vertex */
         public Vertex V1;
         /** second vertex */
@@ -162,7 +163,7 @@ namespace CSGLib
 
         private double DegreesToRad(double d)
         {
-            return (d * 3.1415962 / 180.0);
+            return (d * Math.PI / 180.0);
         }
 
         public Bound GetBound()

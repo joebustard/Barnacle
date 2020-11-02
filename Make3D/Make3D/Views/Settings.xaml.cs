@@ -1,17 +1,7 @@
 ﻿using Make3D.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Media.Media3D;
 
 namespace Make3D.Views
 {
@@ -29,10 +19,23 @@ namespace Make3D.Views
         {
             DialogResult = true;
             SettingsViewModel vm = DataContext as SettingsViewModel;
-            if ( vm != null )
+            if (vm != null)
             {
                 BaseViewModel.Document.ProjectSettings.Description = vm.Description;
                 BaseViewModel.Document.ProjectSettings.BaseScale = vm.SelectedScale;
+                try
+                {
+                    double x = Convert.ToDouble(vm.RotX);
+                    double y = Convert.ToDouble(vm.RotY);
+                    double z = Convert.ToDouble(vm.RotZ);
+                    BaseViewModel.Document.ProjectSettings.ExportRotation = new Point3D(x, y, z);
+                    BaseViewModel.Document.ProjectSettings.ExportAxisSwap = vm.SwapAxis;
+                    BaseViewModel.Document.ProjectSettings.FloorAll = vm.FloorAll;
+                    BaseViewModel.Document.Dirty = true;
+                }
+                catch (Exception)
+                {
+                }
             }
             Close();
         }

@@ -1,19 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Make3D.Models
 {
     public class ModelScales
     {
-        
         public static Dictionary<string, double> Standard = new Dictionary<string, double>();
+
         public static void Initialise()
         {
             Standard["1"] = 1.0;
-            Standard["OO"] = 1.0/ 76.2;
+            Standard["1/24"] = 1.0 / 24;
+            Standard["1/32"] = 1.0 / 32.0;
+            Standard["1/35"] = 1.0 / 35.0;
+            Standard["1/48"] = 1.0 / 48.0;
+            Standard["1/72"] = 1.0 / 72.0;
+            Standard["1/100"] = 1.0 / 100.0;
+            Standard["1/144"] = 1.0 / 144.0;
+            Standard["OO"] = 1.0 / 76.2;
             Standard["HO"] = 1.0 / 87;
             Standard["N"] = 1.0 / 148;
         }
@@ -21,12 +24,11 @@ namespace Make3D.Models
         internal static List<string> ScaleNames()
         {
             List<string> names = new List<string>();
-            foreach( string a in Standard.Keys)
+            foreach (string a in Standard.Keys)
             {
                 names.Add(a);
             }
             return names;
-
         }
     }
 }

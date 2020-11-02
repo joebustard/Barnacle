@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="Make3D.Dialogs.BulkheadControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Make3D.Dialogs"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="400" Loaded="UserControl_Loaded" GotFocus="UserControl_GotFocus" SizeChanged="UserControl_SizeChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition />
+            <RowDefinition Height="25" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Label x:Name="Number" Grid.Column="0" HorizontalAlignment="Stretch" Background="Blue" Foreground="AliceBlue" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+
+            <TextBox x:Name="PositionX" Grid.Column="1" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionX_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+
+            <!--
+            <local:NUDBox x:Name="PositionX" Grid.Column="1" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" VerticalContentAlignment="Center" MinHeight="26" />
+            <local:NUDBox x:Name="PositionY" Grid.Column="2" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" VerticalContentAlignment="Center" />
+            <local:NUDBox x:Name="PositionZ" Grid.Column="3" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" VerticalContentAlignment="Center" />
+            -->
+
+            <TextBox x:Name="PositionY" Grid.Column="2" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionY_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+            <TextBox x:Name="PositionZ" Grid.Column="3" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionZ_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+        </Grid>
+        <Border Grid.Row="1" Background="Transparent" BorderBrush="Brown" BorderThickness="3" GotFocus="UserControl_GotFocus">
+            <Canvas x:Name="PointCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDown="PointCanvas_MouseDown" MouseLeave="PointCanvas_MouseLeave" MouseMove="PointCanvas_MouseMove" MouseUp="PointCanvas_MouseUp" Background="BlanchedAlmond" GotFocus="UserControl_GotFocus" />
+        </Border>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ResetButton" Content="Reset" Grid.Column="0" Click="ResetButton_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" />
+            <Button x:Name="ScaleMinus" Content="-" Grid.Column="1" Click="ScaleMinus_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" />
+            <Button x:Name="ScalePlus" Content="+" Grid.Column="2" Click="ScalePlus_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" />
+            <Button x:Name="LeftRight" Grid.Column="3" Click="LeftRight_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" FontSize="8" FontFamily="Marlett" ToolTip="Copy left shapes to right">4</Button>
+            <Button x:Name="BottomUp" Grid.Column="4" Click="BottomUp_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" FontSize="8" FontFamily="Marlett" ToolTip="Copy bottom shapes to top">5</Button>
+            <Button x:Name="CopyToNextButton" Content="Copy on" Grid.Column="6" Click="CopyToNextButton_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" />
+        </Grid>
+    </Grid>
+</UserControl>

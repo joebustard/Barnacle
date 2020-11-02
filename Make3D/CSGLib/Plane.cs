@@ -37,7 +37,7 @@ namespace CSGLib
     {
         public double DistanceToPlaneFromOrigin;
         public Vector3D PlaneNormal;
-        private const double TreatAsZero = .000000001;
+        private const double TreatAsZero = .0000000001;
 
         public Plane(Vector3D planeNormal, double distanceFromOrigin)
         {

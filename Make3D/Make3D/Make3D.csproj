@@ -50,28 +50,67 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Xceed.Wpf.AvalonDock, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Aero, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Aero.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.Metro, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.AvalonDock.Themes.VS2010, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.AvalonDock.Themes.VS2010.dll</HintPath>
+    </Reference>
+    <Reference Include="Xceed.Wpf.Toolkit, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Extended.Wpf.Toolkit.4.0.1\lib\net40\Xceed.Wpf.Toolkit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\BezierLine.cs" />
+    <Compile Include="Dialogs\BulkheadControl.xaml.cs">
+      <DependentUpon>BulkheadControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
+      <DependentUpon>DecimatorSettings.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ExportSelectedDialog.xaml.cs">
+      <DependentUpon>ExportSelectedDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\FuselageBulkhead.cs" />
+    <Compile Include="Dialogs\FuselageLoftDialog.xaml.cs">
+      <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\LinearLoftDialog.xaml.cs" />
+    <Compile Include="Dialogs\NUDBox.xaml.cs" />
+    <Compile Include="Dialogs\ShapeBase.xaml.cs" />
+    <Compile Include="Dialogs\ShapeLoftDialog.xaml.cs" />
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
+    <Compile Include="Models\PointUtils.cs" />
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectSettings.cs" />
     <Compile Include="Models\ModelScales.cs" />
     <Compile Include="Models\STLExporter.cs" />
+    <Compile Include="undoer.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\ColourDialog.xaml.cs">
+      <DependentUpon>ColourDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\MultiPasteDlg.xaml.cs">
       <DependentUpon>MultiPasteDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ObjectAdorner.cs" />
+    <Compile Include="Views\RotationAdorner.cs" />
+    <Compile Include="Views\SizeAdorner.cs" />
     <Compile Include="Models\Bounds3D.cs" />
     <Compile Include="Models\IcoSphereCreator.cs" />
     <Compile Include="Models\Object3D.cs" />
@@ -112,6 +151,41 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\STLExportedConfirmation.xaml.cs">
+      <DependentUpon>STLExportedConfirmation.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Dialogs\BulkheadControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DecimatorSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ExportSelectedDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\FuselageLoftDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\LinearLoftDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\NUDBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ShapeBase.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ShapeLoftDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -133,6 +207,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CameraPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ColourDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -160,6 +238,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\STLExportedConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -179,6 +261,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -235,6 +318,14 @@
       <Project>{CB0CAFAC-72AB-4D29-A570-D6F97519BBD3}</Project>
       <Name>CSGLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MeshDecimator\MeshDecimator.csproj">
+      <Project>{f49d5d98-df95-4a31-a42f-da6d92c242dd}</Project>
+      <Name>MeshDecimator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PlacementLib\PlacementLib.csproj">
+      <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>
+      <Name>PlacementLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Buttons\Cap.png" />
@@ -252,6 +343,18 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Buttons\Pointy.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\FrontEye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\BackEye.png" />
+    <Resource Include="Images\Buttons\BottomEye.png" />
+    <Resource Include="Images\Buttons\LeftEye.png" />
+    <Resource Include="Images\Buttons\RightEye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\TopEye.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

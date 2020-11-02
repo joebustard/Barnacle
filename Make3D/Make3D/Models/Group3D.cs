@@ -1,4 +1,5 @@
 ﻿using CSGLib;
+using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -7,7 +8,7 @@ namespace Make3D.Models
 {
     public class Group3D : Object3D
     {
-        Scale3D groupScale;
+        private Scale3D groupScale;
         private BooleanModeller modeller;
         private Object3D leftObject;
 
@@ -47,11 +48,11 @@ namespace Make3D.Models
 
             rightObject = null;
             rightSolid = null;
-
         }
 
-        internal void Init()
+        internal bool Init()
         {
+            bool result = false;
             if (leftObject != null && rightObject != null)
             {
                 Position = new Point3D(leftObject.Position.X, leftObject.Position.Y, leftObject.Position.Z);
@@ -59,13 +60,14 @@ namespace Make3D.Models
                 // this is wrong, should join objects then divide bounds of new object somehow
                 //Scale = new Scale3D(1, 1, 1);
                 Color = leftObject.Color;
-                PerformOperation();
-
+                result = PerformOperation();
             }
+
+            return result;
         }
+
         private void GetScaleFromAbsoluteExtent()
         {
-
             // a quick function to convert the coordinates of an object read in, into a unit sized object
             // centered on 0,0,0
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
@@ -120,8 +122,10 @@ namespace Make3D.Models
             }
             groupScale = new Scale3D(scaleX, scaleY, scaleZ);
         }
-        internal void PerformOperation()
+
+        internal bool PerformOperation()
         {
+            bool res = false;
             absoluteBounds = new Bounds3D();
             leftObject.RelativeToAbsolute();
             rightObject.RelativeToAbsolute();
@@ -129,52 +133,57 @@ namespace Make3D.Models
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
             // The original objects have their own  scale that is taken into account by their own RelativeToAbsolutes
             // But the combined object may have been scaled too so take that into acccount now
-          //  leftSolid.Scale(Scale.X, Scale.Y, Scale.Z);
+            //  leftSolid.Scale(Scale.X, Scale.Y, Scale.Z);
             Logger.Log("Right Solid\r\n============\r\n");
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
-          //  rightSolid.Scale(Scale.X, Scale.Y, Scale.Z);
+            //  rightSolid.Scale(Scale.X, Scale.Y, Scale.Z);
             modeller = new BooleanModeller(leftSolid, rightSolid);
-            Solid result = null;
-            switch (PrimType)
+            if (modeller.State == true)
             {
-                case "groupunion":
-                    {
-                        result = modeller.GetUnion();
-                    }
-                    break;
-
-                case "groupdifference":
-                    {
-                        result = modeller.GetDifference();
-                    }
-                    break;
-
-                case "groupintersection":
-                    {
-                        result = modeller.GetIntersection();
-                    }
-                    break;
-            }
-
-            if (result != null)
-            {
-                AbsoluteObjectVertices = new Point3DCollection();
-                TriangleIndices = new System.Windows.Media.Int32Collection();
-                Vector3D[] vc = result.GetVertices();
-                foreach (Vector3D v in vc)
+                Solid result = null;
+                switch (PrimType)
                 {
-                    Point3D p = new Point3D(v.X, v.Y, v.Z);
-                    AbsoluteObjectVertices.Add(p);
-                    absoluteBounds.Adjust(p);
+                    case "groupunion":
+                        {
+                            result = modeller.GetUnion();
+                        }
+                        break;
+
+                    case "groupdifference":
+                        {
+                            result = modeller.GetDifference();
+                        }
+                        break;
+
+                    case "groupintersection":
+                        {
+                            result = modeller.GetIntersection();
+                        }
+                        break;
                 }
-                int[] ids = result.GetIndices();
-                for (int i = 0; i < ids.Length; i++)
+
+                if (result != null)
                 {
-                    TriangleIndices.Add(ids[i]);
+                    AbsoluteObjectVertices = new Point3DCollection();
+                    TriangleIndices = new System.Windows.Media.Int32Collection();
+                    Vector3D[] vc = result.GetVertices();
+                    foreach (Vector3D v in vc)
+                    {
+                        Point3D p = new Point3D(v.X, v.Y, v.Z);
+                        AbsoluteObjectVertices.Add(p);
+                        absoluteBounds.Adjust(p);
+                    }
+                    int[] ids = result.GetIndices();
+                    for (int i = 0; i < ids.Length; i++)
+                    {
+                        TriangleIndices.Add(ids[i]);
+                    }
+                    AbsoluteToRelative();
+                    SetMesh();
+                    res = true;
                 }
-                AbsoluteToRelative();
-                SetMesh();
             }
+            return res;
         }
 
         private void AbsoluteToRelative()
@@ -184,12 +193,11 @@ namespace Make3D.Models
             RelativeObjectVertices = new Point3DCollection();
             foreach (Point3D pnt in AbsoluteObjectVertices)
             {
-               // Point3D p = new Point3D((pnt.X / groupScale.X) , (pnt.Y / groupScale.Y), (pnt.Z / groupScale.Z) );
-                Point3D p = new Point3D((pnt.X - Position.X) / groupScale.X, (pnt.Y  - Position.Y)/ groupScale.Y, (pnt.Z - Position.Z) / groupScale.Z);
+                // Point3D p = new Point3D((pnt.X / groupScale.X) , (pnt.Y / groupScale.Y), (pnt.Z / groupScale.Z) );
+                Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
                 RelativeObjectVertices.Add(p);
             }
             scale = groupScale;
-
         }
 
         internal override void Remesh()
@@ -220,13 +228,31 @@ namespace Make3D.Models
             sc.Y = GetDouble(sn, "Y");
             sc.Z = GetDouble(sn, "Z");
             Scale = sc;
+            RelativeObjectVertices = new Point3DCollection();
+            XmlNodeList vtl = nd.SelectNodes("v");
+            foreach (XmlNode vn in vtl)
+            {
+                XmlElement el = vn as XmlElement;
+                Point3D pv = new Point3D();
+                pv.X = GetDouble(el, "X");
+                pv.Y = GetDouble(el, "Y");
+                pv.Z = GetDouble(el, "Z");
+                RelativeObjectVertices.Add(pv);
+            }
 
-            XmlNode rt = nd.SelectSingleNode("Rotation");
-            Point3D r = new Point3D();
-            r.X = GetDouble(rt, "X");
-            r.Y = GetDouble(rt, "Y");
-            r.Z = GetDouble(rt, "Z");
-            Rotation = r;
+            TriangleIndices = new Int32Collection();
+            XmlNodeList ftl = nd.SelectNodes("f");
+            foreach (XmlNode vn in ftl)
+            {
+                XmlElement el = vn as XmlElement;
+                string tri = el.GetAttribute("v");
+                String[] words = tri.Split(',');
+                TriangleIndices.Add(Convert.ToInt32(words[0]));
+                TriangleIndices.Add(Convert.ToInt32(words[1]));
+                TriangleIndices.Add(Convert.ToInt32(words[2]));
+            }
+            RelativeToAbsolute();
+            SetMesh();
             XmlNodeList nodes = nd.ChildNodes;
             bool left = true;
             foreach (XmlNode sub in nodes)
@@ -245,9 +271,11 @@ namespace Make3D.Models
                 }
             }
 
-            Init();
+            //   Init();
             Position = p;
             Scale = sc;
+            RelativeToAbsolute();
+            SetMesh();
         }
 
         private Object3D ReadObject(XmlNode nd)
@@ -290,12 +318,22 @@ namespace Make3D.Models
             scl.SetAttribute("Y", Scale.Y.ToString());
             scl.SetAttribute("Z", Scale.Z.ToString());
             ele.AppendChild(scl);
-
-            XmlElement rot = doc.CreateElement("Rotation");
-            rot.SetAttribute("X", Rotation.X.ToString());
-            rot.SetAttribute("Y", Rotation.Y.ToString());
-            rot.SetAttribute("Z", Rotation.Z.ToString());
-            ele.AppendChild(rot);
+            foreach (Point3D v in RelativeObjectVertices)
+            {
+                XmlElement vertEle = doc.CreateElement("v");
+                vertEle.SetAttribute("X", v.X.ToString("F5"));
+                vertEle.SetAttribute("Y", v.Y.ToString("F5"));
+                vertEle.SetAttribute("Z", v.Z.ToString("F5"));
+                ele.AppendChild(vertEle);
+            }
+            for (int i = 0; i < TriangleIndices.Count; i += 3)
+            {
+                XmlElement faceEle = doc.CreateElement("f");
+                faceEle.SetAttribute("v", TriangleIndices[i].ToString() + "," +
+                                          TriangleIndices[i + 1].ToString() + "," +
+                                          TriangleIndices[i + 2].ToString());
+                ele.AppendChild(faceEle);
+            }
             leftObject.Write(doc, ele);
             rightObject.Write(doc, ele);
         }
@@ -306,13 +344,13 @@ namespace Make3D.Models
             res.Name = "";
             res.primType = this.primType;
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
-            res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
+
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.Color = this.Color;
             res.leftObject = this.leftObject.Clone();
             res.rightObject = this.rightObject.Clone();
             res.RelativeObjectVertices = new Point3DCollection();
-            foreach( Point3D po in this.RelativeObjectVertices)
+            foreach (Point3D po in this.RelativeObjectVertices)
             {
                 Point3D pn = new Point3D(po.X, po.Y, po.Z);
                 res.RelativeObjectVertices.Add(po);
@@ -329,9 +367,31 @@ namespace Make3D.Models
             res.TriangleIndices = new Int32Collection();
             for (int i = 0; i < TriangleIndices.Count; i++)
             {
-               res.TriangleIndices.Add(this.TriangleIndices[i]);
+                res.TriangleIndices.Add(this.TriangleIndices[i]);
             }
             return res;
+        }
+
+        public override Object3D ConvertToMesh()
+        {
+            Object3D neo = new Object3D();
+            neo.Name = Name;
+            neo.Description = Description;
+            neo.PrimType = "Mesh";
+            neo.Color = Color;
+            neo.Scale = new Scale3D(Scale.X, Scale.Y, Scale.Z);
+
+            neo.Position = new Point3D(Position.X, Position.Y, Position.Z);
+            neo.RelativeObjectVertices = RelativeObjectVertices;
+            RelativeObjectVertices = null;
+            neo.TriangleIndices = TriangleIndices;
+            TriangleIndices = null;
+            AbsoluteObjectVertices = AbsoluteObjectVertices;
+            AbsoluteObjectVertices = null;
+            neo.AbsoluteBounds = AbsoluteBounds;
+            AbsoluteBounds = null;
+            //neo.Unitise();
+            return neo;
         }
     }
 }

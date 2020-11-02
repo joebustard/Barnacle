@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Views"
         mc:Ignorable="d"
-        Title="Multi Paste" Height="150" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="ToolWindow">
+        Title="Multi Paste" Height="200" Width="400" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="ToolWindow">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -16,7 +16,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
-
+            <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
@@ -52,6 +52,14 @@
             <TextBox x:Name="SpaceBox" Grid.Column="1" Width="30" HorizontalAlignment="Left"  VerticalAlignment="Center">1.0</TextBox>
         </Grid>
         <Grid Grid.Row="3" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0">Alternating offset</Label>
+            <TextBox x:Name="AltBox" Grid.Column="1" Width="30" HorizontalAlignment="Left"  VerticalAlignment="Center">0.0</TextBox>
+        </Grid>
+        <Grid Grid.Row="4" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />

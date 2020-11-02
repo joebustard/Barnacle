@@ -24,6 +24,7 @@ namespace Make3D.Views
             NotificationManager.Subscribe("UpdateDisplay", UpdateDisplay);
             NotificationManager.Subscribe("MultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("KeyUp", OnKeyUp);
+            NotificationManager.Subscribe("KeyDown", OnKeyDown);
             NotificationManager.Subscribe("Settings", OnSettings);
             UpdateDisplay(null);
 
@@ -33,9 +34,8 @@ namespace Make3D.Views
         private void OnSettings(object param)
         {
             Settings dlg = new Settings();
-            if ( dlg.ShowDialog()==true)
+            if (dlg.ShowDialog() == true)
             {
-
             }
         }
 
@@ -43,6 +43,13 @@ namespace Make3D.Views
         {
             KeyEventArgs e = param as KeyEventArgs;
             vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+                  Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+        }
+
+        private void OnKeyDown(object param)
+        {
+            KeyEventArgs e = param as KeyEventArgs;
+            vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
                   Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
         }
 
@@ -56,6 +63,7 @@ namespace Make3D.Views
                     MultiPasteConfig cfg = new MultiPasteConfig();
                     cfg.Repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
                     cfg.Spacing = Convert.ToDouble(dlg.SpaceBox.Text);
+                    cfg.AlternatingOffset = Convert.ToDouble(dlg.AltBox.Text);
                     if (dlg.DirectionX.IsChecked == true)
                     {
                         cfg.Direction = "X";
@@ -154,6 +162,12 @@ namespace Make3D.Views
         {
             vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
                              Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+        }
+
+        private void UserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+                                 Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
         }
     }
 }

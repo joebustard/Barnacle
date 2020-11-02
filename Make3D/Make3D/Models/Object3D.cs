@@ -18,7 +18,7 @@ namespace Make3D.Models
         // This mesh is used by the view to display the object
         // Its vertices are absolute, i.e. have been translated
         // and rotated etc.
-        private MeshGeometry3D mesh;
+        private MeshGeometry3D surfaceMesh;
 
         private Vector3DCollection normals;
         protected Point3D position;
@@ -31,7 +31,7 @@ namespace Make3D.Models
         {
             try
             {
-                mesh = new MeshGeometry3D();
+                surfaceMesh = new MeshGeometry3D();
                 relativeObjectVertices = new Point3DCollection();
                 absoluteObjectVertices = new Point3DCollection();
                 triangleIndices = new Int32Collection();
@@ -48,6 +48,13 @@ namespace Make3D.Models
                 MessageBox.Show(ex.Message);
                 System.Diagnostics.Debug.WriteLine(ex.StackTrace);
             }
+        }
+
+        public virtual Object3D ConvertToMesh()
+        {
+            PrimType = "Mesh";
+            //Unitise();
+            return this;
         }
 
         public Bounds3D AbsoluteBounds
@@ -67,12 +74,12 @@ namespace Make3D.Models
 
         public MeshGeometry3D Mesh
         {
-            get { return mesh; }
+            get { return surfaceMesh; }
             set
             {
-                if (mesh != value)
+                if (surfaceMesh != value)
                 {
-                    mesh = value;
+                    surfaceMesh = value;
                 }
             }
         }
@@ -145,6 +152,34 @@ namespace Make3D.Models
         {
             get { return triangleIndices; }
             set { triangleIndices = value; }
+        }
+
+        public int TotalFaces
+        {
+            get
+            {
+                int result = 0;
+                if (triangleIndices != null)
+                {
+                    result = triangleIndices.Count / 3;
+                }
+                return result;
+            }
+        }
+
+        internal void FlipX()
+        {
+            if (PrimType == "Mesh")
+            {
+                Point3DCollection tmp = new Point3DCollection();
+                foreach (Point3D v in relativeObjectVertices)
+                {
+                    Point3D pn = new Point3D(-v.X, v.Y, v.Z);
+                    tmp.Add(pn);
+                }
+                relativeObjectVertices = tmp;
+                Remesh();
+            }
         }
 
         public void LoadObject(string v)
@@ -232,48 +267,45 @@ namespace Make3D.Models
                 }
                 Unitise();
                 RelativeToAbsolute();
-                mesh.Positions = absoluteObjectVertices;
-                mesh.TriangleIndices = triangleIndices;
-                mesh.Normals = normals;
+                surfaceMesh.Positions = absoluteObjectVertices;
+                surfaceMesh.TriangleIndices = triangleIndices;
+                surfaceMesh.Normals = normals;
             }
+        }
+
+        internal void FlipY()
+        {
+            if (PrimType == "Mesh")
+            {
+                Point3DCollection tmp = new Point3DCollection();
+                foreach (Point3D v in relativeObjectVertices)
+                {
+                    Point3D pn = new Point3D(v.X, -v.Y, v.Z);
+                    tmp.Add(pn);
+                }
+                relativeObjectVertices = tmp;
+                Remesh();
+            }
+        }
+
+        internal void FlipInside()
+        {
+            for (int i = 0; i < triangleIndices.Count - 2; i += 3)
+            {
+                int tmp = triangleIndices[i + 1];
+                triangleIndices[i + 1] = triangleIndices[i + 2];
+                triangleIndices[i + 2] = tmp;
+            }
+            Remesh();
         }
 
         public void MoveToCentre()
         {
             // actually centre by x and z, then floor y
-            double minX = double.MaxValue;
-            double minY = double.MaxValue;
-            double minZ = double.MaxValue;
-
-            double maxX = double.MinValue;
-            double maxZ = double.MinValue;
-            foreach (Point3D pd in absoluteObjectVertices)
-            {
-                if (pd.X < minX)
-                {
-                    minX = pd.X;
-                }
-                if (pd.Y < minY)
-                {
-                    minY = pd.Y;
-                }
-                if (pd.Z < minZ)
-                {
-                    minZ = pd.Z;
-                }
-
-                if (pd.X > maxX)
-                {
-                    maxX = pd.X;
-                }
-
-                if (pd.Z > maxZ)
-                {
-                    maxZ = pd.Z;
-                }
-            }
-
-            Position = new Point3D(0, Position.Y - minY, 0);
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue); ;
+            PointUtils.MinMax(absoluteObjectVertices, ref min, ref max);
+            Position = new Point3D(0, Position.Y - min.Y, 0);
         }
 
         public void MoveToFloor()
@@ -290,12 +322,11 @@ namespace Make3D.Models
             Position = new Point3D(Position.X, Position.Y - minY, Position.Z);
         }
 
-        public void RelativeToAbsolute()
+        public void Rotate(Point3D Rotation)
         {
-            if (absoluteObjectVertices != null)
+            if (relativeObjectVertices != null)
             {
-                absoluteObjectVertices.Clear();
-                absoluteBounds = new Bounds3D();
+                Point3DCollection tmp = new Point3DCollection();
                 double r1 = DegreesToRad(Rotation.Y);
                 double r2 = DegreesToRad(Rotation.Z);
                 double r3 = DegreesToRad(Rotation.X);
@@ -322,25 +353,45 @@ namespace Make3D.Models
                 var Azz = cosb * cosc;
                 foreach (Point3D cp in relativeObjectVertices)
                 {
-                    /*
-                     *   Point3D rp = new Point3D();
+                    Point3D rp = new Point3D();
                     rp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
                     rp.Y = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
                     rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
-                    Point3D ap = new Point3D();
-                    ap.X = Position.X + (rp.X * Scale.X);
-                    ap.Y = Position.Y + (rp.Y * Scale.Y);
-                    ap.Z = Position.Z + (rp.Z * Scale.Z);
-                    */
+                    AdjustBounds(rp);
+                    tmp.Add(rp);
+                }
+                relativeObjectVertices = tmp;
+            }
+        }
 
-                    Point3D rp = new Point3D();
-                    rp.X = Axx * cp.X * Scale.X + Axy * cp.Y * Scale.Y + Axz * cp.Z * Scale.Z;
-                    rp.Y = Ayx * cp.X * Scale.X + Ayy * cp.Y * Scale.Y + Ayz * cp.Z * Scale.Z;
-                    rp.Z = Azx * cp.X * Scale.X + Azy * cp.Y * Scale.Y + Azz * cp.Z * Scale.Z;
+        public void ScaleMesh(double sx, double sy, double sz)
+        {
+            Point3DCollection tmp = new Point3DCollection();
+            foreach (Point3D cp in relativeObjectVertices)
+            {
+                Point3D ap = new Point3D();
+                ap.X = sx * cp.X;
+                ap.Y = sy * cp.Y;
+                ap.Z = sz * cp.Z;
+                //AdjustBounds(ap);
+                tmp.Add(ap);
+            }
+            relativeObjectVertices = tmp;
+        }
+
+        public void RelativeToAbsolute()
+        {
+            if (absoluteObjectVertices != null)
+            {
+                absoluteObjectVertices.Clear();
+                absoluteBounds = new Bounds3D();
+
+                foreach (Point3D cp in relativeObjectVertices)
+                {
                     Point3D ap = new Point3D();
-                    ap.X = Position.X + (rp.X);
-                    ap.Y = Position.Y + (rp.Y);
-                    ap.Z = Position.Z + (rp.Z);
+                    ap.X = Position.X + (cp.X);
+                    ap.Y = Position.Y + (cp.Y);
+                    ap.Z = Position.Z + (cp.Z);
                     AdjustBounds(ap);
                     absoluteObjectVertices.Add(ap);
                 }
@@ -379,7 +430,7 @@ namespace Make3D.Models
                 case "roof":
                     {
                         PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Green);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Lavender);
                     }
                     break;
 
@@ -393,7 +444,7 @@ namespace Make3D.Models
                 case "cone":
                     {
                         PrimitiveGenerator.GenerateCone(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals, Colors.Purple);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.LightSeaGreen);
                     }
                     break;
 
@@ -435,20 +486,55 @@ namespace Make3D.Models
                 case "rightangle":
                     {
                         PrimitiveGenerator.GenerateRightAngle(ref pnts, ref indices, ref normals);
-                        AddPrimitiveToObject(pnts, indices, normals,  Color.FromRgb(0x00, 0xAB, 0xEF));
+                        AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0x00, 0xAB, 0xEF));
                     }
                     break;
+
                 case "pointy":
                     {
                         PrimitiveGenerator.GeneratePointy(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0xEF, 0xAB, 0x00));
                     }
                     break;
+
                 default:
                     {
                         //   obj.LoadObject(pth + obType+".txt");
                     }
                     break;
+            }
+        }
+
+        internal void CalcScale(bool move = true)
+        {
+            // a quick function to calculate the scale of an object read in, into a unit sized object
+            // centered on 0,0,0
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(relativeObjectVertices, ref min, ref max);
+
+            double scaleX = max.X - min.X;
+
+            double scaleY = max.Y - min.Y;
+
+            double scaleZ = max.Z - min.Z;
+
+            double midx = min.X + (scaleX / 2);
+            double midy = min.Y + (scaleY / 2);
+            double midz = min.Z + (scaleZ / 2);
+
+            for (int i = 0; i < relativeObjectVertices.Count; i++)
+            {
+                Point3D moved = new Point3D(relativeObjectVertices[i].X - midx,
+                                             relativeObjectVertices[i].Y - midy,
+                                             relativeObjectVertices[i].Z - midz);
+
+                relativeObjectVertices[i] = moved;
+            }
+            Scale = new Scale3D(scaleX, scaleY, scaleZ);
+            if (move)
+            {
+                Position = new Point3D(midx, midy, midz);
             }
         }
 
@@ -497,12 +583,6 @@ namespace Make3D.Models
             sc.Z = GetDouble(sn, "Z");
             Scale = sc;
 
-            XmlNode rt = nd.SelectSingleNode("Rotation");
-            Point3D r = new Point3D();
-            r.X = GetDouble(rt, "X");
-            r.Y = GetDouble(rt, "Y");
-            r.Z = GetDouble(rt, "Z");
-            Rotation = r;
             if (PrimType != "Mesh")
             {
                 BuildPrimitive(PrimType);
@@ -545,9 +625,9 @@ namespace Make3D.Models
 
         internal void SetMesh()
         {
-            mesh.Positions = absoluteObjectVertices;
-            mesh.TriangleIndices = triangleIndices;
-            mesh.Normals = normals;
+            surfaceMesh.Positions = absoluteObjectVertices;
+            surfaceMesh.TriangleIndices = triangleIndices;
+            surfaceMesh.Normals = normals;
         }
 
         internal virtual void Write(XmlDocument doc, XmlElement docNode)
@@ -570,29 +650,21 @@ namespace Make3D.Models
             scl.SetAttribute("Z", Scale.Z.ToString());
             ele.AppendChild(scl);
 
-            XmlElement rot = doc.CreateElement("Rotation");
-            rot.SetAttribute("X", Rotation.X.ToString());
-            rot.SetAttribute("Y", Rotation.Y.ToString());
-            rot.SetAttribute("Z", Rotation.Z.ToString());
-            ele.AppendChild(rot);
-            if (PrimType == "Mesh")
+            foreach (Point3D v in relativeObjectVertices)
             {
-                foreach (Point3D v in relativeObjectVertices)
-                {
-                    XmlElement vertEle = doc.CreateElement("v");
-                    vertEle.SetAttribute("X", v.X.ToString("F5"));
-                    vertEle.SetAttribute("Y", v.Y.ToString("F5"));
-                    vertEle.SetAttribute("Z", v.Z.ToString("F5"));
-                    ele.AppendChild(vertEle);
-                }
-                for (int i = 0; i < triangleIndices.Count; i += 3)
-                {
-                    XmlElement faceEle = doc.CreateElement("f");
-                    faceEle.SetAttribute("v", triangleIndices[i].ToString() + "," +
-                                              triangleIndices[i + 1].ToString() + "," +
-                                              triangleIndices[i + 2].ToString());
-                    ele.AppendChild(faceEle);
-                }
+                XmlElement vertEle = doc.CreateElement("v");
+                vertEle.SetAttribute("X", v.X.ToString("F5"));
+                vertEle.SetAttribute("Y", v.Y.ToString("F5"));
+                vertEle.SetAttribute("Z", v.Z.ToString("F5"));
+                ele.AppendChild(vertEle);
+            }
+            for (int i = 0; i < triangleIndices.Count; i += 3)
+            {
+                XmlElement faceEle = doc.CreateElement("f");
+                faceEle.SetAttribute("v", triangleIndices[i].ToString() + "," +
+                                          triangleIndices[i + 1].ToString() + "," +
+                                          triangleIndices[i + 2].ToString());
+                ele.AppendChild(faceEle);
             }
         }
 
@@ -651,14 +723,14 @@ namespace Make3D.Models
             return ((x / 360.0) * Math.PI * 2);
         }
 
-        private Point3D Rotate(Point3D cp)
+        private Point3D RotateMesh(Point3D cp)
         {
             Point3D res = new Point3D();
 
             return res;
         }
 
-        private void Unitise()
+        public void Unitise()
         {
             // a quick function to convert the coordinates of an object read in, into a unit sized object
             // centered on 0,0,0
@@ -727,20 +799,7 @@ namespace Make3D.Models
                 moved.Z -= 0.5;
                 relativeObjectVertices[i] = moved;
             }
-
-            // generate some c# !!
-
-            File.WriteAllText("C:\\tmp\\t.txt", "");
-            foreach (Point3D p in relativeObjectVertices)
-            {
-                File.AppendAllText("C:\\tmp\\t.txt", $" pnts.Add( new Point3D( {p.X:F3},{p.Y:F3},{p.Z:F3}));");
-                File.AppendAllText("C:\\tmp\\t.txt", "\r\n");
-            }
-            foreach (int f in TriangleIndices)
-            {
-                File.AppendAllText("C:\\tmp\\t.txt", $"indices.Add({f});");
-                File.AppendAllText("C:\\tmp\\t.txt", "\r\n");
-            }
+            Scale = new Scale3D(scaleX, scaleY, scaleZ);
         }
 
         public virtual Object3D Clone()
@@ -751,9 +810,34 @@ namespace Make3D.Models
             res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.Color = this.Color;
-            res.BuildPrimitive(res.primType);
+            if (res.PrimType != "Mesh")
+            {
+                res.BuildPrimitive(res.primType);
+            }
+            else
+            {
+                foreach (Point3D p in this.relativeObjectVertices)
+                {
+                    res.relativeObjectVertices.Add(new Point3D(p.X, p.Y, p.Z));
+                }
 
+                foreach (int i in this.triangleIndices)
+                {
+                    res.triangleIndices.Add(i);
+                }
+            }
+            res.Remesh();
             return res;
+        }
+
+        public void SwapYZAxies()
+        {
+            Point3DCollection tmp = new Point3DCollection();
+            foreach (Point3D pn in relativeObjectVertices)
+            {
+                tmp.Add(new Point3D(pn.X, pn.Z, pn.Y));
+            }
+            relativeObjectVertices = tmp;
         }
     }
 }

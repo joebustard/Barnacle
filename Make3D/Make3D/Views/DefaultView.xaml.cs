@@ -40,15 +40,28 @@ namespace Make3D.Views
             }
         }
 
+        private void CheckSaveFirst(object sender)
+        {
+            if (BaseViewModel.Document.Dirty)
+            {
+                MessageBoxResult res = MessageBox.Show("Document has changed. Save before first?", "Warning", MessageBoxButton.YesNoCancel);
+                if (res == MessageBoxResult.Yes)
+                {
+                    SaveFile(sender);
+                }
+            }
+        }
+
         private void OpenFile(object sender)
         {
+            CheckSaveFirst(sender);
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
                 BaseViewModel.Document.Load(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
-                //   UndoManager.Clear();
+                undoer.ClearUndoFiles();
             }
         }
 
@@ -63,8 +76,10 @@ namespace Make3D.Views
                 //   UndoManager.Clear();
             }
         }
+
         private void OpenRecentFile(object sender)
         {
+            CheckSaveFirst(sender);
             string f = sender.ToString();
             if (File.Exists(f))
             {

@@ -44,7 +44,7 @@ namespace Make3D.ViewModels
             SaveAsCommand = new RelayCommand(OnSaveAs);
             InsertCommand = new RelayCommand(OnInsert);
 
-            //  UndoCommand = new RelayCommand(OnUndo);
+            UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
             CopyCommand = new RelayCommand(OnCopy);
             PasteCommand = new RelayCommand(OnPaste);
@@ -58,9 +58,12 @@ namespace Make3D.ViewModels
             Zoom100Command = new RelayCommand(onZoomReset);
             //  PageCommand = new RelayCommand(OnPageNav);
             AlignCommand = new RelayCommand(OnAlignment);
+            DistributeCommand = new RelayCommand(OnDistribute);
+            FlipCommand = new RelayCommand(OnFlip);
             SizeCommand = new RelayCommand(OnSize);
             GroupCommand = new RelayCommand(OnGroup);
             SelectCommand = new RelayCommand(OnSelect);
+            ImportCommand = new RelayCommand(OnImport);
             ExportCommand = new RelayCommand(OnExport);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
@@ -96,7 +99,20 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetFontUnderLine", SetFontUnderline);
             NotificationManager.Subscribe("SetTextAlignment", SetTextAlignment);
             NotificationManager.Subscribe("SetStatusText1", SetStatusText1);
+            NotificationManager.Subscribe("SetStatusText3", SetStatusText3);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnDistribute(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify("Distribute", s);
+        }
+
+        private void OnFlip(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify("Flip", s);
         }
 
         private void OnSettings(object obj)
@@ -109,6 +125,11 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("InsertFile", obj);
         }
 
+        private void OnImport(object obj)
+        {
+            NotificationManager.Notify("Import", obj);
+        }
+
         private void OnExport(object obj)
         {
             NotificationManager.Notify("Export", obj);
@@ -117,6 +138,11 @@ namespace Make3D.ViewModels
         private void SetStatusText1(object param)
         {
             StatusBlockText1 = param.ToString();
+        }
+
+        private void SetStatusText3(object param)
+        {
+            StatusBlockText3 = param.ToString();
         }
 
         private void OnNew(object obj)
@@ -201,6 +227,8 @@ namespace Make3D.ViewModels
         public ICommand AddCommand { get; set; }
         public ICommand AddPageCommand { get; set; }
         public ICommand AlignCommand { get; set; }
+        public ICommand DistributeCommand { get; set; }
+        public ICommand FlipCommand { get; set; }
 
         public bool BoldChecked
         {
@@ -354,6 +382,7 @@ namespace Make3D.ViewModels
 
         public ICommand SaveAsCommand { get; set; }
         public ICommand SaveCommand { get; set; }
+        public ICommand ImportCommand { get; set; }
         public ICommand ExportCommand { get; set; }
         public ICommand SettingsCommand { get; set; }
         public ICommand SelectCommand { get; set; }

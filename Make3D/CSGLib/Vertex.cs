@@ -55,8 +55,8 @@ namespace CSGLib
         private Status _Status;
 
         /** tolerance value to test equalities */
-        //private static readonly double EqualityTolerance = 1e-5f;
-        private static readonly double EqualityTolerance = 1e-8f;
+        private static readonly double EqualityTolerance = 1e-10f;
+        //private static readonly double EqualityTolerance = 1e-8f;
         //----------------------------------CONSTRUCTORS--------------------------------//
 
         /**
@@ -209,12 +209,22 @@ namespace CSGLib
         * @return array of the adjacent vertices
         */
 
-        public Vertex[] GetAdjacentVertices()
+        public List<Vertex> GetAdjacentVertices(bool unknownOnly = true)
         {
-            Vertex[] vertices = new Vertex[AdjacentVertices.Count];
+            List<Vertex> vertices = new List<Vertex>();
             for (int i = 0; i < AdjacentVertices.Count; i++)
             {
-                vertices[i] = AdjacentVertices[i];
+                if (unknownOnly == true)
+                {
+                    if (AdjacentVertices[i].Status == Status.UNKNOWN)
+                    {
+                        vertices.Add(AdjacentVertices[i]);
+                    }
+                }
+                else
+                {
+                    vertices.Add(AdjacentVertices[i]);
+                }
             }
             return vertices;
         }
@@ -224,7 +234,12 @@ namespace CSGLib
         *
         * @return vertex status - UNKNOWN, BOUNDARY, INSIDE or OUTSIDE
         */
-        public Status Status => _Status;
+
+        public Status Status
+        {
+            get { return _Status; }
+            set { _Status = value; }
+        }
 
         //----------------------------------OTHERS--------------------------------------//
 
@@ -254,13 +269,14 @@ namespace CSGLib
             _Status = status;
 
             //mark adjacent vertices
-            Vertex[] adjacentVerts = GetAdjacentVertices();
-            for (int i = 0; i < adjacentVerts.Length; i++)
+            List<Vertex> adjacentVerts = GetAdjacentVertices();
+            foreach (Vertex v in adjacentVerts)
             {
-                if (adjacentVerts[i].Status == Status.UNKNOWN)
-                {
-                    adjacentVerts[i].Mark(status);
-                }
+                v.Status = status;
+            }
+            foreach (Vertex v in adjacentVerts)
+            {
+                v.Mark(status);
             }
         }
     }

@@ -5,13 +5,18 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Make3D.Views"
              xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
-             d:DesignHeight="400" d:DesignWidth="75">
+             d:DesignHeight="400" d:DesignWidth="100">
     <UserControl.DataContext>
         <ViewModels:ObjectPropertiesViewModel />
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
             <RowDefinition Height="25" />
@@ -35,37 +40,47 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25" />
             <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="25" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0"  Grid.ColumnSpan="2" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Position</Label>
-        <Label Grid.Row="1"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
-        <TextBox Grid.Row="1" Grid.Column="1" FontSize="9" Text="{Binding PositionX}" />
+        <Label Grid.Row="0"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Object</Label>
+        <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="9" Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
+        <!--
+        <Button Grid.Row="2" Grid.Column="1" Background="{Binding ObjectColour}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content=" " Click="Button_Click" />-->
+        <xctk:ColorPicker x:Name="_colorPicker"
+                                   VerticalAlignment="Top" Grid.Row="2" Grid.ColumnSpan="3"  IsOpen="False" SelectedColor="{Binding ObjectColour}" />
+        <Label Grid.Row="3"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Position</Label>
+        <Label Grid.Row="4"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
+        <TextBox Grid.Row="4" Grid.Column="1" FontSize="9" Text="{Binding PositionX}" />
 
-        <Label Grid.Row="2"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
-        <TextBox Grid.Row="2" Grid.Column="1" FontSize="9" Text="{Binding PositionY}" />
+        <Label Grid.Row="5"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
+        <TextBox Grid.Row="5" Grid.Column="1" FontSize="9" Text="{Binding PositionY}" />
 
-        <Label Grid.Row="3"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
-        <TextBox Grid.Row="3" Grid.Column="1" FontSize="9" Text="{Binding PositionZ}" />
-        <UniformGrid Grid.Row="4" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Rows="1">
-        <Button x:Name="SetFloor" Content="Floor" FontSize="8" Command="{Binding MoveToFloorCommand}" ToolTip="Set object on the floor"/>
-            <Button x:Name="SetCentre" Content="Centre" FontSize="8" Command="{Binding MoveToCentreCommand}" ToolTip="Move object to centre of the floor"/>
+        <Label Grid.Row="6"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
+        <TextBox Grid.Row="6" Grid.Column="1" FontSize="9" Text="{Binding PositionZ}" />
+        <UniformGrid Grid.Row="7" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Rows="1">
+            <Button x:Name="SetFloor" Content="Floor" FontSize="8" Command="{Binding MoveToFloorCommand}" ToolTip="Set object on the floor" />
+            <Button x:Name="SetCentre" Content="Centre" FontSize="8" Command="{Binding MoveToCentreCommand}" ToolTip="Move object to centre of the floor" />
         </UniformGrid>
-        <Label Grid.Row="5"  Grid.ColumnSpan="2" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Size</Label>
-        <Label Grid.Row="6"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">L(X)</Label>
-        <TextBox Grid.Row="6" Grid.Column="1" FontSize="9" Text="{Binding ScaleX}" />
+        <Label Grid.Row="8"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Size</Label>
+        <Label Grid.Row="9"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">L(X)</Label>
+        <TextBox Grid.Row="9" Grid.Column="1" FontSize="9" Text="{Binding ScaleX }" />
 
-        <Label Grid.Row="7"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">H(Y)</Label>
-        <TextBox Grid.Row="7" Grid.Column="1" FontSize="9" Text="{Binding ScaleY}" />
+        <Label Grid.Row="10"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">H(Y)</Label>
+        <TextBox Grid.Row="10" Grid.Column="1" FontSize="9" Text="{Binding ScaleY }" />
 
-        <Label Grid.Row="8"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">W(Z)</Label>
-        <TextBox Grid.Row="8" Grid.Column="1" FontSize="9" Text="{Binding ScaleZ}" />
+        <Label Grid.Row="11"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">W(Z)</Label>
+        <TextBox Grid.Row="11" Grid.Column="1" FontSize="9" Text="{Binding ScaleZ }" />
 
-        <Label Grid.Row="9"  Grid.ColumnSpan="2" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Rotation</Label>
-        <Label Grid.Row="10"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
-        <TextBox Grid.Row="10" Grid.Column="1" FontSize="9" Text="{Binding RotationX}" />
+        <Label Grid.Row="12"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Rotation</Label>
+        <Label Grid.Row="13"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
+        <TextBox Grid.Row="13" Grid.Column="1" FontSize="9" Text="{Binding RotationX}" />
+        <Button Grid.Row="13" Grid.Column="2" FontSize="9" Content="." Command="{Binding RotateXCommand}" />
 
-        <Label Grid.Row="11"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
-        <TextBox Grid.Row="11" Grid.Column="1" FontSize="9" Text="{Binding RotationY}" />
-        <Label Grid.Row="12"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
-        <TextBox Grid.Row="12" Grid.Column="1" FontSize="9" Text="{Binding RotationZ}" />
+        <Label Grid.Row="14"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
+        <TextBox Grid.Row="14" Grid.Column="1" FontSize="9" Text="{Binding RotationY}" />
+        <Button Grid.Row="14" Grid.Column="2" FontSize="9" Content="." Command="{Binding RotateYCommand}" />
+        <Label Grid.Row="15"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
+        <TextBox Grid.Row="15" Grid.Column="1" FontSize="9" Text="{Binding RotationZ}" />
+        <Button Grid.Row="15" Grid.Column="2" FontSize="9" Content="." Command="{Binding RotateZCommand}" />
     </Grid>
 </UserControl>

@@ -26,7 +26,13 @@ namespace Make3D
 
         public static void Notify(string name, object param)
         {
+            List<ObserverDef> tmp = new List<ObserverDef>();
             foreach (ObserverDef df in observers)
+            {
+                tmp.Add(df);
+            }
+
+            foreach (ObserverDef df in tmp)
             {
                 if (df.messageName == name)
                 {

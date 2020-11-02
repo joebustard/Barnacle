@@ -39,6 +39,17 @@ namespace Make3D.Models
             upper.Z = double.MinValue;
         }
 
+        public Bounds3D(Bounds3D b)
+        {
+            lower.X = b.Lower.X;
+            lower.Y = b.Lower.Y;
+            lower.Z = b.Lower.Z;
+
+            upper.X = b.Upper.X;
+            upper.Y = b.Upper.Y;
+            upper.Z = b.Upper.Z;
+        }
+
         public void Zero()
         {
             lower.X = 0;

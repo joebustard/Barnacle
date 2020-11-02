@@ -1,30 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Make3D.ViewModels
 {
-   internal class CameraViewModel : BaseViewModel, INotifyPropertyChanged
+    internal class CameraViewModel : BaseViewModel, INotifyPropertyChanged
     {
-
         private int buttonAreaHeight;
+
         public int ButtonAreaHeight
         {
             get { return buttonAreaHeight; }
-            set {  if (buttonAreaHeight != value)
+            set
+            {
+                if (buttonAreaHeight != value)
                 {
                     buttonAreaHeight = value;
                     NotifyPropertyChanged();
                 }
             }
         }
+
         public ICommand CameraCommand { get; set; }
         private Visibility cameraPaletteVisible;
+
         public Visibility CameraPaletteVisible
         {
             get
@@ -46,7 +45,7 @@ namespace Make3D.ViewModels
         {
             CameraCommand = new RelayCommand(OnCameraCommand);
             NotificationManager.Subscribe("CameraPaletteVisible", OnCameraPaletteVisibleChanged);
-            ButtonAreaHeight = 6 * 35;
+            ButtonAreaHeight = 4 * 36;
         }
 
         private void OnCameraCommand(object obj)
@@ -61,6 +60,5 @@ namespace Make3D.ViewModels
             Visibility v = (Visibility)param;
             CameraPaletteVisible = v;
         }
-
     }
 }

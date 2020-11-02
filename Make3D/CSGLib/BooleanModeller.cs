@@ -53,7 +53,7 @@ namespace CSGLib
         /** solid where boolean operations will be applied */
         private Part Object1;
         private Part Object2;
-
+        public bool State { get; set; }
         //--------------------------------CONSTRUCTORS----------------------------------//
 
         /**
@@ -66,19 +66,24 @@ namespace CSGLib
 
         public BooleanModeller(Solid solid1, Solid solid2)
         {
+            State = false;
             //representation to apply boolean operations
             Object1 = new Part(solid1);
             Object2 = new Part(solid2);
 
             //split the faces so that none of them intercepts each other
             //Logger.Log("Split Faces ob1 (ob2)\r\n");
-            Object1.SplitFaces(Object2);
-            // Logger.Log("Split Faces ob2 (ob1)\r\n");
-            Object2.SplitFaces(Object1);
-
-            //classify faces as being inside or outside the other solid
-            Object1.ClassifyFaces(Object2);
-            Object2.ClassifyFaces(Object1);
+            if (Object1.SplitFaces(Object2))
+            {
+                // Logger.Log("Split Faces ob2 (ob1)\r\n");
+                if (Object2.SplitFaces(Object1))
+                {
+                    //classify faces as being inside or outside the other solid
+                    Object1.ClassifyFaces(Object2);
+                    Object2.ClassifyFaces(Object1);
+                    State = true;
+                }
+            }
         }
 
         private BooleanModeller()
@@ -120,7 +125,10 @@ namespace CSGLib
 
         public Solid GetIntersection()
         {
-            return ComposeSolid(Status.INSIDE, Status.SAME, Status.INSIDE);
+            //   Object2.InvertInsideFaces();
+            Solid result = ComposeSolid(Status.INSIDE, Status.SAME, Status.INSIDE);
+            //Object2.InvertInsideFaces();
+            return result;
         }
 
         public Solid GetUnion()

@@ -1,10 +1,32 @@
 ﻿using System;
+using System.Reflection;
+using System.Windows;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
     public class PolarCamera
     {
+        public enum Orientations
+        {
+            Front,
+            Back,
+            Left,
+            Right,
+            Top,
+            Bottom
+        }
+
+        private Orientations orientation;
+
+        public Orientations Orientation
+        {
+            get
+            {
+                return orientation;
+            }
+        }
+
         private PolarCoordinate polarFrontHome;
         private PolarCoordinate polarBackHome;
         private PolarCoordinate polarLeftHome;
@@ -24,13 +46,22 @@ namespace Make3D.Models
         private Point3D cameraPos;
         public Point3D CameraPos { get { return cameraPos; } }
 
-
-        private Point3D dragDelta;
-        public Point3D DragDelta {  get { return dragDelta; } }
         public PolarCamera()
         {
             homeDistance = 300;
 
+            Init();
+        }
+
+        public PolarCamera(double d)
+        {
+            homeDistance = d;
+
+            Init();
+        }
+
+        private void Init()
+        {
             polarFrontHome = new PolarCoordinate(1.53, 1.243, homeDistance);
             polarBackHome = new PolarCoordinate(4.568, 1.243, homeDistance);
             polarRightHome = new PolarCoordinate(0.0, 1.483, homeDistance);
@@ -44,7 +75,7 @@ namespace Make3D.Models
             polarPos = new PolarCoordinate(0, 0, 0);
             Copy(polarFrontHome);
             ConvertPolarTo3D();
-            dragDelta = new Point3D(1, 1, 0);
+            orientation = Orientations.Front;
         }
 
         private void Copy(PolarCoordinate p)
@@ -62,37 +93,42 @@ namespace Make3D.Models
             double y = polarPos.Rho * Math.Cos(polarPos.Phi);
             cameraPos = new Point3D(x, y, z);
             distance = polarPos.Rho;
-            GenerateDragDelta();
+            SetOrientation();
         }
 
         // calculates the direction that move drags on the GUI should move objects
         // based roughly on where the camera is.
-        private void GenerateDragDelta()
+        private void SetOrientation()
         {
             if ((polarPos.Theta >= 0.76) && (polarPos.Theta < 2.35))
             {
                 // Front
-                dragDelta = new Point3D(1, 1, 0);
+
+                orientation = Orientations.Front;
             }
             if ((polarPos.Theta >= 2.35) && (polarPos.Theta < 4))
             {
                 // Left
-                dragDelta = new Point3D(0, 1, 1);
+
+                orientation = Orientations.Left;
             }
 
             if ((polarPos.Theta >= 4) && (polarPos.Theta < 5.54))
             {
                 // Back
-                dragDelta = new Point3D(-1, 1, 0);
+
+                orientation = Orientations.Back;
             }
-            if ((polarPos.Theta >= 5.54) && (polarPos.Theta <=6.28))
+            if ((polarPos.Theta >= 5.54) && (polarPos.Theta <= 6.2831856))
             {
                 // Right
+                orientation = Orientations.Right;
             }
             if ((polarPos.Theta >= 0) && (polarPos.Theta < 0.76))
             {
                 // Right
-                dragDelta = new Point3D(0, 1, -1);
+
+                orientation = Orientations.Right;
             }
         }
 
@@ -109,11 +145,27 @@ namespace Make3D.Models
 
         internal void Move(double dx, double dy)
         {
-            double dt = dx * 0.01;
-            double dp = dy * 0.01;
+            double dt = 0;
+            double dp = 0;
 
-            if (Math.Abs(dt) >= 0.01 || Math.Abs(dp) >= 0.01)
+            var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
+            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
 
+            var dpiX = (int)dpiXProperty.GetValue(null, null);
+            var dpiY = (int)dpiYProperty.GetValue(null, null);
+            double mmx = (dx * 25.4) / dpiX;
+            if (Math.Abs(mmx) > 0.00001)
+            {
+                double theta = mmx / distance;
+                dt = Math.Atan(theta);
+            }
+            double mmy = (dy * 25.4) / dpiY;
+            if (Math.Abs(mmy) > 0.00001)
+            {
+                double theta = mmy / distance;
+                dp = Math.Atan(theta);
+            }
+            if (Math.Abs(dt) >= 0.001 || Math.Abs(dp) >= 0.001)
             {
                 polarPos.Theta += dt;
                 polarPos.Phi += dp;

@@ -50,6 +50,8 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
+        private int maxSplitLevel = 200;
+
         /// <summary>
         /// tolerance value to test equalities
         /// </summary>
@@ -96,7 +98,7 @@ namespace CSGLib
                 v1 = verticesTemp[indices[i]];
                 v2 = verticesTemp[indices[i + 1]];
                 v3 = verticesTemp[indices[i + 2]];
-                AddFace(v1, v2, v3);
+                AddFace(v1, v2, v3, 0);
             }
 
             //create bound
@@ -224,8 +226,9 @@ namespace CSGLib
         /// Split faces so that none face is intercepted by a face of other object
         /// </summary>
         /// <param name="obj">the other object 3d used to make the split</param>
-        public void SplitFaces(Part obj)
+        public bool SplitFaces(Part obj)
         {
+            bool result = true;
             Line line;
             Face face1, face2;
             Segment segment1;
@@ -233,7 +236,7 @@ namespace CSGLib
             double distFace1Vert1, distFace1Vert2, distFace1Vert3, distFace2Vert1, distFace2Vert2, distFace2Vert3;
             int signFace1Vert1, signFace1Vert2, signFace1Vert3, signFace2Vert1, signFace2Vert2, signFace2Vert3;
             int numFacesBefore = NumFaces;
-            int numFacesStart = NumFaces;
+            int numFacesStart = NumFaces + obj.NumFaces;
 
             //if the objects bounds overlap...
             if (_Bound.Overlap(obj._Bound))
@@ -308,11 +311,11 @@ namespace CSGLib
                                             SplitFace(i, segment1, segment2);
 
                                             //prevent from infinite loop (with a loss of faces...)
-                                            //if(numFacesStart*20<getNumFaces())
-                                            //{
-                                            //  System.out.println("possible infinite loop situation: terminating faces split");
-                                            //  return;
-                                            //}
+                                            if (numFacesStart * 100 < NumFaces)
+                                            {
+                                                //Logger.Log("possible infinite loop situation: terminating faces split");
+                                                return false;
+                                            }
 
                                             //if the face in the position isn't the same, there was a break
                                             if (face1 != GetFace(i))
@@ -349,6 +352,7 @@ namespace CSGLib
                     }
                 }
             }
+            return result;
         }
 
         /// <summary>
@@ -358,7 +362,7 @@ namespace CSGLib
         /// <param name="v2">a face vertex</param>
         /// <param name="v3">a face vertex</param>
         /// <returns></returns>
-        private Face AddFace(Vertex v1, Vertex v2, Vertex v3)
+        private Face AddFace(Vertex v1, Vertex v2, Vertex v3, int splitLevel)
         {
             //  Logger.Log("AddFace\r\n");
             //    Logger.Log(v1.ToString() + "\r\n");
@@ -368,20 +372,22 @@ namespace CSGLib
             if (!(v1.Equals(v2) || v1.Equals(v3) || v2.Equals(v3)))
             {
                 Face face = new Face(v1, v2, v3);
-                if (face.GetArea() > EqualityTolerance)
+                face.SplitLevel = splitLevel;
+                //if (face.GetArea() > EqualityTolerance)
+                if (face.GetArea() > 0.00000001 && splitLevel < maxSplitLevel)
                 {
                     Faces.Add(face);
                     return face;
                 }
                 else
                 {
-                    Logger.Log("Reject Adding face with invalid area\r\n");
+                    //Logger.Log("Reject Adding face with invalid area\r\n");
                     return null;
                 }
             }
             else
             {
-                Logger.Log("Reject Adding invalid face\r\n");
+                //Logger.Log("Reject Adding invalid face\r\n");
                 return null;
             }
         }
@@ -433,27 +439,27 @@ namespace CSGLib
 
             if (linedVertex == 1)
             {
-                AddFace(face.V2, face.V3, vertex1);
-                AddFace(face.V2, vertex1, vertex2);
-                AddFace(face.V3, vertex2, vertex1);
-                AddFace(face.V2, vertex2, face.V1);
-                AddFace(face.V3, face.V1, vertex2);
+                AddFace(face.V2, face.V3, vertex1, face.SplitLevel + 1);
+                AddFace(face.V2, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V3, vertex2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V2, vertex2, face.V1, face.SplitLevel + 1);
+                AddFace(face.V3, face.V1, vertex2, face.SplitLevel + 1);
             }
             else if (linedVertex == 2)
             {
-                AddFace(face.V3, face.V1, vertex1);
-                AddFace(face.V3, vertex1, vertex2);
-                AddFace(face.V1, vertex2, vertex1);
-                AddFace(face.V3, vertex2, face.V2);
-                AddFace(face.V1, face.V2, vertex2);
+                AddFace(face.V3, face.V1, vertex1, face.SplitLevel + 1);
+                AddFace(face.V3, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V1, vertex2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V3, vertex2, face.V2, face.SplitLevel + 1);
+                AddFace(face.V1, face.V2, vertex2, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V1, face.V2, vertex1);
-                AddFace(face.V1, vertex1, vertex2);
-                AddFace(face.V2, vertex2, vertex1);
-                AddFace(face.V1, vertex2, face.V3);
-                AddFace(face.V2, face.V3, vertex2);
+                AddFace(face.V1, face.V2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V1, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V2, vertex2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V1, vertex2, face.V3, face.SplitLevel + 1);
+                AddFace(face.V2, face.V3, vertex2, face.SplitLevel + 1);
             }
         }
 
@@ -475,24 +481,24 @@ namespace CSGLib
 
             if (endVertex.Equals(face.V1))
             {
-                AddFace(face.V1, vertex1, vertex2);
-                AddFace(vertex1, face.V2, vertex2);
-                AddFace(face.V2, face.V3, vertex2);
-                AddFace(face.V3, face.V1, vertex2);
+                AddFace(face.V1, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(vertex1, face.V2, vertex2, face.SplitLevel + 1);
+                AddFace(face.V2, face.V3, vertex2, face.SplitLevel + 1);
+                AddFace(face.V3, face.V1, vertex2, face.SplitLevel + 1);
             }
             else if (endVertex.Equals(face.V2))
             {
-                AddFace(face.V2, vertex1, vertex2);
-                AddFace(vertex1, face.V3, vertex2);
-                AddFace(face.V3, face.V1, vertex2);
-                AddFace(face.V1, face.V2, vertex2);
+                AddFace(face.V2, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(vertex1, face.V3, vertex2, face.SplitLevel + 1);
+                AddFace(face.V3, face.V1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V1, face.V2, vertex2, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V3, vertex1, vertex2);
-                AddFace(vertex1, face.V1, vertex2);
-                AddFace(face.V1, face.V2, vertex2);
-                AddFace(face.V2, face.V3, vertex2);
+                AddFace(face.V3, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(vertex1, face.V1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V1, face.V2, vertex2, face.SplitLevel + 1);
+                AddFace(face.V2, face.V3, vertex2, face.SplitLevel + 1);
             }
         }
 
@@ -514,21 +520,21 @@ namespace CSGLib
 
             if (splitEdge == 1)
             {
-                AddFace(face.V1, vertex1, face.V3);
-                AddFace(vertex1, vertex2, face.V3);
-                AddFace(vertex2, face.V2, face.V3);
+                AddFace(face.V1, vertex1, face.V3, face.SplitLevel + 1);
+                AddFace(vertex1, vertex2, face.V3, face.SplitLevel + 1);
+                AddFace(vertex2, face.V2, face.V3, face.SplitLevel + 1);
             }
             else if (splitEdge == 2)
             {
-                AddFace(face.V2, vertex1, face.V1);
-                AddFace(vertex1, vertex2, face.V1);
-                AddFace(vertex2, face.V3, face.V1);
+                AddFace(face.V2, vertex1, face.V1, face.SplitLevel + 1);
+                AddFace(vertex1, vertex2, face.V1, face.SplitLevel + 1);
+                AddFace(vertex2, face.V3, face.V1, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V3, vertex1, face.V2);
-                AddFace(vertex1, vertex2, face.V2);
-                AddFace(vertex2, face.V1, face.V2);
+                AddFace(face.V3, vertex1, face.V2, face.SplitLevel + 1);
+                AddFace(vertex1, vertex2, face.V2, face.SplitLevel + 1);
+                AddFace(vertex2, face.V1, face.V2, face.SplitLevel + 1);
             }
         }
 
@@ -548,21 +554,21 @@ namespace CSGLib
 
             if (endVertex.Equals(face.V1))
             {
-                AddFace(face.V1, face.V2, vertex);
-                AddFace(face.V2, face.V3, vertex);
-                AddFace(face.V3, face.V1, vertex);
+                AddFace(face.V1, face.V2, vertex, face.SplitLevel + 1);
+                AddFace(face.V2, face.V3, vertex, face.SplitLevel + 1);
+                AddFace(face.V3, face.V1, vertex, face.SplitLevel + 1);
             }
             else if (endVertex.Equals(face.V2))
             {
-                AddFace(face.V2, face.V3, vertex);
-                AddFace(face.V3, face.V1, vertex);
-                AddFace(face.V1, face.V2, vertex);
+                AddFace(face.V2, face.V3, vertex, face.SplitLevel + 1);
+                AddFace(face.V3, face.V1, vertex, face.SplitLevel + 1);
+                AddFace(face.V1, face.V2, vertex, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V3, face.V1, vertex);
-                AddFace(face.V1, face.V2, vertex);
-                AddFace(face.V2, face.V3, vertex);
+                AddFace(face.V3, face.V1, vertex, face.SplitLevel + 1);
+                AddFace(face.V1, face.V2, vertex, face.SplitLevel + 1);
+                AddFace(face.V2, face.V3, vertex, face.SplitLevel + 1);
             }
         }
 
@@ -585,39 +591,39 @@ namespace CSGLib
 
             if (startVertex.Equals(face.V1) && endVertex.Equals(face.V2))
             {
-                AddFace(face.V1, vertex1, vertex2);
-                AddFace(face.V1, vertex2, face.V3);
-                AddFace(vertex1, face.V2, vertex2);
+                AddFace(face.V1, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V1, vertex2, face.V3, face.SplitLevel + 1);
+                AddFace(vertex1, face.V2, vertex2, face.SplitLevel + 1);
             }
             else if (startVertex.Equals(face.V2) && endVertex.Equals(face.V1))
             {
-                AddFace(face.V1, vertex2, vertex1);
-                AddFace(face.V1, vertex1, face.V3);
-                AddFace(vertex2, face.V2, vertex1);
+                AddFace(face.V1, vertex2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V1, vertex1, face.V3, face.SplitLevel + 1);
+                AddFace(vertex2, face.V2, vertex1, face.SplitLevel + 1);
             }
             else if (startVertex.Equals(face.V2) && endVertex.Equals(face.V3))
             {
-                AddFace(face.V2, vertex1, vertex2);
-                AddFace(face.V2, vertex2, face.V1);
-                AddFace(vertex1, face.V3, vertex2);
+                AddFace(face.V2, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V2, vertex2, face.V1, face.SplitLevel + 1);
+                AddFace(vertex1, face.V3, vertex2, face.SplitLevel + 1);
             }
             else if (startVertex.Equals(face.V3) && endVertex.Equals(face.V2))
             {
-                AddFace(face.V2, vertex2, vertex1);
-                AddFace(face.V2, vertex1, face.V1);
-                AddFace(vertex2, face.V3, vertex1);
+                AddFace(face.V2, vertex2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V2, vertex1, face.V1, face.SplitLevel + 1);
+                AddFace(vertex2, face.V3, vertex1, face.SplitLevel + 1);
             }
             else if (startVertex.Equals(face.V3) && endVertex.Equals(face.V1))
             {
-                AddFace(face.V3, vertex1, vertex2);
-                AddFace(face.V3, vertex2, face.V2);
-                AddFace(vertex1, face.V1, vertex2);
+                AddFace(face.V3, vertex1, vertex2, face.SplitLevel + 1);
+                AddFace(face.V3, vertex2, face.V2, face.SplitLevel + 1);
+                AddFace(vertex1, face.V1, vertex2, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V3, vertex2, vertex1);
-                AddFace(face.V3, vertex1, face.V2);
-                AddFace(vertex2, face.V1, vertex1);
+                AddFace(face.V3, vertex2, vertex1, face.SplitLevel + 1);
+                AddFace(face.V3, vertex1, face.V2, face.SplitLevel + 1);
+                AddFace(vertex2, face.V1, vertex1, face.SplitLevel + 1);
             }
         }
 
@@ -634,9 +640,9 @@ namespace CSGLib
 
             Vertex vertex = AddVertex(newPos, Status.BOUNDARY);
 
-            AddFace(face.V1, face.V2, vertex);
-            AddFace(face.V2, face.V3, vertex);
-            AddFace(face.V3, face.V1, vertex);
+            AddFace(face.V1, face.V2, vertex, face.SplitLevel + 1);
+            AddFace(face.V2, face.V3, vertex, face.SplitLevel + 1);
+            AddFace(face.V3, face.V1, vertex, face.SplitLevel + 1);
         }
 
         /// <summary>
@@ -655,18 +661,18 @@ namespace CSGLib
 
             if (splitEdge == 1)
             {
-                AddFace(face.V1, vertex, face.V3);
-                AddFace(vertex, face.V2, face.V3);
+                AddFace(face.V1, vertex, face.V3, face.SplitLevel + 1);
+                AddFace(vertex, face.V2, face.V3, face.SplitLevel + 1);
             }
             else if (splitEdge == 2)
             {
-                AddFace(face.V2, vertex, face.V1);
-                AddFace(vertex, face.V3, face.V1);
+                AddFace(face.V2, vertex, face.V1, face.SplitLevel + 1);
+                AddFace(vertex, face.V3, face.V1, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V3, vertex, face.V2);
-                AddFace(vertex, face.V1, face.V2);
+                AddFace(face.V3, vertex, face.V2, face.SplitLevel + 1);
+                AddFace(vertex, face.V1, face.V2, face.SplitLevel + 1);
             }
         }
 
@@ -686,18 +692,18 @@ namespace CSGLib
 
             if (endVertex.Equals(face.V1))
             {
-                AddFace(face.V1, vertex, face.V3);
-                AddFace(vertex, face.V2, face.V3);
+                AddFace(face.V1, vertex, face.V3, face.SplitLevel + 1);
+                AddFace(vertex, face.V2, face.V3, face.SplitLevel + 1);
             }
             else if (endVertex.Equals(face.V2))
             {
-                AddFace(face.V2, vertex, face.V1);
-                AddFace(vertex, face.V3, face.V1);
+                AddFace(face.V2, vertex, face.V1, face.SplitLevel + 1);
+                AddFace(vertex, face.V3, face.V1, face.SplitLevel + 1);
             }
             else
             {
-                AddFace(face.V3, vertex, face.V2);
-                AddFace(vertex, face.V1, face.V2);
+                AddFace(face.V3, vertex, face.V2, face.SplitLevel + 1);
+                AddFace(vertex, face.V1, face.V2, face.SplitLevel + 1);
             }
         }
 
@@ -729,193 +735,196 @@ namespace CSGLib
             double startDist, endDist;
 
             Face face = GetFace(facePos);
-            Vertex startVertex = segment1.StartVertex;
-            Vertex endVertex = segment1.EndVertex;
+            if (face.SplitLevel < maxSplitLevel)
+            {
+                Vertex startVertex = segment1.StartVertex;
+                Vertex endVertex = segment1.EndVertex;
 
-            //starting point: deeper starting point
-            if (segment2.StartDist > segment1.StartDist + EqualityTolerance)
-            {
-                startDist = segment2.StartDist;
-                startType = segment1.IntermediateType;
-                startPos = segment2.StartPosition;
-            }
-            else
-            {
-                startDist = segment1.StartDist;
-                startType = segment1.StartType;
-                startPos = segment1.StartPosition;
-            }
-
-            //ending point: deepest ending point
-            if (segment2.EndDistance < segment1.EndDistance - EqualityTolerance)
-            {
-                endDist = segment2.EndDistance;
-                endType = segment1.IntermediateType;
-                endPos = segment2.EndPosition;
-            }
-            else
-            {
-                endDist = segment1.EndDistance;
-                endType = segment1.EndType;
-                endPos = segment1.EndPosition;
-            }
-            middleType = segment1.IntermediateType;
-
-            //set vertex to BOUNDARY if it is start type
-            if (startType == Segment.VERTEX)
-            {
-                startVertex.SetStatus(Status.BOUNDARY);
-            }
-
-            //set vertex to BOUNDARY if it is end type
-            if (endType == Segment.VERTEX)
-            {
-                endVertex.SetStatus(Status.BOUNDARY);
-            }
-
-            //VERTEX-_______-VERTEX
-            if (startType == Segment.VERTEX && endType == Segment.VERTEX)
-            {
-                return;
-            }
-
-            //______-EDGE-______
-            else if (middleType == Segment.EDGE)
-            {
-                //gets the edge
-                int splitEdge;
-                if ((startVertex == face.V1 && endVertex == face.V2) || (startVertex == face.V2 && endVertex == face.V1))
+                //starting point: deeper starting point
+                if (segment2.StartDist > segment1.StartDist + EqualityTolerance)
                 {
-                    splitEdge = 1;
-                }
-                else if ((startVertex == face.V2 && endVertex == face.V3) || (startVertex == face.V3 && endVertex == face.V2))
-                {
-                    splitEdge = 2;
+                    startDist = segment2.StartDist;
+                    startType = segment1.IntermediateType;
+                    startPos = segment2.StartPosition;
                 }
                 else
                 {
-                    splitEdge = 3;
+                    startDist = segment1.StartDist;
+                    startType = segment1.StartType;
+                    startPos = segment1.StartPosition;
                 }
 
-                //VERTEX-EDGE-EDGE
+                //ending point: deepest ending point
+                if (segment2.EndDistance < segment1.EndDistance - EqualityTolerance)
+                {
+                    endDist = segment2.EndDistance;
+                    endType = segment1.IntermediateType;
+                    endPos = segment2.EndPosition;
+                }
+                else
+                {
+                    endDist = segment1.EndDistance;
+                    endType = segment1.EndType;
+                    endPos = segment1.EndPosition;
+                }
+                middleType = segment1.IntermediateType;
+
+                //set vertex to BOUNDARY if it is start type
                 if (startType == Segment.VERTEX)
                 {
-                    BreakFaceInTwo(facePos, endPos, splitEdge);
+                    startVertex.SetStatus(Status.BOUNDARY);
+                }
+
+                //set vertex to BOUNDARY if it is end type
+                if (endType == Segment.VERTEX)
+                {
+                    endVertex.SetStatus(Status.BOUNDARY);
+                }
+
+                //VERTEX-_______-VERTEX
+                if (startType == Segment.VERTEX && endType == Segment.VERTEX)
+                {
                     return;
                 }
 
-                //EDGE-EDGE-VERTEX
-                else if (endType == Segment.VERTEX)
+                //______-EDGE-______
+                else if (middleType == Segment.EDGE)
                 {
-                    BreakFaceInTwo(facePos, startPos, splitEdge);
-                    return;
-                }
-
-                // EDGE-EDGE-EDGE
-                else if (startDist == endDist)
-                {
-                    BreakFaceInTwo(facePos, endPos, splitEdge);
-                }
-                else
-                {
-                    if ((startVertex == face.V1 && endVertex == face.V2) || (startVertex == face.V2 && endVertex == face.V3) || (startVertex == face.V3 && endVertex == face.V1))
+                    //gets the edge
+                    int splitEdge;
+                    if ((startVertex == face.V1 && endVertex == face.V2) || (startVertex == face.V2 && endVertex == face.V1))
                     {
-                        BreakFaceInThree(facePos, startPos, endPos, splitEdge);
+                        splitEdge = 1;
+                    }
+                    else if ((startVertex == face.V2 && endVertex == face.V3) || (startVertex == face.V3 && endVertex == face.V2))
+                    {
+                        splitEdge = 2;
                     }
                     else
                     {
-                        BreakFaceInThree(facePos, endPos, startPos, splitEdge);
+                        splitEdge = 3;
                     }
-                }
-                return;
-            }
 
-            //______-FACE-______
+                    //VERTEX-EDGE-EDGE
+                    if (startType == Segment.VERTEX)
+                    {
+                        BreakFaceInTwo(facePos, endPos, splitEdge);
+                        return;
+                    }
 
-            //VERTEX-FACE-EDGE
-            else if (startType == Segment.VERTEX && endType == Segment.EDGE)
-            {
-                BreakFaceInTwo(facePos, endPos, endVertex);
-            }
-            //EDGE-FACE-VERTEX
-            else if (startType == Segment.EDGE && endType == Segment.VERTEX)
-            {
-                BreakFaceInTwo(facePos, startPos, startVertex);
-            }
-            //VERTEX-FACE-FACE
-            else if (startType == Segment.VERTEX && endType == Segment.FACE)
-            {
-                BreakFaceInThree(facePos, endPos, startVertex);
-            }
-            //FACE-FACE-VERTEX
-            else if (startType == Segment.FACE && endType == Segment.VERTEX)
-            {
-                BreakFaceInThree(facePos, startPos, endVertex);
-            }
-            //EDGE-FACE-EDGE
-            else if (startType == Segment.EDGE && endType == Segment.EDGE)
-            {
-                BreakFaceInThree(facePos, startPos, endPos, startVertex, endVertex);
-            }
-            //EDGE-FACE-FACE
-            else if (startType == Segment.EDGE && endType == Segment.FACE)
-            {
-                BreakFaceInFour(facePos, startPos, endPos, startVertex);
-            }
-            //FACE-FACE-EDGE
-            else if (startType == Segment.FACE && endType == Segment.EDGE)
-            {
-                BreakFaceInFour(facePos, endPos, startPos, endVertex);
-            }
-            //FACE-FACE-FACE
-            else if (startType == Segment.FACE && endType == Segment.FACE)
-            {
-                //  Logger.Log("FACE FACE FACE\r\n");
-                Vector3D segmentVector = new Vector3D(startPos.X - endPos.X, startPos.Y - endPos.Y, startPos.Z - endPos.Z);
+                    //EDGE-EDGE-VERTEX
+                    else if (endType == Segment.VERTEX)
+                    {
+                        BreakFaceInTwo(facePos, startPos, splitEdge);
+                        return;
+                    }
 
-                //if the intersection segment is a point only...
-                if (Math.Abs(segmentVector.X) < EqualityTolerance && Math.Abs(segmentVector.Y) < EqualityTolerance && Math.Abs(segmentVector.Z) < EqualityTolerance)
-                {
-                    BreakFaceInThree(facePos, startPos);
+                    // EDGE-EDGE-EDGE
+                    else if (startDist == endDist)
+                    {
+                        BreakFaceInTwo(facePos, endPos, splitEdge);
+                    }
+                    else
+                    {
+                        if ((startVertex == face.V1 && endVertex == face.V2) || (startVertex == face.V2 && endVertex == face.V3) || (startVertex == face.V3 && endVertex == face.V1))
+                        {
+                            BreakFaceInThree(facePos, startPos, endPos, splitEdge);
+                        }
+                        else
+                        {
+                            BreakFaceInThree(facePos, endPos, startPos, splitEdge);
+                        }
+                    }
                     return;
                 }
 
-                //gets the vertex more lined with the intersection segment
-                int linedVertex;
-                Vector3D linedVertexPos;
-                Vector3D vertexVector = new Vector3D(endPos.X - face.V1._Position.X, endPos.Y - face.V1._Position.Y, endPos.Z - face.V1._Position.Z);
-                vertexVector.Normalize();
-                double dot1 = Math.Abs(Vector3D.DotProduct(segmentVector, vertexVector));
-                vertexVector = new Vector3D(endPos.X - face.V2._Position.X, endPos.Y - face.V2._Position.Y, endPos.Z - face.V2._Position.Z);
-                vertexVector.Normalize();
-                double dot2 = Math.Abs(Vector3D.DotProduct(segmentVector, vertexVector));
-                vertexVector = new Vector3D(endPos.X - face.V3._Position.X, endPos.Y - face.V3._Position.Y, endPos.Z - face.V3._Position.Z);
-                vertexVector.Normalize();
-                double dot3 = Math.Abs(Vector3D.DotProduct(segmentVector, vertexVector));
-                if (dot1 > dot2 && dot1 > dot3)
-                {
-                    linedVertex = 1;
-                    linedVertexPos = face.V1.Position;
-                }
-                else if (dot2 > dot3 && dot2 > dot1)
-                {
-                    linedVertex = 2;
-                    linedVertexPos = face.V2.Position;
-                }
-                else
-                {
-                    linedVertex = 3;
-                    linedVertexPos = face.V3.Position;
-                }
+                //______-FACE-______
 
-                // Now find which of the intersection endpoints is nearest to that vertex.
-                if ((linedVertexPos - startPos).Length > (linedVertexPos - endPos).Length)
+                //VERTEX-FACE-EDGE
+                else if (startType == Segment.VERTEX && endType == Segment.EDGE)
                 {
-                    BreakFaceInFive(facePos, startPos, endPos, linedVertex);
+                    BreakFaceInTwo(facePos, endPos, endVertex);
                 }
-                else
+                //EDGE-FACE-VERTEX
+                else if (startType == Segment.EDGE && endType == Segment.VERTEX)
                 {
-                    BreakFaceInFive(facePos, endPos, startPos, linedVertex);
+                    BreakFaceInTwo(facePos, startPos, startVertex);
+                }
+                //VERTEX-FACE-FACE
+                else if (startType == Segment.VERTEX && endType == Segment.FACE)
+                {
+                    BreakFaceInThree(facePos, endPos, startVertex);
+                }
+                //FACE-FACE-VERTEX
+                else if (startType == Segment.FACE && endType == Segment.VERTEX)
+                {
+                    BreakFaceInThree(facePos, startPos, endVertex);
+                }
+                //EDGE-FACE-EDGE
+                else if (startType == Segment.EDGE && endType == Segment.EDGE)
+                {
+                    BreakFaceInThree(facePos, startPos, endPos, startVertex, endVertex);
+                }
+                //EDGE-FACE-FACE
+                else if (startType == Segment.EDGE && endType == Segment.FACE)
+                {
+                    BreakFaceInFour(facePos, startPos, endPos, startVertex);
+                }
+                //FACE-FACE-EDGE
+                else if (startType == Segment.FACE && endType == Segment.EDGE)
+                {
+                    BreakFaceInFour(facePos, endPos, startPos, endVertex);
+                }
+                //FACE-FACE-FACE
+                else if (startType == Segment.FACE && endType == Segment.FACE)
+                {
+                    //  Logger.Log("FACE FACE FACE\r\n");
+                    Vector3D segmentVector = new Vector3D(startPos.X - endPos.X, startPos.Y - endPos.Y, startPos.Z - endPos.Z);
+
+                    //if the intersection segment is a point only...
+                    if (Math.Abs(segmentVector.X) < EqualityTolerance && Math.Abs(segmentVector.Y) < EqualityTolerance && Math.Abs(segmentVector.Z) < EqualityTolerance)
+                    {
+                        BreakFaceInThree(facePos, startPos);
+                        return;
+                    }
+
+                    //gets the vertex more lined with the intersection segment
+                    int linedVertex;
+                    Vector3D linedVertexPos;
+                    Vector3D vertexVector = new Vector3D(endPos.X - face.V1._Position.X, endPos.Y - face.V1._Position.Y, endPos.Z - face.V1._Position.Z);
+                    vertexVector.Normalize();
+                    double dot1 = Math.Abs(Vector3D.DotProduct(segmentVector, vertexVector));
+                    vertexVector = new Vector3D(endPos.X - face.V2._Position.X, endPos.Y - face.V2._Position.Y, endPos.Z - face.V2._Position.Z);
+                    vertexVector.Normalize();
+                    double dot2 = Math.Abs(Vector3D.DotProduct(segmentVector, vertexVector));
+                    vertexVector = new Vector3D(endPos.X - face.V3._Position.X, endPos.Y - face.V3._Position.Y, endPos.Z - face.V3._Position.Z);
+                    vertexVector.Normalize();
+                    double dot3 = Math.Abs(Vector3D.DotProduct(segmentVector, vertexVector));
+                    if (dot1 > dot2 && dot1 > dot3)
+                    {
+                        linedVertex = 1;
+                        linedVertexPos = face.V1.Position;
+                    }
+                    else if (dot2 > dot3 && dot2 > dot1)
+                    {
+                        linedVertex = 2;
+                        linedVertexPos = face.V2.Position;
+                    }
+                    else
+                    {
+                        linedVertex = 3;
+                        linedVertexPos = face.V3.Position;
+                    }
+
+                    // Now find which of the intersection endpoints is nearest to that vertex.
+                    if ((linedVertexPos - startPos).Length > (linedVertexPos - endPos).Length)
+                    {
+                        BreakFaceInFive(facePos, startPos, endPos, linedVertex);
+                    }
+                    else
+                    {
+                        BreakFaceInFive(facePos, endPos, startPos, linedVertex);
+                    }
                 }
             }
         }

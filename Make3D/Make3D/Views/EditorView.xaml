@@ -12,8 +12,8 @@
         <ViewModels:EditorViewModel />
     </UserControl.DataContext>
 
-    <Grid MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseWheel="Grid_MouseWheel" KeyUp="UserControl_KeyUp">
-        <Viewport3D Name="viewport3D1" KeyUp="UserControl_KeyUp">
+    <Grid MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseWheel="Grid_MouseWheel" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
+        <Viewport3D Name="viewport3D1" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
 
             <Viewport3D.Camera>
                 <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPos}" LookDirection = "{Binding LookDirection}">

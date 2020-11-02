@@ -1,0 +1,63 @@
+﻿<UserControl x:Class="Make3D.Dialogs.ShapeBase"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Make3D.Dialogs"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="400" Loaded="UserControl_Loaded" SizeChanged="PointCanvas_SizeChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+        <Label x:Name="HeaderLabel" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Background="Blue" Foreground="AliceBlue">Header</Label>
+        <Grid Grid.Column="0" Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+            </Grid.RowDefinitions>
+            <Label Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Points</Label>
+            <!--
+            <TextBox x:Name="NumberOfPointsBox" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" TextChanged="NumberOfPointsBox_TextChanged" />
+            -->
+            <local:NUDBox x:Name="NumberOfPointsBox" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" />
+            <Label Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Rotate</Label>
+            <Grid Grid.Row="1" Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <Button  Grid.Column="0"  Grid.Row="1" Content="-" Click="RotateMinus_Click" />
+                <Button  Grid.Column="1"  Grid.Row="1" Content="0" Click="RotateZero_Click" />
+                <Button  Grid.Column="2"  Grid.Row="1" Content="+" Click="RotatePlus_Click_1" />
+            </Grid>
+            <Label  Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">Snap</Label>
+            <CheckBox Grid.Column="1" Grid.Row="2" IsChecked="true" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked" VerticalAlignment="Center" />
+            <Label  Grid.Column="0" Grid.Row="3" VerticalAlignment="Center">Link</Label>
+            <CheckBox Grid.Column="1" Grid.Row="3" IsChecked="false" Checked="LinkBox_Checked" Unchecked="LinkBox_Unchecked" VerticalAlignment="Center" />
+            <Label Grid.Column="0" Grid.Row="4">Point Distance</Label>
+            <Label Grid.Column="1" Grid.Row="4" x:Name="DistanceLabel" />
+        </Grid>
+        <Canvas x:Name="PointCanvas" Grid.Column="1"  Grid.Row="1" MaxWidth="600" MaxHeight="600" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AntiqueWhite" MouseDown="PointCanvas_MouseDown" MouseMove="PointCanvas_MouseMove" MouseUp="PointCanvas_MouseUp" MouseLeave="PointCanvas_MouseLeave" SizeChanged="PointCanvas_SizeChanged" />
+    </Grid>
+</UserControl>

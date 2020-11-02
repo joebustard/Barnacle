@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Make3D.Models;
+using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
-using Make3D.Models;
 
 namespace Make3D.ViewModels
 {
     internal class BaseViewModel : INotifyPropertyChanged
     {
+        protected bool lastChangeWasNudge;
+
         public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -85,10 +83,10 @@ namespace Make3D.ViewModels
                 }
             }
         }
-     
+
         public BaseViewModel()
         {
-            if ( document == null )
+            if (document == null)
             {
                 document = new Document();
             }
@@ -97,9 +95,38 @@ namespace Make3D.ViewModels
 
         private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if ( e.PropertyName == "Caption")
+            if (e.PropertyName == "Caption")
             {
                 NotifyPropertyChanged("Caption");
+            }
+        }
+
+        public void CheckPoint()
+        {
+            lastChangeWasNudge = false;
+            if (Document != null)
+            {
+                string s = undoer.GetNextCheckPointName();
+                Document.Write(s);
+            }
+        }
+
+        public void CheckPointForNudge()
+        {
+            if (!lastChangeWasNudge)
+            {
+                CheckPoint();
+            }
+            lastChangeWasNudge = true;
+        }
+
+        public void Undo()
+        {
+            if (undoer.CanUndo())
+            {
+                string s = undoer.GetLastCheckPointName();
+                Document.Read(s, true);
+                NotificationManager.Notify("Refresh", null);
             }
         }
 

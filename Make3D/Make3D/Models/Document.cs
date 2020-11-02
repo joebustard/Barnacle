@@ -4,16 +4,15 @@ using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
 namespace Make3D.Models
 {
-    
     internal class Document : INotifyPropertyChanged
     {
-
-        public ProjectSettings ProjectSettings { get; set;  }
+        public ProjectSettings ProjectSettings { get; set; }
         private string caption;
         private static int nextId;
 
@@ -124,7 +123,7 @@ namespace Make3D.Models
                 {
                     if (nd.Name == "Settings")
                     {
-                       ProjectSettings prj = new ProjectSettings();
+                        ProjectSettings prj = new ProjectSettings();
                         prj.Read(nd);
 
                         ProjectSettings = prj;
@@ -135,6 +134,10 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
+                        if (obj.PrimType != "Mesh")
+                        {
+                            obj = obj.ConvertToMesh();
+                        }
                         Content.Add(obj);
                     }
                     if (nd.Name == "groupobj")
@@ -153,22 +156,80 @@ namespace Make3D.Models
             }
         }
 
-        internal void Export(string v)
+        internal string ExportAll(string v, Bounds3D bnds)
         {
+            string res = "";
             if (v == "STL")
             {
                 STLExporter exp = new STLExporter();
+                List<Object3D> exportList = new List<Object3D>();
+                if (ProjectSettings.FloorAll)
+                {
+                    exportList = new List<Object3D>();
+                    foreach (Object3D ob in Content)
+                    {
+                        Object3D clone = ob.Clone();
+                        clone.MoveToFloor();
+                        exportList.Add(clone);
+                    }
+                }
+                else
+                {
+                    exportList = Content;
+                }
+
                 if (FileName == "")
                 {
-                    exp.Export("C:\\tmp\\test.stl", Content);
+                    exp.Export("C:\\tmp\\test.stl", exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                 }
                 else
                 {
                     string expName = System.IO.Path.ChangeExtension(FilePath, "stl");
-                    exp.Export(expName, Content);
-                    MessageBox.Show("Model exported to " + expName);
+                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    res = expName;
                 }
             }
+            return res;
+        }
+
+        internal string ExportParts(string v, Bounds3D bnds, List<Object3D> parts)
+        {
+            string res = "";
+            if (v == "STL")
+            {
+                STLExporter exp = new STLExporter();
+                List<Object3D> exportList;
+                if (ProjectSettings.FloorAll)
+                {
+                    exportList = new List<Object3D>();
+                    foreach (Object3D ob in parts)
+                    {
+                        Object3D clone = ob.Clone();
+                        clone.MoveToFloor();
+                        exportList.Add(clone);
+                    }
+                }
+                else
+                {
+                    exportList = parts;
+                }
+
+                string expPath = System.IO.Path.GetDirectoryName(FilePath);
+                List<Object3D> oneOb = new List<Object3D>();
+                foreach (Object3D ob in parts)
+                {
+                    string expName = System.IO.Path.Combine(expPath, ob.Name + ".stl");
+                    oneOb.Clear();
+                    oneOb.Add(ob);
+                    exp.Export(expName, oneOb, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    if (res != "")
+                    {
+                        res += ", ";
+                    }
+                    res += expName;
+                }
+            }
+            return res;
         }
 
         internal void DeleteObject(Object3D o)
@@ -218,6 +279,8 @@ namespace Make3D.Models
             Content.Remove(grp);
             Content.Add(grp.LeftObject);
             Content.Add(grp.RightObject);
+            grp.LeftObject.CalcScale(false);
+            grp.RightObject.CalcScale(false);
             Dirty = true;
         }
 
@@ -246,7 +309,7 @@ namespace Make3D.Models
             ModelScales.Initialise();
             Clear();
             NotificationManager.Subscribe("DocDirty", OnDocDirty);
-            if ( File.Exists("C:\\tmp\\tinker.obj"))
+            if (File.Exists("C:\\tmp\\tinker.obj"))
             {
                 Object3D tmp = new Object3D();
                 tmp.LoadObject("C:\\tmp\\tinker.obj");
@@ -260,28 +323,149 @@ namespace Make3D.Models
 
         internal void GroupToMesh(Group3D grp)
         {
-            Object3D neo = new Object3D();
-            neo.Name = grp.Name;
-            neo.Description = grp.Description;
-            neo.PrimType = "Mesh";
-            neo.Color = grp.Color;
-            neo.Scale = new Scale3D(grp.Scale.X, grp.Scale.Y, grp.Scale.Z);
-            neo.Rotation = new Point3D(grp.Rotation.X, grp.Rotation.Y, grp.Rotation.Z);
-            neo.Position = new Point3D(grp.Position.X, grp.Position.Y, grp.Position.Z);
-            neo.RelativeObjectVertices = grp.RelativeObjectVertices;
-            grp.RelativeObjectVertices = null;
-            neo.TriangleIndices = grp.TriangleIndices;
-            grp.TriangleIndices = null;
-            neo.AbsoluteObjectVertices = grp.AbsoluteObjectVertices;
-            grp.AbsoluteObjectVertices = null;
-            neo.AbsoluteBounds = grp.AbsoluteBounds;
-            grp.AbsoluteBounds = null;
+            Object3D neo = grp.ConvertToMesh();
+
             Content.Remove(grp);
-            neo.SetMesh();
+            neo.Remesh();
 
             Content.Add(neo);
 
             Dirty = true;
+        }
+
+        internal void ImportObjs(string fileName)
+        {
+            if (File.Exists(fileName))
+            {
+                Object3D ob = null;
+                string[] lines = File.ReadAllLines(fileName);
+                foreach (string s in lines)
+                {
+                    string t = s.Trim();
+                    if (t != "")
+                    {
+                        if (!t.StartsWith("#)"))
+                        {
+                            if (t.StartsWith("o"))
+                            {
+                                if (ob != null)
+                                {
+                                    ob.PrimType = "Mesh";
+                                    ob.CalcScale();
+                                    ob.RelativeToAbsolute();
+                                    ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+                                    ob.Mesh.TriangleIndices = ob.TriangleIndices;
+                                    ob.Mesh.Normals = ob.Normals;
+                                    ob.Rotate(new Point3D(-90, 0, 0));
+                                    ob.MoveToFloor();
+                                    ob.Remesh();
+                                }
+                                String name = t.Substring(2);
+                                ob = new Object3D();
+                                ob.Name = name;
+                                Content.Add(ob);
+                            }
+                            if (t.StartsWith("v "))
+                            {
+                                t = t.Replace("  ", " ");
+                                string[] words = t.Split(' ');
+                                double x = Convert.ToDouble(words[1]);
+                                double y = Convert.ToDouble(words[2]);
+                                double z = Convert.ToDouble(words[3]);
+                                Point3D p = new Point3D(x, y, z);
+                                ob.RelativeObjectVertices.Add(p);
+                            }
+
+                            if (t.StartsWith("vn "))
+                            {
+                                t = t.Replace("  ", " ");
+                                string[] words = t.Split(' ');
+                                double x = Convert.ToDouble(words[1]);
+                                double y = Convert.ToDouble(words[2]);
+                                double z = Convert.ToDouble(words[3]);
+                                Vector3D p = new Vector3D(x, y, z);
+                                ob.Normals.Add(p);
+                            }
+                            if (t.StartsWith("f "))
+                            {
+                                t = t.Replace("  ", " ");
+                                string[] words = t.Split(' ');
+                                if (words.GetLength(0) == 4)
+                                {
+                                    int ind = Convert.ToInt32(words[1]);
+                                    ob.TriangleIndices.Add(ind - 1);
+                                    ind = Convert.ToInt32(words[2]);
+                                    ob.TriangleIndices.Add(ind - 1);
+                                    ind = Convert.ToInt32(words[3]);
+                                    ob.TriangleIndices.Add(ind - 1);
+                                }
+                                else
+                                {
+                                    List<int> indices = new List<int>();
+
+                                    double cx = 0;
+                                    double cy = 0;
+                                    double cz = 0;
+                                    for (int j = 1; j < words.GetLength(0); j++)
+                                    {
+                                        int pi = Convert.ToInt32(words[j]);
+                                        indices.Add(pi);
+                                        cx += ob.RelativeObjectVertices[pi].X;
+                                        cy += ob.RelativeObjectVertices[pi].Y;
+                                        cz += ob.RelativeObjectVertices[pi].Z;
+                                    }
+                                    cx = cx / indices.Count;
+                                    cy = cy / indices.Count;
+                                    cz = cz / indices.Count;
+                                    ob.RelativeObjectVertices.Add(new Point3D(cx, cy, cz));
+                                    int id = ob.RelativeObjectVertices.Count - 1;
+                                    for (int j = 0; j < indices.Count - 1; j++)
+                                    {
+                                        ob.TriangleIndices.Add(indices[j]);
+                                        ob.TriangleIndices.Add(indices[j + 1]);
+                                        ob.TriangleIndices.Add(id);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                ob.PrimType = "Mesh";
+                ob.CalcScale();
+                ob.RelativeToAbsolute();
+
+                ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+                ob.Mesh.TriangleIndices = ob.TriangleIndices;
+                ob.Mesh.Normals = ob.Normals;
+                ob.Rotate(new Point3D(-90, 0, 0));
+                ob.MoveToFloor();
+                ob.Remesh();
+            }
+        }
+
+        internal void ImportStl(string fileName)
+        {
+            STLExporter exp = new STLExporter();
+            Vector3DCollection normals = new Vector3DCollection();
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection tris = new Int32Collection();
+            Object3D ob = new Object3D();
+            exp.Import(fileName, ref normals, ref pnts, ref tris);
+            ob.Normals = normals;
+            ob.RelativeObjectVertices = pnts;
+            ob.TriangleIndices = tris;
+            ob.PrimType = "Mesh";
+            ob.CalcScale();
+            ob.RelativeToAbsolute();
+
+            ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+            ob.Mesh.TriangleIndices = ob.TriangleIndices;
+            ob.Mesh.Normals = ob.Normals;
+            ob.Rotate(new Point3D(-90, 0, 0));
+            ob.MoveToFloor();
+            ob.Remesh();
+            Content.Add(ob);
+            ob.Name = "Object_" + Content.Count.ToString();
         }
     }
 }
