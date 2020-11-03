@@ -88,7 +88,7 @@ namespace Make3D.ViewModels
             {
                 LoadMru();
             }
-            //     StatusBlockText3 = "Page " + (Document.PageNumber + 1).ToString() + " of " + (Document.NumberOfPages.ToString());
+
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
             NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
             NotificationManager.Subscribe("ClosePrintPreview", ReturnToDefaultView);

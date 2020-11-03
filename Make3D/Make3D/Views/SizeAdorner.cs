@@ -230,13 +230,13 @@ namespace Make3D.Adorners
             }
         }
 
-        internal bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e)
+        internal bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
         {
             bool handled = false;
             if (boxSelected)
             {
                 handled = true;
-                MouseMoveBox(lastPos, newPos);
+                MouseMoveBox(lastPos, newPos, ctrlDown);
             }
             else
             {
@@ -249,13 +249,26 @@ namespace Make3D.Adorners
             return handled;
         }
 
-        private void MouseMoveBox(Point lastPos, Point newPos)
+        private void MouseMoveBox(Point lastPos, Point newPos, bool ctrlDown)
         {
             double dr = Math.Sqrt(Camera.Distance);
             double deltaX = (newPos.X - lastPos.X) / dr;
-            double deltaY = -(newPos.Y - lastPos.Y) / dr;
-            double deltaZ = -(newPos.X - lastPos.X) / dr;
-            MoveBox(deltaX, deltaY, 0);
+
+            double deltaY;
+            double deltaZ;
+
+            if (!ctrlDown)
+            {
+                deltaY = -(newPos.Y - lastPos.Y) / dr;
+                deltaZ = 0;
+            }
+            else
+            {
+                deltaY = 0;
+                deltaZ = -(newPos.Y - lastPos.Y) / dr;
+            }
+
+            MoveBox(deltaX, deltaY, deltaZ);
         }
 
         private void MoveBox(double deltaX, double deltaY, double deltaZ)

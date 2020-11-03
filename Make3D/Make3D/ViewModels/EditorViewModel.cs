@@ -591,6 +591,7 @@ namespace Make3D.ViewModels
             if (ObjectClipboard.HasItems())
             {
                 CheckPoint();
+                RecalculateAllBounds();
                 selectedObjectAdorner.Clear();
                 foreach (Object3D cl in ObjectClipboard.Items)
                 {
@@ -624,6 +625,7 @@ namespace Make3D.ViewModels
                 if (ObjectClipboard.HasItems())
                 {
                     CheckPoint();
+                    RecalculateAllBounds();
                     selectedObjectAdorner.Clear();
                     double altOff = 0;
                     for (int i = 0; i < cfg.Repeats; i++)
@@ -1071,6 +1073,22 @@ namespace Make3D.ViewModels
             }
         }
 
+        public void RecalculateAllBounds()
+        {
+            allBounds = new Bounds3D();
+            if (Document.Content.Count > 0)
+            {
+                foreach (Object3D ob in Document.Content)
+                {
+                    allBounds += ob.AbsoluteBounds;
+                }
+            }
+            else
+            {
+                allBounds.Zero();
+            }
+        }
+
         public void OnRefreshAdorners(object param)
         {
             allBounds = new Bounds3D();
@@ -1125,7 +1143,12 @@ namespace Make3D.ViewModels
 
         internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
         {
-            if (selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e) == true)
+            bool ctrlDown = false;
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                ctrlDown = true;
+            }
+            if (selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e, ctrlDown) == true)
             {
                 lastMouse = newPos;
             }
@@ -1437,6 +1460,7 @@ namespace Make3D.ViewModels
             obj.Description = obType;
 
             obj.Scale = new Scale3D(20, 20, 20);
+            RecalculateAllBounds();
             obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
             if (obType == "vaseloft" || obType == "shapeloft" || obType == "fuselageloft")
             {
@@ -1521,36 +1545,42 @@ namespace Make3D.ViewModels
                 case "CameraHome":
                     {
                         HomeCamera();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
                 case "CameraBack":
                     {
                         BackCamera();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
                 case "CameraLeft":
                     {
                         LeftCamera();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
                 case "CameraRight":
                     {
                         RightCamera();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
                 case "CameraTop":
                     {
                         TopCamera();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
                 case "CameraBottom":
                     {
                         BottomCamera();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
@@ -1558,6 +1588,7 @@ namespace Make3D.ViewModels
                     {
                         LookToCenter();
                         ReportCameraPosition();
+                        cameraMode = CameraModes.CameraMoveLookCenter;
                     }
                     break;
 
@@ -1570,12 +1601,14 @@ namespace Make3D.ViewModels
                 case "CameraMoveLookCenter":
                     {
                         cameraMode = CameraModes.CameraMoveLookCenter;
+                        camera.LookAt(new Point3D(0, 0, 0));
                     }
                     break;
 
-                case "CameraMoveLookObject":
+                case "CameraLookObject":
                     {
                         cameraMode = CameraModes.CameraMoveLookObject;
+                        LookAtObject();
                     }
                     break;
 
@@ -1583,6 +1616,17 @@ namespace Make3D.ViewModels
                     break;
             }
             ReportCameraPosition();
+        }
+
+        private void LookAtObject()
+        {
+            if (selectedItems.Count == 1)
+            {
+                //ResetSelectionColours();
+                Object3D sel = selectedItems[0];
+                CameraLookObject = sel.Position;
+                camera.LookAt(CameraLookObject);
+            }
         }
 
         private void OnNewDocument(object param)
@@ -1601,7 +1645,7 @@ namespace Make3D.ViewModels
         {
             String s = $"Camera ({camera.CameraPos.X:F2},{camera.CameraPos.Y:F2},{camera.CameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
             NotificationManager.Notify("SetStatusText1", s);
-            s = $"Faces {totalFaces}";
+            s = $"Total Faces {totalFaces}";
             NotificationManager.Notify("SetStatusText3", s);
         }
 

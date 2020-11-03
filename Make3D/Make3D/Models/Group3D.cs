@@ -56,9 +56,6 @@ namespace Make3D.Models
             if (leftObject != null && rightObject != null)
             {
                 Position = new Point3D(leftObject.Position.X, leftObject.Position.Y, leftObject.Position.Z);
-
-                // this is wrong, should join objects then divide bounds of new object somehow
-                //Scale = new Scale3D(1, 1, 1);
                 Color = leftObject.Color;
                 result = PerformOperation();
             }
@@ -193,7 +190,6 @@ namespace Make3D.Models
             RelativeObjectVertices = new Point3DCollection();
             foreach (Point3D pnt in AbsoluteObjectVertices)
             {
-                // Point3D p = new Point3D((pnt.X / groupScale.X) , (pnt.Y / groupScale.Y), (pnt.Z / groupScale.Z) );
                 Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
                 RelativeObjectVertices.Add(p);
             }
