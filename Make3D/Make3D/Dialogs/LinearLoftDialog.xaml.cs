@@ -49,7 +49,7 @@ namespace Make3D.Dialogs
                 Point3D[,] vertices = new Point3D[numSpokes, line.Count];
                 for (int i = 0; i < line.Count; i++)
                 {
-                    vertices[0, i] = new Point3D(line[i].X, line[i].Y, 0);
+                    vertices[0, i] = new Point3D(line[i].X*20, line[i].Y * 20, 0);
                 }
 
                 for (int i = 1; i < numSpokes; i++)
@@ -58,8 +58,8 @@ namespace Make3D.Dialogs
                     double rad = Math.PI * theta / 180.0;
                     for (int j = 0; j < line.Count; j++)
                     {
-                        double x = vertices[0, j].X * Math.Cos(rad);
-                        double z = vertices[0, j].X * Math.Sin(rad);
+                        double x = vertices[0, j].X * Math.Cos(rad) ;
+                        double z = vertices[0, j].X * Math.Sin(rad)  ;
                         vertices[i, j] = new Point3D(x, vertices[0, j].Y, z);
                     }
                 }
@@ -73,14 +73,18 @@ namespace Make3D.Dialogs
                     }
                 }
                 int topPoint = pnts.Count;
-                pnts.Add(new Point3D(0, 1, 0));
+                pnts.Add(new Point3D(0, 20, 0));
                 tris = new Int32Collection();
                 int spOff;
                 int spOff2;
-                for (int i = 0; i < numSpokes - 1; i++)
+                for (int i = 0; i < numSpokes; i++)
                 {
                     spOff = i * line.Count + 1;
                     spOff2 = (i + 1) * line.Count + 1;
+                    if ( i == numSpokes-1)
+                    {
+                        spOff2 = 1;
+                    }
                     // base
                     tris.Add(0);
                     tris.Add(spOff);
@@ -103,30 +107,33 @@ namespace Make3D.Dialogs
                     tris.Add(topPoint);
                     tris.Add(spOff2 + line.Count - 1);
                 }
-
+                
                 spOff = (numSpokes - 1) * line.Count + 1;
                 spOff2 = 1;
                 // base
                 tris.Add(0);
                 tris.Add(spOff);
-                tris.Add(spOff2);
+tris.Add(spOff2);
+                /*
 
+                
                 for (int j = 0; j < line.Count - 1; j++)
                 {
                     tris.Add(spOff + j);
                     tris.Add(spOff2 + j + 1);
-                    tris.Add(spOff2 + j);
+                    tris.Add(spOff2+ j);
 
-                    tris.Add(spOff + j);
-                    tris.Add(spOff + j + 1);
-                    tris.Add(spOff2 + j + 1);
+                   // tris.Add(spOff + j);
+                  //  tris.Add(spOff + j + 1);
+                    // tris.Add(spOff2 + j + 1);
                 }
-
+                
                 // Top
 
-                tris.Add(spOff + line.Count - 1);
-                tris.Add(topPoint);
-                tris.Add(spOff2 + line.Count - 1);
+               tris.Add(spOff + line.Count - 1);
+               tris.Add(topPoint);
+               tris.Add(spOff2 + line.Count - 1);
+               */
             }
         }
 
@@ -251,8 +258,8 @@ namespace Make3D.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            camMain.Position = new Point3D(3, 1, 1);
-            camMain.LookDirection = new Vector3D(-3, -1, -1);
+            camMain.Position = new Point3D(1, 1, 60);
+            camMain.LookDirection = new Vector3D(-1, -1, -60);
             MyModelGroup.Children.Clear();
             line = new List<Point>();
             line.Add(new Point(0.5, 0));

@@ -19,7 +19,7 @@
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <Custom:Ribbon  x:Name="MainRibbon" Grid.Row="0"  MinHeight="100">
+        <Custom:Ribbon  x:Name="MainRibbon" Grid.Row="0"  MinHeight="100" SelectionChanged="MainRibbon_SelectionChanged">
             <Custom:Ribbon.QuickAccessToolBar>
                 <Custom:RibbonQuickAccessToolBar>
                     <Custom:RibbonButton x:Name="New" SmallImageSource="/images/buttons/new_file.png" Command="{Binding NewCommand}" />
@@ -216,12 +216,14 @@
                     <Custom:RibbonButton x:Name="Zoom100Button" Label="100%" Command="{Binding Zoom100Command}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ShowGroup" Header="Show">
-                    <Custom:RibbonCheckBox x:Name="ShowGrid" Label="Grid" IsChecked="{Binding ShowGridChecked}" />
-                    <Custom:RibbonCheckBox x:Name="ShowMargin" Label="Margins" IsChecked="{Binding ShowMarginsChecked}" />
+                    <Custom:RibbonCheckBox x:Name="ShowFloor" Label="Floor" IsChecked="{Binding ShowFloorChecked}" />
+                    <Custom:RibbonCheckBox x:Name="ShowAxis" Label="Axis" IsChecked="{Binding ShowAxiesChecked}" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="OptionGroup" Header="Options">
+                    <!--
                     <Custom:RibbonCheckBox x:Name="SnapMargin" Label="Margin Snap" IsChecked="{Binding SnapMarginChecked}" ToolTip="Snap new staves and tabs to left margin" />
-                </Custom:RibbonGroup>
+       -->
+                    </Custom:RibbonGroup>
             </Custom:RibbonTab>
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">

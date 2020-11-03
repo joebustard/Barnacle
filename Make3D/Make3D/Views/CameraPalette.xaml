@@ -24,10 +24,10 @@
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraBack" ToolTip="Move the camera to the default back position and point it at the centre of the world." Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/BackEye.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraRight" ToolTip="Move the camera to the default right position and point it at the centre of the world." Margin="0,0,2,2">
+            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLeft" ToolTip="Move the camera to the default right position and point it at the centre of the world." Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/RightEye.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLeft" ToolTip="Move the camera to the default left position and point it at the centre of the world." Margin="0,0,2,2">
+            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraRight" ToolTip="Move the camera to the default left position and point it at the centre of the world." Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/LeftEye.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraTop" ToolTip="Move the camera to the default top position and point it at the centre of the world." Margin="0,0,2,2">
@@ -37,11 +37,11 @@
                 <Image Source="/Make3D;component/Images/Buttons/BottomEye.png" />
             </Button>
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLookCenter" ToolTip="Point the camera at the centre of the world." Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/CenterEye.png" />
             </Button>
 
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLookObject" ToolTip="Point the camera at the selected object" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/View.png" />
+                <Image Source="/Make3D;component/Images/Buttons/ObjectEye.png" />
             </Button>
         </UniformGrid>
     </Grid>

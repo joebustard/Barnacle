@@ -120,5 +120,10 @@ namespace Make3D.Views
             Scroller.Width = MyGrid.Width;
             Scroller.Height = MyGrid.Height;
         }
+
+        private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }

@@ -90,8 +90,11 @@
     <Compile Include="Dialogs\ShapeBase.xaml.cs" />
     <Compile Include="Dialogs\ShapeLoftDialog.xaml.cs" />
     <Compile Include="Models\Adorner.cs" />
+    <Compile Include="Models\Axies.cs" />
+    <Compile Include="Models\Floor.cs" />
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />
+    <Compile Include="Models\MeshExtensions.cs" />
     <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
     <Compile Include="Models\PointUtils.cs" />
@@ -355,6 +358,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Buttons\TopEye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\centereye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\ObjectEye.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\Vase.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

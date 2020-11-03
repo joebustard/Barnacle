@@ -26,8 +26,8 @@ namespace Make3D.ViewModels
         private Ribbon MainRibbon;
         private static List<MruEntry> recentFilesList;
         private bool rightTextAlignment;
-        private bool showGridChecked;
-        private bool showMarginsChecked;
+        private bool showFloorChecked;
+        private bool showAxiesChecked;
         private bool snapMarginChecked;
 
         private SubViewManager subViewMan;
@@ -68,7 +68,7 @@ namespace Make3D.ViewModels
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
 
-            showGridChecked = false;
+            showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
 
@@ -88,7 +88,8 @@ namespace Make3D.ViewModels
             {
                 LoadMru();
             }
-
+            ShowFloorChecked = true;
+            ShowAxiesChecked = true;
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
             NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
             NotificationManager.Subscribe("ClosePrintPreview", ReturnToDefaultView);
@@ -387,36 +388,36 @@ namespace Make3D.ViewModels
         public ICommand SettingsCommand { get; set; }
         public ICommand SelectCommand { get; set; }
 
-        public bool ShowGridChecked
+        public bool ShowFloorChecked
         {
             get
             {
-                return showGridChecked;
+                return showFloorChecked;
             }
             set
             {
-                if (showGridChecked != value)
+                if (showFloorChecked != value)
                 {
-                    showGridChecked = value;
+                    showFloorChecked = value;
                     NotifyPropertyChanged();
-                    NotificationManager.Notify("ShowGrid", showGridChecked);
+                    NotificationManager.Notify("ShowFloor", showFloorChecked);
                 }
             }
         }
 
-        public bool ShowMarginsChecked
+        public bool ShowAxiesChecked
         {
             get
             {
-                return showMarginsChecked;
+                return showAxiesChecked;
             }
             set
             {
-                if (showMarginsChecked != value)
+                if (showAxiesChecked != value)
                 {
-                    showMarginsChecked = value;
+                    showAxiesChecked = value;
                     NotifyPropertyChanged();
-                    NotificationManager.Notify("ShowMargins", showMarginsChecked);
+                    NotificationManager.Notify("ShowAxies", showAxiesChecked);
                 }
             }
         }

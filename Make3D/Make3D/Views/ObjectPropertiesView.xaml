@@ -49,10 +49,10 @@
         <xctk:ColorPicker x:Name="_colorPicker"
                                    VerticalAlignment="Top" Grid.Row="2" Grid.ColumnSpan="3"  IsOpen="False" SelectedColor="{Binding ObjectColour}" />
         <Label Grid.Row="3"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Position</Label>
-        <Label Grid.Row="4"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
+        <Label Grid.Row="4"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Red">X</Label>
         <TextBox Grid.Row="4" Grid.Column="1" FontSize="9" Text="{Binding PositionX}" />
 
-        <Label Grid.Row="5"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
+        <Label Grid.Row="5"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Green">Y</Label>
         <TextBox Grid.Row="5" Grid.Column="1" FontSize="9" Text="{Binding PositionY}" />
 
         <Label Grid.Row="6"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
@@ -62,21 +62,21 @@
             <Button x:Name="SetCentre" Content="Centre" FontSize="8" Command="{Binding MoveToCentreCommand}" ToolTip="Move object to centre of the floor" />
         </UniformGrid>
         <Label Grid.Row="8"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Size</Label>
-        <Label Grid.Row="9"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">L(X)</Label>
+        <Label Grid.Row="9"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Red">L(X)</Label>
         <TextBox Grid.Row="9" Grid.Column="1" FontSize="9" Text="{Binding ScaleX }" />
 
-        <Label Grid.Row="10"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">H(Y)</Label>
+        <Label Grid.Row="10"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Green">H(Y)</Label>
         <TextBox Grid.Row="10" Grid.Column="1" FontSize="9" Text="{Binding ScaleY }" />
 
         <Label Grid.Row="11"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">W(Z)</Label>
         <TextBox Grid.Row="11" Grid.Column="1" FontSize="9" Text="{Binding ScaleZ }" />
 
         <Label Grid.Row="12"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Rotation</Label>
-        <Label Grid.Row="13"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">X</Label>
+        <Label Grid.Row="13"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Red">X</Label>
         <TextBox Grid.Row="13" Grid.Column="1" FontSize="9" Text="{Binding RotationX}" />
         <Button Grid.Row="13" Grid.Column="2" FontSize="9" Content="." Command="{Binding RotateXCommand}" />
 
-        <Label Grid.Row="14"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Y</Label>
+        <Label Grid.Row="14"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Green">Y</Label>
         <TextBox Grid.Row="14" Grid.Column="1" FontSize="9" Text="{Binding RotationY}" />
         <Button Grid.Row="14" Grid.Column="2" FontSize="9" Content="." Command="{Binding RotateYCommand}" />
         <Label Grid.Row="15"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
