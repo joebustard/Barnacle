@@ -1,0 +1,34 @@
+﻿<Window x:Class="Make3D.Dialogs.STLExportedPartsConfirmation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Make3D.Dialogs"
+        mc:Ignorable="d"
+     Title="STL Parts Exported Confirmation" Height="200" Width="800" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+        </Grid.ColumnDefinitions>
+        <Label x:Name="ExportLabel" Grid.Row="0" FontSize="16" HorizontalAlignment="Center">Model parts have been exported to</Label>
+        <Label x:Name="PathLabel" Grid.Row="1" FontSize="16" HorizontalAlignment="Center" />
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            
+            <Button Grid.Column="1" Content="Open Export Folder" Click="OpenFolderClick" Margin="2,2,4,8" />
+            <Button Grid.Column="3" Content="Ok" Click="CloseClick" Margin="4,2,4,8" />
+        </Grid>
+      
+    </Grid>
+</Window>

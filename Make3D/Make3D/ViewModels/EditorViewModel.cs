@@ -106,40 +106,69 @@ namespace Make3D.ViewModels
         private void OnExportParts(object param)
         {
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
-            /*
-                STLExportedConfirmation dlg = new STLExportedConfirmation();
+            
+                STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
                 dlg.ExportPath = exportedPath;
-                            if (dlg.ShowDialog() == true)
-                            {
-                            }
-                            */
+            dlg.ShowDialog();
+ 
+                            
         }
 
         private void OnIrregular(object param)
         {
+            
+            EditorParameters pm = new EditorParameters();
+            Object3D editingObj = null;
             IrregularPolygonDlg dlg = new IrregularPolygonDlg();
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                 editingObj = selectedObjectAdorner.SelectedObjects[0];
+                if (editingObj.EditorParameters != null )
+                {
+                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                    {
+                        dlg.EditorParameters = editingObj.EditorParameters;
+                    }
+                }
+            }
             if (dlg.ShowDialog() == true)
             {
-                Object3D obj = new Object3D();
-
+                bool positionAtRight= false;
+                if (editingObj == null)
+                {
+                    editingObj = new Object3D();
+                    editingObj.Name = Document.NextName;
+                    editingObj.Description = "";
+                    Document.Content.Add(editingObj);
+                    positionAtRight = true;
+                }
                 DeselectAll();
-                obj.Name = Document.NextName;
-                obj.Description = "";
 
-                obj.RelativeObjectVertices = dlg.Vertices;
-                obj.TriangleIndices = dlg.Triangles;
+                editingObj.EditorParameters = dlg.EditorParameters;
+                editingObj.RelativeObjectVertices = dlg.Vertices;
+                editingObj.TriangleIndices = dlg.Triangles;
                 //obj.CalcScale(false);
                 RecalculateAllBounds();
-                obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
+                if (positionAtRight)
+                {
+                    if (allBounds.Upper.X > double.MinValue)
+                    {
+                        editingObj.Position = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                    else
+                    {
+                        editingObj.Position = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                }
 
-                obj.PrimType = "Mesh";
+                editingObj.PrimType = "Mesh";
 
-                obj.Remesh();
-                allBounds += obj.AbsoluteBounds;
+                editingObj.Remesh();
+                allBounds += editingObj.AbsoluteBounds;
 
-                GeometryModel3D gm = GetMesh(obj);
+                GeometryModel3D gm = GetMesh(editingObj);
 
-                Document.Content.Add(obj);
+  
                 Document.Dirty = true;
                 RegenerateDisplayList();
             }
@@ -1648,18 +1677,25 @@ namespace Make3D.ViewModels
 
         private void RestoreUnselectedColours()
         {
-            foreach (Object3D ob in selectedItems)
+            try
             {
-                foreach (GeometryModel3D md in modelItems)
+                foreach (Object3D ob in selectedItems)
                 {
-                    if (md != floor.FloorMesh)
+                    foreach (GeometryModel3D md in modelItems)
                     {
-                        if (ob.Mesh == md.Geometry)
+                        if (md != floor.FloorMesh)
                         {
-                            md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
+                            if (ob.Mesh == md.Geometry)
+                            {
+                                md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
+                            }
                         }
                     }
                 }
+            }
+            catch
+            {
+
             }
         }
 

@@ -93,8 +93,13 @@
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
     <Compile Include="Dialogs\ShapeBase.xaml.cs" />
     <Compile Include="Dialogs\ShapeLoftDialog.xaml.cs" />
+    <Compile Include="Dialogs\STLExportedPartsConfirmation.xaml.cs">
+      <DependentUpon>STLExportedPartsConfirmation.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
+    <Compile Include="Models\EditorParameter.cs" />
+    <Compile Include="Models\EditorParameters.cs" />
     <Compile Include="Models\Floor.cs" />
     <Compile Include="Models\Grid.cs" />
     <Compile Include="Models\Group3D.cs" />
@@ -197,6 +202,10 @@
     <Page Include="Dialogs\ShapeLoftDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\STLExportedPartsConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

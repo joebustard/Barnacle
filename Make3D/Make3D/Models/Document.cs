@@ -204,7 +204,9 @@ namespace Make3D.Models
                     string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     exportList.Clear();
+                    
                 }
+                res = pth;
             }
             return res;
         }

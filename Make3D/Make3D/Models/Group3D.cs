@@ -63,18 +63,9 @@ namespace Make3D.Models
                 Bounds3D combined = new Bounds3D();
                 combined.Add(leftBnd);
                 combined.Add(rightBnd);
-                Position = new Point3D(combined.MidPoint().X, combined.MidPoint().Y, combined.MidPoint().Z);
+              //  Position = new Point3D(combined.MidPoint().X, combined.MidPoint().Y, combined.MidPoint().Z);
                 result = PerformOperation();
-                if (result)
-                {
-                    /*
-                        double nx = absoluteBounds.MidPoint().X ;
-                        double ny = absoluteBounds.MidPoint().Y;
-                        double nz = absoluteBounds.MidPoint().Z;
-                        Position = new Point3D(nx, ny, nz);
-                        AbsoluteToRelative();
-                        */
-                }
+               
             }
 
             return result;
@@ -192,6 +183,12 @@ namespace Make3D.Models
                     {
                         TriangleIndices.Add(ids[i]);
                     }
+                   
+                    double nx = absoluteBounds.MidPoint().X ;
+                    double ny = absoluteBounds.MidPoint().Y;
+                    double nz = absoluteBounds.MidPoint().Z;
+                    Position = new Point3D(nx, ny, nz);
+       
                     AbsoluteToRelative();
                     SetMesh();
                     res = true;
@@ -215,9 +212,12 @@ namespace Make3D.Models
 
         internal override void Remesh()
         {
-            RelativeToAbsolute();
+            if (RelativeObjectVertices != null && RelativeObjectVertices.Count > 0)
+            {
+                RelativeToAbsolute();
 
-            SetMesh();
+                SetMesh();
+            }
         }
 
         internal override void Read(XmlNode nd)

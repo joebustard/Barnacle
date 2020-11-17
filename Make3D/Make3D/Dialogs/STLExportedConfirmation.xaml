@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="2" Content="Close" Click="CloseClick" Margin="4,2,4,8" />
+            <Button Grid.Column="2" Content="Ok" Click="CloseClick" Margin="4,2,4,8" />
         </Grid>
     </Grid>
 </Window>

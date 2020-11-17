@@ -27,6 +27,18 @@ namespace Make3D.Models
         private Int32Collection triangleIndices;
         protected string primType;
 
+        private EditorParameters editorParameters;
+        public EditorParameters EditorParameters
+        {
+            get
+            {
+                return editorParameters;
+            }
+            set
+            {
+                editorParameters = value ;
+            }
+        }
         public Object3D()
         {
             try
@@ -42,6 +54,7 @@ namespace Make3D.Models
                 Rotation = new Point3D();
                 absoluteBounds = new Bounds3D();
                 PrimType = "";
+                editorParameters = new EditorParameters();
             }
             catch (Exception ex)
             {
@@ -103,6 +116,7 @@ namespace Make3D.Models
                 if (position != value)
                 {
                     position = value;
+
                     Remesh();
                 }
             }
@@ -583,6 +597,11 @@ namespace Make3D.Models
             sc.Z = GetDouble(sn, "Z");
             Scale = sc;
 
+            XmlNode ed = nd.SelectSingleNode("EditorParameters");
+            if ( ed != null )
+            {
+                EditorParameters.Load(ed as XmlElement);
+            }
             if (PrimType != "Mesh")
             {
                 BuildPrimitive(PrimType);
@@ -619,8 +638,11 @@ namespace Make3D.Models
 
         internal virtual void Remesh()
         {
-            RelativeToAbsolute();
-            SetMesh();
+            if (relativeObjectVertices != null && relativeObjectVertices.Count > 0)
+            {
+                RelativeToAbsolute();
+                SetMesh();
+            }
         }
 
         internal void SetMesh()
@@ -649,6 +671,10 @@ namespace Make3D.Models
             scl.SetAttribute("Y", Scale.Y.ToString());
             scl.SetAttribute("Z", Scale.Z.ToString());
             ele.AppendChild(scl);
+            if ( EditorParameters.HasContent)
+            {
+                EditorParameters.Write(doc, ele);
+            }
 
             foreach (Point3D v in relativeObjectVertices)
             {

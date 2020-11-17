@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Make3D.Models;
+using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,19 @@ namespace Make3D.Dialogs
         private double height = 10;
         private BitmapImage localImage;
         private WriteableBitmap wbx;
+        private double scale;
+        private EditorParameters editorParameters;
+        public EditorParameters EditorParameters
+        {
+            get
+            {
+                return editorParameters;
+            }
+            set
+            {
+                editorParameters = value;
+            }
+        }
         private Point3DCollection vertices;
 
         public Point3DCollection Vertices
@@ -52,7 +66,10 @@ namespace Make3D.Dialogs
             vertices = new Point3DCollection();
             triangles = new Int32Collection();
             selectedPoint = -1;
+            scale = 1.0;
             InitialisePoints();
+            editorParameters = new EditorParameters();
+            editorParameters.ToolName = "IrregularPolygon";
         }
 
         private void LoadImage(string f)
@@ -63,6 +80,7 @@ namespace Make3D.Dialogs
             localImage.UriSource = fileUri;
             //    localImage.DecodePixelWidth = 800;
             localImage.EndInit();
+            editorParameters.Set("ImagePath", f);
             UpdateDisplay();
         }
 
@@ -236,6 +254,21 @@ namespace Make3D.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             MainCanvas.ContextMenu = LineMenu();
+            string imageName = EditorParameters.Get("ImagePath");
+            if ( imageName != "")
+            {
+                LoadImage(imageName);
+            }
+            String s = EditorParameters.Get("Points");
+            if ( s != "")
+            {
+                string[] words = s.Split(',');
+                points.Clear();
+                for ( int i = 0; i < words.GetLength(0); i +=2)
+                {
+                    points.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i+1])));
+                }
+            }
             UpdateDisplay();
         }
 
@@ -257,6 +290,9 @@ namespace Make3D.Dialogs
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             InitialisePoints();
+            scale = 1;
+            MainScale.ScaleX = scale;
+            MainScale.ScaleY = scale;
             UpdateDisplay();
         }
 
@@ -284,11 +320,40 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void InButton_Click(object sender, RoutedEventArgs e)
+        {
+            scale *= 1.1;
+            MainScale.ScaleX = scale;
+            MainScale.ScaleY = scale;
+        }
+
+        private void OutButton_Click(object sender, RoutedEventArgs e)
+        {
+            scale *= 0.9;
+            MainScale.ScaleX = scale;
+            MainScale.ScaleY = scale;
+        }
+
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
+            GeneratePointParams();
             GenerateFaces();
             DialogResult = true;
             Close();
+        }
+
+        private void GeneratePointParams()
+        {
+            String s = "";
+            for (int i = 0; i < points.Count; i++)
+            {
+                s += points[i].X.ToString() + "," + points[i].Y.ToString();
+                if ( i < points.Count-1)
+                {
+                    s += ",";
+                }
+            }
+            editorParameters.Set("Points", s);
         }
 
         private void GenerateFaces()
