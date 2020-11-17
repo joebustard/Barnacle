@@ -148,6 +148,7 @@
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Export" Label="Export">
                         <Custom:RibbonButton x:Name="STL" Label="STL" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="STLParts" Label="STL Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export each part into its own STL file" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
@@ -205,8 +206,8 @@
                         <Custom:RibbonButton x:Name="SaveSelected" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
-                <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Make3D;component/Images/Buttons/question1.png">
-                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                <Custom:RibbonGroup Name="ToolGroup" Header="Tools">
+                    <Custom:RibbonButton x:Name="IrregularButton" Label="Platelet" Command="{Binding IrregularCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
             <Custom:RibbonTab Name="ViewTab1" Header="View">
@@ -215,6 +216,7 @@
                     <Custom:RibbonButton x:Name="ZoomInButton" Label="Zoom In" Command="{Binding ZoomInCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="Zoom100Button" Label="100%" Command="{Binding Zoom100Command}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
+
                 <Custom:RibbonGroup Name="ShowGroup" Header="Show">
                     <Custom:RibbonCheckBox x:Name="ShowFloor" Label="Floor" IsChecked="{Binding ShowFloorChecked}" />
                     <Custom:RibbonCheckBox x:Name="ShowAxis" Label="Axis" IsChecked="{Binding ShowAxiesChecked}" />
@@ -223,7 +225,10 @@
                     <!--
                     <Custom:RibbonCheckBox x:Name="SnapMargin" Label="Margin Snap" IsChecked="{Binding SnapMarginChecked}" ToolTip="Snap new staves and tabs to left margin" />
        -->
-                    </Custom:RibbonGroup>
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Make3D;component/Images/Buttons/question1.png">
+                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                </Custom:RibbonGroup>
             </Custom:RibbonTab>
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">

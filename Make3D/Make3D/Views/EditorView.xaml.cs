@@ -91,6 +91,7 @@ namespace Make3D.Views
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             bool shift = false;
+            bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             lastHitModel = null;
             HitTest(sender, e);
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
@@ -101,7 +102,7 @@ namespace Make3D.Views
             vm.MouseDown(lastMousePos, e);
             if (lastHitModel != null)
             {
-                vm.Select(lastHitModel, shift);
+                vm.Select(lastHitModel, leftButton,shift);
             }
         }
 

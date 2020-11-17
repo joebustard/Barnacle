@@ -1,17 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
-    public class Axies
+    internal class Grid3D
     {
-        public double Size { get; set; }
-        Model3DGroup group;
+        private double length = 210;
+
+        public double Size
+        {
+            get
+            {
+                return length;
+            }
+            set
+            {
+                if (length != value)
+                {
+                    length = value;
+                    DefineModel(group);
+                }
+            }
+        }
+
+        private Model3DGroup group;
+
         public Model3DGroup Group
         {
             get
@@ -19,49 +33,59 @@ namespace Make3D.Models
                 return group;
             }
         }
-        public Axies()
+
+        public Grid3D()
         {
-            Size = 210;
             group = new Model3DGroup();
+            Size = 210;
             DefineModel(group);
         }
+
         private void DefineModel(Model3DGroup group)
         {
-            // Origin cube.
-            MeshGeometry3D mesh = MakeCubeMesh(0, 0, 0, 0.1);
-            Material material = new DiffuseMaterial(Brushes.Yellow);
-            GeometryModel3D model = new GeometryModel3D(mesh, material);
-            group.Children.Add(model);
+            group.Children.Clear();
 
-            const double thickness = 0.2;
-            double length = Size;
+            for (double x = -length; x <= length; x += 1)
+            {
+                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
+                xmesh.ApplyTransformation(new ScaleTransform3D(0.05, 0.1, 2 * length));
+                xmesh.ApplyTransformation(new TranslateTransform3D(x, 0, 0));
+                Material xmaterial = new DiffuseMaterial(Brushes.LightBlue);
+                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
+                group.Children.Add(xmodel);
+            }
 
-            // X axis.
-            MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-            xmesh.ApplyTransformation(new ScaleTransform3D(length, thickness, thickness));
-            xmesh.ApplyTransformation(new TranslateTransform3D(length / 2, 0, 0));
-            Material xmaterial = new DiffuseMaterial(Brushes.Red);
-            GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-            group.Children.Add(xmodel);
+            for (double z = -length; z <= length; z += 1)
+            {
+                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
+                xmesh.ApplyTransformation(new ScaleTransform3D(2 * length, 0.1, 0.05));
+                xmesh.ApplyTransformation(new TranslateTransform3D(0, 0, z));
+                Material xmaterial = new DiffuseMaterial(Brushes.LightBlue);
+                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
+                group.Children.Add(xmodel);
+            }
 
-            // Y axis cube.
-            MeshGeometry3D ymesh = MakeCubeMesh(0, 0, 0, 1);
-            ymesh.ApplyTransformation(new ScaleTransform3D(thickness, length, thickness));
-            ymesh.ApplyTransformation(new TranslateTransform3D(0, length / 2, 0));
-            Material ymaterial = new DiffuseMaterial(Brushes.Green);
-            GeometryModel3D ymodel = new GeometryModel3D(ymesh, ymaterial);
-            group.Children.Add(ymodel);
+            for (double x = -length; x <= length; x += 10)
+            {
+                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
+                xmesh.ApplyTransformation(new ScaleTransform3D(0.5, 0.1, 2 * length));
+                xmesh.ApplyTransformation(new TranslateTransform3D(x, 0, 0));
+                Material xmaterial = new DiffuseMaterial(Brushes.CadetBlue);
+                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
+                group.Children.Add(xmodel);
+            }
 
-            // Z axis cube.
-            MeshGeometry3D zmesh = MakeCubeMesh(0, 0, 0, 1);
-            Transform3DGroup zgroup = new Transform3DGroup();
-            zgroup.Children.Add(new ScaleTransform3D(thickness, thickness, length));
-            zgroup.Children.Add(new TranslateTransform3D(0, 0, length / 2));
-            zmesh.ApplyTransformation(zgroup);
-            Material zmaterial = new DiffuseMaterial(Brushes.Blue);
-            GeometryModel3D zmodel = new GeometryModel3D(zmesh, zmaterial);
-            group.Children.Add(zmodel);
+            for (double z = -length; z <= length; z += 10)
+            {
+                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
+                xmesh.ApplyTransformation(new ScaleTransform3D(2 * length, 0.1, 0.5));
+                xmesh.ApplyTransformation(new TranslateTransform3D(0, 0, z));
+                Material xmaterial = new DiffuseMaterial(Brushes.CadetBlue);
+                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
+                group.Children.Add(xmodel);
+            }
         }
+
         // Make a mesh containing a cube centered at this point.
         private MeshGeometry3D MakeCubeMesh(double x, double y, double z, double width)
         {

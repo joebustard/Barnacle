@@ -65,9 +65,10 @@ namespace Make3D.ViewModels
             SelectCommand = new RelayCommand(OnSelect);
             ImportCommand = new RelayCommand(OnImport);
             ExportCommand = new RelayCommand(OnExport);
+            ExportPartsCommand = new RelayCommand(OnExportParts);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
-
+            IrregularCommand = new RelayCommand(OnIrregular);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -102,6 +103,16 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetStatusText1", SetStatusText1);
             NotificationManager.Subscribe("SetStatusText3", SetStatusText3);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnExportParts(object obj)
+        {
+            NotificationManager.Notify("ExportParts", obj);
+        }
+
+        private void OnIrregular(object obj)
+        {
+            NotificationManager.Notify("Irregular", null);
         }
 
         private void OnDistribute(object obj)
@@ -385,6 +396,7 @@ namespace Make3D.ViewModels
         public ICommand SaveCommand { get; set; }
         public ICommand ImportCommand { get; set; }
         public ICommand ExportCommand { get; set; }
+        public ICommand ExportPartsCommand { get; set; }
         public ICommand SettingsCommand { get; set; }
         public ICommand SelectCommand { get; set; }
 
@@ -471,6 +483,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand TextAlignmentCommand { get; set; }
+        public ICommand IrregularCommand { get; set; }
 
         public Visibility ToolPaletteVisible
         {

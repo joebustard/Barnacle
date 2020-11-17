@@ -1,4 +1,5 @@
-﻿using System.Windows.Media;
+﻿using System;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
@@ -57,278 +58,93 @@ namespace Make3D.Models
             indices.Add(v3);
         }
 
+        public static Point3D[] MakePolygonPoints(int numSides)
+        {
+            double radius = 0.5;
+            // Generate the points.
+            Point3D[] points = new Point3D[numSides];
+            double dtheta = 2 * Math.PI / numSides;
+            double theta = 0;
+            for (int i = 0; i < numSides; i++)
+            {
+                points[i] = new Point3D(radius * Math.Cos(theta), -0.5, radius * Math.Sin(theta));
+                theta += dtheta;
+            }
+            return points;
+        }
+
         internal static void GenerateCylinder(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();
-            pnts.Add(new Point3D(0.294, 0.405, 0.500));
-            pnts.Add(new Point3D(0.405, 0.294, 0.500));
-            pnts.Add(new Point3D(-0.476, 0.155, -0.500));
-            pnts.Add(new Point3D(-0.405, 0.294, -0.500));
-            pnts.Add(new Point3D(-0.294, 0.405, -0.500));
-            pnts.Add(new Point3D(-0.155, 0.476, -0.500));
-            pnts.Add(new Point3D(0.155, 0.476, 0.500));
-            pnts.Add(new Point3D(0.000, 0.500, -0.500));
-            pnts.Add(new Point3D(-0.476, 0.155, 0.500));
-            pnts.Add(new Point3D(0.155, 0.476, -0.500));
-            pnts.Add(new Point3D(0.294, 0.405, -0.500));
-            pnts.Add(new Point3D(0.405, 0.294, -0.500));
-            pnts.Add(new Point3D(0.476, 0.155, -0.500));
-            pnts.Add(new Point3D(0.000, 0.500, 0.500));
-            pnts.Add(new Point3D(-0.500, 0.000, 0.500));
-            pnts.Add(new Point3D(-0.155, 0.476, 0.500));
-            pnts.Add(new Point3D(0.500, 0.000, -0.500));
-            pnts.Add(new Point3D(0.000, -0.500, -0.500));
-            pnts.Add(new Point3D(0.000, -0.500, 0.500));
-            pnts.Add(new Point3D(0.155, -0.476, 0.500));
-            pnts.Add(new Point3D(-0.155, -0.476, -0.500));
-            pnts.Add(new Point3D(-0.294, -0.405, -0.500));
-            pnts.Add(new Point3D(-0.405, -0.294, -0.500));
-            pnts.Add(new Point3D(-0.476, -0.155, -0.500));
-            pnts.Add(new Point3D(-0.500, 0.000, -0.500));
-            pnts.Add(new Point3D(-0.294, 0.405, 0.500));
-            pnts.Add(new Point3D(-0.405, 0.294, 0.500));
-            pnts.Add(new Point3D(0.476, -0.155, -0.500));
-            pnts.Add(new Point3D(-0.476, -0.155, 0.500));
-            pnts.Add(new Point3D(0.405, -0.294, -0.500));
-            pnts.Add(new Point3D(0.294, -0.405, -0.500));
-            pnts.Add(new Point3D(0.155, -0.476, -0.500));
-            pnts.Add(new Point3D(0.294, -0.405, 0.500));
-            pnts.Add(new Point3D(-0.405, -0.294, 0.500));
-            pnts.Add(new Point3D(0.405, -0.294, 0.500));
-            pnts.Add(new Point3D(-0.294, -0.405, 0.500));
-            pnts.Add(new Point3D(0.476, -0.155, 0.500));
-            pnts.Add(new Point3D(-0.155, -0.476, 0.500));
-            pnts.Add(new Point3D(0.476, 0.155, 0.500));
-            pnts.Add(new Point3D(0.500, 0.000, 0.500));
+            int numSides = 180;
+            Point3D[] bottom = MakePolygonPoints(numSides);
+            // Top is the bottom reversed and moved up to 1
+            Point3D[] top = new Point3D[numSides];
+            int ind = numSides - 1;
+            foreach (Point3D p in bottom)
+            {
+                top[ind] = new Point3D(p.X, 0.5, p.Z);
+                ind--;
+            }
+            Point3D bottomCentre = new Point3D(0, -0.5, 0);
+            Point3D topCentre = new Point3D(0, 0.5, 0);
+            for (int i = 0; i < numSides; i++)
+            {
+                int j = i + 1;
+                if (j == numSides)
+                {
+                    j = 0;
+                }
 
-            indices.Add(0);
-            indices.Add(9);
-            indices.Add(6);
-            indices.Add(4);
-            indices.Add(5);
-            indices.Add(3);
-            indices.Add(2);
-            indices.Add(3);
-            indices.Add(5);
-            indices.Add(2);
-            indices.Add(5);
-            indices.Add(7);
-            indices.Add(2);
-            indices.Add(7);
-            indices.Add(9);
-            indices.Add(2);
-            indices.Add(9);
-            indices.Add(10);
-            indices.Add(2);
-            indices.Add(10);
-            indices.Add(11);
-            indices.Add(2);
-            indices.Add(11);
-            indices.Add(12);
-            indices.Add(9);
-            indices.Add(13);
-            indices.Add(6);
-            indices.Add(12);
-            indices.Add(11);
-            indices.Add(1);
-            indices.Add(0);
-            indices.Add(1);
-            indices.Add(10);
-            indices.Add(11);
-            indices.Add(10);
-            indices.Add(1);
-            indices.Add(15);
-            indices.Add(4);
-            indices.Add(25);
-            indices.Add(26);
-            indices.Add(25);
-            indices.Add(3);
-            indices.Add(4);
-            indices.Add(3);
-            indices.Add(25);
-            indices.Add(10);
-            indices.Add(9);
-            indices.Add(0);
-            indices.Add(22);
-            indices.Add(12);
-            indices.Add(21);
-            indices.Add(23);
-            indices.Add(12);
-            indices.Add(22);
-            indices.Add(20);
-            indices.Add(21);
-            indices.Add(12);
-            indices.Add(24);
-            indices.Add(12);
-            indices.Add(23);
-            indices.Add(2);
-            indices.Add(12);
-            indices.Add(24);
-            indices.Add(12);
-            indices.Add(16);
-            indices.Add(20);
-            indices.Add(17);
-            indices.Add(20);
-            indices.Add(16);
-            indices.Add(27);
-            indices.Add(31);
-            indices.Add(16);
-            indices.Add(29);
-            indices.Add(31);
-            indices.Add(27);
-            indices.Add(30);
-            indices.Add(31);
-            indices.Add(29);
-            indices.Add(17);
-            indices.Add(16);
-            indices.Add(31);
-            indices.Add(31);
-            indices.Add(19);
-            indices.Add(17);
-            indices.Add(18);
-            indices.Add(17);
-            indices.Add(19);
-            indices.Add(3);
-            indices.Add(2);
-            indices.Add(8);
-            indices.Add(3);
-            indices.Add(8);
-            indices.Add(26);
-            indices.Add(13);
-            indices.Add(9);
-            indices.Add(7);
-            indices.Add(14);
-            indices.Add(8);
-            indices.Add(24);
-            indices.Add(8);
-            indices.Add(2);
-            indices.Add(24);
-            indices.Add(32);
-            indices.Add(19);
-            indices.Add(30);
-            indices.Add(31);
-            indices.Add(30);
-            indices.Add(19);
-            indices.Add(30);
-            indices.Add(29);
-            indices.Add(32);
-            indices.Add(29);
-            indices.Add(34);
-            indices.Add(32);
-            indices.Add(27);
-            indices.Add(36);
-            indices.Add(34);
-            indices.Add(27);
-            indices.Add(34);
-            indices.Add(29);
-            indices.Add(14);
-            indices.Add(24);
-            indices.Add(23);
-            indices.Add(14);
-            indices.Add(23);
-            indices.Add(28);
-            indices.Add(7);
-            indices.Add(5);
-            indices.Add(15);
-            indices.Add(7);
-            indices.Add(15);
-            indices.Add(13);
-            indices.Add(26);
-            indices.Add(38);
-            indices.Add(25);
-            indices.Add(8);
-            indices.Add(38);
-            indices.Add(26);
-            indices.Add(15);
-            indices.Add(25);
-            indices.Add(38);
-            indices.Add(13);
-            indices.Add(15);
-            indices.Add(38);
-            indices.Add(1);
-            indices.Add(6);
-            indices.Add(38);
-            indices.Add(0);
-            indices.Add(6);
-            indices.Add(1);
-            indices.Add(13);
-            indices.Add(38);
-            indices.Add(6);
-            indices.Add(5);
-            indices.Add(4);
-            indices.Add(15);
-            indices.Add(23);
-            indices.Add(22);
-            indices.Add(33);
-            indices.Add(23);
-            indices.Add(33);
-            indices.Add(28);
-            indices.Add(20);
-            indices.Add(37);
-            indices.Add(35);
-            indices.Add(35);
-            indices.Add(33);
-            indices.Add(21);
-            indices.Add(22);
-            indices.Add(21);
-            indices.Add(33);
-            indices.Add(36);
-            indices.Add(27);
-            indices.Add(39);
-            indices.Add(16);
-            indices.Add(39);
-            indices.Add(27);
-            indices.Add(18);
-            indices.Add(37);
-            indices.Add(20);
-            indices.Add(35);
-            indices.Add(21);
-            indices.Add(20);
-            indices.Add(38);
-            indices.Add(39);
-            indices.Add(16);
-            indices.Add(8);
-            indices.Add(14);
-            indices.Add(38);
-            indices.Add(14);
-            indices.Add(28);
-            indices.Add(38);
-            indices.Add(39);
-            indices.Add(38);
-            indices.Add(28);
-            indices.Add(39);
-            indices.Add(28);
-            indices.Add(33);
-            indices.Add(39);
-            indices.Add(33);
-            indices.Add(35);
-            indices.Add(39);
-            indices.Add(35);
-            indices.Add(37);
-            indices.Add(39);
-            indices.Add(37);
-            indices.Add(18);
-            indices.Add(39);
-            indices.Add(18);
-            indices.Add(19);
-            indices.Add(32);
-            indices.Add(34);
-            indices.Add(19);
-            indices.Add(36);
-            indices.Add(19);
-            indices.Add(34);
-            indices.Add(39);
-            indices.Add(19);
-            indices.Add(36);
-            indices.Add(17);
-            indices.Add(18);
-            indices.Add(20);
-            indices.Add(16);
-            indices.Add(12);
-            indices.Add(38);
-            indices.Add(1);
-            indices.Add(38);
-            indices.Add(12);
+                int k = numSides - i - 1;
+                int l = k - 1;
+                if (l < 0)
+                {
+                    l = numSides - 1;
+                }
+                // bottom cap
+                AddTriangle(pnts, indices, bottomCentre, bottom[i], bottom[j]);
+                // top cap
+                AddTriangle(pnts, indices, topCentre, top[i], top[j]);
+
+                // vertical 1
+                AddTriangle(pnts, indices, bottom[i], top[k], top[l]);
+
+                // vertical 2
+                AddTriangle(pnts, indices, bottom[i], top[l], bottom[j]);
+            }
+        }
+
+        private static void AddTriangle(Point3DCollection pnts, Int32Collection indices, Point3D p0, Point3D p1, Point3D p2)
+        {
+            int i0 = AddVertice(pnts, p0);
+            int i1 = AddVertice(pnts, p1);
+            int i2 = AddVertice(pnts, p2);
+            indices.Add(i0);
+            indices.Add(i1);
+            indices.Add(i2);
+        }
+
+        private static int AddVertice(Point3DCollection pnts, Point3D p)
+        {
+            int res = -1;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if ((Math.Abs(pnts[i].X - p.X) < 0.0000001) &&
+                     (Math.Abs(pnts[i].Y - p.Y) < 0.0000001) &&
+                     (Math.Abs(pnts[i].Z - p.Z) < 0.0000001)
+                    )
+                {
+                    res = i;
+                    break;
+                }
+            }
+            if (res == -1)
+            {
+                pnts.Add(p);
+                res = pnts.Count - 1;
+            }
+            return res;
         }
 
         internal static void GenerateRoof(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)

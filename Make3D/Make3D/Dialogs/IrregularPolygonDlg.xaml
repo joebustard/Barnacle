@@ -1,0 +1,33 @@
+﻿<Window x:Class="Make3D.Dialogs.IrregularPolygonDlg"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Make3D.Dialogs"
+        mc:Ignorable="d"
+        Title="IrregularPolygonDlg" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="8*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" />
+                <RowDefinition />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <UniformGrid Grid.Row="0" Columns="1">
+                <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" />
+                <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" />
+            </UniformGrid>
+            <UniformGrid Grid.Row="2" Columns="1">
+                <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" />
+                <Button x:Name="OkButton" Content="Ok" Click="OkButton_Click" />
+            </UniformGrid>
+        </Grid>
+        <Border Grid.Column="1" BorderThickness="2" Background="Azure">
+            <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp" />
+        </Border>
+    </Grid>
+</Window>

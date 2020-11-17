@@ -26,6 +26,8 @@
                         <AmbientLight Color="#FF808080" />
                         <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
                         </DirectionalLight>
+                        <DirectionalLight x:Name = "dirLightMain2" Direction = "1,1,1" Color="Yellow">
+                        </DirectionalLight>
                     </Model3DGroup>
                 </ModelVisual3D.Content>
             </ModelVisual3D>

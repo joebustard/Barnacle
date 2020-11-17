@@ -1,6 +1,7 @@
 ﻿using Make3D.Models;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -8,17 +9,11 @@ using System.Windows.Media.Media3D;
 
 namespace Make3D.Adorners
 {
-    public class SizeAdorner
+    public class SizeAdorner : Adorner
     {
-        private Model3DCollection adornments;
-        public Model3DCollection Adornments { get { return adornments; } }
-        private List<Object3D> thumbs;
-        private List<Object3D> taggedObjects;
 
-        public List<Object3D> SelectedObjects
-        {
-            get { return taggedObjects; }
-        }
+       
+        private List<Object3D> thumbs;
 
         private Object3D box;
         private bool boxSelected;
@@ -34,8 +29,8 @@ namespace Make3D.Adorners
         public SizeAdorner(PolarCamera camera)
         {
             Camera = camera;
-            adornments = new Model3DCollection();
-            taggedObjects = new List<Object3D>();
+            Adornments = new Model3DCollection();
+            SelectedObjects = new List<Object3D>();
             thumbs = new List<Object3D>();
             selectedThumb = null;
             box = null;
@@ -50,10 +45,10 @@ namespace Make3D.Adorners
             GenerateAdornments();
         }
 
-        public void Clear()
+        public override void Clear()
         {
-            adornments.Clear();
-            taggedObjects.Clear();
+            Adornments.Clear();
+            SelectedObjects.Clear();
             thumbs.Clear();
             selectedThumb = null;
             box = null;
@@ -61,26 +56,23 @@ namespace Make3D.Adorners
             bounds = new Bounds3D();
         }
 
-        public void AdornObject(Object3D obj)
+        public override void AdornObject(Object3D obj)
         {
             selectedThumb = null;
             boxSelected = false;
             obj.CalcScale(false);
-            taggedObjects.Add(obj);
+            SelectedObjects.Add(obj);
             GenerateAdornments();
         }
 
-        public void Refresh()
-        {
-            GenerateAdornments();
-        }
 
-        private void GenerateAdornments()
+
+        internal override void GenerateAdornments()
         {
-            adornments.Clear();
+            Adornments.Clear();
             thumbs.Clear();
             bounds = new Bounds3D();
-            foreach (Object3D obj in taggedObjects)
+            foreach (Object3D obj in SelectedObjects)
             {
                 bounds += obj.AbsoluteBounds;
             }
@@ -102,12 +94,12 @@ namespace Make3D.Adorners
             box.TriangleIndices = indices;
             box.Normals = normals;
             box.Position = position;
-            box.ScaleMesh(size.X + 1.0, size.Y + 1.0, size.Z + 1.0);
+            box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
             //box.Scale.Adjust(1.1, 1.1, 1.1);
             box.Color = Color.FromArgb(150, 64, 64, 64);
             box.RelativeToAbsolute();
             box.SetMesh();
-            adornments.Add(GetMesh(box));
+            Adornments.Add(GetMesh(box));
             double thumbSize = 4;
 
             CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
@@ -141,27 +133,14 @@ namespace Make3D.Adorners
             thumb.RelativeToAbsolute();
             thumb.SetMesh();
             thumbs.Add(thumb);
-            adornments.Add(GetMesh(thumb));
+            Adornments.Add(GetMesh(thumb));
         }
 
-        internal int NumberOfSelectedObjects()
-        {
-            return taggedObjects.Count;
-        }
 
-        private static GeometryModel3D GetMesh(Object3D obj)
-        {
-            GeometryModel3D gm = new GeometryModel3D();
-            gm.Geometry = obj.Mesh;
 
-            DiffuseMaterial mt = new DiffuseMaterial();
-            mt.Color = obj.Color;
-            mt.Brush = new SolidColorBrush(obj.Color);
-            gm.Material = mt;
-            return gm;
-        }
 
-        internal bool Select(GeometryModel3D geo)
+
+        internal override bool Select(GeometryModel3D geo)
         {
             bool handled = false;
 
@@ -188,7 +167,7 @@ namespace Make3D.Adorners
             return handled;
         }
 
-        internal void Nudge(Adorner.NudgeDirection dir, double v)
+        internal override void Nudge(Adorner.NudgeDirection dir, double v)
         {
             switch (dir)
             {
@@ -230,7 +209,7 @@ namespace Make3D.Adorners
             }
         }
 
-        internal bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
+        internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
         {
             bool handled = false;
             if (boxSelected)
@@ -308,7 +287,7 @@ namespace Make3D.Adorners
                                             box.Position.Y + positionChange.Y,
                                             box.Position.Z + positionChange.Z);
                 box.Remesh();
-                foreach (Object3D obj in taggedObjects)
+                foreach (Object3D obj in SelectedObjects)
                 {
                     obj.Position = new Point3D(obj.Position.X + positionChange.X,
                     obj.Position.Y + positionChange.Y,
@@ -329,8 +308,18 @@ namespace Make3D.Adorners
         private void MouseMoveThumb(Point lastPos, Point newPos)
         {
             double dr = Math.Sqrt(Camera.Distance);
-            double deltaX = (newPos.X - lastPos.X) / dr;
-            double deltaY = (newPos.Y - lastPos.Y) / dr;
+            
+            double deltaX = (newPos.X - lastPos.X);
+            double deltaY = (newPos.Y - lastPos.Y);
+            var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
+            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+
+            var dpiX = (int)dpiXProperty.GetValue(null, null);
+            var dpiY = (int)dpiYProperty.GetValue(null, null);
+            double mmx = (deltaX * 25.4) / dpiX;
+            double mmy = (deltaY * 25.4) / dpiY;
+            mmx /= dr;
+            mmy /= dr;
             Point3D scaleChange = new Point3D(1, 1, 1);
             Point3D positionChange = new Point3D(0, 0, 0);
             switch (selectedThumb.Name.ToLower())
@@ -341,13 +330,15 @@ namespace Make3D.Adorners
                         {
                             if (Camera.Orientation == PolarCamera.Orientations.Front)
                             {
-                                scaleChange.X = ((box.Scale.X + (deltaX)) / box.Scale.X);
+                                scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
+                                positionChange.X += ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width )/ 2.0;
                             }
                             else
                             {
                                 if (Camera.Orientation == PolarCamera.Orientations.Back)
                                 {
-                                    scaleChange.X = ((box.Scale.X - (deltaX)) / box.Scale.X);
+                                    scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
+                                    positionChange.X += ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
                                 }
                             }
                         }
@@ -364,13 +355,17 @@ namespace Make3D.Adorners
                         {
                             if (Camera.Orientation == PolarCamera.Orientations.Front)
                             {
-                                scaleChange.X = ((box.Scale.X - (deltaX)) / box.Scale.X);
+                                scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
+                                positionChange.X -= ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
+
                             }
                             else
                             {
                                 if (Camera.Orientation == PolarCamera.Orientations.Back)
                                 {
-                                    scaleChange.X = ((box.Scale.X + (deltaX)) / box.Scale.X);
+                                    scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
+                                    positionChange.X -= ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
+
                                 }
                             }
                         }
@@ -385,7 +380,8 @@ namespace Make3D.Adorners
                     {
                         if (deltaY != 0)
                         {
-                            scaleChange.Y = ((box.Scale.Y - (deltaY)) / box.Scale.Y);
+                            scaleChange.Y = ((box.Scale.Y - (mmy)) / box.Scale.Y);
+                            positionChange.Y += ((box.AbsoluteBounds.Height * scaleChange.Y) - box.AbsoluteBounds.Height) / 2.0;
                         }
                         if (scaleChange.Y <= 0)
                         {
@@ -398,7 +394,8 @@ namespace Make3D.Adorners
                     {
                         if (deltaY != 0)
                         {
-                            scaleChange.Y = ((box.Scale.Y + (deltaY)) / box.Scale.Y);
+                            scaleChange.Y = ((box.Scale.Y + (mmy)) / box.Scale.Y);
+                            positionChange.Y -= ((box.AbsoluteBounds.Height * scaleChange.Y) - box.AbsoluteBounds.Height) / 2.0;
                         }
                         if (scaleChange.Y <= 0)
                         {
@@ -413,13 +410,15 @@ namespace Make3D.Adorners
                         {
                             if (Camera.Orientation == PolarCamera.Orientations.Left)
                             {
-                                scaleChange.Z = ((box.Scale.Z + (deltaX)) / box.Scale.Z);
+                                scaleChange.Z = ((box.Scale.Z + (mmx)) / box.Scale.Z);
+                                positionChange.Z += ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                             }
                             else
                             {
                                 if (Camera.Orientation == PolarCamera.Orientations.Right)
                                 {
-                                    scaleChange.Z = ((box.Scale.Z - (deltaX)) / box.Scale.Z);
+                                    scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
+                                    positionChange.Z -= ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                                 }
                             }
                             //scaleChange.Z = ((box.Scale.Z + (deltaX)) / box.Scale.Z);
@@ -455,8 +454,9 @@ namespace Make3D.Adorners
                     }
                     break;
             }
-            foreach (Object3D obj in taggedObjects)
+            foreach (Object3D obj in SelectedObjects)
             {
+                Bounds3D before = obj.AbsoluteBounds;
                 obj.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
                 obj.Position = new Point3D(obj.Position.X + positionChange.X,
                 obj.Position.Y + positionChange.Y,
@@ -504,7 +504,7 @@ namespace Make3D.Adorners
             }
         }
 
-        internal void MouseUp()
+        internal override void MouseUp()
         {
             selectedThumb = null;
             boxSelected = false;

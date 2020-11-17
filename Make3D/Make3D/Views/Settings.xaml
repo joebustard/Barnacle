@@ -40,9 +40,13 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0">Base Scale</Label>
-            <ComboBox x:Name="ScaleBox" Grid.Column="1" Width="60" HorizontalAlignment="Left" VerticalAlignment="Center" SelectedItem="{Binding SelectedScale}" ItemsSource="{Binding Scales}" />
+            <ComboBox x:Name="ScaleBox" Grid.Column="1" Width="55" HorizontalAlignment="Right" VerticalAlignment="Center" SelectedItem="{Binding SelectedScale}" ItemsSource="{Binding Scales}" />
+            <Label Grid.Column="2">Export Scale</Label>
+            <ComboBox x:Name="ExportScaleBox" Grid.Column="3" Width="55" HorizontalAlignment="Right" VerticalAlignment="Center" SelectedItem="{Binding ExportScale}" ItemsSource="{Binding Scales}" />
         </Grid>
         <GroupBox Grid.Row="4" Grid.Column="1" Header="On Export">
             <Grid>

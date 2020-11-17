@@ -12,10 +12,12 @@ namespace Make3D.Models
         public Point3D ExportRotation { get; set; }
         public bool ExportAxisSwap { get; set; }
         public bool FloorAll { get; internal set; }
+        public string ExportScale { get; set; }
 
         public ProjectSettings()
         {
             BaseScale = "1";
+            ExportScale = "1";
             ExportRootName = "<FileName>";
             Description = "A 3D model created by Barnacle";
             ExportRotation = new Point3D(0, 0, 0);
@@ -29,6 +31,7 @@ namespace Make3D.Models
             docNode.AppendChild(ele);
             ele.SetAttribute("ExportRootName", ExportRootName);
             ele.SetAttribute("BaseScale", BaseScale);
+            ele.SetAttribute("ExportScale", ExportScale);
             ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
             ele.SetAttribute("FloorAll", FloorAll.ToString());
             XmlElement rot = doc.CreateElement("Rotation");
@@ -50,6 +53,10 @@ namespace Make3D.Models
             if (ele.HasAttribute("BaseScale"))
             {
                 BaseScale = ele.GetAttribute("BaseScale");
+            }
+            if (ele.HasAttribute("ExportScale"))
+            {
+                ExportScale = ele.GetAttribute("ExportScale");
             }
             if (ele.HasAttribute("SwapAxis"))
             {

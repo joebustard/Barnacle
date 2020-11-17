@@ -805,6 +805,8 @@ namespace Make3D.Models
         public virtual Object3D Clone()
         {
             Object3D res = new Object3D();
+            res.Name = this.Name;
+            res.Description = this.Description;
             res.primType = this.primType;
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
             res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);

@@ -110,6 +110,20 @@ namespace Make3D.ViewModels
             }
         }
 
+        private string exportScale;
+
+        public string ExportScale
+        {
+            get { return exportScale; }
+            set
+            {
+                if (exportScale != value)
+                {
+                    exportScale = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         private bool swapAxis;
 
         public bool SwapAxis
@@ -145,6 +159,7 @@ namespace Make3D.ViewModels
             Description = document.ProjectSettings.Description;
             Scales = ModelScales.ScaleNames();
             SelectedScale = document.ProjectSettings.BaseScale;
+            ExportScale = document.ProjectSettings.ExportScale;
             RotX = document.ProjectSettings.ExportRotation.X.ToString("F3");
             RotY = document.ProjectSettings.ExportRotation.Y.ToString("F3");
             RotZ = document.ProjectSettings.ExportRotation.Z.ToString("F3");

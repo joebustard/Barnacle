@@ -23,6 +23,7 @@ namespace Make3D.Views
             {
                 BaseViewModel.Document.ProjectSettings.Description = vm.Description;
                 BaseViewModel.Document.ProjectSettings.BaseScale = vm.SelectedScale;
+                BaseViewModel.Document.ProjectSettings.ExportScale = vm.ExportScale;
                 try
                 {
                     double x = Convert.ToDouble(vm.RotX);

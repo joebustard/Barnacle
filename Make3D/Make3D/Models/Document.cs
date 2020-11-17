@@ -25,6 +25,19 @@ namespace Make3D.Models
             }
         }
 
+        public String DuplicateName(string s)
+        {
+            string res;
+            do
+            {
+                nextId++;
+                res = s + "_" + nextId.ToString();
+            }
+            while (ContainsName(res));
+
+            return res;
+        }
+
         public List<Object3D> Content;
 
         public string Caption
@@ -156,62 +169,136 @@ namespace Make3D.Models
             }
         }
 
-        internal string ExportAll(string v, Bounds3D bnds)
+        internal string ExportAllPartsSeperately(string v, Bounds3D bnds)
         {
+            String pth = System.IO.Path.GetDirectoryName(FilePath);
             string res = "";
-            if (v == "STL")
+            double scalefactor = 1.0;
+            if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
             {
-                STLExporter exp = new STLExporter();
-                List<Object3D> exportList = new List<Object3D>();
-                if (ProjectSettings.FloorAll)
-                {
-                    exportList = new List<Object3D>();
-                    foreach (Object3D ob in Content)
-                    {
-                        Object3D clone = ob.Clone();
-                        clone.MoveToFloor();
-                        exportList.Add(clone);
-                    }
-                }
-                else
-                {
-                    exportList = Content;
-                }
+                scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
+            }
 
-                if (FileName == "")
+            STLExporter exp = new STLExporter();
+
+            if (FileName == "")
+            {
+                MessageBox.Show("Save the document first. So there is an export path");
+            }
+            else
+            {
+                List<Object3D> exportList = new List<Object3D>();
+                foreach (Object3D ob in Content)
                 {
-                    exp.Export("C:\\tmp\\test.stl", exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                }
-                else
-                {
-                    string expName = System.IO.Path.ChangeExtension(FilePath, "stl");
+                    Object3D clone = ob.Clone();
+                    if (scalefactor != 1.0)
+                    {
+                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                    }
+                    if (ProjectSettings.FloorAll)
+                    {
+                        clone.MoveToFloor();
+                    }
+                    exportList.Add(clone);
+                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                    res = expName;
+                    exportList.Clear();
                 }
             }
             return res;
         }
 
-        internal string ExportParts(string v, Bounds3D bnds, List<Object3D> parts)
+        internal string ExportAll(string v, Bounds3D bnds)
         {
+            string res = "";
+            double scalefactor = 1.0;
+            if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
+            {
+                scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
+            }
+
+            List<Object3D> exportList = new List<Object3D>();
+            foreach (Object3D ob in Content)
+            {
+                Object3D clone = ob.Clone();
+                if (scalefactor != 1.0)
+                {
+                    clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                    clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                }
+                if (ProjectSettings.FloorAll)
+                {
+                    clone.MoveToFloor();
+                }
+                exportList.Add(clone);
+            }
+            if (v == "STL")
+            {
+                STLExporter exp = new STLExporter();
+
+                if (FileName == "")
+                {
+                    MessageBox.Show("Save the document first. So there is an export name");
+                }
+                else
+                {
+                    string expName = System.IO.Path.ChangeExtension(FilePath, "stl");
+
+                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    res = expName;
+                }
+            }
+            else if (v == "STLParts")
+            {
+                STLExporter exp = new STLExporter();
+
+                if (FileName == "")
+                {
+                    MessageBox.Show("Save the document first. So there is an export path");
+                }
+                else
+                {
+                    String pth = System.IO.Path.GetDirectoryName(FilePath);
+                    foreach (Object3D ob in exportList)
+                    {
+                        string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
+                        List<Object3D> tmp = new List<Object3D>();
+                        tmp.Add(ob);
+                        exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                        res = expName;
+                    }
+                }
+            }
+            return res;
+        }
+
+        internal string ExportSelectedParts(string v, Bounds3D bnds, List<Object3D> parts)
+        {
+            double scalefactor = 1.0;
+            if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
+            {
+                scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
+            }
             string res = "";
             if (v == "STL")
             {
                 STLExporter exp = new STLExporter();
-                List<Object3D> exportList;
-                if (ProjectSettings.FloorAll)
+
+                List<Object3D> exportList = new List<Object3D>();
+                foreach (Object3D ob in parts)
                 {
-                    exportList = new List<Object3D>();
-                    foreach (Object3D ob in parts)
+                    Object3D clone = ob.Clone();
+                    if (scalefactor != 1.0)
                     {
-                        Object3D clone = ob.Clone();
-                        clone.MoveToFloor();
-                        exportList.Add(clone);
+                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
                     }
-                }
-                else
-                {
-                    exportList = parts;
+                    if (ProjectSettings.FloorAll)
+                    {
+                        clone.MoveToFloor();
+                    }
+                    exportList.Add(clone);
                 }
 
                 string expPath = System.IO.Path.GetDirectoryName(FilePath);
@@ -221,6 +308,7 @@ namespace Make3D.Models
                     string expName = System.IO.Path.Combine(expPath, ob.Name + ".stl");
                     oneOb.Clear();
                     oneOb.Add(ob);
+
                     exp.Export(expName, oneOb, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     if (res != "")
                     {
@@ -309,11 +397,6 @@ namespace Make3D.Models
             ModelScales.Initialise();
             Clear();
             NotificationManager.Subscribe("DocDirty", OnDocDirty);
-            if (File.Exists("C:\\tmp\\tinker.obj"))
-            {
-                Object3D tmp = new Object3D();
-                tmp.LoadObject("C:\\tmp\\tinker.obj");
-            }
         }
 
         private void OnDocDirty(object param)
@@ -466,6 +549,20 @@ namespace Make3D.Models
             ob.Remesh();
             Content.Add(ob);
             ob.Name = "Object_" + Content.Count.ToString();
+        }
+
+        internal bool ContainsName(string name)
+        {
+            bool res = false;
+            foreach (Object3D ob in Content)
+            {
+                if (ob.Name == name)
+                {
+                    res = true;
+                    break;
+                }
+            }
+            return res;
         }
     }
 }

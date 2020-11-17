@@ -37,6 +37,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -85,6 +86,9 @@
     <Compile Include="Dialogs\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\IrregularPolygonDlg.xaml.cs">
+      <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\LinearLoftDialog.xaml.cs" />
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
     <Compile Include="Dialogs\ShapeBase.xaml.cs" />
@@ -92,6 +96,7 @@
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\Floor.cs" />
+    <Compile Include="Models\Grid.cs" />
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\MeshExtensions.cs" />
@@ -170,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\FuselageLoftDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\IrregularPolygonDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -328,6 +337,10 @@
     <ProjectReference Include="..\PlacementLib\PlacementLib.csproj">
       <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>
       <Name>PlacementLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PolygonTriangulationLib\PolygonTriangulationLib.csproj">
+      <Project>{BF1D777E-DF33-4C03-80A6-9ECB741746F1}</Project>
+      <Name>PolygonTriangulationLib</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

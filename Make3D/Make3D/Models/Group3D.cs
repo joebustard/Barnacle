@@ -55,9 +55,26 @@ namespace Make3D.Models
             bool result = false;
             if (leftObject != null && rightObject != null)
             {
-                Position = new Point3D(leftObject.Position.X, leftObject.Position.Y, leftObject.Position.Z);
                 Color = leftObject.Color;
+                Bounds3D leftBnd = leftObject.AbsoluteBounds;
+                Bounds3D rightBnd = rightObject.AbsoluteBounds;
+                Point3D leftPnt = leftObject.Position;
+                Point3D rightPnt = rightObject.Position;
+                Bounds3D combined = new Bounds3D();
+                combined.Add(leftBnd);
+                combined.Add(rightBnd);
+                Position = new Point3D(combined.MidPoint().X, combined.MidPoint().Y, combined.MidPoint().Z);
                 result = PerformOperation();
+                if (result)
+                {
+                    /*
+                        double nx = absoluteBounds.MidPoint().X ;
+                        double ny = absoluteBounds.MidPoint().Y;
+                        double nz = absoluteBounds.MidPoint().Z;
+                        Position = new Point3D(nx, ny, nz);
+                        AbsoluteToRelative();
+                        */
+                }
             }
 
             return result;
@@ -337,7 +354,8 @@ namespace Make3D.Models
         public override Object3D Clone()
         {
             Group3D res = new Group3D();
-            res.Name = "";
+            res.Name = this.Name;
+            res.Description = this.Description;
             res.primType = this.primType;
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
 

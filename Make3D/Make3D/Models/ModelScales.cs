@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Make3D.Models
 {
@@ -13,6 +14,7 @@ namespace Make3D.Models
             Standard["1/32"] = 1.0 / 32.0;
             Standard["1/35"] = 1.0 / 35.0;
             Standard["1/48"] = 1.0 / 48.0;
+            Standard["1/50"] = 1.0 / 50.0;
             Standard["1/72"] = 1.0 / 72.0;
             Standard["1/100"] = 1.0 / 100.0;
             Standard["1/144"] = 1.0 / 144.0;
@@ -29,6 +31,20 @@ namespace Make3D.Models
                 names.Add(a);
             }
             return names;
+        }
+
+        internal static double ConversionFactor(string baseScale, string exportScale)
+        {
+            double res = 1.0;
+            if (Standard.ContainsKey(baseScale) && Standard.ContainsKey(exportScale))
+            {
+                double startScale = Standard[baseScale];
+                double endScale = Standard[exportScale];
+                res = 1.0 / startScale;
+                res = res * endScale;
+            }
+            return res;
+
         }
     }
 }
