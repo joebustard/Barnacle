@@ -78,6 +78,12 @@ namespace Make3D.Models
             orientation = Orientations.Front;
         }
 
+        internal void LooktoCenter()
+        {
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
         private void Copy(PolarCoordinate p)
         {
             polarPos.Phi = p.Phi;
@@ -216,9 +222,9 @@ namespace Make3D.Models
             ConvertPolarTo3D();
         }
 
-        internal void LookAt(Point3D cameraLookObject)
+        internal void LookAt(Point3D pnt)
         {
-            polarOrigin = cameraLookObject;
+            polarOrigin = pnt;
         }
     }
 }

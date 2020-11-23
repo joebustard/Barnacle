@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Media3D;
+﻿using System;
+using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
@@ -45,6 +46,22 @@ namespace Make3D.Models
             }
             min = new Point3D(minX, minY, minZ);
             max = new Point3D(maxX, maxY, maxZ);
+        }
+        public static bool equals(Point3D p, double x, double y, double z)
+        {
+            return equals(p.X,x) && equals(p.Y,y) && equals(p.Z,z);
+
+        }
+        public static bool equals(double v1, double v2)
+        {
+            if (Math.Abs(v1 - v2) < 0.0000001)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -15,23 +15,29 @@ namespace Make3D.ViewModels
 {
     internal class DefaultViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private static List<MruEntry> recentFilesList;
+        private static string statusBlockText1;
+        private static string statusBlockText2;
+        private static string statusBlockText3;
         private static Control subView;
         private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
         private bool boldChecked;
         private string caption;
         private bool centerTextAlignment;
+        private bool doughnutEnabled;
         private string fontSize;
         private bool italicChecked;
         private bool leftTextAlignment;
+        private bool linearEnabled;
         private Ribbon MainRibbon;
-        private static List<MruEntry> recentFilesList;
         private bool rightTextAlignment;
-        private bool showFloorChecked;
         private bool showAxiesChecked;
+        private bool showFloorChecked;
         private bool snapMarginChecked;
-
         private SubViewManager subViewMan;
+
         private Visibility toolPaletteVisible;
+
         private bool underLineChecked;
 
         public DefaultViewModel()
@@ -69,6 +75,8 @@ namespace Make3D.ViewModels
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
             IrregularCommand = new RelayCommand(OnIrregular);
+            LinearCommand = new RelayCommand(OnLinear);
+            DoughnutCommand = new RelayCommand(OnDoughNut);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -91,6 +99,11 @@ namespace Make3D.ViewModels
             }
             ShowFloorChecked = true;
             ShowAxiesChecked = true;
+
+            LinearEnabled = true;
+            DoughnutEnabled = true;
+            IrregularEnabled = true;
+
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
             NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
             NotificationManager.Subscribe("ClosePrintPreview", ReturnToDefaultView);
@@ -102,145 +115,41 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetTextAlignment", SetTextAlignment);
             NotificationManager.Subscribe("SetStatusText1", SetStatusText1);
             NotificationManager.Subscribe("SetStatusText3", SetStatusText3);
+            NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
+            NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             SubView = subViewMan.GetView("editor");
         }
 
-        private void OnExportParts(object obj)
+        private void SetSingleToolVisible(object param)
         {
-            NotificationManager.Notify("ExportParts", obj);
-        }
-
-        private void OnIrregular(object obj)
-        {
-            NotificationManager.Notify("Irregular", null);
-        }
-
-        private void OnDistribute(object obj)
-        {
-            string s = obj.ToString();
-            NotificationManager.Notify("Distribute", s);
-        }
-
-        private void OnFlip(object obj)
-        {
-            string s = obj.ToString();
-            NotificationManager.Notify("Flip", s);
-        }
-
-        private void OnSettings(object obj)
-        {
-            NotificationManager.Notify("Settings", null);
-        }
-
-        private void OnInsert(object obj)
-        {
-            NotificationManager.Notify("InsertFile", obj);
-        }
-
-        private void OnImport(object obj)
-        {
-            NotificationManager.Notify("Import", obj);
-        }
-
-        private void OnExport(object obj)
-        {
-            NotificationManager.Notify("Export", obj);
-        }
-
-        private void SetStatusText1(object param)
-        {
-            StatusBlockText1 = param.ToString();
-        }
-
-        private void SetStatusText3(object param)
-        {
-            StatusBlockText3 = param.ToString();
-        }
-
-        private void OnNew(object obj)
-        {
-            BaseViewModel.Document.Clear();
-            Caption = BaseViewModel.Document.Caption;
-            NotificationManager.Notify("NewDocument", null);
-            //UndoManager.Clear();
-        }
-
-        private void OnOpen(object obj)
-        {
-            NotificationManager.Notify("OpenFile", null);
-            Caption = BaseViewModel.Document.Caption;
-        }
-
-        private void OnSave(object obj)
-        {
-            NotificationManager.Notify("SaveFile", null);
-            Caption = BaseViewModel.Document.Caption;
-            UpdateRecentFiles(BaseViewModel.Document.FilePath);
-        }
-
-        private void UpdateRecentFiles(string fileName)
-        {
-            bool found = false;
-            foreach (MruEntry mru in recentFilesList)
+            string s = param.ToString();
+            switch (s)
             {
-                if (mru.Path == fileName)
-                {
-                    found = true;
+                case "LinearLoft":
+                    {
+                        LinearEnabled = true;
+                    }
                     break;
-                }
-            }
-            if (!found)
-            {
-                string shortName = AbbreviatePath(fileName, 30);
-                MruEntry m = new MruEntry(shortName, fileName);
-                recentFilesList.Insert(0, m);
-                if (recentFilesList.Count > 6)
-                {
-                    recentFilesList.RemoveAt(recentFilesList.Count - 1);
-                }
-                SaveMru();
-                CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
-            }
-        }
 
-        private void SaveMru()
-        {
-            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            if (!Directory.Exists(mruPath))
-            {
-                Directory.CreateDirectory(mruPath);
-            }
-            StreamWriter fout = new StreamWriter(mruPath + "\\Mru.txt");
-            foreach (MruEntry me in recentFilesList)
-            {
-                fout.WriteLine(me.Path);
-            }
-            fout.Close();
-        }
+                case "Torus":
+                    {
+                        DoughnutEnabled = true;
+                    }
+                    break;
 
-        private void LoadMru()
-        {
-            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            if (Directory.Exists(mruPath))
-            {
-                StreamReader fin = new StreamReader(mruPath + "\\Mru.txt");
-                while (!fin.EndOfStream)
-                {
-                    String s = fin.ReadLine();
-                    string shortName = AbbreviatePath(s, 30);
-                    MruEntry m = new MruEntry(shortName, s);
-                    recentFilesList.Add(m);
-                    //CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
-                }
-                fin.Close();
+                case "IrregularPolygon":
+                    {
+                        IrregularEnabled = true;
+                    }
+                    break;
             }
         }
 
         public ICommand AddCommand { get; set; }
+
         public ICommand AddPageCommand { get; set; }
+
         public ICommand AlignCommand { get; set; }
-        public ICommand DistributeCommand { get; set; }
-        public ICommand FlipCommand { get; set; }
 
         public bool BoldChecked
         {
@@ -292,9 +201,50 @@ namespace Make3D.ViewModels
         }
 
         public ICommand CopyCommand { get; set; }
+
         public ICommand CutCommand { get; set; }
+
+        public ICommand DistributeCommand { get; set; }
+
         public ICommand DoNothingCommand { get; set; }
+
+        public ICommand DoughnutCommand { get; set; }
+
+        public bool DoughnutEnabled
+        {
+            get { return doughnutEnabled; }
+            set
+            {
+                if (doughnutEnabled != value)
+                {
+                    doughnutEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool irregularEnabled;
+
+        public bool IrregularEnabled
+        {
+            get { return irregularEnabled; }
+            set
+            {
+                if (irregularEnabled != value)
+                {
+                    irregularEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand ExitCommand { get; set; }
+
+        public ICommand ExportCommand { get; set; }
+
+        public ICommand ExportPartsCommand { get; set; }
+
+        public ICommand FlipCommand { get; set; }
 
         public String FontSize
         {
@@ -314,6 +264,12 @@ namespace Make3D.ViewModels
         }
 
         public ICommand GroupCommand { get; set; }
+
+        public ICommand ImportCommand { get; set; }
+
+        public ICommand InsertCommand { get; set; }
+
+        public ICommand IrregularCommand { get; set; }
 
         public bool ItalicChecked
         {
@@ -348,13 +304,36 @@ namespace Make3D.ViewModels
             }
         }
 
-        public ICommand NewCommand { get; set; }
-        public ICommand OpenCommand { get; set; }
-        public ICommand OpenRecentFileCommand { get; set; }
-        public ICommand PageCommand { get; set; }
-        public ICommand PasteCommand { get; set; }
+        public ICommand LinearCommand { get; set; }
+
+        public bool LinearEnabled
+        {
+            get { return linearEnabled; }
+
+            set
+            {
+                if (linearEnabled != value)
+                {
+                    linearEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand MultiPasteCommand { get; set; }
+
+        public ICommand NewCommand { get; set; }
+
+        public ICommand OpenCommand { get; set; }
+
+        public ICommand OpenRecentFileCommand { get; set; }
+
+        public ICommand PageCommand { get; set; }
+
+        public ICommand PasteCommand { get; set; }
+
         public ICommand PrintCommand { get; set; }
+
         public ICommand PrintPreviewCommand { get; set; }
 
         public List<MruEntry> RecentFilesList
@@ -393,29 +372,12 @@ namespace Make3D.ViewModels
         }
 
         public ICommand SaveAsCommand { get; set; }
+
         public ICommand SaveCommand { get; set; }
-        public ICommand ImportCommand { get; set; }
-        public ICommand ExportCommand { get; set; }
-        public ICommand ExportPartsCommand { get; set; }
-        public ICommand SettingsCommand { get; set; }
+
         public ICommand SelectCommand { get; set; }
 
-        public bool ShowFloorChecked
-        {
-            get
-            {
-                return showFloorChecked;
-            }
-            set
-            {
-                if (showFloorChecked != value)
-                {
-                    showFloorChecked = value;
-                    NotifyPropertyChanged();
-                    NotificationManager.Notify("ShowFloor", showFloorChecked);
-                }
-            }
-        }
+        public ICommand SettingsCommand { get; set; }
 
         public bool ShowAxiesChecked
         {
@@ -430,6 +392,23 @@ namespace Make3D.ViewModels
                     showAxiesChecked = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("ShowAxies", showAxiesChecked);
+                }
+            }
+        }
+
+        public bool ShowFloorChecked
+        {
+            get
+            {
+                return showFloorChecked;
+            }
+            set
+            {
+                if (showFloorChecked != value)
+                {
+                    showFloorChecked = value;
+                    NotifyPropertyChanged();
+                    NotificationManager.Notify("ShowFloor", showFloorChecked);
                 }
             }
         }
@@ -461,6 +440,57 @@ namespace Make3D.ViewModels
             }
         }
 
+        public String StatusBlockText1
+        {
+            get
+            {
+                return statusBlockText1;
+            }
+
+            set
+            {
+                if (statusBlockText1 != value)
+                {
+                    statusBlockText1 = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String StatusBlockText2
+        {
+            get
+            {
+                return statusBlockText2;
+            }
+
+            set
+            {
+                if (statusBlockText2 != value)
+                {
+                    statusBlockText2 = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String StatusBlockText3
+        {
+            get
+            {
+                return statusBlockText3;
+            }
+
+            set
+            {
+                if (statusBlockText3 != value)
+                {
+                    statusBlockText3 = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public Control SubView
         {
             get
@@ -483,7 +513,6 @@ namespace Make3D.ViewModels
         }
 
         public ICommand TextAlignmentCommand { get; set; }
-        public ICommand IrregularCommand { get; set; }
 
         public Visibility ToolPaletteVisible
         {
@@ -520,10 +549,12 @@ namespace Make3D.ViewModels
             }
         }
 
-        public ICommand InsertCommand { get; set; }
         public ICommand UndoCommand { get; set; }
+
         public ICommand Zoom100Command { get; set; }
+
         public ICommand ZoomInCommand { get; set; }
+
         public ICommand ZoomOutCommand { get; set; }
 
         public void LoadSystemFonts()
@@ -568,6 +599,31 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void EnableAllTools(bool b)
+        {
+            LinearEnabled = b;
+            DoughnutEnabled = b;
+            IrregularEnabled = b;
+        }
+
+        private void LoadMru()
+        {
+            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            if (Directory.Exists(mruPath))
+            {
+                StreamReader fin = new StreamReader(mruPath + "\\Mru.txt");
+                while (!fin.EndOfStream)
+                {
+                    String s = fin.ReadLine();
+                    string shortName = AbbreviatePath(s, 30);
+                    MruEntry m = new MruEntry(shortName, s);
+                    recentFilesList.Add(m);
+                    //CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+                }
+                fin.Close();
+            }
+        }
+
         private void OnAdd(object obj)
         {
             string name = obj.ToString();
@@ -590,8 +646,19 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("Cut", null);
         }
 
+        private void OnDistribute(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify("Distribute", s);
+        }
+
         private void OnDoNothing(object obj)
         {
+        }
+
+        private void OnDoughNut(object obj)
+        {
+            NotificationManager.Notify("Doughnut", obj);
         }
 
         private void OnExit(object obj)
@@ -607,10 +674,65 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnExport(object obj)
+        {
+            NotificationManager.Notify("Export", obj);
+        }
+
+        private void OnExportParts(object obj)
+        {
+            NotificationManager.Notify("ExportParts", obj);
+        }
+
+        private void OnFlip(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify("Flip", s);
+        }
+
         private void OnGroup(object obj)
         {
             string s = obj.ToString();
             NotificationManager.Notify("Group", s);
+        }
+
+        private void OnImport(object obj)
+        {
+            NotificationManager.Notify("Import", obj);
+        }
+
+        private void OnInsert(object obj)
+        {
+            NotificationManager.Notify("InsertFile", obj);
+        }
+
+        private void OnIrregular(object obj)
+        {
+            NotificationManager.Notify("Irregular", null);
+        }
+
+        private void OnLinear(object obj)
+        {
+            NotificationManager.Notify("Linear", obj);
+        }
+
+        private void OnMultiPaste(object obj)
+        {
+            NotificationManager.Notify("MultiPaste", null);
+        }
+
+        private void OnNew(object obj)
+        {
+            BaseViewModel.Document.Clear();
+            Caption = BaseViewModel.Document.Caption;
+            NotificationManager.Notify("NewDocument", null);
+            //UndoManager.Clear();
+        }
+
+        private void OnOpen(object obj)
+        {
+            NotificationManager.Notify("OpenFile", null);
+            Caption = BaseViewModel.Document.Caption;
         }
 
         private void OnOpenRecent(object obj)
@@ -626,11 +748,6 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("Paste", null);
         }
 
-        private void OnMultiPaste(object obj)
-        {
-            NotificationManager.Notify("MultiPaste", null);
-        }
-
         private void OnPrint(object obj)
         {
             NotificationManager.Notify("Print", null);
@@ -639,6 +756,13 @@ namespace Make3D.ViewModels
         private void OnRedo(object obj)
         {
             NotificationManager.Notify("Redo", null);
+        }
+
+        private void OnSave(object obj)
+        {
+            NotificationManager.Notify("SaveFile", null);
+            Caption = BaseViewModel.Document.Caption;
+            UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
 
         private void OnSaveAs(object obj)
@@ -651,6 +775,11 @@ namespace Make3D.ViewModels
         private void OnSelect(object obj)
         {
             NotificationManager.Notify("Select", obj);
+        }
+
+        private void OnSettings(object obj)
+        {
+            NotificationManager.Notify("Settings", null);
         }
 
         private void OnSize(object obj)
@@ -706,6 +835,21 @@ namespace Make3D.ViewModels
             OnView("PageEdit");
         }
 
+        private void SaveMru()
+        {
+            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            if (!Directory.Exists(mruPath))
+            {
+                Directory.CreateDirectory(mruPath);
+            }
+            StreamWriter fout = new StreamWriter(mruPath + "\\Mru.txt");
+            foreach (MruEntry me in recentFilesList)
+            {
+                fout.WriteLine(me.Path);
+            }
+            fout.Close();
+        }
+
         private void SetFontBold(object param)
         {
             bool b = (bool)param;
@@ -735,6 +879,16 @@ namespace Make3D.ViewModels
             UnderlineChecked = b;
         }
 
+        private void SetStatusText1(object param)
+        {
+            StatusBlockText1 = param.ToString();
+        }
+
+        private void SetStatusText3(object param)
+        {
+            StatusBlockText3 = param.ToString();
+        }
+
         private void SetTextAlignment(object param)
         {
             TextAlignment ta = (TextAlignment)param;
@@ -760,60 +914,34 @@ namespace Make3D.ViewModels
             }
         }
 
-        private static string statusBlockText1;
-
-        private static string statusBlockText2;
-
-        private static string statusBlockText3;
-
-        public String StatusBlockText1
+        private void SetToolVisibility(object param)
         {
-            get
-            {
-                return statusBlockText1;
-            }
-
-            set
-            {
-                if (statusBlockText1 != value)
-                {
-                    statusBlockText1 = value;
-                    NotifyPropertyChanged();
-                }
-            }
+            bool b = Convert.ToBoolean(param);
+            EnableAllTools(b);
         }
 
-        public String StatusBlockText2
+        private void UpdateRecentFiles(string fileName)
         {
-            get
+            bool found = false;
+            foreach (MruEntry mru in recentFilesList)
             {
-                return statusBlockText2;
-            }
-
-            set
-            {
-                if (statusBlockText2 != value)
+                if (mru.Path == fileName)
                 {
-                    statusBlockText2 = value;
-                    NotifyPropertyChanged();
+                    found = true;
+                    break;
                 }
             }
-        }
-
-        public String StatusBlockText3
-        {
-            get
+            if (!found)
             {
-                return statusBlockText3;
-            }
-
-            set
-            {
-                if (statusBlockText3 != value)
+                string shortName = AbbreviatePath(fileName, 30);
+                MruEntry m = new MruEntry(shortName, fileName);
+                recentFilesList.Insert(0, m);
+                if (recentFilesList.Count > 6)
                 {
-                    statusBlockText3 = value;
-                    NotifyPropertyChanged();
+                    recentFilesList.RemoveAt(recentFilesList.Count - 1);
                 }
+                SaveMru();
+                CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
             }
         }
     }

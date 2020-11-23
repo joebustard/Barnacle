@@ -172,6 +172,11 @@ namespace Make3D.Models
         internal string ExportAllPartsSeperately(string v, Bounds3D bnds)
         {
             String pth = System.IO.Path.GetDirectoryName(FilePath);
+            pth = System.IO.Path.Combine(pth, "export");
+            if (!Directory.Exists(pth))
+            {
+                Directory.CreateDirectory(pth);
+            }
             string res = "";
             double scalefactor = 1.0;
             if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
@@ -245,8 +250,15 @@ namespace Make3D.Models
                 }
                 else
                 {
-                    string expName = System.IO.Path.ChangeExtension(FilePath, "stl");
-
+                    String pth = System.IO.Path.GetDirectoryName(FilePath);
+                    pth = System.IO.Path.Combine(pth, "export");
+                    if (!Directory.Exists(pth))
+                    {
+                        Directory.CreateDirectory(pth);
+                    }
+                    string expName = System.IO.Path.GetFileName(FilePath);
+                    expName = System.IO.Path.ChangeExtension(expName,"stl");
+                    expName = System.IO.Path.Combine(pth, expName);
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     res = expName;
                 }
@@ -262,6 +274,11 @@ namespace Make3D.Models
                 else
                 {
                     String pth = System.IO.Path.GetDirectoryName(FilePath);
+                    pth = System.IO.Path.Combine(pth, "export");
+                    if (!Directory.Exists(pth))
+                    {
+                        Directory.CreateDirectory(pth);
+                    }
                     foreach (Object3D ob in exportList)
                     {
                         string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
@@ -303,11 +320,18 @@ namespace Make3D.Models
                     exportList.Add(clone);
                 }
 
-                string expPath = System.IO.Path.GetDirectoryName(FilePath);
+    
+                String pth = System.IO.Path.GetDirectoryName(FilePath);
+                pth = System.IO.Path.Combine(pth, "export");
+                if (!Directory.Exists(pth))
+                {
+                    Directory.CreateDirectory(pth);
+                }
+
                 List<Object3D> oneOb = new List<Object3D>();
                 foreach (Object3D ob in parts)
                 {
-                    string expName = System.IO.Path.Combine(expPath, ob.Name + ".stl");
+                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
                     oneOb.Clear();
                     oneOb.Add(ob);
 

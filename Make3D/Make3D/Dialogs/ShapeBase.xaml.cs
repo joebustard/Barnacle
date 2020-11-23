@@ -186,29 +186,7 @@ namespace Make3D.Dialogs
 
         private void NumberOfPointsBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            /*
 
-                try
-                {
-                    int num = Convert.ToInt32(NumberOfPointsBox.;
-
-                    if (num < 3 || num > 9)
-                    {
-                        NumberOfPointsBox.Text = NumberOfPoints.ToString();
-                    }
-                    else
-                    {
-                        rotation = 0;
-                        NumberOfPoints = num;
-                        GenerateDefaultPoints();
-                        Redraw();
-                    }
-                }
-                catch
-                {
-                    NumberOfPointsBox.Text = NumberOfPoints.ToString();
-                }
-            */
         }
 
         private void RotateMinus_Click(object sender, RoutedEventArgs e)

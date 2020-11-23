@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -91,6 +92,8 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
             NotificationManager.Subscribe("Irregular", OnIrregular);
+            NotificationManager.Subscribe("Linear", OnLinear);
+            NotificationManager.Subscribe("Doughnut", OnDoughNut);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             ReportCameraPosition();
@@ -103,27 +106,38 @@ namespace Make3D.ViewModels
             RegenerateDisplayList();
         }
 
+        private void OnDoughNut(object param)
+        {
+            TorusDialog torusDialog = new TorusDialog();
+            DisplayModeller(torusDialog);
+        }
+
         private void OnExportParts(object param)
         {
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
-            
-                STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
-                dlg.ExportPath = exportedPath;
+
+            STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
+            dlg.ExportPath = exportedPath;
             dlg.ShowDialog();
- 
-                            
+        }
+
+        private void OnLinear(object param)
+        {
+            LinearLoftDialog dlg = new LinearLoftDialog();
+            DisplayModeller(dlg);
         }
 
         private void OnIrregular(object param)
         {
-            
+            IrregularPolygonDlg dlg = new IrregularPolygonDlg();
+
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;
-            IrregularPolygonDlg dlg = new IrregularPolygonDlg();
+
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
-                 editingObj = selectedObjectAdorner.SelectedObjects[0];
-                if (editingObj.EditorParameters != null )
+                editingObj = selectedObjectAdorner.SelectedObjects[0];
+                if (editingObj.EditorParameters != null)
                 {
                     if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
                     {
@@ -133,7 +147,7 @@ namespace Make3D.ViewModels
             }
             if (dlg.ShowDialog() == true)
             {
-                bool positionAtRight= false;
+                bool positionAtRight = false;
                 if (editingObj == null)
                 {
                     editingObj = new Object3D();
@@ -146,7 +160,64 @@ namespace Make3D.ViewModels
 
                 editingObj.EditorParameters = dlg.EditorParameters;
                 editingObj.RelativeObjectVertices = dlg.Vertices;
-                editingObj.TriangleIndices = dlg.Triangles;
+                editingObj.TriangleIndices = dlg.Faces;
+                RecalculateAllBounds();
+                if (positionAtRight)
+                {
+                    if (allBounds.Upper.X > double.MinValue)
+                    {
+                        editingObj.Position = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                    else
+                    {
+                        editingObj.Position = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                }
+
+                editingObj.PrimType = "Mesh";
+
+                editingObj.Remesh();
+                allBounds += editingObj.AbsoluteBounds;
+
+                GeometryModel3D gm = GetMesh(editingObj);
+
+                Document.Dirty = true;
+                RegenerateDisplayList();
+            }
+        }
+
+        private void DisplayModeller(BaseModellerDialog dlg)
+        {
+            EditorParameters pm = new EditorParameters();
+            Object3D editingObj = null;
+
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                editingObj = selectedObjectAdorner.SelectedObjects[0];
+                if (editingObj.EditorParameters != null)
+                {
+                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                    {
+                        dlg.EditorParameters = editingObj.EditorParameters;
+                    }
+                }
+            }
+            if (dlg.ShowDialog() == true)
+            {
+                bool positionAtRight = false;
+                if (editingObj == null)
+                {
+                    editingObj = new Object3D();
+                    editingObj.Name = Document.NextName;
+                    editingObj.Description = "";
+                    Document.Content.Add(editingObj);
+                    positionAtRight = true;
+                }
+                DeselectAll();
+
+                editingObj.EditorParameters = dlg.EditorParameters;
+                editingObj.RelativeObjectVertices = dlg.Vertices;
+                editingObj.TriangleIndices = dlg.Faces;
                 //obj.CalcScale(false);
                 RecalculateAllBounds();
                 if (positionAtRight)
@@ -168,7 +239,6 @@ namespace Make3D.ViewModels
 
                 GeometryModel3D gm = GetMesh(editingObj);
 
-  
                 Document.Dirty = true;
                 RegenerateDisplayList();
             }
@@ -307,6 +377,7 @@ namespace Make3D.ViewModels
 
         internal void DeselectAll()
         {
+            NotificationManager.Notify("SetToolsVisibility", true);
             RemoveObjectAdorner();
             ResetSelectionColours();
             selectedObjectAdorner = new SizeAdorner(camera);
@@ -515,6 +586,7 @@ namespace Make3D.ViewModels
         internal void Select(GeometryModel3D geo, bool size, bool append = false)
         {
             bool handled = false;
+            NotificationManager.Notify("SetToolsVisibility", false);
             /*
             // if user has just clicked on floor then delect everything
             if (geo.Geometry == Floor.Geometry)
@@ -791,6 +863,7 @@ namespace Make3D.ViewModels
                     {
                         geo.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
                         selectedItems.Add(ob);
+                        EnableTool(ob);
                         break;
                     }
                 }
@@ -982,25 +1055,13 @@ namespace Make3D.ViewModels
         private bool Loft(Object3D obj, string obType)
         {
             bool res = false;
-            if (obType == "vaseloft")
-            {
-                LinearLoftDialog dlg = new LinearLoftDialog();
-                if (dlg.ShowDialog() == true)
-                {
-                    obj.RelativeObjectVertices = dlg.GetVertices();
-                    obj.TriangleIndices = dlg.GetFaces();
-                    obj.CalcScale(false);
-
-                    res = true;
-                }
-            }
-            else if (obType == "shapeloft")
+            if (obType == "shapeloft")
             {
                 ShapeLoftDialog dlg = new ShapeLoftDialog();
                 if (dlg.ShowDialog() == true)
                 {
-                    obj.RelativeObjectVertices = dlg.GetVertices();
-                    obj.TriangleIndices = dlg.GetFaces();
+                    obj.RelativeObjectVertices = dlg.Vertices;
+                    obj.TriangleIndices = dlg.Faces;
                     obj.CalcScale(false);
                     res = true;
                 }
@@ -1609,13 +1670,17 @@ namespace Make3D.ViewModels
 
         private void ResetSelectionColours()
         {
+            List<GeometryModel3D> tmp = modelItems.OfType<GeometryModel3D>().ToList();
             foreach (Object3D ob in selectedItems)
             {
-                foreach (GeometryModel3D md in modelItems)
+                foreach (GeometryModel3D md in tmp)
                 {
-                    if (ob.Mesh == md.Geometry)
+                    if (md != null)
                     {
-                        md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
+                        if (ob.Mesh == md.Geometry)
+                        {
+                            md.Material = new DiffuseMaterial(new SolidColorBrush(ob.Color));
+                        }
                     }
                 }
             }
@@ -1679,9 +1744,10 @@ namespace Make3D.ViewModels
         {
             try
             {
+                List<GeometryModel3D> tmp = modelItems.OfType<GeometryModel3D>().ToList();
                 foreach (Object3D ob in selectedItems)
                 {
-                    foreach (GeometryModel3D md in modelItems)
+                    foreach (GeometryModel3D md in tmp)
                     {
                         if (md != floor.FloorMesh)
                         {
@@ -1695,7 +1761,6 @@ namespace Make3D.ViewModels
             }
             catch
             {
-
             }
         }
 
@@ -1745,6 +1810,7 @@ namespace Make3D.ViewModels
 
         private void SelectAll()
         {
+            NotificationManager.Notify("SetToolsVisibility", false);
             ResetSelection();
             foreach (Object3D ob in Document.Content)
             {
@@ -1758,14 +1824,29 @@ namespace Make3D.ViewModels
         private void SelectFirst()
         {
             ResetSelection();
+
             if (Document.Content.Count > 0)
             {
+                NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[0];
                 selectedItems.Add(ob);
                 selectedObjectAdorner.AdornObject(ob);
                 NotificationManager.Notify("ObjectSelected", ob);
+                EnableTool(ob);
             }
             UpdateSelectionDisplay();
+        }
+
+        private void EnableTool(Object3D ob)
+        {
+            if (ob != null)
+            {
+                string toolName = ob.EditorParameters.ToolName;
+                if (toolName != "")
+                {
+                    NotificationManager.Notify("SetSingleToolsVisible", toolName);
+                }
+            }
         }
 
         private void SelectLast()
@@ -1773,10 +1854,12 @@ namespace Make3D.ViewModels
             ResetSelection();
             if (Document.Content.Count > 0)
             {
+                NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[Document.Content.Count - 1];
                 selectedItems.Add(ob);
                 selectedObjectAdorner.AdornObject(ob);
                 NotificationManager.Notify("ObjectSelected", ob);
+                EnableTool(ob);
             }
             UpdateSelectionDisplay();
         }
@@ -1786,6 +1869,7 @@ namespace Make3D.ViewModels
             if (selectedItems.Count == 1)
             {
                 ResetSelectionColours();
+                NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D sel = selectedItems[0];
 
                 Object3D nxt = null;
@@ -1808,6 +1892,7 @@ namespace Make3D.ViewModels
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
                 NotificationManager.Notify("ObjectSelected", nxt);
+                EnableTool(nxt);
                 UpdateSelectionDisplay();
             }
         }
@@ -1816,6 +1901,7 @@ namespace Make3D.ViewModels
         {
             if (selectedItems.Count == 1)
             {
+                NotificationManager.Notify("SetToolsVisibility", false);
                 ResetSelectionColours();
                 Object3D sel = selectedItems[0];
 
@@ -1842,15 +1928,17 @@ namespace Make3D.ViewModels
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
                 NotificationManager.Notify("ObjectSelected", nxt);
+                EnableTool(nxt);
                 UpdateSelectionDisplay();
             }
         }
 
         private void SetSelectionColours()
         {
+            List<GeometryModel3D> tmp = modelItems.OfType<GeometryModel3D>().ToList();
             foreach (Object3D ob in selectedItems)
             {
-                foreach (GeometryModel3D md in modelItems)
+                foreach (GeometryModel3D md in tmp)
                 {
                     if (ob.Mesh == md.Geometry)
                     {

@@ -207,7 +207,10 @@
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup" Header="Tools">
-                    <Custom:RibbonButton x:Name="IrregularButton" Label="Platelet" Command="{Binding IrregularCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="IrregularButton" Label="Platelet"   IsEnabled="{Binding IrregularEnabled}" Command="{Binding IrregularCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="LinearButton" Label="Linear" Command="{Binding LinearCommand}" IsEnabled="{Binding LinearEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/Vase.png"
+  ToolTip="Create an object by linear lofting" />
+                    <Custom:RibbonButton x:Name="DoughButton" Label="DoughNut" Command="{Binding DoughnutCommand}" IsEnabled="{Binding DoughnutEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
             <Custom:RibbonTab Name="ViewTab1" Header="View">
@@ -222,9 +225,6 @@
                     <Custom:RibbonCheckBox x:Name="ShowAxis" Label="Axis" IsChecked="{Binding ShowAxiesChecked}" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="OptionGroup" Header="Options">
-                    <!--
-                    <Custom:RibbonCheckBox x:Name="SnapMargin" Label="Margin Snap" IsChecked="{Binding SnapMarginChecked}" ToolTip="Snap new staves and tabs to left margin" />
-       -->
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Make3D;component/Images/Buttons/question1.png">
                     <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />

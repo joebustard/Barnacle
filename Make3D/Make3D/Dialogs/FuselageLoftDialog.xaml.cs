@@ -371,8 +371,9 @@ namespace Make3D.Dialogs
                 Point pn = e.GetPosition(viewport3D1);
                 double dx = pn.X - oldMousePos.X;
                 double dy = pn.Y - oldMousePos.Y;
-                polarCamera.Move(dx, dy);
+                polarCamera.Move(dx, -dy);
                 UpdateCameraPos();
+                oldMousePos = pn;
             }
         }
 
@@ -411,8 +412,6 @@ namespace Make3D.Dialogs
         }
 
         private Vector3D lookDirection;
-        private int selectedBulkhead;
-
         public Vector3D LookDirection
         {
             get { return lookDirection; }
@@ -425,6 +424,9 @@ namespace Make3D.Dialogs
                 }
             }
         }
+        private int selectedBulkhead;
+
+ 
 
         private void LoadBulkhead_Click(object sender, RoutedEventArgs e)
         {

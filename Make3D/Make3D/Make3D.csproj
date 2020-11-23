@@ -72,6 +72,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\BaseModellerDialog.cs" />
     <Compile Include="Dialogs\BezierLine.cs" />
     <Compile Include="Dialogs\BulkheadControl.xaml.cs">
       <DependentUpon>BulkheadControl.xaml</DependentUpon>
@@ -96,6 +97,9 @@
     <Compile Include="Dialogs\STLExportedPartsConfirmation.xaml.cs">
       <DependentUpon>STLExportedPartsConfirmation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TorusDialog.xaml.cs">
+      <DependentUpon>TorusDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\EditorParameter.cs" />
@@ -105,6 +109,7 @@
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\MeshExtensions.cs" />
+    <Compile Include="Models\MeshUtils.cs" />
     <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
     <Compile Include="Models\PointUtils.cs" />
@@ -204,6 +209,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\STLExportedPartsConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\TorusDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

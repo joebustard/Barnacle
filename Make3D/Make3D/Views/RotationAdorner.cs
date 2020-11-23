@@ -1,9 +1,6 @@
 ﻿using Make3D.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -13,9 +10,13 @@ namespace Make3D.Views
 {
     public class RotationAdorner : Adorner
     {
-        Object3D sphere;
-        bool selectedSphere = false;
+        private Object3D sphere;
+        private Object3D xAxis;
+        private Object3D yAxis;
+        private Object3D zAxis;
+        private bool selectedSphere = false;
         private Bounds3D bounds;
+
         public RotationAdorner(PolarCamera camera)
         {
             Camera = camera;
@@ -34,7 +35,6 @@ namespace Make3D.Views
 
         internal PolarCamera Camera { get; set; }
 
-
         internal override bool Select(GeometryModel3D geo)
         {
             bool handled = false;
@@ -52,15 +52,15 @@ namespace Make3D.Views
 
         private void OnScaleRefresh(object param)
         {
-
         }
+
         public override void AdornObject(Object3D obj)
         {
-
             obj.CalcScale(false);
             SelectedObjects.Add(obj);
             GenerateAdornments();
         }
+
         internal override void GenerateAdornments()
         {
             Adornments.Clear();
@@ -77,8 +77,14 @@ namespace Make3D.Views
 
         private void CreateAdornments(Point3D position, Point3D size)
         {
-            sphere = new Object3D();
+            xAxis = CreateAxis(position, 100, 1, 1, Colors.Red, "XAxis");
+            Adornments.Add(GetMesh(xAxis));
+            yAxis = CreateAxis(position, 1, 100, 1, Colors.Green, "YAxis");
+            Adornments.Add(GetMesh(yAxis));
+            zAxis = CreateAxis(position, 1, 1, 100, Colors.Yellow, "ZAxis");
+            Adornments.Add(GetMesh(zAxis));
 
+            sphere = new Object3D();
             // create the main semi transparent part of of the adorner
             Point3DCollection pnts = new Point3DCollection();
             Int32Collection indices = new Int32Collection();
@@ -88,15 +94,34 @@ namespace Make3D.Views
             sphere.TriangleIndices = indices;
             sphere.Normals = normals;
             sphere.Position = position;
-            sphere.ScaleMesh(size.X *2, size.Y *2, size.Z *2);
+            sphere.ScaleMesh(size.X * 2, size.Y * 2, size.Z * 2);
             //box.Scale.Adjust(1.1, 1.1, 1.1);
             sphere.Color = Color.FromArgb(150, 64, 64, 64);
             sphere.RelativeToAbsolute();
             sphere.SetMesh();
             Adornments.Add(GetMesh(sphere));
-            double thumbSize = 4;
+        }
 
+        private Object3D CreateAxis(Point3D position, double xSize, double ySize, double zSize, Color col, string name)
+        {
+            Object3D rect = new Object3D();
 
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection indices = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
+            rect.Name = name;
+            rect.RelativeObjectVertices = pnts;
+            rect.TriangleIndices = indices;
+            rect.Normals = normals;
+
+            rect.Position = position;
+            rect.ScaleMesh(xSize, ySize, zSize);
+            rect.Color = col;
+            rect.RelativeToAbsolute();
+            rect.SetMesh();
+
+            return rect;
         }
 
         internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
@@ -121,13 +146,13 @@ namespace Make3D.Views
                     deltaZ = -(newPos.Y - lastPos.Y) / dr;
                 }
 
-                RotateObject(deltaX, deltaY, deltaZ);
+                Rotate(deltaX, deltaY, deltaZ);
                 handled = true;
             }
             return handled;
         }
 
-        private void RotateObject(double deltaX, double deltaY, double deltaZ)
+        private void Rotate(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
             PolarCamera.Orientations ori = Camera.Orientation;
@@ -160,20 +185,26 @@ namespace Make3D.Views
 
             if (positionChange != null)
             {
-               
+                RotateSingleObject(positionChange, xAxis);
+                RotateSingleObject(positionChange, yAxis);
+                RotateSingleObject(positionChange, zAxis);
                 foreach (Object3D obj in SelectedObjects)
                 {
-                    obj.Rotate(positionChange);
-                    obj.Remesh();
+                    RotateSingleObject(positionChange, obj);
                     NotificationManager.Notify("PositionUpdated", obj);
                 }
-                    NotificationManager.Notify("DocDirty", null);
+                NotificationManager.Notify("DocDirty", null);
             }
-
         }
+
+        private static void RotateSingleObject(Point3D positionChange, Object3D obj)
+        {
+            obj.Rotate(positionChange);
+            obj.Remesh();
+        }
+
         internal override void MouseUp()
         {
-           
             selectedSphere = false;
         }
     }

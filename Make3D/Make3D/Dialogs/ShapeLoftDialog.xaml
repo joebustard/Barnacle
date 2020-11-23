@@ -1,4 +1,4 @@
-﻿<Window x:Class="Make3D.Dialogs.ShapeLoftDialog"
+﻿<local:BaseModellerDialog x:Class="Make3D.Dialogs.ShapeLoftDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -19,10 +19,11 @@
         </Grid.ColumnDefinitions>
         <local:ShapeBase x:Name="TopShape" Grid.Column="0" Grid.Row="0" Margin="2,2,2,2" VerticalAlignment="Stretch" />
         <local:ShapeBase x:Name="BottomShape" Grid.Column="0" Grid.Row="1" Margin="2,2,2,2" VerticalAlignment="Stretch" />
-        <Viewport3D Name="viewport3D1"  Grid.Row ="0" Grid.Column="1" Grid.RowSpan="2">
+        <Viewport3D Name="viewport3D1"  Grid.Row ="0" Grid.Column="1" Grid.RowSpan="2" MouseMove="Viewport_MouseMove"
+              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
             <Viewport3D.Camera>
-                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPos}" LookDirection = "{Binding LookDirection}">
+                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
                 </PerspectiveCamera>
             </Viewport3D.Camera>
 
@@ -69,4 +70,4 @@
             <Button Grid.Column="1" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
         </Grid>
     </Grid>
-</Window>
+</local:BaseModellerDialog>

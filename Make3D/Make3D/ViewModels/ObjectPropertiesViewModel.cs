@@ -31,22 +31,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        /*
-                private Brush objectColour;
-
-                public Brush ObjectColour
-                {
-                    get { return objectColour; }
-                    set
-                    {
-                        if (objectColour != value)
-                        {
-                            objectColour = value;
-                            NotifyPropertyChanged();
-                        }
-                    }
-                }
-                */
         private Color objectColour;
 
         public Color ObjectColour
@@ -357,6 +341,9 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
             NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
             NotificationManager.Subscribe("PositionUpdated", OnPositionUpdated);
+            rotationX = 90;
+            rotationY = 90;
+            rotationZ = 90;
         }
 
         private void OnPositionUpdated(object param)
@@ -376,7 +363,15 @@ namespace Make3D.ViewModels
 
         private void OnRotateX(object obj)
         {
-            Point3D p2 = new Point3D(rotationX, 0, 0);
+            Point3D p2;
+            if (obj.ToString() == "+")
+            {
+                p2 = new Point3D(rotationX, 0, 0);
+            }
+            else
+            {
+                p2 = new Point3D(-rotationX, 0, 0);
+            }
             RotateSelected(p2);
         }
 
@@ -394,13 +389,29 @@ namespace Make3D.ViewModels
 
         private void OnRotateY(object obj)
         {
-            Point3D p2 = new Point3D(0, rotationY, 0);
+            Point3D p2;
+            if (obj.ToString() == "+")
+            {
+                p2 = new Point3D(0, rotationY, 0);
+            }
+            else
+            {
+                p2 = new Point3D(0, -rotationY, 0);
+            }
             RotateSelected(p2);
         }
 
         private void OnRotateZ(object obj)
         {
-            Point3D p2 = new Point3D(0, 0, rotationZ);
+            Point3D p2;
+            if (obj.ToString() == "+")
+            {
+                p2 = new Point3D(0, 0, rotationZ);
+            }
+            else
+            {
+                p2 = new Point3D(0, 0, -rotationZ);
+            }
             RotateSelected(p2);
         }
 
