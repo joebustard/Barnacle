@@ -41,6 +41,12 @@ namespace Make3D.Models
         public double Distance
         {
             get { return distance; }
+            set
+            {
+                distance = value;
+                polarPos.Rho = distance;
+                ConvertPolarTo3D();
+            }
         }
 
         private Point3D cameraPos;

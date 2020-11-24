@@ -33,6 +33,7 @@ namespace Make3D.Dialogs
             sizeY = 10;
             sizeZ = 10;
             DataContext = this;
+            EditorParameters.ToolName = "TwoShape";
         }
 
         private void OnBottomPointsChanged(List<Point> pnts)
@@ -215,5 +216,19 @@ namespace Make3D.Dialogs
             SizeY.Text = sizeY.ToString();
             SizeZ.Text = sizeZ.ToString();
         }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            EditorParameters.Set("TopNumberOfPoints",TopShape.NumberOfPoints.ToString() );
+            EditorParameters.Set("TopDistances", TopShape.GetDistances());
+            EditorParameters.Set("TopRotation", TopShape.RotationDegrees.ToString());
+
+            EditorParameters.Set("BottomNumberOfPoints", BottomShape.NumberOfPoints.ToString());
+            EditorParameters.Set("BottomDistances", BottomShape.GetDistances());
+            EditorParameters.Set("BottomRotation", BottomShape.RotationDegrees.ToString());
+            DialogResult = true;
+            Close();
+        }
+
     }
 }

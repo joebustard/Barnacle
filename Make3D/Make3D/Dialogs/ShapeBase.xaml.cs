@@ -29,6 +29,18 @@ namespace Make3D.Dialogs
 
         private double rotation;
         private double rotationDegrees;
+        public double RotationDegrees
+        {
+
+            get
+            {
+                return rotationDegrees;
+            }
+            set
+            {
+                rotationDegrees = value;
+            }
+        }
         private double maxRotation;
         private int selectedPoint;
         private bool snapPoint;
@@ -251,6 +263,24 @@ namespace Make3D.Dialogs
                     }
                 }
             }
+        }
+
+        internal string GetDistances()
+        {
+            string res = "";
+            for (int i = 0; i < pointAngles.Count; i++)
+            {
+                res += pointDistance[i].ToString();
+                res += ",";
+            }
+            return res;
+        }
+
+        internal string GetEditorParameters()
+        {
+            string res = "";
+
+            return res;
         }
 
         private void PointCanvas_MouseMove(object sender, MouseEventArgs e)

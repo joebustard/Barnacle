@@ -94,6 +94,8 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Irregular", OnIrregular);
             NotificationManager.Subscribe("Linear", OnLinear);
             NotificationManager.Subscribe("Doughnut", OnDoughNut);
+            NotificationManager.Subscribe("Fuselage", OnFuselage);
+            NotificationManager.Subscribe("TwoShape", OnTwoShape);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             ReportCameraPosition();
@@ -106,12 +108,23 @@ namespace Make3D.ViewModels
             RegenerateDisplayList();
         }
 
+        private void OnTwoShape(object param)
+        {
+            ShapeLoftDialog dlg = new ShapeLoftDialog();
+            DisplayModeller(dlg);
+        }
+
         private void OnDoughNut(object param)
         {
             TorusDialog torusDialog = new TorusDialog();
             DisplayModeller(torusDialog);
         }
 
+        private void OnFuselage(object param)
+        {
+            FuselageLoftDialog dlg = new FuselageLoftDialog();
+            DisplayModeller(dlg);
+        }
         private void OnExportParts(object param)
         {
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
@@ -130,60 +143,8 @@ namespace Make3D.ViewModels
         private void OnIrregular(object param)
         {
             IrregularPolygonDlg dlg = new IrregularPolygonDlg();
-
-            EditorParameters pm = new EditorParameters();
-            Object3D editingObj = null;
-
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                editingObj = selectedObjectAdorner.SelectedObjects[0];
-                if (editingObj.EditorParameters != null)
-                {
-                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
-                    {
-                        dlg.EditorParameters = editingObj.EditorParameters;
-                    }
-                }
-            }
-            if (dlg.ShowDialog() == true)
-            {
-                bool positionAtRight = false;
-                if (editingObj == null)
-                {
-                    editingObj = new Object3D();
-                    editingObj.Name = Document.NextName;
-                    editingObj.Description = "";
-                    Document.Content.Add(editingObj);
-                    positionAtRight = true;
-                }
-                DeselectAll();
-
-                editingObj.EditorParameters = dlg.EditorParameters;
-                editingObj.RelativeObjectVertices = dlg.Vertices;
-                editingObj.TriangleIndices = dlg.Faces;
-                RecalculateAllBounds();
-                if (positionAtRight)
-                {
-                    if (allBounds.Upper.X > double.MinValue)
-                    {
-                        editingObj.Position = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                    else
-                    {
-                        editingObj.Position = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                }
-
-                editingObj.PrimType = "Mesh";
-
-                editingObj.Remesh();
-                allBounds += editingObj.AbsoluteBounds;
-
-                GeometryModel3D gm = GetMesh(editingObj);
-
-                Document.Dirty = true;
-                RegenerateDisplayList();
-            }
+            DisplayModeller(dlg);
+            
         }
 
         private void DisplayModeller(BaseModellerDialog dlg)
@@ -1071,8 +1032,8 @@ namespace Make3D.ViewModels
                 FuselageLoftDialog dlg = new FuselageLoftDialog();
                 if (dlg.ShowDialog() == true)
                 {
-                    obj.RelativeObjectVertices = dlg.GetVertices();
-                    obj.TriangleIndices = dlg.GetFaces();
+                    obj.RelativeObjectVertices = dlg.Vertices;
+                    obj.TriangleIndices = dlg.Faces;
                     obj.CalcScale(false);
                     res = true;
                 }

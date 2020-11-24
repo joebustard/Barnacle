@@ -23,7 +23,7 @@ namespace Make3D.Dialogs
         public PointsChanged OnPointsChanged;
         public int IdNumber { get; set; }
         public int NumberOfPoints { get; set; }
-        public FuselageBulkhead BulkHead { get; set; }
+        public FuselageBulkhead FuselageBulkHead { get; set; }
         public List<Point> Points;
         public List<Point> ControlPoints;
         private double cx;
@@ -86,34 +86,16 @@ namespace Make3D.Dialogs
             }
             Redraw();
             Notify("Refresh");
-            /*
-            PositionX.MinimumValue = 0;
-            PositionX.MaximumValue = 200;
-            PositionX.StartValue = BulkHead.OffsetFromStart;
-            PositionX.Value = BulkHead.OffsetFromStart;
-            PositionX.OnValueChanged += PositionX_Changed;
-
-            PositionY.MinimumValue = -100;
-            PositionY.MaximumValue = 100;
-            PositionY.StartValue = BulkHead.OffsetFromStart;
-            PositionY.Value = BulkHead.OffsetY;
-            PositionY.OnValueChanged += PositionY_Changed;
-
-            PositionZ.MinimumValue = -100;
-            PositionZ.MaximumValue = 100;
-            PositionZ.StartValue = BulkHead.OffsetFromStart;
-            PositionZ.Value = BulkHead.OffsetZ;
-            PositionZ.OnValueChanged += PositionZ_Changed;
-            */
+            
         }
 
         public void Redraw()
         {
             cx = PointCanvas.ActualWidth / 2.0;
             cy = PointCanvas.ActualHeight / 2.0;
-            PositionX.Text = BulkHead.OffsetX.ToString();
-            PositionY.Text = BulkHead.OffsetY.ToString();
-            PositionZ.Text = BulkHead.OffsetZ.ToString();
+            PositionX.Text = FuselageBulkHead.OffsetX.ToString();
+            PositionY.Text = FuselageBulkHead.OffsetY.ToString();
+            PositionZ.Text = FuselageBulkHead.OffsetZ.ToString();
             Number.Content = IdNumber.ToString();
             maxRadius = PointCanvas.ActualWidth / 2;
             if (PointCanvas.ActualHeight / 2 < maxRadius)
@@ -174,7 +156,7 @@ namespace Make3D.Dialogs
 
         internal double GetDistance()
         {
-            return BulkHead.OffsetX;
+            return FuselageBulkHead.OffsetX;
         }
 
         private void DisplayLines()
@@ -250,19 +232,7 @@ namespace Make3D.Dialogs
             ControlPoints.Clear();
             pointAngles.Clear();
             pointDistance.Clear();
-            /*
-            double dTheta = (Math.PI * 2) / NumberOfPoints;
-
-            for (double theta = 0; theta < (Math.PI * 2); theta += dTheta)
-            {
-                pointAngles.Add(theta);
-                pointDistance.Add(1);
-                double x = 1 * Math.Cos(theta);
-                double y = 1 * Math.Sin(theta);
-                Point p = new Point(x, y);
-                Points.Add(p);
-            }
-            */
+           
             Points.Clear();
             bzlines = new BezierLine[4];
             bzlines[0] = new BezierLine();
@@ -353,45 +323,7 @@ namespace Make3D.Dialogs
             return new Point(x, y);
         }
 
-        /*    private void DisplayPoints()
-            {
-                if (bzlines != null)
-                {
-                    double rad = 3;
-                    for (int i = 0; i < Points.Count; i++)
-                    {
-                        if (selectedPoint == i)
-                        {
-                            rad = 8;
-                        }
-                        else
-                        {
-                            rad = 5;
-                        }
-                        double dx = Points[i].X * BulkHead.Depth;
-                        double dy = Points[i].Y * BulkHead.Height;
-                        string s = $"{dx},{dy}";
-
-                        AddCircle(Points[i].X, Points[i].Y, rad, Brushes.Red, s);
-                    }
-                    for (int i = 0; i < ControlPoints.Count; i++)
-                    {
-                        if (selectedControlPoint == i)
-                        {
-                            rad = 8;
-                        }
-                        else
-                        {
-                            rad = 5;
-                        }
-                        double dx = ControlPoints[i].X * BulkHead.Depth;
-                        double dy = ControlPoints[i].Y * BulkHead.Height;
-                        string s = $"{dx},{dy}";
-                        AddCircle(ControlPoints[i].X, ControlPoints[i].Y, rad, Brushes.Yellow, s);
-                    }
-                }
-            }
-            */
+      
 
         private static SolidColorBrush[] pointColours =
         {
@@ -417,8 +349,8 @@ Brushes.Green
                     {
                         rad = 6;
                     }
-                    double dx = bzlines[i].P0.X * BulkHead.Depth;
-                    double dy = bzlines[i].P0.Y * BulkHead.Height;
+                    double dx = bzlines[i].P0.X * FuselageBulkHead.Depth;
+                    double dy = bzlines[i].P0.Y * FuselageBulkHead.Height;
                     string s = $"{dx},{dy}";
 
                     AddCircle(bzlines[i].P0.X, bzlines[i].P0.Y, rad, pointColours[i], s);
@@ -428,8 +360,8 @@ Brushes.Green
                     {
                         rad = 7;
                     }
-                    dx = bzlines[i].P1.X * BulkHead.Depth;
-                    dy = bzlines[i].P1.Y * BulkHead.Height;
+                    dx = bzlines[i].P1.X * FuselageBulkHead.Depth;
+                    dy = bzlines[i].P1.Y * FuselageBulkHead.Height;
                     s = $"{dx},{dy}";
                     AddCircle(bzlines[i].P1.X, bzlines[i].P1.Y, rad, pointColours[i], s);
                     cp++;
@@ -439,8 +371,8 @@ Brushes.Green
                     {
                         rad = 7;
                     }
-                    dx = bzlines[i].P2.X * BulkHead.Depth;
-                    dy = bzlines[i].P2.Y * BulkHead.Height;
+                    dx = bzlines[i].P2.X * FuselageBulkHead.Depth;
+                    dy = bzlines[i].P2.Y * FuselageBulkHead.Height;
                     s = $"{dx},{dy}";
                     AddCircle(bzlines[i].P2.X, bzlines[i].P2.Y, rad, pointColours[i], s);
                     cp++;
@@ -631,7 +563,7 @@ Brushes.Green
         internal void MoveToTop()
         {
             double offset = 1.0 - Points[1].Y;
-            BulkHead.OffsetY = -(offset * BulkHead.Height);
+            FuselageBulkHead.OffsetY = -(offset * FuselageBulkHead.Height);
             Redraw();
         }
 
@@ -665,7 +597,7 @@ Brushes.Green
             fb.OffsetY = GetDouble(nd, "Y");
             fb.OffsetZ = GetDouble(nd, "Z");
 
-            BulkHead = fb;
+            FuselageBulkHead = fb;
 
             List<Point> pnts = new List<Point>();
             XmlNodeList pntList = nd.SelectNodes("Point");
@@ -699,11 +631,11 @@ Brushes.Green
         {
             XmlElement nd = doc.CreateElement("Bulkhead");
             nd.SetAttribute("Id", IdNumber.ToString());
-            nd.SetAttribute("D", BulkHead.Depth.ToString());
-            nd.SetAttribute("H", BulkHead.Height.ToString());
-            nd.SetAttribute("X", BulkHead.OffsetX.ToString());
-            nd.SetAttribute("Y", BulkHead.OffsetY.ToString());
-            nd.SetAttribute("Z", BulkHead.OffsetZ.ToString());
+            nd.SetAttribute("D", FuselageBulkHead.Depth.ToString());
+            nd.SetAttribute("H", FuselageBulkHead.Height.ToString());
+            nd.SetAttribute("X", FuselageBulkHead.OffsetX.ToString());
+            nd.SetAttribute("Y", FuselageBulkHead.OffsetY.ToString());
+            nd.SetAttribute("Z", FuselageBulkHead.OffsetZ.ToString());
             foreach (Point p in Points)
             {
                 XmlElement pnt = doc.CreateElement("Point");
@@ -790,7 +722,7 @@ Brushes.Green
             try
             {
                 double pos = Convert.ToDouble(PositionX.Text);
-                BulkHead.OffsetX = pos;
+                FuselageBulkHead.OffsetX = pos;
                 Notify("Refresh");
             }
             catch
@@ -803,7 +735,7 @@ Brushes.Green
             try
             {
                 double pos = Convert.ToDouble(PositionY.Text);
-                BulkHead.OffsetY = pos;
+                FuselageBulkHead.OffsetY = pos;
                 SetBezierOffsets();
                 Notify("Refresh");
             }
@@ -817,7 +749,7 @@ Brushes.Green
             try
             {
                 double pos = Convert.ToDouble(PositionZ.Text);
-                BulkHead.OffsetZ = pos;
+                FuselageBulkHead.OffsetZ = pos;
                 SetBezierOffsets();
                 Notify("Refresh");
             }
@@ -830,7 +762,7 @@ Brushes.Green
         {
             for (int i = 0; i < bzlines.GetLength(0); i++)
             {
-                bzlines[i].SetOffset(BulkHead.OffsetZ / BulkHead.Depth, BulkHead.OffsetY / BulkHead.Height);
+                bzlines[i].SetOffset(FuselageBulkHead.OffsetZ / FuselageBulkHead.Depth, FuselageBulkHead.OffsetY / FuselageBulkHead.Height);
             }
         }
 
@@ -946,6 +878,32 @@ Brushes.Green
             ControlPoints[5] = new Point(ControlPoints[2].X, -ControlPoints[2].Y);
 
             Redraw();
+        }
+
+        // This is specifically for saving as an editor parameters
+        public String ToEditorParameters()
+        {
+            string res = "";
+  
+            res += "Id="+ IdNumber.ToString()+",";
+            res += "D="+FuselageBulkHead.Depth.ToString() + ",";
+            res += "H="+ FuselageBulkHead.Height.ToString() + ",";
+            res += "X="+ FuselageBulkHead.OffsetX.ToString() + ",";
+            res += "Y="+ FuselageBulkHead.OffsetY.ToString() + ",";
+            res += "Z="+ FuselageBulkHead.OffsetZ.ToString() + ",";
+            foreach (Point p in Points)
+            {
+                res += "P="+ p.X.ToString()+"!"+p.Y.ToString()+",";
+            }
+            foreach (Point p in ControlPoints)
+            {
+                res += "C=" + p.X.ToString() + "!" + p.Y.ToString() + ",";
+            }
+            foreach (double d in pointDistance)
+            {
+                res += "V=" + d.ToString() + ",";
+            }
+            return res;
         }
     }
 }

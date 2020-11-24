@@ -25,10 +25,12 @@ namespace Make3D.ViewModels
         private string caption;
         private bool centerTextAlignment;
         private bool doughnutEnabled;
+        private bool fuselageEnabled;
         private string fontSize;
         private bool italicChecked;
         private bool leftTextAlignment;
         private bool linearEnabled;
+        private bool twoShapeEnabled;
         private Ribbon MainRibbon;
         private bool rightTextAlignment;
         private bool showAxiesChecked;
@@ -77,6 +79,8 @@ namespace Make3D.ViewModels
             IrregularCommand = new RelayCommand(OnIrregular);
             LinearCommand = new RelayCommand(OnLinear);
             DoughnutCommand = new RelayCommand(OnDoughNut);
+            FuselageCommand = new RelayCommand(OnFuselage);
+            TwoShapeCommand = new RelayCommand(OnTwoShape);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -100,9 +104,8 @@ namespace Make3D.ViewModels
             ShowFloorChecked = true;
             ShowAxiesChecked = true;
 
-            LinearEnabled = true;
-            DoughnutEnabled = true;
-            IrregularEnabled = true;
+            EnableAllTools(true);
+            
 
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
             NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
@@ -118,6 +121,16 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnTwoShape(object obj)
+        {
+            NotificationManager.Notify("TwoShape", null);
+        }
+
+        private void OnFuselage(object obj)
+        {
+            NotificationManager.Notify("Fuselage", null);
         }
 
         private void SetSingleToolVisible(object param)
@@ -140,6 +153,17 @@ namespace Make3D.ViewModels
                 case "IrregularPolygon":
                     {
                         IrregularEnabled = true;
+                    }
+                    break;
+
+                case "Fuselage":
+                    {
+                        FuselageEnabled = true;
+                    }
+                    break;
+                case "TwoShape":
+                    {
+                        TwoShapeEnabled = true;
                     }
                     break;
             }
@@ -209,6 +233,8 @@ namespace Make3D.ViewModels
         public ICommand DoNothingCommand { get; set; }
 
         public ICommand DoughnutCommand { get; set; }
+        public ICommand FuselageCommand { get; set; }
+        public ICommand TwoShapeCommand { get; set; }
 
         public bool DoughnutEnabled
         {
@@ -238,6 +264,18 @@ namespace Make3D.ViewModels
             }
         }
 
+        public bool FuselageEnabled
+        {
+            get { return fuselageEnabled; }
+            set
+            {
+                if (fuselageEnabled != value)
+                {
+                    fuselageEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public ICommand ExitCommand { get; set; }
 
         public ICommand ExportCommand { get; set; }
@@ -320,6 +358,19 @@ namespace Make3D.ViewModels
             }
         }
 
+        public bool TwoShapeEnabled
+        {
+            get { return twoShapeEnabled; }
+
+            set
+            {
+                if (twoShapeEnabled != value)
+                {
+                    twoShapeEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
@@ -604,6 +655,8 @@ namespace Make3D.ViewModels
             LinearEnabled = b;
             DoughnutEnabled = b;
             IrregularEnabled = b;
+            FuselageEnabled = b;
+            TwoShapeEnabled = b;
         }
 
         private void LoadMru()

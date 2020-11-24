@@ -19,7 +19,14 @@ namespace Make3D.Dialogs
         private PolarCamera polarCamera;
         private Int32Collection tris;
         private Point3DCollection vertices;
+        public PolarCamera Camera
+        {
 
+            get
+            {
+                return polarCamera;
+            }
+        }
         public BaseModellerDialog()
         {
             vertices = new Point3DCollection();
@@ -210,7 +217,7 @@ namespace Make3D.Dialogs
             gm.Material = mt;
             DiffuseMaterial mtb = new DiffuseMaterial();
             mtb.Color = Colors.CornflowerBlue;
-            mtb.Brush = new SolidColorBrush(Colors.Black);
+            mtb.Brush = new SolidColorBrush(Colors.Green);
             gm.BackMaterial = mtb;
 
             return gm;

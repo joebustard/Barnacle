@@ -211,6 +211,8 @@
                     <Custom:RibbonButton x:Name="LinearButton" Label="Linear" Command="{Binding LinearCommand}" IsEnabled="{Binding LinearEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/Vase.png"
   ToolTip="Create an object by linear lofting" />
                     <Custom:RibbonButton x:Name="DoughButton" Label="DoughNut" Command="{Binding DoughnutCommand}" IsEnabled="{Binding DoughnutEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="FuselageButton" Label="Fuselage" Command="{Binding FuselageCommand}" IsEnabled="{Binding FuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ShapeLoftButton" Label="Two Shape" Command="{Binding TwoShapeCommand}" IsEnabled="{Binding TwoShapeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
             <Custom:RibbonTab Name="ViewTab1" Header="View">

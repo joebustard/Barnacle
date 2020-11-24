@@ -64,12 +64,8 @@
                 <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
             </Button>
 
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="ShapeLoft" ToolTip="Add an object lofted between two shapes" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
-            </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="FuselageLoft" ToolTip="Add an object lofted across multiple spars" Margin="0,0,2,2">
-                <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
-            </Button>
+          
+
         </UniformGrid>
     </Grid>
 </UserControl>
