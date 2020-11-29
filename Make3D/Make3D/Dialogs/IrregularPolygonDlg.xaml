@@ -46,6 +46,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
+            <Label x:Name="PositionLabel" Grid.Column="0" />
             <Button Grid.Column="3" x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" />
             <Button Grid.Column="4" x:Name="OkButton" Content="Ok" Click="Ok_Click" />
         </Grid>

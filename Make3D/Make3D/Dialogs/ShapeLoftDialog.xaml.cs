@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Dialogs
@@ -210,6 +208,37 @@ namespace Make3D.Dialogs
             BottomShape.Header = "Bottom Shape";
             BottomShape.OnPointsChanged += OnBottomPointsChanged;
 
+            String s = EditorParameters.Get("TopNumberOfPoints");
+            if (s != "")
+            {
+                int v = Convert.ToInt16(s);
+
+                s = EditorParameters.Get("TopDistances");
+                List<double> dists = GetDoubles(v, s);
+                s = EditorParameters.Get("TopRotation");
+                double r = Convert.ToDouble(s);
+                TopShape.SetPoints(v, dists, r);
+
+                s = EditorParameters.Get("BottomNumberOfPoints");
+                v = Convert.ToInt16(s);
+                s = EditorParameters.Get("BottomDistances");
+                dists = GetDoubles(v, s);
+                s = EditorParameters.Get("BottomRotation");
+                r = Convert.ToDouble(s);
+                BottomShape.SetPoints(v, dists, r);
+
+                s = EditorParameters.Get("ScaleX");
+                if (s != "")
+                {
+                    sizeX = Convert.ToDouble(s);
+                    sizeX = Math.Round(sizeX * 100) / 100;
+                    s = EditorParameters.Get("ScaleY");
+                    sizeY = Convert.ToDouble(s);
+                    s = EditorParameters.Get("ScaleZ");
+                    sizeZ = Convert.ToDouble(s);
+                }
+            }
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             SizeX.Text = sizeX.ToString();
@@ -217,18 +246,33 @@ namespace Make3D.Dialogs
             SizeZ.Text = sizeZ.ToString();
         }
 
+        private List<double> GetDoubles(int v, string s)
+        {
+            List<double> res = new List<double>();
+            string[] words = s.Split(',');
+            for (int i = 0; i < v && i < words.GetLength(0); i++)
+            {
+                double d = Convert.ToDouble(words[i]);
+                res.Add(d);
+            }
+            return res;
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            EditorParameters.Set("TopNumberOfPoints",TopShape.NumberOfPoints.ToString() );
+            EditorParameters.Set("TopNumberOfPoints", TopShape.NumberOfPoints.ToString());
             EditorParameters.Set("TopDistances", TopShape.GetDistances());
             EditorParameters.Set("TopRotation", TopShape.RotationDegrees.ToString());
 
             EditorParameters.Set("BottomNumberOfPoints", BottomShape.NumberOfPoints.ToString());
             EditorParameters.Set("BottomDistances", BottomShape.GetDistances());
             EditorParameters.Set("BottomRotation", BottomShape.RotationDegrees.ToString());
+
+            EditorParameters.Set("ScaleX", sizeX.ToString());
+            EditorParameters.Set("ScaleY", sizeY.ToString());
+            EditorParameters.Set("ScaleZ", sizeZ.ToString());
             DialogResult = true;
             Close();
         }
-
     }
 }

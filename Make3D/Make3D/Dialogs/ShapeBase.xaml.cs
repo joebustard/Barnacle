@@ -29,9 +29,9 @@ namespace Make3D.Dialogs
 
         private double rotation;
         private double rotationDegrees;
+
         public double RotationDegrees
         {
-
             get
             {
                 return rotationDegrees;
@@ -41,6 +41,7 @@ namespace Make3D.Dialogs
                 rotationDegrees = value;
             }
         }
+
         private double maxRotation;
         private int selectedPoint;
         private bool snapPoint;
@@ -73,7 +74,10 @@ namespace Make3D.Dialogs
 
             cx = PointCanvas.ActualWidth / 2.0;
             cy = PointCanvas.ActualHeight / 2.0;
-            GenerateDefaultPoints();
+            if (pointDistance == null)
+            {
+                GenerateDefaultPoints();
+            }
             Redraw();
         }
 
@@ -142,7 +146,8 @@ namespace Make3D.Dialogs
             pointDistance = new List<double>();
             double dTheta = (Math.PI * 2) / NumberOfPoints;
             maxRotation = dTheta / 2;
-            for (double theta = 0; theta < (Math.PI * 2); theta += dTheta)
+            int num = 0;
+            for (double theta = 0; theta < (Math.PI * 2) && num < NumberOfPoints; theta += dTheta)
             {
                 pointAngles.Add(theta);
                 pointDistance.Add(0.5);
@@ -150,6 +155,7 @@ namespace Make3D.Dialogs
                 double y = 0.5 * Math.Sin(theta);
                 Point p = new Point(x, y);
                 Points.Add(p);
+                num++;
             }
         }
 
@@ -198,7 +204,6 @@ namespace Make3D.Dialogs
 
         private void NumberOfPointsBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-
         }
 
         private void RotateMinus_Click(object sender, RoutedEventArgs e)
@@ -263,6 +268,19 @@ namespace Make3D.Dialogs
                     }
                 }
             }
+        }
+
+        internal void SetPoints(int num, List<double> dists, double rot)
+        {
+            rotation = rot;
+            NumberOfPoints = num;
+            GenerateDefaultPoints();
+            for (int i = 0; i < num; i++)
+            {
+                pointDistance[i] = dists[i];
+            }
+            GeneratePoints();
+            Redraw();
         }
 
         internal string GetDistances()

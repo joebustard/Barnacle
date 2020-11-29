@@ -14,6 +14,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using Workflow;
 
 namespace Make3D.ViewModels
 {
@@ -83,6 +84,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("DoMultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("Export", OnExport);
             NotificationManager.Subscribe("ExportParts", OnExportParts);
+            NotificationManager.Subscribe("Slice", OnSlice);
             NotificationManager.Subscribe("Import", OnImport);
             NotificationManager.Subscribe("MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("MoveObjectToCentre", OnMoveObjectToCentre);
@@ -108,6 +110,35 @@ namespace Make3D.ViewModels
             RegenerateDisplayList();
         }
 
+        private void OnSlice(object param)
+        {
+            string s = param.ToString();
+            if (s == "SliceAll")
+            {
+                string modelPath = Document.FilePath;
+                string modelName = Path.GetFileNameWithoutExtension(modelPath);
+                modelPath = Path.GetDirectoryName(modelPath);
+                string exportPath = Path.Combine(modelPath, "export");
+                if (!Directory.Exists(exportPath))
+                {
+                    Directory.CreateDirectory(exportPath);
+                }
+                exportPath = Path.Combine(exportPath, modelName + ".stl");
+
+                string gcodePath = Path.Combine(modelPath, "gcode");
+                if (!Directory.Exists(gcodePath))
+                {
+                    Directory.CreateDirectory(gcodePath);
+                }
+                gcodePath = Path.Combine(gcodePath, modelName + ".gcode");
+
+                string logPath = Path.Combine(modelPath, "slicelog.log");
+
+                string exportedPath = Document.ExportAll("STL", allBounds);
+                SlicerInterface.Slice(exportPath, gcodePath, logPath, "Print3D");
+            }
+        }
+
         private void OnTwoShape(object param)
         {
             ShapeLoftDialog dlg = new ShapeLoftDialog();
@@ -125,6 +156,7 @@ namespace Make3D.ViewModels
             FuselageLoftDialog dlg = new FuselageLoftDialog();
             DisplayModeller(dlg);
         }
+
         private void OnExportParts(object param)
         {
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
@@ -144,11 +176,11 @@ namespace Make3D.ViewModels
         {
             IrregularPolygonDlg dlg = new IrregularPolygonDlg();
             DisplayModeller(dlg);
-            
         }
 
         private void DisplayModeller(BaseModellerDialog dlg)
         {
+            CheckPoint();
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;
 
@@ -160,6 +192,7 @@ namespace Make3D.ViewModels
                     if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
                     {
                         dlg.EditorParameters = editingObj.EditorParameters;
+                        editingObj.CalcScale();
                     }
                 }
             }

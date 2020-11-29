@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Make3D.Models
 {
@@ -10,6 +9,9 @@ namespace Make3D.Models
         public static void Initialise()
         {
             Standard["1"] = 1.0;
+            Standard["1/2"] = 1.0 / 2.0;
+            Standard["1/6"] = 1.0 / 6.0;
+            Standard["1/12"] = 1.0 / 12.0;
             Standard["1/24"] = 1.0 / 24;
             Standard["1/32"] = 1.0 / 32.0;
             Standard["1/35"] = 1.0 / 35.0;
@@ -44,7 +46,6 @@ namespace Make3D.Models
                 res = res * endScale;
             }
             return res;
-
         }
     }
 }

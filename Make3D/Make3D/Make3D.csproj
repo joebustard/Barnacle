@@ -360,6 +360,10 @@
       <Project>{BF1D777E-DF33-4C03-80A6-9ECB741746F1}</Project>
       <Name>PolygonTriangulationLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Workflow\Workflow.csproj">
+      <Project>{f7fdc6da-9937-472f-a90a-22fadf138439}</Project>
+      <Name>Workflow</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Buttons\Cap.png" />

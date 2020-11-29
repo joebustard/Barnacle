@@ -74,6 +74,7 @@ namespace Make3D.ViewModels
             ImportCommand = new RelayCommand(OnImport);
             ExportCommand = new RelayCommand(OnExport);
             ExportPartsCommand = new RelayCommand(OnExportParts);
+            SliceCommand = new RelayCommand(OnSlice);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
             IrregularCommand = new RelayCommand(OnIrregular);
@@ -105,7 +106,6 @@ namespace Make3D.ViewModels
             ShowAxiesChecked = true;
 
             EnableAllTools(true);
-            
 
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
             NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
@@ -121,6 +121,11 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnSlice(object obj)
+        {
+            NotificationManager.Notify("Slice", obj);
         }
 
         private void OnTwoShape(object obj)
@@ -161,6 +166,7 @@ namespace Make3D.ViewModels
                         FuselageEnabled = true;
                     }
                     break;
+
                 case "TwoShape":
                     {
                         TwoShapeEnabled = true;
@@ -276,11 +282,13 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         public ICommand ExitCommand { get; set; }
 
         public ICommand ExportCommand { get; set; }
 
         public ICommand ExportPartsCommand { get; set; }
+        public ICommand SliceCommand { get; set; }
 
         public ICommand FlipCommand { get; set; }
 
@@ -371,6 +379,7 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }

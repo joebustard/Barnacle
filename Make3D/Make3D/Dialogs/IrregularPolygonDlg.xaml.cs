@@ -315,10 +315,10 @@ namespace Make3D.Dialogs
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            PositionLabel.Content = $"({position.X},{position.Y})";
             if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
             {
-                System.Windows.Point position = e.GetPosition(MainCanvas);
-
                 points[selectedPoint] = position;
             }
             else
