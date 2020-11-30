@@ -58,6 +58,7 @@ namespace Make3D.ViewModels
             CopyCommand = new RelayCommand(OnCopy);
             PasteCommand = new RelayCommand(OnPaste);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
+            CircularPasteCommand = new RelayCommand(OnCircularPaste);
             CutCommand = new RelayCommand(OnCut);
             //  ViewCommand = new RelayCommand(OnView);
             AddCommand = new RelayCommand(OnAdd);
@@ -123,6 +124,11 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnCircularPaste(object obj)
+        {
+            NotificationManager.Notify("CircularPaste", null);
         }
 
         private void OnSpurGear(object obj)
@@ -408,7 +414,9 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         public ICommand MultiPasteCommand { get; set; }
+        public ICommand CircularPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
 

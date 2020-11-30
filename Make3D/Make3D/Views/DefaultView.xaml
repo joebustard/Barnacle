@@ -74,6 +74,8 @@
                     <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
 
                     <Custom:RibbonButton x:Name="PasteMultiButton" Label="Multi Paste" Command="{Binding MultiPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
+
+                    <Custom:RibbonButton x:Name="PasteCircularButton" Label="Circular Paste" Command="{Binding CircularPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="SelectionGroup" Header="Selection" LargeImageSource="/Make3D;component/Images/Buttons/SelectAll.png">

@@ -82,6 +82,8 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Copy", OnCopy);
             NotificationManager.Subscribe("Paste", OnPaste);
             NotificationManager.Subscribe("DoMultiPaste", OnMultiPaste);
+            NotificationManager.Subscribe("CircularPaste", OnCircularPaste);
+
             NotificationManager.Subscribe("Export", OnExport);
             NotificationManager.Subscribe("ExportParts", OnExportParts);
             NotificationManager.Subscribe("Slice", OnSlice);
@@ -109,6 +111,109 @@ namespace Make3D.ViewModels
             showAxies = true;
             showFloor = true;
             RegenerateDisplayList();
+        }
+
+        private void OnCircularPaste(object param)
+        {
+            CircularPasteDlg dlg = new CircularPasteDlg();
+            if (dlg.ShowDialog() == true)
+            {
+                if (ObjectClipboard.HasItems())
+                {
+                    CheckPoint();
+                    RecalculateAllBounds();
+                    selectedObjectAdorner.Clear();
+                    double radius = Convert.ToDouble(dlg.RadiusBox.Text);
+                    double altRadius = Convert.ToDouble(dlg.AltBox.Text);
+                    double cx = allBounds.Upper.X;
+                    if (radius > altRadius)
+                    {
+                        cx += radius;
+                    }
+                    else
+                    {
+                        cx += altRadius;
+                    }
+                    double cy = 0;
+                    double cz = 0;
+                    double rx;
+                    double ry;
+                    double rz;
+                    int repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
+                    if (repeats > 0)
+                    {
+                        double dTheta = (Math.PI * 2) / repeats;
+                        double theta = 0;
+                        bool alt = false;
+                        double x;
+                        double y;
+
+                        while (theta < (Math.PI * 2))
+                        {
+                            rx = 0;
+                            ry = 0;
+                            rz = 0;
+                            if (!alt)
+                            {
+                                x = radius * Math.Cos(theta);
+                                y = radius * Math.Sin(theta);
+                            }
+                            else
+                            {
+                                x = altRadius * Math.Cos(theta);
+                                y = altRadius * Math.Sin(theta);
+                            }
+                            alt = !alt;
+                            foreach (Object3D cl in ObjectClipboard.Items)
+                            {
+                                Object3D o = cl.Clone();
+                                o.Name = Document.NextName;
+
+                                if (o is Group3D)
+                                {
+                                    (o as Group3D).Init();
+                                }
+
+                                if (dlg.DirectionX.IsChecked == true)
+                                {
+                                    o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy, cz + o.AbsoluteBounds.Depth / 2 + y);
+                                    ry = -theta;
+                                }
+                                if (dlg.DirectionY.IsChecked == true)
+                                {
+                                    o.Position = new Point3D(cx, cy + o.AbsoluteBounds.Height / 2 + x, cz + o.AbsoluteBounds.Depth / 2 + y);
+                                    rx = (Math.PI / 2) + theta;
+                                }
+                                if (dlg.DirectionY.IsChecked == true)
+                                {
+                                    o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
+                                    rz = -theta;
+                                }
+                                o.CalcScale(false);
+
+                                o.Remesh();
+                                o.RotateRad(new Point3D(rx, ry, rz));
+                                if (dlg.DirectionX.IsChecked == true)
+                                {
+                                    o.MoveToFloor();
+                                }
+                                allBounds.Add(o.AbsoluteBounds);
+                                GeometryModel3D gm = GetMesh(o);
+                                Document.Content.Add(o);
+                                Document.Dirty = true;
+
+                                selectedItems.Add(o);
+                                selectedObjectAdorner.AdornObject(o);
+                            }
+
+                            theta += dTheta;
+                        }
+
+                        RegenerateDisplayList();
+                        UpdateSelectionDisplay();
+                    }
+                }
+            }
         }
 
         private void OnSpurGear(object param)
@@ -1512,15 +1617,23 @@ namespace Make3D.ViewModels
                                 o.Position = new Point3D(altOff, 0, allBounds.Upper.Z + o.AbsoluteBounds.Depth / 2 + cfg.Spacing);
                             }
                             o.CalcScale(false);
-                            //o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2, 0, 0);
+
                             o.Remesh();
-                            //o.MoveToFloor();
+                            if (cfg.Direction == "X" || cfg.Direction == "Z")
+                            {
+                                o.MoveToFloor();
+                            }
+
                             allBounds.Add(o.AbsoluteBounds);
                             GeometryModel3D gm = GetMesh(o);
                             Document.Content.Add(o);
                             Document.Dirty = true;
+
+                            selectedItems.Add(o);
+                            selectedObjectAdorner.AdornObject(o);
                         }
                     }
+                    UpdateSelectionDisplay();
                     RegenerateDisplayList();
                 }
             }
@@ -1966,6 +2079,8 @@ namespace Make3D.ViewModels
             {
                 modelItems.Add(md);
             }
+
+            NotifyPropertyChanged("ModelItems");
         }
 
         private void Zoom(double v)

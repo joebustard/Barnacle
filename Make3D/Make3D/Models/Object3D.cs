@@ -28,6 +28,7 @@ namespace Make3D.Models
         protected string primType;
 
         private EditorParameters editorParameters;
+
         public EditorParameters EditorParameters
         {
             get
@@ -36,9 +37,10 @@ namespace Make3D.Models
             }
             set
             {
-                editorParameters = value ;
+                editorParameters = value;
             }
         }
+
         public Object3D()
         {
             try
@@ -345,37 +347,55 @@ namespace Make3D.Models
                 double r2 = DegreesToRad(Rotation.Z);
                 double r3 = DegreesToRad(Rotation.X);
 
-                var cosa = Math.Cos(r2);
-                var sina = Math.Sin(r2);
-
-                var cosb = Math.Cos(r1);
-                var sinb = Math.Sin(r1);
-
-                var cosc = Math.Cos(r3);
-                var sinc = Math.Sin(r3);
-
-                var Axx = cosa * cosb;
-                var Axy = cosa * sinb * sinc - sina * cosc;
-                var Axz = cosa * sinb * cosc + sina * sinc;
-
-                var Ayx = sina * cosb;
-                var Ayy = sina * sinb * sinc + cosa * cosc;
-                var Ayz = sina * sinb * cosc - cosa * sinc;
-
-                var Azx = -sinb;
-                var Azy = cosb * sinc;
-                var Azz = cosb * cosc;
-                foreach (Point3D cp in relativeObjectVertices)
-                {
-                    Point3D rp = new Point3D();
-                    rp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
-                    rp.Y = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
-                    rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
-                    AdjustBounds(rp);
-                    tmp.Add(rp);
-                }
-                relativeObjectVertices = tmp;
+                RotatePoints(tmp, r1, r2, r3);
             }
+        }
+
+        public void RotateRad(Point3D Rotation)
+        {
+            if (relativeObjectVertices != null)
+            {
+                Point3DCollection tmp = new Point3DCollection();
+                double r1 = Rotation.Y;
+                double r2 = Rotation.Z;
+                double r3 = Rotation.X;
+
+                RotatePoints(tmp, r1, r2, r3);
+            }
+        }
+
+        private void RotatePoints(Point3DCollection tmp, double r1, double r2, double r3)
+        {
+            var cosa = Math.Cos(r2);
+            var sina = Math.Sin(r2);
+
+            var cosb = Math.Cos(r1);
+            var sinb = Math.Sin(r1);
+
+            var cosc = Math.Cos(r3);
+            var sinc = Math.Sin(r3);
+
+            var Axx = cosa * cosb;
+            var Axy = cosa * sinb * sinc - sina * cosc;
+            var Axz = cosa * sinb * cosc + sina * sinc;
+
+            var Ayx = sina * cosb;
+            var Ayy = sina * sinb * sinc + cosa * cosc;
+            var Ayz = sina * sinb * cosc - cosa * sinc;
+
+            var Azx = -sinb;
+            var Azy = cosb * sinc;
+            var Azz = cosb * cosc;
+            foreach (Point3D cp in relativeObjectVertices)
+            {
+                Point3D rp = new Point3D();
+                rp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
+                rp.Y = Ayx * cp.X + Ayy * cp.Y + Ayz * cp.Z;
+                rp.Z = Azx * cp.X + Azy * cp.Y + Azz * cp.Z;
+                AdjustBounds(rp);
+                tmp.Add(rp);
+            }
+            relativeObjectVertices = tmp;
         }
 
         public void ScaleMesh(double sx, double sy, double sz)
@@ -598,7 +618,7 @@ namespace Make3D.Models
             Scale = sc;
 
             XmlNode ed = nd.SelectSingleNode("EditorParameters");
-            if ( ed != null )
+            if (ed != null)
             {
                 EditorParameters.Load(ed as XmlElement);
             }
@@ -671,7 +691,7 @@ namespace Make3D.Models
             scl.SetAttribute("Y", Scale.Y.ToString());
             scl.SetAttribute("Z", Scale.Z.ToString());
             ele.AppendChild(scl);
-            if ( EditorParameters.HasContent)
+            if (EditorParameters.HasContent)
             {
                 EditorParameters.Write(doc, ele);
             }

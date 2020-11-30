@@ -124,6 +124,9 @@
     <Compile Include="undoer.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Dialogs\CircularPasteDlg.xaml.cs">
+      <DependentUpon>CircularPasteDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ColourDialog.xaml.cs">
       <DependentUpon>ColourDialog.xaml</DependentUpon>
     </Compile>
@@ -244,6 +247,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\CameraPalette.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CircularPasteDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
