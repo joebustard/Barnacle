@@ -31,6 +31,7 @@ namespace Make3D.ViewModels
         private bool leftTextAlignment;
         private bool linearEnabled;
         private bool twoShapeEnabled;
+        private bool spurGearEnabled;
         private Ribbon MainRibbon;
         private bool rightTextAlignment;
         private bool showAxiesChecked;
@@ -82,6 +83,7 @@ namespace Make3D.ViewModels
             DoughnutCommand = new RelayCommand(OnDoughNut);
             FuselageCommand = new RelayCommand(OnFuselage);
             TwoShapeCommand = new RelayCommand(OnTwoShape);
+            SpurGearCommand = new RelayCommand(OnSpurGear);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -121,6 +123,11 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnSpurGear(object obj)
+        {
+            NotificationManager.Notify("SpurGear", obj);
         }
 
         private void OnSlice(object obj)
@@ -170,6 +177,12 @@ namespace Make3D.ViewModels
                 case "TwoShape":
                     {
                         TwoShapeEnabled = true;
+                    }
+                    break;
+
+                case "SpurGear":
+                    {
+                        SpurGearEnabled = true;
                     }
                     break;
             }
@@ -241,6 +254,8 @@ namespace Make3D.ViewModels
         public ICommand DoughnutCommand { get; set; }
         public ICommand FuselageCommand { get; set; }
         public ICommand TwoShapeCommand { get; set; }
+
+        public ICommand SpurGearCommand { get; set; }
 
         public bool DoughnutEnabled
         {
@@ -380,6 +395,19 @@ namespace Make3D.ViewModels
             }
         }
 
+        public bool SpurGearEnabled
+        {
+            get { return spurGearEnabled; }
+
+            set
+            {
+                if (spurGearEnabled != value)
+                {
+                    spurGearEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
@@ -666,6 +694,7 @@ namespace Make3D.ViewModels
             IrregularEnabled = b;
             FuselageEnabled = b;
             TwoShapeEnabled = b;
+            SpurGearEnabled = b;
         }
 
         private void LoadMru()

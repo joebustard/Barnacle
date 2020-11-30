@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="ShapeLoftDialog" Height="550" Width="800" Loaded="Window_Loaded">
+        Title="Shape Loft" Height="550" Width="800" Loaded="Window_Loaded">
     <Grid  VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />

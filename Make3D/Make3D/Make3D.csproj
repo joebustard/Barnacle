@@ -94,6 +94,9 @@
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
     <Compile Include="Dialogs\ShapeBase.xaml.cs" />
     <Compile Include="Dialogs\ShapeLoftDialog.xaml.cs" />
+    <Compile Include="Dialogs\SpurGearDialog.xaml.cs">
+      <DependentUpon>SpurGearDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\STLExportedPartsConfirmation.xaml.cs">
       <DependentUpon>STLExportedPartsConfirmation.xaml</DependentUpon>
     </Compile>
@@ -207,6 +210,10 @@
     <Page Include="Dialogs\ShapeLoftDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SpurGearDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\STLExportedPartsConfirmation.xaml">
       <SubType>Designer</SubType>

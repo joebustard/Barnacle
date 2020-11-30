@@ -98,6 +98,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Doughnut", OnDoughNut);
             NotificationManager.Subscribe("Fuselage", OnFuselage);
             NotificationManager.Subscribe("TwoShape", OnTwoShape);
+            NotificationManager.Subscribe("SpurGear", OnSpurGear);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             ReportCameraPosition();
@@ -108,6 +109,12 @@ namespace Make3D.ViewModels
             showAxies = true;
             showFloor = true;
             RegenerateDisplayList();
+        }
+
+        private void OnSpurGear(object param)
+        {
+            SpurGearDialog dlg = new SpurGearDialog();
+            DisplayModeller(dlg);
         }
 
         private void OnSlice(object param)
