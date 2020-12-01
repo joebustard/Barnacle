@@ -219,6 +219,7 @@
                     <Custom:RibbonButton x:Name="FuselageButton" Label="Fuselage" Command="{Binding FuselageCommand}" IsEnabled="{Binding FuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="ShapeLoftButton" Label="Two Shape" Command="{Binding TwoShapeCommand}" IsEnabled="{Binding TwoShapeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="SpurGearButton" Label="Spur Gear" Command="{Binding SpurGearCommand}" IsEnabled="{Binding SpurGearEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="TankTrackButton" Label="Tank Track" Command="{Binding TankTrackCommand}" IsEnabled="{Binding TankTrackEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
             <Custom:RibbonTab Name="ViewTab1" Header="View">

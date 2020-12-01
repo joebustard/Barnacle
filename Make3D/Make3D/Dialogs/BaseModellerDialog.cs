@@ -11,7 +11,7 @@ namespace Make3D.Dialogs
 {
     public class BaseModellerDialog : Window, INotifyPropertyChanged
     {
-        public System.Windows.Media.Color meshColour;
+        protected System.Windows.Media.Color meshColour;
         private Point3D cameraPosition;
         private EditorParameters editorParameters;
         private Vector3D lookDirection;

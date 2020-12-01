@@ -103,6 +103,9 @@
     <Compile Include="Dialogs\TorusDialog.xaml.cs">
       <DependentUpon>TorusDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TrackDialog.xaml.cs">
+      <DependentUpon>TrackDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\EditorParameter.cs" />
@@ -223,6 +226,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\TorusDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\TrackDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

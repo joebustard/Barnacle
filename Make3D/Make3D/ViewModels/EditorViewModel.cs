@@ -101,6 +101,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Fuselage", OnFuselage);
             NotificationManager.Subscribe("TwoShape", OnTwoShape);
             NotificationManager.Subscribe("SpurGear", OnSpurGear);
+            NotificationManager.Subscribe("TankTrack", OnTankTrack);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             ReportCameraPosition();
@@ -111,6 +112,12 @@ namespace Make3D.ViewModels
             showAxies = true;
             showFloor = true;
             RegenerateDisplayList();
+        }
+
+        private void OnTankTrack(object param)
+        {
+            TrackDialog dlg = new TrackDialog();
+            DisplayModeller(dlg);
         }
 
         private void OnCircularPaste(object param)
@@ -304,6 +311,7 @@ namespace Make3D.ViewModels
                     if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
                     {
                         dlg.EditorParameters = editingObj.EditorParameters;
+                        dlg.MeshColour = editingObj.Color;
                         editingObj.CalcScale();
                     }
                 }
@@ -317,6 +325,7 @@ namespace Make3D.ViewModels
                     editingObj.Name = Document.NextName;
                     editingObj.Description = "";
                     Document.Content.Add(editingObj);
+                    editingObj.Color = dlg.MeshColour;
                     positionAtRight = true;
                 }
                 DeselectAll();
@@ -324,7 +333,7 @@ namespace Make3D.ViewModels
                 editingObj.EditorParameters = dlg.EditorParameters;
                 editingObj.RelativeObjectVertices = dlg.Vertices;
                 editingObj.TriangleIndices = dlg.Faces;
-                //obj.CalcScale(false);
+                
                 RecalculateAllBounds();
                 if (positionAtRight)
                 {

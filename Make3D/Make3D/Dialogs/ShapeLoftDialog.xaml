@@ -19,31 +19,33 @@
         </Grid.ColumnDefinitions>
         <local:ShapeBase x:Name="TopShape" Grid.Column="0" Grid.Row="0" Margin="2,2,2,2" VerticalAlignment="Stretch" />
         <local:ShapeBase x:Name="BottomShape" Grid.Column="0" Grid.Row="1" Margin="2,2,2,2" VerticalAlignment="Stretch" />
-        <Viewport3D Name="viewport3D1"  Grid.Row ="0" Grid.Column="1" Grid.RowSpan="2" MouseMove="Viewport_MouseMove"
+        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" Grid.RowSpan="3" BorderBrush="Blue">
+            <Viewport3D Name="viewport3D1"  MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
-            <Viewport3D.Camera>
-                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                </PerspectiveCamera>
-            </Viewport3D.Camera>
+                <Viewport3D.Camera>
+                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                    </PerspectiveCamera>
+                </Viewport3D.Camera>
 
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <Model3DGroup>
-                        <AmbientLight Color="#FF808080" />
-                        <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                        </DirectionalLight>
-                    </Model3DGroup>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup>
+                            <AmbientLight Color="#FF808080" />
+                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                            </DirectionalLight>
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
 
-            <ModelVisual3D x:Name = "MyModel">
-                <ModelVisual3D.Content>
-                    <Model3DGroup x:Name="MyModelGroup">
-                    </Model3DGroup>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-        </Viewport3D>
+                <ModelVisual3D x:Name = "MyModel">
+                    <ModelVisual3D.Content>
+                        <Model3DGroup x:Name="MyModelGroup">
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+            </Viewport3D>
+        </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />

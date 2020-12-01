@@ -25,22 +25,22 @@ namespace Make3D.ViewModels
         private string caption;
         private bool centerTextAlignment;
         private bool doughnutEnabled;
-        private bool fuselageEnabled;
         private string fontSize;
+        private bool fuselageEnabled;
+        private bool irregularEnabled;
         private bool italicChecked;
         private bool leftTextAlignment;
         private bool linearEnabled;
-        private bool twoShapeEnabled;
-        private bool spurGearEnabled;
         private Ribbon MainRibbon;
         private bool rightTextAlignment;
         private bool showAxiesChecked;
         private bool showFloorChecked;
         private bool snapMarginChecked;
+        private bool spurGearEnabled;
         private SubViewManager subViewMan;
-
+        private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
-
+        private bool twoShapeEnabled;
         private bool underLineChecked;
 
         public DefaultViewModel()
@@ -85,6 +85,7 @@ namespace Make3D.ViewModels
             FuselageCommand = new RelayCommand(OnFuselage);
             TwoShapeCommand = new RelayCommand(OnTwoShape);
             SpurGearCommand = new RelayCommand(OnSpurGear);
+            TankTrackCommand = new RelayCommand(OnTankTrack);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -124,74 +125,6 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             SubView = subViewMan.GetView("editor");
-        }
-
-        private void OnCircularPaste(object obj)
-        {
-            NotificationManager.Notify("CircularPaste", null);
-        }
-
-        private void OnSpurGear(object obj)
-        {
-            NotificationManager.Notify("SpurGear", obj);
-        }
-
-        private void OnSlice(object obj)
-        {
-            NotificationManager.Notify("Slice", obj);
-        }
-
-        private void OnTwoShape(object obj)
-        {
-            NotificationManager.Notify("TwoShape", null);
-        }
-
-        private void OnFuselage(object obj)
-        {
-            NotificationManager.Notify("Fuselage", null);
-        }
-
-        private void SetSingleToolVisible(object param)
-        {
-            string s = param.ToString();
-            switch (s)
-            {
-                case "LinearLoft":
-                    {
-                        LinearEnabled = true;
-                    }
-                    break;
-
-                case "Torus":
-                    {
-                        DoughnutEnabled = true;
-                    }
-                    break;
-
-                case "IrregularPolygon":
-                    {
-                        IrregularEnabled = true;
-                    }
-                    break;
-
-                case "Fuselage":
-                    {
-                        FuselageEnabled = true;
-                    }
-                    break;
-
-                case "TwoShape":
-                    {
-                        TwoShapeEnabled = true;
-                    }
-                    break;
-
-                case "SpurGear":
-                    {
-                        SpurGearEnabled = true;
-                    }
-                    break;
-            }
         }
 
         public ICommand AddCommand { get; set; }
@@ -249,6 +182,8 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand CircularPasteCommand { get; set; }
+
         public ICommand CopyCommand { get; set; }
 
         public ICommand CutCommand { get; set; }
@@ -258,10 +193,6 @@ namespace Make3D.ViewModels
         public ICommand DoNothingCommand { get; set; }
 
         public ICommand DoughnutCommand { get; set; }
-        public ICommand FuselageCommand { get; set; }
-        public ICommand TwoShapeCommand { get; set; }
-
-        public ICommand SpurGearCommand { get; set; }
 
         public bool DoughnutEnabled
         {
@@ -276,40 +207,11 @@ namespace Make3D.ViewModels
             }
         }
 
-        private bool irregularEnabled;
-
-        public bool IrregularEnabled
-        {
-            get { return irregularEnabled; }
-            set
-            {
-                if (irregularEnabled != value)
-                {
-                    irregularEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool FuselageEnabled
-        {
-            get { return fuselageEnabled; }
-            set
-            {
-                if (fuselageEnabled != value)
-                {
-                    fuselageEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public ICommand ExitCommand { get; set; }
 
         public ICommand ExportCommand { get; set; }
 
         public ICommand ExportPartsCommand { get; set; }
-        public ICommand SliceCommand { get; set; }
 
         public ICommand FlipCommand { get; set; }
 
@@ -330,6 +232,21 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand FuselageCommand { get; set; }
+
+        public bool FuselageEnabled
+        {
+            get { return fuselageEnabled; }
+            set
+            {
+                if (fuselageEnabled != value)
+                {
+                    fuselageEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand GroupCommand { get; set; }
 
         public ICommand ImportCommand { get; set; }
@@ -337,6 +254,19 @@ namespace Make3D.ViewModels
         public ICommand InsertCommand { get; set; }
 
         public ICommand IrregularCommand { get; set; }
+
+        public bool IrregularEnabled
+        {
+            get { return irregularEnabled; }
+            set
+            {
+                if (irregularEnabled != value)
+                {
+                    irregularEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public bool ItalicChecked
         {
@@ -387,36 +317,7 @@ namespace Make3D.ViewModels
             }
         }
 
-        public bool TwoShapeEnabled
-        {
-            get { return twoShapeEnabled; }
-
-            set
-            {
-                if (twoShapeEnabled != value)
-                {
-                    twoShapeEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool SpurGearEnabled
-        {
-            get { return spurGearEnabled; }
-
-            set
-            {
-                if (spurGearEnabled != value)
-                {
-                    spurGearEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public ICommand MultiPasteCommand { get; set; }
-        public ICommand CircularPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
 
@@ -511,6 +412,8 @@ namespace Make3D.ViewModels
 
         public ICommand SizeCommand { get; set; }
 
+        public ICommand SliceCommand { get; set; }
+
         public bool SnapMarginChecked
         {
             get
@@ -532,6 +435,22 @@ namespace Make3D.ViewModels
                     }
                     NotifyPropertyChanged();
                     NotificationManager.Notify("SnapMargin", snapMarginChecked);
+                }
+            }
+        }
+
+        public ICommand SpurGearCommand { get; set; }
+
+        public bool SpurGearEnabled
+        {
+            get { return spurGearEnabled; }
+
+            set
+            {
+                if (spurGearEnabled != value)
+                {
+                    spurGearEnabled = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -608,6 +527,22 @@ namespace Make3D.ViewModels
             get { return _systemFonts; }
         }
 
+        public ICommand TankTrackCommand { get; set; }
+
+        public bool TankTrackEnabled
+        {
+            get { return tankTrackEnabled; }
+
+            set
+            {
+                if (tankTrackEnabled != value)
+                {
+                    tankTrackEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand TextAlignmentCommand { get; set; }
 
         public Visibility ToolPaletteVisible
@@ -624,6 +559,21 @@ namespace Make3D.ViewModels
                     toolPaletteVisible = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("ToolPaletteVisible", toolPaletteVisible);
+                }
+            }
+        }
+
+        public ICommand TwoShapeCommand { get; set; }
+        public bool TwoShapeEnabled
+        {
+            get { return twoShapeEnabled; }
+
+            set
+            {
+                if (twoShapeEnabled != value)
+                {
+                    twoShapeEnabled = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -703,6 +653,7 @@ namespace Make3D.ViewModels
             FuselageEnabled = b;
             TwoShapeEnabled = b;
             SpurGearEnabled = b;
+            TankTrackEnabled = b;
         }
 
         private void LoadMru()
@@ -733,6 +684,11 @@ namespace Make3D.ViewModels
         {
             string s = obj.ToString();
             NotificationManager.Notify("Alignment", s);
+        }
+
+        private void OnCircularPaste(object obj)
+        {
+            NotificationManager.Notify("CircularPaste", null);
         }
 
         private void OnCopy(object obj)
@@ -787,6 +743,11 @@ namespace Make3D.ViewModels
         {
             string s = obj.ToString();
             NotificationManager.Notify("Flip", s);
+        }
+
+        private void OnFuselage(object obj)
+        {
+            NotificationManager.Notify("Fuselage", null);
         }
 
         private void OnGroup(object obj)
@@ -887,11 +848,29 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("Size", s);
         }
 
+        private void OnSlice(object obj)
+        {
+            NotificationManager.Notify("Slice", obj);
+        }
+
+        private void OnSpurGear(object obj)
+        {
+            NotificationManager.Notify("SpurGear", obj);
+        }
+
+        private void OnTankTrack(object obj)
+        {
+            NotificationManager.Notify("TankTrack", obj);
+        }
         private void OnTextAlignment(object obj)
         {
             NotificationManager.Notify("TextAlignment", obj);
         }
 
+        private void OnTwoShape(object obj)
+        {
+            NotificationManager.Notify("TwoShape", null);
+        }
         private void OnUndo(object obj)
         {
             NotificationManager.Notify("Undo", null);
@@ -978,6 +957,54 @@ namespace Make3D.ViewModels
             UnderlineChecked = b;
         }
 
+        private void SetSingleToolVisible(object param)
+        {
+            string s = param.ToString();
+            switch (s)
+            {
+                case "LinearLoft":
+                    {
+                        LinearEnabled = true;
+                    }
+                    break;
+
+                case "Torus":
+                    {
+                        DoughnutEnabled = true;
+                    }
+                    break;
+
+                case "IrregularPolygon":
+                    {
+                        IrregularEnabled = true;
+                    }
+                    break;
+
+                case "Fuselage":
+                    {
+                        FuselageEnabled = true;
+                    }
+                    break;
+
+                case "TwoShape":
+                    {
+                        TwoShapeEnabled = true;
+                    }
+                    break;
+
+                case "SpurGear":
+                    {
+                        SpurGearEnabled = true;
+                    }
+                    break;
+
+                case "TankTrack":
+                    {
+                        TankTrackEnabled = true;
+                    }
+                    break;
+            }
+        }
         private void SetStatusText1(object param)
         {
             StatusBlockText1 = param.ToString();
