@@ -152,9 +152,11 @@
                         <Custom:RibbonButton x:Name="STL" Label="STL" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                         <Custom:RibbonButton x:Name="STLParts" Label="STL Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export each part into its own STL file" />
                     </Custom:RibbonMenuButton>
+                    <!--
                     <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
                         <Custom:RibbonButton x:Name="Slicer" Label="Sl3cer" Command="{Binding SliceCommand}" CommandParameter="SliceAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice ( and copy to sdcard if present)" />
                     </Custom:RibbonMenuButton>
+                    -->
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
                     <Custom:RibbonMenuButton x:Name="Flip" Label="Flip">

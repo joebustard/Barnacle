@@ -19,14 +19,15 @@ namespace Make3D.Dialogs
         private PolarCamera polarCamera;
         private Int32Collection tris;
         private Point3DCollection vertices;
+
         public PolarCamera Camera
         {
-
             get
             {
                 return polarCamera;
             }
         }
+
         public BaseModellerDialog()
         {
             vertices = new Point3DCollection();
@@ -266,6 +267,26 @@ namespace Make3D.Dialogs
                 double diff = Math.Sign(e.Delta) * 1;
                 polarCamera.Zoom(diff);
                 UpdateCameraPos();
+            }
+        }
+
+        protected void CentreVertices()
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(Vertices, ref min, ref max);
+
+            double scaleX = max.X - min.X;
+            double scaleY = max.Y - min.Y;
+            double scaleZ = max.Z - min.Z;
+
+            double midx = min.X + (scaleX / 2);
+            double midy = min.Y + (scaleY / 2);
+            double midz = min.Z + (scaleZ / 2);
+            Vector3D offset = new Vector3D(-midx, -min.Y, -midz);
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Vertices[i] += offset;
             }
         }
     }

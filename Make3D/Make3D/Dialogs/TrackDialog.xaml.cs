@@ -1,16 +1,10 @@
-﻿using Microsoft.Win32;
-using PolygonTriangulationLib;
+﻿using Make3D.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,68 +18,27 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class TrackDialog : BaseModellerDialog
     {
-        private double height = 10;
-        private BitmapImage localImage;
+        public string selectedTrackType;
+        private bool cf;
         private List<System.Windows.Point> editingPolygon;
-        private List<System.Windows.Point> outerPolygon;
+        private double height = 10;
         private List<System.Windows.Point> innerPolygon;
+        private BitmapImage localImage;
+        private int noOfLinks;
+        private List<System.Windows.Point> outerPolygon;
         private double scale;
         private int selectedPoint;
-        private WriteableBitmap wbx;
-
-        private ObservableCollection<String> trackTypes;
-        public ObservableCollection<String> TrackTypes
-        {
-            get
-            {
-                return trackTypes;
-            }
-            set
-            {
-                if ( trackTypes != value)
-                {
-                    trackTypes = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string selectedTrackType;
-        public string SelectedTrackType
-        {
-            get
-            {
-                return selectedTrackType;
-            }
-            set
-            {
-                if (selectedTrackType != value)
-                {
-                    selectedTrackType = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        private int noOfLinks;
-        public int NoOfLinks
-        {
-            get
-            {
-                return noOfLinks;
-            }
-            set
-            {
-                if (noOfLinks != value)
-                {
-                    noOfLinks = value;
-                    NotifyPropertyChanged();
-                    GenerateTrackPath();
-                    
-                }
-            }
-        }
-
+        private double spudSize;
+        private double guideSize;
+        private double thickness;
         private List<System.Windows.Point> trackPath;
+        private ObservableCollection<String> trackTypes;
+        private WriteableBitmap wbx;
+        private bool showLinks;
+        private bool showOutline;
+        private Floor floor;
+        private Grid3D grid;
+
         public TrackDialog()
         {
             InitializeComponent();
@@ -98,11 +51,190 @@ namespace Make3D.Dialogs
             DataContext = this;
             TrackTypes = new ObservableCollection<string>();
             TrackTypes.Add("Simple");
+            TrackTypes.Add("Centre Guide");
             SelectedTrackType = "Simple";
             NoOfLinks = 100;
             trackPath = new List<System.Windows.Point>();
             outerPolygon = new List<System.Windows.Point>();
             innerPolygon = new List<System.Windows.Point>();
+            Thickness = 6;
+            SpudSize = 4;
+            GuideSize = 4;
+            floor = new Floor();
+            grid = new Grid3D();
+        }
+
+        public bool ShowLinkMarkers
+        {
+            get
+            {
+                return showLinks;
+            }
+
+            set
+            {
+                if (showLinks != value)
+                {
+                    showLinks = value;
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool ShowOutline
+        {
+            get
+            {
+                return showOutline;
+            }
+
+            set
+            {
+                if (showOutline != value)
+                {
+                    showOutline = value;
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public int NoOfLinks
+        {
+            get
+            {
+                return noOfLinks;
+            }
+            set
+            {
+                if (noOfLinks != value)
+                {
+                    noOfLinks = value;
+                    NotifyPropertyChanged();
+                    UpdateTrack();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private void UpdateTrack()
+        {
+            GenerateTrackPath();
+            GenerateTrack();
+            GenerateFaces();
+        }
+
+        public string SelectedTrackType
+        {
+            get
+            {
+                return selectedTrackType;
+            }
+            set
+            {
+                if (selectedTrackType != value)
+                {
+                    selectedTrackType = value;
+                    NotifyPropertyChanged();
+                    UpdateTrack();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double GuideSize
+        {
+            get
+            {
+                return guideSize;
+            }
+            set
+            {
+                if (guideSize != value)
+                {
+                    guideSize = value;
+                    NotifyPropertyChanged();
+                    UpdateTrack();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double SpudSize
+        {
+            get
+            {
+                return spudSize;
+            }
+            set
+            {
+                if (spudSize != value)
+                {
+                    spudSize = value;
+                    NotifyPropertyChanged();
+                    UpdateTrack();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double Thickness
+        {
+            get
+            {
+                return thickness;
+            }
+            set
+            {
+                if (thickness != value)
+                {
+                    thickness = value;
+                    NotifyPropertyChanged();
+                    UpdateTrack();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public ObservableCollection<String> TrackTypes
+        {
+            get
+            {
+                return trackTypes;
+            }
+            set
+            {
+                if (trackTypes != value)
+                {
+                    trackTypes = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public void TestPerps()
+        {
+            System.Windows.Point p1 = new System.Windows.Point(1, 1);
+            System.Windows.Point p2 = new System.Windows.Point(2, 2);
+            System.Windows.Point p3 = Perpendicular(p1, p2, 0, Math.Sqrt(2));
+
+            String s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 0 = {p3.X},{p3.Y}";
+            System.Diagnostics.Debug.WriteLine(s);
+
+            p3 = Perpendicular(p1, p2, 0.5, Math.Sqrt(2));
+            s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 0.5 = {p3.X},{p3.Y}";
+            System.Diagnostics.Debug.WriteLine(s);
+
+            p3 = Perpendicular(p1, p2, 1, Math.Sqrt(2));
+            s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 1 = {p3.X},{p3.Y}";
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            SaveEditorParameters();
+            GenerateFaces();
+            DialogResult = true;
+            Close();
         }
 
         private void AddEditingLineToDisplayList(int i, int v)
@@ -124,13 +256,22 @@ namespace Make3D.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
-        private void AddTrackLine(List<System.Windows.Point> pnts,int i, int v)
+        private void AddTrackLine(List<System.Windows.Point> pnts, int i, int v)
         {
+            cf = !cf;
             if (v >= pnts.Count)
             {
                 v = 0;
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 32, 32));
+            SolidColorBrush br;
+            if (cf)
+            {
+                br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 32, 32));
+            }
+            else
+            {
+                br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 128, 93, 32));
+            }
             Line ln = new Line();
             ln.Stroke = br;
             ln.StrokeThickness = 1;
@@ -139,29 +280,8 @@ namespace Make3D.Dialogs
             ln.Y1 = pnts[i].Y;
             ln.X2 = pnts[v].X;
             ln.Y2 = pnts[v].Y;
-           
+
             MainCanvas.Children.Add(ln);
-        }
-
-        private void CreateOutsideFace(List<System.Windows.Point> ply,int i)
-        {
-            int v = i + 1;
-            if (v == ply.Count)
-            {
-                v = 0;
-            }
-
-            int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
-            int c1 = AddVertice(ply[i].X, ply[i].Y, height);
-            int c2 = AddVertice(ply[v].X, ply[v].Y, height);
-            int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c1);
-
-            Faces.Add(c0);
-            Faces.Add(c3);
-            Faces.Add(c2);
         }
 
         private void CreateInnerFace(List<System.Windows.Point> ply, int i)
@@ -183,6 +303,27 @@ namespace Make3D.Dialogs
             Faces.Add(c0);
             Faces.Add(c2);
             Faces.Add(c3);
+        }
+
+        private void CreateOutsideFace(List<System.Windows.Point> ply, int i)
+        {
+            int v = i + 1;
+            if (v == ply.Count)
+            {
+                v = 0;
+            }
+
+            int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
+            int c1 = AddVertice(ply[i].X, ply[i].Y, height);
+            int c2 = AddVertice(ply[v].X, ply[v].Y, height);
+            int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c1);
+
+            Faces.Add(c0);
+            Faces.Add(c3);
+            Faces.Add(c2);
         }
 
         private void DisplayLines()
@@ -226,6 +367,29 @@ namespace Make3D.Dialogs
             }
         }
 
+        private void DisplayShape()
+        {
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+                if (floor != null)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                GeometryModel3D gm = GetModel();
+                MyModelGroup.Children.Add(gm);
+            }
+        }
+
+        private void DisplayTrack2D()
+        {
+            DisplayTrackPolygon();
+        }
+
         private void DisplayTrackPath()
         {
             if (trackPath != null)
@@ -233,7 +397,6 @@ namespace Make3D.Dialogs
                 double rad = 3;
                 for (int i = 0; i < trackPath.Count; i++)
                 {
-                    
                     System.Windows.Point p = trackPath[i];
                     Ellipse el = new Ellipse();
 
@@ -248,153 +411,245 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void DisplayTrack2D()
-        {
-            if (trackPath != null)
-            {
-               switch (SelectedTrackType)
-                {
-                    case "Simple":
-                        GenerateSimpleTrack();
-                        break;
-                }
-
-                DisplayTrackPolygon();
-            }
-        }
-
         private void DisplayTrackPolygon()
         {
-            if ( outerPolygon.Count > 2 )
+            if (outerPolygon != null && outerPolygon.Count > 2)
             {
                 for (int i = 0; i < outerPolygon.Count; i++)
                 {
-                    AddTrackLine(outerPolygon,i, i + 1);
+                    AddTrackLine(outerPolygon, i, i + 1);
                 }
             }
-            if (innerPolygon.Count > 2)
+            if (innerPolygon != null && innerPolygon.Count > 2)
             {
                 for (int i = 0; i < innerPolygon.Count; i++)
                 {
-                   AddTrackLine(innerPolygon, i, i + 1);
+                    AddTrackLine(innerPolygon, i, i + 1);
                 }
             }
         }
 
-        private void GenerateSimpleTrack()
+        private double Distance(System.Windows.Point p1, System.Windows.Point p2)
         {
-            outerPolygon.Clear();
-            innerPolygon.Clear();
-            bool firstCall = true;
-            for( int i = 0; i < trackPath.Count; i ++)
-            {
-                int j = i + 1;
-                if ( j >= trackPath.Count)
-                {
-                    j = 0;
-                }
-                System.Windows.Point p1 = trackPath[i];
-                System.Windows.Point p2 = trackPath[j];
-                SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall);
-                firstCall = false;
-            }
+            double d = Math.Sqrt((p2.X - p1.X) * (p2.X - p1.X) +
+                                   (p2.Y - p1.Y) * (p2.Y - p1.Y));
+
+            return d;
         }
 
         private void GenerateFaces()
         {
             Faces.Clear();
             Vertices.Clear();
-            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-            double top = 0;
-            for (int i = 0; i < outerPolygon.Count; i++)
+            List<System.Windows.Point> otmp = new List<System.Windows.Point>();
+            List<System.Windows.Point> itmp = new List<System.Windows.Point>();
+            if (outerPolygon != null)
             {
-                if (outerPolygon[i].Y > top)
+                double top = 0;
+                for (int i = 0; i < outerPolygon.Count; i++)
                 {
-                    top = outerPolygon[i].Y;
+                    if (outerPolygon[i].Y > top)
+                    {
+                        top = outerPolygon[i].Y;
+                    }
                 }
-            }
-            for (int i = 0; i < outerPolygon.Count; i++)
-            {
-                if (localImage == null)
+                for (int i = 0; i < outerPolygon.Count; i++)
                 {
-                    // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(outerPolygon[i].X, top - outerPolygon[i].Y));
+                    if (localImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        otmp.Insert(0, new System.Windows.Point(outerPolygon[i].X, top - outerPolygon[i].Y));
+                    }
+                    else
+                    {
+                        double x = ToMM(outerPolygon[i].X);
+                        double y = ToMM(top - outerPolygon[i].Y);
+                        otmp.Insert(0, new System.Windows.Point(x, y));
+                    }
                 }
-                else
-                {
-                    double x = ToMM(outerPolygon[i].X);
-                    double y = ToMM(top - outerPolygon[i].Y);
-                    tmp.Insert(0, new System.Windows.Point(x, y));
-                }
-            }
-            
-            // generate side triangles so original points are already in list
-            for (int i = 0; i < outerPolygon.Count; i++)
-            {
-                CreateOutsideFace(tmp,i);
-            }
-            tmp.Clear();
-            for (int i = 0; i < innerPolygon.Count; i++)
-            {
-                if (localImage == null)
-                {
-                    // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(innerPolygon[i].X, top - innerPolygon[i].Y));
-                }
-                else
-                {
-                    double x = ToMM(innerPolygon[i].X);
-                    double y = ToMM(top - innerPolygon[i].Y);
-                    tmp.Insert(0, new System.Windows.Point(x, y));
-                }
-            }
-            
-            for (int i = 0; i < innerPolygon.Count; i++)
-            {
-                CreateInnerFace(tmp,i);
-            }
-            /*
-            // triangulate the basic polygon
-            TriangulationPolygon ply = new TriangulationPolygon();
-            List<PointF> pf = new List<PointF>();
-            foreach (System.Windows.Point p in editingPolygon)
-            {
-                pf.Add(new PointF((float)p.X, (float)p.Y));
-            }
-            ply.Points = pf.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0.0);
-                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0.0);
-                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0.0);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
 
-                c0 = AddVertice(t.Points[0].X, t.Points[0].Y, height);
-                c1 = AddVertice(t.Points[1].X, t.Points[1].Y, height);
-                c2 = AddVertice(t.Points[2].X, t.Points[2].Y, height);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
+                // generate side triangles so original points are already in list
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    CreateOutsideFace(otmp, i);
+                }
+                itmp.Clear();
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    if (localImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        itmp.Insert(0, new System.Windows.Point(innerPolygon[i].X, top - innerPolygon[i].Y));
+                    }
+                    else
+                    {
+                        double x = ToMM(innerPolygon[i].X);
+                        double y = ToMM(top - innerPolygon[i].Y);
+                        itmp.Insert(0, new System.Windows.Point(x, y));
+                    }
+                }
+
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    CreateInnerFace(itmp, i);
+                }
+
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    int v = i + 1;
+                    if (v == innerPolygon.Count)
+                    {
+                        v = 0;
+                    }
+
+                    int c0 = AddVertice(itmp[i].X, itmp[i].Y, 0.0);
+                    int c1 = AddVertice(otmp[i].X, otmp[i].Y, 0.0);
+                    int c2 = AddVertice(otmp[v].X, otmp[v].Y, 0.0);
+                    int c3 = AddVertice(itmp[v].X, itmp[v].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    int v = i + 1;
+                    if (v == innerPolygon.Count)
+                    {
+                        v = 0;
+                    }
+
+                    int c0 = AddVertice(itmp[i].X, itmp[i].Y, height);
+                    int c1 = AddVertice(otmp[i].X, otmp[i].Y, height);
+                    int c2 = AddVertice(otmp[v].X, otmp[v].Y, height);
+                    int c3 = AddVertice(itmp[v].X, itmp[v].Y, height);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+                CentreVertices();
             }
-            */
         }
 
-        private void GeneratePointParams()
+        private void GenerateSimpleTrack()
         {
-            String s = "";
-            for (int i = 0; i < editingPolygon.Count; i++)
+            if (outerPolygon != null)
             {
-                s += editingPolygon[i].X.ToString() + "," + editingPolygon[i].Y.ToString();
-                if (i < editingPolygon.Count - 1)
+                outerPolygon.Clear();
+                innerPolygon.Clear();
+                bool firstCall = true;
+                for (int i = 0; i < trackPath.Count; i++)
                 {
-                    s += ",";
+                    int j = i + 1;
+                    if (j >= trackPath.Count)
+                    {
+                        j = 0;
+                    }
+                    System.Windows.Point p1 = trackPath[i];
+                    System.Windows.Point p2 = trackPath[j];
+                    SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall);
+                    firstCall = false;
                 }
             }
-            EditorParameters.Set("Points", s);
-            EditorParameters.Set("NoOfLinks", NoOfLinks.ToString());
+        }
+
+        private void GenerateCentreGuideTrack()
+        {
+            if (outerPolygon != null)
+            {
+                outerPolygon.Clear();
+                innerPolygon.Clear();
+                bool firstCall = true;
+                for (int i = 0; i < trackPath.Count; i++)
+                {
+                    int j = i + 1;
+                    if (j >= trackPath.Count)
+                    {
+                        j = 0;
+                    }
+                    System.Windows.Point p1 = trackPath[i];
+                    System.Windows.Point p2 = trackPath[j];
+                    CentreGuideLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall);
+                    firstCall = false;
+                }
+            }
+        }
+
+        private void GenerateTrack()
+        {
+            if (trackPath != null)
+            {
+                switch (SelectedTrackType)
+                {
+                    case "Simple":
+                        GenerateSimpleTrack();
+                        break;
+
+                    case "Centre Guide":
+                        GenerateCentreGuideTrack();
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Generates the basic path created by the user defined polygon points
+        /// </summary>
+        private void GenerateTrackPath()
+        {
+            if (NoOfLinks > 0 && trackPath != null)
+            {
+                trackPath.Clear();
+                if (editingPolygon != null)
+                {
+                    double totalDist = PolygonLength(editingPolygon);
+                    double t;
+                    double dt = 1.0 / NoOfLinks;
+                    for (t = 0; t < 1; t += dt)
+                    {
+                        System.Windows.Point p = GetPathPoint(editingPolygon, t, totalDist);
+                        trackPath.Add(p);
+                    }
+                }
+            }
+        }
+
+        private System.Windows.Point GetPathPoint(List<System.Windows.Point> points, double t, double totalDist)
+        {
+            System.Windows.Point res = points[0];
+            bool found = false;
+            double targetDistance = t * totalDist;
+
+            double runningDist = 0;
+            double dist = 0;
+            for (int i = 0; i < points.Count && found == false; i++)
+            {
+                int j = i + 1;
+                if (j == points.Count)
+                {
+                    j = 0;
+                }
+                System.Windows.Point p1 = points[i];
+                System.Windows.Point p2 = points[j];
+                dist = Distance(p1, p2);
+                if (runningDist < targetDistance && (runningDist + dist >= targetDistance))
+                {
+                    double overHang = (targetDistance - runningDist) / dist;
+                    res = new System.Windows.Point(p1.X + (p2.X - p1.X) * overHang,
+                                                    p1.Y + (p2.Y - p1.Y) * overHang);
+                    found = true;
+                }
+                runningDist += dist;
+            }
+            return res;
         }
 
         private void ImageButton_Click(object sender, RoutedEventArgs e)
@@ -425,13 +680,32 @@ namespace Make3D.Dialogs
         private void InitialisePoints()
         {
             editingPolygon.Clear();
-            editingPolygon.Add(new System.Windows.Point(10, 10));
-            editingPolygon.Add(new System.Windows.Point(100, 10));
-            editingPolygon.Add(new System.Windows.Point(100, 100));
-            editingPolygon.Add(new System.Windows.Point(10, 100));
-        }
+            //  editingPolygon.Add(new System.Windows.Point(10, 10));
+            //    editingPolygon.Add(new System.Windows.Point(100, 10));
+            //      editingPolygon.Add(new System.Windows.Point(100, 100));
+            //      editingPolygon.Add(new System.Windows.Point(10, 100));
 
-    
+            editingPolygon.Add(new System.Windows.Point(16.0308899744799, 97.118354607299));
+            editingPolygon.Add(new System.Windows.Point(18.9995733030873, 88.2123046214768));
+            editingPolygon.Add(new System.Windows.Point(25.1348951574346, 79.2295608223482));
+            editingPolygon.Add(new System.Windows.Point(36.3875756563591, 74.6411808335573));
+            editingPolygon.Add(new System.Windows.Point(43.1020597048191, 73.285088073382));
+            editingPolygon.Add(new System.Windows.Point(52.0791875361411, 73.7929855968123));
+            editingPolygon.Add(new System.Windows.Point(254.797849118189, 97.118354607299));
+            editingPolygon.Add(new System.Windows.Point(278.97141336542, 100.087037935906));
+            editingPolygon.Add(new System.Windows.Point(294.242196571272, 107.916125947681));
+            editingPolygon.Add(new System.Windows.Point(296.783513337065, 119.171430762668));
+            editingPolygon.Add(new System.Windows.Point(293.80634805609, 128.289529557677));
+            editingPolygon.Add(new System.Windows.Point(281.515999075655, 136.55943311594));
+            editingPolygon.Add(new System.Windows.Point(262.855703867266, 142.920897391527));
+            editingPolygon.Add(new System.Windows.Point(196.571272454067, 152.995014001776));
+            editingPolygon.Add(new System.Windows.Point(94.8329656568214, 150.549540451472));
+            editingPolygon.Add(new System.Windows.Point(84.6785978257837, 148.783563437378));
+            editingPolygon.Add(new System.Windows.Point(44.2592719076565, 133.870637251554));
+            editingPolygon.Add(new System.Windows.Point(31.2984042358894, 128.07748074849));
+            editingPolygon.Add(new System.Windows.Point(22.3923542500672, 122.140114091276));
+            editingPolygon.Add(new System.Windows.Point(16.8790852112249, 110.265380776846));
+        }
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -504,7 +778,8 @@ namespace Make3D.Dialogs
             if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
             {
                 editingPolygon[selectedPoint] = position;
-                GenerateTrackPath();                
+                GenerateTrackPath();
+                GenerateTrack();
             }
             else
             {
@@ -515,6 +790,8 @@ namespace Make3D.Dialogs
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            GenerateTrackPath();
+            GenerateTrack();
             GenerateFaces();
         }
 
@@ -523,6 +800,38 @@ namespace Make3D.Dialogs
             scale *= 0.9;
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
+        }
+
+        private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double d)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            double grad = dy / dx;
+            double perp = -1.0 / grad;
+            double sgn = Math.Sign(d);
+            d = Math.Abs(d);
+            System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
+            double x = tp.X + sgn * Math.Sqrt((d * d) / (1.0 + (1.0 / (grad * grad))));
+            double y = tp.Y + perp * (x - tp.X);
+            System.Windows.Point res = new System.Windows.Point(x, y);
+            return res;
+        }
+
+        private double PolygonLength(List<System.Windows.Point> points)
+        {
+            double res = 0;
+            for (int i = 0; i < points.Count; i++)
+            {
+                int j = i + 1;
+                if (j == points.Count)
+                {
+                    j = 0;
+                }
+                System.Windows.Point p1 = points[i];
+                System.Windows.Point p2 = points[j];
+                res += Distance(p1, p2);
+            }
+            return res;
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -534,165 +843,38 @@ namespace Make3D.Dialogs
             UpdateDisplay();
         }
 
-        private double ToMM(double x)
+        private void SaveEditorParameters()
         {
-            double res = x;
-            if (localImage != null)
+            String s = "";
+            for (int i = 0; i < editingPolygon.Count; i++)
             {
-                res = 25.4 * x / localImage.DpiX;
-            }
-            return res;
-        }
-
-        private void UpdateDisplay()
-        {
-            MainCanvas.Children.Clear();
-            if (localImage != null)
-            {
-                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
-                image.Source = localImage;
-                image.Width = localImage.Width;
-                image.Height = localImage.Height;
-                MainCanvas.Children.Add(image);
-            }
-            DisplayTrackPath();
-            DisplayTrack2D();
-            DisplayLines();
-            DisplayPoints();
-            DisplayShape();
-        }
-        private void DisplayShape()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-                
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
-        }
-
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-            string imageName = EditorParameters.Get("ImagePath");
-            if (imageName != "")
-            {
-                LoadImage(imageName);
-            }
-            String s = EditorParameters.Get("Points");
-            if (s != "")
-            {
-                string[] words = s.Split(',');
-                editingPolygon.Clear();
-                for (int i = 0; i < words.GetLength(0); i += 2)
+                s += editingPolygon[i].X.ToString() + "," + editingPolygon[i].Y.ToString();
+                if (i < editingPolygon.Count - 1)
                 {
-                    editingPolygon.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
+                    s += ",";
                 }
             }
-            s = EditorParameters.Get("NoOfLinks");
-            if (s != "")
-            {
-                NoOfLinks = Convert.ToInt16(s);
-            }
-            Camera.Distance = 200;
-            UpdateCameraPos();
-            UpdateDisplay();
-            
-        }
-
-        /// <summary>
-        /// Generates the basic path created by the user defined polygon points
-        /// </summary>
-        private void GenerateTrackPath()
-        {
-            if (NoOfLinks > 0 && trackPath != null)
-            {
-                trackPath.Clear();
-                double totalDist = PolygonLength(editingPolygon);
-                double t;
-                double dt = 1.0 / NoOfLinks;
-                for (t = 0; t < 1; t += dt)
-                {
-                    System.Windows.Point p = GetPathPoint(editingPolygon, t, totalDist);
-                    trackPath.Add(p);
-                }
-            }
-        }
-
-        private System.Windows.Point GetPathPoint(List<System.Windows.Point> points, double t, double totalDist)
-        {
-            System.Windows.Point res = points[0];
-            bool found = false;
-            double targetDistance = t * totalDist;
-
-            double runningDist = 0;
-            double dist = 0;
-            for (int i = 0; i < points.Count && found == false; i++)
-            {
-                int j = i + 1;
-                if (j == points.Count)
-                {
-                    j = 0;
-                }
-                System.Windows.Point p1 = points[i];
-                System.Windows.Point p2 = points[j];
-                dist = Distance(p1, p2);
-                if ( runningDist < targetDistance && (runningDist + dist >= targetDistance))
-                {
-                    double overHang = (targetDistance - runningDist)/dist;
-                    res = new System.Windows.Point( p1.X + ( p2.X -p1.X)*overHang, 
-                                                    p1.Y + (p2.Y - p1.Y) * overHang);
-                    found = true;
-                }
-                runningDist += dist;
-
-            }
-            return res;
-        }
-
-        private double PolygonLength(List<System.Windows.Point> points)
-        {
-            double res = 0;
-            for( int i = 0; i < points.Count; i ++)
-            {
-                int j = i + 1;
-                if ( j == points.Count)
-                {
-                    j = 0;
-                }
-                System.Windows.Point p1 = points[i];
-                System.Windows.Point p2 = points[j];
-                res += Distance(p1, p2);
-            }
-            return res;
-
-        }
-
-        private double Distance(System.Windows.Point p1, System.Windows.Point p2)
-        {
-            double d = Math.Sqrt((p2.X - p1.X) * (p2.X - p1.X) +
-                                   (p2.Y - p1.Y) * (p2.Y - p1.Y));
-
-            return d;
+            EditorParameters.Set("Points", s);
+            EditorParameters.Set("NoOfLinks", NoOfLinks.ToString());
+            EditorParameters.Set("TrackType", SelectedTrackType);
         }
 
         private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall)
         {
-
-            double grad = 0;
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
-            double thickness = 6;
-            double spikeSize = 4;
-            if ( dx == 0 && dy != 0)
+
+            if (dx == 0 && dy != 0)
             {
                 if (p2.Y > p1.Y)
                 {
                     // vertical downwards
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
+                    }
                     outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness - spikeSize, p1.Y + 0.87 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness - spudSize, p1.Y + 0.87 * dy));
                     outter.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
 
                     if (firstCall)
@@ -706,9 +888,12 @@ namespace Make3D.Dialogs
                 else
                 {
                     // vertical upwards
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
+                    }
                     outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness - spikeSize, p1.Y + 0.87 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness - spudSize, p1.Y + 0.87 * dy));
                     outter.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
 
                     if (firstCall)
@@ -719,17 +904,19 @@ namespace Make3D.Dialogs
                     inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.87 * dy));
                     inner.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
                 }
-
             }
             else
             if (dy == 0)
             {
-                if (p2.X - p1.X>0)
+                if (p2.X - p1.X > 0)
                 {
                     // Horizontal Left to right
-                    outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
+                    }
                     outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spikeSize));
+                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spudSize));
                     outter.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
 
                     if (firstCall)
@@ -737,16 +924,19 @@ namespace Make3D.Dialogs
                         inner.Add(new System.Windows.Point(p1.X, p1.Y + thickness));
                     }
                     inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness ));
+                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness));
                     inner.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
                 }
                 else
                 {
                     // Horizontal right to Left
-                    outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness + spikeSize));
-                    outter.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X, p1.Y - +thickness));
+                    }
+                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness + spudSize));
+                    outter.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
 
                     if (firstCall)
                     {
@@ -779,20 +969,22 @@ namespace Make3D.Dialogs
                 {
                     sign = -1;
                 }
-                System.Windows.Point o1 = Perpendicular(p1, p2, 0.0, -sign *thickness);
+                System.Windows.Point o1 = Perpendicular(p1, p2, 0.0, -sign * thickness);
                 System.Windows.Point o2 = Perpendicular(p1, p2, 0.75, -sign * thickness);
-                System.Windows.Point o3 = Perpendicular(p1, p2, 0.87, -sign * (thickness +spikeSize));
+                System.Windows.Point o3 = Perpendicular(p1, p2, 0.87, -sign * (thickness + spudSize));
                 System.Windows.Point o4 = Perpendicular(p1, p2, 1.0, -sign * thickness);
-                outter.Add(o1);
+                if (firstCall)
+                {
+                    outter.Add(o1);
+                }
                 outter.Add(o2);
                 outter.Add(o3);
                 outter.Add(o4);
 
-                
-                System.Windows.Point i1 = Perpendicular(p1, p2, 0.0, sign*thickness);
-                System.Windows.Point i2 = Perpendicular(p1, p2, 0.75, sign*thickness);
-                System.Windows.Point i3 = Perpendicular(p1, p2, 0.87, sign*thickness);
-                System.Windows.Point i4 = Perpendicular(p1, p2, 1.0, sign*thickness);
+                System.Windows.Point i1 = Perpendicular(p1, p2, 0.0, sign * thickness);
+                System.Windows.Point i2 = Perpendicular(p1, p2, 0.75, sign * thickness);
+                System.Windows.Point i3 = Perpendicular(p1, p2, 0.87, sign * thickness);
+                System.Windows.Point i4 = Perpendicular(p1, p2, 1.0, sign * thickness);
                 if (firstCall)
                 {
                     inner.Add(i1);
@@ -801,46 +993,262 @@ namespace Make3D.Dialogs
                 inner.Add(i3);
                 inner.Add(i4);
             }
-            
         }
-        public void TestPerps()
-        {
-            System.Windows.Point p1 = new System.Windows.Point(1, 1);
-            System.Windows.Point p2 = new System.Windows.Point(2, 2);
-            System.Windows.Point p3 = Perpendicular(p1, p2, 0, Math.Sqrt(2));
 
-            String s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 0 = {p3.X},{p3.Y}";
-            System.Diagnostics.Debug.WriteLine(s);
-
-            p3 = Perpendicular(p1, p2, 0.5, Math.Sqrt(2));
-            s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 0.5 = {p3.X},{p3.Y}";
-            System.Diagnostics.Debug.WriteLine(s);
-
-            p3 = Perpendicular(p1, p2, 1, Math.Sqrt(2));
-            s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 1 = {p3.X},{p3.Y}";
-            System.Diagnostics.Debug.WriteLine(s);
-        }
-        private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double d)
+        private void CentreGuideLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall)
         {
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
-            double grad = dy/ dx;
-            double perp = -1.0 / grad;
-            double sgn = Math.Sign(d);
-            d = Math.Abs(d);
-            System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
-            double x = tp.X + sgn * Math.Sqrt((d * d) / (1.0 + (1.0 / (grad * grad))));
-            double y = tp.Y + perp * (x - tp.X);
-            System.Windows.Point res = new System.Windows.Point(x, y);
+
+            if (dx == 0 && dy != 0)
+            {
+                if (p2.Y > p1.Y)
+                {
+                    // vertical downwards
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
+                    }
+                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.2 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.3 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.5 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.6 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness - spudSize, p1.Y + 0.87 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
+
+                    if (firstCall)
+                    {
+                        inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
+                    }
+                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.2 * dy));
+                    inner.Add(new System.Windows.Point(p1.X - thickness - guideSize, p1.Y + 0.3 * dy));
+                    inner.Add(new System.Windows.Point(p1.X - thickness - guideSize, p1.Y + 0.5 * dy));
+                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.6 * dy));
+                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
+                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.87 * dy));
+                    inner.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
+                }
+                else
+                {
+                    // vertical upwards
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
+                    }
+                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.2 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.3 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.5 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.6 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness - spudSize, p1.Y + 0.87 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
+
+                    if (firstCall)
+                    {
+                        inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
+                    }
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.2 * dy));
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.3 * dy));
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.5 * dy));
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.6 * dy));
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.87 * dy));
+                    inner.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
+                }
+            }
+            else
+            if (dy == 0)
+            {
+                if (p2.X - p1.X > 0)
+                {
+                    // Horizontal Left to right
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
+                    }
+                    outter.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y - thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y - thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y - thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.4 * dx, p1.Y - thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spudSize));
+                    outter.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
+
+                    if (firstCall)
+                    {
+                        inner.Add(new System.Windows.Point(p1.X, p1.Y + thickness));
+                    }
+                    inner.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y + thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y + thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y + thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.6 * dx, p1.Y + thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness));
+                    inner.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
+                }
+                else
+                {
+                    // Horizontal right to Left
+                    if (firstCall)
+                    {
+                        outter.Add(new System.Windows.Point(p1.X, p1.Y - +thickness));
+                    }
+                    outter.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y + thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y + thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y + thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.6 * dx, p1.Y + thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
+                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness + spudSize));
+                    outter.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
+
+                    if (firstCall)
+                    {
+                        inner.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
+                    }
+                    inner.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y - thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y - thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y - thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.6 * dx, p1.Y - thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
+                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness));
+                    inner.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
+                }
+            }
+            else
+            {
+                double sign = -1;
+                if (dx > 0 && dy < 0)
+                {
+                    sign = 1;
+                }
+                else
+                if (dx > 0 && dy > 0)
+                {
+                    sign = -1;
+                }
+                else
+                if (dx < 0 && dy < 0)
+                {
+                    sign = 1;
+                }
+                else
+                if (dx < 0 && dy > 0)
+                {
+                    sign = -1;
+                }
+                System.Windows.Point o1 = Perpendicular(p1, p2, 0.0, -sign * thickness);
+                System.Windows.Point o2 = Perpendicular(p1, p2, 0.2, -sign * thickness);
+                System.Windows.Point o3 = Perpendicular(p1, p2, 0.3, -sign * thickness);
+                System.Windows.Point o4 = Perpendicular(p1, p2, 0.5, -sign * thickness);
+                System.Windows.Point o5 = Perpendicular(p1, p2, 0.6, -sign * thickness);
+                System.Windows.Point o6 = Perpendicular(p1, p2, 0.75, -sign * thickness);
+                System.Windows.Point o7 = Perpendicular(p1, p2, 0.87, -sign * (thickness + spudSize));
+                System.Windows.Point o8 = Perpendicular(p1, p2, 1.0, -sign * thickness);
+                if (firstCall)
+                {
+                    outter.Add(o1);
+                }
+                outter.Add(o2);
+                outter.Add(o3);
+                outter.Add(o4);
+                outter.Add(o5);
+                outter.Add(o6);
+                outter.Add(o7);
+                outter.Add(o8);
+
+                System.Windows.Point i1 = Perpendicular(p1, p2, 0.0, sign * thickness);
+                System.Windows.Point i2 = Perpendicular(p1, p2, 0.2, sign * thickness);
+                System.Windows.Point i3 = Perpendicular(p1, p2, 0.3, sign * (thickness + guideSize));
+                System.Windows.Point i4 = Perpendicular(p1, p2, 0.5, sign * (thickness + guideSize));
+                System.Windows.Point i5 = Perpendicular(p1, p2, 0.6, sign * thickness);
+                System.Windows.Point i6 = Perpendicular(p1, p2, 0.75, sign * thickness);
+                System.Windows.Point i7 = Perpendicular(p1, p2, 0.87, sign * thickness);
+                System.Windows.Point i8 = Perpendicular(p1, p2, 1.0, sign * thickness);
+                if (firstCall)
+                {
+                    inner.Add(i1);
+                }
+                inner.Add(i2);
+                inner.Add(i3);
+                inner.Add(i4);
+                inner.Add(i5);
+                inner.Add(i6);
+                inner.Add(i7);
+                inner.Add(i8);
+            }
+        }
+
+        private double ToMM(double x)
+        {
+            double res = x;
+            if (localImage != null)
+            {
+                res = 25.4 * x / localImage.DpiX;
+            }
             return res;
         }
 
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        private void UpdateDisplay()
         {
-            GeneratePointParams();
+            MainCanvas.Children.Clear();
+
+            if (localImage != null)
+            {
+                System.Windows.Controls.Image image = new System.Windows.Controls.Image();
+                image.Source = localImage;
+                image.Width = localImage.Width;
+                image.Height = localImage.Height;
+                MainCanvas.Children.Add(image);
+            }
+            if (showLinks)
+            {
+                DisplayTrackPath();
+            }
+
+            if (showOutline)
+            {
+                DisplayTrack2D();
+            }
+            DisplayLines();
+            DisplayPoints();
+            DisplayShape();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                LoadImage(imageName);
+            }
+            String s = EditorParameters.Get("Points");
+            if (s != "")
+            {
+                string[] words = s.Split(',');
+                editingPolygon.Clear();
+                for (int i = 0; i < words.GetLength(0); i += 2)
+                {
+                    editingPolygon.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
+                }
+            }
+            s = EditorParameters.Get("NoOfLinks");
+            if (s != "")
+            {
+                NoOfLinks = Convert.ToInt16(s);
+            }
+
+            s = EditorParameters.Get("TrackType");
+            if (s != "")
+            {
+                SelectedTrackType = s;
+            }
+            Camera.Distance = 200;
+            GenerateTrackPath();
+            GenerateTrack();
             GenerateFaces();
-            DialogResult = true;
-            Close();
+            UpdateCameraPos();
+            UpdateDisplay();
         }
     }
 }

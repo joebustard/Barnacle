@@ -68,26 +68,6 @@ namespace Make3D.Dialogs
             NotifyPropertyChanged("BulkHeads");
         }
 
-        private void CentreVertices()
-        {
-            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-            PointUtils.MinMax(Vertices, ref min, ref max);
-
-            double scaleX = max.X - min.X;
-            double scaleY = max.Y - min.Y;
-            double scaleZ = max.Z - min.Z;
-
-            double midx = min.X + (scaleX / 2);
-            double midy = min.Y + (scaleY / 2);
-            double midz = min.Z + (scaleZ / 2);
-            Vector3D offset = new Vector3D(-midx, -midy, -midz);
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                Vertices[i] += offset;
-            }
-        }
-
         private void CopyOn(int i)
         {
             i = i - 1;
@@ -161,7 +141,7 @@ namespace Make3D.Dialogs
         private void RecordEditorParameters()
         {
             EditorParameters.Set("Bulkheads", bulkHeads.Count.ToString());
-            for ( int i =0; i < bulkHeads.Count; i ++)
+            for (int i = 0; i < bulkHeads.Count; i++)
             {
                 string name = "Bulkhead" + i;
                 string text = bulkHeads[i].ToEditorParameters();
@@ -172,35 +152,33 @@ namespace Make3D.Dialogs
         private bool UnpackEditorParameters()
         {
             bool found = false;
-           string s =  EditorParameters.Get("Bulkheads");
-            if ( s != "")
+            string s = EditorParameters.Get("Bulkheads");
+            if (s != "")
             {
                 found = true;
                 int c = Convert.ToInt16(s);
-                if ( c > 0)
+                if (c > 0)
                 {
                     BulkHeads.Clear();
-                    for( int i = 0; i < c; i ++)
+                    for (int i = 0; i < c; i++)
                     {
                         string name = "Bulkhead" + i.ToString();
                         s = EditorParameters.Get(name);
-                        if ( s != "")
+                        if (s != "")
                         {
                             BulkheadControl bc = new BulkheadControl();
                             bc.FuselageBulkHead = new FuselageBulkhead();
                             List<Point> pnts = new List<Point>();
- 
-                            List<Point> ctrls = new List<Point>();
 
+                            List<Point> ctrls = new List<Point>();
 
                             List<double> dists = new List<double>();
 
                             String[] lines = s.Split(',');
-                            double x=0;
-                            double y=0;
-                            double z=0;
+                            double x = 0;
+                            double y = 0;
 
-                            foreach ( string t in lines)
+                            foreach (string t in lines)
                             {
                                 string[] words = t.Split('=');
                                 switch (words[0])
@@ -210,31 +188,37 @@ namespace Make3D.Dialogs
                                             bc.IdNumber = Convert.ToInt32(words[1]);
                                         }
                                         break;
+
                                     case "D":
                                         {
                                             bc.FuselageBulkHead.Depth = Convert.ToDouble(words[1]);
                                         }
                                         break;
+
                                     case "H":
                                         {
                                             bc.FuselageBulkHead.Height = Convert.ToDouble(words[1]);
                                         }
                                         break;
+
                                     case "X":
                                         {
                                             bc.FuselageBulkHead.OffsetX = Convert.ToDouble(words[1]);
                                         }
                                         break;
+
                                     case "Y":
                                         {
                                             bc.FuselageBulkHead.OffsetY = Convert.ToDouble(words[1]);
                                         }
                                         break;
+
                                     case "Z":
                                         {
                                             bc.FuselageBulkHead.OffsetZ = Convert.ToDouble(words[1]);
                                         }
                                         break;
+
                                     case "P":
                                         {
                                             GetXY(words[1], ref x, ref y);
@@ -242,6 +226,7 @@ namespace Make3D.Dialogs
                                             pnts.Add(p);
                                         }
                                         break;
+
                                     case "C":
                                         {
                                             GetXY(words[1], ref x, ref y);
@@ -249,13 +234,13 @@ namespace Make3D.Dialogs
                                             ctrls.Add(p);
                                         }
                                         break;
+
                                     case "V":
                                         {
                                             double d = Convert.ToDouble(words[1]);
                                             dists.Add(d);
                                         }
                                         break;
-
                                 }
                             }
                             bc.OnPerformAction += PerformAction;
@@ -269,9 +254,8 @@ namespace Make3D.Dialogs
                         co.Redraw();
                     }
 
-                    bulkHeads[ bulkHeads.Count-1].CopyToNextButton.Visibility = Visibility.Hidden;
+                    bulkHeads[bulkHeads.Count - 1].CopyToNextButton.Visibility = Visibility.Hidden;
                     NotifyPropertyChanged("BulkHeads");
-
                 }
             }
             return found;
