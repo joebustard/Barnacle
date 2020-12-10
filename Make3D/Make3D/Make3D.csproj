@@ -424,5 +424,8 @@
   <ItemGroup>
     <Resource Include="Images\Buttons\Vase.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Buttons\PanEye.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

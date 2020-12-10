@@ -320,6 +320,7 @@ namespace Make3D.Adorners
             double mmy = (deltaY * 25.4) / dpiY;
             mmx /= dr;
             mmy /= dr;
+
             Point3D scaleChange = new Point3D(1, 1, 1);
             Point3D positionChange = new Point3D(0, 0, 0);
             switch (selectedThumb.Name.ToLower())
@@ -418,7 +419,7 @@ namespace Make3D.Adorners
                                 if (Camera.Orientation == PolarCamera.Orientations.Right)
                                 {
                                     scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
-                                    positionChange.Z -= ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
+                                    positionChange.Z = ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                                 }
                             }
                             //scaleChange.Z = ((box.Scale.Z + (deltaX)) / box.Scale.Z);
@@ -436,13 +437,15 @@ namespace Make3D.Adorners
                         {
                             if (Camera.Orientation == PolarCamera.Orientations.Left)
                             {
-                                scaleChange.Z = ((box.Scale.Z - (deltaX)) / box.Scale.Z);
+                                scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
+                                positionChange.Z -= ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                             }
                             else
                             {
                                 if (Camera.Orientation == PolarCamera.Orientations.Right)
                                 {
-                                    scaleChange.Z = ((box.Scale.Z + (deltaX)) / box.Scale.Z);
+                                    scaleChange.Z = ((box.Scale.Z + (mmx)) / box.Scale.Z);
+                                    positionChange.Z = -((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                                 }
                             }
                             // scaleChange.Z = ((box.Scale.Z - (deltaX)) / box.Scale.Z);

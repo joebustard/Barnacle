@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -88,6 +89,16 @@ namespace Make3D.Models
                     }
                 }
             }
+        }
+
+        internal ObservableCollection<string> GetObjectNames()
+        {
+            ObservableCollection<string> res = new ObservableCollection<string>();
+            foreach( Object3D ob in Content)
+            {
+                res.Add(ob.Name);
+            }
+            return res;
         }
 
         public string Extension { get; set; }

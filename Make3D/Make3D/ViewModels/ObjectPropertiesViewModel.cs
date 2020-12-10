@@ -25,6 +25,7 @@ namespace Make3D.ViewModels
                         if (selectedObject.Name != value)
                         {
                             selectedObject.Name = value;
+                            NotificationManager.Notify("ObjectNamesChanged", null);
                         }
                     }
                 }

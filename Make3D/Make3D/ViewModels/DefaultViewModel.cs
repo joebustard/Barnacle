@@ -43,6 +43,40 @@ namespace Make3D.ViewModels
         private bool twoShapeEnabled;
         private bool underLineChecked;
 
+        public ObservableCollection<string> ObjectNames
+        {
+            get
+            {
+                ObservableCollection<string> res = null;
+                if (document != null)
+                {
+                    res = document.GetObjectNames();
+                }
+                return res;
+            }
+        }
+        private string selectedObjectName;
+        public string SelectedObjectName
+        {
+            get
+            {
+                return selectedObjectName;
+            }
+
+            set
+            {
+                if ( selectedObjectName != value)
+                {
+                    selectedObjectName = value;
+                    NotifyPropertyChanged();
+
+                    if (selectedObjectName != "")
+                    {
+                        NotificationManager.Notify("SelectObjectName", selectedObjectName);
+                    }
+                }
+            }
+        }
         public DefaultViewModel()
         {
             subViewMan = new SubViewManager();
@@ -96,6 +130,7 @@ namespace Make3D.ViewModels
             recentFilesList = new List<MruEntry>();
 
             FillColor = Brushes.White;
+            SelectedObjectName = "";
             LoadSystemFonts();
             SelectedFont = "Arial";
             FontSize = "14";
@@ -124,7 +159,16 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetStatusText3", SetStatusText3);
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
+            NotificationManager.Subscribe("ObjectNamesChanged", ObjectNamesChanged);
+
             SubView = subViewMan.GetView("editor");
+        }
+
+
+
+        private void ObjectNamesChanged(object param)
+        {
+            NotifyPropertyChanged("ObjectNames");
         }
 
         public ICommand AddCommand { get; set; }
@@ -678,6 +722,7 @@ namespace Make3D.ViewModels
         {
             string name = obj.ToString();
             NotificationManager.Notify("AddObject", name);
+            NotifyPropertyChanged("ObjectNames");
         }
 
         private void OnAlignment(object obj)

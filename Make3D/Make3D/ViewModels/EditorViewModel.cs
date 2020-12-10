@@ -104,6 +104,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("TankTrack", OnTankTrack);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
+            NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -114,6 +115,29 @@ namespace Make3D.ViewModels
             RegenerateDisplayList();
         }
 
+        private void SelectObjectByName(object param)
+        {
+            string nm = param.ToString();
+
+            ResetSelection();
+
+            if (Document.Content.Count > 0)
+            {
+                NotificationManager.Notify("SetToolsVisibility", false);
+                foreach (Object3D ob in Document.Content)
+                {
+                    if (ob.Name == nm)
+                    {
+                        selectedItems.Add(ob);
+                        selectedObjectAdorner.AdornObject(ob);
+                        NotificationManager.Notify("ObjectSelected", ob);
+                        EnableTool(ob);
+                    }
+                }
+
+            }
+            UpdateSelectionDisplay();
+        }
         private void OnTankTrack(object param)
         {
             TrackDialog dlg = new TrackDialog();
@@ -302,7 +326,7 @@ namespace Make3D.ViewModels
             CheckPoint();
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;
-
+            bool needToAdd = false;
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
                 editingObj = selectedObjectAdorner.SelectedObjects[0];
@@ -324,7 +348,8 @@ namespace Make3D.ViewModels
                     editingObj = new Object3D();
                     editingObj.Name = Document.NextName;
                     editingObj.Description = "";
-                    Document.Content.Add(editingObj);
+                    needToAdd = true;
+
                     editingObj.Color = dlg.MeshColour;
                     positionAtRight = true;
                 }
@@ -333,29 +358,41 @@ namespace Make3D.ViewModels
                 editingObj.EditorParameters = dlg.EditorParameters;
                 editingObj.RelativeObjectVertices = dlg.Vertices;
                 editingObj.TriangleIndices = dlg.Faces;
-                
+
                 RecalculateAllBounds();
-                if (positionAtRight)
-                {
-                    if (allBounds.Upper.X > double.MinValue)
-                    {
-                        editingObj.Position = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                    else
-                    {
-                        editingObj.Position = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                }
+                Point3D placement = new Point3D(0, 0, 0);
+                editingObj.Position = new Point3D(0, 0, 0);
 
                 editingObj.PrimType = "Mesh";
 
                 editingObj.Remesh();
+
+                editingObj.CalcScale();
+
+                if (positionAtRight)
+                {
+                    if (allBounds.Upper.X > double.MinValue)
+                    {
+                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                    else
+                    {
+                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                }
+                editingObj.Position = placement;
+
                 allBounds += editingObj.AbsoluteBounds;
 
                 GeometryModel3D gm = GetMesh(editingObj);
 
+                if (needToAdd)
+                {
+                    Document.Content.Add(editingObj);
+                }
                 Document.Dirty = true;
                 RegenerateDisplayList();
+                NotificationManager.Notify("ObjectNames",null);
             }
         }
 
@@ -702,28 +739,40 @@ namespace Make3D.ViewModels
         {
             bool handled = false;
             NotificationManager.Notify("SetToolsVisibility", false);
-            /*
-            // if user has just clicked on floor then delect everything
-            if (geo.Geometry == Floor.Geometry)
+
+
+            if (selectedObjectAdorner != null)
             {
-                if (selectedObjectAdorner != null)
-                {
-                    // remove the currnt visible elements of the adorner
-                    RemoveObjectAdorner();
-                    DeselectAll();
-                }
-                handled = true;
+                handled = selectedObjectAdorner.Select(geo);
             }
-            else
-            */
+            if (!handled)
             {
-                if (selectedObjectAdorner != null)
+                CheckIfContentSelected(geo, append, size);
+            }
+
+            ShowToolForCurrentSelection();
+        }
+
+        private void ShowToolForCurrentSelection(bool clear = false)
+        {
+            if (clear == true)
+            {
+                NotificationManager.Notify("SetToolsVisibility", false);
+            }
+
+
+            // if nothing was selected turn the all editor tools back on
+            if ((selectedObjectAdorner == null) ||
+                 ((selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 0)))
+            {
+                NotificationManager.Notify("SetToolsVisibility", true);
+            }
+            if (selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+            {
+                string s = selectedObjectAdorner.SelectedObjects[0].EditorParameters.Get("ToolName");
+                if (s != "")
                 {
-                    handled = selectedObjectAdorner.Select(geo);
-                }
-                if (!handled)
-                {
-                    CheckIfContentSelected(geo, append, size);
+                    NotificationManager.Notify("SetSingleToolsVisible", s);
                 }
             }
         }
@@ -1204,6 +1253,10 @@ namespace Make3D.ViewModels
                 Object3D sel = selectedItems[0];
                 CameraLookObject = sel.Position;
                 camera.LookAt(CameraLookObject);
+                LookToObject();
+                NotifyPropertyChanged("CameraPos");
+                NotifyPropertyChanged("LookDirection");
+
             }
         }
 
@@ -1315,6 +1368,8 @@ namespace Make3D.ViewModels
                 Document.Content.Add(obj);
                 Document.Dirty = true;
                 RegenerateDisplayList();
+
+                NotificationManager.Notify("ObjectNamesChanged", null);
             }
         }
 
@@ -1958,6 +2013,7 @@ namespace Make3D.ViewModels
                 EnableTool(ob);
             }
             UpdateSelectionDisplay();
+
         }
 
         private void EnableTool(Object3D ob)
@@ -1985,6 +2041,7 @@ namespace Make3D.ViewModels
                 EnableTool(ob);
             }
             UpdateSelectionDisplay();
+
         }
 
         private void SelectNext()
@@ -2017,6 +2074,7 @@ namespace Make3D.ViewModels
                 NotificationManager.Notify("ObjectSelected", nxt);
                 EnableTool(nxt);
                 UpdateSelectionDisplay();
+
             }
         }
 

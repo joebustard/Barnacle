@@ -89,7 +89,8 @@
                     <Custom:RibbonButton x:Name="SelectLastButton" Label="Last" Command="{Binding SelectCommand}" CommandParameter="Last" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectAll.png" ToolTip="Select Last" />
 
                     <Custom:RibbonButton x:Name="SelectAllButton" Label="All" Command="{Binding SelectCommand}" CommandParameter="All" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectAll.png" ToolTip="Select All" />
-                    <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectClear.png" ToolTip="Select All" />
+                    <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectClear.png" ToolTip="Clear selection" />
+                    <ComboBox x:Name="SelectObjectNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select an object by its name" ItemsSource="{Binding ObjectNames}" SelectedItem="{Binding SelectedObjectName}"/>
                 </Custom:RibbonGroup>
 
                 <!--

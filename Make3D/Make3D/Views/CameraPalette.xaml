@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Make3D.Views"
              xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="380" d:DesignWidth="800">
+             d:DesignHeight="430" d:DesignWidth="800">
     <UserControl.DataContext>
         <ViewModels:CameraViewModel />
     </UserControl.DataContext>
@@ -42,6 +42,9 @@
 
             <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraLookObject" ToolTip="Point the camera at the selected object" Margin="0,0,2,2">
                 <Image Source="/Make3D;component/Images/Buttons/ObjectEye.png" />
+            </Button>
+            <Button Width="35" Height="35" Command="{Binding CameraCommand}" CommandParameter="CameraMove" ToolTip="Pan the camera without changing the look direction" Margin="0,0,2,2">
+                <Image Source="/Make3D;component/Images/Buttons/PanEye.png" />
             </Button>
         </UniformGrid>
     </Grid>
