@@ -19,7 +19,9 @@ namespace Make3D.Dialogs
         private PolarCamera polarCamera;
         private Int32Collection tris;
         private Point3DCollection vertices;
-
+        protected Floor floor;
+        protected Grid3D grid;
+        
         public PolarCamera Camera
         {
             get
@@ -37,6 +39,8 @@ namespace Make3D.Dialogs
             LookDirection = new Vector3D(-polarCamera.CameraPos.X, -polarCamera.CameraPos.Y, -polarCamera.CameraPos.Z);
             meshColour = Colors.CornflowerBlue;
             editorParameters = new EditorParameters();
+            floor = new Floor();
+            grid = new Grid3D();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

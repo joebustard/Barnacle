@@ -29,10 +29,10 @@
             </Grid.RowDefinitions>
             <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="0" Grid.Column="0">
                 <UniformGrid>
-                    <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" />
-                    <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" />
-                    <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" />
-                    <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" />
+                    <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2"/>
+                    <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2"/>
+                    <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2"/>
+                    <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2"/>
                 </UniformGrid>
             </Border>
             <StackPanel Orientation="Horizontal" Grid.Row="1">

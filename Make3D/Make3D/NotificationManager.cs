@@ -12,6 +12,7 @@ namespace Make3D
         {
             public string messageName;
             public RXMessage observer;
+            public bool alive;
         }
 
         private static List<ObserverDef> observers = new List<ObserverDef>();
@@ -21,19 +22,22 @@ namespace Make3D
             ObserverDef df = new ObserverDef();
             df.messageName = name;
             df.observer = fnc;
+            df.alive = true;
             observers.Add(df);
         }
 
         public static void Notify(string name, object param)
         {
+            bool adjust = false;
             List<ObserverDef> tmp = new List<ObserverDef>();
             foreach (ObserverDef df in observers)
             {
                 tmp.Add(df);
             }
 
-            foreach (ObserverDef df in tmp)
+            for (int i =0; i < tmp.Count; i ++)
             {
+                ObserverDef df = tmp[i];
                 if (df.messageName == name)
                 {
                     if (df.observer != null)
@@ -44,11 +48,26 @@ namespace Make3D
                         }
                         catch (Exception ex)
                         {
-                           // MessageBox.Show(ex.Message);
+                            df.alive = false;
+                            adjust = true;
                         }
                     }
                 }
             }
+
+            if ( adjust)
+            {
+                observers.Clear();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    ObserverDef df = tmp[i];
+                    if (df.alive)
+                    {
+                        observers.Add(df);
+                    }
+                }
+            }
+
         }
 
         public static void Unsubscribe(String s)

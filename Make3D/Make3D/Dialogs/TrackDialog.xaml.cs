@@ -36,8 +36,7 @@ namespace Make3D.Dialogs
         private WriteableBitmap wbx;
         private bool showLinks;
         private bool showOutline;
-        private Floor floor;
-        private Grid3D grid;
+
 
         public TrackDialog()
         {
@@ -60,8 +59,7 @@ namespace Make3D.Dialogs
             Thickness = 6;
             SpudSize = 4;
             GuideSize = 4;
-            floor = new Floor();
-            grid = new Grid3D();
+
         }
 
         public bool ShowLinkMarkers
@@ -680,10 +678,6 @@ namespace Make3D.Dialogs
         private void InitialisePoints()
         {
             editingPolygon.Clear();
-            //  editingPolygon.Add(new System.Windows.Point(10, 10));
-            //    editingPolygon.Add(new System.Windows.Point(100, 10));
-            //      editingPolygon.Add(new System.Windows.Point(100, 100));
-            //      editingPolygon.Add(new System.Windows.Point(10, 100));
 
             editingPolygon.Add(new System.Windows.Point(16.0308899744799, 97.118354607299));
             editingPolygon.Add(new System.Windows.Point(18.9995733030873, 88.2123046214768));

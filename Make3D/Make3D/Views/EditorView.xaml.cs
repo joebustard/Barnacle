@@ -17,7 +17,7 @@ namespace Make3D.Views
         private EditorViewModel vm;
         private Point lastMousePos;
         private GeometryModel3D lastHitModel;
-
+        private Point3D lastHitPoint;
         public EditorView()
         {
             InitializeComponent();
@@ -93,6 +93,7 @@ namespace Make3D.Views
             bool shift = false;
             bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
             lastHitModel = null;
+            lastHitPoint = new Point3D(0, 0, 0);
             HitTest(sender, e);
             if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
             {
@@ -102,7 +103,7 @@ namespace Make3D.Views
             vm.MouseDown(lastMousePos, e);
             if (lastHitModel != null)
             {
-                vm.Select(lastHitModel, leftButton,shift);
+                vm.Select(lastHitModel, lastHitPoint, leftButton,shift);
             }
         }
 
@@ -151,6 +152,7 @@ namespace Make3D.Views
                     {
                         // UpdateResultInfo(rayMeshResult);
                         lastHitModel = hitgeo;
+                        lastHitPoint = rayMeshResult.PointHit;
                     }
                     result = HitTestResultBehavior.Stop;
                 }

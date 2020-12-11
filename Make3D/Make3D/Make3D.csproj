@@ -111,6 +111,7 @@
     <Compile Include="Models\EditorParameter.cs" />
     <Compile Include="Models\EditorParameters.cs" />
     <Compile Include="Models\Floor.cs" />
+    <Compile Include="Models\FloorMarker.cs" />
     <Compile Include="Models\Grid.cs" />
     <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\Logger.cs" />

@@ -145,11 +145,11 @@ namespace Make3D.Dialogs
             if (EditorParameters.Get("Radius") == "")
             {
                 Thickness = 2;
-                Radius = 30;
-                NumberOfTeeth = 20;
-                TeethBaseHeight = 5;
-                TeethBaseWidth = 5;
-                TeethTopHeight = 2;
+                Radius = 10;
+                NumberOfTeeth = 15;
+                TeethBaseHeight = 2;
+                TeethBaseWidth = 2;
+                TeethTopHeight = 1;
                 TeethTopWidth = 1;
             }
             else
@@ -187,9 +187,9 @@ namespace Make3D.Dialogs
                     double totalGapLeft = circumference - (actualBaseWidth * numberOfTeeth);
 
                     double gapPerTooth = totalGapLeft / numberOfTeeth;
-                    if (gapPerTooth < 0)
+                    if (gapPerTooth <= 0)
                     {
-                        gapPerTooth = 0;
+                        gapPerTooth = 0.1;
                     }
                     double toothTopRadius = actualOutterRadius + teethBaseHeight + TeethTopHeight;
                     double toothTopCircum = Math.PI * 2 * toothTopRadius;
@@ -296,8 +296,18 @@ namespace Make3D.Dialogs
                         Faces.Add(c1);
                         Faces.Add(c2);
                     }
+
+                    CentreVertices();
                     GeometryModel3D gm = GetModel();
                     MyModelGroup.Children.Clear();
+                    if (floor != null)
+                    {
+                        MyModelGroup.Children.Add(floor.FloorMesh);
+                        foreach (GeometryModel3D m in grid.Group.Children)
+                        {
+                            MyModelGroup.Children.Add(m);
+                        }
+                    }
                     MyModelGroup.Children.Add(gm);
                 }
             }

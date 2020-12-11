@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
-    public class Grid3D
+    public class FloorMarker
     {
-        private double length = 210;
+
+        private Point3D position;
+        private double length = 10;
 
         public double Size
         {
@@ -24,6 +31,22 @@ namespace Make3D.Models
             }
         }
 
+        public Point3D Position
+        {
+            get
+            {
+                return position;
+            }
+
+            set
+            {
+                if (position != value)
+                {
+                    position = value;
+                    DefineModel(group);
+                }
+            }
+        }
         private Model3DGroup group;
 
         public Model3DGroup Group
@@ -34,10 +57,14 @@ namespace Make3D.Models
             }
         }
 
-        public Grid3D()
+        public Model3DGroup MarkerMesh
+        {
+            get { return group; }
+        }
+        public FloorMarker()
         {
             group = new Model3DGroup();
-            Size = 210;
+            Size = 10;
             DefineModel(group);
         }
 
@@ -45,45 +72,21 @@ namespace Make3D.Models
         {
             group.Children.Clear();
 
-            for (double x = -length; x <= length; x += 1)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(0.05, 0.1, 2 * length));
-                xmesh.ApplyTransformation(new TranslateTransform3D(x, 0, 0));
-                Material xmaterial = new DiffuseMaterial(Brushes.LightBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
 
-            for (double z = -length; z <= length; z += 1)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(2 * length, 0.1, 0.05));
-                xmesh.ApplyTransformation(new TranslateTransform3D(0, 0, z));
-                Material xmaterial = new DiffuseMaterial(Brushes.LightBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
+            MeshGeometry3D xmesh = MakeCubeMesh(0, 0,0, 1);
+            xmesh.ApplyTransformation(new ScaleTransform3D(length, 0.1, 4));
+            xmesh.ApplyTransformation(new TranslateTransform3D(position.X, 0, position.Z));
+            Material xmaterial = new DiffuseMaterial(Brushes.Red);
+            GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
+            group.Children.Add(xmodel);
 
-            for (double x = -length; x <= length; x += 10)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(0.5, 0.1, 2 * length));
-                xmesh.ApplyTransformation(new TranslateTransform3D(x, 0, 0));
-                Material xmaterial = new DiffuseMaterial(Brushes.CadetBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
+            xmesh = MakeCubeMesh(0, 0, 0, 1);
+            xmesh.ApplyTransformation(new ScaleTransform3D(4, 0.1, length));
+            xmesh.ApplyTransformation(new TranslateTransform3D(position.X, 0, position.Z));
+            xmaterial = new DiffuseMaterial(Brushes.Red);
+            xmodel = new GeometryModel3D(xmesh, xmaterial);
+            group.Children.Add(xmodel);
 
-            for (double z = -length; z <= length; z += 10)
-            {
-                MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
-                xmesh.ApplyTransformation(new ScaleTransform3D(2 * length, 0.1, 0.5));
-                xmesh.ApplyTransformation(new TranslateTransform3D(0, 0, z));
-                Material xmaterial = new DiffuseMaterial(Brushes.CadetBlue);
-                GeometryModel3D xmodel = new GeometryModel3D(xmesh, xmaterial);
-                group.Children.Add(xmodel);
-            }
         }
 
         // Make a mesh containing a cube centered at this point.
@@ -147,18 +150,6 @@ namespace Make3D.Models
             }
 
             return mesh;
-        }
-
-        internal bool Matches(GeometryModel3D geo)
-        {
-            foreach( GeometryModel3D gm in group.Children)
-            {
-                if ( gm == geo)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
     }
 }

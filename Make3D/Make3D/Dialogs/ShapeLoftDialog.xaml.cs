@@ -27,9 +27,9 @@ namespace Make3D.Dialogs
             bottomPoints = null;
             bottomShell = new List<Point>();
             topShell = new List<Point>();
-            sizeX = 10;
-            sizeY = 10;
-            sizeZ = 10;
+            sizeX = 20;
+            sizeY = 20;
+            sizeZ = 20;
             DataContext = this;
             EditorParameters.ToolName = "TwoShape";
         }
@@ -158,8 +158,17 @@ namespace Make3D.Dialogs
                     Faces.Add(f + offset);
                 }
 
+
                 GeometryModel3D gm = GetModel();
                 MyModelGroup.Children.Clear();
+                if (floor != null)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
                 MyModelGroup.Children.Add(gm);
             }
         }
@@ -238,7 +247,7 @@ namespace Make3D.Dialogs
                     sizeZ = Convert.ToDouble(s);
                 }
             }
-
+            Camera.Distance = 30;
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             SizeX.Text = sizeX.ToString();
