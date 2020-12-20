@@ -83,6 +83,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Cut", OnCut);
             NotificationManager.Subscribe("Copy", OnCopy);
             NotificationManager.Subscribe("Paste", OnPaste);
+            NotificationManager.Subscribe("PasteAt", OnPasteAt);
             NotificationManager.Subscribe("DoMultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("CircularPaste", OnCircularPaste);
 
@@ -92,6 +93,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Import", OnImport);
             NotificationManager.Subscribe("MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("MoveObjectToCentre", OnMoveObjectToCentre);
+            NotificationManager.Subscribe("Marker", MoveToMarker);
             NotificationManager.Subscribe("Alignment", OnAlignment);
             NotificationManager.Subscribe("Distribute", OnDistribute);
             NotificationManager.Subscribe("Flip", OnFlip);
@@ -105,6 +107,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SpurGear", OnSpurGear);
             NotificationManager.Subscribe("TankTrack", OnTankTrack);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
+            NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
             ReportCameraPosition();
@@ -114,7 +117,32 @@ namespace Make3D.ViewModels
             totalFaces = 0;
             showAxies = true;
             showFloor = true;
+            showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void MoveToMarker(object param)
+        {
+            if (showFloorMarker == true && floorMarker != null)
+            {
+                Point3D target = floorMarker.Position;
+
+                Bounds3D tmpBounds = new Bounds3D();
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    tmpBounds.Add(ob.AbsoluteBounds);
+                }
+
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
+                    double dAbsY = ob.Position.Y;
+                    double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
+                    ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                    ob.RelativeToAbsolute();
+                }
+            }
+            DeselectAll();
         }
 
         private void SelectObjectByName(object param)
@@ -136,10 +164,10 @@ namespace Make3D.ViewModels
                         EnableTool(ob);
                     }
                 }
-
             }
             UpdateSelectionDisplay();
         }
+
         private void OnTankTrack(object param)
         {
             TrackDialog dlg = new TrackDialog();
@@ -158,7 +186,7 @@ namespace Make3D.ViewModels
                     selectedObjectAdorner.Clear();
                     double radius = Convert.ToDouble(dlg.RadiusBox.Text);
                     double altRadius = Convert.ToDouble(dlg.AltBox.Text);
-                    if ( altRadius == 0)
+                    if (altRadius == 0)
                     {
                         altRadius = radius;
                     }
@@ -404,11 +432,12 @@ namespace Make3D.ViewModels
                 }
                 Document.Dirty = true;
                 RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged",null);
+                NotificationManager.Notify("ObjectNamesChanged", null);
             }
         }
 
         private bool showFloor;
+        private bool showFloorMarker;
         private bool showAxies;
 
         private void OnShowAxies(object param)
@@ -420,6 +449,12 @@ namespace Make3D.ViewModels
         private void OnShowFloor(object param)
         {
             showFloor = (param as bool?) == true;
+            RegenerateDisplayList();
+        }
+
+        private void OnShowFloorMarker(object param)
+        {
+            showFloorMarker = (param as bool?) == true;
             RegenerateDisplayList();
         }
 
@@ -525,7 +560,7 @@ namespace Make3D.ViewModels
                 {
                     modelItems.Add(m);
                 }
-                if (floorMarker != null)
+                if (floorMarker != null && showFloorMarker)
                 {
                     foreach (GeometryModel3D m in floorMarker.MarkerMesh.Children)
                     {
@@ -766,16 +801,13 @@ namespace Make3D.ViewModels
             bool handled = false;
             NotificationManager.Notify("SetToolsVisibility", false);
 
-
             if (selectedObjectAdorner != null)
             {
                 handled = selectedObjectAdorner.Select(geo);
-                
             }
             if (!handled)
             {
-                handled=CheckIfContentSelected(geo, append, size);
-
+                handled = CheckIfContentSelected(geo, append, size);
             }
             if (!handled)
             {
@@ -785,13 +817,18 @@ namespace Make3D.ViewModels
                     floorMarker.Position = hitPos;
                     RegenerateDisplayList();
                 }
-
             }
+            /*
             else
             {
-                floorMarker = null;
+                if (floorMarker != null)
+                {
+                    floorMarker = null;
+                    RegenerateDisplayList();
+                }
             }
-                ShowToolForCurrentSelection();
+            */
+            ShowToolForCurrentSelection();
         }
 
         private void ShowToolForCurrentSelection(bool clear = false)
@@ -800,7 +837,6 @@ namespace Make3D.ViewModels
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
             }
-
 
             // if nothing was selected turn the all editor tools back on
             if ((selectedObjectAdorner == null) ||
@@ -862,7 +898,7 @@ namespace Make3D.ViewModels
                 FloorSelectedObjects();
             }
             else
-            if (selectedObjectAdorner.SelectedObjects.Count > 0)
+          if (selectedObjectAdorner.SelectedObjects.Count > 0)
             {
                 Bounds3D bns = new Bounds3D(selectedObjectAdorner.SelectedObjects[0].AbsoluteBounds);
                 double midX = bns.MidPoint().X;
@@ -1003,6 +1039,20 @@ namespace Make3D.ViewModels
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                                 ob.RelativeToAbsolute();
                                 bns.Add(ob.AbsoluteBounds);
+                            }
+                            break;
+
+                        case "Marker":
+                            {
+                                if (floorMarker != null)
+                                {
+                                    Point3D mp = floorMarker.Position;
+                                    dAbsX = mp.X + (ob.AbsoluteBounds.MidPoint().X - midX);
+                                    dAbsY = mp.Y + (ob.AbsoluteBounds.MidPoint().Y - midY);
+                                    dAbsZ = mp.Z + (ob.AbsoluteBounds.MidPoint().Z - midZ);
+                                    ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                                    ob.RelativeToAbsolute();
+                                }
                             }
                             break;
                     }
@@ -1172,37 +1222,46 @@ namespace Make3D.ViewModels
             List<Object3D> tmp = new List<Object3D>();
             foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
             {
-                Object3D it = ob.ConvertToMesh();
-
                 Document.Content.Remove(ob);
-                it.Remesh();
-                tmp.Add(it);
+                if (confirmed)
+                {
+                    Object3D it = ob.ConvertToMesh();
+                    it.Remesh();
+                    tmp.Add(it);
+                }
+                else
+                {
+                    tmp.Add(ob);
+                }
             }
             selectedObjectAdorner.Clear();
             foreach (Object3D ob in tmp)
             {
-                switch (s)
+                if (ob.IsSizable())
                 {
-                    case "Horizontal":
-                        {
-                            ob.FlipX();
-                            ob.Remesh();
-                        }
-                        break;
+                    switch (s)
+                    {
+                        case "Horizontal":
+                            {
+                                ob.FlipX();
+                                ob.Remesh();
+                            }
+                            break;
 
-                    case "Vertical":
-                        {
-                            ob.FlipY();
-                            ob.Remesh();
-                        }
-                        break;
+                        case "Vertical":
+                            {
+                                ob.FlipY();
+                                ob.Remesh();
+                            }
+                            break;
 
-                    case "Inside":
-                        {
-                            ob.FlipInside();
-                            ob.Remesh();
-                        }
-                        break;
+                        case "Inside":
+                            {
+                                ob.FlipInside();
+                                ob.Remesh();
+                            }
+                            break;
+                    }
                 }
                 Document.Content.Add(ob);
             }
@@ -1301,7 +1360,6 @@ namespace Make3D.ViewModels
                 LookToObject();
                 NotifyPropertyChanged("CameraPos");
                 NotifyPropertyChanged("LookDirection");
-
             }
         }
 
@@ -1420,7 +1478,7 @@ namespace Make3D.ViewModels
 
         private void OnAlignment(object param)
         {
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 1)
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
             {
                 CheckPoint();
                 string s = param.ToString();
@@ -1793,6 +1851,39 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnPasteAt(object param)
+        {
+            if (ObjectClipboard.HasItems() && floorMarker != null)
+            {
+                CheckPoint();
+                RecalculateAllBounds();
+                selectedObjectAdorner.Clear();
+                foreach (Object3D cl in ObjectClipboard.Items)
+                {
+                    Object3D o = cl.Clone();
+                    if (Document.ContainsName(o.Name))
+                    {
+                        o.Name = Document.DuplicateName(o.Name);
+                    }
+                    if (o is Group3D)
+                    {
+                        //    (o as Group3D).Init();
+                    }
+                    o.Position = new Point3D(floorMarker.Position.X, floorMarker.Position.Y, floorMarker.Position.Z);
+                    o.Remesh();
+                    o.MoveToFloor();
+                    o.CalcScale(false);
+                    allBounds += o.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(o);
+                    Document.Content.Add(o);
+                    Document.Dirty = true;
+                }
+
+                RegenerateDisplayList();
+                NotificationManager.Notify("ObjectNamesChanged", null);
+            }
+        }
+
         private void OnRefresh(object param)
         {
             RegenerateDisplayList();
@@ -1801,7 +1892,6 @@ namespace Make3D.ViewModels
 
         private void OnRemesh(object param)
         {
-           
         }
 
         private void OnSize(object param)
@@ -2065,7 +2155,6 @@ namespace Make3D.ViewModels
                 EnableTool(ob);
             }
             UpdateSelectionDisplay();
-
         }
 
         private void EnableTool(Object3D ob)
@@ -2093,7 +2182,6 @@ namespace Make3D.ViewModels
                 EnableTool(ob);
             }
             UpdateSelectionDisplay();
-
         }
 
         private void SelectNext()
@@ -2126,7 +2214,6 @@ namespace Make3D.ViewModels
                 NotificationManager.Notify("ObjectSelected", nxt);
                 EnableTool(nxt);
                 UpdateSelectionDisplay();
-
             }
         }
 

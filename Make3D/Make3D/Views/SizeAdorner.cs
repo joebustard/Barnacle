@@ -11,8 +11,6 @@ namespace Make3D.Adorners
 {
     public class SizeAdorner : Adorner
     {
-
-       
         private List<Object3D> thumbs;
 
         private Object3D box;
@@ -65,23 +63,26 @@ namespace Make3D.Adorners
             GenerateAdornments();
         }
 
-
-
         internal override void GenerateAdornments()
         {
             Adornments.Clear();
             thumbs.Clear();
+            bool addSizeThumbs = true;
             bounds = new Bounds3D();
             foreach (Object3D obj in SelectedObjects)
             {
                 bounds += obj.AbsoluteBounds;
+                if (!obj.IsSizable())
+                {
+                    addSizeThumbs = false;
+                }
             }
             Point3D midp = bounds.MidPoint();
             Point3D size = bounds.Size();
-            CreateAdornments(midp, size);
+            CreateAdornments(midp, size, addSizeThumbs);
         }
 
-        private void CreateAdornments(Point3D position, Point3D size)
+        private void CreateAdornments(Point3D position, Point3D size, bool addSizeThumbs)
         {
             box = new Object3D();
 
@@ -100,14 +101,17 @@ namespace Make3D.Adorners
             box.RelativeToAbsolute();
             box.SetMesh();
             Adornments.Add(GetMesh(box));
-            double thumbSize = 4;
 
-            CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
-            CreateThumb(position, thumbSize, -box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "LeftThumb");
-            CreateThumb(position, thumbSize, 0, box.AbsoluteBounds.Height / 2, 0, Colors.White, "TopThumb");
-            CreateThumb(position, thumbSize, 0, -box.AbsoluteBounds.Height / 2, 0, Colors.White, "BottomThumb");
-            CreateThumb(position, thumbSize, 0, 0, box.AbsoluteBounds.Depth / 2, Colors.White, "FrontThumb");
-            CreateThumb(position, thumbSize, 0, 0, -box.AbsoluteBounds.Depth / 2, Colors.White, "BackThumb");
+            if (addSizeThumbs)
+            {
+                double thumbSize = 4;
+                CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
+                CreateThumb(position, thumbSize, -box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "LeftThumb");
+                CreateThumb(position, thumbSize, 0, box.AbsoluteBounds.Height / 2, 0, Colors.White, "TopThumb");
+                CreateThumb(position, thumbSize, 0, -box.AbsoluteBounds.Height / 2, 0, Colors.White, "BottomThumb");
+                CreateThumb(position, thumbSize, 0, 0, box.AbsoluteBounds.Depth / 2, Colors.White, "FrontThumb");
+                CreateThumb(position, thumbSize, 0, 0, -box.AbsoluteBounds.Depth / 2, Colors.White, "BackThumb");
+            }
         }
 
         private void CreateThumb(Point3D position, double thumbSize, double x, double y, double z, Color col, string name)
@@ -135,10 +139,6 @@ namespace Make3D.Adorners
             thumbs.Add(thumb);
             Adornments.Add(GetMesh(thumb));
         }
-
-
-
-
 
         internal override bool Select(GeometryModel3D geo)
         {
@@ -308,7 +308,7 @@ namespace Make3D.Adorners
         private void MouseMoveThumb(Point lastPos, Point newPos)
         {
             double dr = Math.Sqrt(Camera.Distance);
-            
+
             double deltaX = (newPos.X - lastPos.X);
             double deltaY = (newPos.Y - lastPos.Y);
             var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
@@ -332,7 +332,7 @@ namespace Make3D.Adorners
                             if (Camera.Orientation == PolarCamera.Orientations.Front)
                             {
                                 scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
-                                positionChange.X += ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width )/ 2.0;
+                                positionChange.X += ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
                             }
                             else
                             {
@@ -358,7 +358,6 @@ namespace Make3D.Adorners
                             {
                                 scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
                                 positionChange.X -= ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
-
                             }
                             else
                             {
@@ -366,7 +365,6 @@ namespace Make3D.Adorners
                                 {
                                     scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
                                     positionChange.X -= ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
-
                                 }
                             }
                         }

@@ -9,6 +9,21 @@ namespace Make3D.ViewModels
 {
     internal class ObjectPropertiesViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private bool canScale;
+
+        public bool CanScale
+        {
+            get { return canScale; }
+            set
+            {
+                if (value != canScale)
+                {
+                    canScale = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private string objectName;
 
         public String ObjectName
@@ -345,6 +360,7 @@ namespace Make3D.ViewModels
             rotationX = 90;
             rotationY = 90;
             rotationZ = 90;
+            CanScale = false;
         }
 
         private void OnPositionUpdated(object param)
@@ -452,6 +468,7 @@ namespace Make3D.ViewModels
             {
                 objectColour = selectedObject.Color;
                 objectName = selectedObject.Name;
+                CanScale = selectedObject.IsSizable();
             }
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");

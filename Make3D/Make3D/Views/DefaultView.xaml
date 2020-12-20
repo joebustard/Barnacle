@@ -59,7 +59,10 @@
                     <Custom:RibbonApplicationMenuItem x:Name="Open1" Header="Open" ImageSource="/images/buttons/human_document_open.png" Command="{Binding OpenCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save1" Header="Save" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save2" Header="Save As" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveAsCommand}" />
-                    <Custom:RibbonApplicationMenuItem x:Name="Insert" Header="Insert" ImageSource="/images/buttons/human_document_open.png" Command="{Binding InsertCommand}" />
+                    <Custom:RibbonApplicationMenuItem x:Name="Insert" Header="Insert" ImageSource="/images/buttons/human_document_open.png" Command="{Binding InsertCommand}" ToolTip="Insert the entire contents of an external model into this one" />
+
+                    <Custom:RibbonApplicationMenuItem x:Name="Reference" Header="Reference" ImageSource="/images/buttons/human_document_open.png" Command="{Binding ReferenceCommand}" ToolTip="Reference the contents of an external model. Objects can be moved and rotated but sized." />
+
                     <!--   <Custom:RibbonApplicationMenuItem Header="Print" ImageSource="/images/buttons/Printer.png" Command="{Binding PrintCommand}" />
                     <Custom:RibbonApplicationMenuItem Header="Print Preview" ImageSource="/images/buttons/Printer.png" Command="{Binding ViewCommand}" CommandParameter="PrintPreview" />
 -->
@@ -71,8 +74,9 @@
                 <Custom:RibbonGroup Name="ClipboardGroup" Header="Clipboard" LargeImageSource="/Make3D;component/Images/Buttons/clipboard.png">
                     <Custom:RibbonButton x:Name="CopyButton" Label="Cut" Command="{Binding CutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                     <Custom:RibbonButton x:Name="CutButton" Label="Copy" Command="{Binding CopyCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
-                    <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
+                    <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" ToolTip="Paste at the right of the existing bounds" />
 
+                    <Custom:RibbonButton x:Name="PasteAtButton" Label="Paste At" Command="{Binding PasteAtCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" ToolTip="Paste a the floor marker if its present" />
                     <Custom:RibbonButton x:Name="PasteMultiButton" Label="Multi Paste" Command="{Binding MultiPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
 
                     <Custom:RibbonButton x:Name="PasteCircularButton" Label="Circular Paste" Command="{Binding CircularPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
@@ -90,7 +94,7 @@
 
                     <Custom:RibbonButton x:Name="SelectAllButton" Label="All" Command="{Binding SelectCommand}" CommandParameter="All" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectAll.png" ToolTip="Select All" />
                     <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectClear.png" ToolTip="Clear selection" />
-                    <ComboBox x:Name="SelectObjectNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select an object by its name" ItemsSource="{Binding ObjectNames}" SelectedItem="{Binding SelectedObjectName}"/>
+                    <ComboBox x:Name="SelectObjectNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select an object by its name" ItemsSource="{Binding ObjectNames}" SelectedItem="{Binding SelectedObjectName}" />
                 </Custom:RibbonGroup>
 
                 <!--
@@ -176,6 +180,7 @@
 
                         <Custom:RibbonButton x:Name="FloorAlignment" Label="Floor" Command="{Binding AlignCommand}" CommandParameter="Floor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all on the floor." />
                         <Custom:RibbonButton x:Name="CentreAlignment" Label="Center" Command="{Binding AlignCommand}" CommandParameter="Centre" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered on the first selected." />
+                        <Custom:RibbonButton x:Name="MarkerAlignment" Label="Marker" Command="{Binding MarkerCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Move items to the marker on the floor" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Stack" Label="Stack">
                         <Custom:RibbonButton x:Name="StackLeftAlignment" Label="Stack Left" Command="{Binding AlignCommand}" CommandParameter="StackLeft" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the left of the first selected." />
@@ -235,6 +240,7 @@
                 <Custom:RibbonGroup Name="ShowGroup" Header="Show">
                     <Custom:RibbonCheckBox x:Name="ShowFloor" Label="Floor" IsChecked="{Binding ShowFloorChecked}" />
                     <Custom:RibbonCheckBox x:Name="ShowAxis" Label="Axis" IsChecked="{Binding ShowAxiesChecked}" />
+                    <Custom:RibbonCheckBox x:Name="ShowMarker" Label="Floor Marker" IsChecked="{Binding ShowFloorMarkerChecked}" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="OptionGroup" Header="Options">
                 </Custom:RibbonGroup>

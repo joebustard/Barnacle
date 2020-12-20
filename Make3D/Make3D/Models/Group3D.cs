@@ -48,6 +48,7 @@ namespace Make3D.Models
 
             rightObject = null;
             rightSolid = null;
+            XmlType = "groupobj";
         }
 
         internal bool Init()
@@ -63,9 +64,8 @@ namespace Make3D.Models
                 Bounds3D combined = new Bounds3D();
                 combined.Add(leftBnd);
                 combined.Add(rightBnd);
-              //  Position = new Point3D(combined.MidPoint().X, combined.MidPoint().Y, combined.MidPoint().Z);
+
                 result = PerformOperation();
-               
             }
 
             return result;
@@ -183,12 +183,12 @@ namespace Make3D.Models
                     {
                         TriangleIndices.Add(ids[i]);
                     }
-                   
-                    double nx = absoluteBounds.MidPoint().X ;
+
+                    double nx = absoluteBounds.MidPoint().X;
                     double ny = absoluteBounds.MidPoint().Y;
                     double nz = absoluteBounds.MidPoint().Z;
                     Position = new Point3D(nx, ny, nz);
-       
+
                     AbsoluteToRelative();
                     SetMesh();
                     res = true;
@@ -312,9 +312,9 @@ namespace Make3D.Models
             return null;
         }
 
-        internal override void Write(XmlDocument doc, XmlElement docNode)
+        internal override XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
-            XmlElement ele = doc.CreateElement("groupobj");
+            XmlElement ele = doc.CreateElement(XmlType);
             docNode.AppendChild(ele);
             ele.SetAttribute("Name", Name);
             ele.SetAttribute("Description", Description);
@@ -349,6 +349,8 @@ namespace Make3D.Models
             }
             leftObject.Write(doc, ele);
             rightObject.Write(doc, ele);
+
+            return ele;
         }
 
         public override Object3D Clone()

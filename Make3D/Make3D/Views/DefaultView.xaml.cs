@@ -19,8 +19,20 @@ namespace Make3D.Views
             NotificationManager.Subscribe("SaveFile", SaveFile);
             NotificationManager.Subscribe("OpenFile", OpenFile);
             NotificationManager.Subscribe("InsertFile", InsertFile);
+            NotificationManager.Subscribe("Reference", ReferenceModel);
             NotificationManager.Subscribe("OpenRecentFile", OpenRecentFile);
             NotificationManager.Subscribe("CheckExit", CheckExit);
+        }
+
+        private void ReferenceModel(object param)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = BaseViewModel.Document.FileFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                BaseViewModel.Document.ReferenceFile(dlg.FileName);
+                NotificationManager.Notify("Refresh", null);
+            }
         }
 
         private void CheckExit(object sender)
@@ -73,7 +85,6 @@ namespace Make3D.Views
             {
                 BaseViewModel.Document.InsertFile(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
-                //   UndoManager.Clear();
             }
         }
 
@@ -123,7 +134,6 @@ namespace Make3D.Views
 
         private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
         }
     }
 }

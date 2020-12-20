@@ -92,6 +92,9 @@
     </Compile>
     <Compile Include="Dialogs\LinearLoftDialog.xaml.cs" />
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
+    <Compile Include="Dialogs\RefernceModel.xaml.cs">
+      <DependentUpon>RefernceModel.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ShapeBase.xaml.cs" />
     <Compile Include="Dialogs\ShapeLoftDialog.xaml.cs" />
     <Compile Include="Dialogs\SpurGearDialog.xaml.cs">
@@ -110,6 +113,7 @@
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\EditorParameter.cs" />
     <Compile Include="Models\EditorParameters.cs" />
+    <Compile Include="Models\ExternalReference.cs" />
     <Compile Include="Models\Floor.cs" />
     <Compile Include="Models\FloorMarker.cs" />
     <Compile Include="Models\Grid.cs" />
@@ -124,6 +128,8 @@
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectSettings.cs" />
     <Compile Include="Models\ModelScales.cs" />
+    <Compile Include="Models\ReferenceGrpoup3D.cs" />
+    <Compile Include="Models\ReferenceObject3D.cs" />
     <Compile Include="Models\STLExporter.cs" />
     <Compile Include="undoer.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
@@ -209,6 +215,10 @@
     <Page Include="Dialogs\NUDBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RefernceModel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ShapeBase.xaml">
       <Generator>MSBuild:Compile</Generator>

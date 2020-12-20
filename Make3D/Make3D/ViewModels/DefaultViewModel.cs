@@ -35,6 +35,7 @@ namespace Make3D.ViewModels
         private bool rightTextAlignment;
         private bool showAxiesChecked;
         private bool showFloorChecked;
+        private bool showFloorMarkerChecked;
         private bool snapMarginChecked;
         private bool spurGearEnabled;
         private SubViewManager subViewMan;
@@ -55,7 +56,9 @@ namespace Make3D.ViewModels
                 return res;
             }
         }
+
         private string selectedObjectName;
+
         public string SelectedObjectName
         {
             get
@@ -65,7 +68,7 @@ namespace Make3D.ViewModels
 
             set
             {
-                if ( selectedObjectName != value)
+                if (selectedObjectName != value)
                 {
                     selectedObjectName = value;
                     NotifyPropertyChanged();
@@ -77,6 +80,7 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         public DefaultViewModel()
         {
             subViewMan = new SubViewManager();
@@ -86,11 +90,12 @@ namespace Make3D.ViewModels
             SaveCommand = new RelayCommand(OnSave);
             SaveAsCommand = new RelayCommand(OnSaveAs);
             InsertCommand = new RelayCommand(OnInsert);
-
+            ReferenceCommand = new RelayCommand(OnReference);
             UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
             CopyCommand = new RelayCommand(OnCopy);
             PasteCommand = new RelayCommand(OnPaste);
+            PasteAtCommand = new RelayCommand(OnPasteAt);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
             CircularPasteCommand = new RelayCommand(OnCircularPaste);
             CutCommand = new RelayCommand(OnCut);
@@ -102,6 +107,7 @@ namespace Make3D.ViewModels
             Zoom100Command = new RelayCommand(onZoomReset);
             //  PageCommand = new RelayCommand(OnPageNav);
             AlignCommand = new RelayCommand(OnAlignment);
+            MarkerCommand = new RelayCommand(OnMarker);
             DistributeCommand = new RelayCommand(OnDistribute);
             FlipCommand = new RelayCommand(OnFlip);
             SizeCommand = new RelayCommand(OnSize);
@@ -142,6 +148,7 @@ namespace Make3D.ViewModels
                 LoadMru();
             }
             ShowFloorChecked = true;
+            ShowFloorMarkerChecked = true;
             ShowAxiesChecked = true;
 
             EnableAllTools(true);
@@ -164,7 +171,20 @@ namespace Make3D.ViewModels
             SubView = subViewMan.GetView("editor");
         }
 
+        private void OnReference(object obj)
+        {
+            NotificationManager.Notify("Reference", null);
+        }
 
+        private void OnPasteAt(object obj)
+        {
+            NotificationManager.Notify("PasteAt", null);
+        }
+
+        private void OnMarker(object obj)
+        {
+            NotificationManager.Notify("Marker", null);
+        }
 
         private void ObjectNamesChanged(object param)
         {
@@ -176,6 +196,7 @@ namespace Make3D.ViewModels
         public ICommand AddPageCommand { get; set; }
 
         public ICommand AlignCommand { get; set; }
+        public ICommand MarkerCommand { get; set; }
 
         public bool BoldChecked
         {
@@ -296,6 +317,7 @@ namespace Make3D.ViewModels
         public ICommand ImportCommand { get; set; }
 
         public ICommand InsertCommand { get; set; }
+        public ICommand ReferenceCommand { get; set; }
 
         public ICommand IrregularCommand { get; set; }
 
@@ -372,6 +394,7 @@ namespace Make3D.ViewModels
         public ICommand PageCommand { get; set; }
 
         public ICommand PasteCommand { get; set; }
+        public ICommand PasteAtCommand { get; set; }
 
         public ICommand PrintCommand { get; set; }
 
@@ -450,6 +473,23 @@ namespace Make3D.ViewModels
                     showFloorChecked = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("ShowFloor", showFloorChecked);
+                }
+            }
+        }
+
+        public bool ShowFloorMarkerChecked
+        {
+            get
+            {
+                return showFloorMarkerChecked;
+            }
+            set
+            {
+                if (showFloorMarkerChecked != value)
+                {
+                    showFloorMarkerChecked = value;
+                    NotifyPropertyChanged();
+                    NotificationManager.Notify("ShowFloorMarker", showFloorMarkerChecked);
                 }
             }
         }
@@ -608,6 +648,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand TwoShapeCommand { get; set; }
+
         public bool TwoShapeEnabled
         {
             get { return twoShapeEnabled; }
@@ -907,6 +948,7 @@ namespace Make3D.ViewModels
         {
             NotificationManager.Notify("TankTrack", obj);
         }
+
         private void OnTextAlignment(object obj)
         {
             NotificationManager.Notify("TextAlignment", obj);
@@ -916,6 +958,7 @@ namespace Make3D.ViewModels
         {
             NotificationManager.Notify("TwoShape", null);
         }
+
         private void OnUndo(object obj)
         {
             NotificationManager.Notify("Undo", null);
@@ -1050,6 +1093,7 @@ namespace Make3D.ViewModels
                     break;
             }
         }
+
         private void SetStatusText1(object param)
         {
             StatusBlockText1 = param.ToString();

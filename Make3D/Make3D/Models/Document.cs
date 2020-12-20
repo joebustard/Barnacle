@@ -54,6 +54,48 @@ namespace Make3D.Models
             }
         }
 
+        internal void ReferenceFile(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    DateTime timeStamp = File.GetLastWriteTime(fileName);
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(fileName);
+                    XmlNode docNode = doc.SelectSingleNode("Document");
+                    XmlNodeList nodes = docNode.ChildNodes;
+                    foreach (XmlNode nd in nodes)
+                    {
+                        if (nd.Name == "obj")
+                        {
+                            ReferenceObject3D obj = new ReferenceObject3D();
+
+                            obj.Reference.Path = fileName;
+                            obj.Reference.TimeStamp = timeStamp;
+                            obj.BaseRead(nd);
+                            obj.SetMesh();
+                            Content.Add(obj);
+                        }
+                        if (nd.Name == "groupobj")
+                        {
+                            ReferenceGroup3D obj = new ReferenceGroup3D();
+
+                            obj.Reference.Path = fileName;
+                            obj.Reference.TimeStamp = timeStamp;
+                            obj.BaseRead(nd);
+                            obj.SetMesh();
+                            Content.Add(obj);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         internal void Clear()
         {
             FilePath = "";
@@ -94,7 +136,7 @@ namespace Make3D.Models
         internal ObservableCollection<string> GetObjectNames()
         {
             ObservableCollection<string> res = new ObservableCollection<string>();
-            foreach( Object3D ob in Content)
+            foreach (Object3D ob in Content)
             {
                 res.Add(ob.Name);
             }
@@ -108,7 +150,7 @@ namespace Make3D.Models
 
         public void Load(string fileName)
         {
-            Read(fileName);
+            Read(fileName, true);
             FilePath = fileName;
             FileName = System.IO.Path.GetFileName(fileName);
 
@@ -123,7 +165,7 @@ namespace Make3D.Models
             Dirty = false;
         }
 
-        public virtual void Read(string file, bool clearFirst = true)
+        public virtual void Read(string file, bool clearFirst)
         {
             try
             {
@@ -164,9 +206,26 @@ namespace Make3D.Models
                         }
                         Content.Add(obj);
                     }
+                    if (nd.Name == "refobj")
+                    {
+                        ReferenceObject3D obj = new ReferenceObject3D();
+                        obj.Read(nd);
+
+                        obj.SetMesh();
+
+                        Content.Add(obj);
+                    }
                     if (nd.Name == "groupobj")
                     {
                         Group3D obj = new Group3D();
+                        obj.Read(nd);
+
+                        obj.SetMesh();
+                        Content.Add(obj);
+                    }
+                    if (nd.Name == "refgroupobj")
+                    {
+                        ReferenceGroup3D obj = new ReferenceGroup3D();
                         obj.Read(nd);
 
                         obj.SetMesh();
@@ -220,7 +279,6 @@ namespace Make3D.Models
                     string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     exportList.Clear();
-                    
                 }
                 res = pth;
             }
@@ -268,7 +326,7 @@ namespace Make3D.Models
                         Directory.CreateDirectory(pth);
                     }
                     string expName = System.IO.Path.GetFileName(FilePath);
-                    expName = System.IO.Path.ChangeExtension(expName,"stl");
+                    expName = System.IO.Path.ChangeExtension(expName, "stl");
                     expName = System.IO.Path.Combine(pth, expName);
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     res = expName;
@@ -331,7 +389,6 @@ namespace Make3D.Models
                     exportList.Add(clone);
                 }
 
-    
                 String pth = System.IO.Path.GetDirectoryName(FilePath);
                 pth = System.IO.Path.Combine(pth, "export");
                 if (!Directory.Exists(pth))
@@ -599,6 +656,42 @@ namespace Make3D.Models
                     break;
                 }
             }
+            return res;
+        }
+
+        public static XmlElement FindExternalModel(string name, string path)
+        {
+            XmlElement res = null;
+            if (File.Exists(path))
+            {
+                try
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(path);
+                    XmlNode docNode = doc.SelectSingleNode("Document");
+                    XmlNodeList nodes = docNode.ChildNodes;
+                    foreach (XmlNode nd in nodes)
+                    {
+                        if (nd.Name == "obj" || nd.Name == "groupobj")
+                        {
+                            XmlElement ele = nd as XmlElement;
+                            if (ele.HasAttribute("Name"))
+                            {
+                                if (ele.GetAttribute("Name") == name)
+                                {
+                                    res = ele;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
             return res;
         }
     }

@@ -11,6 +11,7 @@ namespace Make3D.Models
 {
     public class Object3D
     {
+        protected String XmlType { get; set; }
         public Point3D rotation;
         protected Bounds3D absoluteBounds;
         private Point3DCollection absoluteObjectVertices;
@@ -41,6 +42,11 @@ namespace Make3D.Models
             }
         }
 
+        public virtual bool IsSizable()
+        {
+            return true;
+        }
+
         public Object3D()
         {
             try
@@ -57,6 +63,7 @@ namespace Make3D.Models
                 absoluteBounds = new Bounds3D();
                 PrimType = "";
                 editorParameters = new EditorParameters();
+                XmlType = "obj";
             }
             catch (Exception ex)
             {
@@ -68,7 +75,7 @@ namespace Make3D.Models
         public virtual Object3D ConvertToMesh()
         {
             PrimType = "Mesh";
-            //Unitise();
+
             return this;
         }
 
@@ -159,7 +166,6 @@ namespace Make3D.Models
                 if (scale != value)
                 {
                     scale = value;
-                    //Remesh();
                 }
             }
         }
@@ -338,16 +344,23 @@ namespace Make3D.Models
             Position = new Point3D(Position.X, Position.Y - minY, Position.Z);
         }
 
-        public void Rotate(Point3D Rotation)
+        public void Rotate(Point3D RotateBy)
         {
+            double r1 = DegreesToRad(RotateBy.Y);
+            double r2 = DegreesToRad(RotateBy.Z);
+            double r3 = DegreesToRad(RotateBy.X);
             if (relativeObjectVertices != null)
             {
-                Point3DCollection tmp = new Point3DCollection();
-                double r1 = DegreesToRad(Rotation.Y);
-                double r2 = DegreesToRad(Rotation.Z);
-                double r3 = DegreesToRad(Rotation.X);
-
-                RotatePoints(tmp, r1, r2, r3);
+                if (IsSizable())
+                {
+                    relativeObjectVertices = RotatePoints(relativeObjectVertices, r1, r2, r3);
+                }
+                else
+                {
+                    rotation.X += r3;
+                    rotation.Y += r1;
+                    rotation.Z += r2;
+                }
             }
         }
 
@@ -355,17 +368,17 @@ namespace Make3D.Models
         {
             if (relativeObjectVertices != null)
             {
-                Point3DCollection tmp = new Point3DCollection();
                 double r1 = Rotation.Y;
                 double r2 = Rotation.Z;
                 double r3 = Rotation.X;
 
-                RotatePoints(tmp, r1, r2, r3);
+                relativeObjectVertices = RotatePoints(relativeObjectVertices, r1, r2, r3);
             }
         }
 
-        private void RotatePoints(Point3DCollection tmp, double r1, double r2, double r3)
+        private Point3DCollection RotatePoints(Point3DCollection pnts, double r1, double r2, double r3)
         {
+            Point3DCollection tmp = new Point3DCollection();
             var cosa = Math.Cos(r2);
             var sina = Math.Sin(r2);
 
@@ -386,7 +399,7 @@ namespace Make3D.Models
             var Azx = -sinb;
             var Azy = cosb * sinc;
             var Azz = cosb * cosc;
-            foreach (Point3D cp in relativeObjectVertices)
+            foreach (Point3D cp in pnts)
             {
                 Point3D rp = new Point3D();
                 rp.X = Axx * cp.X + Axy * cp.Y + Axz * cp.Z;
@@ -395,7 +408,7 @@ namespace Make3D.Models
                 AdjustBounds(rp);
                 tmp.Add(rp);
             }
-            relativeObjectVertices = tmp;
+            return tmp;
         }
 
         public void ScaleMesh(double sx, double sy, double sz)
@@ -418,9 +431,19 @@ namespace Make3D.Models
             if (absoluteObjectVertices != null)
             {
                 absoluteObjectVertices.Clear();
-                absoluteBounds = new Bounds3D();
 
-                foreach (Point3D cp in relativeObjectVertices)
+                Point3DCollection tmp;
+                if (Rotation != null && (Rotation.X != 0 || Rotation.Y != 0 || Rotation.Z != 0))
+                {
+                    tmp = RotatePoints(relativeObjectVertices, Rotation.Y, Rotation.Z, Rotation.X); // ?????
+                }
+                else
+                {
+                    tmp = relativeObjectVertices;
+                }
+
+                absoluteBounds = new Bounds3D();
+                foreach (Point3D cp in tmp)
                 {
                     Point3D ap = new Point3D();
                     ap.X = Position.X + (cp.X);
@@ -672,9 +695,9 @@ namespace Make3D.Models
             surfaceMesh.Normals = normals;
         }
 
-        internal virtual void Write(XmlDocument doc, XmlElement docNode)
+        internal virtual XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
-            XmlElement ele = doc.CreateElement("obj");
+            XmlElement ele = doc.CreateElement(XmlType);
             docNode.AppendChild(ele);
             ele.SetAttribute("Name", Name);
             ele.SetAttribute("Description", Description);
@@ -712,6 +735,8 @@ namespace Make3D.Models
                                           triangleIndices[i + 2].ToString());
                 ele.AppendChild(faceEle);
             }
+
+            return ele;
         }
 
         protected double GetDouble(XmlNode pn, string v)
@@ -873,6 +898,12 @@ namespace Make3D.Models
                 {
                     res.triangleIndices.Add(i);
                 }
+            }
+            res.EditorParameters.ToolName = EditorParameters.ToolName;
+            foreach (EditorParameter ep in editorParameters.Parameters)
+            {
+                EditorParameter np = new EditorParameter(ep.Name, ep.Value);
+                res.EditorParameters.Parameters.Add(np);
             }
             res.Remesh();
             return res;
