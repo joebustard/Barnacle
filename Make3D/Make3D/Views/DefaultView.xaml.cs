@@ -1,4 +1,5 @@
-﻿using Make3D.ViewModels;
+﻿using Make3D.Dialogs;
+using Make3D.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -15,6 +16,8 @@ namespace Make3D.Views
         public DefaultView()
         {
             InitializeComponent();
+            NotificationManager.Subscribe("NewFile", NewFile);
+            NotificationManager.Subscribe("NewProject", NewProject);
             NotificationManager.Subscribe("SaveAsFile", SaveAsFile);
             NotificationManager.Subscribe("SaveFile", SaveFile);
             NotificationManager.Subscribe("OpenFile", OpenFile);
@@ -24,12 +27,33 @@ namespace Make3D.Views
             NotificationManager.Subscribe("CheckExit", CheckExit);
         }
 
+        private void NewFile(object param)
+        {
+            CheckSaveFirst(null);
+            BaseViewModel.Document.Clear();
+            //   Caption = BaseViewModel.Document.Caption;
+            NotificationManager.Notify("NewDocument", null);
+        }
+
+        private void NewProject(object param)
+        {
+            CheckSaveFirst(null);
+            BaseViewModel.Document.Clear();
+
+            NotificationManager.Notify("NewDocument", null);
+            NewProjectDlg dlg = new NewProjectDlg();
+            if (dlg.ShowDialog() == true)
+            {
+            }
+        }
+
         private void ReferenceModel(object param)
         {
             OpenFileDialog dlg = new OpenFileDialog();
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
+                CheckPoint();
                 BaseViewModel.Document.ReferenceFile(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
             }
@@ -56,7 +80,7 @@ namespace Make3D.Views
         {
             if (BaseViewModel.Document.Dirty)
             {
-                MessageBoxResult res = MessageBox.Show("Document has changed. Save before first?", "Warning", MessageBoxButton.YesNoCancel);
+                MessageBoxResult res = MessageBox.Show("Document has changed. Save first?", "Warning", MessageBoxButton.YesNoCancel);
                 if (res == MessageBoxResult.Yes)
                 {
                     SaveFile(sender);
@@ -72,6 +96,7 @@ namespace Make3D.Views
             if (dlg.ShowDialog() == true)
             {
                 BaseViewModel.Document.Load(dlg.FileName);
+
                 NotificationManager.Notify("Refresh", null);
                 undoer.ClearUndoFiles();
             }
@@ -83,8 +108,18 @@ namespace Make3D.Views
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
+                CheckPoint();
                 BaseViewModel.Document.InsertFile(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
+            }
+        }
+
+        public void CheckPoint()
+        {
+            if (BaseViewModel.Document != null)
+            {
+                string s = undoer.GetNextCheckPointName();
+                BaseViewModel.Document.Write(s);
             }
         }
 

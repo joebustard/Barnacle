@@ -13,6 +13,8 @@ namespace Make3D.Models
             set;
         }
 
+        public bool RefValid { get; set; }
+
         public override bool IsSizable()
         {
             return false;
@@ -22,6 +24,7 @@ namespace Make3D.Models
         {
             Reference = new ExternalReference();
             XmlType = "refobj";
+            RefValid = false;
         }
 
         public override Object3D ConvertToMesh()
@@ -38,6 +41,7 @@ namespace Make3D.Models
 
         internal override void Read(XmlNode nd)
         {
+            RefValid = false;
             XmlElement ele = nd as XmlElement;
             Name = ele.GetAttribute("Name");
 
@@ -57,24 +61,28 @@ namespace Make3D.Models
                 }
                 else
                 {
-                    base.Read(src);
-                    // read the position and rotation AFTER reading the base node as we wnat it from the
-                    // reference object not the source
-                    //
-                    XmlNode pn = nd.SelectSingleNode("Position");
-                    Point3D p = new Point3D();
-                    p.X = GetDouble(pn, "X");
-                    p.Y = GetDouble(pn, "Y");
-                    p.Z = GetDouble(pn, "Z");
-                    Position = p;
+                    if (src.Name == "obj")
+                    {
+                        base.Read(src);
+                        // read the position and rotation AFTER reading the base node as we wnat it from the
+                        // reference object not the source
+                        //
+                        XmlNode pn = nd.SelectSingleNode("Position");
+                        Point3D p = new Point3D();
+                        p.X = GetDouble(pn, "X");
+                        p.Y = GetDouble(pn, "Y");
+                        p.Z = GetDouble(pn, "Z");
+                        Position = p;
 
-                    XmlNode sn = nd.SelectSingleNode("Rotation");
-                    Point3D sc = new Point3D();
-                    sc.X = GetDouble(sn, "X");
-                    sc.Y = GetDouble(sn, "Y");
-                    sc.Z = GetDouble(sn, "Z");
-                    rotation = sc;
-                    Remesh();
+                        XmlNode sn = nd.SelectSingleNode("Rotation");
+                        Point3D sc = new Point3D();
+                        sc.X = GetDouble(sn, "X");
+                        sc.Y = GetDouble(sn, "Y");
+                        sc.Z = GetDouble(sn, "Z");
+                        rotation = sc;
+                        Remesh();
+                        RefValid = true;
+                    }
                 }
             }
         }

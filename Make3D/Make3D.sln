@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonTriangulationLib", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workflow", "Workflow\Workflow.csproj", "{F7FDC6DA-9937-472F-A90A-22FADF138439}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateLib", "TemplateLib\TemplateLib.csproj", "{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{F7FDC6DA-9937-472F-A90A-22FADF138439}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7FDC6DA-9937-472F-A90A-22FADF138439}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7FDC6DA-9937-472F-A90A-22FADF138439}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -123,6 +123,15 @@ namespace CSGLib
             return result;
         }
 
+        public Solid GetReverseDifference()
+        {
+            Object1.InvertInsideFaces();
+            Solid result = ComposeSolid(Status.INSIDE, Status.OPPOSITE, Status.OUTSIDE);
+            Object1.InvertInsideFaces();
+
+            return result;
+        }
+
         public Solid GetIntersection()
         {
             //   Object2.InvertInsideFaces();

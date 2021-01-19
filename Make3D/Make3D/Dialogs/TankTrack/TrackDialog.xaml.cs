@@ -37,7 +37,6 @@ namespace Make3D.Dialogs
         private bool showLinks;
         private bool showOutline;
 
-
         public TrackDialog()
         {
             InitializeComponent();
@@ -59,7 +58,6 @@ namespace Make3D.Dialogs
             Thickness = 6;
             SpudSize = 4;
             GuideSize = 4;
-
         }
 
         public bool ShowLinkMarkers
@@ -738,6 +736,8 @@ namespace Make3D.Dialogs
             localImage.UriSource = fileUri;
             //    localImage.DecodePixelWidth = 800;
             localImage.EndInit();
+            MainCanvas.Width = localImage.Width;
+            MainCanvas.Height = localImage.Height;
             EditorParameters.Set("ImagePath", f);
             UpdateDisplay();
         }

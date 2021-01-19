@@ -9,7 +9,6 @@
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
-
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -18,14 +17,14 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition/>
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="40" />
+                <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120" />
@@ -33,16 +32,16 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" VerticalAlignment="Center">Thickness</Label>
-            <TextBox Grid.Row="0" Grid.Column="1"  MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding Thickness}"/>
+            <TextBox Grid.Row="0" Grid.Column="1"  MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding Thickness}" />
 
             <Label Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">Radius</Label>
-            <TextBox Grid.Row="1" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center"  Text="{Binding Radius}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center"  Text="{Binding Radius}" />
 
             <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" >No. Of Teeth</Label>
             <TextBox Grid.Row="2" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding NumberOfTeeth}" />
 
             <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" >Teeth Base Width</Label>
-            <TextBox Grid.Row="3" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding TeethBaseWidth}"/>
+            <TextBox Grid.Row="3" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding TeethBaseWidth}" />
 
             <Label Grid.Row="4" Grid.Column="0" VerticalAlignment="Center" >Teeth Base Height</Label>
             <TextBox Grid.Row="4" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding TeethBaseHeight}" />
@@ -52,41 +51,40 @@
 
             <Label Grid.Row="6" Grid.Column="0" VerticalAlignment="Center" >Teeth Top Height</Label>
             <TextBox Grid.Row="6" Grid.Column="1" MaxHeight="30" MaxWidth="60" VerticalContentAlignment="Center" Text="{Binding TeethTopHeight}" />
-            <Canvas x:Name="FlatView" Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Background="AliceBlue"/>
+            <Canvas x:Name="FlatView" Grid.Row="0" Grid.Column="2" Grid.RowSpan="6" Background="AliceBlue" />
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
-        <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
-            <Viewport3D.Camera>
-                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                </PerspectiveCamera>
-            </Viewport3D.Camera>
+                <Viewport3D.Camera>
+                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                    </PerspectiveCamera>
+                </Viewport3D.Camera>
 
-            <ModelVisual3D>
-                <ModelVisual3D.Content>
-                    <Model3DGroup>
-                        <AmbientLight Color="#FF808080" />
-                        <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                        </DirectionalLight>
-                    </Model3DGroup>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup>
+                            <AmbientLight Color="#FF808080" />
+                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                            </DirectionalLight>
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
 
-            <ModelVisual3D x:Name = "MyModel">
-                <ModelVisual3D.Content>
-                    <Model3DGroup x:Name="MyModelGroup">
-                    </Model3DGroup>
-                </ModelVisual3D.Content>
-            </ModelVisual3D>
-        </Viewport3D>
+                <ModelVisual3D x:Name = "MyModel">
+                    <ModelVisual3D.Content>
+                        <Model3DGroup x:Name="MyModelGroup">
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+            </Viewport3D>
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>

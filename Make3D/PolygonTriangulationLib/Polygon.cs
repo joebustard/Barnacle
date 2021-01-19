@@ -263,7 +263,6 @@ namespace PolygonTriangulationLib
 
             // We should never get here because there should
             // always be at least two ears.
-            Debug.Assert(false);
         }
 
         // Return true if the three points form an ear.
@@ -310,12 +309,16 @@ namespace PolygonTriangulationLib
             // Find an ear.
             int A = 0, B = 0, C = 0;
             FindEar(ref A, ref B, ref C);
+            if ((A >= 0 && A < Points.Length) &&
+                 (B >= 0 && B < Points.Length) &&
+                 (C >= 0 && C < Points.Length))
+            {
+                // Create a new triangle for the ear.
+                triangles.Add(new Triangle(Points[A], Points[B], Points[C]));
 
-            // Create a new triangle for the ear.
-            triangles.Add(new Triangle(Points[A], Points[B], Points[C]));
-
-            // Remove the ear from the polygon.
-            RemovePointFromArray(B);
+                // Remove the ear from the polygon.
+                RemovePointFromArray(B);
+            }
         }
 
         // Remove point target from the array.

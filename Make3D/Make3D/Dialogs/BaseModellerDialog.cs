@@ -21,12 +21,43 @@ namespace Make3D.Dialogs
         private Point3DCollection vertices;
         protected Floor floor;
         protected Grid3D grid;
-        
+        protected Axies axies;
+
         public PolarCamera Camera
         {
             get
             {
                 return polarCamera;
+            }
+        }
+
+        protected bool showFloor;
+
+        public virtual bool ShowFloor
+        {
+            get { return showFloor; }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        protected bool showAxies;
+
+        public virtual bool ShowAxies
+        {
+            get { return showAxies; }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -41,6 +72,9 @@ namespace Make3D.Dialogs
             editorParameters = new EditorParameters();
             floor = new Floor();
             grid = new Grid3D();
+            axies = new Axies();
+            showFloor = true;
+            showAxies = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -239,7 +273,7 @@ namespace Make3D.Dialogs
             Viewport3D vp = sender as Viewport3D;
             if (vp != null)
             {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     oldMousePos = e.GetPosition(vp);
                 }
@@ -251,7 +285,7 @@ namespace Make3D.Dialogs
             Viewport3D vp = sender as Viewport3D;
             if (vp != null)
             {
-                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed)
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     Point pn = e.GetPosition(vp);
                     double dx = pn.X - oldMousePos.X;
@@ -259,6 +293,7 @@ namespace Make3D.Dialogs
                     polarCamera.Move(dx, -dy);
                     UpdateCameraPos();
                     oldMousePos = pn;
+                    e.Handled = true;
                 }
             }
         }

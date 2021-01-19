@@ -85,6 +85,7 @@ namespace Make3D.ViewModels
         {
             subViewMan = new SubViewManager();
             NewCommand = new RelayCommand(OnNew);
+            NewProjectCommand = new RelayCommand(OnNewProject);
             OpenCommand = new RelayCommand(OnOpen);
             OpenRecentFileCommand = new RelayCommand(OnOpenRecent);
             SaveCommand = new RelayCommand(OnSave);
@@ -119,13 +120,12 @@ namespace Make3D.ViewModels
             SliceCommand = new RelayCommand(OnSlice);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
-            IrregularCommand = new RelayCommand(OnIrregular);
-            LinearCommand = new RelayCommand(OnLinear);
-            DoughnutCommand = new RelayCommand(OnDoughNut);
-            FuselageCommand = new RelayCommand(OnFuselage);
+            ToolCommand = new RelayCommand(OnTool);
+
             TwoShapeCommand = new RelayCommand(OnTwoShape);
             SpurGearCommand = new RelayCommand(OnSpurGear);
             TankTrackCommand = new RelayCommand(OnTankTrack);
+            MeshEditCommand = new RelayCommand(OnMeshEdit);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -169,6 +169,16 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ObjectNamesChanged", ObjectNamesChanged);
 
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnNewProject(object obj)
+        {
+            NotificationManager.Notify("NewProject", null);
+        }
+
+        private void OnMeshEdit(object obj)
+        {
+            NotificationManager.Notify("MeshEdit", null);
         }
 
         private void OnReference(object obj)
@@ -319,7 +329,7 @@ namespace Make3D.ViewModels
         public ICommand InsertCommand { get; set; }
         public ICommand ReferenceCommand { get; set; }
 
-        public ICommand IrregularCommand { get; set; }
+        public ICommand ToolCommand { get; set; }
 
         public bool IrregularEnabled
         {
@@ -386,6 +396,7 @@ namespace Make3D.ViewModels
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
+        public ICommand NewProjectCommand { get; set; }
 
         public ICommand OpenCommand { get; set; }
 
@@ -680,6 +691,7 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand MeshEditCommand { get; set; }
         public ICommand UndoCommand { get; set; }
 
         public ICommand Zoom100Command { get; set; }
@@ -797,11 +809,6 @@ namespace Make3D.ViewModels
         {
         }
 
-        private void OnDoughNut(object obj)
-        {
-            NotificationManager.Notify("Doughnut", obj);
-        }
-
         private void OnExit(object obj)
         {
             if (BaseViewModel.Document.Dirty)
@@ -852,14 +859,10 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("InsertFile", obj);
         }
 
-        private void OnIrregular(object obj)
+        private void OnTool(object obj)
         {
-            NotificationManager.Notify("Irregular", null);
-        }
-
-        private void OnLinear(object obj)
-        {
-            NotificationManager.Notify("Linear", obj);
+            string s = obj.ToString();
+            NotificationManager.Notify(s, null);
         }
 
         private void OnMultiPaste(object obj)
@@ -869,10 +872,7 @@ namespace Make3D.ViewModels
 
         private void OnNew(object obj)
         {
-            BaseViewModel.Document.Clear();
-            Caption = BaseViewModel.Document.Caption;
-            NotificationManager.Notify("NewDocument", null);
-            //UndoManager.Clear();
+            NotificationManager.Notify("NewFile", null);
         }
 
         private void OnOpen(object obj)

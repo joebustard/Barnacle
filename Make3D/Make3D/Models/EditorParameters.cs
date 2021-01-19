@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace Make3D.Models
@@ -11,18 +8,20 @@ namespace Make3D.Models
     {
         public List<EditorParameter> Parameters { get; set; }
         public String ToolName { get; set; }
+
         public bool HasContent
         {
             get
             {
                 bool res = false;
-                if ( ToolName != "" && Parameters.Count > 0)
+                if (ToolName != "" && Parameters.Count > 0)
                 {
                     res = true;
                 }
                 return res;
             }
         }
+
         public EditorParameters()
         {
             Parameters = new List<EditorParameter>();
@@ -32,17 +31,16 @@ namespace Make3D.Models
         internal void Set(string key, string val)
         {
             bool found = false;
-            foreach( EditorParameter p in Parameters)
+            foreach (EditorParameter p in Parameters)
             {
-                if ( p.Name.ToLower() == key.ToLower())
+                if (p.Name.ToLower() == key.ToLower())
                 {
                     p.Value = val;
                     found = true;
                     break;
-
                 }
             }
-            if ( !found)
+            if (!found)
             {
                 Parameters.Add(new EditorParameter(key, val));
             }
@@ -62,6 +60,40 @@ namespace Make3D.Models
             return res;
         }
 
+        internal double GetDouble(string key)
+        {
+            double res = 0;
+            string s = Get(key);
+            if (s != "")
+            {
+                try
+                {
+                    res = Convert.ToDouble(s);
+                }
+                catch
+                {
+                }
+            }
+            return res;
+        }
+
+        internal double GetInt(string key)
+        {
+            int res = 0;
+            string s = Get(key);
+            if (s != "")
+            {
+                try
+                {
+                    res = Convert.ToInt32(s);
+                }
+                catch
+                {
+                }
+            }
+            return res;
+        }
+
         internal void Write(XmlDocument doc, XmlElement ele)
         {
             XmlElement prms = doc.CreateElement("EditorParameters");
@@ -72,7 +104,8 @@ namespace Make3D.Models
             }
             ele.AppendChild(prms);
         }
-        internal void Load( XmlElement ele)
+
+        internal void Load(XmlElement ele)
         {
             Parameters.Clear();
             if (ele.HasAttribute("ToolName"))
@@ -80,7 +113,7 @@ namespace Make3D.Models
                 ToolName = ele.GetAttribute("ToolName");
             }
             XmlNodeList nds = ele.SelectNodes("P");
-            foreach ( XmlNode n in nds)
+            foreach (XmlNode n in nds)
             {
                 XmlElement pel = n as XmlElement;
                 Parameters.Add(new EditorParameter(pel.GetAttribute("Name"), pel.GetAttribute("Val")));
@@ -88,4 +121,3 @@ namespace Make3D.Models
         }
     }
 }
-

@@ -1,0 +1,77 @@
+﻿<Defs>
+	<!--   Basic Template -->
+	<ProjectDefinition Name="Basic">
+		<Description>
+		Creates a basic folder structure to save the new model.
+
+		The folders are
+
+		   /images 
+		   A place to save any image files that will be used to create the model
+
+		   /export
+		   A place to save any STL files exported from the project
+
+		   /gcode
+		   A place to save 3D Printer files created by the external slicer.
+
+		   /scripts
+		   A place to save any limpet scripts
+
+		These folders are simply placeholders. Nothing is created in them.
+		</Description>
+		<Folder Name="images"/>
+		<Folder Name="export"/>
+		<Folder Name="gcode"/>
+		<Folder Name="scripts"/>
+	</ProjectDefinition>
+
+	<!--  Tank Model Template -->
+	<ProjectDefinition Name="Tank Model">
+		<Description>
+		Creates a  folder structure with empty models for a typical tank model kit.
+		The folders are
+
+		   /backup
+		   A place to store backups of the parts as they are developed
+
+		   /docs
+		   A place to store documentation such as design notes and build instructions
+
+		   /images 
+		   A place to save any image files that will be used to create the model
+
+		   /export
+		   A place to save any STL files exported from the project
+
+		   /gcode
+		   A place to save 3D Printer files created by the external slicer.
+
+		   /scripts
+		   A place to save any limpet scripts
+
+		</Description>
+		<Folder Name=".">
+			<File Name="Hull.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Turrent.txt" Source="templates/blankmodel.txt"/>
+			<File Name="LeftRunningGear.txt" Source="templates/blankmodel.txt"/>
+			<File Name="RightRunningGear.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Engine.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Weapons.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Wheels.txt" Source="templates/blankmodel.txt"/>
+			<File Name="DoorsAndHatches.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Suspension.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Lights.txt" Source="templates/blankmodel.txt"/>
+			<File Name="Details.txt" Source="templates/blankmodel.txt"/>
+		</Folder>
+		<Folder Name="backup"/>
+		<Folder Name="docs">
+			<File Name="BillOfMaterials.txt" Source="templates/tankbom.txt"/>
+			<File Name="BuildInstructions.txt" Source="templates/tankbuildinstructions.txt"/>
+		</Folder>
+		<Folder Name="images"/>
+		<Folder Name="export"/>
+		<Folder Name="gcode"/>
+		<Folder Name="scripts"/>
+	</ProjectDefinition>
+</Defs>

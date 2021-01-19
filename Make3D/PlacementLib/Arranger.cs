@@ -52,12 +52,14 @@ namespace PlacementLib
         public double BestScore { get; set; }
         private double maxR;
         private List<PointF> placementPoints;
+        private double plateWidth = 210;
+        private double plateHeight = 210;
 
         public Arranger()
         {
             clearance = 3;
-            width = 200;
-            height = 200;
+            width = 180;
+            height = 180;
 
             ComponentsToPlace = new List<Component>();
             Results = new List<Component>();
@@ -68,8 +70,8 @@ namespace PlacementLib
             BestScore = double.MaxValue;
             workspaces = new List<Workspace>();
             Workspace ws = new Workspace();
-            centre.X = width / 2;
-            centre.Y = height / 2;
+            centre.X = plateWidth / 2;
+            centre.Y = plateHeight / 2;
             maxR = Math.Sqrt((centre.X * centre.X) + (centre.Y * centre.Y)) - clearance;
             // more components make the search time increase dramatically
             // increasing A reduces the time but also the quality

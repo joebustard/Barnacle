@@ -1,0 +1,43 @@
+﻿<Window x:Class="Make3D.Dialogs.NewProjectDlg"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Make3D.Dialogs"
+        mc:Ignorable="d"
+        Title="New Project" Height="450" Width="800" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="1*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+
+            <RowDefinition Height="30" />
+        </Grid.RowDefinitions>
+        <Label Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Project Name</Label>
+        <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="200" TextChanged="TextBox_TextChanged" />
+
+        <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Template</Label>
+
+        <ComboBox Grid.Row="2" x:Name="TemplateBox" Grid.Column="2" SelectionChanged="ComboBox_SelectionChanged" />
+        <TextBox x:Name="DescriptionBox" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" AcceptsReturn="True" IsReadOnly="True" />
+
+        <Grid Grid.Row="7" Grid.Column="2" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Cancel" Click="Cancel_Click" />
+            <Button Grid.Column="1" Content="OK" Click="OK_Click" x:Name="OK_Button" />
+        </Grid>
+    </Grid>
+</Window>

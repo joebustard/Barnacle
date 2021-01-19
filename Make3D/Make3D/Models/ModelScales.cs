@@ -10,6 +10,9 @@ namespace Make3D.Models
         {
             Standard["1"] = 1.0;
             Standard["1/2"] = 1.0 / 2.0;
+            Standard["1/3"] = 1.0 / 3.0;
+            Standard["1/4"] = 1.0 / 4.0;
+            Standard["1/5"] = 1.0 / 5.0;
             Standard["1/6"] = 1.0 / 6.0;
             Standard["1/12"] = 1.0 / 12.0;
             Standard["1/24"] = 1.0 / 24;

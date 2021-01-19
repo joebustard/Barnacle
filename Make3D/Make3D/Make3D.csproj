@@ -73,40 +73,55 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Dialogs\BaseModellerDialog.cs" />
-    <Compile Include="Dialogs\BezierLine.cs" />
-    <Compile Include="Dialogs\BulkheadControl.xaml.cs">
+    <Compile Include="Dialogs\BezierFuselage\BezierLine.cs" />
+    <Compile Include="Dialogs\BezierFuselage\BulkheadControl.xaml.cs">
       <DependentUpon>BulkheadControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Blank\Blank.xaml.cs">
+      <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ExportSelectedDialog.xaml.cs">
+    <Compile Include="Dialogs\Exporting\ExportSelectedDialog.xaml.cs">
       <DependentUpon>ExportSelectedDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\FuselageBulkhead.cs" />
-    <Compile Include="Dialogs\FuselageLoftDialog.xaml.cs">
+    <Compile Include="Dialogs\BezierFuselage\FuselageBulkhead.cs" />
+    <Compile Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\IrregularPolygonDlg.xaml.cs">
       <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\LinearLoftDialog.xaml.cs" />
+    <Compile Include="Dialogs\LinearLoft\LinearLoftDialog.xaml.cs" />
+    <Compile Include="Dialogs\MeshEditor\Mesh.cs" />
+    <Compile Include="Dialogs\MeshEditor\MeshEditorDlg.xaml.cs">
+      <DependentUpon>MeshEditorDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\MeshEditor\MeshTriangle.cs" />
+    <Compile Include="Dialogs\MeshEditor\MeshVertex.cs" />
+    <Compile Include="Dialogs\NewProjectDlg.xaml.cs">
+      <DependentUpon>NewProjectDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
     <Compile Include="Dialogs\RefernceModel.xaml.cs">
       <DependentUpon>RefernceModel.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ShapeBase.xaml.cs" />
-    <Compile Include="Dialogs\ShapeLoftDialog.xaml.cs" />
-    <Compile Include="Dialogs\SpurGearDialog.xaml.cs">
+    <Compile Include="Dialogs\ShapeLoft\ShapeBase.xaml.cs" />
+    <Compile Include="Dialogs\ShapeLoft\ShapeLoftDialog.xaml.cs" />
+    <Compile Include="Dialogs\SpurGear\SpurGearDialog.xaml.cs">
       <DependentUpon>SpurGearDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\STLExportedPartsConfirmation.xaml.cs">
+    <Compile Include="Dialogs\Exporting\STLExportedPartsConfirmation.xaml.cs">
       <DependentUpon>STLExportedPartsConfirmation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\TorusDialog.xaml.cs">
+    <Compile Include="Dialogs\Stadium\StadiumDialog.xaml.cs">
+      <DependentUpon>StadiumDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Torus\TorusDialog.xaml.cs">
       <DependentUpon>TorusDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\TrackDialog.xaml.cs">
+    <Compile Include="Dialogs\TankTrack\TrackDialog.xaml.cs">
       <DependentUpon>TrackDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Adorner.cs" />
@@ -185,10 +200,14 @@
     <Compile Include="Views\Settings.xaml.cs">
       <DependentUpon>Settings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\STLExportedConfirmation.xaml.cs">
+    <Compile Include="Dialogs\Exporting\STLExportedConfirmation.xaml.cs">
       <DependentUpon>STLExportedConfirmation.xaml</DependentUpon>
     </Compile>
-    <Page Include="Dialogs\BulkheadControl.xaml">
+    <Page Include="Dialogs\BezierFuselage\BulkheadControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Blank\Blank.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -196,11 +215,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\ExportSelectedDialog.xaml">
+    <Page Include="Dialogs\Exporting\ExportSelectedDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\FuselageLoftDialog.xaml">
+    <Page Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -208,9 +227,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\LinearLoftDialog.xaml">
+    <Page Include="Dialogs\LinearLoft\LinearLoftDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\MeshEditor\MeshEditorDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\NewProjectDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\NUDBox.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -220,27 +247,31 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\ShapeBase.xaml">
+    <Page Include="Dialogs\ShapeLoft\ShapeBase.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\ShapeLoftDialog.xaml">
+    <Page Include="Dialogs\ShapeLoft\ShapeLoftDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\SpurGearDialog.xaml">
+    <Page Include="Dialogs\SpurGear\SpurGearDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\STLExportedPartsConfirmation.xaml">
+    <Page Include="Dialogs\Exporting\STLExportedPartsConfirmation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\TorusDialog.xaml">
+    <Page Include="Dialogs\Stadium\StadiumDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\TrackDialog.xaml">
+    <Page Include="Dialogs\Torus\TorusDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\TankTrack\TrackDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -300,7 +331,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\STLExportedConfirmation.xaml">
+    <Page Include="Dialogs\Exporting\STLExportedConfirmation.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -392,6 +423,10 @@
       <Project>{BF1D777E-DF33-4C03-80A6-9ECB741746F1}</Project>
       <Name>PolygonTriangulationLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\TemplateLib\TemplateLib.csproj">
+      <Project>{a1e87ea7-c89a-4eba-8fb7-4e3fc8cfc521}</Project>
+      <Name>TemplateLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Workflow\Workflow.csproj">
       <Project>{f7fdc6da-9937-472f-a90a-22fadf138439}</Project>
       <Name>Workflow</Name>
@@ -438,5 +473,16 @@
   <ItemGroup>
     <Resource Include="Images\Buttons\PanEye.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="templates\TemplateData.def">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir $(TargetDir)templates
+copy $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
+Exit 0
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>

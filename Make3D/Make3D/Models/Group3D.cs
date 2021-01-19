@@ -160,6 +160,12 @@ namespace Make3D.Models
                         }
                         break;
 
+                    case "groupreversedifference":
+                        {
+                            result = modeller.GetReverseDifference();
+                        }
+                        break;
+
                     case "groupintersection":
                         {
                             result = modeller.GetIntersection();

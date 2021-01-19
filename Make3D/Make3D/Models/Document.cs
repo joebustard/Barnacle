@@ -43,7 +43,10 @@ namespace Make3D.Models
 
         public string Caption
         {
-            get { return caption; }
+            get
+            {
+                return caption;
+            }
             set
             {
                 if (caption != value)
@@ -75,7 +78,10 @@ namespace Make3D.Models
                             obj.Reference.TimeStamp = timeStamp;
                             obj.BaseRead(nd);
                             obj.SetMesh();
-                            Content.Add(obj);
+                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            {
+                                Content.Add(obj);
+                            }
                         }
                         if (nd.Name == "groupobj")
                         {
@@ -85,7 +91,10 @@ namespace Make3D.Models
                             obj.Reference.TimeStamp = timeStamp;
                             obj.BaseRead(nd);
                             obj.SetMesh();
-                            Content.Add(obj);
+                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            {
+                                Content.Add(obj);
+                            }
                         }
                     }
                 }
@@ -94,6 +103,38 @@ namespace Make3D.Models
             {
                 MessageBox.Show(ex.Message);
             }
+        }
+
+        private bool ReferencedObjectInContent(string name, string pth)
+        {
+            bool found = false;
+            ExternalReference rf = null;
+            foreach (Object3D obj in Content)
+            {
+                if (obj.Name == name)
+                {
+                    if (obj is ReferenceObject3D)
+                    {
+                        rf = (obj as ReferenceObject3D).Reference;
+                        if (rf.Path == pth)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    else
+                    if (obj is ReferenceGroup3D)
+                    {
+                        rf = (obj as ReferenceGroup3D).Reference;
+                        if (rf.Path == pth)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return found;
         }
 
         internal void Clear()
@@ -128,6 +169,7 @@ namespace Make3D.Models
                     if (dirty)
                     {
                         caption += "*";
+                        NotifyPropertyChanged("Caption");
                     }
                 }
             }
@@ -212,8 +254,22 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
+                        if (obj.RefValid)
+                        {
+                            Content.Add(obj);
+                        }
+                        else
+                        {
+                            // might have been converted into a group
+                            ReferenceGroup3D grp = new ReferenceGroup3D();
+                            grp.Read(nd);
 
-                        Content.Add(obj);
+                            grp.SetMesh();
+                            if (grp.RefValid)
+                            {
+                                Content.Add(grp);
+                            }
+                        }
                     }
                     if (nd.Name == "groupobj")
                     {
@@ -229,7 +285,10 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
-                        Content.Add(obj);
+                        if (obj.RefValid)
+                        {
+                            Content.Add(obj);
+                        }
                     }
                 }
             }

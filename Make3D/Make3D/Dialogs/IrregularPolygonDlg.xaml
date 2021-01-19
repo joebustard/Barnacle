@@ -23,20 +23,21 @@
             </Grid.RowDefinitions>
             <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="0" Grid.Column="0">
                 <UniformGrid>
-                    <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2"/>
-                    <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2"/>
-                    <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2"/>
-                    <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2"/>
+                    <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" />
+                    <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2" />
+                    <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2" />
+                    <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2" />
                 </UniformGrid>
             </Border>
         </Grid>
         <Border Grid.Column="1" BorderThickness="4" BorderBrush="Blue" Background="Azure">
-
-            <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
-                <Canvas.LayoutTransform>
-                    <ScaleTransform x:Name="MainScale" />
-                </Canvas.LayoutTransform>
-            </Canvas>
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+                <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
+                    <Canvas.LayoutTransform>
+                        <ScaleTransform x:Name="MainScale" />
+                    </Canvas.LayoutTransform>
+                </Canvas>
+            </ScrollViewer>
         </Border>
         <Grid Grid.Row="2" Grid.ColumnSpan="2">
             <Grid.ColumnDefinitions>

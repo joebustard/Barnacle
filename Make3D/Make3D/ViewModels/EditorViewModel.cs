@@ -49,6 +49,7 @@ namespace Make3D.ViewModels
         private int totalFaces;
         private double zoomPercent = 100;
         private Grid3D grid;
+        private bool showAdorners;
 
         public EditorViewModel()
         {
@@ -102,10 +103,13 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Irregular", OnIrregular);
             NotificationManager.Subscribe("Linear", OnLinear);
             NotificationManager.Subscribe("Doughnut", OnDoughNut);
-            NotificationManager.Subscribe("Fuselage", OnFuselage);
+            NotificationManager.Subscribe("BezierFuselage", OnFuselage);
             NotificationManager.Subscribe("TwoShape", OnTwoShape);
             NotificationManager.Subscribe("SpurGear", OnSpurGear);
             NotificationManager.Subscribe("TankTrack", OnTankTrack);
+            NotificationManager.Subscribe("MeshEdit", OnMeshEdit);
+            NotificationManager.Subscribe("Stadium", OnStadium);
+
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
@@ -117,8 +121,86 @@ namespace Make3D.ViewModels
             totalFaces = 0;
             showAxies = true;
             showFloor = true;
+            showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void OnMeshEdit(object param)
+        {
+            MeshEditorDlg dlg = new MeshEditorDlg();
+            CheckPoint();
+            EditorParameters pm = new EditorParameters();
+            Object3D editingObj = null;
+            bool needToAdd = false;
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                editingObj = selectedObjectAdorner.SelectedObjects[0];
+                if (editingObj.IsSizable() && editingObj.PrimType == "Mesh")
+                {
+                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                    {
+                        dlg.EditorParameters = editingObj.EditorParameters;
+                        dlg.MeshColour = editingObj.Color;
+                        dlg.SetInitialMesh(editingObj.RelativeObjectVertices, editingObj.TriangleIndices);
+                        editingObj.CalcScale();
+                    }
+                }
+            }
+            if (dlg.ShowDialog() == true)
+            {
+                bool positionAtRight = false;
+                if (editingObj == null)
+                {
+                    editingObj = new Object3D();
+                    editingObj.Name = Document.NextName;
+                    editingObj.Description = "";
+                    needToAdd = true;
+
+                    editingObj.Color = dlg.MeshColour;
+                    positionAtRight = true;
+                }
+                DeselectAll();
+
+                editingObj.EditorParameters = dlg.EditorParameters;
+                editingObj.RelativeObjectVertices = dlg.Vertices;
+                editingObj.TriangleIndices = dlg.Faces;
+
+                RecalculateAllBounds();
+                Point3D placement = new Point3D(0, 0, 0);
+                editingObj.Position = new Point3D(0, 0, 0);
+
+                editingObj.PrimType = "Mesh";
+
+                editingObj.Remesh();
+
+                editingObj.CalcScale();
+
+                if (positionAtRight)
+                {
+                    if (allBounds.Upper.X > double.MinValue)
+                    {
+                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                    else
+                    {
+                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                }
+                editingObj.Position = placement;
+
+                allBounds += editingObj.AbsoluteBounds;
+
+                GeometryModel3D gm = GetMesh(editingObj);
+
+                if (needToAdd)
+                {
+                    Document.Content.Add(editingObj);
+                }
+                Document.Dirty = true;
+                RegenerateDisplayList();
+                NotificationManager.Notify("ObjectNamesChanged", null);
+            }
         }
 
         private void MoveToMarker(object param)
@@ -171,6 +253,12 @@ namespace Make3D.ViewModels
         private void OnTankTrack(object param)
         {
             TrackDialog dlg = new TrackDialog();
+            DisplayModeller(dlg);
+        }
+
+        private void OnStadium(object param)
+        {
+            StadiumDialog dlg = new StadiumDialog();
             DisplayModeller(dlg);
         }
 
@@ -584,17 +672,31 @@ namespace Make3D.ViewModels
                 modelItems.Add(gm);
                 allBounds += ob.AbsoluteBounds;
             }
-
+            if (showAdorners)
+            {
+                if (selectedObjectAdorner != null)
+                {
+                    foreach (Model3D md in selectedObjectAdorner.Adornments)
+                    {
+                        modelItems.Add(md);
+                    }
+                }
+            }
             NotifyPropertyChanged("ModelItems");
         }
 
         internal void DeselectAll()
         {
             NotificationManager.Notify("SetToolsVisibility", true);
-            RemoveObjectAdorner();
-            ResetSelectionColours();
-            selectedObjectAdorner = new SizeAdorner(camera);
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.Clear();
+            }
+            // RemoveObjectAdorner();
+            //  ResetSelectionColours();
+            //  selectedObjectAdorner = new SizeAdorner(camera);
             selectedItems.Clear();
+            RegenerateDisplayList();
             NotificationManager.Notify("ObjectSelected", null);
         }
 
@@ -701,6 +803,10 @@ namespace Make3D.ViewModels
                         {
                             OnCopy(null);
                         }
+                        else
+                        {
+                            CheckPoint();
+                        }
                     }
                     break;
 
@@ -717,8 +823,24 @@ namespace Make3D.ViewModels
                     {
                         if (ctrl)
                         {
-                            AlignSelectedObjects("Floor");
+                            CheckPoint();
+                            FloorAllObjects();
+                            RegenerateDisplayList();
                         }
+                        else
+                        {
+                            CheckPoint();
+                            AlignSelectedObjects("Floor");
+                            RegenerateDisplayList();
+                        }
+                    }
+                    break;
+
+                case Key.M:
+                    {
+                        CheckPoint();
+                        MoveToMarker(null);
+                        RegenerateDisplayList();
                     }
                     break;
 
@@ -727,11 +849,44 @@ namespace Make3D.ViewModels
                         OnCut(null);
                     }
                     break;
+
+                case Key.Z:
+                    {
+                        if (ctrl)
+                        {
+                            Undo();
+                        }
+                    }
+                    break;
+
+                case Key.H:
+                    {
+                        showAdorners = false;
+                        RegenerateDisplayList();
+                    }
+                    break;
+            }
+        }
+
+        private void FloorAllObjects()
+        {
+            foreach (Object3D ob in Document.Content)
+            {
+                ob.MoveToFloor();
             }
         }
 
         internal void KeyUp(Key key, bool shift, bool ctrl)
         {
+            switch (key)
+            {
+                case Key.H:
+                    {
+                        showAdorners = true;
+                        RegenerateDisplayList();
+                    }
+                    break;
+            }
         }
 
         internal void MouseDown(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
@@ -813,21 +968,16 @@ namespace Make3D.ViewModels
             {
                 if (floor.Matches(geo) || grid.Matches(geo))
                 {
+                    if (selectedObjectAdorner != null)
+                    {
+                        selectedObjectAdorner.Clear();
+                    }
                     floorMarker = new FloorMarker();
                     floorMarker.Position = hitPos;
                     RegenerateDisplayList();
                 }
             }
-            /*
-            else
-            {
-                if (floorMarker != null)
-                {
-                    floorMarker = null;
-                    RegenerateDisplayList();
-                }
-            }
-            */
+
             ShowToolForCurrentSelection();
         }
 
@@ -898,7 +1048,7 @@ namespace Make3D.ViewModels
                 FloorSelectedObjects();
             }
             else
-          if (selectedObjectAdorner.SelectedObjects.Count > 0)
+            if (selectedObjectAdorner.SelectedObjects.Count > 0)
             {
                 Bounds3D bns = new Bounds3D(selectedObjectAdorner.SelectedObjects[0].AbsoluteBounds);
                 double midX = bns.MidPoint().X;
@@ -919,6 +1069,7 @@ namespace Make3D.ViewModels
                                 //dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - selectedObjectAdorner.Bounds.Lower.X);
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - bns.Lower.X);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -927,6 +1078,7 @@ namespace Make3D.ViewModels
                                 //dAbsX = ob.Position.X + (selectedObjectAdorner.Bounds.Upper.X - ob.AbsoluteBounds.Upper.X);
                                 dAbsX = ob.Position.X + (bns.Upper.X - ob.AbsoluteBounds.Upper.X);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -935,6 +1087,7 @@ namespace Make3D.ViewModels
                                 //dAbsY = ob.Position.Y + (selectedObjectAdorner.Bounds.Upper.Y - ob.AbsoluteBounds.Upper.Y);
                                 dAbsY = ob.Position.Y + (bns.Upper.Y - ob.AbsoluteBounds.Upper.Y);
                                 ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -943,6 +1096,7 @@ namespace Make3D.ViewModels
                                 //dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - selectedObjectAdorner.Bounds.Lower.Y);
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Lower.Y);
                                 ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -951,6 +1105,7 @@ namespace Make3D.ViewModels
                                 //dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - selectedObjectAdorner.Bounds.Lower.Z);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - bns.Lower.Z);
                                 ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -959,6 +1114,7 @@ namespace Make3D.ViewModels
                                 //                                dAbsZ = ob.Position.Z + (selectedObjectAdorner.Bounds.Upper.Z - ob.AbsoluteBounds.Upper.Z);
                                 dAbsZ = ob.Position.Z + (bns.Upper.Z - ob.AbsoluteBounds.Upper.Z);
                                 ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -967,6 +1123,7 @@ namespace Make3D.ViewModels
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - bns.MidPoint().X);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - bns.MidPoint().Z);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, dAbsZ);
+                                ob.RelativeToAbsolute();
                             }
                             break;
 
@@ -1058,6 +1215,7 @@ namespace Make3D.ViewModels
                     }
                 }
             }
+            selectedObjectAdorner.GenerateAdornments();
         }
 
         private void FloorSelectedObjects()
@@ -1067,6 +1225,7 @@ namespace Make3D.ViewModels
                 Object3D ob = selectedObjectAdorner.SelectedObjects[i];
 
                 ob.MoveToFloor();
+                ob.RelativeToAbsolute();
             }
         }
 
@@ -1217,7 +1376,7 @@ namespace Make3D.ViewModels
             if (needsConversion)
             {
                 MessageBoxResult res = MessageBox.Show("Some objects will have to be converted to meshes first. Convert now.", "Warning", MessageBoxButton.OKCancel);
-                confirmed = res == MessageBoxResult.Yes;
+                confirmed = res == MessageBoxResult.OK;
             }
             List<Object3D> tmp = new List<Object3D>();
             foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
@@ -1244,6 +1403,7 @@ namespace Make3D.ViewModels
                         case "Horizontal":
                             {
                                 ob.FlipX();
+                                ob.FlipInside();
                                 ob.Remesh();
                             }
                             break;
@@ -1251,6 +1411,7 @@ namespace Make3D.ViewModels
                         case "Vertical":
                             {
                                 ob.FlipY();
+                                ob.FlipInside();
                                 ob.Remesh();
                             }
                             break;
@@ -1910,6 +2071,10 @@ namespace Make3D.ViewModels
 
         private void OnUndo(object param)
         {
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.Clear();
+            }
             Undo();
         }
 

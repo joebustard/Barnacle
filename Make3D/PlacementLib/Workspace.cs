@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Drawing;
 
 namespace PlacementLib
 {
     public class Workspace
     {
-        System.Windows.Point centre;
+        private System.Windows.Point centre;
         private double width;
+
         public double Width
         {
             get { return width; }
@@ -22,6 +19,7 @@ namespace PlacementLib
         }
 
         private double height;
+
         public double Height
         {
             get { return height; }
@@ -31,16 +29,17 @@ namespace PlacementLib
                 centre.Y = height / 2;
             }
         }
+
         public List<Component> PlacedComponents;
-       public Workspace()
+
+        public Workspace()
         {
             PlacedComponents = new List<Component>();
-            
         }
 
         internal void Remove(Component component)
         {
-            if ( PlacedComponents.Contains(component))
+            if (PlacedComponents.Contains(component))
             {
                 PlacedComponents.Remove(component);
             }
@@ -67,7 +66,7 @@ namespace PlacementLib
                 {
                     return false;
                 }
-                r1 =   new RectangleF((float)px, (float)py, (float)component.Width, (float)component.Height);
+                r1 = new RectangleF((float)px, (float)py, (float)component.Width, (float)component.Height);
             }
             else
             {
@@ -75,31 +74,29 @@ namespace PlacementLib
                 {
                     return false;
                 }
-                if ((px + component.Height < 0) || (py + component.Width <0))
+                if ((px + component.Height < 0) || (py + component.Width < 0))
                 {
                     return false;
                 }
                 r1 = new RectangleF((float)px, (float)py, (float)component.Height, (float)component.Width);
             }
             // basic test
-            
-       
+
             // if a corner of component is in side the others then they overlap
-            foreach ( Component prt in PlacedComponents)
+            foreach (Component prt in PlacedComponents)
             {
-               if ( !prt.Rotated && (  r1.IntersectsWith(prt.Rect) || prt.Rect.Contains(r1)))
+                if (!prt.Rotated && (r1.IntersectsWith(prt.Rect) || prt.Rect.Contains(r1)))
                 {
                     result = false;
                     break;
                 }
-                if (prt.Rotated && (  r1.IntersectsWith(prt.RotatedRect )|| prt.Rect.Contains(r1)) )
+                if (prt.Rotated && (r1.IntersectsWith(prt.RotatedRect) || prt.Rect.Contains(r1)))
                 {
                     result = false;
                     break;
                 }
             }
             return result;
-
         }
 
         public double Evaluate()
@@ -111,9 +108,9 @@ namespace PlacementLib
             double tx = double.MinValue;
             double ty = double.MinValue;
 
-            foreach ( Component com in PlacedComponents)
+            foreach (Component com in PlacedComponents)
             {
-                if ( com.Position.X < lx )
+                if (com.Position.X < lx)
                 {
                     lx = com.Position.X;
                 }
@@ -144,10 +141,26 @@ namespace PlacementLib
                     }
                 }
             }
+            double xdiff = (tx - lx);
+            double ydiff = (ty = ly);
             result = (tx - lx) * (ty - ly);
-
+            double ratio = 1;
+            if (xdiff > ydiff)
+            {
+                if (ydiff > 0)
+                {
+                    ratio = xdiff / ydiff;
+                }
+            }
+            else
+            {
+                if (xdiff > 0)
+                {
+                    ratio = ydiff / xdiff;
+                }
+            }
+            result *= ratio;
             return result;
-
         }
     }
 }

@@ -285,6 +285,8 @@ namespace Make3D.Dialogs
             //    localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             EditorParameters.Set("ImagePath", f);
+            MainCanvas.Width = localImage.Width;
+            MainCanvas.Height = localImage.Height;
             UpdateDisplay();
         }
 

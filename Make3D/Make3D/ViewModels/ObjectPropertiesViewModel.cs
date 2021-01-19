@@ -24,6 +24,22 @@ namespace Make3D.ViewModels
             }
         }
 
+        private double percentScale;
+
+        public double PercentScale
+        {
+            get { return percentScale; }
+            set
+            {
+                if (percentScale != value)
+                {
+                    percentScale = value;
+
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private string objectName;
 
         public String ObjectName
@@ -39,7 +55,9 @@ namespace Make3D.ViewModels
                     {
                         if (selectedObject.Name != value)
                         {
+                            CheckPoint();
                             selectedObject.Name = value;
+                            Document.Dirty = true;
                             NotificationManager.Notify("ObjectNamesChanged", null);
                         }
                     }
@@ -60,7 +78,9 @@ namespace Make3D.ViewModels
                     NotifyPropertyChanged();
                     if (selectedObject != null)
                     {
+                        CheckPoint();
                         selectedObject.Color = objectColour;
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -87,12 +107,14 @@ namespace Make3D.ViewModels
                     double v = GetDouble(value);
                     if (selectedObject.Position.X != v)
                     {
+                        CheckPoint();
                         Point3D p = selectedObject.Position;
                         Point3D p2 = new Point3D(v, p.Y, p.Z);
                         selectedObject.Position = p2;
                         NotifyPropertyChanged();
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -119,12 +141,14 @@ namespace Make3D.ViewModels
                     double v = GetDouble(value);
                     if (selectedObject.Position.Y != v)
                     {
+                        CheckPoint();
                         Point3D p = selectedObject.Position;
                         Point3D p2 = new Point3D(p.X, v, p.Z);
                         selectedObject.Position = p2;
                         NotifyPropertyChanged();
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -151,12 +175,14 @@ namespace Make3D.ViewModels
                     double v = GetDouble(value);
                     if (selectedObject.Position.Z != v)
                     {
+                        CheckPoint();
                         Point3D p = selectedObject.Position;
                         Point3D p2 = new Point3D(p.X, p.Y, v);
                         selectedObject.Position = p2;
                         NotifyPropertyChanged();
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -184,6 +210,7 @@ namespace Make3D.ViewModels
                     Scale3D p = selectedObject.Scale;
                     if (p.X != v && p.X != 0 && v != 0)
                     {
+                        CheckPoint();
                         Scale3D p2 = new Scale3D(v, p.Y, p.Z);
                         double d = v / p.X;
                         selectedObject.Scale = p2;
@@ -192,6 +219,7 @@ namespace Make3D.ViewModels
                         NotifyPropertyChanged();
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -219,6 +247,7 @@ namespace Make3D.ViewModels
                     Scale3D p = selectedObject.Scale;
                     if (p.Y != v && p.Y != 0 && v != 0)
                     {
+                        CheckPoint();
                         Scale3D p2 = new Scale3D(p.X, v, p.Z);
                         double d = v / p.Y;
                         selectedObject.Scale = p2;
@@ -227,6 +256,7 @@ namespace Make3D.ViewModels
                         NotifyPropertyChanged();
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -254,6 +284,7 @@ namespace Make3D.ViewModels
                     Scale3D p = selectedObject.Scale;
                     if (p.Z != v && p.Z != 0 && v != 0)
                     {
+                        CheckPoint();
                         Scale3D p2 = new Scale3D(p.X, p.Y, v);
                         double d = v / p.Z;
                         selectedObject.Scale = p2;
@@ -263,6 +294,7 @@ namespace Make3D.ViewModels
 
                         NotificationManager.Notify("ScaleRefresh", selectedObject);
                         NotificationManager.Notify("RefreshAdorners", null);
+                        Document.Dirty = true;
                     }
                 }
             }
@@ -341,10 +373,12 @@ namespace Make3D.ViewModels
         private Object3D selectedObject;
 
         public ICommand MoveToFloorCommand { get; set; }
+        public ICommand NudgeCommand { get; set; }
         public ICommand MoveToCentreCommand { get; set; }
         public ICommand RotateXCommand { get; set; }
         public ICommand RotateYCommand { get; set; }
         public ICommand RotateZCommand { get; set; }
+        public ICommand ScaleByPercentCommand { get; set; }
 
         public ObjectPropertiesViewModel()
         {
@@ -352,15 +386,103 @@ namespace Make3D.ViewModels
             RotateXCommand = new RelayCommand(OnRotateX);
             RotateYCommand = new RelayCommand(OnRotateY);
             RotateZCommand = new RelayCommand(OnRotateZ);
+            ScaleByPercentCommand = new RelayCommand(OnScaleByPercent);
             MoveToFloorCommand = new RelayCommand(OnMoveToFloor);
             MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
+            NudgeCommand = new RelayCommand(OnNudge);
             NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
             NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
             NotificationManager.Subscribe("PositionUpdated", OnPositionUpdated);
             rotationX = 90;
             rotationY = 90;
             rotationZ = 90;
+            PercentScale = 1;
             CanScale = false;
+        }
+
+        private void OnScaleByPercent(object obj)
+        {
+            if (selectedObject != null)
+            {
+                double v = 100.0;
+                if (obj.ToString() == "+")
+                {
+                    v += percentScale;
+                }
+                else
+                {
+                    v -= percentScale;
+                }
+                v = v / 100.0;
+                CheckPoint();
+
+                selectedObject.ScaleMesh(v, v, v);
+                selectedObject.Remesh();
+                selectedObject.CalcScale();
+                NotifyPropertyChanged();
+
+                NotificationManager.Notify("ScaleRefresh", selectedObject);
+                NotificationManager.Notify("RefreshAdorners", null);
+                OnScaleUpdated(null);
+                Document.Dirty = true;
+            }
+        }
+
+        private void OnNudge(object obj)
+        {
+            Point3D d = new Point3D(0, 0, 0);
+            string s = obj as string;
+            if (s != null)
+            {
+                switch (s)
+                {
+                    case "X+":
+                        {
+                            d.X = 1;
+                        }
+                        break;
+
+                    case "X-":
+                        {
+                            d.X = -1;
+                        }
+                        break;
+
+                    case "Y+":
+                        {
+                            d.Y = 1;
+                        }
+                        break;
+
+                    case "Y-":
+                        {
+                            d.Y = -1;
+                        }
+                        break;
+
+                    case "Z+":
+                        {
+                            d.Z = 1;
+                        }
+                        break;
+
+                    case "Z-":
+                        {
+                            d.Z = -1;
+                        }
+                        break;
+                }
+                CheckPoint();
+                Point3D p = selectedObject.Position;
+                Point3D p2 = new Point3D(p.X + d.X, p.Y + d.Y, p.Z + d.Z);
+                selectedObject.Position = p2;
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("PositionY");
+                NotifyPropertyChanged("PositionZ");
+                NotificationManager.Notify("ScaleRefresh", selectedObject);
+                NotificationManager.Notify("RefreshAdorners", null);
+                Document.Dirty = true;
+            }
         }
 
         private void OnPositionUpdated(object param)
@@ -396,11 +518,13 @@ namespace Make3D.ViewModels
         {
             if (selectedObject != null)
             {
+                CheckPoint();
                 selectedObject.Rotate(p2);
                 selectedObject.Remesh();
 
                 NotifyPropertyChanged();
                 NotificationManager.Notify("Refresh", null);
+                Document.Dirty = true;
             }
         }
 
