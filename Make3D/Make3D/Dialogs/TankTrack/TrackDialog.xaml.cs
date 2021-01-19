@@ -851,6 +851,8 @@ namespace Make3D.Dialogs
             EditorParameters.Set("Points", s);
             EditorParameters.Set("NoOfLinks", NoOfLinks.ToString());
             EditorParameters.Set("TrackType", SelectedTrackType);
+            EditorParameters.Set("Thickness", Thickness.ToString());
+            EditorParameters.Set("SpudSize", SpudSize.ToString());
         }
 
         private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall)
@@ -1236,6 +1238,18 @@ namespace Make3D.Dialogs
             if (s != "")
             {
                 SelectedTrackType = s;
+            }
+
+            s = EditorParameters.Get("Thickness");
+            if (s != "")
+            {
+                Thickness = Convert.ToDouble(s); 
+            }
+
+            s = EditorParameters.Get("SpudSize");
+            if (s != "")
+            {
+                SpudSize = Convert.ToDouble(s); ;
             }
             Camera.Distance = 200;
             GenerateTrackPath();

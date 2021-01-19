@@ -109,7 +109,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("TankTrack", OnTankTrack);
             NotificationManager.Subscribe("MeshEdit", OnMeshEdit);
             NotificationManager.Subscribe("Stadium", OnStadium);
-
+            NotificationManager.Subscribe("BezierRing", OnBezierRing);
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
@@ -124,6 +124,12 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void OnBezierRing(object param)
+        {
+            BezierRingDlg dlg = new BezierRingDlg();
+            DisplayModeller(dlg);
         }
 
         private void OnMeshEdit(object param)

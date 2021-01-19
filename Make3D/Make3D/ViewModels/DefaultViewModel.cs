@@ -25,6 +25,8 @@ namespace Make3D.ViewModels
         private string caption;
         private bool centerTextAlignment;
         private bool doughnutEnabled;
+        private bool bezierRingEnabled;
+        private bool stadiumEnabled;
         private string fontSize;
         private bool fuselageEnabled;
         private bool irregularEnabled;
@@ -277,6 +279,32 @@ namespace Make3D.ViewModels
                 if (doughnutEnabled != value)
                 {
                     doughnutEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool StadiumEnabled
+        {
+            get { return stadiumEnabled; }
+            set
+            {
+                if (stadiumEnabled != value)
+                {
+                    stadiumEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool BezierRingEnabled
+        {
+            get { return bezierRingEnabled; }
+            set
+            {
+                if (bezierRingEnabled != value)
+                {
+                    bezierRingEnabled = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -751,6 +779,8 @@ namespace Make3D.ViewModels
             TwoShapeEnabled = b;
             SpurGearEnabled = b;
             TankTrackEnabled = b;
+            StadiumEnabled = b;
+            BezierRingEnabled = b;
         }
 
         private void LoadMru()
@@ -1087,6 +1117,18 @@ namespace Make3D.ViewModels
                     break;
 
                 case "TankTrack":
+                    {
+                        TankTrackEnabled = true;
+                    }
+                    break;
+
+                case "Stadium":
+                    {
+                        StadiumEnabled = true;
+                    }
+                    break;
+
+                case "BezierRing":
                     {
                         TankTrackEnabled = true;
                     }

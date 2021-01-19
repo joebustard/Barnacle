@@ -46,7 +46,7 @@ namespace Make3D.Dialogs
             set { pointDistance = value; }
         }
 
-        private double rotation;
+
         private double rotationDegrees;
         private double maxRotation;
         private int selectedPoint;

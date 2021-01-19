@@ -23,7 +23,10 @@ namespace Make3D.Dialogs
 
         public double ShapeHeight
         {
-            get { return height; }
+            get
+            {
+                return height;
+            }
             set
             {
                 if (height != value)
@@ -40,7 +43,10 @@ namespace Make3D.Dialogs
 
         public double Radius1
         {
-            get { return radius1; }
+            get
+            {
+                return radius1;
+            }
             set
             {
                 if (value != radius1)
@@ -74,11 +80,103 @@ namespace Make3D.Dialogs
 
         private void GenerateSausageShape()
         {
+            double dx = gap / 2.0;
+            double cy1 = -dx - radius1;
+            double cy2 = dx + radius2;
+
+            double cx1 = 0;
+            double cx2 = 0;
+
+            double theta = 0;
+            double dt = Math.PI / 20.0;
+
+            List<Point> perimeter = new List<Point>();
+            theta = Math.PI / 2;
+            while (theta >= 0)
+            {
+                double x = cx2 + radius2 * Math.Cos(theta);
+                double y = cy2 + radius2 * Math.Sin(theta);
+
+                perimeter.Add(new Point(x, y));
+                theta -= dt;
+            }
+
+            theta = 2.0 * Math.PI;
+
+            while (theta >= 1.5 * Math.PI)
+            {
+                double x = cx1 + radius1 * Math.Cos(theta);
+                double y = cy1 + radius1 * Math.Sin(theta);
+
+                perimeter.Add(new Point(x, y));
+                theta -= dt;
+            }
+            Vertices.Clear();
+            Faces.Clear();
+
+            double phi = 0;
+            double phi2 = 0;
+            double numberOfFacets = 72;
+            double dphi = (2 * Math.PI) / numberOfFacets;
+
+            double px1 = 0;
+            double py1 = 0;
+
+            double px2 = 0;
+            double py2 = 0;
+
+            double px3 = 0;
+            double py3 = 0;
+
+            double px4 = 0;
+            double py4 = 0;
+
+            while (phi <= (2 * Math.PI) - dphi)
+            {
+                phi2 = phi + dphi;
+
+                for (int i = 0; i < perimeter.Count - 1; i++)
+                {
+                    int j = i + 1;
+                    if (j == perimeter.Count)
+                    {
+                        j = 0;
+                    }
+                    px1 = perimeter[i].X * Math.Cos(phi);
+                    py1 = perimeter[i].X * Math.Sin(phi);
+
+                    px2 = perimeter[i].X * Math.Cos(phi2);
+                    py2 = perimeter[i].X * Math.Sin(phi2);
+
+                    px3 = perimeter[j].X * Math.Cos(phi2);
+                    py3 = perimeter[j].X * Math.Sin(phi2);
+
+                    px4 = perimeter[j].X * Math.Cos(phi);
+                    py4 = perimeter[j].X * Math.Sin(phi);
+
+                    int v0 = AddVertice(px1, py1, perimeter[i].Y);
+                    int v1 = AddVertice(px2, py2, perimeter[i].Y);
+                    int v2 = AddVertice(px3, py3, perimeter[j].Y);
+                    int v3 = AddVertice(px4, py4, perimeter[j].Y);
+
+                    Faces.Add(v0);
+                    Faces.Add(v2);
+                    Faces.Add(v1);
+
+                    Faces.Add(v0);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+                }
+                phi += dphi;
+            }
         }
 
         public double Radius2
         {
-            get { return radius2; }
+            get
+            {
+                return radius2;
+            }
             set
             {
                 if (value != radius2)
@@ -92,7 +190,10 @@ namespace Make3D.Dialogs
 
         public double Gap
         {
-            get { return gap; }
+            get
+            {
+                return gap;
+            }
             set
             {
                 if (value != gap)
@@ -106,7 +207,10 @@ namespace Make3D.Dialogs
 
         public List<string> Shapes
         {
-            get { return shapes; }
+            get
+            {
+                return shapes;
+            }
             set
             {
                 if (value != shapes)
@@ -120,7 +224,10 @@ namespace Make3D.Dialogs
 
         public string ShapeStyle
         {
-            get { return shapeStyle; }
+            get
+            {
+                return shapeStyle;
+            }
             set
             {
                 if (value != shapeStyle)
@@ -134,7 +241,10 @@ namespace Make3D.Dialogs
 
         public override bool ShowFloor
         {
-            get { return showFloor; }
+            get
+            {
+                return showFloor;
+            }
             set
             {
                 if (showFloor != value)
@@ -148,7 +258,10 @@ namespace Make3D.Dialogs
 
         public override bool ShowAxies
         {
-            get { return showAxies; }
+            get
+            {
+                return showAxies;
+            }
             set
             {
                 if (showAxies != value)
@@ -165,7 +278,7 @@ namespace Make3D.Dialogs
             InitializeComponent();
             ToolName = "Stadium";
             DataContext = this;
-            Radius1 = 10;
+            Radius1 = 5;
             Radius2 = 10;
             Gap = 10;
             height = 10;
@@ -189,6 +302,7 @@ namespace Make3D.Dialogs
                 Radius2 = EditorParameters.GetDouble("Radius2");
                 Gap = EditorParameters.GetDouble("Gap");
                 ShapeHeight = EditorParameters.GetDouble("Height");
+                ShapeStyle = s;
             }
         }
 

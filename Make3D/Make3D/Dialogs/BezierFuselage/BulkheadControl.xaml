@@ -23,12 +23,6 @@
 
             <TextBox x:Name="PositionX" Grid.Column="1" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionX_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
 
-            <!--
-            <local:NUDBox x:Name="PositionX" Grid.Column="1" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" VerticalContentAlignment="Center" MinHeight="26" />
-            <local:NUDBox x:Name="PositionY" Grid.Column="2" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" VerticalContentAlignment="Center" />
-            <local:NUDBox x:Name="PositionZ" Grid.Column="3" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" VerticalContentAlignment="Center" />
-            -->
-
             <TextBox x:Name="PositionY" Grid.Column="2" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionY_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
             <TextBox x:Name="PositionZ" Grid.Column="3" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionZ_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
         </Grid>

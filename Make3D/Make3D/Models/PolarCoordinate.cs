@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media.Media3D;
 
 namespace Make3D.Models
 {
@@ -56,6 +57,27 @@ namespace Make3D.Models
         internal void Dump()
         {
             System.Diagnostics.Debug.WriteLine($"Phi {Phi:F3} Theta {Theta:F3} Rho {Rho:F3}");
+        }
+        public  Point3D GetPoint3D()
+        {
+            
+            double x = Rho * Math.Sin(Phi) * Math.Cos(Theta);
+            double z = Rho * Math.Sin(Phi) * Math.Sin(Theta);
+            double y = Rho * Math.Cos(Phi);
+            return (new Point3D(x, y, z));
+        }
+
+        public void  SetPoint3D(Point3D p)
+        {
+            Rho = Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
+            Phi = Math.Acos(p.Z / Rho);
+            Theta = Math.Acos(p.X / Math.Sqrt(p.X * p.X + p.Y * p.Y)) * (p.Y < 0 ? -1.0 : 1.0);
+        }
+
+        internal PolarCoordinate Clone()
+        {
+            PolarCoordinate res = new PolarCoordinate(Theta, Phi, Rho);
+            return res;
         }
     }
 }

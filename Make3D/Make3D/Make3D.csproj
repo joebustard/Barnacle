@@ -77,6 +77,7 @@
     <Compile Include="Dialogs\BezierFuselage\BulkheadControl.xaml.cs">
       <DependentUpon>BulkheadControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\BezierRing\BezierRingDlg.cs" />
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
@@ -206,6 +207,10 @@
     <Page Include="Dialogs\BezierFuselage\BulkheadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\BezierRing\BezierRingDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Blank\Blank.xaml">
       <SubType>Designer</SubType>

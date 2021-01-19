@@ -47,5 +47,39 @@ namespace Make3D.Dialogs.Blank
                 }
             }
         }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
     }
 }
