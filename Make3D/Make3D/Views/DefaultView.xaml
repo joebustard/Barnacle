@@ -204,9 +204,7 @@
                         <Custom:RibbonButton x:Name="SameWidth" Label="Same Width" Command="{Binding SizeCommand}" CommandParameter="SameWidth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same width as the first selected one" />
                         <Custom:RibbonButton x:Name="SameHeight" Label="Same Height" Command="{Binding SizeCommand}" CommandParameter="SameHeight" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same height as the first selected one" />
                         <Custom:RibbonButton x:Name="SameBoth" Label="All Same" Command="{Binding SizeCommand}" CommandParameter="SameAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same size as the first selected one" />
-                        <Custom:RibbonSeparator />
-
-                        <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate Faces" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
+                        
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Group" Label="Group">
                         <Custom:RibbonButton x:Name="GroupUnion" Label="Group Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
@@ -230,9 +228,9 @@
                     <Custom:RibbonButton x:Name="TankTrackButton" Label="Tank Track" Command="{Binding TankTrackCommand}" IsEnabled="{Binding TankTrackEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
 
                     <Custom:RibbonButton x:Name="StadiumButton" Label="Stadium" Command="{Binding ToolCommand}" CommandParameter="Stadium" IsEnabled="{Binding StadiumEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="BezierRingButton" Label="Ring" Command="{Binding ToolCommand}" CommandParameter="BezierRing" IsEnabled="{Binding BezierRingEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    
                     <Custom:RibbonSeparator />
-                    <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="LoftGroup" Header="Loft Tools">
@@ -240,7 +238,11 @@
   ToolTip="Create an object by vertical lofting" />
                     <Custom:RibbonButton x:Name="BezierFuselageButton" Label="Bezier Fuselage" Command="{Binding ToolCommand}" CommandParameter="BezierFuselage" IsEnabled="{Binding FuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="ShapeLoftButton" Label="Two Shape" Command="{Binding TwoShapeCommand}" IsEnabled="{Binding TwoShapeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-
+                    <Custom:RibbonButton x:Name="BezierRingButton" Label="Ring" Command="{Binding ToolCommand}" CommandParameter="BezierRing" IsEnabled="{Binding BezierRingEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="MeshGroup" Header="Mesh">
+                    <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate Faces" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
             <Custom:RibbonTab Name="ViewTab1" Header="View">

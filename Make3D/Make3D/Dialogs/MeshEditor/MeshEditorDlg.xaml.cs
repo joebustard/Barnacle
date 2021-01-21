@@ -34,7 +34,7 @@ namespace Make3D.Dialogs
         private MeshTriangle lastSelectedTriangle;
         private int lastSelectedPoint;
         private Point lastMousePos;
-
+        private Point3D offsetOrigin;
         public bool ShowWireFrame
         {
             get { return showWireFrame; }
@@ -127,9 +127,15 @@ namespace Make3D.Dialogs
         {
             editingPoints.Clear();
             editingFaceIndices.Clear();
+            Bounds3D bnds = new Bounds3D();
             foreach (Point3D p in points)
             {
-                Point3D np = new Point3D(p.X, p.Y, p.Z);
+                bnds.Adjust(p);
+            }
+            offsetOrigin = new Point3D( bnds.MidPoint().X,-bnds.Lower.Y, bnds.MidPoint().Z);
+            foreach (Point3D p in points)
+            {
+                Point3D np = new Point3D(p.X, p.Y- bnds.Lower.Y, p.Z);
                 editingPoints.Add(np);
             }
             foreach (int i in triangleIndices)
@@ -208,6 +214,7 @@ namespace Make3D.Dialogs
                     indices.Add(v0);
                     indices.Add(v3);
                     indices.Add(v2);
+                   // indices.Add(v1);
                 }
             }
 
@@ -312,11 +319,10 @@ namespace Make3D.Dialogs
             {
                 if (mesh.CheckHit(lastHitModel, shift, ref lastSelectedPoint, ref lastSelectedTriangle))
                 {
+                    Redisplay();
                 }
-                else
-                {
-                    base.Viewport_MouseDown(viewport3D1, e);
-                }
+
+                base.Viewport_MouseDown(viewport3D1, e);
             }
         }
 
@@ -325,6 +331,7 @@ namespace Make3D.Dialogs
             lastSelectedPoint = -1;
             lastSelectedTriangle = null;
             e.Handled = true;
+            
         }
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -570,6 +577,184 @@ namespace Make3D.Dialogs
             mesh.Clear();
             DialogResult = true;
             Close();
+        }
+
+
+        internal void KeyDown(Key key, bool shift, bool ctrl)
+        {
+            switch (key)
+            {
+                case Key.Up:
+                    {
+                        
+                        if (ctrl)
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Back, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Back, 1.0);
+                            }
+                        }
+                        else
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Up, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Up, 1.0);
+                            }
+                        }
+                    }
+                    break;
+
+                case Key.Down:
+                    {
+                        
+                        if (ctrl)
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                            }
+                        }
+                        else
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Down, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Down, 1.0);
+                            }
+                        }
+                    }
+                    break;
+
+                case Key.Left:
+                    {
+                        
+                        if (shift)
+                        {
+                            Nudge(Adorner.NudgeDirection.Left, 0.1);
+                        }
+                        else
+                        {
+                            Nudge(Adorner.NudgeDirection.Left, 1.0);
+                        }
+                    }
+                    break;
+
+                case Key.Right:
+                    {
+                       
+                        if (shift)
+                        {
+                            Nudge(Adorner.NudgeDirection.Right, 0.1);
+                        }
+                        else
+                        {
+                            Nudge(Adorner.NudgeDirection.Right, 1.0);
+                        }
+                    }
+                    break;
+
+              
+            }
+        }
+
+        private void Nudge(Adorner.NudgeDirection dir, double v)
+        {
+ 
+            switch (dir)
+            {
+                case Adorner.NudgeDirection.Left:
+                    {
+                        MoveBox(-v, 0, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Right:
+                    {
+                        MoveBox(v, 0, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Up:
+                    {
+                        MoveBox(0, v, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Down:
+                    {
+                        MoveBox(0, -v, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Forward:
+                    {
+                        MoveBox(0, 0, -v);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Back:
+                    {
+                        MoveBox(0, 0, v);
+                    }
+                    break;
+            }
+        }
+        private void MoveBox(double deltaX, double deltaY, double deltaZ)
+        {
+            Point3D positionChange = new Point3D(0, 0, 0);
+            PolarCamera.Orientations ori = Camera.Orientation;
+            switch (ori)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
+                    }
+                    break;
+            }
+
+            if (positionChange != null)
+            {
+                mesh.MoveSelectedTriangles(positionChange);
+            }
+            Redisplay();
+        }
+
+        private void MeshGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
         }
     }
 }

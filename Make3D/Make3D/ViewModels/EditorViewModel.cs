@@ -215,22 +215,31 @@ namespace Make3D.ViewModels
             {
                 Point3D target = floorMarker.Position;
 
-                Bounds3D tmpBounds = new Bounds3D();
-                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                {
-                    tmpBounds.Add(ob.AbsoluteBounds);
-                }
-
-                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                {
-                    double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
-                    double dAbsY = ob.Position.Y;
-                    double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
-                    ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                    ob.RelativeToAbsolute();
-                }
+                MoveToPoint(target);
             }
-            DeselectAll();
+        }
+
+        private void MoveToPoint(Point3D target)
+        {
+            Bounds3D tmpBounds = new Bounds3D();
+            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+            {
+                tmpBounds.Add(ob.AbsoluteBounds);
+            }
+
+            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+            {
+                double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
+                double dAbsY = ob.Position.Y;
+                double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
+                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                ob.RelativeToAbsolute();
+            }
+
+            // move the selectors
+            selectedObjectAdorner.GenerateAdornments();
+            // redraw
+            RegenerateDisplayList();
         }
 
         private void SelectObjectByName(object param)
@@ -812,6 +821,7 @@ namespace Make3D.ViewModels
                         else
                         {
                             CheckPoint();
+                            MoveSelectionToCentre();
                         }
                     }
                     break;
@@ -872,6 +882,12 @@ namespace Make3D.ViewModels
                     }
                     break;
             }
+        }
+
+        private void MoveSelectionToCentre()
+        {
+            Point3D centre = new Point3D(0, 0, 0);
+            MoveToPoint(centre);
         }
 
         private void FloorAllObjects()
@@ -1898,7 +1914,9 @@ namespace Make3D.ViewModels
             Object3D prm = param as Object3D;
             CheckPoint();
             prm.MoveToCentre();
-            selectedObjectAdorner.Clear();
+            // move the selectors
+            selectedObjectAdorner.GenerateAdornments();
+            // redraw
             RegenerateDisplayList();
         }
 
@@ -1907,7 +1925,9 @@ namespace Make3D.ViewModels
             Object3D prm = param as Object3D;
             CheckPoint();
             prm.MoveToFloor();
-            selectedObjectAdorner.Clear();
+            // move the selectors
+            selectedObjectAdorner.GenerateAdornments();
+            // redraw
             RegenerateDisplayList();
         }
 
@@ -2225,8 +2245,9 @@ namespace Make3D.ViewModels
                     selectedObjectAdorner.SelectedObjects[i].Scale = new Scale3D(x, y, z);
                     selectedObjectAdorner.SelectedObjects[i].Remesh();
                 }
-
-                selectedObjectAdorner.Refresh();
+                // move the selectors
+                selectedObjectAdorner.GenerateAdornments();
+                // redraw
                 RegenerateDisplayList();
             }
         }

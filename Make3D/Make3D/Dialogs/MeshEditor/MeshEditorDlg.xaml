@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Mesh Editor" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" MouseDown="Grid_MouseDown" MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp">
-    <Grid x:Name="MeshGrid" VerticalAlignment="Stretch">
+        Title="Mesh Editor" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" MouseDown="Grid_MouseDown" MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" KeyDown="MeshGrid_KeyDown">
+    <Grid x:Name="MeshGrid" VerticalAlignment="Stretch" KeyDown="MeshGrid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="25" />
@@ -15,11 +15,24 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
-        <UniformGrid Grid.Column="0" Grid.Row="0" Columns="3">
-            <Button Click="ClearSelection_Click">C</Button>
-            <Button Click="SelectAll_Click">A</Button>
-            <Button Click="Divide_Click">S</Button>
-        </UniformGrid>
+        
+        <Grid Grid.Column="0" Grid.Row="0" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="32" />
+                <RowDefinition Height="32" />
+                <RowDefinition Height="32" />
+                <RowDefinition Height="32" />
+                <RowDefinition Height="32" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="32" />
+                <ColumnDefinition Width="32" />
+                <ColumnDefinition Width="32" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Click="ClearSelection_Click">C</Button>
+            <Button Grid.Row="0" Grid.Column="1" Click="SelectAll_Click">A</Button>
+            <Button Grid.Row="1" Grid.Column="0" Click="Divide_Click">S</Button>
+        </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
             <Viewport3D Name="viewport3D1"  MouseWheel="Viewport_MouseWheel">
 

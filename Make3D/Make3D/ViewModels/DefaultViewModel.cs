@@ -21,12 +21,11 @@ namespace Make3D.ViewModels
         private static string statusBlockText3;
         private static Control subView;
         private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
+        private bool bezierRingEnabled;
         private bool boldChecked;
         private string caption;
         private bool centerTextAlignment;
         private bool doughnutEnabled;
-        private bool bezierRingEnabled;
-        private bool stadiumEnabled;
         private string fontSize;
         private bool fuselageEnabled;
         private bool irregularEnabled;
@@ -35,53 +34,18 @@ namespace Make3D.ViewModels
         private bool linearEnabled;
         private Ribbon MainRibbon;
         private bool rightTextAlignment;
+        private string selectedObjectName;
         private bool showAxiesChecked;
         private bool showFloorChecked;
         private bool showFloorMarkerChecked;
         private bool snapMarginChecked;
         private bool spurGearEnabled;
+        private bool stadiumEnabled;
         private SubViewManager subViewMan;
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
         private bool twoShapeEnabled;
         private bool underLineChecked;
-
-        public ObservableCollection<string> ObjectNames
-        {
-            get
-            {
-                ObservableCollection<string> res = null;
-                if (document != null)
-                {
-                    res = document.GetObjectNames();
-                }
-                return res;
-            }
-        }
-
-        private string selectedObjectName;
-
-        public string SelectedObjectName
-        {
-            get
-            {
-                return selectedObjectName;
-            }
-
-            set
-            {
-                if (selectedObjectName != value)
-                {
-                    selectedObjectName = value;
-                    NotifyPropertyChanged();
-
-                    if (selectedObjectName != "")
-                    {
-                        NotificationManager.Notify("SelectObjectName", selectedObjectName);
-                    }
-                }
-            }
-        }
 
         public DefaultViewModel()
         {
@@ -102,13 +66,13 @@ namespace Make3D.ViewModels
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
             CircularPasteCommand = new RelayCommand(OnCircularPaste);
             CutCommand = new RelayCommand(OnCut);
-            //  ViewCommand = new RelayCommand(OnView);
+
             AddCommand = new RelayCommand(OnAdd);
-            //  AddPageCommand = new RelayCommand(OnAddPage);
+
             ZoomInCommand = new RelayCommand(OnZoomIn);
             ZoomOutCommand = new RelayCommand(OnZoomOut);
             Zoom100Command = new RelayCommand(onZoomReset);
-            //  PageCommand = new RelayCommand(OnPageNav);
+
             AlignCommand = new RelayCommand(OnAlignment);
             MarkerCommand = new RelayCommand(OnMarker);
             DistributeCommand = new RelayCommand(OnDistribute);
@@ -131,8 +95,6 @@ namespace Make3D.ViewModels
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
-
-            //     ToolPaletteVisible = Visibility.Visible;
 
             Caption = BaseViewModel.Document.Caption;
             recentFilesList = new List<MruEntry>();
@@ -173,42 +135,27 @@ namespace Make3D.ViewModels
             SubView = subViewMan.GetView("editor");
         }
 
-        private void OnNewProject(object obj)
-        {
-            NotificationManager.Notify("NewProject", null);
-        }
-
-        private void OnMeshEdit(object obj)
-        {
-            NotificationManager.Notify("MeshEdit", null);
-        }
-
-        private void OnReference(object obj)
-        {
-            NotificationManager.Notify("Reference", null);
-        }
-
-        private void OnPasteAt(object obj)
-        {
-            NotificationManager.Notify("PasteAt", null);
-        }
-
-        private void OnMarker(object obj)
-        {
-            NotificationManager.Notify("Marker", null);
-        }
-
-        private void ObjectNamesChanged(object param)
-        {
-            NotifyPropertyChanged("ObjectNames");
-        }
-
         public ICommand AddCommand { get; set; }
 
         public ICommand AddPageCommand { get; set; }
 
         public ICommand AlignCommand { get; set; }
-        public ICommand MarkerCommand { get; set; }
+
+        public bool BezierRingEnabled
+        {
+            get
+            {
+                return bezierRingEnabled;
+            }
+            set
+            {
+                if (bezierRingEnabled != value)
+                {
+                    bezierRingEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public bool BoldChecked
         {
@@ -273,38 +220,15 @@ namespace Make3D.ViewModels
 
         public bool DoughnutEnabled
         {
-            get { return doughnutEnabled; }
+            get
+            {
+                return doughnutEnabled;
+            }
             set
             {
                 if (doughnutEnabled != value)
                 {
                     doughnutEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool StadiumEnabled
-        {
-            get { return stadiumEnabled; }
-            set
-            {
-                if (stadiumEnabled != value)
-                {
-                    stadiumEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool BezierRingEnabled
-        {
-            get { return bezierRingEnabled; }
-            set
-            {
-                if (bezierRingEnabled != value)
-                {
-                    bezierRingEnabled = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -339,7 +263,10 @@ namespace Make3D.ViewModels
 
         public bool FuselageEnabled
         {
-            get { return fuselageEnabled; }
+            get
+            {
+                return fuselageEnabled;
+            }
             set
             {
                 if (fuselageEnabled != value)
@@ -355,13 +282,13 @@ namespace Make3D.ViewModels
         public ICommand ImportCommand { get; set; }
 
         public ICommand InsertCommand { get; set; }
-        public ICommand ReferenceCommand { get; set; }
-
-        public ICommand ToolCommand { get; set; }
 
         public bool IrregularEnabled
         {
-            get { return irregularEnabled; }
+            get
+            {
+                return irregularEnabled;
+            }
             set
             {
                 if (irregularEnabled != value)
@@ -409,7 +336,10 @@ namespace Make3D.ViewModels
 
         public bool LinearEnabled
         {
-            get { return linearEnabled; }
+            get
+            {
+                return linearEnabled;
+            }
 
             set
             {
@@ -421,19 +351,37 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand MarkerCommand { get; set; }
+
+        public ICommand MeshEditCommand { get; set; }
+
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
+
         public ICommand NewProjectCommand { get; set; }
 
+        public ObservableCollection<string> ObjectNames
+        {
+            get
+            {
+                ObservableCollection<string> res = null;
+                if (document != null)
+                {
+                    res = document.GetObjectNames();
+                }
+                return res;
+            }
+        }
         public ICommand OpenCommand { get; set; }
 
         public ICommand OpenRecentFileCommand { get; set; }
 
         public ICommand PageCommand { get; set; }
 
-        public ICommand PasteCommand { get; set; }
         public ICommand PasteAtCommand { get; set; }
+
+        public ICommand PasteCommand { get; set; }
 
         public ICommand PrintCommand { get; set; }
 
@@ -458,6 +406,8 @@ namespace Make3D.ViewModels
 
         public ICommand RedoCommand { get; set; }
 
+        public ICommand ReferenceCommand { get; set; }
+
         public bool RightTextAlignment
         {
             get
@@ -480,6 +430,27 @@ namespace Make3D.ViewModels
 
         public ICommand SelectCommand { get; set; }
 
+        public string SelectedObjectName
+        {
+            get
+            {
+                return selectedObjectName;
+            }
+
+            set
+            {
+                if (selectedObjectName != value)
+                {
+                    selectedObjectName = value;
+                    NotifyPropertyChanged();
+
+                    if (selectedObjectName != "")
+                    {
+                        NotificationManager.Notify("SelectObjectName", selectedObjectName);
+                    }
+                }
+            }
+        }
         public ICommand SettingsCommand { get; set; }
 
         public bool ShowAxiesChecked
@@ -566,13 +537,32 @@ namespace Make3D.ViewModels
 
         public bool SpurGearEnabled
         {
-            get { return spurGearEnabled; }
+            get
+            {
+                return spurGearEnabled;
+            }
 
             set
             {
                 if (spurGearEnabled != value)
                 {
                     spurGearEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool StadiumEnabled
+        {
+            get
+            {
+                return stadiumEnabled;
+            }
+            set
+            {
+                if (stadiumEnabled != value)
+                {
+                    stadiumEnabled = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -654,7 +644,10 @@ namespace Make3D.ViewModels
 
         public bool TankTrackEnabled
         {
-            get { return tankTrackEnabled; }
+            get
+            {
+                return tankTrackEnabled;
+            }
 
             set
             {
@@ -667,6 +660,8 @@ namespace Make3D.ViewModels
         }
 
         public ICommand TextAlignmentCommand { get; set; }
+
+        public ICommand ToolCommand { get; set; }
 
         public Visibility ToolPaletteVisible
         {
@@ -690,7 +685,10 @@ namespace Make3D.ViewModels
 
         public bool TwoShapeEnabled
         {
-            get { return twoShapeEnabled; }
+            get
+            {
+                return twoShapeEnabled;
+            }
 
             set
             {
@@ -719,7 +717,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        public ICommand MeshEditCommand { get; set; }
         public ICommand UndoCommand { get; set; }
 
         public ICommand Zoom100Command { get; set; }
@@ -799,6 +796,11 @@ namespace Make3D.ViewModels
                 }
                 fin.Close();
             }
+        }
+
+        private void ObjectNamesChanged(object param)
+        {
+            NotifyPropertyChanged("ObjectNames");
         }
 
         private void OnAdd(object obj)
@@ -889,10 +891,14 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("InsertFile", obj);
         }
 
-        private void OnTool(object obj)
+        private void OnMarker(object obj)
         {
-            string s = obj.ToString();
-            NotificationManager.Notify(s, null);
+            NotificationManager.Notify("Marker", null);
+        }
+
+        private void OnMeshEdit(object obj)
+        {
+            NotificationManager.Notify("MeshEdit", null);
         }
 
         private void OnMultiPaste(object obj)
@@ -905,6 +911,10 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("NewFile", null);
         }
 
+        private void OnNewProject(object obj)
+        {
+            NotificationManager.Notify("NewProject", null);
+        }
         private void OnOpen(object obj)
         {
             NotificationManager.Notify("OpenFile", null);
@@ -924,6 +934,11 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("Paste", null);
         }
 
+        private void OnPasteAt(object obj)
+        {
+            NotificationManager.Notify("PasteAt", null);
+        }
+
         private void OnPrint(object obj)
         {
             NotificationManager.Notify("Print", null);
@@ -934,6 +949,10 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("Redo", null);
         }
 
+        private void OnReference(object obj)
+        {
+            NotificationManager.Notify("Reference", null);
+        }
         private void OnSave(object obj)
         {
             NotificationManager.Notify("SaveFile", null);
@@ -984,6 +1003,11 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("TextAlignment", obj);
         }
 
+        private void OnTool(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify(s, null);
+        }
         private void OnTwoShape(object obj)
         {
             NotificationManager.Notify("TwoShape", null);
@@ -1130,7 +1154,7 @@ namespace Make3D.ViewModels
 
                 case "BezierRing":
                     {
-                        TankTrackEnabled = true;
+                        BezierRingEnabled = true;
                     }
                     break;
             }

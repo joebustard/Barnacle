@@ -54,7 +54,7 @@ namespace Make3D.Models
         }
         public static bool equals(double v1, double v2)
         {
-            if (Math.Abs(v1 - v2) < 0.0000001)
+            if (Math.Abs(v1 - v2) < 0.000001)
             {
                 return true;
             }

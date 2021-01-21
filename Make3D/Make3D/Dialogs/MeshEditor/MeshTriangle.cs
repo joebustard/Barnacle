@@ -1,5 +1,7 @@
 ﻿using Make3D.Models;
+using System;
 using System.Collections.Generic;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Make3D.Dialogs.MeshEditor
@@ -40,19 +42,46 @@ namespace Make3D.Dialogs.MeshEditor
             set
             {
                 selected = value;
+                if (selected == false)
+                {
+                    SelectionWeight = 0;
+                }
                 SetModelMaterials();
+
             }
         }
 
-        private void SetModelMaterials()
+        public double SelectionWeight { get; set; }
+        public void SetModelMaterials()
         {
             // don't try to update model materials if one of them isn't
             // defined yet
             if (model != null && SelectedFrontMaterial != null)
             {
-                if (selected)
+                if (selected && SelectionWeight >= 100)
                 {
                     model.Material = SelectedFrontMaterial;
+                }
+                else
+                 if (selected && SelectionWeight < 100)
+                {
+                    //model.Material = PartSelectedFrontMaterial;
+                    SolidColorBrush bh = SelectedFrontMaterial.Brush as SolidColorBrush;
+                    SolidColorBrush bl = UnselectedFrontMaterial.Brush as SolidColorBrush;
+
+                    int dr = (bh.Color.R - bl.Color.R) *(int)SelectionWeight /100  ;
+                    int dg = (bh.Color.G - bl.Color.G) *(int)SelectionWeight  /100 ;
+                    int db = (bh.Color.B - bl.Color.B) * (int)SelectionWeight / 100;
+                    Color c = Color.FromRgb((byte)( bl.Color.R +dr),
+                                            (byte)(bl.Color.G + dg),
+                                            (byte)(bl.Color.B + db));
+                    SolidColorBrush br = new SolidColorBrush();
+                    br.Color = c;
+                    DiffuseMaterial mt = new DiffuseMaterial();
+                    mt.Color= c;
+                    mt.Brush = br;
+                    model.Material = mt;
+                
                 }
                 else
                 {
@@ -76,6 +105,8 @@ namespace Make3D.Dialogs.MeshEditor
                 }
             }
         }
+
+        public DiffuseMaterial PartSelectedFrontMaterial { get; internal set; }
 
         public MeshTriangle()
         {
@@ -132,20 +163,41 @@ namespace Make3D.Dialogs.MeshEditor
 
         internal bool CheckHit(GeometryModel3D m, bool shift)
         {
+           
             bool res = false;
             if (m == model)
             {
-                if (shift == true)
-                {
-                    Selected = true;
-                }
-                else
-                {
-                    Selected = !Selected;
-                }
+
                 res = true;
             }
             return res;
+        }
+
+        private void SelectNeighbours(List<MeshTriangle> visited, double v)
+        {
+            visited.Add(this);
+            if (v > 1)
+            {
+                if (SelectionWeight < 100)
+                {
+                    SelectionWeight += v;
+                }
+                Selected = true;
+                if (NeighbourP0P1 != null && !visited.Contains(NeighbourP0P1))
+                {
+                    NeighbourP0P1.SelectNeighbours(visited, SelectionWeight / 2);
+                }
+
+                if (NeighbourP1P2 != null && !visited.Contains(NeighbourP1P2))
+                {
+                    NeighbourP1P2.SelectNeighbours(visited, SelectionWeight / 2);
+                }
+
+                if (NeighbourP2P0 != null && !visited.Contains(NeighbourP2P0))
+                {
+                    NeighbourP2P0.SelectNeighbours(visited, SelectionWeight / 2);
+                }
+            }
         }
 
         internal void MovePoint(int pindex, List<MeshVertex> vertices)
@@ -164,6 +216,12 @@ namespace Make3D.Dialogs.MeshEditor
             {
                 (model.Geometry as MeshGeometry3D).Positions[2] = vertices[pindex].Position;
             }
+        }
+
+        internal void SelectAllNeighbours()
+        {
+            List<MeshTriangle> visited = new List<MeshTriangle>();
+            SelectNeighbours(visited,100);
         }
     }
 }

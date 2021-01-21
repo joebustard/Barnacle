@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -12,7 +13,7 @@ namespace Make3D.Dialogs.MeshEditor
         private DiffuseMaterial backMaterial;
 
         private DiffuseMaterial selectedFaceMaterial;
-
+        private DiffuseMaterial partSelectedFaceMaterial;
         private DiffuseMaterial unselectedFaceMaterial;
 
         private DiffuseMaterial unselectedPointMaterial;
@@ -41,7 +42,8 @@ namespace Make3D.Dialogs.MeshEditor
         private void CreateMaterials()
         {
             backMaterial = CreateMaterial(Brushes.Black);
-            selectedFaceMaterial = CreateMaterial(Brushes.Yellow);
+            selectedFaceMaterial = CreateMaterial(Brushes.LightYellow);
+            partSelectedFaceMaterial = CreateMaterial(Brushes.Yellow);
             unselectedFaceMaterial = CreateMaterial(Brushes.CornflowerBlue);
             selectedPointMaterial = CreateMaterial(Brushes.Red); ;
             unselectedPointMaterial = CreateMaterial(Brushes.DarkBlue);
@@ -75,9 +77,11 @@ namespace Make3D.Dialogs.MeshEditor
             f.P2 = v3;
             f.CreateModel(Vertices);
             f.SelectedFrontMaterial = selectedFaceMaterial;
+            f.PartSelectedFrontMaterial = partSelectedFaceMaterial;
             f.UnselectedFrontMaterial = unselectedFaceMaterial;
             f.BackMaterial = backMaterial;
             f.Selected = false;
+            f.SetModelMaterials();
             Faces.Add(f);
         }
 
@@ -120,6 +124,10 @@ namespace Make3D.Dialogs.MeshEditor
                     }
                 }
             }
+            if ( res == null )
+            {
+                bool broke = false;
+            }
             return res;
         }
 
@@ -145,6 +153,35 @@ namespace Make3D.Dialogs.MeshEditor
                     modelGroup.Children.Add(vx.Model);
                 }
             }
+            else
+            {
+                List<MeshVertex> showers = new List<MeshVertex>();
+                foreach (MeshTriangle tri in Faces)
+                {
+                    if ( tri.Selected)
+                    {
+                        MeshVertex vx = Vertices[tri.P0];
+                        if ( !showers.Contains(vx))
+                        {
+                            showers.Add(vx);
+                        }
+                        vx = Vertices[tri.P1];
+                        if (!showers.Contains(vx))
+                        {
+                            showers.Add(vx);
+                        }
+                        vx = Vertices[tri.P2];
+                        if (!showers.Contains(vx))
+                        {
+                            showers.Add(vx);
+                        }
+                    }
+                }
+                foreach (MeshVertex vx in showers)
+                {
+                    modelGroup.Children.Add(vx.Model);
+                }
+            }
             return modelGroup;
         }
 
@@ -158,12 +195,35 @@ namespace Make3D.Dialogs.MeshEditor
             {
                 if (tri.CheckHit(m, shift))
                 {
-                    if (tri.Selected)
+                    if (shift == true)
                     {
+                        tri.Selected = true;
+                        tri.SelectionWeight = 100;
+                        tri.SetModelMaterials();
                         Vertices[tri.P0].Selected = true;
                         Vertices[tri.P1].Selected = true;
                         Vertices[tri.P2].Selected = true;
                         lastSelectedTriangle = tri;
+                    }
+                    else
+                    {
+                        
+                        if (tri.Selected == false)
+                        {
+                            DeselectAll();
+                            tri.SelectionWeight = 100;
+                            tri.Selected = true;
+                            tri.SetModelMaterials();
+                            Vertices[tri.P0].Selected = true;
+                            Vertices[tri.P1].Selected = true;
+                            Vertices[tri.P2].Selected = true;
+                            lastSelectedTriangle = tri;
+                        }
+                        else
+                        {
+                            lastSelectedTriangle = tri;
+                            tri.SelectAllNeighbours();
+                        }
                     }
                     found = true;
                     break;
@@ -184,6 +244,15 @@ namespace Make3D.Dialogs.MeshEditor
             return found;
         }
 
+        private void DeselectAll()
+        {
+            foreach( MeshTriangle f in Faces)
+            {
+                f.SelectionWeight = 0;
+                f.Selected = false;
+            }
+        }
+
         internal void SelectAll(bool v)
         {
             foreach (MeshVertex vx in Vertices)
@@ -193,6 +262,14 @@ namespace Make3D.Dialogs.MeshEditor
             foreach (MeshTriangle tri in Faces)
             {
                 tri.Selected = v;
+                if (v)
+                {
+                    tri.SelectionWeight = 100;
+                }
+                else
+                {
+                    tri.SelectionWeight = 0;
+                }
             }
         }
 
@@ -248,6 +325,7 @@ namespace Make3D.Dialogs.MeshEditor
                     nt.SelectedFrontMaterial = selectedFaceMaterial;
                     nt.UnselectedFrontMaterial = unselectedFaceMaterial;
                     nt.BackMaterial = backMaterial;
+                    nt.PartSelectedFrontMaterial = partSelectedFaceMaterial;
                     nt.Selected = false;
                     tmp.Add(nt);
 
@@ -259,6 +337,7 @@ namespace Make3D.Dialogs.MeshEditor
                     nt.SelectedFrontMaterial = selectedFaceMaterial;
                     nt.UnselectedFrontMaterial = unselectedFaceMaterial;
                     nt.BackMaterial = backMaterial;
+                    nt.PartSelectedFrontMaterial = partSelectedFaceMaterial;
                     nt.Selected = false;
                     tmp.Add(nt);
 
@@ -270,6 +349,7 @@ namespace Make3D.Dialogs.MeshEditor
                     nt.SelectedFrontMaterial = selectedFaceMaterial;
                     nt.UnselectedFrontMaterial = unselectedFaceMaterial;
                     nt.BackMaterial = backMaterial;
+                    nt.PartSelectedFrontMaterial = partSelectedFaceMaterial;
                     nt.Selected = false;
                     tmp.Add(nt);
                 }
@@ -286,21 +366,60 @@ namespace Make3D.Dialogs.MeshEditor
         {
             // we have to do it this way to avoid moving the same point multiple times if it is
             // referenced in multiple triangles
-            Int32Collection pnts = new Int32Collection();
+            List<MeshTriangle> movingTris = new List<MeshTriangle>();
             foreach (MeshTriangle f in Faces)
             {
                 if (f.Selected)
                 {
-                    AddPoint(pnts, f.P0);
-                    AddPoint(pnts, f.P1);
-                    AddPoint(pnts, f.P2);
+                    movingTris.Add(f);
                 }
+            }
+
+            // sort by selection weight, highest first
+            bool swapped = false;
+            do
+            {
+                swapped = false;
+                for ( int i = 0; i < movingTris.Count-1; i ++)
+                {
+                    if ( movingTris[i].SelectionWeight < movingTris[i+1].SelectionWeight)
+                    {
+                        MeshTriangle tmp = movingTris[i];
+                        movingTris[i] = movingTris[i + 1];
+                        movingTris[i + 1] = tmp;
+                        swapped = true;
+                    }
+                }
+            } while (swapped == true);
+
+            Int32Collection pnts = new Int32Collection();
+            foreach (MeshTriangle f in movingTris)
+            {
+                double scale = f.SelectionWeight / 100.0;
+                Point3D delta = new Point3D(positionChange.X * scale,
+                                            positionChange.Y * scale ,
+                                            positionChange.Z * scale );
+                if (!pnts.Contains(f.P0))
+                {
+                    AddPoint(pnts, f.P0);
+                    Vertices[f.P0].MovePosition(delta);
+                }
+                if (!pnts.Contains(f.P1))
+                {
+                    AddPoint(pnts, f.P1);
+                    Vertices[f.P1].MovePosition(delta);
+                }
+                if (!pnts.Contains(f.P2))
+                {
+                    AddPoint(pnts, f.P2);
+                    Vertices[f.P2].MovePosition(delta);
+                }
+                
             }
 
             foreach (int pindex in pnts)
             {
-                Vertices[pindex].MovePosition(positionChange);
-
+                
                 foreach (MeshTriangle tri in Faces)
                 {
                     tri.MovePoint(pindex, Vertices);
