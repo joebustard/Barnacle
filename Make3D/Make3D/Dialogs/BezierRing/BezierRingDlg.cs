@@ -19,7 +19,9 @@ namespace Make3D.Dialogs
         private int selectedPoint;
         private int selectedControlPoint;
         private bool snapPoint;
+
         private double sweepDegrees;
+
         public double SweepDegrees
         {
             get { return sweepDegrees; }
@@ -31,6 +33,35 @@ namespace Make3D.Dialogs
                 Redisplay();
             }
         }
+
+        private double bezierDivisions;
+
+        public double BezierDivisions
+        {
+            get { return bezierDivisions; }
+            set
+            {
+                bezierDivisions = value;
+                NotifyPropertyChanged();
+                GenerateRing();
+                Redisplay();
+            }
+        }
+
+        private int rotDivisions;
+
+        public int RotDivisions
+        {
+            get { return rotDivisions; }
+            set
+            {
+                rotDivisions = value;
+                NotifyPropertyChanged();
+                GenerateRing();
+                Redisplay();
+            }
+        }
+
         private List<double> pointDistance;
 
         public List<double> PointDistance
@@ -49,6 +80,7 @@ namespace Make3D.Dialogs
         private double ringRadius;
         private double profileWidth;
         private double profileHeight;
+
         public BezierLine[] BzLines
         {
             get { return bzlines; }
@@ -92,7 +124,7 @@ namespace Make3D.Dialogs
         {
             InitializeComponent();
             DataContext = this;
-            PolarCoordinate pcol = new PolarCoordinate(0,0,1);
+            PolarCoordinate pcol = new PolarCoordinate(0, 0, 1);
             Point3D p1 = new Point3D(10, 10, 10);
             pcol.SetPoint3D(p1);
             Point3D p2 = pcol.GetPoint3D();
@@ -106,11 +138,12 @@ namespace Make3D.Dialogs
             snapPoint = false;
             linkPoints = false;
             GenerateDefaultPoints();
-            ringRadius = 20;
+            ringRadius = 10;
             profileHeight = 10;
             profileWidth = 10;
-            sweepDegrees = 180;
-
+            sweepDegrees = 360;
+            rotDivisions = 19;
+            bezierDivisions = 40;
         }
 
         public void GenerateDefaultPoints()
@@ -184,14 +217,15 @@ namespace Make3D.Dialogs
             set { pointAngles = value; }
         }
 
+        private const int padding = 40;
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-
             MyModelGroup.Children.Clear();
-            maxRadius = (PointCanvas.ActualWidth / 2)-10;
+            maxRadius = (PointCanvas.ActualWidth / 2) - padding;
             if (PointCanvas.ActualHeight / 2 < maxRadius)
             {
-                maxRadius = (PointCanvas.ActualHeight / 2)-10;
+                maxRadius = (PointCanvas.ActualHeight / 2) - padding;
             }
             GenerateRing();
             Redraw();
@@ -334,7 +368,7 @@ namespace Make3D.Dialogs
 
             double x = (p.X - cx) / maxRadius;
             double y = (p.Y - cy) / maxRadius;
-            
+
             switch (selectedControlPoint)
             {
                 case 0:
@@ -462,12 +496,12 @@ namespace Make3D.Dialogs
             double vr = profileHeight / 2;
             double cx = ringRadius;
             double cy = vr;
+            double bstep = 4 / bezierDivisions;
             if (Points != null && Points.Count > 0)
             {
-
                 for (int i = 0; i < bzlines.GetLength(0); i++)
                 {
-                    for (double t = 0; t < 1; t += 0.1)
+                    for (double t = 0; t < 1; t += bstep)
                     {
                         Point p = bzlines[i].GetCoord(t, false);
                         Point3D p3d = new Point3D(cx + hr * p.X, 0, cy - (vr * p.Y));
@@ -477,16 +511,16 @@ namespace Make3D.Dialogs
                     }
                 }
 
-                SweepPolarProfile(polarProfile, cx, cy, sweepDegrees);
+                SweepPolarProfile(polarProfile, cx, cy, sweepDegrees, rotDivisions);
             }
         }
 
-        private void SweepPolarProfile(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange)
+        private void SweepPolarProfile(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs)
         {
             // now we have a lovely copy of the profile in polar coordinates.
             Vertices.Clear();
             Faces.Clear();
-            int numSegs = 36;
+
             double sweep = sweepRange * (Math.PI * 2.0) / 360.0;
             double da = sweep / (numSegs - 1);
             for (int i = 0; i < numSegs; i++)
@@ -503,7 +537,6 @@ namespace Make3D.Dialogs
                     {
                         // dont connect end to start if the sweep doesn't go all the way round
                         break;
-
                     }
                 }
                 double b = da * j;
@@ -519,10 +552,10 @@ namespace Make3D.Dialogs
                     PolarCoordinate pc2 = polarProfile[index2].Clone();
                     PolarCoordinate pc3 = polarProfile[index2].Clone();
                     PolarCoordinate pc4 = polarProfile[index].Clone();
-                    pc1.Theta += a;
-                    pc2.Theta += a;
-                    pc3.Theta += b;
-                    pc4.Theta += b;
+                    pc1.Theta -= a;
+                    pc2.Theta -= a;
+                    pc3.Theta -= b;
+                    pc4.Theta -= b;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
@@ -535,16 +568,13 @@ namespace Make3D.Dialogs
                     int v4 = AddVertice(p4);
 
                     Faces.Add(v1);
-                    Faces.Add(v3);
                     Faces.Add(v2);
+                    Faces.Add(v3);
 
                     Faces.Add(v1);
-                    Faces.Add(v4);
                     Faces.Add(v3);
-
+                    Faces.Add(v4);
                 }
-
-
             }
             if (sweepRange != 360.0)
             {
@@ -571,8 +601,8 @@ namespace Make3D.Dialogs
                     int v3 = AddVertice(p3);
 
                     Faces.Add(v1);
-                    Faces.Add(v2);
                     Faces.Add(v3);
+                    Faces.Add(v2);
                 }
 
                 for (int index = 0; index < polarProfile.Count; index++)
@@ -586,9 +616,9 @@ namespace Make3D.Dialogs
                     PolarCoordinate pc2 = polarProfile[index2].Clone();
                     PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
                     pc3.SetPoint3D(centreOfProfile);
-                    pc1.Theta += sweep;
-                    pc2.Theta += sweep;
-                    pc3.Theta += sweep;
+                    pc1.Theta -= sweep;
+                    pc2.Theta -= sweep;
+                    pc3.Theta -= sweep;
 
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
@@ -599,10 +629,9 @@ namespace Make3D.Dialogs
                     int v3 = AddVertice(p3);
 
                     Faces.Add(v1);
-                    Faces.Add(v3);
                     Faces.Add(v2);
+                    Faces.Add(v3);
                 }
-
             }
         }
 
@@ -612,9 +641,9 @@ namespace Make3D.Dialogs
             cy = PointCanvas.ActualHeight / 2.0;
 
             maxRadius = PointCanvas.ActualWidth / 2;
-            if (PointCanvas.ActualHeight / 2 < maxRadius)
+            if ((PointCanvas.ActualHeight / 2) - padding < maxRadius)
             {
-                maxRadius = PointCanvas.ActualHeight / 2;
+                maxRadius = (PointCanvas.ActualHeight / 2) - padding;
             }
             PointCanvas.Children.Clear();
             DisplayAxis();
@@ -622,11 +651,10 @@ namespace Make3D.Dialogs
             DisplayPoints();
 
             DrawCentreMark();
-
         }
+
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
-           
         }
 
         private static SolidColorBrush[] pointColours =
@@ -643,7 +671,7 @@ Brushes.Green
             {
                 double rad = 3;
                 int cp = 0;
-                
+
                 for (int i = 0; i < bzlines.GetLength(0); i++)
                 {
                     if (selectedPoint == i)
@@ -692,7 +720,6 @@ Brushes.Green
             el.Stroke = Brushes.Black;
             PointCanvas.Children.Add(el);
             el.MouseUp += El_MouseUp;
-    
         }
 
         private void El_MouseUp(object sender, MouseButtonEventArgs e)

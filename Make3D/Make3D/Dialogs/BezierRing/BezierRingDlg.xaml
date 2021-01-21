@@ -9,7 +9,7 @@
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="300" />
-            <RowDefinition  />
+            <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -48,17 +48,21 @@
         </Border>
         <Grid Grid.Row="1" Grid.Column="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition />
-                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <Label Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Sweep</Label>
-            <Slider Grid.Column="1" Grid.Row="0" Minimum="1" Maximum="360" Value="{Binding SweepDegrees}" ToolTip="{Binding SweepDegrees}"/>
+            <Slider Grid.Column="1" Grid.Row="0" Minimum="1" Maximum="360" Value="{Binding SweepDegrees}" ToolTip="{Binding SweepDegrees}" />
+            <Label Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Bezier Divisions</Label>
+            <Slider Grid.Column="1" Grid.Row="1" Minimum="16" Maximum="48" Value="{Binding BezierDivisions}" ToolTip="{Binding BezierDivisions}" />
+            <Label Grid.Column="0" Grid.Row="2" VerticalAlignment="Center">Rot. Divisions</Label>
+            <Slider Grid.Column="1" Grid.Row="2" Minimum="4" Maximum="50" Value="{Binding RotDivisions}" ToolTip="{Binding RotDivisions}" />
         </Grid>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
