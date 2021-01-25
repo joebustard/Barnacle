@@ -54,6 +54,8 @@
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding SpudSize}" MinWidth="50"></TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="5">
+                <Label Width="80" VerticalAlignment="Center" Visibility="{Binding ShowGuideSize}">Guide Size</Label>
+                <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding GuideSize}" MinWidth="50" Visibility="{Binding ShowGuideSize}"></TextBox>
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">

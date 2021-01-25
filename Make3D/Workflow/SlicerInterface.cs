@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 
 namespace Workflow
 {
@@ -17,31 +18,38 @@ popd
 
         public static void Slice(string stlPath, string gcodePath, string logPath, string sdCardName)
         {
-            string sdcard = "";
-            if (sdCardName != "")
+            try
             {
-                sdcard = FindSDCard(sdCardName);
-            }
-            string cmdsToRun =
- @"pushd
+                string sdcard = "";
+                if (sdCardName != "")
+                {
+                    sdcard = FindSDCard(sdCardName);
+                }
+                string cmdsToRun =
+     @"pushd
 ";
 
-            string cmd = sliceCmd.Replace("<STLPATH>", stlPath);
-            cmd = cmd.Replace("<GCODEPATH>", gcodePath);
-            cmd = cmd.Replace("<LOGPATH>", logPath);
-            cmdsToRun += cmd;
-            if (sdcard != "")
-            {
-                cmdsToRun += "copy /y " + gcodePath + " " + sdcard + "\r\n";
-            }
+                string cmd = sliceCmd.Replace("<STLPATH>", stlPath);
+                cmd = cmd.Replace("<GCODEPATH>", gcodePath);
+                cmd = cmd.Replace("<LOGPATH>", logPath);
+                cmdsToRun += cmd;
+                if (sdcard != "")
+                {
+                    cmdsToRun += "copy /y " + gcodePath + " " + sdcard + "\r\n";
+                }
 
-            cmdsToRun +=
- @"
+                cmdsToRun +=
+     @"
 popd";
-            string tmpFile = Path.GetTempPath();
-            tmpFile = Path.Combine(tmpFile, "slice.cmd");
-            File.WriteAllText(tmpFile, cmdsToRun);
-            ExecuteCmds(tmpFile);
+                string tmpFile = Path.GetTempPath();
+                tmpFile = Path.Combine(tmpFile, "slice.cmd");
+                File.WriteAllText(tmpFile, cmdsToRun);
+                ExecuteCmds(tmpFile);
+            }
+            catch ( Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public static void ExecuteCmds(string pt)

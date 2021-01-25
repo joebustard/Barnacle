@@ -235,7 +235,7 @@ namespace Make3D.ViewModels
                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                 ob.RelativeToAbsolute();
             }
-
+            Document.Dirty = true;
             // move the selectors
             selectedObjectAdorner.GenerateAdornments();
             // redraw

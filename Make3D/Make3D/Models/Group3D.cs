@@ -320,42 +320,45 @@ namespace Make3D.Models
 
         internal override XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
-            XmlElement ele = doc.CreateElement(XmlType);
-            docNode.AppendChild(ele);
-            ele.SetAttribute("Name", Name);
-            ele.SetAttribute("Description", Description);
-            ele.SetAttribute("Colour", Color.ToString());
-            ele.SetAttribute("Primitive", PrimType);
-            XmlElement pos = doc.CreateElement("Position");
-            pos.SetAttribute("X", Position.X.ToString());
-            pos.SetAttribute("Y", Position.Y.ToString());
-            pos.SetAttribute("Z", Position.Z.ToString());
-            ele.AppendChild(pos);
-
-            XmlElement scl = doc.CreateElement("Scale");
-            scl.SetAttribute("X", Scale.X.ToString());
-            scl.SetAttribute("Y", Scale.Y.ToString());
-            scl.SetAttribute("Z", Scale.Z.ToString());
-            ele.AppendChild(scl);
-            foreach (Point3D v in RelativeObjectVertices)
+            XmlElement ele = null;
+            if (leftObject != null && rightObject != null)
             {
-                XmlElement vertEle = doc.CreateElement("v");
-                vertEle.SetAttribute("X", v.X.ToString("F5"));
-                vertEle.SetAttribute("Y", v.Y.ToString("F5"));
-                vertEle.SetAttribute("Z", v.Z.ToString("F5"));
-                ele.AppendChild(vertEle);
-            }
-            for (int i = 0; i < TriangleIndices.Count; i += 3)
-            {
-                XmlElement faceEle = doc.CreateElement("f");
-                faceEle.SetAttribute("v", TriangleIndices[i].ToString() + "," +
-                                          TriangleIndices[i + 1].ToString() + "," +
-                                          TriangleIndices[i + 2].ToString());
-                ele.AppendChild(faceEle);
-            }
-            leftObject.Write(doc, ele);
-            rightObject.Write(doc, ele);
+                ele = doc.CreateElement(XmlType);
+                docNode.AppendChild(ele);
+                ele.SetAttribute("Name", Name);
+                ele.SetAttribute("Description", Description);
+                ele.SetAttribute("Colour", Color.ToString());
+                ele.SetAttribute("Primitive", PrimType);
+                XmlElement pos = doc.CreateElement("Position");
+                pos.SetAttribute("X", Position.X.ToString());
+                pos.SetAttribute("Y", Position.Y.ToString());
+                pos.SetAttribute("Z", Position.Z.ToString());
+                ele.AppendChild(pos);
 
+                XmlElement scl = doc.CreateElement("Scale");
+                scl.SetAttribute("X", Scale.X.ToString());
+                scl.SetAttribute("Y", Scale.Y.ToString());
+                scl.SetAttribute("Z", Scale.Z.ToString());
+                ele.AppendChild(scl);
+                foreach (Point3D v in RelativeObjectVertices)
+                {
+                    XmlElement vertEle = doc.CreateElement("v");
+                    vertEle.SetAttribute("X", v.X.ToString("F5"));
+                    vertEle.SetAttribute("Y", v.Y.ToString("F5"));
+                    vertEle.SetAttribute("Z", v.Z.ToString("F5"));
+                    ele.AppendChild(vertEle);
+                }
+                for (int i = 0; i < TriangleIndices.Count; i += 3)
+                {
+                    XmlElement faceEle = doc.CreateElement("f");
+                    faceEle.SetAttribute("v", TriangleIndices[i].ToString() + "," +
+                                              TriangleIndices[i + 1].ToString() + "," +
+                                              TriangleIndices[i + 2].ToString());
+                    ele.AppendChild(faceEle);
+                }
+                leftObject.Write(doc, ele);
+                rightObject.Write(doc, ele);
+            }
             return ele;
         }
 

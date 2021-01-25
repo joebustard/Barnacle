@@ -56,8 +56,8 @@ namespace Make3D.Dialogs
             outerPolygon = new List<System.Windows.Point>();
             innerPolygon = new List<System.Windows.Point>();
             Thickness = 6;
-            SpudSize = 4;
-            GuideSize = 4;
+            SpudSize = 1;
+            GuideSize = 1;
         }
 
         public bool ShowLinkMarkers
@@ -130,6 +130,14 @@ namespace Make3D.Dialogs
                 if (selectedTrackType != value)
                 {
                     selectedTrackType = value;
+                    if (selectedTrackType == "Centre Guide")
+                    {
+                        ShowGuideSize = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowGuideSize = Visibility.Hidden;
+                    }
                     NotifyPropertyChanged();
                     UpdateTrack();
                     UpdateDisplay();
@@ -151,6 +159,21 @@ namespace Make3D.Dialogs
                     NotifyPropertyChanged();
                     UpdateTrack();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        private Visibility showGuideSize;
+
+        public Visibility ShowGuideSize
+        {
+            get { return showGuideSize; }
+            set
+            {
+                if (value != showGuideSize)
+                {
+                    showGuideSize = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -853,6 +876,7 @@ namespace Make3D.Dialogs
             EditorParameters.Set("TrackType", SelectedTrackType);
             EditorParameters.Set("Thickness", Thickness.ToString());
             EditorParameters.Set("SpudSize", SpudSize.ToString());
+            EditorParameters.Set("GuideSize", SpudSize.ToString());
         }
 
         private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall)
@@ -1243,13 +1267,18 @@ namespace Make3D.Dialogs
             s = EditorParameters.Get("Thickness");
             if (s != "")
             {
-                Thickness = Convert.ToDouble(s); 
+                Thickness = Convert.ToDouble(s);
             }
 
             s = EditorParameters.Get("SpudSize");
             if (s != "")
             {
                 SpudSize = Convert.ToDouble(s); ;
+            }
+            s = EditorParameters.Get("GuideSize");
+            if (s != "")
+            {
+                GuideSize = Convert.ToDouble(s); ;
             }
             Camera.Distance = 200;
             GenerateTrackPath();
