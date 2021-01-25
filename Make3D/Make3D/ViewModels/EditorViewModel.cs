@@ -114,6 +114,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
+            NotificationManager.Subscribe("Tube", OnTube);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -124,6 +125,12 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void OnTube(object param)
+        {
+            TubeDlg dlg = new TubeDlg();
+            DisplayModeller(dlg);
         }
 
         private void OnBezierRing(object param)

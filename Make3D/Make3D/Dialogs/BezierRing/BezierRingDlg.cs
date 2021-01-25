@@ -124,10 +124,6 @@ namespace Make3D.Dialogs
         {
             InitializeComponent();
             DataContext = this;
-            PolarCoordinate pcol = new PolarCoordinate(0, 0, 1);
-            Point3D p1 = new Point3D(10, 10, 10);
-            pcol.SetPoint3D(p1);
-            Point3D p2 = pcol.GetPoint3D();
 
             ToolName = "BezierRing";
             Points = new List<Point>();
@@ -515,126 +511,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void SweepPolarProfile(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs)
-        {
-            // now we have a lovely copy of the profile in polar coordinates.
-            Vertices.Clear();
-            Faces.Clear();
-
-            double sweep = sweepRange * (Math.PI * 2.0) / 360.0;
-            double da = sweep / (numSegs - 1);
-            for (int i = 0; i < numSegs; i++)
-            {
-                double a = da * i;
-                int j = i + 1;
-                if (j == numSegs)
-                {
-                    if (sweepRange == 360)
-                    {
-                        j = 0;
-                    }
-                    else
-                    {
-                        // dont connect end to start if the sweep doesn't go all the way round
-                        break;
-                    }
-                }
-                double b = da * j;
-
-                for (int index = 0; index < polarProfile.Count; index++)
-                {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
-                    {
-                        index2 = 0;
-                    }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = polarProfile[index2].Clone();
-                    PolarCoordinate pc4 = polarProfile[index].Clone();
-                    pc1.Theta -= a;
-                    pc2.Theta -= a;
-                    pc3.Theta -= b;
-                    pc4.Theta -= b;
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-                    Point3D p4 = pc4.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-                    int v4 = AddVertice(p4);
-
-                    Faces.Add(v1);
-                    Faces.Add(v2);
-                    Faces.Add(v3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v3);
-                    Faces.Add(v4);
-                }
-            }
-            if (sweepRange != 360.0)
-            {
-                // both ends will be open.
-                Point3D centreOfProfile = new Point3D(cx, 0, cy);
-                for (int index = 0; index < polarProfile.Count; index++)
-                {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
-                    {
-                        index2 = 0;
-                    }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
-                    pc3.SetPoint3D(centreOfProfile);
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v3);
-                    Faces.Add(v2);
-                }
-
-                for (int index = 0; index < polarProfile.Count; index++)
-                {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
-                    {
-                        index2 = 0;
-                    }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
-                    pc3.SetPoint3D(centreOfProfile);
-                    pc1.Theta -= sweep;
-                    pc2.Theta -= sweep;
-                    pc3.Theta -= sweep;
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v2);
-                    Faces.Add(v3);
-                }
-            }
-        }
-
+    
         public void Redraw()
         {
             cx = PointCanvas.ActualWidth / 2.0;

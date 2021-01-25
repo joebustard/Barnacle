@@ -45,6 +45,8 @@ namespace Make3D.Dialogs.Blank
                         MyModelGroup.Children.Add(m);
                     }
                 }
+                GeometryModel3D gm = GetModel();
+                MyModelGroup.Children.Add(gm);
             }
         }
 

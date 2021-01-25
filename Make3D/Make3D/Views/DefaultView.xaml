@@ -9,7 +9,7 @@
              xmlns:local="clr-namespace:Make3D.Views"
              xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="1000">
     <UserControl.DataContext>
         <ViewModels:DefaultViewModel />
     </UserControl.DataContext>
@@ -227,8 +227,8 @@
                     <Custom:RibbonButton x:Name="TankTrackButton" Label="Tank Track" Command="{Binding TankTrackCommand}" IsEnabled="{Binding TankTrackEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
 
                     <Custom:RibbonButton x:Name="StadiumButton" Label="Stadium" Command="{Binding ToolCommand}" CommandParameter="Stadium" IsEnabled="{Binding StadiumEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="TubeButton" Label="Tube" Command="{Binding ToolCommand}" CommandParameter="Tube" IsEnabled="{Binding TubeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
 
-                    <Custom:RibbonSeparator />
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="LoftGroup" Header="Loft Tools">

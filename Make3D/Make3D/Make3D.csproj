@@ -91,7 +91,7 @@
     <Compile Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\IrregularPolygonDlg.xaml.cs">
+    <Compile Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml.cs">
       <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\LinearLoft\LinearLoftDialog.xaml.cs" />
@@ -124,6 +124,9 @@
     </Compile>
     <Compile Include="Dialogs\TankTrack\TrackDialog.xaml.cs">
       <DependentUpon>TrackDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Tube\TubeDlg.xaml.cs">
+      <DependentUpon>TubeDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
@@ -228,7 +231,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\IrregularPolygonDlg.xaml">
+    <Page Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -279,6 +282,10 @@
     <Page Include="Dialogs\TankTrack\TrackDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Tube\TubeDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

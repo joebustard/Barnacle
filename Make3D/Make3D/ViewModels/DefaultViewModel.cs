@@ -41,6 +41,7 @@ namespace Make3D.ViewModels
         private bool snapMarginChecked;
         private bool spurGearEnabled;
         private bool stadiumEnabled;
+        private bool tubeEnabled;
         private SubViewManager subViewMan;
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
@@ -568,6 +569,21 @@ namespace Make3D.ViewModels
             }
         }
 
+        public bool TubeEnabled
+        {
+            get
+            {
+                return tubeEnabled;
+            }
+            set
+            {
+                if (tubeEnabled != value)
+                {
+                    tubeEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public String StatusBlockText1
         {
             get
@@ -778,6 +794,7 @@ namespace Make3D.ViewModels
             TankTrackEnabled = b;
             StadiumEnabled = b;
             BezierRingEnabled = b;
+            TubeEnabled = b;
         }
 
         private void LoadMru()
@@ -1155,6 +1172,12 @@ namespace Make3D.ViewModels
                 case "BezierRing":
                     {
                         BezierRingEnabled = true;
+                    }
+                    break;
+
+                case "Tube":
+                    {
+                        TubeEnabled = true;
                     }
                     break;
             }
