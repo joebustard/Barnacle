@@ -105,6 +105,9 @@
       <DependentUpon>NewProjectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml.cs">
+      <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RefernceModel.xaml.cs">
       <DependentUpon>RefernceModel.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,9 @@
     </Compile>
     <Compile Include="Dialogs\Tube\TubeDlg.xaml.cs">
       <DependentUpon>TubeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Wing\WingDlg.xaml.cs">
+      <DependentUpon>WingDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
@@ -251,6 +257,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\RefernceModel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -286,6 +296,10 @@
     <Page Include="Dialogs\Tube\TubeDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\Wing\WingDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -492,6 +506,7 @@
   <ItemGroup>
     <Resource Include="Images\Buttons\Bolt.png" />
     <Resource Include="Images\Buttons\BigGear.png" />
+    <Resource Include="Dialogs\Wing\Aerofoils\Aerofoils.xml" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -499,7 +514,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)templates
+mkdir $(TargetDir)data
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
+copy /Y $(SolutionDir)make3d\Dialogs\Wing\Aerofoils\*.* $(TargetDir)data
 Exit 0
 </PostBuildEvent>
   </PropertyGroup>

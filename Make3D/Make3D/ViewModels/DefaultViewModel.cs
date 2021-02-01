@@ -42,6 +42,8 @@ namespace Make3D.ViewModels
         private bool spurGearEnabled;
         private bool stadiumEnabled;
         private bool tubeEnabled;
+        private bool profileFuselageEnabled;
+        private bool wingEnabled;
         private SubViewManager subViewMan;
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
@@ -600,7 +602,37 @@ namespace Make3D.ViewModels
                 }
             }
         }
+        public bool ProfileFuselageEnabled
+        {
+            get
+            {
+                return profileFuselageEnabled;
+            }
+            set
+            {
+                if (profileFuselageEnabled != value)
+                {
+                    profileFuselageEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
+        public bool WingEnabled
+        {
+            get
+            {
+                return wingEnabled;
+            }
+            set
+            {
+                if (wingEnabled != value)
+                {
+                    wingEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public String StatusBlockText1
         {
             get
@@ -812,6 +844,8 @@ namespace Make3D.ViewModels
             StadiumEnabled = b;
             BezierRingEnabled = b;
             TubeEnabled = b;
+            ProfileFuselageEnabled = b;
+            WingEnabled = b;
         }
 
         private void LoadMru()
@@ -826,7 +860,7 @@ namespace Make3D.ViewModels
                     string shortName = AbbreviatePath(s, 30);
                     MruEntry m = new MruEntry(shortName, s);
                     recentFilesList.Add(m);
-                    //CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+ 
                 }
                 fin.Close();
             }
@@ -1198,6 +1232,18 @@ namespace Make3D.ViewModels
                 case "Tube":
                     {
                         TubeEnabled = true;
+                    }
+                    break;
+
+                case "ProfileFuselage":
+                    {
+                        ProfileFuselageEnabled = true;
+                    }
+                    break;
+
+                case "Wing":
+                    {
+                        WingEnabled = true;
                     }
                     break;
             }

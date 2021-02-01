@@ -29,6 +29,7 @@ namespace Make3D.ViewModels
         };
 
         private Bounds3D allBounds;
+        private Axies axies;
         private PolarCamera camera;
 
         private Point3D CameraLookObject = new Point3D(0, 0, 0);
@@ -39,19 +40,20 @@ namespace Make3D.ViewModels
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
 
         private Floor floor;
-        private Axies axies;
         private FloorMarker floorMarker;
+        private Grid3D grid;
         private Point lastMouse;
         private Vector3D lookDirection;
         private Model3DCollection modelItems;
         private double onePercentZoom;
         private List<Object3D> selectedItems;
         private Adorner selectedObjectAdorner;
+        private bool showAdorners;
+        private bool showAxies;
+        private bool showFloor;
+        private bool showFloorMarker;
         private int totalFaces;
         private double zoomPercent = 100;
-        private Grid3D grid;
-        private bool showAdorners;
-
         public EditorViewModel()
         {
             floor = new Floor();
@@ -116,6 +118,8 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
             NotificationManager.Subscribe("Tube", OnTube);
+            NotificationManager.Subscribe("ProfileFuselage", OnProfileFuselage);
+            NotificationManager.Subscribe("Wing", OnWing);
             NotificationManager.Subscribe("ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("RemoveDupVertices", OnRemoveDupVertices);
             ReportCameraPosition();
@@ -130,505 +134,6 @@ namespace Make3D.ViewModels
             RegenerateDisplayList();
         }
 
-        private void OnRemoveDupVertices(object param)
-        {
-            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
-            {
-                MessageBox.Show("Nothing selected to check");
-            }
-            else
-            {
-                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                {
-                    ManifoldChecker checker = new ManifoldChecker();
-                    checker.Points = ob.RelativeObjectVertices;
-                    checker.Indices = ob.TriangleIndices;
-                    checker.RemoveDuplicateVertices();
-                    ob.RelativeObjectVertices = checker.Points;
-                    ob.TriangleIndices = checker.Indices;
-                }
-            }
-        }
-
-        private void OnManifoldTest(object param)
-        {
-            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
-            {
-                MessageBox.Show("Nothing selected to check");
-            }
-            else
-            {
-                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                {
-                    ManifoldChecker checker = new ManifoldChecker();
-                    checker.Points = ob.RelativeObjectVertices;
-                    checker.Indices = ob.TriangleIndices;
-                    checker.Check();
-                    if (checker.IsManifold)
-                    {
-                        MessageBox.Show("Manifold");
-                    }
-                    else
-                    {
-                        if (checker.NumberOfDuplicatedVertices > 0)
-                        {
-                            MessageBox.Show($"{checker.NumberOfDuplicatedVertices} duplicate points ");
-                        }
-                        if (checker.NumberOfBadlyOrientatedEdges > 0)
-                        {
-                            MessageBox.Show($"{checker.NumberOfBadlyOrientatedEdges} badly orientated edges");
-                        }
-
-                        if (checker.NumbeOfUnconnectedFaces > 0)
-                        {
-                            MessageBox.Show($"{checker.NumbeOfUnconnectedFaces} incompletely connected faces");
-                        }
-                    }
-                }
-            }
-        }
-
-        private void OnTube(object param)
-        {
-            TubeDlg dlg = new TubeDlg();
-            DisplayModeller(dlg);
-        }
-
-        private void OnBezierRing(object param)
-        {
-            BezierRingDlg dlg = new BezierRingDlg();
-            DisplayModeller(dlg);
-        }
-
-        private void OnMeshEdit(object param)
-        {
-            MeshEditorDlg dlg = new MeshEditorDlg();
-            CheckPoint();
-            EditorParameters pm = new EditorParameters();
-            Object3D editingObj = null;
-            bool needToAdd = false;
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                editingObj = selectedObjectAdorner.SelectedObjects[0];
-                if (editingObj.IsSizable() && editingObj.PrimType == "Mesh")
-                {
-                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
-                    {
-                        dlg.EditorParameters = editingObj.EditorParameters;
-                        dlg.MeshColour = editingObj.Color;
-                        dlg.SetInitialMesh(editingObj.RelativeObjectVertices, editingObj.TriangleIndices);
-                        editingObj.CalcScale();
-                    }
-                }
-            }
-            if (dlg.ShowDialog() == true)
-            {
-                bool positionAtRight = false;
-                if (editingObj == null)
-                {
-                    editingObj = new Object3D();
-                    editingObj.Name = Document.NextName;
-                    editingObj.Description = "";
-                    needToAdd = true;
-
-                    editingObj.Color = dlg.MeshColour;
-                    positionAtRight = true;
-                }
-                DeselectAll();
-
-                editingObj.EditorParameters = dlg.EditorParameters;
-                editingObj.RelativeObjectVertices = dlg.Vertices;
-                editingObj.TriangleIndices = dlg.Faces;
-
-                RecalculateAllBounds();
-                Point3D placement = new Point3D(0, 0, 0);
-                editingObj.Position = new Point3D(0, 0, 0);
-
-                editingObj.PrimType = "Mesh";
-
-                editingObj.Remesh();
-
-                editingObj.CalcScale();
-
-                if (positionAtRight)
-                {
-                    if (allBounds.Upper.X > double.MinValue)
-                    {
-                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                    else
-                    {
-                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                }
-                editingObj.Position = placement;
-
-                allBounds += editingObj.AbsoluteBounds;
-
-                GeometryModel3D gm = GetMesh(editingObj);
-
-                if (needToAdd)
-                {
-                    Document.Content.Add(editingObj);
-                }
-                Document.Dirty = true;
-                RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged", null);
-            }
-        }
-
-        private void MoveToMarker(object param)
-        {
-            if (showFloorMarker == true && floorMarker != null)
-            {
-                Point3D target = floorMarker.Position;
-
-                MoveToPoint(target);
-            }
-        }
-
-        private void MoveToPoint(Point3D target)
-        {
-            Bounds3D tmpBounds = new Bounds3D();
-            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-            {
-                tmpBounds.Add(ob.AbsoluteBounds);
-            }
-
-            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-            {
-                double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
-                double dAbsY = ob.Position.Y;
-                double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
-                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                ob.RelativeToAbsolute();
-            }
-            Document.Dirty = true;
-            // move the selectors
-            selectedObjectAdorner.GenerateAdornments();
-            // redraw
-            RegenerateDisplayList();
-        }
-
-        private void SelectObjectByName(object param)
-        {
-            string nm = param.ToString();
-
-            ResetSelection();
-
-            if (Document.Content.Count > 0)
-            {
-                NotificationManager.Notify("SetToolsVisibility", false);
-                foreach (Object3D ob in Document.Content)
-                {
-                    if (ob.Name == nm)
-                    {
-                        selectedItems.Add(ob);
-                        selectedObjectAdorner.AdornObject(ob);
-                        NotificationManager.Notify("ObjectSelected", ob);
-                        EnableTool(ob);
-                    }
-                }
-            }
-            UpdateSelectionDisplay();
-        }
-
-        private void OnTankTrack(object param)
-        {
-            TrackDialog dlg = new TrackDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnStadium(object param)
-        {
-            StadiumDialog dlg = new StadiumDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnCircularPaste(object param)
-        {
-            CircularPasteDlg dlg = new CircularPasteDlg();
-            if (dlg.ShowDialog() == true)
-            {
-                if (ObjectClipboard.HasItems())
-                {
-                    CheckPoint();
-                    RecalculateAllBounds();
-                    selectedObjectAdorner.Clear();
-                    double radius = Convert.ToDouble(dlg.RadiusBox.Text);
-                    double altRadius = Convert.ToDouble(dlg.AltBox.Text);
-                    if (altRadius == 0)
-                    {
-                        altRadius = radius;
-                    }
-                    if (radius > 0 || altRadius > 0)
-                    {
-                        double cx = allBounds.Upper.X;
-                        if (radius > altRadius)
-                        {
-                            cx += radius;
-                        }
-                        else
-                        {
-                            cx += altRadius;
-                        }
-                        double cy = 0;
-                        double cz = 0;
-                        double rx;
-                        double ry;
-                        double rz;
-                        int repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
-                        if (repeats > 0)
-                        {
-                            double dTheta = (Math.PI * 2) / repeats;
-                            double theta = 0;
-                            bool alt = false;
-                            double x;
-                            double y;
-
-                            while (theta < (Math.PI * 2))
-                            {
-                                rx = 0;
-                                ry = 0;
-                                rz = 0;
-                                if (!alt)
-                                {
-                                    x = radius * Math.Cos(theta);
-                                    y = radius * Math.Sin(theta);
-                                }
-                                else
-                                {
-                                    x = altRadius * Math.Cos(theta);
-                                    y = altRadius * Math.Sin(theta);
-                                }
-                                alt = !alt;
-                                foreach (Object3D cl in ObjectClipboard.Items)
-                                {
-                                    Object3D o = cl.Clone();
-                                    o.Name = Document.NextName;
-
-                                    if (o is Group3D)
-                                    {
-                                        (o as Group3D).Init();
-                                    }
-
-                                    if (dlg.DirectionX.IsChecked == true)
-                                    {
-                                        o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy, cz + o.AbsoluteBounds.Depth / 2 + y);
-                                        ry = -theta;
-                                    }
-                                    if (dlg.DirectionY.IsChecked == true)
-                                    {
-                                        o.Position = new Point3D(cx, cy + o.AbsoluteBounds.Height / 2 + x, cz + o.AbsoluteBounds.Depth / 2 + y);
-                                        rx = (Math.PI / 2) + theta;
-                                    }
-                                    if (dlg.DirectionY.IsChecked == true)
-                                    {
-                                        o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
-                                        rz = -theta;
-                                    }
-                                    o.CalcScale(false);
-
-                                    o.Remesh();
-                                    if (dlg.RotateToCenterBox.IsChecked == true)
-                                    {
-                                        o.RotateRad(new Point3D(rx, ry, rz));
-                                    }
-                                    if (dlg.DirectionX.IsChecked == true)
-                                    {
-                                        o.MoveToFloor();
-                                    }
-                                    allBounds.Add(o.AbsoluteBounds);
-                                    GeometryModel3D gm = GetMesh(o);
-                                    Document.Content.Add(o);
-                                    Document.Dirty = true;
-
-                                    selectedItems.Add(o);
-                                    selectedObjectAdorner.AdornObject(o);
-                                }
-
-                                theta += dTheta;
-                            }
-
-                            RegenerateDisplayList();
-                            UpdateSelectionDisplay();
-                        }
-                    }
-                }
-            }
-        }
-
-        private void OnSpurGear(object param)
-        {
-            SpurGearDialog dlg = new SpurGearDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnSlice(object param)
-        {
-            string s = param.ToString();
-            if (s == "SliceAll")
-            {
-                string modelPath = Document.FilePath;
-                string modelName = Path.GetFileNameWithoutExtension(modelPath);
-                modelPath = Path.GetDirectoryName(modelPath);
-                string exportPath = Path.Combine(modelPath, "export");
-                if (!Directory.Exists(exportPath))
-                {
-                    Directory.CreateDirectory(exportPath);
-                }
-                exportPath = Path.Combine(exportPath, modelName + ".stl");
-
-                string gcodePath = Path.Combine(modelPath, "gcode");
-                if (!Directory.Exists(gcodePath))
-                {
-                    Directory.CreateDirectory(gcodePath);
-                }
-                gcodePath = Path.Combine(gcodePath, modelName + ".gcode");
-
-                string logPath = Path.Combine(modelPath, "slicelog.log");
-
-                string exportedPath = Document.ExportAll("STL", allBounds);
-                SlicerInterface.Slice(exportPath, gcodePath, logPath, "Print3D");
-            }
-        }
-
-        private void OnTwoShape(object param)
-        {
-            ShapeLoftDialog dlg = new ShapeLoftDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnDoughNut(object param)
-        {
-            TorusDialog torusDialog = new TorusDialog();
-            DisplayModeller(torusDialog);
-        }
-
-        private void OnFuselage(object param)
-        {
-            FuselageLoftDialog dlg = new FuselageLoftDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnExportParts(object param)
-        {
-            string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
-
-            STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
-            dlg.ExportPath = exportedPath;
-            dlg.ShowDialog();
-        }
-
-        private void OnLinear(object param)
-        {
-            LinearLoftDialog dlg = new LinearLoftDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnIrregular(object param)
-        {
-            IrregularPolygonDlg dlg = new IrregularPolygonDlg();
-            DisplayModeller(dlg);
-        }
-
-        private void DisplayModeller(BaseModellerDialog dlg)
-        {
-            CheckPoint();
-            EditorParameters pm = new EditorParameters();
-            Object3D editingObj = null;
-            bool needToAdd = false;
-            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
-            {
-                editingObj = selectedObjectAdorner.SelectedObjects[0];
-                if (editingObj.EditorParameters != null)
-                {
-                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
-                    {
-                        dlg.EditorParameters = editingObj.EditorParameters;
-                        dlg.MeshColour = editingObj.Color;
-                        editingObj.CalcScale();
-                    }
-                }
-            }
-            if (dlg.ShowDialog() == true)
-            {
-                bool positionAtRight = false;
-                if (editingObj == null)
-                {
-                    editingObj = new Object3D();
-                    editingObj.Name = Document.NextName;
-                    editingObj.Description = "";
-                    needToAdd = true;
-
-                    editingObj.Color = dlg.MeshColour;
-                    positionAtRight = true;
-                }
-                DeselectAll();
-
-                editingObj.EditorParameters = dlg.EditorParameters;
-                editingObj.RelativeObjectVertices = dlg.Vertices;
-                editingObj.TriangleIndices = dlg.Faces;
-
-                RecalculateAllBounds();
-                Point3D placement = new Point3D(0, 0, 0);
-                editingObj.Position = new Point3D(0, 0, 0);
-
-                editingObj.PrimType = "Mesh";
-
-                editingObj.Remesh();
-
-                editingObj.CalcScale();
-
-                if (positionAtRight)
-                {
-                    if (allBounds.Upper.X > double.MinValue)
-                    {
-                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                    else
-                    {
-                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                    }
-                }
-                editingObj.Position = placement;
-
-                allBounds += editingObj.AbsoluteBounds;
-
-                GeometryModel3D gm = GetMesh(editingObj);
-
-                if (needToAdd)
-                {
-                    Document.Content.Add(editingObj);
-                }
-                Document.Dirty = true;
-                RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged", null);
-            }
-        }
-
-        private bool showFloor;
-        private bool showFloorMarker;
-        private bool showAxies;
-
-        private void OnShowAxies(object param)
-        {
-            showAxies = (param as bool?) == true;
-            RegenerateDisplayList();
-        }
-
-        private void OnShowFloor(object param)
-        {
-            showFloor = (param as bool?) == true;
-            RegenerateDisplayList();
-        }
-
-        private void OnShowFloorMarker(object param)
-        {
-            showFloorMarker = (param as bool?) == true;
-            RegenerateDisplayList();
-        }
-
         private enum CameraModes
         {
             None,
@@ -640,15 +145,15 @@ namespace Make3D.ViewModels
         public Point3D CameraPos
         {
             get { return camera.CameraPos; }
-            set
-            {
-                NotifyPropertyChanged();
-            }
+            set { NotifyPropertyChanged(); }
         }
 
         public Vector3D LookDirection
         {
-            get { return lookDirection; }
+            get
+            {
+                return lookDirection;
+            }
             set
             {
                 if (lookDirection != value)
@@ -661,7 +166,10 @@ namespace Make3D.ViewModels
 
         public Model3DCollection ModelItems
         {
-            get { return modelItems; }
+            get
+            {
+                return modelItems;
+            }
             set
             {
                 if (modelItems != value)
@@ -952,20 +460,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void MoveSelectionToCentre()
-        {
-            Point3D centre = new Point3D(0, 0, 0);
-            MoveToPoint(centre);
-        }
-
-        private void FloorAllObjects()
-        {
-            foreach (Object3D ob in Document.Content)
-            {
-                ob.MoveToFloor();
-            }
-        }
-
         internal void KeyUp(Key key, bool shift, bool ctrl)
         {
             switch (key)
@@ -1069,29 +563,6 @@ namespace Make3D.ViewModels
             }
 
             ShowToolForCurrentSelection();
-        }
-
-        private void ShowToolForCurrentSelection(bool clear = false)
-        {
-            if (clear == true)
-            {
-                NotificationManager.Notify("SetToolsVisibility", false);
-            }
-
-            // if nothing was selected turn the all editor tools back on
-            if ((selectedObjectAdorner == null) ||
-                 ((selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 0)))
-            {
-                NotificationManager.Notify("SetToolsVisibility", true);
-            }
-            if (selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 1)
-            {
-                string s = selectedObjectAdorner.SelectedObjects[0].EditorParameters.Get("ToolName");
-                if (s != "")
-                {
-                    NotificationManager.Notify("SetSingleToolsVisible", s);
-                }
-            }
         }
 
         private static GeometryModel3D GetMesh(Object3D obj)
@@ -1308,17 +779,6 @@ namespace Make3D.ViewModels
             selectedObjectAdorner.GenerateAdornments();
         }
 
-        private void FloorSelectedObjects()
-        {
-            for (int i = 0; i < selectedObjectAdorner.SelectedObjects.Count; i++)
-            {
-                Object3D ob = selectedObjectAdorner.SelectedObjects[i];
-
-                ob.MoveToFloor();
-                ob.RelativeToAbsolute();
-            }
-        }
-
         private void BackCamera()
         {
             camera.HomeBack();
@@ -1452,6 +912,93 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void DisplayModeller(BaseModellerDialog dlg)
+        {
+            CheckPoint();
+            EditorParameters pm = new EditorParameters();
+            Object3D editingObj = null;
+            bool needToAdd = false;
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                editingObj = selectedObjectAdorner.SelectedObjects[0];
+                if (editingObj.EditorParameters != null)
+                {
+                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                    {
+                        dlg.EditorParameters = editingObj.EditorParameters;
+                        dlg.MeshColour = editingObj.Color;
+                        editingObj.CalcScale();
+                    }
+                }
+            }
+            if (dlg.ShowDialog() == true)
+            {
+                bool positionAtRight = false;
+                if (editingObj == null)
+                {
+                    editingObj = new Object3D();
+                    editingObj.Name = Document.NextName;
+                    editingObj.Description = "";
+                    needToAdd = true;
+
+                    editingObj.Color = dlg.MeshColour;
+                    positionAtRight = true;
+                }
+                DeselectAll();
+
+                editingObj.EditorParameters = dlg.EditorParameters;
+                editingObj.RelativeObjectVertices = dlg.Vertices;
+                editingObj.TriangleIndices = dlg.Faces;
+
+                RecalculateAllBounds();
+                Point3D placement = new Point3D(0, 0, 0);
+                editingObj.Position = new Point3D(0, 0, 0);
+
+                editingObj.PrimType = "Mesh";
+
+                editingObj.Remesh();
+
+                editingObj.CalcScale();
+
+                if (positionAtRight)
+                {
+                    if (allBounds.Upper.X > double.MinValue)
+                    {
+                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                    else
+                    {
+                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                }
+                editingObj.Position = placement;
+
+                allBounds += editingObj.AbsoluteBounds;
+
+                GeometryModel3D gm = GetMesh(editingObj);
+
+                if (needToAdd)
+                {
+                    Document.Content.Add(editingObj);
+                }
+                Document.Dirty = true;
+                RegenerateDisplayList();
+                NotificationManager.Notify("ObjectNamesChanged", null);
+            }
+        }
+
+        private void EnableTool(Object3D ob)
+        {
+            if (ob != null)
+            {
+                string toolName = ob.EditorParameters.ToolName;
+                if (toolName != "")
+                {
+                    NotificationManager.Notify("SetSingleToolsVisible", toolName);
+                }
+            }
+        }
+
         private void FlipSelectedObjects(string s)
         {
             bool needsConversion = false;
@@ -1515,6 +1062,25 @@ namespace Make3D.ViewModels
                     }
                 }
                 Document.Content.Add(ob);
+            }
+        }
+
+        private void FloorAllObjects()
+        {
+            foreach (Object3D ob in Document.Content)
+            {
+                ob.MoveToFloor();
+            }
+        }
+
+        private void FloorSelectedObjects()
+        {
+            for (int i = 0; i < selectedObjectAdorner.SelectedObjects.Count; i++)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+
+                ob.MoveToFloor();
+                ob.RelativeToAbsolute();
             }
         }
 
@@ -1678,6 +1244,45 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("CameraPos");
         }
 
+        private void MoveSelectionToCentre()
+        {
+            Point3D centre = new Point3D(0, 0, 0);
+            MoveToPoint(centre);
+        }
+
+        private void MoveToMarker(object param)
+        {
+            if (showFloorMarker == true && floorMarker != null)
+            {
+                Point3D target = floorMarker.Position;
+
+                MoveToPoint(target);
+            }
+        }
+
+        private void MoveToPoint(Point3D target)
+        {
+            Bounds3D tmpBounds = new Bounds3D();
+            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+            {
+                tmpBounds.Add(ob.AbsoluteBounds);
+            }
+
+            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+            {
+                double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
+                double dAbsY = ob.Position.Y;
+                double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
+                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                ob.RelativeToAbsolute();
+            }
+            Document.Dirty = true;
+            // move the selectors
+            selectedObjectAdorner.GenerateAdornments();
+            // redraw
+            RegenerateDisplayList();
+        }
+
         private void OnAddObject(object param)
         {
             CheckPoint();
@@ -1737,6 +1342,12 @@ namespace Make3D.ViewModels
                 selectedObjectAdorner.Refresh();
                 RegenerateDisplayList();
             }
+        }
+
+        private void OnBezierRing(object param)
+        {
+            BezierRingDlg dlg = new BezierRingDlg();
+            DisplayModeller(dlg);
         }
 
         private void OnCameraCommand(object param)
@@ -1820,6 +1431,119 @@ namespace Make3D.ViewModels
             ReportCameraPosition();
         }
 
+        private void OnCircularPaste(object param)
+        {
+            CircularPasteDlg dlg = new CircularPasteDlg();
+            if (dlg.ShowDialog() == true)
+            {
+                if (ObjectClipboard.HasItems())
+                {
+                    CheckPoint();
+                    RecalculateAllBounds();
+                    selectedObjectAdorner.Clear();
+                    double radius = Convert.ToDouble(dlg.RadiusBox.Text);
+                    double altRadius = Convert.ToDouble(dlg.AltBox.Text);
+                    if (altRadius == 0)
+                    {
+                        altRadius = radius;
+                    }
+                    if (radius > 0 || altRadius > 0)
+                    {
+                        double cx = allBounds.Upper.X;
+                        if (radius > altRadius)
+                        {
+                            cx += radius;
+                        }
+                        else
+                        {
+                            cx += altRadius;
+                        }
+                        double cy = 0;
+                        double cz = 0;
+                        double rx;
+                        double ry;
+                        double rz;
+                        int repeats = Convert.ToInt16(dlg.RepeatsBox.Text);
+                        if (repeats > 0)
+                        {
+                            double dTheta = (Math.PI * 2) / repeats;
+                            double theta = 0;
+                            bool alt = false;
+                            double x;
+                            double y;
+
+                            while (theta < (Math.PI * 2))
+                            {
+                                rx = 0;
+                                ry = 0;
+                                rz = 0;
+                                if (!alt)
+                                {
+                                    x = radius * Math.Cos(theta);
+                                    y = radius * Math.Sin(theta);
+                                }
+                                else
+                                {
+                                    x = altRadius * Math.Cos(theta);
+                                    y = altRadius * Math.Sin(theta);
+                                }
+                                alt = !alt;
+                                foreach (Object3D cl in ObjectClipboard.Items)
+                                {
+                                    Object3D o = cl.Clone();
+                                    o.Name = Document.NextName;
+
+                                    if (o is Group3D)
+                                    {
+                                        (o as Group3D).Init();
+                                    }
+
+                                    if (dlg.DirectionX.IsChecked == true)
+                                    {
+                                        o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy, cz + o.AbsoluteBounds.Depth / 2 + y);
+                                        ry = -theta;
+                                    }
+                                    if (dlg.DirectionY.IsChecked == true)
+                                    {
+                                        o.Position = new Point3D(cx, cy + o.AbsoluteBounds.Height / 2 + x, cz + o.AbsoluteBounds.Depth / 2 + y);
+                                        rx = (Math.PI / 2) + theta;
+                                    }
+                                    if (dlg.DirectionY.IsChecked == true)
+                                    {
+                                        o.Position = new Point3D(cx + o.AbsoluteBounds.Width / 2 + x, cy + o.AbsoluteBounds.Height / 2 + y, cz);
+                                        rz = -theta;
+                                    }
+                                    o.CalcScale(false);
+
+                                    o.Remesh();
+                                    if (dlg.RotateToCenterBox.IsChecked == true)
+                                    {
+                                        o.RotateRad(new Point3D(rx, ry, rz));
+                                    }
+                                    if (dlg.DirectionX.IsChecked == true)
+                                    {
+                                        o.MoveToFloor();
+                                    }
+                                    allBounds.Add(o.AbsoluteBounds);
+                                    GeometryModel3D gm = GetMesh(o);
+                                    Document.Content.Add(o);
+                                    Document.Dirty = true;
+
+                                    selectedItems.Add(o);
+                                    selectedObjectAdorner.AdornObject(o);
+                                }
+
+                                theta += dTheta;
+                            }
+
+                            RegenerateDisplayList();
+                            UpdateSelectionDisplay();
+                        }
+                    }
+                }
+            }
+        }
+
         private void OnCopy(object param)
         {
             if (selectedObjectAdorner != null)
@@ -1856,6 +1580,98 @@ namespace Make3D.ViewModels
             {
                 OptimisePlacement();
             }
+            else
+            {
+                if ( selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count <3)
+                {
+                    MessageBox.Show("At least 3 selected objects are need for even distribution");
+                }
+                else
+                {
+                    double minx = double.MaxValue;
+                    double miny = double.MaxValue;
+                    double minz = double.MaxValue;
+                    double maxx = double.MinValue;
+                    double maxy = double.MinValue;
+                    double maxz = double.MinValue;
+                    double count = selectedObjectAdorner.SelectedObjects.Count;
+                    // Note this is positions, not bounds
+                    foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
+                    {
+                        if ( o.Position.X < minx)
+                        {
+                            minx = o.Position.X;
+                        }
+                        if (o.Position.X > maxx)
+                        {
+                            maxx = o.Position.X;
+                        }
+
+                        if (o.Position.Y < miny)
+                        {
+                            miny = o.Position.Y;
+                        }
+                        if (o.Position.Y > maxy)
+                        {
+                            maxy = o.Position.Y;
+                        }
+
+                        if (o.Position.Z < minz)
+                        {
+                            minz = o.Position.Z;
+                        }
+                        if (o.Position.Z > maxz)
+                        {
+                            maxz = o.Position.Z;
+                        }
+                    }
+
+                    double dx = (maxx - minx) / (count - 1);
+                    double dy = (maxy - miny) / (count - 1);
+                    double dz = (maxz - minz) / (count - 1);
+                    switch (s)
+                    {
+                        case "Horizontal":
+                            {
+                                for ( int i = 0; i < count; i++)
+                                {
+                                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                                    Point3D p = new Point3D(minx + (i * dx), ob.Position.Y, ob.Position.Z);
+                                    ob.Position = p;
+                                }
+                            }
+                            break;
+                        case "Vertical":
+                            {
+                                for (int i = 0; i < count; i++)
+                                {
+                                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                                    Point3D p = new Point3D(ob.Position.X,miny + (i * dy),  ob.Position.Z);
+                                    ob.Position = p;
+                                }
+                            }
+                            break;
+                        case "Distal":
+                            {
+                                for (int i = 0; i < count; i++)
+                                {
+                                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                                    Point3D p = new Point3D(ob.Position.X, ob.Position.Y, minz + (i * dz));
+                                    ob.Position = p;
+                                }
+                            }
+                            break;
+                    }
+                    RegenerateDisplayList();
+                    UpdateSelectionDisplay();
+                }
+            }
+        }
+
+        private void OnDoughNut(object param)
+        {
+            TorusDialog torusDialog = new TorusDialog();
+            DisplayModeller(torusDialog);
         }
 
         private void OnExport(object param)
@@ -1891,6 +1707,15 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnExportParts(object param)
+        {
+            string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
+
+            STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
+            dlg.ExportPath = exportedPath;
+            dlg.ShowDialog();
+        }
+
         private void OnFlip(object param)
         {
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
@@ -1901,6 +1726,12 @@ namespace Make3D.ViewModels
                 selectedObjectAdorner.Refresh();
                 RegenerateDisplayList();
             }
+        }
+
+        private void OnFuselage(object param)
+        {
+            FuselageLoftDialog dlg = new FuselageLoftDialog();
+            DisplayModeller(dlg);
         }
 
         private async void OnGroup(object param)
@@ -1974,6 +1805,133 @@ namespace Make3D.ViewModels
                         }
                     }
                     break;
+            }
+        }
+
+        private void OnIrregular(object param)
+        {
+            IrregularPolygonDlg dlg = new IrregularPolygonDlg();
+            DisplayModeller(dlg);
+        }
+
+        private void OnLinear(object param)
+        {
+            LinearLoftDialog dlg = new LinearLoftDialog();
+            DisplayModeller(dlg);
+        }
+
+        private void OnManifoldTest(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to check");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    ManifoldChecker checker = new ManifoldChecker();
+                    checker.Points = ob.RelativeObjectVertices;
+                    checker.Indices = ob.TriangleIndices;
+                    checker.Check();
+                    if (checker.IsManifold)
+                    {
+                        MessageBox.Show("Manifold");
+                    }
+                    else
+                    {
+                        if (checker.NumberOfDuplicatedVertices > 0)
+                        {
+                            MessageBox.Show($"{checker.NumberOfDuplicatedVertices} duplicate points ");
+                        }
+                        if (checker.NumberOfBadlyOrientatedEdges > 0)
+                        {
+                            MessageBox.Show($"{checker.NumberOfBadlyOrientatedEdges} badly orientated edges");
+                        }
+
+                        if (checker.NumbeOfUnconnectedFaces > 0)
+                        {
+                            MessageBox.Show($"{checker.NumbeOfUnconnectedFaces} incompletely connected faces");
+                        }
+                    }
+                }
+            }
+        }
+
+        private void OnMeshEdit(object param)
+        {
+            MeshEditorDlg dlg = new MeshEditorDlg();
+            CheckPoint();
+            EditorParameters pm = new EditorParameters();
+            Object3D editingObj = null;
+            bool needToAdd = false;
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                editingObj = selectedObjectAdorner.SelectedObjects[0];
+                if (editingObj.IsSizable() && editingObj.PrimType == "Mesh")
+                {
+                    if (editingObj.EditorParameters.ToolName == dlg.EditorParameters.ToolName)
+                    {
+                        dlg.EditorParameters = editingObj.EditorParameters;
+                        dlg.MeshColour = editingObj.Color;
+                        dlg.SetInitialMesh(editingObj.RelativeObjectVertices, editingObj.TriangleIndices);
+                        editingObj.CalcScale();
+                    }
+                }
+            }
+            if (dlg.ShowDialog() == true)
+            {
+                bool positionAtRight = false;
+                if (editingObj == null)
+                {
+                    editingObj = new Object3D();
+                    editingObj.Name = Document.NextName;
+                    editingObj.Description = "";
+                    needToAdd = true;
+
+                    editingObj.Color = dlg.MeshColour;
+                    positionAtRight = true;
+                }
+                DeselectAll();
+
+                editingObj.EditorParameters = dlg.EditorParameters;
+                editingObj.RelativeObjectVertices = dlg.Vertices;
+                editingObj.TriangleIndices = dlg.Faces;
+
+                RecalculateAllBounds();
+                Point3D placement = new Point3D(0, 0, 0);
+                editingObj.Position = new Point3D(0, 0, 0);
+
+                editingObj.PrimType = "Mesh";
+
+                editingObj.Remesh();
+
+                editingObj.CalcScale();
+
+                if (positionAtRight)
+                {
+                    if (allBounds.Upper.X > double.MinValue)
+                    {
+                        placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                    else
+                    {
+                        placement = new Point3D(editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                    }
+                }
+                editingObj.Position = placement;
+
+                allBounds += editingObj.AbsoluteBounds;
+
+                GeometryModel3D gm = GetMesh(editingObj);
+
+                if (needToAdd)
+                {
+                    Document.Content.Add(editingObj);
+                }
+                Document.Dirty = true;
+                RegenerateDisplayList();
+                NotificationManager.Notify("ObjectNamesChanged", null);
             }
         }
 
@@ -2139,6 +2097,12 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnProfileFuselage(object param)
+        {
+            ProfileFuselageDlg dlg = new ProfileFuselageDlg();
+            DisplayModeller(dlg);
+        }
+
         private void OnRefresh(object param)
         {
             RegenerateDisplayList();
@@ -2147,6 +2111,43 @@ namespace Make3D.ViewModels
 
         private void OnRemesh(object param)
         {
+        }
+
+        private void OnRemoveDupVertices(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to check");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    ManifoldChecker checker = new ManifoldChecker();
+                    checker.Points = ob.RelativeObjectVertices;
+                    checker.Indices = ob.TriangleIndices;
+                    checker.RemoveDuplicateVertices();
+                    ob.RelativeObjectVertices = checker.Points;
+                    ob.TriangleIndices = checker.Indices;
+                }
+            }
+        }
+        private void OnShowAxies(object param)
+        {
+            showAxies = (param as bool?) == true;
+            RegenerateDisplayList();
+        }
+
+        private void OnShowFloor(object param)
+        {
+            showFloor = (param as bool?) == true;
+            RegenerateDisplayList();
+        }
+
+        private void OnShowFloorMarker(object param)
+        {
+            showFloorMarker = (param as bool?) == true;
+            RegenerateDisplayList();
         }
 
         private void OnSize(object param)
@@ -2163,6 +2164,65 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnSlice(object param)
+        {
+            string s = param.ToString();
+            if (s == "SliceAll")
+            {
+                string modelPath = Document.FilePath;
+                string modelName = Path.GetFileNameWithoutExtension(modelPath);
+                modelPath = Path.GetDirectoryName(modelPath);
+                string exportPath = Path.Combine(modelPath, "export");
+                if (!Directory.Exists(exportPath))
+                {
+                    Directory.CreateDirectory(exportPath);
+                }
+                exportPath = Path.Combine(exportPath, modelName + ".stl");
+
+                string gcodePath = Path.Combine(modelPath, "gcode");
+                if (!Directory.Exists(gcodePath))
+                {
+                    Directory.CreateDirectory(gcodePath);
+                }
+                gcodePath = Path.Combine(gcodePath, modelName + ".gcode");
+
+                string logPath = Path.Combine(modelPath, "slicelog.log");
+
+                string exportedPath = Document.ExportAll("STL", allBounds);
+                SlicerInterface.Slice(exportPath, gcodePath, logPath, "Print3D");
+            }
+        }
+
+        private void OnSpurGear(object param)
+        {
+            SpurGearDialog dlg = new SpurGearDialog();
+            DisplayModeller(dlg);
+        }
+
+        private void OnStadium(object param)
+        {
+            StadiumDialog dlg = new StadiumDialog();
+            DisplayModeller(dlg);
+        }
+
+        private void OnTankTrack(object param)
+        {
+            TrackDialog dlg = new TrackDialog();
+            DisplayModeller(dlg);
+        }
+
+        private void OnTube(object param)
+        {
+            TubeDlg dlg = new TubeDlg();
+            DisplayModeller(dlg);
+        }
+
+        private void OnTwoShape(object param)
+        {
+            ShapeLoftDialog dlg = new ShapeLoftDialog();
+            DisplayModeller(dlg);
+        }
+
         private void OnUndo(object param)
         {
             if (selectedObjectAdorner != null)
@@ -2172,6 +2232,11 @@ namespace Make3D.ViewModels
             Undo();
         }
 
+        private void OnWing(object param)
+        {
+            WingDlg dlg = new WingDlg();
+            DisplayModeller(dlg);
+        }
         private void OptimisePlacement()
         {
             CheckPoint();
@@ -2417,18 +2482,6 @@ namespace Make3D.ViewModels
             UpdateSelectionDisplay();
         }
 
-        private void EnableTool(Object3D ob)
-        {
-            if (ob != null)
-            {
-                string toolName = ob.EditorParameters.ToolName;
-                if (toolName != "")
-                {
-                    NotificationManager.Notify("SetSingleToolsVisible", toolName);
-                }
-            }
-        }
-
         private void SelectLast()
         {
             ResetSelection();
@@ -2477,6 +2530,28 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void SelectObjectByName(object param)
+        {
+            string nm = param.ToString();
+
+            ResetSelection();
+
+            if (Document.Content.Count > 0)
+            {
+                NotificationManager.Notify("SetToolsVisibility", false);
+                foreach (Object3D ob in Document.Content)
+                {
+                    if (ob.Name == nm)
+                    {
+                        selectedItems.Add(ob);
+                        selectedObjectAdorner.AdornObject(ob);
+                        NotificationManager.Notify("ObjectSelected", ob);
+                        EnableTool(ob);
+                    }
+                }
+            }
+            UpdateSelectionDisplay();
+        }
         private void SelectPrevious()
         {
             if (selectedItems.Count == 1)
@@ -2528,6 +2603,28 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void ShowToolForCurrentSelection(bool clear = false)
+        {
+            if (clear == true)
+            {
+                NotificationManager.Notify("SetToolsVisibility", false);
+            }
+
+            // if nothing was selected turn the all editor tools back on
+            if ((selectedObjectAdorner == null) ||
+                 ((selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 0)))
+            {
+                NotificationManager.Notify("SetToolsVisibility", true);
+            }
+            if (selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+            {
+                string s = selectedObjectAdorner.SelectedObjects[0].EditorParameters.Get("ToolName");
+                if (s != "")
+                {
+                    NotificationManager.Notify("SetSingleToolsVisible", s);
+                }
+            }
+        }
         private void TopCamera()
         {
             camera.HomeTop();

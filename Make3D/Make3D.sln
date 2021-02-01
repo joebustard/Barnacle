@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateLib", "TemplateLib\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManifoldLib", "ManifoldLib\ManifoldLib.csproj", "{DABC6ACF-3F5E-469B-BCC0-6F676287B245}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertAerofoilsToXML", "ConvertAerofoilsToXML\ConvertAerofoilsToXML.csproj", "{8DDF64C0-825D-432D-936A-3F663E028B34}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8DDF64C0-825D-432D-936A-3F663E028B34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DDF64C0-825D-432D-936A-3F663E028B34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DDF64C0-825D-432D-936A-3F663E028B34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DDF64C0-825D-432D-936A-3F663E028B34}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

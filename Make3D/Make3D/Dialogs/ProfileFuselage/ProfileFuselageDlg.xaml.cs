@@ -1,29 +1,45 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Dialogs.Blank
+namespace Make3D.Dialogs
 {
     /// <summary>
     /// Interaction logic for Blank.xaml
     /// </summary>
-    public partial class Blank : BaseModellerDialog, INotifyPropertyChanged
+    public partial class ProfileFuselageDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        public Blank()
+        public ProfileFuselageDlg()
         {
             InitializeComponent();
-            ToolName = "Blank";
+            ToolName = "ProfileFuselage";
             DataContext = this;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadEditorParameters();
             UpdateCameraPos();
+            LoadEditorParameters();
             MyModelGroup.Children.Clear();
 
             Redisplay();
+        }
+
+        private void LoadEditorParameters()
+        {
+            // load back the tool specific parameters
         }
 
         private void Redisplay()
@@ -86,7 +102,6 @@ namespace Make3D.Dialogs.Blank
                 }
             }
         }
-
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -94,10 +109,6 @@ namespace Make3D.Dialogs.Blank
             Close();
         }
 
-        private void LoadEditorParameters()
-        {
-            // load back the tool specific parameters
-        }
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
