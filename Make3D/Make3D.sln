@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Workflow", "Workflow\Workfl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TemplateLib", "TemplateLib\TemplateLib.csproj", "{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManifoldLib", "ManifoldLib\ManifoldLib.csproj", "{DABC6ACF-3F5E-469B-BCC0-6F676287B245}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1E87EA7-C89A-4EBA-8FB7-4E3FC8CFC521}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DABC6ACF-3F5E-469B-BCC0-6F676287B245}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

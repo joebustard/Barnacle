@@ -423,6 +423,10 @@
       <Project>{CB0CAFAC-72AB-4D29-A570-D6F97519BBD3}</Project>
       <Name>CSGLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ManifoldLib\ManifoldLib.csproj">
+      <Project>{DABC6ACF-3F5E-469B-BCC0-6F676287B245}</Project>
+      <Name>ManifoldLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MeshDecimator\MeshDecimator.csproj">
       <Project>{f49d5d98-df95-4a31-a42f-da6d92c242dd}</Project>
       <Name>MeshDecimator</Name>
@@ -486,6 +490,8 @@
     <Resource Include="Images\Buttons\PanEye.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Buttons\Bolt.png" />
+    <Resource Include="Images\Buttons\BigGear.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -493,7 +499,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)templates
-copy $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
+copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
 Exit 0
 </PostBuildEvent>
   </PropertyGroup>

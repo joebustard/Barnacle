@@ -2,6 +2,7 @@
 using Make3D.Dialogs;
 using Make3D.Models;
 using Make3D.Views;
+using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
 using PlacementLib;
@@ -115,6 +116,8 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
             NotificationManager.Subscribe("Tube", OnTube);
+            NotificationManager.Subscribe("ManifoldTest", OnManifoldTest);
+            NotificationManager.Subscribe("RemoveDupVertices", OnRemoveDupVertices);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -125,6 +128,64 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void OnRemoveDupVertices(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to check");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    ManifoldChecker checker = new ManifoldChecker();
+                    checker.Points = ob.RelativeObjectVertices;
+                    checker.Indices = ob.TriangleIndices;
+                    checker.RemoveDuplicateVertices();
+                    ob.RelativeObjectVertices = checker.Points;
+                    ob.TriangleIndices = checker.Indices;
+                }
+            }
+        }
+
+        private void OnManifoldTest(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to check");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    ManifoldChecker checker = new ManifoldChecker();
+                    checker.Points = ob.RelativeObjectVertices;
+                    checker.Indices = ob.TriangleIndices;
+                    checker.Check();
+                    if (checker.IsManifold)
+                    {
+                        MessageBox.Show("Manifold");
+                    }
+                    else
+                    {
+                        if (checker.NumberOfDuplicatedVertices > 0)
+                        {
+                            MessageBox.Show($"{checker.NumberOfDuplicatedVertices} duplicate points ");
+                        }
+                        if (checker.NumberOfBadlyOrientatedEdges > 0)
+                        {
+                            MessageBox.Show($"{checker.NumberOfBadlyOrientatedEdges} badly orientated edges");
+                        }
+
+                        if (checker.NumbeOfUnconnectedFaces > 0)
+                        {
+                            MessageBox.Show($"{checker.NumbeOfUnconnectedFaces} incompletely connected faces");
+                        }
+                    }
+                }
+            }
         }
 
         private void OnTube(object param)

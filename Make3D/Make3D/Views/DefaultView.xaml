@@ -64,9 +64,6 @@
 
                     <Custom:RibbonApplicationMenuItem x:Name="Reference" Header="Reference" ImageSource="/images/buttons/human_document_open.png" Command="{Binding ReferenceCommand}" ToolTip="Reference the contents of an external model. Objects can be moved and rotated but sized." />
 
-                    <!--   <Custom:RibbonApplicationMenuItem Header="Print" ImageSource="/images/buttons/Printer.png" Command="{Binding PrintCommand}" />
-                    <Custom:RibbonApplicationMenuItem Header="Print Preview" ImageSource="/images/buttons/Printer.png" Command="{Binding ViewCommand}" CommandParameter="PrintPreview" />
--->
                     <Custom:RibbonApplicationMenuItem Header="Exit" ImageSource="/images/buttons/exit.png" Command="{Binding ExitCommand}" />
                 </Custom:RibbonApplicationMenu>
             </Custom:Ribbon.ApplicationMenu>
@@ -98,56 +95,6 @@
                     <ComboBox x:Name="SelectObjectNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select an object by its name" ItemsSource="{Binding ObjectNames}" SelectedItem="{Binding SelectedObjectName}" />
                 </Custom:RibbonGroup>
 
-                <!--
-                <Custom:RibbonGroup Name="TextGroup" Header="Text" LargeImageSource="/Make3D;component/Images/Buttons/BigText.png">
-                    <ComboBox x:Name="FontFamilySelector"
-          ItemsSource="{Binding SystemFonts}"
-          HorizontalAlignment="Left"
-          Margin="0,0,0,0"
-          VerticalAlignment="Top" Text="{Binding SelectedFont}">
-                        <ComboBox.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <VirtualizingStackPanel Width="150" />
-                            </ItemsPanelTemplate>
-                        </ComboBox.ItemsPanel>
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <Grid Height="24">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100" />
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Grid.Column="0"
-                           VerticalAlignment="Center"
-                           Margin="3"
-                           Text="{Binding}" FontFamily="{Binding}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
-                    <StackPanel Orientation="Horizontal">
-                        <Custom:RibbonToggleButton  IsChecked="{Binding BoldChecked}" Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Label="B" FontWeight="Bold" />
-                        <Custom:RibbonToggleButton  IsChecked="{Binding ItalicChecked}" Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Label="I" FontStyle="Italic" FontWeight="Bold" />
-                        <Custom:RibbonToggleButton  IsChecked="{Binding UnderlineChecked}" Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Label="U"  FontWeight="Bold" />
-                        <ComboBox Width="45" Height="20" Text="{Binding FontSize}">
-                            <ListBoxItem Content="8" />
-                            <ListBoxItem Content="10" />
-                            <ListBoxItem Content="12" />
-                            <ListBoxItem Content="14" />
-                            <ListBoxItem Content="16" />
-                            <ListBoxItem Content="22" />
-                            <ListBoxItem Content="32" />
-                            <ListBoxItem Content="72" />
-                        </ComboBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="L" IsChecked="{Binding LeftTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Left.png" />
-                        <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="C" IsChecked="{Binding CenterTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Center.png" />
-                        <Custom:RibbonRadioButton Width="20" Height="20" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Command="{Binding TextAlignmentCommand}" CommandParameter="R" IsChecked="{Binding RightTextAlignment}" SmallImageSource="/Make3D;component/Images/Buttons/Right.png" />
-                    </StackPanel>
-                </Custom:RibbonGroup>
--->
                 <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
                     <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                     <Custom:RibbonMenuButton x:Name="Import" Label="Import">
@@ -219,7 +166,7 @@
                         <Custom:RibbonButton x:Name="GroupToMesh" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
-                <Custom:RibbonGroup Name="ToolGroup" Header="Parametric Tools">
+                <Custom:RibbonGroup Name="ToolGroup" Header="Parametric Tools" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
                     <Custom:RibbonButton x:Name="IrregularButton" Label="Platelet"   IsEnabled="{Binding IrregularEnabled}" Command="{Binding ToolCommand}" CommandParameter="Irregular" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
 
                     <Custom:RibbonButton x:Name="DoughButton" Label="DoughNut" Command="{Binding ToolCommand}" CommandParameter="Doughnut" IsEnabled="{Binding DoughnutEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
@@ -228,10 +175,9 @@
 
                     <Custom:RibbonButton x:Name="StadiumButton" Label="Stadium" Command="{Binding ToolCommand}" CommandParameter="Stadium" IsEnabled="{Binding StadiumEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="TubeButton" Label="Tube" Command="{Binding ToolCommand}" CommandParameter="Tube" IsEnabled="{Binding TubeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-
                 </Custom:RibbonGroup>
 
-                <Custom:RibbonGroup Name="LoftGroup" Header="Loft Tools">
+                <Custom:RibbonGroup Name="LoftGroup" Header="Loft Tools" LargeImageSource="/Make3D;component/Images/Buttons/BigGear.png">
                     <Custom:RibbonButton x:Name="LinearButton" Label="Vertical" Command="{Binding ToolCommand}" CommandParameter="Linear" IsEnabled="{Binding LinearEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/Vase.png"
   ToolTip="Create an object by vertical lofting" />
                     <Custom:RibbonButton x:Name="BezierFuselageButton" Label="Bezier Fuselage" Command="{Binding ToolCommand}" CommandParameter="BezierFuselage" IsEnabled="{Binding FuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
@@ -241,6 +187,10 @@
                 <Custom:RibbonGroup Name="MeshGroup" Header="Mesh">
                     <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate Faces" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
+
+                    <Custom:RibbonButton x:Name="ManifoldButton" Label="Test Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
+
+                    <Custom:RibbonButton x:Name="DupVertexButton" Label="Remove Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
             <Custom:RibbonTab Name="ViewTab1" Header="View">

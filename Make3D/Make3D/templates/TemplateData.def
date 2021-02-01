@@ -30,6 +30,8 @@
     <Description>
       Creates a  folder structure with empty 1/35 scale models for a typical tank model kit.
       The folders are
+      /assemblies
+      A place to store sub assembly models
       /backup
       A place to store backups of the parts as they are developed
       /docs
@@ -43,17 +45,13 @@
       /scripts
       A place to save any limpet scripts
     </Description>
+
     <Folder Name=".">
       <File Name="Hull.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Turrent.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="TurrentAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="LeftRunningGear.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="RightRunningGear.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Wheels.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
@@ -61,12 +59,69 @@
       <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
+    <Folder Name="assemblies">
+      <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="TurrentAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
     <Folder Name="backup" />
     <Folder Name="docs">
-      <File Name="BillOfMaterials.docx" Source="templates/tankbom.docx" />
+      <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="images" />
+    <Folder Name="export" />
+    <Folder Name="gcode" />
+    <Folder Name="scripts" />
+  </ProjectDefinition>
+
+  <!--  Aircraft Model Template -->
+  <ProjectDefinition Name="Aircraft Model">
+    <Description>
+      Creates a  folder structure with empty 1/35 scale models for a typical aircraft model kit.
+      The folders are
+      /assemblies
+      A place to store sub assembly models
+      /backup
+      A place to store backups of the parts as they are developed
+      /docs
+      A place to store documentation such as design notes and build instructions
+      /images
+      A place to save any image files that will be used to create the model
+      /images/ribs
+      A place to save rib images to create the fuselage
+      /export
+      A place to save any STL files exported from the project
+      /gcode
+      A place to save 3D Printer files created by the external slicer.
+      /scripts
+      A place to save any limpet scripts
+    </Description>
+    <Folder Name=".">
+      <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Wings.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="UnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Tail.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
+    <Folder Name="assemblies">
+      <File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
+    <Folder Name="backup" />
+    <Folder Name="docs">
+      <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
+      <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
+    </Folder>
+    <Folder Name="images" />
+    <Folder Name="images\ribs" />
     <Folder Name="export" />
     <Folder Name="gcode" />
     <Folder Name="scripts" />

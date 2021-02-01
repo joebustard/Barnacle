@@ -60,7 +60,7 @@ namespace CSGLib
         private Vector3D Center;
 
         /** face status relative to a solid  */
-        private static readonly double EqualityTolerance = 1e-10f;
+        private static readonly double EqualityTolerance = 1e-8f;
 
         private enum Side { UP, DOWN, ON, NONE };
 

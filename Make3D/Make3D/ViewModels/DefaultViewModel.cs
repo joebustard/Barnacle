@@ -59,6 +59,7 @@ namespace Make3D.ViewModels
             SaveAsCommand = new RelayCommand(OnSaveAs);
             InsertCommand = new RelayCommand(OnInsert);
             ReferenceCommand = new RelayCommand(OnReference);
+            ManifoldCommand = new RelayCommand(OnManifoldTest);
             UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
             CopyCommand = new RelayCommand(OnCopy);
@@ -93,6 +94,7 @@ namespace Make3D.ViewModels
             SpurGearCommand = new RelayCommand(OnSpurGear);
             TankTrackCommand = new RelayCommand(OnTankTrack);
             MeshEditCommand = new RelayCommand(OnMeshEdit);
+            DupVertexCommand = new RelayCommand(OnDupVertex);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -134,6 +136,16 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ObjectNamesChanged", ObjectNamesChanged);
 
             SubView = subViewMan.GetView("editor");
+        }
+
+        private void OnDupVertex(object obj)
+        {
+            NotificationManager.Notify("RemoveDupVertices", null);
+        }
+
+        private void OnManifoldTest(object obj)
+        {
+            NotificationManager.Notify("ManifoldTest", null);
         }
 
         public ICommand AddCommand { get; set; }
@@ -355,6 +367,7 @@ namespace Make3D.ViewModels
         public ICommand MarkerCommand { get; set; }
 
         public ICommand MeshEditCommand { get; set; }
+        public ICommand DupVertexCommand { get; set; }
 
         public ICommand MultiPasteCommand { get; set; }
 
@@ -374,6 +387,7 @@ namespace Make3D.ViewModels
                 return res;
             }
         }
+
         public ICommand OpenCommand { get; set; }
 
         public ICommand OpenRecentFileCommand { get; set; }
@@ -408,6 +422,7 @@ namespace Make3D.ViewModels
         public ICommand RedoCommand { get; set; }
 
         public ICommand ReferenceCommand { get; set; }
+        public ICommand ManifoldCommand { get; set; }
 
         public bool RightTextAlignment
         {
@@ -452,6 +467,7 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         public ICommand SettingsCommand { get; set; }
 
         public bool ShowAxiesChecked
@@ -584,6 +600,7 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         public String StatusBlockText1
         {
             get
@@ -932,6 +949,7 @@ namespace Make3D.ViewModels
         {
             NotificationManager.Notify("NewProject", null);
         }
+
         private void OnOpen(object obj)
         {
             NotificationManager.Notify("OpenFile", null);
@@ -970,6 +988,7 @@ namespace Make3D.ViewModels
         {
             NotificationManager.Notify("Reference", null);
         }
+
         private void OnSave(object obj)
         {
             NotificationManager.Notify("SaveFile", null);
@@ -1025,6 +1044,7 @@ namespace Make3D.ViewModels
             string s = obj.ToString();
             NotificationManager.Notify(s, null);
         }
+
         private void OnTwoShape(object obj)
         {
             NotificationManager.Notify("TwoShape", null);

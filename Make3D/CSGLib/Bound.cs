@@ -61,7 +61,7 @@ namespace CSGLib
         private double ZMin;
 
         /** tolerance value to test equalities */
-        private static readonly double EqualityTolerance = 1e-10f;
+        private static readonly double EqualityTolerance = 1e-8f;
 
         //---------------------------------CONSTRUCTORS---------------------------------//
 

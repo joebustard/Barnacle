@@ -50,7 +50,7 @@ namespace CSGLib
         /// <summary>
         /// tolerance value to test equalities
         /// </summary>
-        private static readonly double EqualityTolerance = 1e-10f;
+        private static readonly double EqualityTolerance = 1e-8f;
 
         private static Random Rnd = new Random();
         private Vector3D StartPoint;
