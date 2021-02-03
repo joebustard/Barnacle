@@ -506,7 +506,9 @@
   <ItemGroup>
     <Resource Include="Images\Buttons\Bolt.png" />
     <Resource Include="Images\Buttons\BigGear.png" />
-    <Resource Include="Dialogs\Wing\Aerofoils\Aerofoils.xml" />
+    <Resource Include="Dialogs\Wing\Airfoils\Airfoils.xml">
+      <SubType>Designer</SubType>
+    </Resource>
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -516,7 +518,7 @@
     <PostBuildEvent>mkdir $(TargetDir)templates
 mkdir $(TargetDir)data
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
-copy /Y $(SolutionDir)make3d\Dialogs\Wing\Aerofoils\*.* $(TargetDir)data
+copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
 Exit 0
 </PostBuildEvent>
   </PropertyGroup>
