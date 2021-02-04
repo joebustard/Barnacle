@@ -61,6 +61,10 @@
                 <Label Width="80" Visibility="{Binding SweepControlsVisible}">Sweep Angle</Label>
                 <TextBox Width="30" Text="{Binding SweepAngle}" VerticalAlignment="Center" Visibility="{Binding SweepControlsVisible}"/>
             </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <Label Width="80">Dihedral</Label>
+                <TextBox Width="30" Text="{Binding DihedralAngle}" VerticalAlignment="Center" />
+            </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"

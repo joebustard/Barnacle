@@ -568,6 +568,12 @@ namespace Make3D.Dialogs
             //     GenerateSuperMesh();
             Redisplay();
         }
+        private void DivideLong_Click(object sender, RoutedEventArgs e)
+        {
+            mesh.DivideLongSideSelectedFaces();
+            //     GenerateSuperMesh();
+            Redisplay();
+        }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {

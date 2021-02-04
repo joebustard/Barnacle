@@ -28,13 +28,16 @@ namespace Make3D.Dialogs
         private List<String> shapeNames;
         private double span;
         private double sweepAngle;
+        private double dihedralAngle;
         private Visibility sweepControlsVisible;
         private double sweepLimit = 60;
+        private double dihedralLimit = 20;
         private List<String> tipairfoilNames;
         private Visibility tipControlsVisible;
         private string tipGroup;
         private double tipLength;
         private double tipOffsetX = 0;
+        private double tipOffsetY = 0;
         private double tipOffsetZ = 0;
         private List<String> tipShapeNames;
         private bool topModelChecked;
@@ -54,6 +57,8 @@ namespace Make3D.Dialogs
             rootLength = 30;
             tipLength = 10;
             span = 70;
+            sweepAngle = 0;
+            dihedralAngle = 0;
         }
 
         public List<string> AirfoilGroups
@@ -288,6 +293,7 @@ namespace Make3D.Dialogs
             {
                 if (sweepAngle != value)
                 {
+                    sweepAngle = value;
                     if (sweepAngle < -sweepLimit)
                     {
                         sweepAngle = -sweepLimit;
@@ -297,7 +303,34 @@ namespace Make3D.Dialogs
                     {
                         sweepAngle = sweepLimit;
                     }
-                    sweepAngle = value;
+                    
+                    NotifyPropertyChanged();
+                    Update();
+                }
+            }
+        }
+
+        public double DihedralAngle
+        {
+            get
+            {
+                return dihedralAngle;
+            }
+            set
+            {
+                if (dihedralAngle != value)
+                {
+                    dihedralAngle = value;
+                    if (dihedralAngle < -dihedralLimit)
+                    {
+                        dihedralAngle = -dihedralLimit;
+                    }
+
+                    if (dihedralAngle > sweepLimit)
+                    {
+                        dihedralAngle = sweepLimit;
+                    }
+                    
                     NotifyPropertyChanged();
                     Update();
                 }
@@ -465,6 +498,19 @@ namespace Make3D.Dialogs
                         TipControlsVisible = Visibility.Hidden;
                         SweepControlsVisible = Visibility.Hidden;
                         tipOffsetX = 0;
+                        double theta = (Math.PI * dihedralAngle) / 180;
+                        tipOffsetY = span * Math.Sin(theta);
+                        tipOffsetZ = span;
+                    }
+                    break;
+
+                case "Straight Edge":
+                    {
+                        TipControlsVisible = Visibility.Hidden;
+                        SweepControlsVisible = Visibility.Hidden;
+                        double theta = (Math.PI * dihedralAngle) / 180;
+                        tipOffsetY = span * Math.Sin(theta);
+                        tipOffsetX = rootLength - tipLength;
                         tipOffsetZ = span;
                     }
                     break;
@@ -474,6 +520,8 @@ namespace Make3D.Dialogs
                         TipControlsVisible = Visibility.Visible;
                         SweepControlsVisible = Visibility.Hidden;
                         tipOffsetX = (rootLength - tipLength) / 2;
+                        double theta = (Math.PI * dihedralAngle) / 180;
+                        tipOffsetY = span * Math.Sin(theta);
                         tipOffsetZ = span;
                     }
                     break;
@@ -483,6 +531,8 @@ namespace Make3D.Dialogs
                         TipControlsVisible = Visibility.Visible;
                         SweepControlsVisible = Visibility.Hidden;
                         tipOffsetX = 0;
+                        double theta = (Math.PI * dihedralAngle) / 180;
+                        tipOffsetY = span * Math.Sin(theta);
                         tipOffsetZ = span;
                     }
                     break;
@@ -493,6 +543,8 @@ namespace Make3D.Dialogs
                         SweepControlsVisible = Visibility.Visible;
                         double theta = (Math.PI * (-sweepAngle)) / 180;
                         tipOffsetX = span * Math.Sin(theta);
+                        theta = (Math.PI * dihedralAngle) / 180;
+                        tipOffsetY = span * Math.Sin(theta);
                         tipOffsetZ = span * Math.Cos(theta); ;
                     }
                     break;
@@ -552,8 +604,8 @@ namespace Make3D.Dialogs
 
                                 Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
                                 Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
-                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, p3.Y * tl, tipOffsetZ);
-                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, p4.Y * tl, tipOffsetZ);
+                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
+                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
 
                                 int v1 = AddVertice(pd1);
                                 int v2 = AddVertice(pd2);
@@ -579,8 +631,8 @@ namespace Make3D.Dialogs
 
                                 Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
                                 Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
-                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, p3.Y * tl, tipOffsetZ);
-                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, p4.Y * tl, tipOffsetZ);
+                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
+                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl)+ tipOffsetY, tipOffsetZ);
 
                                 int v1 = AddVertice(pd1);
                                 int v2 = AddVertice(pd2);
@@ -596,8 +648,8 @@ namespace Make3D.Dialogs
                                 Faces.Add(v4);
                             }
 
-                            TriangulatePerimiter(rootPnts, rootLength,0, 0, true);
-                            TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetZ,false);
+                            TriangulatePerimiter(rootPnts, rootLength,0, 0,0, true);
+                            TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ,false);
                             CentreVertices();
                         }
                     }
@@ -646,7 +698,7 @@ namespace Make3D.Dialogs
             return res;
         }
 
-        private void TriangulatePerimiter(List<Point> points, double l,  double xo, double z, bool invert)
+        private void TriangulatePerimiter(List<Point> points, double l,  double xo, double yo,double z, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
             List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
@@ -658,9 +710,9 @@ namespace Make3D.Dialogs
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(xo + t.Points[0].X * l,t.Points[0].Y * l, z );
-                int c1 = AddVertice(xo + t.Points[1].X * l, t.Points[1].Y * l, z );
-                int c2 = AddVertice(xo + t.Points[2].X * l, t.Points[2].Y * l, z) ;
+                int c0 = AddVertice(xo + t.Points[0].X * l,yo + t.Points[0].Y * l, z );
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z );
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z) ;
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -841,6 +893,7 @@ namespace Make3D.Dialogs
         private void SetShapeNames()
         {
             shapeNames.Add("Straight");
+            shapeNames.Add("Straight Edge");
             shapeNames.Add("Tapered");
             shapeNames.Add("Delta");
             shapeNames.Add("Swept");

@@ -87,46 +87,81 @@ namespace Make3D.Dialogs.MeshEditor
 
         internal void FindNeighbours()
         {
+            
             foreach (MeshTriangle tri in Faces)
             {
-                tri.NeighbourP0P1 = FindNeighbourTriangle(tri, tri.P0, tri.P1);
-                tri.NeighbourP1P2 = FindNeighbourTriangle(tri, tri.P1, tri.P2);
-                tri.NeighbourP2P0 = FindNeighbourTriangle(tri, tri.P2, tri.P0);
+                System.Diagnostics.Debug.WriteLine($"{tri.P0},{tri.P1},{tri.P2}");
+            }
+            foreach (MeshTriangle tri in Faces)
+            {
+                if (tri.NeighbourP0P1 == null)
+                {
+                    tri.NeighbourP0P1 = FindNeighbourTriangle(tri, tri.P0, tri.P1);
+                }
+                if (tri.NeighbourP1P2 == null)
+                {
+                    tri.NeighbourP1P2 = FindNeighbourTriangle(tri, tri.P1, tri.P2);
+                }
+                if (tri.NeighbourP2P0 == null)
+                {
+                    tri.NeighbourP2P0 = FindNeighbourTriangle(tri, tri.P2, tri.P0);
+                }
             }
         }
 
         private MeshTriangle FindNeighbourTriangle(MeshTriangle tri, int p0, int p1)
         {
+            
             Dialogs.MeshEditor.MeshTriangle res = null;
             foreach (MeshTriangle nd in Faces)
             {
                 if (tri != nd)
                 {
-                    if ((nd.P0 == p0 && nd.P1 == p1) ||
-                        (nd.P0 == p1 && nd.P1 == p0))
+                    if (nd.NeighbourP0P1 == null)
                     {
-                        res = nd;
-                        break;
+                        
+                        if ((nd.P0 == p0 && nd.P1 == p1) ||
+                            (nd.P0 == p1 && nd.P1 == p0))
+                        {
+                            
+                            res = nd;
+                            nd.NeighbourP0P1 = tri;
+                            break;
+                        }
                     }
 
-                    if ((nd.P1 == p0 && nd.P2 == p1) ||
-                        (nd.P1 == p1 && nd.P2 == p0))
+                    if (nd.NeighbourP1P2 == null)
                     {
-                        res = nd;
-                        break;
+                       
+                        if ((nd.P1 == p0 && nd.P2 == p1) ||
+                            (nd.P1 == p1 && nd.P2 == p0))
+                        {
+                           
+                            res = nd;
+                            nd.NeighbourP1P2 = tri;
+                            break;
+                        }
                     }
 
-                    if ((nd.P2 == p0 && nd.P0 == p1) ||
-                        (nd.P0 == p1 && nd.P2 == p0))
+
+                    if (nd.NeighbourP2P0 == null)
                     {
-                        res = nd;
-                        break;
+                       
+                        if ((nd.P2 == p0 && nd.P0 == p1) ||
+                            (nd.P2 == p1 && nd.P0 == p0))
+                        {
+                           
+                            res = nd;
+                            nd.NeighbourP2P0 = tri;
+                            break;
+                        }
                     }
                 }
             }
-            if ( res == null )
+            if (res == null)
             {
                 bool broke = false;
+                System.Diagnostics.Debug.WriteLine("NOT FOUND");
             }
             return res;
         }
@@ -158,10 +193,10 @@ namespace Make3D.Dialogs.MeshEditor
                 List<MeshVertex> showers = new List<MeshVertex>();
                 foreach (MeshTriangle tri in Faces)
                 {
-                    if ( tri.Selected)
+                    if (tri.Selected)
                     {
                         MeshVertex vx = Vertices[tri.P0];
-                        if ( !showers.Contains(vx))
+                        if (!showers.Contains(vx))
                         {
                             showers.Add(vx);
                         }
@@ -207,7 +242,7 @@ namespace Make3D.Dialogs.MeshEditor
                     }
                     else
                     {
-                        
+
                         if (tri.Selected == false)
                         {
                             DeselectAll();
@@ -246,7 +281,7 @@ namespace Make3D.Dialogs.MeshEditor
 
         private void DeselectAll()
         {
-            foreach( MeshTriangle f in Faces)
+            foreach (MeshTriangle f in Faces)
             {
                 f.SelectionWeight = 0;
                 f.Selected = false;
@@ -362,6 +397,223 @@ namespace Make3D.Dialogs.MeshEditor
             FindNeighbours();
         }
 
+        internal void DivideLongSideSelectedFaces()
+        {
+            List<MeshTriangle> tmp = new List<MeshTriangle>();
+            List<MeshTriangle> skip = new List<MeshTriangle>();
+            
+            Point3D p0;
+            Point3D p1;
+            Point3D p2;
+            Point3D splitPoint;
+            MeshTriangle neighbour = null;
+            foreach (MeshTriangle tri in Faces)
+            {
+                if (tri.Selected == true)
+                {
+                    
+                    p0 = Vertices[tri.P0].Position;
+                    p1 = Vertices[tri.P1].Position;
+                    p2 = Vertices[tri.P2].Position;
+
+                    
+                    double d0 = Dist3D(p0, p1);
+                    double d1 = Dist3D(p1, p2);
+                    double d2 = Dist3D(p2, p0);
+                    int splitting = 0;
+                    double longest = d0;
+                    splitPoint = Midpoint(p0, p1);
+                    neighbour = tri.NeighbourP0P1;
+                    if ( d1 > longest)
+                    {
+                        splitting = 1;
+                        longest = d1;
+                        splitPoint = Midpoint(p1, p2);
+                        neighbour = tri.NeighbourP1P2;
+                    }
+
+                    if (d2 > longest)
+                    {
+                        splitting = 2;
+                        longest = d2;
+                        splitPoint = Midpoint(p2, p0);
+                        neighbour = tri.NeighbourP2P0;
+                    }
+
+
+                   
+                    int mp = AddVertex(splitPoint);
+                    if (splitting == 0)
+                    {
+                        MeshTriangle nt = new MeshTriangle();
+                        nt.P0 = tri.P0;
+                        nt.P1 = mp;
+                        nt.P2 = tri.P2;
+
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        nt = new Dialogs.MeshEditor.MeshTriangle();
+                        nt.P0 = mp;
+                        nt.P1 = tri.P1;
+                        nt.P2 = tri.P2;
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+                    }
+
+                    if (splitting == 1)
+                    {
+                        MeshTriangle nt = new MeshTriangle();
+                        nt.P0 = tri.P0;
+                        nt.P1 = tri.P1;
+                        nt.P2 = mp;
+
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        nt = new Dialogs.MeshEditor.MeshTriangle();
+                        nt.P0 = tri.P0;
+                        nt.P1 = mp;
+                        nt.P2 = tri.P2;
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        
+                    }
+                    if (splitting == 2)
+                    {
+                        MeshTriangle nt = new MeshTriangle();
+                        nt.P0 = tri.P0;
+                        nt.P1 = tri.P1;
+                        nt.P2 = mp;
+
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        nt = new Dialogs.MeshEditor.MeshTriangle();
+                        nt.P0 = tri.P1;
+                        nt.P1 = tri.P2;
+                        nt.P2 = mp;
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+                    }
+
+                    int neighbourSplitting = 0;
+                    if ( neighbour.NeighbourP1P2 == tri)
+                    {
+                        neighbourSplitting = 1;
+                    }
+                    if (neighbour.NeighbourP2P0 == tri)
+                    {
+                        neighbourSplitting = 2;
+                    }
+
+                    if (neighbourSplitting == 0)
+                    {
+                        MeshTriangle nt = new MeshTriangle();
+                        nt.P0 = neighbour.P0;
+                        nt.P1 = mp;
+                        nt.P2 = neighbour.P2;
+
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        nt = new Dialogs.MeshEditor.MeshTriangle();
+                        nt.P0 = mp;
+                        nt.P1 = neighbour.P1;
+                        nt.P2 = neighbour.P2;
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+                    }
+
+                    if (neighbourSplitting == 1)
+                    {
+                        MeshTriangle nt = new MeshTriangle();
+                        nt.P0 = neighbour.P0;
+                        nt.P1 = neighbour.P1;
+                        nt.P2 = mp;
+
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        nt = new Dialogs.MeshEditor.MeshTriangle();
+                        nt.P0 = neighbour.P0;
+                        nt.P1 = mp;
+                        nt.P2 = neighbour.P2;
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+
+                    }
+                    if (neighbourSplitting == 2)
+                    {
+                        MeshTriangle nt = new MeshTriangle();
+                        nt.P0 = neighbour.P0;
+                        nt.P1 = neighbour.P1;
+                        nt.P2 = mp;
+
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+
+                        nt = new Dialogs.MeshEditor.MeshTriangle();
+                        nt.P0 = neighbour.P1;
+                        nt.P1 = neighbour.P2;
+                        nt.P2 = mp;
+                        SetupNewFace(nt);
+                        tmp.Add(nt);
+                    }
+                    neighbour.Selected = false;
+                    skip.Add(neighbour);
+                }
+                else
+                {
+                    tmp.Add(tri);
+                }
+            }
+            foreach( MeshTriangle f in skip)
+            {
+                if ( tmp.Contains(f))
+                {
+                    tmp.Remove(f);
+                }
+            }
+            Faces = tmp;
+            foreach (MeshTriangle tri in Faces)
+            {
+                tri.NeighbourP0P1 = null;
+                tri.NeighbourP1P2 = null;
+                tri.NeighbourP2P0 = null;
+            }
+                FindNeighbours();
+        }
+
+        private void SetupNewFace(MeshTriangle nt)
+        {
+            nt.CreateModel(Vertices);
+            nt.SelectedFrontMaterial = selectedFaceMaterial;
+            nt.UnselectedFrontMaterial = unselectedFaceMaterial;
+            nt.BackMaterial = backMaterial;
+            nt.PartSelectedFrontMaterial = partSelectedFaceMaterial;
+            nt.Selected = false;
+        }
+
+        private Point3D Midpoint(Point3D p0, Point3D p1)
+        {
+            double dx = p1.X - p0.X;
+            double dy = p1.Y - p0.Y;
+            double dz = p1.Z - p0.Z;
+            Point3D res = new Point3D(p0.X + dx / 2, p0.Y + dy / 2, p0.Z + dz / 2);
+            return res;
+        }
+
+        private double Dist3D(Point3D p0, Point3D p1)
+        {
+            double dx = p1.X - p0.X;
+            double dy = p1.Y - p0.Y;
+            double dz = p1.Z - p0.Z; 
+            return Math.Sqrt( dx*dx + dy * dy + dz * dz);
+        }
+
         internal void MoveSelectedTriangles(Point3D positionChange)
         {
             // we have to do it this way to avoid moving the same point multiple times if it is
@@ -380,9 +632,9 @@ namespace Make3D.Dialogs.MeshEditor
             do
             {
                 swapped = false;
-                for ( int i = 0; i < movingTris.Count-1; i ++)
+                for (int i = 0; i < movingTris.Count - 1; i++)
                 {
-                    if ( movingTris[i].SelectionWeight < movingTris[i+1].SelectionWeight)
+                    if (movingTris[i].SelectionWeight < movingTris[i + 1].SelectionWeight)
                     {
                         MeshTriangle tmp = movingTris[i];
                         movingTris[i] = movingTris[i + 1];
@@ -397,8 +649,8 @@ namespace Make3D.Dialogs.MeshEditor
             {
                 double scale = f.SelectionWeight / 100.0;
                 Point3D delta = new Point3D(positionChange.X * scale,
-                                            positionChange.Y * scale ,
-                                            positionChange.Z * scale );
+                                            positionChange.Y * scale,
+                                            positionChange.Z * scale);
                 if (!pnts.Contains(f.P0))
                 {
                     AddPoint(pnts, f.P0);
@@ -414,12 +666,12 @@ namespace Make3D.Dialogs.MeshEditor
                     AddPoint(pnts, f.P2);
                     Vertices[f.P2].MovePosition(delta);
                 }
-                
+
             }
 
             foreach (int pindex in pnts)
             {
-                
+
                 foreach (MeshTriangle tri in Faces)
                 {
                     tri.MovePoint(pindex, Vertices);
