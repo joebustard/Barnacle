@@ -35,6 +35,7 @@ namespace Make3D.Dialogs
         private int lastSelectedPoint;
         private Point lastMousePos;
         private Point3D offsetOrigin;
+
         public bool ShowWireFrame
         {
             get { return showWireFrame; }
@@ -116,6 +117,10 @@ namespace Make3D.Dialogs
                     }
                 }
                 MyModelGroup.Children.Add(mesh.GetModels());
+                if (lastSelectedPoint != -1)
+                {
+                    MyModelGroup.Children.Add(mesh.Vertices[lastSelectedPoint].Model);
+                }
             }
         }
 
@@ -132,10 +137,10 @@ namespace Make3D.Dialogs
             {
                 bnds.Adjust(p);
             }
-            offsetOrigin = new Point3D( bnds.MidPoint().X,-bnds.Lower.Y, bnds.MidPoint().Z);
+            offsetOrigin = new Point3D(bnds.MidPoint().X, -bnds.Lower.Y, bnds.MidPoint().Z);
             foreach (Point3D p in points)
             {
-                Point3D np = new Point3D(p.X, p.Y- bnds.Lower.Y, p.Z);
+                Point3D np = new Point3D(p.X, p.Y - bnds.Lower.Y, p.Z);
                 editingPoints.Add(np);
             }
             foreach (int i in triangleIndices)
@@ -214,7 +219,7 @@ namespace Make3D.Dialogs
                     indices.Add(v0);
                     indices.Add(v3);
                     indices.Add(v2);
-                   // indices.Add(v1);
+                    // indices.Add(v1);
                 }
             }
 
@@ -328,10 +333,9 @@ namespace Make3D.Dialogs
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            lastSelectedPoint = -1;
+            // lastSelectedPoint = -1;
             lastSelectedTriangle = null;
             e.Handled = true;
-            
         }
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -568,6 +572,7 @@ namespace Make3D.Dialogs
             //     GenerateSuperMesh();
             Redisplay();
         }
+
         private void DivideLong_Click(object sender, RoutedEventArgs e)
         {
             mesh.DivideLongSideSelectedFaces();
@@ -585,14 +590,12 @@ namespace Make3D.Dialogs
             Close();
         }
 
-
         internal void KeyDown(Key key, bool shift, bool ctrl)
         {
             switch (key)
             {
                 case Key.Up:
                     {
-                        
                         if (ctrl)
                         {
                             if (shift)
@@ -620,7 +623,6 @@ namespace Make3D.Dialogs
 
                 case Key.Down:
                     {
-                        
                         if (ctrl)
                         {
                             if (shift)
@@ -648,7 +650,6 @@ namespace Make3D.Dialogs
 
                 case Key.Left:
                     {
-                        
                         if (shift)
                         {
                             Nudge(Adorner.NudgeDirection.Left, 0.1);
@@ -662,7 +663,6 @@ namespace Make3D.Dialogs
 
                 case Key.Right:
                     {
-                       
                         if (shift)
                         {
                             Nudge(Adorner.NudgeDirection.Right, 0.1);
@@ -673,14 +673,11 @@ namespace Make3D.Dialogs
                         }
                     }
                     break;
-
-              
             }
         }
 
         private void Nudge(Adorner.NudgeDirection dir, double v)
         {
- 
             switch (dir)
             {
                 case Adorner.NudgeDirection.Left:
@@ -720,6 +717,7 @@ namespace Make3D.Dialogs
                     break;
             }
         }
+
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
@@ -753,7 +751,14 @@ namespace Make3D.Dialogs
 
             if (positionChange != null)
             {
-                mesh.MoveSelectedTriangles(positionChange);
+                if (lastSelectedPoint != -1)
+                {
+                    mesh.MovePoint(lastSelectedPoint, positionChange);
+                }
+                else
+                {
+                    mesh.MoveSelectedTriangles(positionChange);
+                }
             }
             Redisplay();
         }

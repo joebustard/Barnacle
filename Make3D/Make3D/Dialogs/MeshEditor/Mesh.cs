@@ -87,7 +87,6 @@ namespace Make3D.Dialogs.MeshEditor
 
         internal void FindNeighbours()
         {
-            
             foreach (MeshTriangle tri in Faces)
             {
                 System.Diagnostics.Debug.WriteLine($"{tri.P0},{tri.P1},{tri.P2}");
@@ -111,7 +110,6 @@ namespace Make3D.Dialogs.MeshEditor
 
         private MeshTriangle FindNeighbourTriangle(MeshTriangle tri, int p0, int p1)
         {
-            
             Dialogs.MeshEditor.MeshTriangle res = null;
             foreach (MeshTriangle nd in Faces)
             {
@@ -119,11 +117,9 @@ namespace Make3D.Dialogs.MeshEditor
                 {
                     if (nd.NeighbourP0P1 == null)
                     {
-                        
                         if ((nd.P0 == p0 && nd.P1 == p1) ||
                             (nd.P0 == p1 && nd.P1 == p0))
                         {
-                            
                             res = nd;
                             nd.NeighbourP0P1 = tri;
                             break;
@@ -132,25 +128,20 @@ namespace Make3D.Dialogs.MeshEditor
 
                     if (nd.NeighbourP1P2 == null)
                     {
-                       
                         if ((nd.P1 == p0 && nd.P2 == p1) ||
                             (nd.P1 == p1 && nd.P2 == p0))
                         {
-                           
                             res = nd;
                             nd.NeighbourP1P2 = tri;
                             break;
                         }
                     }
 
-
                     if (nd.NeighbourP2P0 == null)
                     {
-                       
                         if ((nd.P2 == p0 && nd.P0 == p1) ||
                             (nd.P2 == p1 && nd.P0 == p0))
                         {
-                           
                             res = nd;
                             nd.NeighbourP2P0 = tri;
                             break;
@@ -160,7 +151,6 @@ namespace Make3D.Dialogs.MeshEditor
             }
             if (res == null)
             {
-                bool broke = false;
                 System.Diagnostics.Debug.WriteLine("NOT FOUND");
             }
             return res;
@@ -242,7 +232,6 @@ namespace Make3D.Dialogs.MeshEditor
                     }
                     else
                     {
-
                         if (tri.Selected == false)
                         {
                             DeselectAll();
@@ -271,7 +260,9 @@ namespace Make3D.Dialogs.MeshEditor
                     if (vx.CheckHit(m, shift))
                     {
                         found = true;
+                        DeselectAll();
                         lastSelectedPoint = Vertices.IndexOf(vx);
+                        vx.Selected = true;
                         break;
                     }
                 }
@@ -401,7 +392,7 @@ namespace Make3D.Dialogs.MeshEditor
         {
             List<MeshTriangle> tmp = new List<MeshTriangle>();
             List<MeshTriangle> skip = new List<MeshTriangle>();
-            
+
             Point3D p0;
             Point3D p1;
             Point3D p2;
@@ -411,12 +402,10 @@ namespace Make3D.Dialogs.MeshEditor
             {
                 if (tri.Selected == true)
                 {
-                    
                     p0 = Vertices[tri.P0].Position;
                     p1 = Vertices[tri.P1].Position;
                     p2 = Vertices[tri.P2].Position;
 
-                    
                     double d0 = Dist3D(p0, p1);
                     double d1 = Dist3D(p1, p2);
                     double d2 = Dist3D(p2, p0);
@@ -424,7 +413,7 @@ namespace Make3D.Dialogs.MeshEditor
                     double longest = d0;
                     splitPoint = Midpoint(p0, p1);
                     neighbour = tri.NeighbourP0P1;
-                    if ( d1 > longest)
+                    if (d1 > longest)
                     {
                         splitting = 1;
                         longest = d1;
@@ -440,8 +429,6 @@ namespace Make3D.Dialogs.MeshEditor
                         neighbour = tri.NeighbourP2P0;
                     }
 
-
-                   
                     int mp = AddVertex(splitPoint);
                     if (splitting == 0)
                     {
@@ -477,8 +464,6 @@ namespace Make3D.Dialogs.MeshEditor
                         nt.P2 = tri.P2;
                         SetupNewFace(nt);
                         tmp.Add(nt);
-
-                        
                     }
                     if (splitting == 2)
                     {
@@ -499,7 +484,7 @@ namespace Make3D.Dialogs.MeshEditor
                     }
 
                     int neighbourSplitting = 0;
-                    if ( neighbour.NeighbourP1P2 == tri)
+                    if (neighbour.NeighbourP1P2 == tri)
                     {
                         neighbourSplitting = 1;
                     }
@@ -542,8 +527,6 @@ namespace Make3D.Dialogs.MeshEditor
                         nt.P2 = neighbour.P2;
                         SetupNewFace(nt);
                         tmp.Add(nt);
-
-
                     }
                     if (neighbourSplitting == 2)
                     {
@@ -570,9 +553,9 @@ namespace Make3D.Dialogs.MeshEditor
                     tmp.Add(tri);
                 }
             }
-            foreach( MeshTriangle f in skip)
+            foreach (MeshTriangle f in skip)
             {
-                if ( tmp.Contains(f))
+                if (tmp.Contains(f))
                 {
                     tmp.Remove(f);
                 }
@@ -584,7 +567,7 @@ namespace Make3D.Dialogs.MeshEditor
                 tri.NeighbourP1P2 = null;
                 tri.NeighbourP2P0 = null;
             }
-                FindNeighbours();
+            FindNeighbours();
         }
 
         private void SetupNewFace(MeshTriangle nt)
@@ -610,8 +593,8 @@ namespace Make3D.Dialogs.MeshEditor
         {
             double dx = p1.X - p0.X;
             double dy = p1.Y - p0.Y;
-            double dz = p1.Z - p0.Z; 
-            return Math.Sqrt( dx*dx + dy * dy + dz * dz);
+            double dz = p1.Z - p0.Z;
+            return Math.Sqrt(dx * dx + dy * dy + dz * dz);
         }
 
         internal void MoveSelectedTriangles(Point3D positionChange)
@@ -666,12 +649,10 @@ namespace Make3D.Dialogs.MeshEditor
                     AddPoint(pnts, f.P2);
                     Vertices[f.P2].MovePosition(delta);
                 }
-
             }
 
             foreach (int pindex in pnts)
             {
-
                 foreach (MeshTriangle tri in Faces)
                 {
                     tri.MovePoint(pindex, Vertices);
