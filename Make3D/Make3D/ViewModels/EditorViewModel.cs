@@ -1219,6 +1219,7 @@ namespace Make3D.ViewModels
                     if (grp.Init())
                     {
                         Document.ReplaceObjectsByGroup(grp);
+                        RemoveDuplicateVertices(grp);
                         leftie = grp;
                         i++;
                         res = true;
@@ -2123,15 +2124,21 @@ namespace Make3D.ViewModels
             {
                 foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                 {
-                    ManifoldChecker checker = new ManifoldChecker();
-                    checker.Points = ob.RelativeObjectVertices;
-                    checker.Indices = ob.TriangleIndices;
-                    checker.RemoveDuplicateVertices();
-                    ob.RelativeObjectVertices = checker.Points;
-                    ob.TriangleIndices = checker.Indices;
+                    RemoveDuplicateVertices(ob);
                 }
             }
         }
+
+        private static void RemoveDuplicateVertices(Object3D ob)
+        {
+            ManifoldChecker checker = new ManifoldChecker();
+            checker.Points = ob.RelativeObjectVertices;
+            checker.Indices = ob.TriangleIndices;
+            checker.RemoveDuplicateVertices();
+            ob.RelativeObjectVertices = checker.Points;
+            ob.TriangleIndices = checker.Indices;
+        }
+
         private void OnShowAxies(object param)
         {
             showAxies = (param as bool?) == true;

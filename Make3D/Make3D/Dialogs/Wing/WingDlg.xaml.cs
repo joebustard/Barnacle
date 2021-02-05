@@ -176,7 +176,7 @@ namespace Make3D.Dialogs
                 {
                     selectedShape = value;
                     NotifyPropertyChanged();
-                    
+
                     Update();
                 }
             }
@@ -303,7 +303,7 @@ namespace Make3D.Dialogs
                     {
                         sweepAngle = sweepLimit;
                     }
-                    
+
                     NotifyPropertyChanged();
                     Update();
                 }
@@ -330,7 +330,7 @@ namespace Make3D.Dialogs
                     {
                         dihedralAngle = sweepLimit;
                     }
-                    
+
                     NotifyPropertyChanged();
                     Update();
                 }
@@ -576,10 +576,10 @@ namespace Make3D.Dialogs
                             Faces.Clear();
 
                             double dt = 0.01;
-                            double startT=0;
-                            double endT=1;
+                            double startT = 0;
+                            double endT = 1;
                             bool close = false;
-                            if ( TopModelChecked)
+                            if (TopModelChecked)
                             {
                                 startT = 0;
                                 endT = 0.5;
@@ -623,7 +623,7 @@ namespace Make3D.Dialogs
                             if (close)
                             {
                                 Point p1 = GetProfileAt(rootProfile, rootEdgeLength, startT);
-                                
+
                                 Point p2 = GetProfileAt(rootProfile, rootEdgeLength, endT);
                                 Point p3 = GetProfileAt(tipProfile, tipEdgeLength, endT);
                                 Point p4 = GetProfileAt(tipProfile, tipEdgeLength, startT);
@@ -632,7 +632,7 @@ namespace Make3D.Dialogs
                                 Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
                                 Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
                                 Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
-                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl)+ tipOffsetY, tipOffsetZ);
+                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
 
                                 int v1 = AddVertice(pd1);
                                 int v2 = AddVertice(pd2);
@@ -648,8 +648,8 @@ namespace Make3D.Dialogs
                                 Faces.Add(v4);
                             }
 
-                            TriangulatePerimiter(rootPnts, rootLength,0, 0,0, true);
-                            TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ,false);
+                            TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
+                            TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
                             CentreVertices();
                         }
                     }
@@ -698,7 +698,7 @@ namespace Make3D.Dialogs
             return res;
         }
 
-        private void TriangulatePerimiter(List<Point> points, double l,  double xo, double yo,double z, bool invert)
+        private void TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
             List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
@@ -710,9 +710,9 @@ namespace Make3D.Dialogs
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(xo + t.Points[0].X * l,yo + t.Points[0].Y * l, z );
-                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z );
-                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z) ;
+                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -817,12 +817,15 @@ namespace Make3D.Dialogs
                 s = EditorParameters.Get("Sweep");
                 SweepAngle = Convert.ToDouble(s);
 
-               RootGroup = EditorParameters.Get("RootGroup" );
-               SelectedRootAirfoil = EditorParameters.Get("RootAirfoil" );
+                s = EditorParameters.Get("Dihedral");
+                dihedralAngle = Convert.ToDouble(s);
 
-               TipGroup = EditorParameters.Get("TipGroup" );
-               SelectedTipAirfoil = EditorParameters.Get("TipAirfoil" );
-               SelectedTipShape = EditorParameters.Get("TipShape" );
+                RootGroup = EditorParameters.Get("RootGroup");
+                SelectedRootAirfoil = EditorParameters.Get("RootAirfoil");
+
+                TipGroup = EditorParameters.Get("TipGroup");
+                SelectedTipAirfoil = EditorParameters.Get("TipAirfoil");
+                SelectedTipShape = EditorParameters.Get("TipShape");
             }
         }
 
@@ -863,6 +866,7 @@ namespace Make3D.Dialogs
             EditorParameters.Set("RootLength", rootLength.ToString());
             EditorParameters.Set("TipLength", tipLength.ToString());
             EditorParameters.Set("Sweep", sweepAngle.ToString());
+            EditorParameters.Set("Dihedral", dihedralAngle.ToString());
 
             EditorParameters.Set("RootGroup", RootGroup);
             EditorParameters.Set("RootAirfoil", SelectedRootAirfoil);

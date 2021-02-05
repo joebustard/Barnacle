@@ -79,6 +79,22 @@ namespace ManifoldLib
                 }
             }
 
+            foreach (Face f in Faces)
+            {
+                foreach (Edge e in f.Edges)
+                {
+                    if (Vertices[e.P0].DuplicateOf != -1)
+                    {
+                        e.P0 = Vertices[e.P0].NewNumber;
+                    }
+
+                    if (Vertices[e.P1].DuplicateOf != -1)
+                    {
+                        e.P1 = Vertices[e.P1].NewNumber;
+                    }
+                }
+            }
+            /*
             for (int i = 0; i < Vertices.Count; i++)
             {
                 if (Vertices[i].NewNumber != Vertices[i].OriginalNumber)
@@ -100,6 +116,7 @@ namespace ManifoldLib
                     }
                 }
             }
+            */
             List<Vertex> tmp = new List<Vertex>();
             for (int i = 0; i < Vertices.Count; i++)
             {
