@@ -304,8 +304,9 @@ namespace PolygonTriangulationLib
 
         // Remove an ear from the polygon and
         // add it to the triangles array.
-        private void RemoveEar(List<Triangle> triangles)
+        private bool RemoveEar(List<Triangle> triangles)
         {
+            bool removed = false;
             // Find an ear.
             int A = 0, B = 0, C = 0;
             FindEar(ref A, ref B, ref C);
@@ -318,7 +319,9 @@ namespace PolygonTriangulationLib
 
                 // Remove the ear from the polygon.
                 RemovePointFromArray(B);
+                removed = true;
             }
+            return removed;
         }
 
         // Remove point target from the array.
@@ -352,10 +355,11 @@ namespace PolygonTriangulationLib
 
             // While the copy of the polygon has more than
             // three points, remove an ear.
-            while (pgon.Points.Length > 3)
+            bool more = true;
+            while (pgon.Points.Length > 3 && more)
             {
                 // Remove an ear from the polygon.
-                pgon.RemoveEar(triangles);
+                more = pgon.RemoveEar(triangles);
             }
 
             // Copy the last three points into their own triangle.

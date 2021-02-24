@@ -17,7 +17,7 @@ namespace Make3D.Dialogs
     /// <summary>
     /// Interaction logic for IrregularPolygonDlg.xaml
     /// </summary>
-    public partial class IrregularPolygonDlg : BaseModellerDialog
+    public partial class PlateletDlg : BaseModellerDialog
     {
         private double height = 10;
         private BitmapImage localImage;
@@ -26,7 +26,7 @@ namespace Make3D.Dialogs
         private int selectedPoint;
         private WriteableBitmap wbx;
 
-        public IrregularPolygonDlg()
+        public PlateletDlg()
         {
             InitializeComponent();
             points = new List<System.Windows.Point>();
@@ -35,7 +35,7 @@ namespace Make3D.Dialogs
             scale = 1.0;
             InitialisePoints();
 
-            EditorParameters.ToolName = "IrregularPolygon";
+            EditorParameters.ToolName = "Platelet";
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)

@@ -13,6 +13,14 @@
     <UserControl.DataContext>
         <ViewModels:DefaultViewModel />
     </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style x:Key="ToolMenuItemStyle" TargetType="Custom:RibbonMenuItem">
+            <Setter Property="Header"  Value="{Binding Name}"></Setter>
+            <Setter Property="Command" Value="{Binding ToolCommand}" />
+            <Setter Property="CommandParameter" Value="{Binding CommandParam}" />
+            <Setter Property="IsEnabled" Value="{Binding IsActive}" />
+        </Style>
+    </UserControl.Resources>
     <Grid ScrollViewer.CanContentScroll="True">
         <Grid.RowDefinitions>
             <RowDefinition Height="140" />
@@ -168,51 +176,19 @@
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup" Header="Tools" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
-                    <Custom:RibbonMenuButton x:Name="ParametricTools" Label="Parametric Shapes">
-                    <Custom:RibbonButton x:Name="IrregularButton" Label="Platelet"   IsEnabled="{Binding IrregularEnabled}" Command="{Binding ToolCommand}" CommandParameter="Irregular" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create an object from a polygon optionaly overlayed on an external image."/>
-
-                    <Custom:RibbonButton x:Name="DoughButton" Label="DoughNut" Command="{Binding ToolCommand}" CommandParameter="Doughnut" IsEnabled="{Binding DoughnutEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a doughnut."/>
-                        <Custom:RibbonButton x:Name="SpurGearButton" Label="Spur Gear" Command="{Binding SpurGearCommand}" IsEnabled="{Binding SpurGearEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a gear wheel with a variable number of teeth."/>
-
-                    <Custom:RibbonButton x:Name="StadiumButton" Label="Stadium" Command="{Binding ToolCommand}" CommandParameter="Stadium" IsEnabled="{Binding StadiumEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a stadium or sausage with variable end radii"/>
-                    <Custom:RibbonButton x:Name="TubeButton" Label="Tube" Command="{Binding ToolCommand}" CommandParameter="Tube" IsEnabled="{Binding TubeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a partial or full tube with bevelled ends"/>
+                    <Custom:RibbonMenuButton x:Name="ParametricTools" Label="Parametric Shapes" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding ParametricToolsToShow}">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="LoftTools" Label="Lofted Shapes">
-                        <Custom:RibbonButton x:Name="LinearButton" Label="Vertical" Command="{Binding ToolCommand}" CommandParameter="Linear" IsEnabled="{Binding LinearEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/Vase.png"
-  ToolTip="Create an object by vertical lofting" />
-                        <Custom:RibbonButton x:Name="ShapeLoftButton" Label="Two Shape" Command="{Binding TwoShapeCommand}" IsEnabled="{Binding TwoShapeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                        <Custom:RibbonButton x:Name="BezierRingButton" Label="Ring" Command="{Binding ToolCommand}" CommandParameter="BezierRing" IsEnabled="{Binding BezierRingEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonMenuButton x:Name="LoftTools" Label="Lofted Shapes"
+                        ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding LoftedToolsToShow}">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="VehicleTools" Label="Vehicles">
-                        <Custom:RibbonButton x:Name="TankTrackButton" Label="Tank Track" Command="{Binding TankTrackCommand}" IsEnabled="{Binding TankTrackEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonMenuButton x:Name="VehicleTools" Label="Vehicles" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding VehicleToolsToShow}">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="AircraftTools" Label="Aircraft">
-                        <Custom:RibbonButton x:Name="BezierFuselageButton" Label="Bezier Fuselage" Command="{Binding ToolCommand}" CommandParameter="BezierFuselage" IsEnabled="{Binding FuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a fuselage from bezier profiles."/>
-                        <Custom:RibbonButton x:Name="ProfileFuselageButton" Label="Profile Fuselage" Command="{Binding ToolCommand}" CommandParameter="ProfileFuselage" IsEnabled="{Binding ProfileFuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a fuselage from  externally prepared top, bottom and spar images."/>
-                        <Custom:RibbonButton x:Name="WingButton" Label="Wing" Command="{Binding ToolCommand}" CommandParameter="Wing" IsEnabled="{Binding WingEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Create a wing from a database of airfoil profiles."/>
+                    <Custom:RibbonMenuButton x:Name="AircraftTools" Label="Aircraft" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding AircraftToolsToShow}">
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton x:Name="DecorativeTools" Label="Decorative" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding DecorativeToolsToShow}">
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
-                <!--
-                <Custom:RibbonGroup Name="ToolGroup" Header="Parametric Tools" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
-                    <Custom:RibbonButton x:Name="IrregularButton" Label="Platelet"   IsEnabled="{Binding IrregularEnabled}" Command="{Binding ToolCommand}" CommandParameter="Irregular" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
 
-                    <Custom:RibbonButton x:Name="DoughButton" Label="DoughNut" Command="{Binding ToolCommand}" CommandParameter="Doughnut" IsEnabled="{Binding DoughnutEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="SpurGearButton" Label="Spur Gear" Command="{Binding SpurGearCommand}" IsEnabled="{Binding SpurGearEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="TankTrackButton" Label="Tank Track" Command="{Binding TankTrackCommand}" IsEnabled="{Binding TankTrackEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-
-                    <Custom:RibbonButton x:Name="StadiumButton" Label="Stadium" Command="{Binding ToolCommand}" CommandParameter="Stadium" IsEnabled="{Binding StadiumEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="TubeButton" Label="Tube" Command="{Binding ToolCommand}" CommandParameter="Tube" IsEnabled="{Binding TubeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                </Custom:RibbonGroup>
-
-                <Custom:RibbonGroup Name="LoftGroup" Header="Loft Tools" LargeImageSource="/Make3D;component/Images/Buttons/BigGear.png">
-                    <Custom:RibbonButton x:Name="LinearButton" Label="Vertical" Command="{Binding ToolCommand}" CommandParameter="Linear" IsEnabled="{Binding LinearEnabled}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/Vase.png"
-  ToolTip="Create an object by vertical lofting" />
-                    <Custom:RibbonButton x:Name="BezierFuselageButton" Label="Bezier Fuselage" Command="{Binding ToolCommand}" CommandParameter="BezierFuselage" IsEnabled="{Binding FuselageEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="ShapeLoftButton" Label="Two Shape" Command="{Binding TwoShapeCommand}" IsEnabled="{Binding TwoShapeEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="BezierRingButton" Label="Ring" Command="{Binding ToolCommand}" CommandParameter="BezierRing" IsEnabled="{Binding BezierRingEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                </Custom:RibbonGroup>
-
-                -->
                 <Custom:RibbonGroup Name="MeshGroup" Header="Mesh">
                     <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate Faces" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
@@ -220,7 +196,7 @@
                     <Custom:RibbonButton x:Name="DupVertexButton" Label="Remove Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
-              
+
             <Custom:RibbonTab Name="ViewTab1" Header="View">
                 <Custom:RibbonGroup Name="ZoomGroup" Header="Zoom">
                     <Custom:RibbonButton x:Name="ZoomOutButton" Label="Zoom Out" Command="{Binding ZoomOutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />

@@ -54,6 +54,7 @@ namespace Make3D.ViewModels
         private bool showFloorMarker;
         private int totalFaces;
         private double zoomPercent = 100;
+
         public EditorViewModel()
         {
             floor = new Floor();
@@ -103,9 +104,9 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Flip", OnFlip);
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
-            NotificationManager.Subscribe("Irregular", OnIrregular);
-            NotificationManager.Subscribe("Linear", OnLinear);
-            NotificationManager.Subscribe("Doughnut", OnDoughNut);
+            NotificationManager.Subscribe("Platelet", OnPlatelet);
+            NotificationManager.Subscribe("LinearLoft", OnLinear);
+            NotificationManager.Subscribe("Torus", OnTorus);
             NotificationManager.Subscribe("BezierFuselage", OnFuselage);
             NotificationManager.Subscribe("TwoShape", OnTwoShape);
             NotificationManager.Subscribe("SpurGear", OnSpurGear);
@@ -118,6 +119,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
             NotificationManager.Subscribe("Tube", OnTube);
+            NotificationManager.Subscribe("Filet", OnFilet);
             NotificationManager.Subscribe("ProfileFuselage", OnProfileFuselage);
             NotificationManager.Subscribe("Wing", OnWing);
             NotificationManager.Subscribe("ManifoldTest", OnManifoldTest);
@@ -1219,7 +1221,7 @@ namespace Make3D.ViewModels
                     if (grp.Init())
                     {
                         Document.ReplaceObjectsByGroup(grp);
-                        RemoveDuplicateVertices(grp);
+                        //  RemoveDuplicateVertices(grp);
                         leftie = grp;
                         i++;
                         res = true;
@@ -1583,7 +1585,7 @@ namespace Make3D.ViewModels
             }
             else
             {
-                if ( selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count <3)
+                if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count < 3)
                 {
                     MessageBox.Show("At least 3 selected objects are need for even distribution");
                 }
@@ -1599,7 +1601,7 @@ namespace Make3D.ViewModels
                     // Note this is positions, not bounds
                     foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
                     {
-                        if ( o.Position.X < minx)
+                        if (o.Position.X < minx)
                         {
                             minx = o.Position.X;
                         }
@@ -1634,7 +1636,7 @@ namespace Make3D.ViewModels
                     {
                         case "Horizontal":
                             {
-                                for ( int i = 0; i < count; i++)
+                                for (int i = 0; i < count; i++)
                                 {
                                     Object3D ob = selectedObjectAdorner.SelectedObjects[i];
                                     Point3D p = new Point3D(minx + (i * dx), ob.Position.Y, ob.Position.Z);
@@ -1642,16 +1644,18 @@ namespace Make3D.ViewModels
                                 }
                             }
                             break;
+
                         case "Vertical":
                             {
                                 for (int i = 0; i < count; i++)
                                 {
                                     Object3D ob = selectedObjectAdorner.SelectedObjects[i];
-                                    Point3D p = new Point3D(ob.Position.X,miny + (i * dy),  ob.Position.Z);
+                                    Point3D p = new Point3D(ob.Position.X, miny + (i * dy), ob.Position.Z);
                                     ob.Position = p;
                                 }
                             }
                             break;
+
                         case "Distal":
                             {
                                 for (int i = 0; i < count; i++)
@@ -1669,7 +1673,7 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void OnDoughNut(object param)
+        private void OnTorus(object param)
         {
             TorusDialog torusDialog = new TorusDialog();
             DisplayModeller(torusDialog);
@@ -1809,9 +1813,9 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void OnIrregular(object param)
+        private void OnPlatelet(object param)
         {
-            IrregularPolygonDlg dlg = new IrregularPolygonDlg();
+            PlateletDlg dlg = new PlateletDlg();
             DisplayModeller(dlg);
         }
 
@@ -2224,6 +2228,12 @@ namespace Make3D.ViewModels
             DisplayModeller(dlg);
         }
 
+        private void OnFilet(object param)
+        {
+            FiletDlg dlg = new FiletDlg();
+            DisplayModeller(dlg);
+        }
+
         private void OnTwoShape(object param)
         {
             ShapeLoftDialog dlg = new ShapeLoftDialog();
@@ -2244,6 +2254,7 @@ namespace Make3D.ViewModels
             WingDlg dlg = new WingDlg();
             DisplayModeller(dlg);
         }
+
         private void OptimisePlacement()
         {
             CheckPoint();
@@ -2559,6 +2570,7 @@ namespace Make3D.ViewModels
             }
             UpdateSelectionDisplay();
         }
+
         private void SelectPrevious()
         {
             if (selectedItems.Count == 1)
@@ -2632,6 +2644,7 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
         private void TopCamera()
         {
             camera.HomeTop();

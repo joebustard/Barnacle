@@ -15,6 +15,7 @@ namespace Make3D.Models
             Standard["1/5"] = 1.0 / 5.0;
             Standard["1/6"] = 1.0 / 6.0;
             Standard["1/12"] = 1.0 / 12.0;
+            Standard["1/16"] = 1.0 / 16.0;
             Standard["1/24"] = 1.0 / 24;
             Standard["1/32"] = 1.0 / 32.0;
             Standard["1/35"] = 1.0 / 35.0;
@@ -23,6 +24,9 @@ namespace Make3D.Models
             Standard["1/72"] = 1.0 / 72.0;
             Standard["1/100"] = 1.0 / 100.0;
             Standard["1/144"] = 1.0 / 144.0;
+            Standard["1/200"] = 1.0 / 200.0;
+            Standard["1/300"] = 1.0 / 300.0;
+            Standard["1/400"] = 1.0 / 400.0;
             Standard["OO"] = 1.0 / 76.2;
             Standard["HO"] = 1.0 / 87;
             Standard["N"] = 1.0 / 148;

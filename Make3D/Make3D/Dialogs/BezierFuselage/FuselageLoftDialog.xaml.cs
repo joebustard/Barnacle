@@ -32,7 +32,7 @@ namespace Make3D.Dialogs
             BulkHeads = new ObservableCollection<BulkheadControl>();
             DataContext = this;
             selectedBulkhead = -1;
-            EditorParameters.ToolName = "Fuselage";
+            EditorParameters.ToolName = "BezierFuselage";
         }
 
         public ObservableCollection<BulkheadControl> BulkHeads

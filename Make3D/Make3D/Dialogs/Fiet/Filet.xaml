@@ -1,11 +1,11 @@
-﻿<local:BaseModellerDialog x:Class="Make3D.Dialogs.StadiumDialog"
+﻿<local:BaseModellerDialog x:Class="Make3D.Dialogs.FiletDlg"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Stadium" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
+        Title="Filet" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -13,41 +13,11 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Grid.Row="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="150" />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Grid.Row="1" Content="Radius 1" />
-            <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Radius1}" />
-
-            <Label Grid.Column="0" Grid.Row="2" Content="Gap" />
-            <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Gap}" />
-
-            <Label Grid.Column="0" Grid.Row="3" Content="Radius 2" />
-            <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding Radius2}" />
-
-            <Label Grid.Column="0" Grid.Row="4" Content="Height" />
-            <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding ShapeHeight}" />
-
-            <Label Grid.Column="0" Grid.Row="5" Content="Style" />
-            <ComboBox Grid.Column="1" Grid.Row="5" SelectedItem="{Binding ShapeStyle}" ItemsSource="{Binding Shapes}">
-            </ComboBox>
-        </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" Margin="66,193,-66,-193">
+              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">

@@ -91,6 +91,9 @@
     <Compile Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Fiet\Filet.xaml.cs">
+      <DependentUpon>Filet.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml.cs">
       <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
     </Compile>
@@ -105,9 +108,14 @@
       <DependentUpon>NewProjectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\ImageMarker.xaml.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\LetterMarker.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml.cs">
       <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ProfileFuselage\RibControl.xaml.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
     <Compile Include="Dialogs\RefernceModel.xaml.cs">
       <DependentUpon>RefernceModel.xaml</DependentUpon>
     </Compile>
@@ -162,6 +170,7 @@
     <Compile Include="Dialogs\CircularPasteDlg.xaml.cs">
       <DependentUpon>CircularPasteDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ToolDef.cs" />
     <Compile Include="Views\ColourDialog.xaml.cs">
       <DependentUpon>ColourDialog.xaml</DependentUpon>
     </Compile>
@@ -237,6 +246,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\Fiet\Filet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -257,9 +270,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\ProfileFuselage\ImageMarker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ProfileFuselage\RibControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ProfileFuselage\RibManager.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\RefernceModel.xaml">
       <SubType>Designer</SubType>

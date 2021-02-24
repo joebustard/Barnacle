@@ -15,33 +15,76 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
+        <TabControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+            <TabItem Header="Spars">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="23*" />
+                        <ColumnDefinition Width="3*" />
+                        <ColumnDefinition Width="236*" />
+                    </Grid.ColumnDefinitions>
+                    <local:RibManager x:Name="RibManager" Grid.ColumnSpan="3" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Position">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="9*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                    </Grid.RowDefinitions>
+                    <UniformGrid Grid.Column="0" Grid.Row="0" Columns="1">
+                        <Button x:Name="Front" Content="Front" Click="Front_Click" />
+                        <Button x:Name="Back" Content="Back" Click="Back_Click" />
+                        <Button x:Name="Left" Content="Left" Click="Left_Click" />
+                        <Button x:Name="Right" Content="Right" Click="Right_Click" />
+                    </UniformGrid>
+                    <Border Grid.Row="0" Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
+                        <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+              MouseDown="Viewport_MouseDown"
+              MouseWheel="Viewport_MouseWheel">
 
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
+                            <Viewport3D.Camera>
+                                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                                </PerspectiveCamera>
+                            </Viewport3D.Camera>
 
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
+                            <ModelVisual3D>
+                                <ModelVisual3D.Content>
+                                    <Model3DGroup>
+                                        <AmbientLight Color="#FF808080" />
+                                        <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                                        </DirectionalLight>
+                                    </Model3DGroup>
+                                </ModelVisual3D.Content>
+                            </ModelVisual3D>
 
-                <ModelVisual3D x:Name = "MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
-        </Border>
+                            <ModelVisual3D x:Name = "MyModel">
+                                <ModelVisual3D.Content>
+                                    <Model3DGroup x:Name="MyModelGroup">
+                                    </Model3DGroup>
+                                </ModelVisual3D.Content>
+                            </ModelVisual3D>
+                        </Viewport3D>
+                    </Border>
+                    <Grid Grid.Column="0" Grid.Row="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <Button x:Name="ZoomIn" Content="Zoom In" Click="ZoomIn_Click" Grid.Row="0" />
+                        <Button x:Name="ZoomOut" Content="Zoom Out" Click="ZoomOut_Click" Grid.Row="1" />
+                    </Grid>
+                    <local:ImageMarker x:Name="TopView" Grid.Row="1" Grid.Column="1" />
+                    <local:ImageMarker x:Name="SideView" Grid.Row="2" Grid.Column="1" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
