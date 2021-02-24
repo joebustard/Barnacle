@@ -51,7 +51,7 @@ namespace Make3D.ViewModels
         private void OnCommand(object obj)
         {
             string s = obj.ToString();
-            NotificationManager.Notify(s, null);
+            NotificationManager.Notify("Tool", s);
         }
     }
 }

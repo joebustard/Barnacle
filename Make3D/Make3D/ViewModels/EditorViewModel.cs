@@ -104,24 +104,18 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Flip", OnFlip);
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
-            NotificationManager.Subscribe("Platelet", OnPlatelet);
-            NotificationManager.Subscribe("LinearLoft", OnLinear);
-            NotificationManager.Subscribe("Torus", OnTorus);
+
             NotificationManager.Subscribe("BezierFuselage", OnFuselage);
-            NotificationManager.Subscribe("TwoShape", OnTwoShape);
-            NotificationManager.Subscribe("SpurGear", OnSpurGear);
-            NotificationManager.Subscribe("TankTrack", OnTankTrack);
+
             NotificationManager.Subscribe("MeshEdit", OnMeshEdit);
-            NotificationManager.Subscribe("Stadium", OnStadium);
-            NotificationManager.Subscribe("BezierRing", OnBezierRing);
+
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
-            NotificationManager.Subscribe("Tube", OnTube);
-            NotificationManager.Subscribe("Filet", OnFilet);
-            NotificationManager.Subscribe("ProfileFuselage", OnProfileFuselage);
-            NotificationManager.Subscribe("Wing", OnWing);
+
+            NotificationManager.Subscribe("Tool", OnTool);
+
             NotificationManager.Subscribe("ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("RemoveDupVertices", OnRemoveDupVertices);
             ReportCameraPosition();
@@ -602,6 +596,16 @@ namespace Make3D.ViewModels
             }
             mesh = new MeshDecimator.Mesh(vex, tris);
             return mesh;
+        }
+
+        private static void RemoveDuplicateVertices(Object3D ob)
+        {
+            ManifoldChecker checker = new ManifoldChecker();
+            checker.Points = ob.RelativeObjectVertices;
+            checker.Indices = ob.TriangleIndices;
+            checker.RemoveDuplicateVertices();
+            ob.RelativeObjectVertices = checker.Points;
+            ob.TriangleIndices = checker.Indices;
         }
 
         private void AlignSelectedObjects(string s)
@@ -1347,12 +1351,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void OnBezierRing(object param)
-        {
-            BezierRingDlg dlg = new BezierRingDlg();
-            DisplayModeller(dlg);
-        }
-
         private void OnCameraCommand(object param)
         {
             string p = param.ToString();
@@ -1673,12 +1671,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void OnTorus(object param)
-        {
-            TorusDialog torusDialog = new TorusDialog();
-            DisplayModeller(torusDialog);
-        }
-
         private void OnExport(object param)
         {
             string s = param as string;
@@ -1811,18 +1803,6 @@ namespace Make3D.ViewModels
                     }
                     break;
             }
-        }
-
-        private void OnPlatelet(object param)
-        {
-            PlateletDlg dlg = new PlateletDlg();
-            DisplayModeller(dlg);
-        }
-
-        private void OnLinear(object param)
-        {
-            LinearLoftDialog dlg = new LinearLoftDialog();
-            DisplayModeller(dlg);
         }
 
         private void OnManifoldTest(object param)
@@ -2102,12 +2082,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void OnProfileFuselage(object param)
-        {
-            ProfileFuselageDlg dlg = new ProfileFuselageDlg();
-            DisplayModeller(dlg);
-        }
-
         private void OnRefresh(object param)
         {
             RegenerateDisplayList();
@@ -2131,16 +2105,6 @@ namespace Make3D.ViewModels
                     RemoveDuplicateVertices(ob);
                 }
             }
-        }
-
-        private static void RemoveDuplicateVertices(Object3D ob)
-        {
-            ManifoldChecker checker = new ManifoldChecker();
-            checker.Points = ob.RelativeObjectVertices;
-            checker.Indices = ob.TriangleIndices;
-            checker.RemoveDuplicateVertices();
-            ob.RelativeObjectVertices = checker.Points;
-            ob.TriangleIndices = checker.Indices;
         }
 
         private void OnShowAxies(object param)
@@ -2204,40 +2168,14 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void OnSpurGear(object param)
+        private void OnTool(object param)
         {
-            SpurGearDialog dlg = new SpurGearDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnStadium(object param)
-        {
-            StadiumDialog dlg = new StadiumDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnTankTrack(object param)
-        {
-            TrackDialog dlg = new TrackDialog();
-            DisplayModeller(dlg);
-        }
-
-        private void OnTube(object param)
-        {
-            TubeDlg dlg = new TubeDlg();
-            DisplayModeller(dlg);
-        }
-
-        private void OnFilet(object param)
-        {
-            FiletDlg dlg = new FiletDlg();
-            DisplayModeller(dlg);
-        }
-
-        private void OnTwoShape(object param)
-        {
-            ShapeLoftDialog dlg = new ShapeLoftDialog();
-            DisplayModeller(dlg);
+            String toolName = param.ToString();
+            BaseModellerDialog dlg = ToolFactory.MakeTool(toolName);
+            if (dlg != null)
+            {
+                DisplayModeller(dlg);
+            }
         }
 
         private void OnUndo(object param)
@@ -2247,12 +2185,6 @@ namespace Make3D.ViewModels
                 selectedObjectAdorner.Clear();
             }
             Undo();
-        }
-
-        private void OnWing(object param)
-        {
-            WingDlg dlg = new WingDlg();
-            DisplayModeller(dlg);
         }
 
         private void OptimisePlacement()

@@ -15,6 +15,11 @@ namespace Make3D.ViewModels
 {
     internal class DefaultViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        public List<ToolDef> aircraftToolsToShow;
+        public List<ToolDef> decorativeToolsToShow;
+        public List<ToolDef> loftedToolsToShow;
+        public List<ToolDef> parametricToolsToShow;
+        public List<ToolDef> vehicleToolsToShow;
         private static List<MruEntry> recentFilesList;
         private static string statusBlockText1;
         private static string statusBlockText2;
@@ -33,6 +38,7 @@ namespace Make3D.ViewModels
         private bool leftTextAlignment;
         private bool linearEnabled;
         private Ribbon MainRibbon;
+        private bool profileFuselageEnabled;
         private bool rightTextAlignment;
         private string selectedObjectName;
         private bool showAxiesChecked;
@@ -41,14 +47,13 @@ namespace Make3D.ViewModels
         private bool snapMarginChecked;
         private bool spurGearEnabled;
         private bool stadiumEnabled;
-        private bool tubeEnabled;
-        private bool profileFuselageEnabled;
-        private bool wingEnabled;
         private SubViewManager subViewMan;
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
+        private bool tubeEnabled;
         private bool twoShapeEnabled;
         private bool underLineChecked;
+        private bool wingEnabled;
 
         public DefaultViewModel()
         {
@@ -140,19 +145,25 @@ namespace Make3D.ViewModels
             EnableAllTools(true);
         }
 
-        private void OnDupVertex(object obj)
-        {
-            NotificationManager.Notify("RemoveDupVertices", null);
-        }
-
-        private void OnManifoldTest(object obj)
-        {
-            NotificationManager.Notify("ManifoldTest", null);
-        }
-
         public ICommand AddCommand { get; set; }
 
         public ICommand AddPageCommand { get; set; }
+
+        public List<ToolDef> AircraftToolsToShow
+        {
+            get
+            {
+                return aircraftToolsToShow;
+            }
+            set
+            {
+                if (aircraftToolsToShow != value)
+                {
+                    aircraftToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public ICommand AlignCommand { get; set; }
 
@@ -227,6 +238,22 @@ namespace Make3D.ViewModels
 
         public ICommand CutCommand { get; set; }
 
+        public List<ToolDef> DecorativeToolsToShow
+        {
+            get
+            {
+                return decorativeToolsToShow;
+            }
+            set
+            {
+                if (decorativeToolsToShow != value)
+                {
+                    decorativeToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand DistributeCommand { get; set; }
 
         public ICommand DoNothingCommand { get; set; }
@@ -248,6 +275,8 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
+        public ICommand DupVertexCommand { get; set; }
 
         public ICommand ExitCommand { get; set; }
 
@@ -366,10 +395,27 @@ namespace Make3D.ViewModels
             }
         }
 
+        public List<ToolDef> LoftedToolsToShow
+        {
+            get
+            {
+                return loftedToolsToShow;
+            }
+            set
+            {
+                if (loftedToolsToShow != value)
+                {
+                    loftedToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand ManifoldCommand { get; set; }
+
         public ICommand MarkerCommand { get; set; }
 
         public ICommand MeshEditCommand { get; set; }
-        public ICommand DupVertexCommand { get; set; }
 
         public ICommand MultiPasteCommand { get; set; }
 
@@ -396,6 +442,22 @@ namespace Make3D.ViewModels
 
         public ICommand PageCommand { get; set; }
 
+        public List<ToolDef> ParametricToolsToShow
+        {
+            get
+            {
+                return parametricToolsToShow;
+            }
+            set
+            {
+                if (parametricToolsToShow != value)
+                {
+                    parametricToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand PasteAtCommand { get; set; }
 
         public ICommand PasteCommand { get; set; }
@@ -403,6 +465,22 @@ namespace Make3D.ViewModels
         public ICommand PrintCommand { get; set; }
 
         public ICommand PrintPreviewCommand { get; set; }
+
+        public bool ProfileFuselageEnabled
+        {
+            get
+            {
+                return profileFuselageEnabled;
+            }
+            set
+            {
+                if (profileFuselageEnabled != value)
+                {
+                    profileFuselageEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public List<MruEntry> RecentFilesList
         {
@@ -424,7 +502,6 @@ namespace Make3D.ViewModels
         public ICommand RedoCommand { get; set; }
 
         public ICommand ReferenceCommand { get; set; }
-        public ICommand ManifoldCommand { get; set; }
 
         public bool RightTextAlignment
         {
@@ -587,54 +664,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        public bool TubeEnabled
-        {
-            get
-            {
-                return tubeEnabled;
-            }
-            set
-            {
-                if (tubeEnabled != value)
-                {
-                    tubeEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool ProfileFuselageEnabled
-        {
-            get
-            {
-                return profileFuselageEnabled;
-            }
-            set
-            {
-                if (profileFuselageEnabled != value)
-                {
-                    profileFuselageEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool WingEnabled
-        {
-            get
-            {
-                return wingEnabled;
-            }
-            set
-            {
-                if (wingEnabled != value)
-                {
-                    wingEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public String StatusBlockText1
         {
             get
@@ -748,150 +777,20 @@ namespace Make3D.ViewModels
             }
         }
 
-        public List<ToolDef> parametricToolsToShow;
-        public List<ToolDef> loftedToolsToShow;
-        public List<ToolDef> vehicleToolsToShow;
-        public List<ToolDef> aircraftToolsToShow;
-        public List<ToolDef> decorativeToolsToShow;
-
-        public List<ToolDef> AircraftToolsToShow
+        public bool TubeEnabled
         {
             get
             {
-                return aircraftToolsToShow;
+                return tubeEnabled;
             }
             set
             {
-                if (aircraftToolsToShow != value)
+                if (tubeEnabled != value)
                 {
-                    aircraftToolsToShow = value;
+                    tubeEnabled = value;
                     NotifyPropertyChanged();
                 }
             }
-        }
-
-        public List<ToolDef> DecorativeToolsToShow
-        {
-            get
-            {
-                return decorativeToolsToShow;
-            }
-            set
-            {
-                if (decorativeToolsToShow != value)
-                {
-                    decorativeToolsToShow = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public List<ToolDef> VehicleToolsToShow
-        {
-            get
-            {
-                return vehicleToolsToShow;
-            }
-            set
-            {
-                if (vehicleToolsToShow != value)
-                {
-                    vehicleToolsToShow = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public List<ToolDef> ParametricToolsToShow
-        {
-            get
-            {
-                return parametricToolsToShow;
-            }
-            set
-            {
-                if (parametricToolsToShow != value)
-                {
-                    parametricToolsToShow = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public List<ToolDef> LoftedToolsToShow
-        {
-            get
-            {
-                return loftedToolsToShow;
-            }
-            set
-            {
-                if (loftedToolsToShow != value)
-                {
-                    loftedToolsToShow = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private void CreateToolMenus()
-        {
-            CreateParametricMenu();
-            CreateLoftingMenu();
-            CreateVehicleToolMenu();
-            CreateAircraftToolMenu();
-            CreateDecorativeToolMenu();
-        }
-
-        private void CreateDecorativeToolMenu()
-        {
-            decorativeToolsToShow = new List<ToolDef>();
-
-            decorativeToolsToShow.Add(new ToolDef("Wheel", true, "Wheel", "Create a variety of wheel designs."));
-            NotifyPropertyChanged("DecorativeeToolsToShow");
-        }
-
-        private void CreateVehicleToolMenu()
-        {
-            vehicleToolsToShow = new List<ToolDef>();
-            vehicleToolsToShow.Add(new ToolDef("Tank Track", true, "TankTrack", "Create a tank track by drawing overan external image."));
-            vehicleToolsToShow.Add(new ToolDef("Wheel", true, "Wheel", "Create a variety of wheel designs."));
-            NotifyPropertyChanged("VehicleToolsToShow");
-        }
-
-        private void CreateAircraftToolMenu()
-        {
-            aircraftToolsToShow = new List<ToolDef>();
-            aircraftToolsToShow.Add(new ToolDef("Bezier Fuselage", true, "BezierFuselage", "Create a fuselage from bezier profiles."));
-            aircraftToolsToShow.Add(new ToolDef("Profile Fuselage", true, "ProfileFuselage", "Create a fuselage from  externally prepared top, bottom and spar images."));
-            aircraftToolsToShow.Add(new ToolDef("Wing", true, "Wing", "Create a wing from a database of airfoil profiles."));
-            aircraftToolsToShow.Add(new ToolDef("Propeller", true, "Propeller", "Create a propeller."));
-            aircraftToolsToShow.Add(new ToolDef("Turbo Fan", true, "TurboFan", "Create a turbofan."));
-
-            NotifyPropertyChanged("AircraftToolsToShow");
-        }
-
-        private void CreateLoftingMenu()
-        {
-            loftedToolsToShow = new List<ToolDef>();
-            loftedToolsToShow.Add(new ToolDef("Vertical", true, "LinearLoft", "Create an object by vertical lofting."));
-            loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
-            loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
-
-            NotifyPropertyChanged("LoftedToolsToShow");
-        }
-
-        private void CreateParametricMenu()
-        {
-            parametricToolsToShow = new List<ToolDef>();
-            parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
-            parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
-            parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
-            parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
-            parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
-            parametricToolsToShow.Add(new ToolDef("Filet", true, "Filet", "Create a support filet."));
-            parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
-            NotifyPropertyChanged("ParametricToolsToShow");
         }
 
         public ICommand TwoShapeCommand { get; set; }
@@ -932,6 +831,38 @@ namespace Make3D.ViewModels
 
         public ICommand UndoCommand { get; set; }
 
+        public List<ToolDef> VehicleToolsToShow
+        {
+            get
+            {
+                return vehicleToolsToShow;
+            }
+            set
+            {
+                if (vehicleToolsToShow != value)
+                {
+                    vehicleToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool WingEnabled
+        {
+            get
+            {
+                return wingEnabled;
+            }
+            set
+            {
+                if (wingEnabled != value)
+                {
+                    wingEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand Zoom100Command { get; set; }
 
         public ICommand ZoomInCommand { get; set; }
@@ -970,6 +901,65 @@ namespace Make3D.ViewModels
             }
             result += fldrs[last];
             return result;
+        }
+
+        private void CreateAircraftToolMenu()
+        {
+            aircraftToolsToShow = new List<ToolDef>();
+            aircraftToolsToShow.Add(new ToolDef("Bezier Fuselage", true, "BezierFuselage", "Create a fuselage from bezier profiles."));
+            aircraftToolsToShow.Add(new ToolDef("Profile Fuselage", true, "ProfileFuselage", "Create a fuselage from  externally prepared top, bottom and spar images."));
+            aircraftToolsToShow.Add(new ToolDef("Wing", true, "Wing", "Create a wing from a database of airfoil profiles."));
+            aircraftToolsToShow.Add(new ToolDef("Propeller", true, "Propeller", "Create a propeller."));
+            aircraftToolsToShow.Add(new ToolDef("Turbo Fan", true, "TurboFan", "Create a turbofan."));
+
+            NotifyPropertyChanged("AircraftToolsToShow");
+        }
+
+        private void CreateDecorativeToolMenu()
+        {
+            decorativeToolsToShow = new List<ToolDef>();
+
+            NotifyPropertyChanged("DecorativeToolsToShow");
+        }
+
+        private void CreateLoftingMenu()
+        {
+            loftedToolsToShow = new List<ToolDef>();
+            loftedToolsToShow.Add(new ToolDef("Vertical", true, "LinearLoft", "Create an object by vertical lofting."));
+            loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
+            loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
+            loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
+            NotifyPropertyChanged("LoftedToolsToShow");
+        }
+
+        private void CreateParametricMenu()
+        {
+            parametricToolsToShow = new List<ToolDef>();
+            parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
+            parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
+            parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
+            parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
+            parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
+            parametricToolsToShow.Add(new ToolDef("Filet", true, "Filet", "Create a support filet."));
+            parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
+            NotifyPropertyChanged("ParametricToolsToShow");
+        }
+
+        private void CreateToolMenus()
+        {
+            CreateParametricMenu();
+            CreateLoftingMenu();
+            CreateVehicleToolMenu();
+            CreateAircraftToolMenu();
+            CreateDecorativeToolMenu();
+        }
+
+        private void CreateVehicleToolMenu()
+        {
+            vehicleToolsToShow = new List<ToolDef>();
+            vehicleToolsToShow.Add(new ToolDef("Tank Track", true, "TankTrack", "Create a tank track by drawing overan external image."));
+            vehicleToolsToShow.Add(new ToolDef("Wheel", true, "Wheel", "Create a variety of wheel designs."));
+            NotifyPropertyChanged("VehicleToolsToShow");
         }
 
         private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -1072,6 +1062,11 @@ namespace Make3D.ViewModels
         {
         }
 
+        private void OnDupVertex(object obj)
+        {
+            NotificationManager.Notify("RemoveDupVertices", null);
+        }
+
         private void OnExit(object obj)
         {
             if (BaseViewModel.Document.Dirty)
@@ -1120,6 +1115,11 @@ namespace Make3D.ViewModels
         private void OnInsert(object obj)
         {
             NotificationManager.Notify("InsertFile", obj);
+        }
+
+        private void OnManifoldTest(object obj)
+        {
+            NotificationManager.Notify("ManifoldTest", null);
         }
 
         private void OnMarker(object obj)
@@ -1239,7 +1239,7 @@ namespace Make3D.ViewModels
         private void OnTool(object obj)
         {
             string s = obj.ToString();
-            NotificationManager.Notify(s, null);
+            NotificationManager.Notify("Tool", s);
         }
 
         private void OnTwoShape(object obj)
@@ -1304,6 +1304,18 @@ namespace Make3D.ViewModels
             fout.Close();
         }
 
+        private void SetActive(string s, List<ToolDef> defs)
+        {
+            foreach (ToolDef df in defs)
+            {
+                if (df.CommandParam == s)
+                {
+                    df.IsActive = true;
+                    break;
+                }
+            }
+        }
+
         private void SetFontBold(object param)
         {
             bool b = (bool)param;
@@ -1342,18 +1354,6 @@ namespace Make3D.ViewModels
             SetActive(s, vehicleToolsToShow);
             SetActive(s, aircraftToolsToShow);
             SetActive(s, decorativeToolsToShow);
-        }
-
-        private void SetActive(string s, List<ToolDef> defs)
-        {
-            foreach (ToolDef df in defs)
-            {
-                if (df.CommandParam == s)
-                {
-                    df.IsActive = true;
-                    break;
-                }
-            }
         }
 
         private void SetStatusText1(object param)

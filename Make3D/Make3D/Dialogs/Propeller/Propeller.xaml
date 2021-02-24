@@ -1,11 +1,11 @@
-﻿<local:BaseModellerDialog x:Class="Make3D.Dialogs.Blank"
+﻿<local:BaseModellerDialog x:Class="Make3D.Dialogs.Propeller"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Blank" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
+        Title="Propeller" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -29,9 +29,22 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Label Width="100">No. of Blades</Label>
+                <Slider Value="{Binding NumberOfBlades}" Minimum="2" Maximum="8" Width="200" />
+                <TextBox Text="{Binding NumberOfBlades}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label Width="100">Blade Length</Label>
+                <Slider Value="{Binding BladeLength}" Minimum="10" Maximum="100" Width="200" />
+                <TextBox Text="{Binding BladeLength}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label Width="100">Hub Type</Label>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Flat</RadioButton>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Domed</RadioButton>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Cone</RadioButton>
+            </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>

@@ -91,7 +91,7 @@
     <Compile Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Fiet\Filet.xaml.cs">
+    <Compile Include="Dialogs\Filet\Filet.xaml.cs">
       <DependentUpon>Filet.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml.cs">
@@ -116,8 +116,14 @@
     </Compile>
     <Compile Include="Dialogs\ProfileFuselage\RibControl.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
+    <Compile Include="Dialogs\Propeller\Propeller.xaml.cs">
+      <DependentUpon>Propeller.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RefernceModel.xaml.cs">
       <DependentUpon>RefernceModel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Scribble\Scribble.xaml.cs">
+      <DependentUpon>Scribble.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ShapeLoft\ShapeBase.xaml.cs" />
     <Compile Include="Dialogs\ShapeLoft\ShapeLoftDialog.xaml.cs" />
@@ -130,6 +136,9 @@
     <Compile Include="Dialogs\Stadium\StadiumDialog.xaml.cs">
       <DependentUpon>StadiumDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Star\Star.xaml.cs">
+      <DependentUpon>Star.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Torus\TorusDialog.xaml.cs">
       <DependentUpon>TorusDialog.xaml</DependentUpon>
     </Compile>
@@ -138,6 +147,12 @@
     </Compile>
     <Compile Include="Dialogs\Tube\TubeDlg.xaml.cs">
       <DependentUpon>TubeDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Turbofan\TurboFan.xaml.cs">
+      <DependentUpon>TurboFan.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Wheel\Wheel.xaml.cs">
+      <DependentUpon>Wheel.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Wing\WingDlg.xaml.cs">
       <DependentUpon>WingDlg.xaml</DependentUpon>
@@ -164,6 +179,7 @@
     <Compile Include="Models\ReferenceGrpoup3D.cs" />
     <Compile Include="Models\ReferenceObject3D.cs" />
     <Compile Include="Models\STLExporter.cs" />
+    <Compile Include="Models\ToolFactory.cs" />
     <Compile Include="undoer.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
@@ -246,7 +262,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\Fiet\Filet.xaml">
+    <Page Include="Dialogs\Filet\Filet.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -286,7 +302,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\Propeller\Propeller.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\RefernceModel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Scribble\Scribble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -310,6 +334,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\Star\Star.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\Torus\TorusDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -321,6 +349,14 @@
     <Page Include="Dialogs\Tube\TubeDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\Turbofan\TurboFan.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Wheel\Wheel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Wing\WingDlg.xaml">
       <SubType>Designer</SubType>

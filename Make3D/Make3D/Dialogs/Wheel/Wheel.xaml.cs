@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -8,13 +9,69 @@ namespace Make3D.Dialogs
     /// <summary>
     /// Interaction logic for Blank.xaml
     /// </summary>
-    public partial class Blank : BaseModellerDialog, INotifyPropertyChanged
+    public partial class Wheel : BaseModellerDialog, INotifyPropertyChanged
     {
-        public Blank()
+        private double axelBore;
+        private List<String> hubStyles;
+        private List<String> rimStyles;
+        private double tyreDepth;
+
+        private double wheelWidth;
+
+        public Wheel()
         {
             InitializeComponent();
-            ToolName = "Blank";
+            ToolName = "Wheel";
             DataContext = this;
+            tyreDepth = 50;
+            wheelWidth = 50;
+            axelBore = 10;
+            hubStyles = new List<string>();
+            rimStyles = new List<string>();
+        }
+
+        public double AxelBore
+        {
+            get
+            {
+                return axelBore;
+            }
+            set
+            {
+                if (axelBore != value)
+                {
+                    axelBore = value; NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<String> HubStyles
+        {
+            get
+            {
+                return hubStyles;
+            }
+            set
+            {
+                if (hubStyles != value)
+                {
+                    hubStyles = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<String> RimStyles
+        {
+            get
+            {
+                return rimStyles;
+            }
+            set
+            {
+                rimStyles = value;
+                NotifyPropertyChanged();
+            }
         }
 
         public override bool ShowAxies
@@ -47,6 +104,36 @@ namespace Make3D.Dialogs
                     showFloor = value;
                     NotifyPropertyChanged();
                     Redisplay();
+                }
+            }
+        }
+
+        public double TyreDepth
+        {
+            get
+            {
+                return tyreDepth;
+            }
+            set
+            {
+                if (tyreDepth != value)
+                {
+                    tyreDepth = value; NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double WheelWidth
+        {
+            get
+            {
+                return wheelWidth;
+            }
+            set
+            {
+                if (wheelWidth != value)
+                {
+                    wheelWidth = value; NotifyPropertyChanged();
                 }
             }
         }
@@ -97,6 +184,14 @@ namespace Make3D.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            hubStyles.Add("1");
+            hubStyles.Add("2");
+            hubStyles.Add("3");
+
+            rimStyles.Add("1");
+            rimStyles.Add("2");
+            rimStyles.Add("3");
+
             LoadEditorParameters();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();

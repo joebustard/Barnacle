@@ -8,12 +8,12 @@ namespace Make3D.Dialogs
     /// <summary>
     /// Interaction logic for Blank.xaml
     /// </summary>
-    public partial class Blank : BaseModellerDialog, INotifyPropertyChanged
+    public partial class Star : BaseModellerDialog, INotifyPropertyChanged
     {
-        public Blank()
+        public Star()
         {
             InitializeComponent();
-            ToolName = "Blank";
+            ToolName = "Star";
             DataContext = this;
         }
 
