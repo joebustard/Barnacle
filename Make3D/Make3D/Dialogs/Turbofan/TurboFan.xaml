@@ -31,7 +31,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label Width="100">No. of Blades</Label>
-                <Slider Value="{Binding NumberOfBlades}" Minimum="4" Maximum="20" Width="200" />
+                <Slider Value="{Binding NumberOfBlades}" Minimum="4" Maximum="100" Width="200" />
                 <TextBox Text="{Binding NumberOfBlades}" Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
@@ -39,20 +39,30 @@
                 <Slider Value="{Binding BladeLength}" Minimum="10" Maximum="100" Width="200" />
                 <TextBox Text="{Binding BladeLength}" Width="50" />
             </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <Label Width="100">Blade Pitch</Label>
+                <Slider Value="{Binding BladePitch}" Minimum="1" Maximum="90" Width="200" />
+                <TextBox Text="{Binding BladePitch}" Width="50" />
+            </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label Width="100">Hub Type</Label>
-                <RadioButton GroupName="HubGroup" VerticalAlignment="Center">Flat</RadioButton>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Domed</RadioButton>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Cone</RadioButton>
+                <RadioButton GroupName="HubGroup" IsChecked="{Binding FlatHub}" VerticalAlignment="Center">Flat</RadioButton>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0"  IsChecked="{Binding DomedHub}" VerticalAlignment="Center">Domed</RadioButton>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" IsChecked="{Binding ConeHub}"  VerticalAlignment="Center">Cone</RadioButton>
+            </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <Label Width="100">Hub Radius</Label>
+                <Slider Value="{Binding HubRadius}" Minimum="1" Maximum="100" Width="200" />
+                <TextBox Text="{Binding HubRadius}" Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
                 <Label Width="100">Blade Alignment</Label>
-                <RadioButton GroupName="AlignGroup" VerticalAlignment="Center">Anti-clockwise</RadioButton>
-                <RadioButton GroupName="AlignGroup" Margin="8,0,0,0" VerticalAlignment="Center">Clockwise</RadioButton>
+                <RadioButton GroupName="BladeAlignGroup" VerticalAlignment="Center" IsChecked="{Binding Anticlockwise}">Anti-clockwise</RadioButton>
+                <RadioButton GroupName="BladeAlignGroup" Margin="8,0,0,0" IsChecked="{Binding Clockwise}"  VerticalAlignment="Center">Clockwise</RadioButton>
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label Width="90" ToolTip="Include a solid disk behind the blades">Backing Disk</Label>
-                <CheckBox VerticalAlignment="Center" ></CheckBox>
+                <CheckBox VerticalAlignment="Center" IsChecked="{Binding SupportDisk}"></CheckBox>
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">

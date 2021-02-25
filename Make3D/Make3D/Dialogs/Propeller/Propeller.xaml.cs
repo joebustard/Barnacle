@@ -58,6 +58,11 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void GenerateShape()
+        {
+            ClearShape();
+        }
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -98,6 +103,7 @@ namespace Make3D.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
+            GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
 

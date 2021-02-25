@@ -145,6 +145,11 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void GenerateShape()
+        {
+            ClearShape();
+        }
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -193,6 +198,7 @@ namespace Make3D.Dialogs
             rimStyles.Add("3");
 
             LoadEditorParameters();
+            GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
 
