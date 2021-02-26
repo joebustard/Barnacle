@@ -437,7 +437,10 @@ namespace Make3D.Dialogs
 
         private void Br_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            //selectedMarker = null;
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                selectedMarker = null;
+            }
         }
 
         private void AddText(int x, int y, string text, System.Windows.Media.Color color, object tag)

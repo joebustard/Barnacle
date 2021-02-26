@@ -34,6 +34,11 @@
                 <Slider Value="{Binding NumberOfBlades}" Minimum="4" Maximum="100" Width="200" />
                 <TextBox Text="{Binding NumberOfBlades}" Width="50" />
             </StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Label Width="100">Blade Overlap</Label>
+                <Slider Value="{Binding BladeOverlap}" Minimum="0" Maximum="99" Width="200" />
+                <TextBox Text="{Binding BladeOverlap}" Width="50" />
+            </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label Width="100">Blade Length</Label>
                 <Slider Value="{Binding BladeLength}" Minimum="10" Maximum="100" Width="200" />
@@ -45,10 +50,6 @@
                 <TextBox Text="{Binding BladePitch}" Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label Width="100">Hub Type</Label>
-                <RadioButton GroupName="HubGroup" IsChecked="{Binding FlatHub}" VerticalAlignment="Center">Flat</RadioButton>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0"  IsChecked="{Binding DomedHub}" VerticalAlignment="Center">Domed</RadioButton>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" IsChecked="{Binding ConeHub}"  VerticalAlignment="Center">Cone</RadioButton>
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label Width="100">Hub Radius</Label>

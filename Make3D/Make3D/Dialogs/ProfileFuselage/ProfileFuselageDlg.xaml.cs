@@ -304,7 +304,7 @@ namespace Make3D.Dialogs
                     //  y += SideView.GetYmm(SideView.Dimensions[0].Mid.Y);
                     peri.Add(new PointF((float)z, (float)y));
                 }
-                TriangulatePerimiter(peri, x, -SideView.GetYmm(SideView.Dimensions[0].Mid.Y), TopView.GetYmm(TopView.Dimensions[0].Mid.Y), false);
+                TriangulatePerimiter(peri, x, -SideView.GetYmm(SideView.Dimensions[0].Mid.Y), 0, false);
 
                 int endRib = RibManager.Ribs.Count - 1;
                 peri = new List<PointF>();

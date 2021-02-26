@@ -19,6 +19,7 @@ namespace Make3D.Dialogs
         private bool domedHub;
         private bool flatHub;
         private double hubRadius;
+        private double bladeOverlap;
         private int numberOfBlades;
 
         private bool supportDisk;
@@ -83,6 +84,23 @@ namespace Make3D.Dialogs
                 if (bladePitch != value)
                 {
                     bladePitch = value;
+                    NotifyPropertyChanged();
+                    Regenerate();
+                }
+            }
+        }
+
+        public double BladeOverlap
+        {
+            get
+            {
+                return bladeOverlap;
+            }
+            set
+            {
+                if (bladeOverlap != value)
+                {
+                    bladeOverlap = value;
                     NotifyPropertyChanged();
                     Regenerate();
                 }
@@ -253,13 +271,25 @@ namespace Make3D.Dialogs
         private void GenerateShape()
         {
             ClearShape();
+            GenerateBlades();
+            GenerateHub();
+            CentreVertices();
+        }
+
+        private void GenerateHub()
+        {
+            GenerateCylinder();
+        }
+
+        private void GenerateBlades()
+        {
             int numSteps = 30;
             double thickness = 2;
             // angle between the start of each blade.
             double bladeStartDTheta = (Math.PI * 2) / numberOfBlades;
 
             // angle covered by the sweep of an individual blade
-            double bladeSweepDTheta = bladeStartDTheta;
+            double bladeSweepDTheta = bladeStartDTheta + (bladeOverlap * bladeStartDTheta / 100.0);
             double dtheta = bladeSweepDTheta / numSteps;
             // blade pitch in radians
             double pitch = (90 - bladePitch) * Math.PI / 180.0;
@@ -444,7 +474,6 @@ namespace Make3D.Dialogs
                     Faces.Add(backP4);
                 }
             }
-            CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -497,6 +526,72 @@ namespace Make3D.Dialogs
             GenerateShape();
             UpdateCameraPos();
             Redisplay();
+        }
+
+        public Point3D[] MakePolygonPoints(int numSides, double radius)
+        {
+            //double radius = 0.5;
+            // Generate the points.
+            Point3D[] points = new Point3D[numSides];
+            double dtheta = 2 * Math.PI / numSides;
+            double theta = 0;
+            for (int i = 0; i < numSides; i++)
+            {
+                points[i] = new Point3D(radius * Math.Cos(theta), radius * Math.Sin(theta), -0.5 * radius);
+                theta += dtheta;
+            }
+            return points;
+        }
+
+        internal void GenerateCylinder()
+        {
+            int numSides = 180;
+            Point3D[] bottom = MakePolygonPoints(numSides, hubRadius);
+            // Top is the bottom reversed and moved up to 1
+            Point3D[] top = new Point3D[numSides];
+            int ind = numSides - 1;
+            foreach (Point3D p in bottom)
+            {
+                top[ind] = new Point3D(p.X, p.Y, 0.5 * hubRadius);
+                ind--;
+            }
+            Point3D bottomCentre = new Point3D(0, 0, -0.5 * hubRadius);
+            Point3D topCentre = new Point3D(0, 0, 0.5 * hubRadius);
+            for (int i = 0; i < numSides; i++)
+            {
+                int j = i + 1;
+                if (j == numSides)
+                {
+                    j = 0;
+                }
+
+                int k = numSides - i - 1;
+                int l = k - 1;
+                if (l < 0)
+                {
+                    l = numSides - 1;
+                }
+                // bottom cap
+                AddTriangle(bottomCentre, bottom[i], bottom[j]);
+                // top cap
+                AddTriangle(topCentre, top[i], top[j]);
+
+                // vertical 1
+                AddTriangle(bottom[i], top[k], top[l]);
+
+                // vertical 2
+                AddTriangle(bottom[i], top[l], bottom[j]);
+            }
+        }
+
+        private void AddTriangle(Point3D p0, Point3D p1, Point3D p2)
+        {
+            int i0 = AddVertice(p0);
+            int i1 = AddVertice(p1);
+            int i2 = AddVertice(p2);
+            Faces.Add(i0);
+            Faces.Add(i2);
+            Faces.Add(i1);
         }
     }
 }
