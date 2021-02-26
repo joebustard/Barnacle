@@ -7,9 +7,9 @@ namespace ManifoldLib
     {
         private const double tolerance = 1E-6;
 
-        public Vertex Vertex
+        public VertexTreeNode(Vertex v)
         {
-            get; set;
+            Vertex = v;
         }
 
         public VertexTreeNode Left
@@ -27,9 +27,9 @@ namespace ManifoldLib
             get; set;
         }
 
-        public VertexTreeNode(Vertex v)
+        public Vertex Vertex
         {
-            Vertex = v;
+            get; set;
         }
 
         public void Add(Vertex v)
@@ -75,6 +75,25 @@ namespace ManifoldLib
             }
         }
 
+        internal void AddToList(List<Vertex> tmp)
+        {
+            if (Left != null)
+            {
+                Left.AddToList(tmp);
+            }
+            tmp.Add(Vertex);
+
+            if (Mid != null)
+            {
+                Mid.AddToList(tmp);
+            }
+
+            if (Right != null)
+            {
+                Right.AddToList(tmp);
+            }
+        }
+
         internal void Sort()
         {
             // the tree is arranged by x.
@@ -91,7 +110,7 @@ namespace ManifoldLib
                     {
                         bool doit = false;
                         double dy = t.Vertex.Pos.Y - t.Mid.Vertex.Pos.Y;
-                        if (dy > 0)
+                        if (dy > tolerance)
                         {
                             doit = true;
                         }
@@ -119,25 +138,6 @@ namespace ManifoldLib
             if (Right != null)
             {
                 Right.Sort();
-            }
-        }
-
-        internal void AddToList(List<Vertex> tmp)
-        {
-            if (Left != null)
-            {
-                Left.AddToList(tmp);
-            }
-            tmp.Add(Vertex);
-
-            if (Mid != null)
-            {
-                Mid.AddToList(tmp);
-            }
-
-            if (Right != null)
-            {
-                Right.AddToList(tmp);
             }
         }
     }

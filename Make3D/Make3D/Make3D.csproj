@@ -111,6 +111,9 @@
     <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageMarker.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\LetterMarker.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\NoteWindow.xaml.cs">
+      <DependentUpon>NoteWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml.cs">
       <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
     </Compile>
@@ -289,6 +292,10 @@
     <Page Include="Dialogs\ProfileFuselage\ImageMarker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ProfileFuselage\NoteWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml">
       <SubType>Designer</SubType>

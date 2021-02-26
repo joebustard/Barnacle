@@ -391,3 +391,8 @@ Make3D/Make3D/obj/Debug/DesignTimeResolveAssemblyReferences.cache
 Make3D/Make3D/ViewModels/EditorViewModel.cs.bak
 Make3D/UnityExample/Assets/Plugins/MeshDecimator/MeshDecimator.dll
 Make3D/Make3D/obj/Debug/DesignTimeResolveAssemblyReferences.cache
+Make3D/.vs/Make3D/v15/.suo
+Make3D/.vs/Make3D/v15/.suo
+*.ide-shm
+*.ide-wal
+*.cache

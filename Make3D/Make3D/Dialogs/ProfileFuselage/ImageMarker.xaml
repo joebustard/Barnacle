@@ -20,7 +20,7 @@
         <Border BorderBrush="DarkBlue" BorderThickness="2" Padding="4,4,4,4" Grid.Row="1">
             <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
 
-                <Canvas x:Name="mainCanvas" Width="2000" Height="1000" MouseMove="MainCanvas_MouseMove"  MouseUp="Ply_MouseUp">
+                <Canvas x:Name="mainCanvas" Width="2000" Height="1000" MouseMove="MainCanvas_MouseMove"  MouseUp="MainCanvas_MouseUp">
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="MainScale" />
                     </Canvas.LayoutTransform>
