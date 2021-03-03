@@ -38,7 +38,7 @@
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label Width="100">Hub Style</Label>
-                <ComboBox Width="150" ItemsSource="{Binding HubStyles}" SelectedItem="{Binding SelectedRimStyle}" />
+                <ComboBox Width="150" ItemsSource="{Binding HubStyles}" SelectedItem="{Binding SelectedHubStyle}" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label Width="100">Tyre Depth</Label>
@@ -46,9 +46,9 @@
                 <TextBox Text="{Binding TyreDepth}" Width="100" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <Label Width="100">Wheel Width</Label>
-                <Slider Width="200" Value="{Binding WheelWidth}" Minimum="1.0" Maximum="100.0" />
-                <TextBox Text="{Binding WheelWidth}" Width="100" />
+                <Label Width="100">Hub Inner</Label>
+                <Slider Width="200" Value="{Binding HubInner}" Minimum="1.0" Maximum="100.0" />
+                <TextBox Text="{Binding HubInner}" Width="100" />
             </StackPanel>
 
             <StackPanel Grid.Row="9" Orientation="Horizontal">

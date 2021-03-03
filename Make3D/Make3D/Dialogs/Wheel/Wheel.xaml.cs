@@ -12,11 +12,13 @@ namespace Make3D.Dialogs
     public partial class Wheel : BaseModellerDialog, INotifyPropertyChanged
     {
         private double axelBore;
+        private double hubInner;
+        private double hubOutter;
         private List<String> hubStyles;
+        private double hubThickness;
         private List<String> rimStyles;
+        private string selectedHubStyle;
         private double tyreDepth;
-
-        private double wheelWidth;
 
         public Wheel()
         {
@@ -24,8 +26,10 @@ namespace Make3D.Dialogs
             ToolName = "Wheel";
             DataContext = this;
             tyreDepth = 50;
-            wheelWidth = 50;
+            hubInner = 50;
+            hubOutter = 100;
             axelBore = 10;
+            hubThickness = 20;
             hubStyles = new List<string>();
             rimStyles = new List<string>();
         }
@@ -40,7 +44,43 @@ namespace Make3D.Dialogs
             {
                 if (axelBore != value)
                 {
-                    axelBore = value; NotifyPropertyChanged();
+                    axelBore = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double HubInner
+        {
+            get
+            {
+                return hubInner;
+            }
+            set
+            {
+                if (hubInner != value)
+                {
+                    hubInner = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double HubOutter
+        {
+            get
+            {
+                return hubOutter;
+            }
+            set
+            {
+                if (hubOutter != value)
+                {
+                    hubOutter = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -57,6 +97,7 @@ namespace Make3D.Dialogs
                 {
                     hubStyles = value;
                     NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -71,6 +112,24 @@ namespace Make3D.Dialogs
             {
                 rimStyles = value;
                 NotifyPropertyChanged();
+                UpdateDisplay();
+            }
+        }
+
+        public string SelectedHubStyle
+        {
+            get
+            {
+                return selectedHubStyle;
+            }
+            set
+            {
+                if (selectedHubStyle != value)
+                {
+                    selectedHubStyle = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
             }
         }
 
@@ -118,22 +177,9 @@ namespace Make3D.Dialogs
             {
                 if (tyreDepth != value)
                 {
-                    tyreDepth = value; NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public double WheelWidth
-        {
-            get
-            {
-                return wheelWidth;
-            }
-            set
-            {
-                if (wheelWidth != value)
-                {
-                    wheelWidth = value; NotifyPropertyChanged();
+                    tyreDepth = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -145,9 +191,141 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void CreateSideFace(List<Point> points, int i, double thickness, bool rev)
+        {
+            int v = i + 1;
+            if (v == points.Count)
+            {
+                v = 0;
+            }
+
+            int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
+            int c1 = AddVertice(points[i].X, points[i].Y, thickness);
+            int c2 = AddVertice(points[v].X, points[v].Y, thickness);
+            int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
+            if (rev)
+            {
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c0);
+                Faces.Add(c3);
+                Faces.Add(c2);
+            }
+            else
+            {
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
+            }
+        }
+
         private void GenerateShape()
         {
             ClearShape();
+            List<Point> points = new List<Point>();
+            double numSpoke = 0;
+            double gapDTheta = 0;
+            double spokeDTheta = 0;
+            double spokeTipDTheta = 0;
+            double numSubs = 10;
+            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta);
+            double actualInner = hubInner;
+            if (axelBore > actualInner)
+            {
+                actualInner = axelBore + 1;
+            }
+            double actualOutter = hubOutter;
+            if (actualOutter <= actualInner)
+            {
+                actualOutter = actualInner + 1;
+            }
+
+            double theta = 0;
+            bool inSpoke = true;
+            while (theta <= Math.PI * 2)
+            {
+                if (inSpoke)
+                {
+                    // create spoke points
+                    theta += spokeTipDTheta;
+                    // creat gap points
+                    // Add a gap
+                    double dt = spokeDTheta / numSubs;
+                    for (int i = 0; i < numSubs; i++)
+                    {
+                        theta += dt;
+                        if (theta < Math.PI * 2)
+                        {
+                            double x = actualOutter * Math.Cos(theta);
+                            double y = actualOutter * Math.Sin(theta);
+                            points.Add(new System.Windows.Point(x, y));
+                        }
+                    }
+                }
+                else
+                {
+                    theta += spokeTipDTheta;
+                    // creat gap points
+                    // Add a gap
+                    double dt = gapDTheta / numSubs;
+                    for (int i = 0; i < numSubs; i++)
+                    {
+                        theta += dt;
+                        if (theta < Math.PI * 2)
+                        {
+                            double x = actualInner * Math.Cos(theta);
+                            double y = actualInner * Math.Sin(theta);
+                            points.Add(new System.Windows.Point(x, y));
+                        }
+                    }
+                }
+                inSpoke = !inSpoke;
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < points.Count; i++)
+            {
+                CreateSideFace(points, i, hubThickness, true);
+            }
+        }
+
+        private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta)
+        {
+            Double twop = Math.PI * 2.0;
+            switch (selectedHubStyle)
+            {
+                case "1":
+                    {
+                        numSpoke = 8;
+                        spokeGapDTheta = twop / (numSpoke * 2.0);
+                        spokeDTheta = spokeGapDTheta;
+                        spokeTipDTheta = 0;
+                    }
+                    break;
+
+                case "2":
+                    {
+                        numSpoke = 8;
+                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
+                        spokeDTheta = spokeGapDTheta / 2;
+                        spokeTipDTheta = spokeDTheta;
+                    }
+                    break;
+
+                case "3":
+                    {
+                        numSpoke = 12;
+                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
+                        spokeDTheta = 0.9 * spokeGapDTheta;
+                        spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                    }
+                    break;
+            }
         }
 
         private void LoadEditorParameters()
@@ -187,11 +365,18 @@ namespace Make3D.Dialogs
             // save the parameters for the tool
         }
 
+        private void UpdateDisplay()
+        {
+            GenerateShape();
+            Redisplay();
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             hubStyles.Add("1");
             hubStyles.Add("2");
             hubStyles.Add("3");
+            selectedHubStyle = "1";
 
             rimStyles.Add("1");
             rimStyles.Add("2");
