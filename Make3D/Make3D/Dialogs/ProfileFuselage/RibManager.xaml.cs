@@ -154,6 +154,7 @@ namespace Make3D.Dialogs
                 if (Ribs.Contains(selectedRib))
                 {
                     Ribs.Remove(selectedRib);
+                    
                     if (OnRibDeleted != null)
                     {
                         OnRibDeleted(selectedRib);

@@ -579,7 +579,7 @@ namespace Make3D.Models
             double midx = min.X + (scaleX / 2);
             double midy = min.Y + (scaleY / 2);
             double midz = min.Z + (scaleZ / 2);
-
+            /*
             for (int i = 0; i < relativeObjectVertices.Count; i++)
             {
                 Point3D moved = new Point3D(relativeObjectVertices[i].X - midx,
@@ -588,6 +588,7 @@ namespace Make3D.Models
 
                 relativeObjectVertices[i] = moved;
             }
+            */
             Scale = new Scale3D(scaleX, scaleY, scaleZ);
             if (move)
             {

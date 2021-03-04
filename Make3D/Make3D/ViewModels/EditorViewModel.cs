@@ -923,6 +923,7 @@ namespace Make3D.ViewModels
             CheckPoint();
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;
+            Point3D placement = new Point3D(0, 0, 0);
             bool needToAdd = false;
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
@@ -933,7 +934,8 @@ namespace Make3D.ViewModels
                     {
                         dlg.EditorParameters = editingObj.EditorParameters;
                         dlg.MeshColour = editingObj.Color;
-                        editingObj.CalcScale();
+                        editingObj.CalcScale(false);
+                        placement = editingObj.Position;
                     }
                 }
             }
@@ -957,14 +959,14 @@ namespace Make3D.ViewModels
                 editingObj.TriangleIndices = dlg.Faces;
 
                 RecalculateAllBounds();
-                Point3D placement = new Point3D(0, 0, 0);
+
                 editingObj.Position = new Point3D(0, 0, 0);
 
                 editingObj.PrimType = "Mesh";
 
                 editingObj.Remesh();
 
-                editingObj.CalcScale();
+                editingObj.CalcScale(false);
 
                 if (positionAtRight)
                 {

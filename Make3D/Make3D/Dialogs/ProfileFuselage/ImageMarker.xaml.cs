@@ -231,19 +231,6 @@ namespace Make3D.Dialogs
 
         internal void DeleteMarker(RibControl rc)
         {
-            LetterMarker target = null;
-            foreach (LetterMarker mk in markers)
-            {
-                if (mk.Rib == rc)
-                {
-                    target = mk;
-                    break;
-                }
-            }
-            if (target != null)
-            {
-                markers.Remove(target);
-            }
             UpdateDisplay();
         }
 

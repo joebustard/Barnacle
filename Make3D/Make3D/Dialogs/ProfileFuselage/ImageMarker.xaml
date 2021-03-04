@@ -24,7 +24,7 @@
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="MainScale" />
                     </Canvas.LayoutTransform>
-                    <Image x:Name="MyImage" />
+                    <Image x:Name="MyImage" Margin="20,20" />
                 </Canvas>
             </ScrollViewer>
         </Border>

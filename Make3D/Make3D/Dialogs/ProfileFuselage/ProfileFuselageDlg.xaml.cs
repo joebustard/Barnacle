@@ -42,6 +42,8 @@ namespace Make3D.Dialogs
 
         private double zoomLevel;
 
+        private NoteWindow noteWindow;
+
         public ProfileFuselageDlg()
         {
             InitializeComponent();
@@ -54,6 +56,7 @@ namespace Make3D.Dialogs
             zoomLevel = 1;
             dirty = false;
             filePath = "";
+            noteWindow = new NoteWindow();
         }
 
         public List<LetterMarker> Markers
@@ -147,6 +150,7 @@ namespace Make3D.Dialogs
                             {
                                 sideViewFilename = opDlg.FileName;
                                 SideView.ImageFilePath = sideViewFilename;
+                                SideView.UpdateLayout();
                                 dirty = true;
                             }
                             catch
@@ -170,7 +174,9 @@ namespace Make3D.Dialogs
                             try
                             {
                                 filePath = opDlg.FileName;
+                                noteWindow.Show();
                                 await Read(filePath);
+                                noteWindow.Hide();
                                 dirty = false;
                             }
                             catch
@@ -268,12 +274,21 @@ namespace Make3D.Dialogs
             }
             SaveEditorParmeters();
             DialogResult = true;
+            noteWindow.Close();
+            Close();
+        }
+
+        protected override void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            noteWindow.Close();
             Close();
         }
 
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeBack();
+            Camera.Distance = 2 * Bounds.Depth;
             UpdateCameraPos();
         }
 
@@ -292,7 +307,7 @@ namespace Make3D.Dialogs
         private void Front_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeFront();
-
+            Camera.Distance = 2 * Bounds.Depth;
             UpdateCameraPos();
         }
 
@@ -305,17 +320,36 @@ namespace Make3D.Dialogs
                 int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
 
                 double x = TopView.GetXmm(markers[0].Position);
-
+                List<PointF> leftEdge = new List<PointF>();
+                double leftx = x;
+                List<PointF> rightEdge = new List<PointF>();
+                double rightx = x;
                 for (int i = 0; i < RibManager.Ribs.Count; i++)
                 {
                     x = TopView.GetXmm(markers[i].Position);
-
+                    if (i == RibManager.Ribs.Count - 1)
+                    {
+                        rightx = x;
+                    }
                     foreach (PointF pnt in RibManager.Ribs[i].ProfilePoints)
                     {
-                        double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
-                        double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
-                        y += SideView.GetYmm(SideView.Dimensions[i].Mid.Y);
-                        AddVertice(x, -y, -z);
+                        //double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
+                        // double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
+                        double v = pnt.X * TopView.Dimensions[i].Height / 2;
+                        double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
+
+                        v = pnt.Y * SideView.Dimensions[i].Height / 2;
+                        double y = SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
+                        // y += SideView.GetYmm(SideView.Dimensions[i].Mid.Y);
+                        AddVertice(x, z, y);
+                        if (i == 0)
+                        {
+                            leftEdge.Add(new PointF((float)y, (float)z));
+                        }
+                        if (i == RibManager.Ribs.Count - 1)
+                        {
+                            rightEdge.Add(new PointF((float)y, (float)z));
+                        }
                     }
                 }
 
@@ -330,71 +364,28 @@ namespace Make3D.Dialogs
                     for (int index = 0; index < facesPerRib - 1; index++)
                     {
                         Faces.Add(f);
-                        Faces.Add(f + facesPerRib + 1);
+
                         Faces.Add(f + facesPerRib);
+                        Faces.Add(f + facesPerRib + 1);
 
                         Faces.Add(f);
-                        Faces.Add(f + 1);
                         Faces.Add(f + facesPerRib + 1);
+                        Faces.Add(f + 1);
 
                         f++;
                     }
 
                     Faces.Add(f);
-                    Faces.Add(first + facesPerRib);
                     Faces.Add(f + facesPerRib);
+                    Faces.Add(first + facesPerRib);
 
                     Faces.Add(f);
-                    Faces.Add(first);
                     Faces.Add(first + facesPerRib);
+                    Faces.Add(first);
                 }
 
-                /*
-                                for (int i = 0; i < facesPerRib - 1; i++)
-                                {
-                                    Faces.Add(0);
-                                    Faces.Add(i + 1);
-                                    Faces.Add(i);
-                                }
-
-                                Faces.Add(0);
-                                Faces.Add(1);
-                                Faces.Add(facesPerRib - 1);
-
-                                f = first + facesPerRib;
-                                for (int i = 0; i < facesPerRib - 1; i++)
-                                {
-                                    Faces.Add(right);
-                                    Faces.Add(f);
-                                    Faces.Add(f + 1);
-
-                                    f++;
-                                }
-
-                                */
-
-                List<PointF> peri = new List<PointF>();
-                x = TopView.GetXmm(markers[0].Position);
-                foreach (PointF pnt in RibManager.Ribs[0].ProfilePoints)
-                {
-                    double z = TopView.GetYmm(pnt.X * TopView.Dimensions[0].Height / 2);
-                    double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[0].Height / 2));
-                    //  y += SideView.GetYmm(SideView.Dimensions[0].Mid.Y);
-                    peri.Add(new PointF((float)z, (float)y));
-                }
-                TriangulatePerimiter(peri, x, -SideView.GetYmm(SideView.Dimensions[0].Mid.Y), 0, false);
-
-                int endRib = RibManager.Ribs.Count - 1;
-                peri = new List<PointF>();
-                x = TopView.GetXmm(markers[endRib].Position);
-                foreach (PointF pnt in RibManager.Ribs[endRib].ProfilePoints)
-                {
-                    double z = TopView.GetYmm(pnt.X * TopView.Dimensions[endRib].Height / 2);
-                    double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[endRib].Height / 2));
-                    //  y += SideView.GetYmm(SideView.Dimensions[0].Mid.Y);
-                    peri.Add(new PointF((float)z, (float)y));
-                }
-                TriangulatePerimiter(peri, x, -SideView.GetYmm(SideView.Dimensions[endRib].Mid.Y), 0, true);
+                TriangulatePerimiter(leftEdge, leftx, 0, 0, false);
+                TriangulatePerimiter(rightEdge, rightx, 0, 0, true);
                 CentreVertices();
             }
         }
@@ -402,6 +393,7 @@ namespace Make3D.Dialogs
         private void Left_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeLeft();
+            Camera.Distance = 2 * Bounds.Width;
             UpdateCameraPos();
         }
 
@@ -502,7 +494,6 @@ namespace Make3D.Dialogs
         {
             this.Cursor = Cursors.Wait;
 
-            NoteWindow noteWindow = new NoteWindow();
             XmlDocument doc = new XmlDocument();
             doc.Load(fileName);
             XmlNode docNode = doc.SelectSingleNode("Spars");
@@ -515,13 +506,12 @@ namespace Make3D.Dialogs
             TopView.ImageFilePath = topNode.GetAttribute("Path");
             XmlElement sideNode = docNode.SelectSingleNode("Side") as XmlElement;
             SideView.ImageFilePath = sideNode.GetAttribute("Path");
+            SideView.UpdateDisplay();
+            TopView.UpdateDisplay();
             RibManager.Ribs.Clear();
             Markers.Clear();
             XmlNodeList nodes = docNode.SelectNodes("Rib");
-            if (nodes.Count > 0)
-            {
-                noteWindow.Show();
-            }
+
             foreach (XmlNode nd in nodes)
             {
                 XmlElement el = nd as XmlElement;
@@ -529,6 +519,7 @@ namespace Make3D.Dialogs
                 string nme = el.GetAttribute("Header");
                 Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
                 noteWindow.Message = "Loading Rib " + nme;
+                noteWindow.Activate();
                 noteWindow.Refresh();
                 Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
                 int position = Convert.ToInt16(el.GetAttribute("Position"));
@@ -538,11 +529,11 @@ namespace Make3D.Dialogs
             }
 
             SortRibs();
-            SideView.UpdateDisplay();
-            TopView.UpdateDisplay();
+
             GenerateSkin();
             Redisplay();
-            noteWindow.Close();
+            noteWindow.Hide();
+            this.Activate();
             this.Cursor = Cursors.Arrow;
         }
 
@@ -576,6 +567,7 @@ namespace Make3D.Dialogs
         private void Right_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeRight();
+            Camera.Distance = 2 * Bounds.Width;
             UpdateCameraPos();
         }
 
@@ -738,6 +730,13 @@ namespace Make3D.Dialogs
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             zoomLevel *= 0.9;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
+
+        private void ZoomReset_Click(object sender, RoutedEventArgs e)
+        {
+            zoomLevel = 1;
             TopView.SetScale(zoomLevel);
             SideView.SetScale(zoomLevel);
         }

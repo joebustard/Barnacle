@@ -418,7 +418,7 @@ namespace Make3D.ViewModels
 
                 selectedObject.ScaleMesh(v, v, v);
                 selectedObject.Remesh();
-                selectedObject.CalcScale();
+                selectedObject.CalcScale(false);
                 NotifyPropertyChanged();
 
                 NotificationManager.Notify("ScaleRefresh", selectedObject);

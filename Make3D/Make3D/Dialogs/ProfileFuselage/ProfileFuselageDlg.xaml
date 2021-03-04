@@ -75,9 +75,11 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30" />
                             <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
                         </Grid.RowDefinitions>
                         <Button x:Name="ZoomIn" Content="Zoom In" Click="ZoomIn_Click" Grid.Row="0" />
                         <Button x:Name="ZoomOut" Content="Zoom Out" Click="ZoomOut_Click" Grid.Row="1" />
+                        <Button x:Name="ZoomReset" Content="Zoom Reset" Click="ZoomReset_Click" Grid.Row="2" />
                     </Grid>
                     <local:ImageMarker x:Name="TopView" Grid.Row="1" Grid.Column="1" />
                     <local:ImageMarker x:Name="SideView" Grid.Row="2" Grid.Column="1" />

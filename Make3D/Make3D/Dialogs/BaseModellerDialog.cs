@@ -25,6 +25,19 @@ namespace Make3D.Dialogs
         private PolarCamera polarCamera;
         private Int32Collection tris;
         private Point3DCollection vertices;
+        private Bounds3D bounds;
+
+        public Bounds3D Bounds
+        {
+            get { return bounds; }
+            set
+            {
+                if (bounds != value)
+                {
+                    bounds = value;
+                }
+            }
+        }
 
         public BaseModellerDialog()
         {
@@ -40,6 +53,7 @@ namespace Make3D.Dialogs
             axies = new Axies();
             showFloor = true;
             showAxies = true;
+            bounds = new Bounds3D();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -360,7 +374,7 @@ namespace Make3D.Dialogs
             return res;
         }
 
-        protected void Cancel_Click(object sender, RoutedEventArgs e)
+        protected virtual void Cancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
@@ -380,9 +394,11 @@ namespace Make3D.Dialogs
             double midy = min.Y + (scaleY / 2);
             double midz = min.Z + (scaleZ / 2);
             Vector3D offset = new Vector3D(-midx, -min.Y, -midz);
+            bounds.Zero();
             for (int i = 0; i < Vertices.Count; i++)
             {
                 Vertices[i] += offset;
+                bounds.Adjust(Vertices[i]);
             }
         }
 
