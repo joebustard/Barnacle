@@ -25,7 +25,13 @@ namespace Make3D.Dialogs
 
         private string imagePath;
 
+        private double mx;
+        private double my;
         private List<PointF> profilePoints;
+
+        private double scale;
+
+        private System.Drawing.Bitmap src;
 
         private int tlx = int.MaxValue;
 
@@ -33,27 +39,17 @@ namespace Make3D.Dialogs
 
         private System.Drawing.Bitmap workingImage;
 
-        public System.Drawing.Bitmap WorkingImage
-        {
-            get
-            {
-                return workingImage;
-            }
-            set
-            {
-                workingImage = value;
-            }
-        }
-
         public RibControl()
         {
             InitializeComponent();
-            Width = 200;
-            Height = 200;
+            Width = 400;
+            Height = 400;
             Header = "";
             edgePoints = null;
             NumDivisions = 120;
             ProfilePoints = new List<PointF>();
+            scale = 1;
+            SetRibScale();
         }
 
         public double EdgeLength { get; set; }
@@ -62,7 +58,10 @@ namespace Make3D.Dialogs
 
         public string ImagePath
         {
-            get { return imagePath; }
+            get
+            {
+                return imagePath;
+            }
             set
             {
                 if (value != imagePath)
@@ -76,13 +75,28 @@ namespace Make3D.Dialogs
 
         public List<PointF> ProfilePoints
         {
-            get { return profilePoints; }
+            get
+            {
+                return profilePoints;
+            }
             set
             {
                 if (profilePoints != value)
                 {
                     profilePoints = value;
                 }
+            }
+        }
+
+        public System.Drawing.Bitmap WorkingImage
+        {
+            get
+            {
+                return workingImage;
+            }
+            set
+            {
+                workingImage = value;
             }
         }
 
@@ -207,8 +221,8 @@ namespace Make3D.Dialogs
 
             divisionLength = EdgeLength / NumDivisions;
 
-            double mx = tlx + (brx - tlx) / 2;
-            double my = tly + (bry - tly) / 2;
+            mx = tlx + (brx - tlx) / 2;
+            my = tly + (bry - tly) / 2;
             profilePoints = new List<PointF>();
             List<PointF> tmp = new List<PointF>();
             for (int i = 0; i < edgePoints.Count; i++)
@@ -260,6 +274,8 @@ namespace Make3D.Dialogs
                     cp++;
                 }
             }
+
+            ShowEdge();
         }
 
         public void SetImageSource()
@@ -268,6 +284,11 @@ namespace Make3D.Dialogs
             {
                 RibImage.Source = loadBitmap(workingImage);
             }
+        }
+
+        public void UpdateHeaderLabel()
+        {
+            HeaderLabel.Content = Header;
         }
 
         internal RibControl Clone()
@@ -340,6 +361,53 @@ namespace Make3D.Dialogs
         [DllImport("gdi32")]
         private static extern int DeleteObject(IntPtr o);
 
+        private void CopySrcToWorking()
+        {
+            Color c;
+            workingImage = new System.Drawing.Bitmap(src);
+            for (int px = 0; px < src.Width; px++)
+            {
+                for (int py = 0; py < src.Height; py++)
+                {
+                    workingImage.SetPixel(px, py, System.Drawing.Color.White);
+                    c = src.GetPixel(px, py);
+                    if (c.R < 128 || c.G < 128 || c.B < 128)
+                    {
+                        if (px < tlx)
+                        {
+                            tlx = px;
+                        }
+                        if (py < tly)
+                        {
+                            tly = py;
+                        }
+                    }
+                }
+            }
+            /*
+            // allow a little bit of extra space
+            if (tlx > 0)
+            {
+                tlx--;
+            }
+            if (tly > 0)
+            {
+                tly++;
+            }
+            */
+            for (int px = tlx; px < src.Width; px++)
+            {
+                for (int py = tly; py < src.Height; py++)
+                {
+                    c = src.GetPixel(px, py);
+                    if (c.R < 128 || c.G < 128 || c.B < 128)
+                    {
+                        workingImage.SetPixel(px - tlx, py - tly, System.Drawing.Color.Black);
+                    }
+                }
+            }
+        }
+
         private double Distance(PointF point1, PointF point2)
         {
             double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
@@ -372,7 +440,7 @@ namespace Make3D.Dialogs
                 {
                     PointF p = new PointF((float)px, (float)py);
                     edgePoints.Add(p);
-                    Mark((int)px, (int)py, c);
+                    //                    Mark((int)px, (int)py, c);
                     EdgeLength += Distance(edgePoints[edgePoints.Count - 2],
                     edgePoints[edgePoints.Count - 1]);
                 }
@@ -381,7 +449,7 @@ namespace Make3D.Dialogs
             {
                 PointF p = new PointF((float)px, (float)py);
                 edgePoints.Add(p);
-                Mark((int)px, (int)py, c);
+                //                Mark((int)px, (int)py, c);
             }
         }
 
@@ -390,57 +458,17 @@ namespace Make3D.Dialogs
             if (File.Exists(imagePath))
             {
                 System.Drawing.Color c;
-                using (System.Drawing.Bitmap src = new System.Drawing.Bitmap(imagePath))
+                if (src == null)
                 {
-                    workingImage = new System.Drawing.Bitmap(src);
-                    for (int px = 0; px < src.Width; px++)
-                    {
-                        for (int py = 0; py < src.Height; py++)
-                        {
-                            workingImage.SetPixel(px, py, System.Drawing.Color.White);
-                            c = src.GetPixel(px, py);
-                            if (c.R < 128 || c.G < 128 || c.B < 128)
-                            {
-                                if (px < tlx)
-                                {
-                                    tlx = px;
-                                }
-                                if (py < tly)
-                                {
-                                    tly = py;
-                                }
-                            }
-                        }
-                    }
-
-                    // allow a little bit of extra space
-                    if (tlx > 0)
-                    {
-                        tlx--;
-                    }
-                    if (tly > 0)
-                    {
-                        tly++;
-                    }
-
-                    for (int px = tlx; px < src.Width; px++)
-                    {
-                        for (int py = tly; py < src.Height; py++)
-                        {
-                            c = src.GetPixel(px, py);
-                            if (c.R < 128 || c.G < 128 || c.B < 128)
-                            {
-                                workingImage.SetPixel(px - tlx, py - tly, System.Drawing.Color.Black);
-                            }
-                        }
-                    }
+                    src = new System.Drawing.Bitmap(imagePath);
                 }
+                ShowWorkingImage();
             }
         }
 
         private void Mark(int x, int y, System.Drawing.Color c)
         {
-            int size = 2;
+            int size = 1;
             for (int i = -size; i <= size; i++)
             {
                 for (int j = -size; j <= size; j++)
@@ -453,14 +481,86 @@ namespace Make3D.Dialogs
             }
         }
 
-        public void UpdateHeaderLabel()
+        private void RibCanvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            HeaderLabel.Content = Header;
+        }
+
+        private void RibCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+        }
+
+        private void SetRibScale()
+        {
+            RibScale.ScaleX = scale;
+            RibScale.ScaleY = scale;
+        }
+
+        private void ShowEdge()
+        {
+            if (edgePoints != null)
+            {
+                foreach (PointF pnt in edgePoints)
+                {
+                    Mark((int)pnt.X, (int)pnt.Y, Color.Blue);
+                }
+            }
+        }
+
+        private void ShowProfile()
+        {
+            if (profilePoints != null)
+            {
+                foreach (PointF pnt in profilePoints)
+                {
+                    Mark((int)((1 + pnt.X) * mx), (int)((1 + pnt.Y) * my), Color.Red);
+                }
+            }
+        }
+
+        private void ShowProfile_Click(object sender, RoutedEventArgs e)
+        {
+            if (src != null)
+            {
+                ShowWorkingImage();
+            }
+        }
+
+        private void ShowWorkingImage()
+        {
+            CopySrcToWorking();
+            if (ShowProfileBut.IsChecked == false)
+            {
+                ShowEdge();
+            }
+            else
+            {
+                ShowProfile();
+            }
+
+            SetImageSource();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             HeaderLabel.Content = Header;
+        }
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            scale = 1.1 * scale;
+            SetRibScale();
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            scale = 0.9 * scale;
+            SetRibScale();
+        }
+
+        private void ZoomReset_Click(object sender, RoutedEventArgs e)
+        {
+            scale = 1.0;
+            SetRibScale();
         }
     }
 }

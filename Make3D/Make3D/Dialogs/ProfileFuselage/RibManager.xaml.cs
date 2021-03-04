@@ -14,44 +14,66 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class RibManager : UserControl, INotifyPropertyChanged
     {
-        public delegate void CommandHandler(string command);
-
         public CommandHandler OnCommandHandler;
 
-        public delegate void RibAdded(string ribName, RibControl rc);
-
-        public RibAdded OnRibAdded { get; set; }
-
-        public delegate void RibDeleted(RibControl rc);
-
-        public RibDeleted OnRibDeleted { get; set; }
-
-        public delegate void RibInserted(string ribName, RibControl rc, RibControl after);
-
-        public RibInserted OnRibInserted { get; set; }
-
-        public delegate void RibsRenamed(List<NameRec> newNames);
-
-        public RibsRenamed OnRibsRenamed { get; set; }
-
-        public char NextNameLetter { get; set; }
-        public int NextNameNumber { get; set; }
+        private bool controlsEnabled;
 
         private ObservableCollection<RibControl> ribs;
 
+        private RibControl selectedRib;
+
+        public RibManager()
+        {
+            InitializeComponent();
+            ribs = new ObservableCollection<RibControl>();
+            DataContext = this;
+            NextNameLetter = 'A';
+            NextNameNumber = 0;
+            selectedRib = null;
+            controlsEnabled = true;
+        }
+
+        public delegate void CommandHandler(string command);
+
+        public delegate void RibAdded(string ribName, RibControl rc);
+
+        public delegate void RibDeleted(RibControl rc);
+
+        public delegate void RibInserted(string ribName, RibControl rc, RibControl after);
+
+        public delegate void RibsRenamed(List<NameRec> newNames);
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        public bool ControlsEnabled
         {
-            if (PropertyChanged != null)
+            get
             {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+                return controlsEnabled;
+            }
+            set
+            {
+                if (controlsEnabled != value)
+                {
+                    controlsEnabled = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
+        public char NextNameLetter { get; set; }
+        public int NextNameNumber { get; set; }
+        public RibAdded OnRibAdded { get; set; }
+        public RibDeleted OnRibDeleted { get; set; }
+        public RibInserted OnRibInserted { get; set; }
+        public RibsRenamed OnRibsRenamed { get; set; }
+
         public ObservableCollection<RibControl> Ribs
         {
-            get { return ribs; }
+            get
+            {
+                return ribs;
+            }
             set
             {
                 if (ribs != value)
@@ -61,11 +83,12 @@ namespace Make3D.Dialogs
             }
         }
 
-        private RibControl selectedRib;
-
         public RibControl SelectedRib
         {
-            get { return selectedRib; }
+            get
+            {
+                return selectedRib;
+            }
             set
             {
                 if (selectedRib != value)
@@ -76,14 +99,30 @@ namespace Make3D.Dialogs
             }
         }
 
-        public RibManager()
+        public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
-            InitializeComponent();
-            ribs = new ObservableCollection<RibControl>();
-            DataContext = this;
-            NextNameLetter = 'A';
-            NextNameNumber = 0;
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        internal void CopyARib(string name)
+        {
             selectedRib = null;
+            RibControl src = null;
+            foreach (RibControl rc in Ribs)
+            {
+                if (rc.Header == name)
+                {
+                    src = rc;
+                    break;
+                }
+            }
+            if (src != null)
+            {
+                Copy(src);
+            }
         }
 
         private void AddRib_Click(object sender, RoutedEventArgs e)
@@ -104,6 +143,7 @@ namespace Make3D.Dialogs
                     rc.ClearSinglePixels();
                     rc.FindEdge();
                     rc.SetImageSource();
+
                     string name = "" + NextNameLetter;
                     if (NextNameNumber > 0)
                     {
@@ -129,49 +169,6 @@ namespace Make3D.Dialogs
             }
         }
 
-        internal void CopyARib(string name)
-        {
-            selectedRib = null;
-            RibControl src = null;
-            foreach (RibControl rc in Ribs)
-            {
-                if (rc.Header == name)
-                {
-                    src = rc;
-                    break;
-                }
-            }
-            if (src != null)
-            {
-                Copy(src);
-            }
-        }
-
-        private void DeleteRib_Click(object sender, RoutedEventArgs e)
-        {
-            if (selectedRib != null)
-            {
-                if (Ribs.Contains(selectedRib))
-                {
-                    Ribs.Remove(selectedRib);
-                    
-                    if (OnRibDeleted != null)
-                    {
-                        OnRibDeleted(selectedRib);
-                    }
-                    NotifyPropertyChanged("Ribs");
-                }
-            }
-        }
-
-        private void CopyRib_Click(object sender, RoutedEventArgs e)
-        {
-            if (selectedRib != null)
-            {
-                Copy(selectedRib);
-            }
-        }
-
         private void Copy(RibControl src)
         {
             RibControl clone = src.Clone();
@@ -186,7 +183,7 @@ namespace Make3D.Dialogs
             }
             clone.Header = nameStart + subName.ToString();
             int index = Ribs.IndexOf(src);
-            if (index < Ribs.Count - 1)
+            if (index >= 0 && index < Ribs.Count - 1)
             {
                 Ribs.Insert(index + 1, clone);
             }
@@ -203,11 +200,49 @@ namespace Make3D.Dialogs
             RenameRibs(nameStart);
         }
 
-        public struct NameRec
+        private void CopyRib_Click(object sender, RoutedEventArgs e)
         {
-            public int ribIndex;
-            public string originalName;
-            public string newName;
+            if (selectedRib != null)
+            {
+                Copy(selectedRib);
+            }
+        }
+
+        private void DeleteRib_Click(object sender, RoutedEventArgs e)
+        {
+            if (selectedRib != null)
+            {
+                if (Ribs.Contains(selectedRib))
+                {
+                    Ribs.Remove(selectedRib);
+
+                    if (OnRibDeleted != null)
+                    {
+                        OnRibDeleted(selectedRib);
+                    }
+                    NotifyPropertyChanged("Ribs");
+                }
+            }
+        }
+
+        private void Export_Click(object sender, RoutedEventArgs e)
+        {
+            OnCommandHandler?.Invoke("Export");
+        }
+
+        private void LoadRibs_Click(object sender, RoutedEventArgs e)
+        {
+            OnCommandHandler?.Invoke("LoadProject");
+        }
+
+        private void LoadSide_Click(object sender, RoutedEventArgs e)
+        {
+            OnCommandHandler?.Invoke("LoadSide");
+        }
+
+        private void LoadTop_Click(object sender, RoutedEventArgs e)
+        {
+            OnCommandHandler?.Invoke("LoadTop");
         }
 
         private void RenameRibs(string nameStart)
@@ -248,29 +283,16 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void LoadTop_Click(object sender, RoutedEventArgs e)
-        {
-            OnCommandHandler?.Invoke("LoadTop");
-        }
-
-        private void LoadSide_Click(object sender, RoutedEventArgs e)
-        {
-            OnCommandHandler?.Invoke("LoadSide");
-        }
-
-        private void LoadRibs_Click(object sender, RoutedEventArgs e)
-        {
-            OnCommandHandler?.Invoke("LoadProject");
-        }
-
         private void SaveRibs_Click(object sender, RoutedEventArgs e)
         {
             OnCommandHandler?.Invoke("SaveProject");
         }
 
-        private void Export_Click(object sender, RoutedEventArgs e)
+        public struct NameRec
         {
-            OnCommandHandler?.Invoke("Export");
+            public string newName;
+            public string originalName;
+            public int ribIndex;
         }
     }
 }

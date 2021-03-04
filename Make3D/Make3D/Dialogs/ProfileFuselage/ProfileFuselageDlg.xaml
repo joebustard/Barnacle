@@ -36,14 +36,17 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
-                    <UniformGrid Grid.Column="0" Grid.Row="0" Columns="1">
+                    <UniformGrid Grid.Column="0" Grid.Row="0" Columns="2">
                         <Button x:Name="Front" Content="Front" Click="Front_Click" />
                         <Button x:Name="Back" Content="Back" Click="Back_Click" />
                         <Button x:Name="Left" Content="Left" Click="Left_Click" />
                         <Button x:Name="Right" Content="Right" Click="Right_Click" />
+                        <Button x:Name="Top" Content="Top" Click="Top_Click" />
+                        <Button x:Name="Bottom" Content="Bottom" Click="Bottom_Click" />
                     </UniformGrid>
-                    <Border Grid.Row="0" Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
+                    <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
                         <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown"
               MouseWheel="Viewport_MouseWheel">
@@ -71,7 +74,7 @@
                             </ModelVisual3D>
                         </Viewport3D>
                     </Border>
-                    <Grid Grid.Column="0" Grid.Row="3">
+                    <Grid Grid.Column="0" Grid.Row="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30" />
                             <RowDefinition Height="30" />
@@ -81,8 +84,8 @@
                         <Button x:Name="ZoomOut" Content="Zoom Out" Click="ZoomOut_Click" Grid.Row="1" />
                         <Button x:Name="ZoomReset" Content="Zoom Reset" Click="ZoomReset_Click" Grid.Row="2" />
                     </Grid>
-                    <local:ImageMarker x:Name="TopView" Grid.Row="1" Grid.Column="1" />
-                    <local:ImageMarker x:Name="SideView" Grid.Row="2" Grid.Column="1" />
+                    <local:ImageMarker x:Name="TopView" Grid.Row="2" Grid.Column="1" />
+                    <local:ImageMarker x:Name="SideView" Grid.Row="3" Grid.Column="1" />
                 </Grid>
             </TabItem>
         </TabControl>

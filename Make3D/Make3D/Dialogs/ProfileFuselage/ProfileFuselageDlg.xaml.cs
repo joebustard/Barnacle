@@ -31,6 +31,8 @@ namespace Make3D.Dialogs
 
         private MeshGeometry3D mesh;
 
+        private NoteWindow noteWindow;
+
         //  private PolarCamera polarCamera;
         private System.Windows.Point oldMousePos;
 
@@ -41,8 +43,6 @@ namespace Make3D.Dialogs
         private Point3DCollection vertices;
 
         private double zoomLevel;
-
-        private NoteWindow noteWindow;
 
         public ProfileFuselageDlg()
         {
@@ -175,12 +175,17 @@ namespace Make3D.Dialogs
                             {
                                 filePath = opDlg.FileName;
                                 noteWindow.Show();
+                                RibManager.ControlsEnabled = false;
                                 await Read(filePath);
                                 noteWindow.Hide();
                                 dirty = false;
+                                RibManager.ControlsEnabled = true;
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                MessageBox.Show(ex.Message);
+                                RibManager.ControlsEnabled = true;
+                                noteWindow.Hide();
                             }
                         }
                     }
@@ -262,6 +267,13 @@ namespace Make3D.Dialogs
             dirty = true;
         }
 
+        protected override void Cancel_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            noteWindow.Close();
+            Close();
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             if (dirty)
@@ -278,17 +290,17 @@ namespace Make3D.Dialogs
             Close();
         }
 
-        protected override void Cancel_Click(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
-            noteWindow.Close();
-            Close();
-        }
-
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeBack();
             Camera.Distance = 2 * Bounds.Depth;
+            UpdateCameraPos();
+        }
+
+        private void Bottom_Click(object sender, RoutedEventArgs e)
+        {
+            Camera.HomeBottom();
+            Camera.Distance = 2 * Bounds.Width;
             UpdateCameraPos();
         }
 
@@ -313,80 +325,88 @@ namespace Make3D.Dialogs
 
         private void GenerateSkin()
         {
-            Faces.Clear();
-            Vertices.Clear();
-            if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
+            try
             {
-                int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
-
-                double x = TopView.GetXmm(markers[0].Position);
-                List<PointF> leftEdge = new List<PointF>();
-                double leftx = x;
-                List<PointF> rightEdge = new List<PointF>();
-                double rightx = x;
-                for (int i = 0; i < RibManager.Ribs.Count; i++)
+                Faces.Clear();
+                Vertices.Clear();
+                if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
                 {
-                    x = TopView.GetXmm(markers[i].Position);
-                    if (i == RibManager.Ribs.Count - 1)
-                    {
-                        rightx = x;
-                    }
-                    foreach (PointF pnt in RibManager.Ribs[i].ProfilePoints)
-                    {
-                        //double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
-                        // double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
-                        double v = pnt.X * TopView.Dimensions[i].Height / 2;
-                        double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
+                    int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
 
-                        v = pnt.Y * SideView.Dimensions[i].Height / 2;
-                        double y = SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
-                        // y += SideView.GetYmm(SideView.Dimensions[i].Mid.Y);
-                        AddVertice(x, z, y);
-                        if (i == 0)
-                        {
-                            leftEdge.Add(new PointF((float)y, (float)z));
-                        }
+                    double x = TopView.GetXmm(markers[0].Position);
+                    List<PointF> leftEdge = new List<PointF>();
+                    double leftx = x;
+                    List<PointF> rightEdge = new List<PointF>();
+                    double rightx = x;
+                    for (int i = 0; i < RibManager.Ribs.Count; i++)
+                    {
+                        x = TopView.GetXmm(markers[i].Position);
                         if (i == RibManager.Ribs.Count - 1)
                         {
-                            rightEdge.Add(new PointF((float)y, (float)z));
+                            rightx = x;
+                        }
+                        foreach (PointF pnt in RibManager.Ribs[i].ProfilePoints)
+                        {
+                            //double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
+                            // double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
+                            double v = pnt.X * TopView.Dimensions[i].Height / 2;
+                            double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
+
+                            v = pnt.Y * SideView.Dimensions[i].Height / 2;
+                            double y = SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
+                            // y += SideView.GetYmm(SideView.Dimensions[i].Mid.Y);
+                            AddVertice(x, z, y);
+                            if (i == 0)
+                            {
+                                leftEdge.Add(new PointF((float)y, (float)z));
+                            }
+                            if (i == RibManager.Ribs.Count - 1)
+                            {
+                                rightEdge.Add(new PointF((float)y, (float)z));
+                            }
                         }
                     }
-                }
 
-                int right = Vertices.Count;
-                // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
-                int f = 0;
-                int first = f;
-                for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
-                {
-                    f = (blk * facesPerRib);
-                    first = f;
-                    for (int index = 0; index < facesPerRib - 1; index++)
+                    int right = Vertices.Count;
+                    // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
+                    int f = 0;
+                    int first = f;
+                    for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
                     {
-                        Faces.Add(f);
+                        f = (blk * facesPerRib);
+                        first = f;
+                        for (int index = 0; index < facesPerRib - 1; index++)
+                        {
+                            Faces.Add(f);
 
+                            Faces.Add(f + facesPerRib);
+                            Faces.Add(f + facesPerRib + 1);
+
+                            Faces.Add(f);
+                            Faces.Add(f + facesPerRib + 1);
+                            Faces.Add(f + 1);
+
+                            f++;
+                        }
+
+                        Faces.Add(f);
                         Faces.Add(f + facesPerRib);
-                        Faces.Add(f + facesPerRib + 1);
+                        Faces.Add(first + facesPerRib);
 
                         Faces.Add(f);
-                        Faces.Add(f + facesPerRib + 1);
-                        Faces.Add(f + 1);
-
-                        f++;
+                        Faces.Add(first + facesPerRib);
+                        Faces.Add(first);
                     }
 
-                    Faces.Add(f);
-                    Faces.Add(f + facesPerRib);
-                    Faces.Add(first + facesPerRib);
-
-                    Faces.Add(f);
-                    Faces.Add(first + facesPerRib);
-                    Faces.Add(first);
+                    TriangulatePerimiter(leftEdge, leftx, 0, 0, false);
+                    TriangulatePerimiter(rightEdge, rightx, 0, 0, true);
+                    CentreVertices();
                 }
-
-                TriangulatePerimiter(leftEdge, leftx, 0, 0, false);
-                TriangulatePerimiter(rightEdge, rightx, 0, 0, true);
-                CentreVertices();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "GenerateSkin");
+                throw ex;
             }
         }
 
@@ -410,36 +430,43 @@ namespace Make3D.Dialogs
         private async Task<bool> LoadRib(XmlElement el, string pth, string nme, int position)
         {
             bool res = true;
-            RibControl rc = new RibControl();
-            rc.ImagePath = pth;
-            rc.Header = nme;
+            try
+            {
+                RibControl rc = new RibControl();
+                rc.ImagePath = pth;
+                rc.Header = nme;
 
-            XmlNode pnts = el.SelectSingleNode("EdgeDUMMY");
-            if (pnts != null)
-            {
-                rc.FetchImage();
-                rc.ProfilePoints.Clear();
-                double len = Convert.ToDouble((pnts as XmlElement).GetAttribute("EdgeLength"));
-                rc.EdgeLength = len;
-                XmlNodeList ndl = pnts.SelectNodes("V");
-                foreach (XmlNode pn in ndl)
+                XmlNode pnts = el.SelectSingleNode("EdgeDUMMY");
+                if (pnts != null)
                 {
-                    XmlElement pe = pn as XmlElement;
-                    float x = (float)Convert.ToDouble(pe.GetAttribute("X"));
-                    float y = (float)Convert.ToDouble(pe.GetAttribute("Y"));
-                    PointF f = new PointF(x, y);
-                    rc.ProfilePoints.Add(f);
+                    rc.FetchImage();
+                    rc.ProfilePoints.Clear();
+                    double len = Convert.ToDouble((pnts as XmlElement).GetAttribute("EdgeLength"));
+                    rc.EdgeLength = len;
+                    XmlNodeList ndl = pnts.SelectNodes("V");
+                    foreach (XmlNode pn in ndl)
+                    {
+                        XmlElement pe = pn as XmlElement;
+                        float x = (float)Convert.ToDouble(pe.GetAttribute("X"));
+                        float y = (float)Convert.ToDouble(pe.GetAttribute("Y"));
+                        PointF f = new PointF(x, y);
+                        rc.ProfilePoints.Add(f);
+                    }
                 }
+                else
+                {
+                    rc.FetchImage();
+                    rc.ClearSinglePixels();
+                    rc.FindEdge();
+                    rc.SetImageSource();
+                }
+                CreateLetter(nme, position, rc);
+                RibManager.Ribs.Add(rc);
             }
-            else
+            catch (Exception ex)
             {
-                rc.FetchImage();
-                rc.ClearSinglePixels();
-                rc.FindEdge();
-                rc.SetImageSource();
+                MessageBox.Show(ex.Message, "LoadRib");
             }
-            CreateLetter(nme, position, rc);
-            RibManager.Ribs.Add(rc);
 
             return res;
         }
@@ -529,7 +556,9 @@ namespace Make3D.Dialogs
             }
 
             SortRibs();
-
+            // need to update the top and side views BEFORE generating skin
+            TopView.UpdateDisplay();
+            SideView.UpdateDisplay();
             GenerateSkin();
             Redisplay();
             noteWindow.Hide();
@@ -606,29 +635,43 @@ namespace Make3D.Dialogs
 
         private void SortRibs()
         {
-            bool swapped = false;
-            do
+            try
             {
-                swapped = false;
-                for (int i = 0; i < markers.Count - 1; i++)
+                bool swapped = false;
+                do
                 {
-                    if (markers[i].Position > markers[i + 1].Position)
+                    swapped = false;
+                    for (int i = 0; i < markers.Count - 1; i++)
                     {
-                        LetterMarker mk = markers[i];
-                        markers[i] = markers[i + 1];
-                        markers[i + 1] = mk;
-                        swapped = true;
+                        if (markers[i].Position > markers[i + 1].Position)
+                        {
+                            LetterMarker mk = markers[i];
+                            markers[i] = markers[i + 1];
+                            markers[i + 1] = mk;
+                            swapped = true;
+                        }
                     }
+                } while (swapped);
+                SideView.Markers = markers;
+                TopView.Markers = markers;
+                ObservableCollection<RibControl> ribs = new ObservableCollection<RibControl>();
+                foreach (LetterMarker mk in markers)
+                {
+                    ribs.Add(mk.Rib);
                 }
-            } while (swapped);
-            SideView.Markers = markers;
-            TopView.Markers = markers;
-            ObservableCollection<RibControl> ribs = new ObservableCollection<RibControl>();
-            foreach (LetterMarker mk in markers)
-            {
-                ribs.Add(mk.Rib);
+                RibManager.Ribs = ribs;
             }
-            RibManager.Ribs = ribs;
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "SortRibs");
+            }
+        }
+
+        private void Top_Click(object sender, RoutedEventArgs e)
+        {
+            Camera.HomeTop();
+            Camera.Distance = 2 * Bounds.Width;
+            UpdateCameraPos();
         }
 
         private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)

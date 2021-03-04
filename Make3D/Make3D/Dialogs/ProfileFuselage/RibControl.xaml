@@ -11,7 +11,42 @@
             <RowDefinition Height="25" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label x:Name="HeaderLabel" Grid.Row="0" Background="Blue" Foreground="Yellow" />
-        <Image x:Name="RibImage" Grid.Row="1" />
+        <Grid Grid.Row="0" Background="Blue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="40" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+            <Label x:Name="HeaderLabel" Grid.Row="0" Background="Blue" Foreground="Yellow" />
+            <Button x:Name="ZoomOut" Margin="2,1,0,1" Grid.Column="1" Click="ZoomOut_Click">-</Button>
+            <Button x:Name="ZoomReset" Margin="2,1,0,1" Grid.Column="2" Click="ZoomReset_Click">.</Button>
+            <Button x:Name="ZoomIn" Margin="2,1,0,1" Grid.Column="3" Click="ZoomIn_Click">+</Button>
+            <ToggleButton x:Name="ShowProfileBut" Margin="2,1,0,1" Grid.Column="4" Click="ShowProfile_Click">
+                <ToggleButton.Style>
+                    <Style TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Content" Value="Outline" />
+                        <Setter Property="Foreground" Value="Blue" />
+                        <Style.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Content" Value="Profile" />
+                                <Setter Property="Foreground" Value="Red" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToggleButton.Style>
+            </ToggleButton>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+
+            <Canvas x:Name="ribCanvas"  Width="800" Height="800" MouseMove="RibCanvas_MouseMove"  MouseUp="RibCanvas_MouseUp" Margin="20,20">
+                <Canvas.LayoutTransform>
+                    <ScaleTransform x:Name="RibScale" />
+                </Canvas.LayoutTransform>
+                <Image x:Name="RibImage" />
+            </Canvas>
+        </ScrollViewer>
     </Grid>
 </UserControl>
