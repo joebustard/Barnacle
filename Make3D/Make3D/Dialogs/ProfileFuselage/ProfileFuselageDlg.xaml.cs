@@ -21,6 +21,57 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class ProfileFuselageDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool wholeBody;
+
+        public bool WholeBody
+        {
+            get { return wholeBody; }
+            set
+            {
+                if (wholeBody != value)
+                {
+                    wholeBody = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
+            }
+        }
+
+        private bool frontBody;
+
+        public bool FrontBody
+        {
+            get { return frontBody; }
+            set
+            {
+                if (frontBody != value)
+                {
+                    frontBody = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
+            }
+        }
+
+        private bool backBody;
+
+        public bool BackBody
+        {
+            get { return backBody; }
+            set
+            {
+                if (backBody != value)
+                {
+                    backBody = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
+            }
+        }
+
         public List<LetterMarker> markers;
 
         private bool dirty;
@@ -52,7 +103,7 @@ namespace Make3D.Dialogs
             faces = new Int32Collection();
             mesh = new MeshGeometry3D();
             vertices = new Point3DCollection();
-
+            WholeBody = true;
             zoomLevel = 1;
             dirty = false;
             filePath = "";
@@ -190,19 +241,6 @@ namespace Make3D.Dialogs
                         }
                     }
                     break;
-                    /*
-                                    case "Export":
-                                        {
-                                            SaveFileDialog saveFileDialog = new SaveFileDialog();
-                                            saveFileDialog.Filter = "STL files (*.stl) | *.stl";
-                                            if (saveFileDialog.ShowDialog() == true)
-                                            {
-                                                STLExporter export = new STLExporter();
-                                                export.Export(saveFileDialog.FileName, vertices, faces);
-                                            }
-                                        }
-                                        break;
-                                        */
             }
         }
 
@@ -332,7 +370,19 @@ namespace Make3D.Dialogs
                 if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
                 {
                     int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
-
+                    int start = 0;
+                    int end = RibManager.Ribs[0].ProfilePoints.Count;
+                    if (backBody)
+                    {
+                        end = end / 2;
+                        facesPerRib = facesPerRib / 2;
+                    }
+                    if (frontBody)
+                    {
+                        end = RibManager.Ribs[0].ProfilePoints.Count;
+                        start = end / 2;
+                        facesPerRib = facesPerRib / 2;
+                    }
                     double x = TopView.GetXmm(markers[0].Position);
                     List<PointF> leftEdge = new List<PointF>();
                     double leftx = x;
@@ -345,8 +395,10 @@ namespace Make3D.Dialogs
                         {
                             rightx = x;
                         }
-                        foreach (PointF pnt in RibManager.Ribs[i].ProfilePoints)
+
+                        for (int proind = start; proind < end; proind++)
                         {
+                            PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
                             //double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
                             // double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
                             double v = pnt.X * TopView.Dimensions[i].Height / 2;
@@ -367,10 +419,11 @@ namespace Make3D.Dialogs
                         }
                     }
 
-                    int right = Vertices.Count;
+                    // int right = Vertices.Count;
                     // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
                     int f = 0;
                     int first = f;
+
                     for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
                     {
                         f = (blk * facesPerRib);

@@ -283,6 +283,8 @@ namespace Make3D.Dialogs
             if (workingImage != null)
             {
                 RibImage.Source = loadBitmap(workingImage);
+                RibCanvas.Width = workingImage.Width;
+                RibCanvas.Height = workingImage.Height;
             }
         }
 
@@ -457,7 +459,6 @@ namespace Make3D.Dialogs
         {
             if (File.Exists(imagePath))
             {
-                System.Drawing.Color c;
                 if (src == null)
                 {
                     src = new System.Drawing.Bitmap(imagePath);

@@ -41,7 +41,7 @@
 
         <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
 
-            <Canvas x:Name="ribCanvas"  Width="800" Height="800" MouseMove="RibCanvas_MouseMove"  MouseUp="RibCanvas_MouseUp" Margin="20,20">
+            <Canvas x:Name="RibCanvas"  Width="800" Height="800" MouseMove="RibCanvas_MouseMove"  MouseUp="RibCanvas_MouseUp" Margin="20,20">
                 <Canvas.LayoutTransform>
                     <ScaleTransform x:Name="RibScale" />
                 </Canvas.LayoutTransform>

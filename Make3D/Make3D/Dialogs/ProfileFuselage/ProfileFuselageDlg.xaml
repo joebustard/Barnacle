@@ -46,6 +46,11 @@
                         <Button x:Name="Top" Content="Top" Click="Top_Click" />
                         <Button x:Name="Bottom" Content="Bottom" Click="Bottom_Click" />
                     </UniformGrid>
+                    <UniformGrid Grid.Row="1" Margin="4,4,4,4" Columns="1">
+                        <RadioButton GroupName="BodyMode" Content="Whole" IsChecked="{Binding WholeBody}" />
+                        <RadioButton GroupName="BodyMode" Content="Front" IsChecked="{Binding FrontBody}" />
+                        <RadioButton GroupName="BodyMode" Content="Back" IsChecked="{Binding BackBody}" />
+                    </UniformGrid>
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
                         <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown"
