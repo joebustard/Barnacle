@@ -274,7 +274,10 @@ namespace Make3D.Dialogs
                     cp++;
                 }
             }
-
+            if (profilePoints.Count > 0)
+            {
+                //           profilePoints.Add(new PointF(profilePoints[0].X, profilePoints[0].Y));
+            }
             ShowEdge();
         }
 

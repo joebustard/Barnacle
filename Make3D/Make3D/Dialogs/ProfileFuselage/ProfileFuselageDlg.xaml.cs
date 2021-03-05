@@ -21,77 +21,22 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class ProfileFuselageDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private bool wholeBody;
-
-        public bool WholeBody
-        {
-            get { return wholeBody; }
-            set
-            {
-                if (wholeBody != value)
-                {
-                    wholeBody = value;
-                    NotifyPropertyChanged();
-                    GenerateSkin();
-                    Redisplay();
-                }
-            }
-        }
-
-        private bool frontBody;
-
-        public bool FrontBody
-        {
-            get { return frontBody; }
-            set
-            {
-                if (frontBody != value)
-                {
-                    frontBody = value;
-                    NotifyPropertyChanged();
-                    GenerateSkin();
-                    Redisplay();
-                }
-            }
-        }
-
-        private bool backBody;
-
-        public bool BackBody
-        {
-            get { return backBody; }
-            set
-            {
-                if (backBody != value)
-                {
-                    backBody = value;
-                    NotifyPropertyChanged();
-                    GenerateSkin();
-                    Redisplay();
-                }
-            }
-        }
-
         public List<LetterMarker> markers;
-
+        private bool backBody;
         private bool dirty;
-
         private Int32Collection faces;
-
         private string filePath;
-
+        private bool frontBody;
         private MeshGeometry3D mesh;
-
         private NoteWindow noteWindow;
 
         //  private PolarCamera polarCamera;
         private System.Windows.Point oldMousePos;
 
         private string sideViewFilename;
-
         private string topViewFilename;
-
         private Point3DCollection vertices;
+        private bool wholeBody;
 
         private double zoomLevel;
 
@@ -108,6 +53,42 @@ namespace Make3D.Dialogs
             dirty = false;
             filePath = "";
             noteWindow = new NoteWindow();
+        }
+
+        public bool BackBody
+        {
+            get
+            {
+                return backBody;
+            }
+            set
+            {
+                if (backBody != value)
+                {
+                    backBody = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
+            }
+        }
+
+        public bool FrontBody
+        {
+            get
+            {
+                return frontBody;
+            }
+            set
+            {
+                if (frontBody != value)
+                {
+                    frontBody = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
+            }
         }
 
         public List<LetterMarker> Markers
@@ -154,6 +135,24 @@ namespace Make3D.Dialogs
                 {
                     showFloor = value;
                     NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public bool WholeBody
+        {
+            get
+            {
+                return wholeBody;
+            }
+            set
+            {
+                if (wholeBody != value)
+                {
+                    wholeBody = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
                     Redisplay();
                 }
             }
@@ -225,7 +224,9 @@ namespace Make3D.Dialogs
                             try
                             {
                                 filePath = opDlg.FileName;
+                                noteWindow.Owner = this;
                                 noteWindow.Show();
+
                                 RibManager.ControlsEnabled = false;
                                 await Read(filePath);
                                 noteWindow.Hide();
@@ -365,24 +366,36 @@ namespace Make3D.Dialogs
         {
             try
             {
+                // clear out existing 3d model
                 Faces.Clear();
                 Vertices.Clear();
+
+                // o we have enough data to construct the model
                 if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
                 {
+                    // work out the range of faces we are going to do based upon whether we
+                    // are doing the whole model or just fron or back
                     int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
+
+                    // assume its whole model
                     int start = 0;
                     int end = RibManager.Ribs[0].ProfilePoints.Count;
+
+                    // so if we are only doing the back we only skin the first half
                     if (backBody)
                     {
                         end = end / 2;
                         facesPerRib = facesPerRib / 2;
                     }
+
+                    // if its the front we start half way round
                     if (frontBody)
                     {
                         end = RibManager.Ribs[0].ProfilePoints.Count;
                         start = end / 2;
                         facesPerRib = facesPerRib / 2;
                     }
+
                     double x = TopView.GetXmm(markers[0].Position);
                     List<PointF> leftEdge = new List<PointF>();
                     double leftx = x;
@@ -418,26 +431,32 @@ namespace Make3D.Dialogs
                             }
                         }
                     }
-
+                    facesPerRib = leftEdge.Count;
                     // int right = Vertices.Count;
                     // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
                     int f = 0;
+                    int g = 0;
                     int first = f;
 
                     for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
                     {
                         f = (blk * facesPerRib);
                         first = f;
-                        for (int index = 0; index < facesPerRib - 1; index++)
+                        for (int index = 0; index < facesPerRib; index++)
                         {
+                            g = f + 1;
+                            if (index == facesPerRib - 1)
+                            {
+                                g = first;
+                            }
                             Faces.Add(f);
 
                             Faces.Add(f + facesPerRib);
-                            Faces.Add(f + facesPerRib + 1);
+                            Faces.Add(g + facesPerRib);
 
                             Faces.Add(f);
-                            Faces.Add(f + facesPerRib + 1);
-                            Faces.Add(f + 1);
+                            Faces.Add(g + facesPerRib);
+                            Faces.Add(g);
 
                             f++;
                         }
@@ -599,7 +618,7 @@ namespace Make3D.Dialogs
                 string nme = el.GetAttribute("Header");
                 Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
                 noteWindow.Message = "Loading Rib " + nme;
-                noteWindow.Activate();
+                // noteWindow.Activate();
                 noteWindow.Refresh();
                 Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
                 int position = Convert.ToInt16(el.GetAttribute("Position"));

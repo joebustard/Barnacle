@@ -16,8 +16,11 @@ namespace Make3D.Dialogs
         private double hubOutter;
         private List<String> hubStyles;
         private double hubThickness;
+        private double rimOutter;
         private List<String> rimStyles;
+        private double rimThickness;
         private string selectedHubStyle;
+        private string selectedRimStyle;
         private double tyreDepth;
 
         public Wheel()
@@ -26,10 +29,12 @@ namespace Make3D.Dialogs
             ToolName = "Wheel";
             DataContext = this;
             tyreDepth = 50;
-            hubInner = 50;
-            hubOutter = 100;
-            axelBore = 10;
-            hubThickness = 20;
+            hubInner = 10;
+            hubOutter = 10;
+            axelBore = 5;
+            hubThickness = 10;
+            rimThickness = 12;
+            rimOutter = 5;
             hubStyles = new List<string>();
             rimStyles = new List<string>();
         }
@@ -102,6 +107,39 @@ namespace Make3D.Dialogs
             }
         }
 
+        public double HubThickness
+        {
+            get
+            {
+                return hubThickness;
+            }
+            set
+            {
+                if (value != hubThickness)
+                {
+                    hubThickness = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double RimOutter
+        {
+            get
+            {
+                return rimOutter;
+            }
+            set
+            {
+                if (rimOutter != value)
+                {
+                    rimOutter = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public List<String> RimStyles
         {
             get
@@ -113,6 +151,22 @@ namespace Make3D.Dialogs
                 rimStyles = value;
                 NotifyPropertyChanged();
                 UpdateDisplay();
+            }
+        }
+
+        public double RimThickness
+        {
+            get
+            {
+                return rimThickness;
+            }
+            set
+            {
+                if (rimThickness != value)
+                {
+                    rimThickness = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -129,6 +183,22 @@ namespace Make3D.Dialogs
                     selectedHubStyle = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public string SelectedRimStyle
+        {
+            get
+            {
+                return selectedRimStyle;
+            }
+            set
+            {
+                if (selectedRimStyle != value)
+                {
+                    selectedRimStyle = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -191,6 +261,45 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void CreateHubSurface(List<Point> inp, List<Point> oup, double z, bool invert)
+        {
+            int i = 0;
+            int j;
+            while (i < inp.Count)
+            {
+                j = i + 1;
+                if (j == inp.Count)
+                {
+                    j = 0;
+                }
+                int c0 = AddVertice(inp[i].X, inp[i].Y, z);
+                int c1 = AddVertice(oup[i].X, oup[i].Y, z);
+                int c2 = AddVertice(oup[j].X, oup[j].Y, z);
+                int c3 = AddVertice(inp[j].X, inp[j].Y, z);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+                i++;
+            }
+        }
+
         private void CreateSideFace(List<Point> points, int i, double thickness, bool rev)
         {
             int v = i + 1;
@@ -225,30 +334,30 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void GenerateShape()
+        private void GenerateHub()
         {
-            ClearShape();
-            List<Point> points = new List<Point>();
+            List<Point> hubExternalPoints = new List<Point>();
             double numSpoke = 0;
             double gapDTheta = 0;
             double spokeDTheta = 0;
             double spokeTipDTheta = 0;
             double numSubs = 10;
+            double twopi = Math.PI * 2;
             GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta);
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
                 actualInner = axelBore + 1;
             }
-            double actualOutter = hubOutter;
-            if (actualOutter <= actualInner)
+            double actualOutter = hubOutter + actualInner;
+            if (actualOutter < actualInner)
             {
-                actualOutter = actualInner + 1;
+                actualOutter = actualInner;
             }
 
             double theta = 0;
             bool inSpoke = true;
-            while (theta <= Math.PI * 2)
+            while (theta <= twopi)
             {
                 if (inSpoke)
                 {
@@ -260,11 +369,11 @@ namespace Make3D.Dialogs
                     for (int i = 0; i < numSubs; i++)
                     {
                         theta += dt;
-                        if (theta < Math.PI * 2)
+                        if (theta < twopi)
                         {
                             double x = actualOutter * Math.Cos(theta);
                             double y = actualOutter * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
+                            hubExternalPoints.Add(new System.Windows.Point(x, y));
                         }
                     }
                 }
@@ -277,21 +386,82 @@ namespace Make3D.Dialogs
                     for (int i = 0; i < numSubs; i++)
                     {
                         theta += dt;
-                        if (theta < Math.PI * 2)
+                        if (theta < twopi)
                         {
                             double x = actualInner * Math.Cos(theta);
                             double y = actualInner * Math.Sin(theta);
-                            points.Add(new System.Windows.Point(x, y));
+                            hubExternalPoints.Add(new System.Windows.Point(x, y));
                         }
                     }
                 }
                 inSpoke = !inSpoke;
             }
             // generate side triangles so original points are already in list
-            for (int i = 0; i < points.Count; i++)
+            for (int i = 0; i < hubExternalPoints.Count; i++)
             {
-                CreateSideFace(points, i, hubThickness, true);
+                CreateSideFace(hubExternalPoints, i, hubThickness, true);
             }
+            if (hubExternalPoints.Count > 0)
+            {
+                List<System.Windows.Point> hubInternalPoints = new List<Point>();
+                // create set of points for the inside of the bore hole.
+                // to make triangulation easier, create exactly the same number of points
+                double dt = (Math.PI * 2) / (hubExternalPoints.Count - 1);
+                theta = 0;
+                while (theta < twopi)
+                {
+                    double x = axelBore * Math.Cos(theta);
+                    double y = axelBore * Math.Sin(theta);
+                    hubInternalPoints.Add(new System.Windows.Point(x, y));
+                    theta += dt;
+                }
+                for (int i = 0; i < hubInternalPoints.Count; i++)
+                {
+                    CreateSideFace(hubInternalPoints, i, hubThickness, false);
+                }
+
+                CreateHubSurface(hubInternalPoints, hubExternalPoints, 0.0, true);
+                CreateHubSurface(hubInternalPoints, hubExternalPoints, hubThickness, false);
+            }
+        }
+
+        private void GenerateRim()
+        {
+            // the actualoutter of the hub is the inner of the rim
+            double actualInner = hubInner;
+            if (axelBore > actualInner)
+            {
+                actualInner = axelBore + 1;
+            }
+            double actualOutter = hubOutter + actualInner;
+            if (actualOutter < actualInner)
+            {
+                actualOutter = actualInner;
+            }
+            double rimInnerRadius = actualOutter;
+            List<double> ringRadius = new List<double>();
+            List<double> ringThickness = new List<double>();
+            GetRimParams(ringRadius, ringThickness);
+
+            for (int i = 0; i < ringRadius.Count; i++)
+
+            {
+                double ro = ringRadius[i];
+                double t = ringThickness[i];
+                GenerateRimRing(rimInnerRadius, rimInnerRadius + ro, t);
+                rimInnerRadius += ro;
+            }
+        }
+
+        private void GenerateRimRing(double rimInnerRadius, double v, double t)
+        {
+        }
+
+        private void GenerateShape()
+        {
+            ClearShape();
+            GenerateHub();
+            GenerateRim();
         }
 
         private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta)
@@ -323,6 +493,28 @@ namespace Make3D.Dialogs
                         spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
                         spokeDTheta = 0.9 * spokeGapDTheta;
                         spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                    }
+                    break;
+            }
+        }
+
+        private void GetRimParams(List<double> ringRadius, List<double> ringThickness)
+        {
+            switch (SelectedRimStyle)
+            {
+                case "1":
+                    {
+                        ringRadius.Add(rimOutter);
+                        ringThickness.Add(rimThickness);
+                    }
+                    break;
+
+                case "2":
+                    {
+                        ringRadius.Add(rimOutter / 2);
+                        ringThickness.Add(rimThickness * .75);
+                        ringRadius.Add(rimOutter / 2);
+                        ringThickness.Add(rimThickness * 1.25);
                     }
                     break;
             }
@@ -368,6 +560,7 @@ namespace Make3D.Dialogs
         private void UpdateDisplay()
         {
             GenerateShape();
+            CentreVertices();
             Redisplay();
         }
 
@@ -381,6 +574,7 @@ namespace Make3D.Dialogs
             rimStyles.Add("1");
             rimStyles.Add("2");
             rimStyles.Add("3");
+            SelectedRimStyle = "1";
 
             LoadEditorParameters();
             GenerateShape();
