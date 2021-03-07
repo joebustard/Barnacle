@@ -195,6 +195,9 @@ namespace Make3D.Dialogs
                 }
                 py++;
             }
+            PointF leftTop = edgePoints[0];
+            int lb = edgePoints.Count - 1;
+            PointF leftBottom = edgePoints[lb];
 
             // right side
             py = workingImage.Height - 1;
@@ -218,8 +221,27 @@ namespace Make3D.Dialogs
                 }
                 py--;
             }
+            PointF rightBottom = edgePoints[lb + 1];
+            PointF rightTop = edgePoints[edgePoints.Count - 1];
 
-            divisionLength = EdgeLength / NumDivisions;
+            PointF midTop = new PointF(leftTop.X + (rightTop.X - leftTop.X) / 2,
+                                       leftTop.Y + (rightTop.Y - leftTop.Y) / 2);
+
+            PointF midBottom = new PointF(leftBottom.X + (rightBottom.X - leftBottom.X) / 2,
+                                       leftBottom.Y + (rightBottom.Y - leftBottom.Y) / 2);
+
+            edgePoints.Insert(lb + 1, midBottom);
+            edgePoints.Insert(lb + 1, midBottom);
+            edgePoints.Insert(0, midTop);
+            edgePoints.Add(midTop);
+            EdgeLength = 0;
+            for (int i = 1; i < edgePoints.Count; i++)
+            {
+                EdgeLength += Distance(edgePoints[i - 1], edgePoints[i]);
+            }
+            lb += 2;
+
+            divisionLength = EdgeLength / (NumDivisions - 1);
 
             mx = tlx + (brx - tlx) / 2;
             my = tly + (bry - tly) / 2;
@@ -446,8 +468,8 @@ namespace Make3D.Dialogs
                     PointF p = new PointF((float)px, (float)py);
                     edgePoints.Add(p);
                     //                    Mark((int)px, (int)py, c);
-                    EdgeLength += Distance(edgePoints[edgePoints.Count - 2],
-                    edgePoints[edgePoints.Count - 1]);
+                    //  EdgeLength += Distance(edgePoints[edgePoints.Count - 2],
+                    // edgePoints[edgePoints.Count - 1]);
                 }
             }
             else

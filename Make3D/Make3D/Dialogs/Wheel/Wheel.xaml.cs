@@ -136,6 +136,7 @@ namespace Make3D.Dialogs
                 {
                     rimOutter = value;
                     NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -166,6 +167,7 @@ namespace Make3D.Dialogs
                 {
                     rimThickness = value;
                     NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -199,6 +201,7 @@ namespace Make3D.Dialogs
                 {
                     selectedRimStyle = value;
                     NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -300,40 +303,6 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void CreateSideFace(List<Point> points, int i, double thickness, bool rev)
-        {
-            int v = i + 1;
-            if (v == points.Count)
-            {
-                v = 0;
-            }
-
-            int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
-            int c1 = AddVertice(points[i].X, points[i].Y, thickness);
-            int c2 = AddVertice(points[v].X, points[v].Y, thickness);
-            int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
-            if (rev)
-            {
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
-
-                Faces.Add(c0);
-                Faces.Add(c3);
-                Faces.Add(c2);
-            }
-            else
-            {
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
-
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c3);
-            }
-        }
-
         private void GenerateHub()
         {
             List<Point> hubExternalPoints = new List<Point>();
@@ -397,10 +366,9 @@ namespace Make3D.Dialogs
                 inSpoke = !inSpoke;
             }
             // generate side triangles so original points are already in list
-            for (int i = 0; i < hubExternalPoints.Count; i++)
-            {
-                CreateSideFace(hubExternalPoints, i, hubThickness, true);
-            }
+
+            CreateSideFaces(hubExternalPoints, hubThickness, true);
+
             if (hubExternalPoints.Count > 0)
             {
                 List<System.Windows.Point> hubInternalPoints = new List<Point>();
@@ -415,10 +383,8 @@ namespace Make3D.Dialogs
                     hubInternalPoints.Add(new System.Windows.Point(x, y));
                     theta += dt;
                 }
-                for (int i = 0; i < hubInternalPoints.Count; i++)
-                {
-                    CreateSideFace(hubInternalPoints, i, hubThickness, false);
-                }
+
+                CreateSideFaces(hubInternalPoints, hubThickness, false);
 
                 CreateHubSurface(hubInternalPoints, hubExternalPoints, 0.0, true);
                 CreateHubSurface(hubInternalPoints, hubExternalPoints, hubThickness, false);
@@ -448,13 +414,36 @@ namespace Make3D.Dialogs
             {
                 double ro = ringRadius[i];
                 double t = ringThickness[i];
-                GenerateRimRing(rimInnerRadius, rimInnerRadius + ro, t);
+                GenerateRing(0, 0, 0, rimInnerRadius, rimInnerRadius + ro, t);
                 rimInnerRadius += ro;
             }
         }
 
-        private void GenerateRimRing(double rimInnerRadius, double v, double t)
+        private void GenerateRing(double cx, double cy, double cz, double ir, double or, double thicky)
         {
+            List<Point> inners = new List<Point>();
+            List<Point> outters = new List<Point>();
+            double twoPi = Math.PI * 2;
+            double theta = 0;
+            double dt = twoPi / 36;
+            double x;
+            double y;
+            while (theta < twoPi)
+            {
+                x = ir * Math.Cos(theta);
+                y = ir * Math.Sin(theta);
+                inners.Add(new Point(x, y));
+
+                x = or * Math.Cos(theta);
+                y = or * Math.Sin(theta);
+                outters.Add(new Point(x, y));
+
+                theta += dt;
+            }
+            CreateSideFaces(outters, thicky, true);
+            CreateSideFaces(inners, thicky, false);
+            CreateHubSurface(inners, outters, 0.0, true);
+            CreateHubSurface(inners, outters, thicky, false);
         }
 
         private void GenerateShape()
@@ -515,6 +504,17 @@ namespace Make3D.Dialogs
                         ringThickness.Add(rimThickness * .75);
                         ringRadius.Add(rimOutter / 2);
                         ringThickness.Add(rimThickness * 1.25);
+                    }
+                    break;
+
+                case "3":
+                    {
+                        ringRadius.Add(rimOutter / 3);
+                        ringThickness.Add(rimThickness * .9);
+                        ringRadius.Add(rimOutter / 3);
+                        ringThickness.Add(rimThickness * 1.1);
+                        ringRadius.Add(rimOutter / 3);
+                        ringThickness.Add(rimThickness * .9);
                     }
                     break;
             }

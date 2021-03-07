@@ -39,6 +39,45 @@ namespace Make3D.Dialogs
             }
         }
 
+        // run around around a list of points
+        // assume the start and end are linked.
+        protected void CreateSideFaces(List<Point> points, double thickness, bool rev)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                int v = i + 1;
+                if (v == points.Count)
+                {
+                    v = 0;
+                }
+
+                int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
+                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
+                int c2 = AddVertice(points[v].X, points[v].Y, thickness);
+                int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
+                if (rev)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+            }
+        }
+
         public BaseModellerDialog()
         {
             vertices = new Point3DCollection();

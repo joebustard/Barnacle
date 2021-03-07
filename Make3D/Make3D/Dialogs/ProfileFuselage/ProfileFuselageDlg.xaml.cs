@@ -403,6 +403,7 @@ namespace Make3D.Dialogs
                     double rightx = x;
                     for (int i = 0; i < RibManager.Ribs.Count; i++)
                     {
+                        System.Diagnostics.Debug.WriteLine($"Rib {i}");
                         x = TopView.GetXmm(markers[i].Position);
                         if (i == RibManager.Ribs.Count - 1)
                         {
@@ -411,6 +412,11 @@ namespace Make3D.Dialogs
 
                         for (int proind = start; proind < end; proind++)
                         {
+                            System.Diagnostics.Debug.WriteLine($"proind {proind}");
+                            if (i == 9 && proind == 119)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"proind {proind}");
+                            }
                             PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
                             //double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
                             // double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
@@ -437,7 +443,7 @@ namespace Make3D.Dialogs
                     int f = 0;
                     int g = 0;
                     int first = f;
-
+                    System.Diagnostics.Debug.WriteLine("Starting faces");
                     for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
                     {
                         f = (blk * facesPerRib);
@@ -489,13 +495,13 @@ namespace Make3D.Dialogs
             UpdateCameraPos();
         }
 
-        private void LoadEditorParameters()
+        private async void LoadEditorParameters()
         {
             string s = EditorParameters.Get("Path");
             if (s != "")
             {
                 filePath = s;
-                Read(filePath);
+                await Read(filePath);
             }
         }
 
@@ -679,6 +685,7 @@ namespace Make3D.Dialogs
             if (saveFileDialog.ShowDialog() == true)
             {
                 Write(saveFileDialog.FileName);
+                filePath = saveFileDialog.FileName;
                 dirty = false;
             }
         }
