@@ -21,12 +21,15 @@ namespace Make3D.Dialogs
 
         private double divisionLength;
 
-        private List<PointF> edgePoints;
+        // raw list of points font around the bitmap
+
+        // private List<PointF> edgePoints;
+        private ImageEdge imageEdge;
 
         private string imagePath;
 
-        private double mx;
-        private double my;
+        private double middleX;
+        private double middleY;
         private List<PointF> profilePoints;
 
         private double scale;
@@ -45,14 +48,28 @@ namespace Make3D.Dialogs
             Width = 400;
             Height = 400;
             Header = "";
-            edgePoints = null;
-            NumDivisions = 120;
+            //edgePoints = null;
+            NumDivisions = 80;
             ProfilePoints = new List<PointF>();
             scale = 1;
             SetRibScale();
+            imageEdge = new ImageEdge();
         }
 
-        public double EdgeLength { get; set; }
+        public double EdgeLength
+        {
+            get
+            {
+                if (imageEdge != null)
+                {
+                    return imageEdge.Length;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
 
         public string Header { get; set; }
 
@@ -166,12 +183,7 @@ namespace Make3D.Dialogs
 
         public void FindEdge()
         {
-            double tlx = double.MaxValue;
-            double tly = double.MaxValue;
-            double brx = double.MinValue;
-            double bry = double.MinValue;
-            edgePoints = new List<PointF>();
-            EdgeLength = 0;
+            imageEdge.Clear();
 
             // left side
             double px = 0;
@@ -186,7 +198,7 @@ namespace Make3D.Dialogs
                     if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
                     {
                         found = true;
-                        HandlePoint(ref tlx, ref tly, ref brx, ref bry, px, py, System.Drawing.Color.Blue);
+                        imageEdge.Add(px, py); ;
                     }
                     else
                     {
@@ -195,9 +207,6 @@ namespace Make3D.Dialogs
                 }
                 py++;
             }
-            PointF leftTop = edgePoints[0];
-            int lb = edgePoints.Count - 1;
-            PointF leftBottom = edgePoints[lb];
 
             // right side
             py = workingImage.Height - 1;
@@ -211,8 +220,7 @@ namespace Make3D.Dialogs
                     if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
                     {
                         found = true;
-                        AdjustBounds(ref tlx, ref tly, ref brx, ref bry, px, py);
-                        HandlePoint(ref tlx, ref tly, ref brx, ref bry, px, py, System.Drawing.Color.Red);
+                        imageEdge.Add(px, py);
                     }
                     else
                     {
@@ -221,38 +229,49 @@ namespace Make3D.Dialogs
                 }
                 py--;
             }
-            PointF rightBottom = edgePoints[lb + 1];
-            PointF rightTop = edgePoints[edgePoints.Count - 1];
 
-            PointF midTop = new PointF(leftTop.X + (rightTop.X - leftTop.X) / 2,
-                                       leftTop.Y + (rightTop.Y - leftTop.Y) / 2);
+            imageEdge.Analyse();
 
-            PointF midBottom = new PointF(leftBottom.X + (rightBottom.X - leftBottom.X) / 2,
-                                       leftBottom.Y + (rightBottom.Y - leftBottom.Y) / 2);
+            ShowEdge();
+        }
 
-            edgePoints.Insert(lb + 1, midBottom);
-            edgePoints.Insert(lb + 1, midBottom);
-            edgePoints.Insert(0, midTop);
-            edgePoints.Add(midTop);
-            EdgeLength = 0;
-            for (int i = 1; i < edgePoints.Count; i++)
-            {
-                EdgeLength += Distance(edgePoints[i - 1], edgePoints[i]);
-            }
-            lb += 2;
-
+        public void GenerateProfilePoints(int modelType)
+        {
             divisionLength = EdgeLength / (NumDivisions - 1);
 
-            mx = tlx + (brx - tlx) / 2;
-            my = tly + (bry - tly) / 2;
+            middleX = imageEdge.MiddleX;
+            middleY = imageEdge.MiddleY;
             profilePoints = new List<PointF>();
+
             List<PointF> tmp = new List<PointF>();
-            for (int i = 0; i < edgePoints.Count; i++)
+            int startP = -1;
+            int endP = -1;
+            if (modelType == 0)
             {
-                tmp.Add(new PointF((float)(edgePoints[i].X - mx), (float)(edgePoints[i].Y - my)));
+                startP = imageEdge.WholeStart;
+                endP = imageEdge.WholeEnd;
+                divisionLength = imageEdge.Length / (NumDivisions - 1);
+            }
+            if (modelType == 1)
+            {
+                startP = imageEdge.BackStart;
+                endP = imageEdge.BackEnd;
+                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+            }
+            if (modelType == 2)
+            {
+                startP = imageEdge.FrontStart;
+                endP = imageEdge.FrontEnd;
+                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+            }
+
+            for (int i = startP; i <= endP; i++)
+            {
+                tmp.Add(new PointF((float)(imageEdge.EdgePoints[i].X - middleX), (float)(imageEdge.EdgePoints[i].Y - middleY)));
             }
             // for convenience add the first point onto the end again
             tmp.Add(new PointF(tmp[0].X, tmp[0].Y));
+
             for (int i = 0; i < NumDivisions; i++)
             {
                 double targetDistance = i * divisionLength;
@@ -271,6 +290,7 @@ namespace Make3D.Dialogs
                         double overhang = targetDistance - runningDistance;
                         if (overhang < 0)
                         {
+                            System.Diagnostics.Debug.WriteLine("Distance error creating profile");
                         }
                         if (overhang != 0.0)
                         {
@@ -278,8 +298,8 @@ namespace Make3D.Dialogs
                             double nx = p0.X + (p1.X - p0.X) * delta;
                             double ny = p0.Y + (p1.Y - p0.Y) * delta;
                             //   Mark((int)(nx + mx), (int)(ny + my), System.Windows.Media.Colors.LightGreen);
-                            nx = nx / mx;
-                            ny = ny / my;
+                            nx = nx / middleX;
+                            ny = ny / middleY;
                             profilePoints.Add(new PointF((float)nx, (float)ny));
                         }
                         else
@@ -287,8 +307,8 @@ namespace Make3D.Dialogs
                             double nx = p0.X;
                             double ny = p0.Y;
                             //   Mark((int)(nx + mx), (int)(ny + my), System.Windows.Media.Colors.LightGreen);
-                            nx = nx / mx;
-                            ny = ny / my;
+                            nx = nx / middleX;
+                            ny = ny / middleY;
                             profilePoints.Add(new PointF((float)nx, (float)ny));
                         }
                     }
@@ -296,11 +316,10 @@ namespace Make3D.Dialogs
                     cp++;
                 }
             }
-            if (profilePoints.Count > 0)
+            if (profilePoints.Count != NumDivisions)
             {
-                //           profilePoints.Add(new PointF(profilePoints[0].X, profilePoints[0].Y));
+                System.Diagnostics.Debug.WriteLine("ERROR incorrect number of profile divisions");
             }
-            ShowEdge();
         }
 
         public void SetImageSource()
@@ -323,7 +342,7 @@ namespace Make3D.Dialogs
             RibControl cl = new RibControl();
             cl.Header = Header;
             cl.NumDivisions = NumDivisions;
-            cl.EdgeLength = EdgeLength;
+            cl.imageEdge = imageEdge.Clone();
             cl.ImagePath = ImagePath;
             cl.ProfilePoints = new List<PointF>();
             foreach (PointF fp in profilePoints)
@@ -443,43 +462,6 @@ namespace Make3D.Dialogs
             return Math.Sqrt(diff);
         }
 
-        private bool DuplicateEdgePoint(double px, double py)
-        {
-            bool result = false;
-            foreach (PointF p in edgePoints)
-            {
-                if (p.X == px && p.Y == py)
-                {
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-        }
-
-        private void HandlePoint(ref double tlx, ref double tly, ref double brx, ref double bry, double px, double py, System.Drawing.Color c)
-        {
-            AdjustBounds(ref tlx, ref tly, ref brx, ref bry, px, py);
-
-            if (edgePoints.Count > 0)
-            {
-                if (!DuplicateEdgePoint(px, py))
-                {
-                    PointF p = new PointF((float)px, (float)py);
-                    edgePoints.Add(p);
-                    //                    Mark((int)px, (int)py, c);
-                    //  EdgeLength += Distance(edgePoints[edgePoints.Count - 2],
-                    // edgePoints[edgePoints.Count - 1]);
-                }
-            }
-            else
-            {
-                PointF p = new PointF((float)px, (float)py);
-                edgePoints.Add(p);
-                //                Mark((int)px, (int)py, c);
-            }
-        }
-
         private void LoadImage(string imagePath)
         {
             if (File.Exists(imagePath))
@@ -523,9 +505,9 @@ namespace Make3D.Dialogs
 
         private void ShowEdge()
         {
-            if (edgePoints != null)
+            if (imageEdge.EdgePoints != null)
             {
-                foreach (PointF pnt in edgePoints)
+                foreach (PointF pnt in imageEdge.EdgePoints)
                 {
                     Mark((int)pnt.X, (int)pnt.Y, Color.Blue);
                 }
@@ -538,7 +520,7 @@ namespace Make3D.Dialogs
             {
                 foreach (PointF pnt in profilePoints)
                 {
-                    Mark((int)((1 + pnt.X) * mx), (int)((1 + pnt.Y) * my), Color.Red);
+                    Mark((int)((1 + pnt.X) * middleX), (int)((1 + pnt.Y) * middleY), Color.Red);
                 }
             }
         }

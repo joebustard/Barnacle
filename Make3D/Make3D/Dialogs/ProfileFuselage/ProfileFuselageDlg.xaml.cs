@@ -67,6 +67,11 @@ namespace Make3D.Dialogs
                 {
                     backBody = value;
                     NotifyPropertyChanged();
+                    if (backBody)
+                    {
+                        RibManager.ModelType = 1;
+                    }
+
                     GenerateSkin();
                     Redisplay();
                 }
@@ -85,6 +90,10 @@ namespace Make3D.Dialogs
                 {
                     frontBody = value;
                     NotifyPropertyChanged();
+                    if (frontBody)
+                    {
+                        RibManager.ModelType = 2;
+                    }
                     GenerateSkin();
                     Redisplay();
                 }
@@ -151,6 +160,10 @@ namespace Make3D.Dialogs
                 if (wholeBody != value)
                 {
                     wholeBody = value;
+                    if (wholeBody)
+                    {
+                        RibManager.ModelType = 0;
+                    }
                     NotifyPropertyChanged();
                     GenerateSkin();
                     Redisplay();
@@ -381,21 +394,6 @@ namespace Make3D.Dialogs
                     int start = 0;
                     int end = RibManager.Ribs[0].ProfilePoints.Count;
 
-                    // so if we are only doing the back we only skin the first half
-                    if (backBody)
-                    {
-                        end = end / 2;
-                        facesPerRib = facesPerRib / 2;
-                    }
-
-                    // if its the front we start half way round
-                    if (frontBody)
-                    {
-                        end = RibManager.Ribs[0].ProfilePoints.Count;
-                        start = end / 2;
-                        facesPerRib = facesPerRib / 2;
-                    }
-
                     double x = TopView.GetXmm(markers[0].Position);
                     List<PointF> leftEdge = new List<PointF>();
                     double leftx = x;
@@ -413,19 +411,14 @@ namespace Make3D.Dialogs
                         for (int proind = start; proind < end; proind++)
                         {
                             System.Diagnostics.Debug.WriteLine($"proind {proind}");
-                            if (i == 9 && proind == 119)
-                            {
-                                System.Diagnostics.Debug.WriteLine($"proind {proind}");
-                            }
+
                             PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
-                            //double z = TopView.GetYmm(pnt.X * TopView.Dimensions[i].Height / 2);
-                            // double y = SideView.GetYmm((pnt.Y * SideView.Dimensions[i].Height / 2));
                             double v = pnt.X * TopView.Dimensions[i].Height / 2;
                             double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
 
                             v = pnt.Y * SideView.Dimensions[i].Height / 2;
                             double y = SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
-                            // y += SideView.GetYmm(SideView.Dimensions[i].Mid.Y);
+
                             AddVertice(x, z, y);
                             if (i == 0)
                             {
@@ -514,30 +507,12 @@ namespace Make3D.Dialogs
                 rc.ImagePath = pth;
                 rc.Header = nme;
 
-                XmlNode pnts = el.SelectSingleNode("EdgeDUMMY");
-                if (pnts != null)
-                {
-                    rc.FetchImage();
-                    rc.ProfilePoints.Clear();
-                    double len = Convert.ToDouble((pnts as XmlElement).GetAttribute("EdgeLength"));
-                    rc.EdgeLength = len;
-                    XmlNodeList ndl = pnts.SelectNodes("V");
-                    foreach (XmlNode pn in ndl)
-                    {
-                        XmlElement pe = pn as XmlElement;
-                        float x = (float)Convert.ToDouble(pe.GetAttribute("X"));
-                        float y = (float)Convert.ToDouble(pe.GetAttribute("Y"));
-                        PointF f = new PointF(x, y);
-                        rc.ProfilePoints.Add(f);
-                    }
-                }
-                else
-                {
-                    rc.FetchImage();
-                    rc.ClearSinglePixels();
-                    rc.FindEdge();
-                    rc.SetImageSource();
-                }
+                rc.FetchImage();
+                rc.ClearSinglePixels();
+                rc.FindEdge();
+                rc.GenerateProfilePoints(0);
+                rc.SetImageSource();
+
                 CreateLetter(nme, position, rc);
                 RibManager.Ribs.Add(rc);
             }

@@ -39,7 +39,7 @@
             </ToggleButton>
         </Grid>
 
-        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Padding="5,5,5,5">
 
             <Canvas x:Name="RibCanvas"  Width="800" Height="800" MouseMove="RibCanvas_MouseMove"  MouseUp="RibCanvas_MouseUp" Margin="20,20">
                 <Canvas.LayoutTransform>

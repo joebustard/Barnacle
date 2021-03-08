@@ -18,6 +18,7 @@ namespace Make3D.Dialogs
 
         private bool controlsEnabled;
 
+        private int modelType;
         private ObservableCollection<RibControl> ribs;
 
         private RibControl selectedRib;
@@ -61,11 +62,32 @@ namespace Make3D.Dialogs
             }
         }
 
+        public int ModelType
+        {
+            get
+            {
+                return modelType;
+            }
+            set
+            {
+                if (modelType != value)
+                {
+                    modelType = value;
+                    GenerateProfiles();
+                }
+            }
+        }
+
         public char NextNameLetter { get; set; }
+
         public int NextNameNumber { get; set; }
+
         public RibAdded OnRibAdded { get; set; }
+
         public RibDeleted OnRibDeleted { get; set; }
+
         public RibInserted OnRibInserted { get; set; }
+
         public RibsRenamed OnRibsRenamed { get; set; }
 
         public ObservableCollection<RibControl> Ribs
@@ -142,6 +164,7 @@ namespace Make3D.Dialogs
 
                     rc.ClearSinglePixels();
                     rc.FindEdge();
+
                     rc.SetImageSource();
 
                     string name = "" + NextNameLetter;
@@ -228,6 +251,14 @@ namespace Make3D.Dialogs
         private void Export_Click(object sender, RoutedEventArgs e)
         {
             OnCommandHandler?.Invoke("Export");
+        }
+
+        private void GenerateProfiles()
+        {
+            foreach (RibControl rc in ribs)
+            {
+                rc.GenerateProfilePoints(modelType);
+            }
         }
 
         private void LoadRibs_Click(object sender, RoutedEventArgs e)

@@ -109,6 +109,7 @@
     </Compile>
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\ImageEdge.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageMarker.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\LetterMarker.cs" />
     <Compile Include="Dialogs\ProfileFuselage\NoteWindow.xaml.cs">
@@ -592,6 +593,6 @@ Exit 0
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
-</PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
