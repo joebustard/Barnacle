@@ -8,14 +8,26 @@ namespace Make3D.Models
         private const double TwoPI = Math.PI * 2.0;
         private double phi;
 
+        private double theta;
+
+        public PolarCoordinate(double t, double p, double r)
+        {
+            Theta = t;
+            Phi = p;
+            Rho = r;
+        }
+
         public double Phi
 
         {
-            get { return phi; }
+            get
+            {
+                return phi;
+            }
             set
             {
                 phi = value;
-                if (phi < 0.001)
+                if (phi < 0)
                 {
                     phi = phi + TwoPI;
                 }
@@ -26,15 +38,18 @@ namespace Make3D.Models
             }
         }
 
-        private double theta;
+        public double Rho { get; set; }
 
         public double Theta
         {
-            get { return theta; }
+            get
+            {
+                return theta;
+            }
             set
             {
                 theta = value;
-                if (theta <= 0)
+                if (theta < 0)
                 {
                     theta = theta + TwoPI;
                 }
@@ -45,29 +60,15 @@ namespace Make3D.Models
             }
         }
 
-        public double Rho { get; set; }
-
-        public PolarCoordinate(double t, double p, double r)
+        public Point3D GetPoint3D()
         {
-            Theta = t;
-            Phi = p;
-            Rho = r;
-        }
-
-        internal void Dump()
-        {
-            System.Diagnostics.Debug.WriteLine($"Phi {Phi:F3} Theta {Theta:F3} Rho {Rho:F3}");
-        }
-        public  Point3D GetPoint3D()
-        {
-            
             double x = Rho * Math.Sin(Phi) * Math.Cos(Theta);
             double z = Rho * Math.Sin(Phi) * Math.Sin(Theta);
             double y = Rho * Math.Cos(Phi);
             return (new Point3D(x, y, z));
         }
 
-        public void  SetPoint3D(Point3D p)
+        public void SetPoint3D(Point3D p)
         {
             Rho = Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
             Phi = Math.Acos(p.Z / Rho);
@@ -78,6 +79,11 @@ namespace Make3D.Models
         {
             PolarCoordinate res = new PolarCoordinate(Theta, Phi, Rho);
             return res;
+        }
+
+        internal void Dump()
+        {
+            System.Diagnostics.Debug.WriteLine($"Phi {Phi:F3} Theta {Theta:F3} Rho {Rho:F3}");
         }
     }
 }

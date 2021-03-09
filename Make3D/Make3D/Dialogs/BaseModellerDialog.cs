@@ -18,6 +18,7 @@ namespace Make3D.Dialogs
         protected System.Windows.Media.Color meshColour;
         protected bool showAxies;
         protected bool showFloor;
+        private Bounds3D bounds;
         private Point3D cameraPosition;
         private EditorParameters editorParameters;
         private Vector3D lookDirection;
@@ -25,58 +26,6 @@ namespace Make3D.Dialogs
         private PolarCamera polarCamera;
         private Int32Collection tris;
         private Point3DCollection vertices;
-        private Bounds3D bounds;
-
-        public Bounds3D Bounds
-        {
-            get { return bounds; }
-            set
-            {
-                if (bounds != value)
-                {
-                    bounds = value;
-                }
-            }
-        }
-
-        // run around around a list of points
-        // assume the start and end are linked.
-        protected void CreateSideFaces(List<Point> points, double thickness, bool rev)
-        {
-            for (int i = 0; i < points.Count; i++)
-            {
-                int v = i + 1;
-                if (v == points.Count)
-                {
-                    v = 0;
-                }
-
-                int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
-                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
-                int c2 = AddVertice(points[v].X, points[v].Y, thickness);
-                int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
-                if (rev)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-
-                    Faces.Add(c0);
-                    Faces.Add(c3);
-                    Faces.Add(c2);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c3);
-                }
-            }
-        }
 
         public BaseModellerDialog()
         {
@@ -96,6 +45,21 @@ namespace Make3D.Dialogs
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Bounds3D Bounds
+        {
+            get
+            {
+                return bounds;
+            }
+            set
+            {
+                if (bounds != value)
+                {
+                    bounds = value;
+                }
+            }
+        }
 
         public PolarCamera Camera
         {
@@ -253,11 +217,138 @@ namespace Make3D.Dialogs
             NotifyPropertyChanged("CameraPosition");
         }
 
-        internal void SweepPolarProfile(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs)
+        internal void SweepPolarProfilePhi(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true)
         {
             // now we have a lovely copy of the profile in polar coordinates.
-            Vertices.Clear();
-            Faces.Clear();
+            if (clear)
+            {
+                Vertices.Clear();
+                Faces.Clear();
+            }
+
+            double sweep = sweepRange * (Math.PI * 2.0) / 360.0;
+            double da = sweep / (numSegs - 1);
+            for (int i = 0; i < numSegs; i++)
+            {
+                double a = da * i;
+                int j = i + 1;
+                if (j == numSegs)
+                {
+                    if (sweepRange == 360)
+                    {
+                        j = 0;
+                    }
+                    else
+                    {
+                        // dont connect end to start if the sweep doesn't go all the way round
+                        break;
+                    }
+                }
+                double b = da * j;
+
+                for (int index = 0; index < polarProfile.Count; index++)
+                {
+                    int index2 = index + 1;
+                    if (index2 == polarProfile.Count)
+                    {
+                        index2 = 0;
+                    }
+                    PolarCoordinate pc1 = polarProfile[index].Clone();
+                    PolarCoordinate pc2 = polarProfile[index2].Clone();
+                    PolarCoordinate pc3 = polarProfile[index2].Clone();
+                    PolarCoordinate pc4 = polarProfile[index].Clone();
+                    pc1.Phi -= a;
+                    pc2.Phi -= a;
+                    pc3.Phi -= b;
+                    pc4.Phi -= b;
+
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+                    Point3D p4 = pc4.GetPoint3D();
+
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+                    int v4 = AddVertice(p4);
+
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v4);
+                }
+            }
+            return;
+            if (sweepRange != 360.0)
+            {
+                // both ends will be open.
+                Point3D centreOfProfile = new Point3D(cx, 0, cy);
+                for (int index = 0; index < polarProfile.Count; index++)
+                {
+                    int index2 = index + 1;
+                    if (index2 == polarProfile.Count)
+                    {
+                        index2 = 0;
+                    }
+                    PolarCoordinate pc1 = polarProfile[index].Clone();
+                    PolarCoordinate pc2 = polarProfile[index2].Clone();
+                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
+                    pc3.SetPoint3D(centreOfProfile);
+
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+                }
+
+                for (int index = 0; index < polarProfile.Count; index++)
+                {
+                    int index2 = index + 1;
+                    if (index2 == polarProfile.Count)
+                    {
+                        index2 = 0;
+                    }
+                    PolarCoordinate pc1 = polarProfile[index].Clone();
+                    PolarCoordinate pc2 = polarProfile[index2].Clone();
+                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
+                    pc3.SetPoint3D(centreOfProfile);
+                    pc1.Phi -= sweep;
+                    pc2.Phi -= sweep;
+                    pc3.Phi -= sweep;
+
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+                }
+            }
+        }
+
+        internal void SweepPolarProfileTheta(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true)
+        {
+            // now we have a lovely copy of the profile in polar coordinates.
+            if (clear)
+            {
+                Vertices.Clear();
+                Faces.Clear();
+            }
 
             double sweep = sweepRange * (Math.PI * 2.0) / 360.0;
             double da = sweep / (numSegs - 1);
@@ -445,6 +536,45 @@ namespace Make3D.Dialogs
         {
             Vertices.Clear();
             Faces.Clear();
+        }
+
+        // run around around a list of points
+        // assume the start and end are linked.
+        protected void CreateSideFaces(List<Point> points, double thickness, bool rev)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                int v = i + 1;
+                if (v == points.Count)
+                {
+                    v = 0;
+                }
+
+                int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
+                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
+                int c2 = AddVertice(points[v].X, points[v].Y, thickness);
+                int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
+                if (rev)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+            }
         }
 
         protected GeometryModel3D GetModel()

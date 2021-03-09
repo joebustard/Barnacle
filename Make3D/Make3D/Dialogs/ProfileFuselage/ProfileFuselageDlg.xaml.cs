@@ -417,9 +417,9 @@ namespace Make3D.Dialogs
                             double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
 
                             v = pnt.Y * SideView.Dimensions[i].Height / 2;
-                            double y = SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
+                            double y = -SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
 
-                            AddVertice(x, z, y);
+                            AddVertice(x, y, z);
                             if (i == 0)
                             {
                                 leftEdge.Add(new PointF((float)y, (float)z));
@@ -469,8 +469,8 @@ namespace Make3D.Dialogs
                         Faces.Add(first);
                     }
 
-                    TriangulatePerimiter(leftEdge, leftx, 0, 0, false);
-                    TriangulatePerimiter(rightEdge, rightx, 0, 0, true);
+                    TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
+                    TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
                     CentreVertices();
                 }
             }
@@ -736,9 +736,9 @@ namespace Make3D.Dialogs
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(xo, yo + t.Points[0].Y, z + t.Points[0].X);
-                int c1 = AddVertice(xo, yo + t.Points[1].Y, z + t.Points[1].X);
-                int c2 = AddVertice(xo, yo + t.Points[2].Y, z + t.Points[2].X);
+                int c0 = AddVertice(xo, yo + t.Points[0].X, z + t.Points[0].Y);
+                int c1 = AddVertice(xo, yo + t.Points[1].X, z + t.Points[1].Y);
+                int c2 = AddVertice(xo, yo + t.Points[2].X, z + t.Points[2].Y);
                 if (invert)
                 {
                     Faces.Add(c0);

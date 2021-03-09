@@ -67,15 +67,19 @@
                 <Slider Width="200" Value="{Binding HubThickness}" Minimum="1.0" Maximum="100.0" />
                 <TextBox Text="{Binding HubThickness}" Width="100" />
             </StackPanel>
-            <StackPanel Grid.Row="11" Orientation="Horizontal">
-                <Label Width="100">Axel Bore</Label>
-                <Slider Width="200" Value="{Binding AxelBore}" Minimum="1.0" Maximum="50.0" />
-                <TextBox Text="{Binding AxelBore}" Width="100" />
+            <StackPanel Grid.Row="10" Orientation="Horizontal">
+                <Label Width="100">Tyre Style</Label>
+                <ComboBox Width="150" ItemsSource="{Binding TyreStyles}" SelectedItem="{Binding SelectedTyreStyle}" />
             </StackPanel>
-            <StackPanel Grid.Row="13" Orientation="Horizontal">
+            <StackPanel Grid.Row="11" Orientation="Horizontal">
                 <Label Width="100">Tyre Depth</Label>
                 <Slider Width="200" Value="{Binding TyreDepth}" Minimum="1.0" Maximum="100.0" />
                 <TextBox Text="{Binding TyreDepth}" Width="100" />
+            </StackPanel>
+            <StackPanel Grid.Row="13" Orientation="Horizontal">
+                <Label Width="100">Axel Bore</Label>
+                <Slider Width="200" Value="{Binding AxelBore}" Minimum="1.0" Maximum="50.0" />
+                <TextBox Text="{Binding AxelBore}" Width="100" />
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">

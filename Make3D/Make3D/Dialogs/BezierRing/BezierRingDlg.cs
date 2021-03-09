@@ -507,7 +507,7 @@ namespace Make3D.Dialogs
                     }
                 }
 
-                SweepPolarProfile(polarProfile, cx, cy, sweepDegrees, rotDivisions);
+                SweepPolarProfileTheta(polarProfile, cx, cy, sweepDegrees, rotDivisions);
             }
         }
 

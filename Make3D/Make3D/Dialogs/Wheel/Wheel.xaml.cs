@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make3D.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
@@ -11,6 +12,7 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class Wheel : BaseModellerDialog, INotifyPropertyChanged
     {
+        private double actualRimOutter;
         private double axelBore;
         private double hubInner;
         private double hubOutter;
@@ -21,14 +23,17 @@ namespace Make3D.Dialogs
         private double rimThickness;
         private string selectedHubStyle;
         private string selectedRimStyle;
+        private string selectedTyreStyle;
+        private Double twop = Math.PI * 2.0;
         private double tyreDepth;
+        private List<String> tyreStyles;
 
         public Wheel()
         {
             InitializeComponent();
             ToolName = "Wheel";
             DataContext = this;
-            tyreDepth = 50;
+            tyreDepth = 10;
             hubInner = 10;
             hubOutter = 10;
             axelBore = 5;
@@ -37,6 +42,7 @@ namespace Make3D.Dialogs
             rimOutter = 5;
             hubStyles = new List<string>();
             rimStyles = new List<string>();
+            tyreStyles = new List<string>();
         }
 
         public double AxelBore
@@ -206,6 +212,23 @@ namespace Make3D.Dialogs
             }
         }
 
+        public string SelectedTyreStyle
+        {
+            get
+            {
+                return selectedTyreStyle;
+            }
+            set
+            {
+                if (selectedTyreStyle != value)
+                {
+                    selectedTyreStyle = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public override bool ShowAxies
         {
             get
@@ -251,6 +274,23 @@ namespace Make3D.Dialogs
                 if (tyreDepth != value)
                 {
                     tyreDepth = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public List<String> TyreStyles
+        {
+            get
+            {
+                return tyreStyles;
+            }
+            set
+            {
+                if (tyreStyles != value)
+                {
+                    tyreStyles = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -417,6 +457,7 @@ namespace Make3D.Dialogs
                 GenerateRing(0, 0, 0, rimInnerRadius, rimInnerRadius + ro, t);
                 rimInnerRadius += ro;
             }
+            actualRimOutter = rimInnerRadius;
         }
 
         private void GenerateRing(double cx, double cy, double cz, double ir, double or, double thicky)
@@ -451,11 +492,57 @@ namespace Make3D.Dialogs
             ClearShape();
             GenerateHub();
             GenerateRim();
+            GenerateTyre();
+        }
+
+        private void GenerateTyre()
+        {
+            switch (selectedTyreStyle)
+            {
+                case "1":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateRing(0, 0, 0, tyreInner, tyreOutter, rimThickness + 1);
+                    }
+                    break;
+
+                case "2":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile1(tyreInner, tyreOutter, rimThickness + 1);
+                    }
+                    break;
+            }
+        }
+
+        private void GenerateTyreProfile1(double inner, double outter, double t)
+        {
+            List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
+
+            double cx = inner;
+
+            int rotDivisions = 36;
+            PolarCoordinate pcol;
+
+            pcol = Polar(inner, t, 0);
+            polarProfile.Add(pcol);
+
+            pcol = Polar(outter, t, 0);
+            polarProfile.Add(pcol);
+
+            pcol = Polar(outter, 0, 0);
+            polarProfile.Add(pcol);
+
+            pcol = Polar(inner, 0, 0);
+            polarProfile.Add(pcol);
+
+            SweepPolarProfilePhi(polarProfile, 0, 0, 90, rotDivisions, false);
         }
 
         private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta)
         {
-            Double twop = Math.PI * 2.0;
             switch (selectedHubStyle)
             {
                 case "1":
@@ -481,6 +568,15 @@ namespace Make3D.Dialogs
                         numSpoke = 12;
                         spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
                         spokeDTheta = 0.9 * spokeGapDTheta;
+                        spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                    }
+                    break;
+
+                case "4":
+                    {
+                        numSpoke = 4;
+                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
+                        spokeDTheta = 0.75 * spokeGapDTheta;
                         spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
                     }
                     break;
@@ -517,12 +613,29 @@ namespace Make3D.Dialogs
                         ringThickness.Add(rimThickness * .9);
                     }
                     break;
+
+                case "4":
+                    {
+                        ringRadius.Add(rimOutter / 2);
+                        ringThickness.Add(rimThickness * 0.5);
+                        ringRadius.Add(rimOutter / 2);
+                        ringThickness.Add(rimThickness);
+                    }
+                    break;
             }
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+        }
+
+        private PolarCoordinate Polar(double x, double y, double z)
+        {
+            Point3D p3d = new Point3D(x, y, z);
+            PolarCoordinate pcol = new PolarCoordinate(0, 0, 0);
+            pcol.SetPoint3D(p3d);
+            return pcol;
         }
 
         private void Redisplay()
@@ -569,12 +682,18 @@ namespace Make3D.Dialogs
             hubStyles.Add("1");
             hubStyles.Add("2");
             hubStyles.Add("3");
+            hubStyles.Add("4");
             selectedHubStyle = "1";
 
             rimStyles.Add("1");
             rimStyles.Add("2");
             rimStyles.Add("3");
+            rimStyles.Add("4");
             SelectedRimStyle = "1";
+
+            tyreStyles.Add("1");
+            tyreStyles.Add("2");
+            SelectedTyreStyle = "1";
 
             LoadEditorParameters();
             GenerateShape();
