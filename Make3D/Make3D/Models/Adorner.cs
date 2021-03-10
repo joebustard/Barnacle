@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -10,6 +11,8 @@ namespace Make3D.Models
     public class Adorner
     {
         private Model3DCollection adornments;
+        private List<Object3D> taggedObjects;
+
         public enum NudgeDirection
         {
             Left,
@@ -19,61 +22,36 @@ namespace Make3D.Models
             Forward,
             Back
         }
-        private List<Object3D> taggedObjects;
-        public List<Object3D> SelectedObjects
-        {
-            get { return taggedObjects; }
-            set { taggedObjects = value; }
-        }
+
         public Model3DCollection Adornments
         {
             get { return adornments; }
             set { adornments = value; }
         }
 
-        internal virtual bool Select(GeometryModel3D geo)
-        {
-            bool handled = false;
+        public Canvas Overlay { get; internal set; }
 
-
-            return handled;
-        }
-        internal virtual bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
+        public List<Object3D> SelectedObjects
         {
-            bool handled = false;
-           
-            return handled;
+            get { return taggedObjects; }
+            set { taggedObjects = value; }
         }
 
-        internal virtual void Nudge(Adorner.NudgeDirection dir, double v)
-        {
-           
-        }
-        internal virtual void MouseUp()
-        {
+        public Viewport3D ViewPort { get; set; }
 
-        }
-        internal int NumberOfSelectedObjects()
-        {
-            return SelectedObjects.Count;
-        }
         public virtual void AdornObject(Object3D obj)
         {
-
         }
+
         public virtual void Clear()
         {
             Adornments.Clear();
             SelectedObjects.Clear();
         }
+
         public void Refresh()
         {
             GenerateAdornments();
-        }
-
-        internal virtual void GenerateAdornments()
-        {
-            
         }
 
         internal static GeometryModel3D GetMesh(Object3D obj)
@@ -86,6 +64,37 @@ namespace Make3D.Models
             mt.Brush = new SolidColorBrush(obj.Color);
             gm.Material = mt;
             return gm;
+        }
+
+        internal virtual void GenerateAdornments()
+        {
+        }
+
+        internal virtual bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
+        {
+            bool handled = false;
+
+            return handled;
+        }
+
+        internal virtual void MouseUp()
+        {
+        }
+
+        internal virtual void Nudge(Adorner.NudgeDirection dir, double v)
+        {
+        }
+
+        internal int NumberOfSelectedObjects()
+        {
+            return SelectedObjects.Count;
+        }
+
+        internal virtual bool Select(GeometryModel3D geo)
+        {
+            bool handled = false;
+
+            return handled;
         }
     }
 }

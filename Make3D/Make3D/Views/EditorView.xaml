@@ -13,6 +13,7 @@
     </UserControl.DataContext>
 
     <Grid MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseWheel="Grid_MouseWheel" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
+
         <Viewport3D Name="viewport3D1" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
 
             <Viewport3D.Camera>
@@ -48,5 +49,6 @@
                 </ModelVisual3D.Transform>
             </ModelVisual3D>
         </Viewport3D>
+        <Canvas Name="overlayCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
     </Grid>
 </UserControl>

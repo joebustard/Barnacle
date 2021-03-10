@@ -12,6 +12,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -176,6 +177,8 @@ namespace Make3D.ViewModels
             }
         }
 
+        public Canvas Overlay { get; internal set; }
+
         public void CountFaces()
         {
             totalFaces = 0;
@@ -283,6 +286,7 @@ namespace Make3D.ViewModels
             //  ResetSelectionColours();
             //  selectedObjectAdorner = new SizeAdorner(camera);
             selectedItems.Clear();
+            Overlay.Children.Clear();
             RegenerateDisplayList();
             NotificationManager.Notify("ObjectSelected", null);
         }
@@ -551,6 +555,7 @@ namespace Make3D.ViewModels
                     if (selectedObjectAdorner != null)
                     {
                         selectedObjectAdorner.Clear();
+                        Overlay.Children.Clear();
                     }
                     floorMarker = new FloorMarker();
                     floorMarker.Position = hitPos;
@@ -1097,6 +1102,8 @@ namespace Make3D.ViewModels
             if (sizer)
             {
                 selectedObjectAdorner = new SizeAdorner(camera);
+                selectedObjectAdorner.ViewPort = ViewPort;
+                selectedObjectAdorner.Overlay = Overlay;
             }
             else
             {

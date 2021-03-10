@@ -2,31 +2,39 @@
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Make3D.ViewModels
 {
     internal class BaseViewModel : INotifyPropertyChanged
     {
-        protected bool lastChangeWasNudge;
-
-        public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
         // only one document shared between all the views
         protected static Document document;
+
+        protected bool lastChangeWasNudge;
+
+        private static SolidColorBrush _fillBrushColor = Brushes.Black;
+
+        private static SolidColorBrush _strokeBrushColor = Brushes.Black;
+
+        private static string selectedFont;
+
+        public BaseViewModel()
+        {
+            if (document == null)
+            {
+                document = new Document();
+            }
+            document.PropertyChanged += Document_PropertyChanged;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public static Document Document
         {
             get { return document; }
         }
-
-        private static SolidColorBrush _fillBrushColor = Brushes.Black;
 
         public SolidColorBrush FillColor
         {
@@ -44,27 +52,6 @@ namespace Make3D.ViewModels
                 }
             }
         }
-
-        private static SolidColorBrush _strokeBrushColor = Brushes.Black;
-
-        public SolidColorBrush StrokeColor
-        {
-            get
-            {
-                return _strokeBrushColor;
-            }
-            set
-            {
-                if (value != _strokeBrushColor)
-                {
-                    _strokeBrushColor = value;
-                    NotifyPropertyChanged();
-                    NotificationManager.Notify("StrokeColour", _strokeBrushColor);
-                }
-            }
-        }
-
-        private static string selectedFont;
 
         public String SelectedFont
         {
@@ -84,22 +71,24 @@ namespace Make3D.ViewModels
             }
         }
 
-        public BaseViewModel()
+        public SolidColorBrush StrokeColor
         {
-            if (document == null)
+            get
             {
-                document = new Document();
+                return _strokeBrushColor;
             }
-            document.PropertyChanged += Document_PropertyChanged;
+            set
+            {
+                if (value != _strokeBrushColor)
+                {
+                    _strokeBrushColor = value;
+                    NotifyPropertyChanged();
+                    NotificationManager.Notify("StrokeColour", _strokeBrushColor);
+                }
+            }
         }
 
-        private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Caption")
-            {
-                NotifyPropertyChanged("Caption");
-            }
-        }
+        public Viewport3D ViewPort { get; set; }
 
         public void CheckPoint()
         {
@@ -120,6 +109,14 @@ namespace Make3D.ViewModels
             lastChangeWasNudge = true;
         }
 
+        public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         public void Undo()
         {
             if (undoer.CanUndo())
@@ -130,6 +127,12 @@ namespace Make3D.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Caption")
+            {
+                NotifyPropertyChanged("Caption");
+            }
+        }
     }
 }

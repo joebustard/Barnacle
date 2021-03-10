@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -11,18 +12,13 @@ namespace Make3D.Adorners
 {
     public class SizeAdorner : Adorner
     {
-        private List<Object3D> thumbs;
-
+        private Bounds3D bounds;
         private Object3D box;
         private bool boxSelected;
+        private List<Point3D> labelLocations;
         private Object3D selectedThumb;
-        internal PolarCamera Camera { get; set; }
-        private Bounds3D bounds;
-
-        public Bounds3D Bounds
-        {
-            get { return bounds; }
-        }
+        private List<Label> thumbLabels;
+        private List<Object3D> thumbs;
 
         public SizeAdorner(PolarCamera camera)
         {
@@ -34,12 +30,25 @@ namespace Make3D.Adorners
             box = null;
             boxSelected = false;
             bounds = new Bounds3D();
+            labelLocations = new List<Point3D>();
+            thumbLabels = new List<Label>();
+            ViewPort = null;
             NotificationManager.Subscribe("ScaleRefresh", OnScaleRefresh);
         }
 
-        private void OnScaleRefresh(object param)
+        public Bounds3D Bounds
         {
-            Object3D ob = param as Object3D;
+            get { return bounds; }
+        }
+
+        internal PolarCamera Camera { get; set; }
+
+        public override void AdornObject(Object3D obj)
+        {
+            selectedThumb = null;
+            boxSelected = false;
+            obj.CalcScale(false);
+            SelectedObjects.Add(obj);
             GenerateAdornments();
         }
 
@@ -52,21 +61,14 @@ namespace Make3D.Adorners
             box = null;
             boxSelected = false;
             bounds = new Bounds3D();
-        }
-
-        public override void AdornObject(Object3D obj)
-        {
-            selectedThumb = null;
-            boxSelected = false;
-            obj.CalcScale(false);
-            SelectedObjects.Add(obj);
-            GenerateAdornments();
+            Overlay.Children.Clear();
         }
 
         internal override void GenerateAdornments()
         {
             Adornments.Clear();
             thumbs.Clear();
+            Overlay.Children.Clear();
             bool addSizeThumbs = true;
             bounds = new Bounds3D();
             foreach (Object3D obj in SelectedObjects)
@@ -82,93 +84,34 @@ namespace Make3D.Adorners
             CreateAdornments(midp, size, addSizeThumbs);
         }
 
-        private void CreateAdornments(Point3D position, Point3D size, bool addSizeThumbs)
-        {
-            box = new Object3D();
-
-            // create the main semi transparent part of of the adorner
-            Point3DCollection pnts = new Point3DCollection();
-            Int32Collection indices = new Int32Collection();
-            Vector3DCollection normals = new Vector3DCollection();
-            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
-            box.RelativeObjectVertices = pnts;
-            box.TriangleIndices = indices;
-            box.Normals = normals;
-            box.Position = position;
-            box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
-            //box.Scale.Adjust(1.1, 1.1, 1.1);
-            box.Color = Color.FromArgb(150, 64, 64, 64);
-            box.RelativeToAbsolute();
-            box.SetMesh();
-            Adornments.Add(GetMesh(box));
-
-            if (addSizeThumbs)
-            {
-                double thumbSize = 4;
-                CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
-                CreateThumb(position, thumbSize, -box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "LeftThumb");
-                CreateThumb(position, thumbSize, 0, box.AbsoluteBounds.Height / 2, 0, Colors.White, "TopThumb");
-                CreateThumb(position, thumbSize, 0, -box.AbsoluteBounds.Height / 2, 0, Colors.White, "BottomThumb");
-                CreateThumb(position, thumbSize, 0, 0, box.AbsoluteBounds.Depth / 2, Colors.White, "FrontThumb");
-                CreateThumb(position, thumbSize, 0, 0, -box.AbsoluteBounds.Depth / 2, Colors.White, "BackThumb");
-            }
-        }
-
-        private void CreateThumb(Point3D position, double thumbSize, double x, double y, double z, Color col, string name)
-        {
-            Object3D thumb = new Object3D();
-
-            Point3DCollection pnts = new Point3DCollection();
-            Int32Collection indices = new Int32Collection();
-            Vector3DCollection normals = new Vector3DCollection();
-            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
-            thumb.Name = name;
-            thumb.RelativeObjectVertices = pnts;
-            thumb.TriangleIndices = indices;
-            thumb.Normals = normals;
-
-            position.X += x;
-            position.Y += y;
-            position.Z += z;
-            thumb.Position = position;
-            thumb.Scale = new Scale3D(thumbSize, thumbSize, thumbSize);
-            thumb.ScaleMesh(thumbSize, thumbSize, thumbSize);
-            thumb.Color = col;
-            thumb.RelativeToAbsolute();
-            thumb.SetMesh();
-            thumbs.Add(thumb);
-            Adornments.Add(GetMesh(thumb));
-        }
-
-        internal override bool Select(GeometryModel3D geo)
+        internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
         {
             bool handled = false;
-
-            if (box != null)
+            if (boxSelected)
             {
-                if (box.Mesh == geo.Geometry)
+                handled = true;
+                MouseMoveBox(lastPos, newPos, ctrlDown);
+            }
+            else
+            {
+                if (selectedThumb != null)
                 {
                     handled = true;
-                    boxSelected = true;
-                }
-                else
-                {
-                    foreach (Object3D thumb in thumbs)
-                    {
-                        if (thumb.Mesh == geo.Geometry)
-                        {
-                            handled = true;
-                            selectedThumb = thumb;
-                            break;
-                        }
-                    }
+                    MouseMoveThumb(lastPos, newPos);
                 }
             }
             return handled;
         }
 
+        internal override void MouseUp()
+        {
+            selectedThumb = null;
+            boxSelected = false;
+        }
+
         internal override void Nudge(Adorner.NudgeDirection dir, double v)
         {
+            Overlay.Children.Clear();
             switch (dir)
             {
                 case Adorner.NudgeDirection.Left:
@@ -209,23 +152,165 @@ namespace Make3D.Adorners
             }
         }
 
-        internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
+        internal override bool Select(GeometryModel3D geo)
         {
             bool handled = false;
-            if (boxSelected)
+
+            if (box != null)
             {
-                handled = true;
-                MouseMoveBox(lastPos, newPos, ctrlDown);
-            }
-            else
-            {
-                if (selectedThumb != null)
+                if (box.Mesh == geo.Geometry)
                 {
                     handled = true;
-                    MouseMoveThumb(lastPos, newPos);
+                    boxSelected = true;
+                }
+                else
+                {
+                    foreach (Object3D thumb in thumbs)
+                    {
+                        if (thumb.Mesh == geo.Geometry)
+                        {
+                            handled = true;
+                            selectedThumb = thumb;
+                            break;
+                        }
+                    }
                 }
             }
             return handled;
+        }
+
+        private void AddLabel(double x, double y, double z, string v2)
+        {
+            labelLocations.Add(new Point3D(x, y, z));
+            Label l = new Label();
+            l.Content = v2;
+            l.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
+            l.FontWeight = FontWeights.Bold;
+            thumbLabels.Add(l);
+        }
+
+        private void CreateAdornments(Point3D position, Point3D size, bool addSizeThumbs)
+        {
+            box = new Object3D();
+
+            // create the main semi transparent part of of the adorner
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection indices = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
+            box.RelativeObjectVertices = pnts;
+            box.TriangleIndices = indices;
+            box.Normals = normals;
+            box.Position = position;
+            box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
+            //box.Scale.Adjust(1.1, 1.1, 1.1);
+            box.Color = Color.FromArgb(150, 64, 64, 64);
+            box.RelativeToAbsolute();
+            box.SetMesh();
+            Adornments.Add(GetMesh(box));
+
+            if (addSizeThumbs)
+            {
+                double thumbSize = 4;
+                CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
+                CreateThumb(position, thumbSize, -box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "LeftThumb");
+                CreateThumb(position, thumbSize, 0, box.AbsoluteBounds.Height / 2, 0, Colors.White, "TopThumb");
+                CreateThumb(position, thumbSize, 0, -box.AbsoluteBounds.Height / 2, 0, Colors.White, "BottomThumb");
+                CreateThumb(position, thumbSize, 0, 0, box.AbsoluteBounds.Depth / 2, Colors.White, "FrontThumb");
+                CreateThumb(position, thumbSize, 0, 0, -box.AbsoluteBounds.Depth / 2, Colors.White, "BackThumb");
+                LabelThumbs(size);
+            }
+        }
+
+        private void CreateThumb(Point3D position, double thumbSize, double x, double y, double z, Color col, string name)
+        {
+            Object3D thumb = new Object3D();
+
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection indices = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
+            thumb.Name = name;
+            thumb.RelativeObjectVertices = pnts;
+            thumb.TriangleIndices = indices;
+            thumb.Normals = normals;
+
+            position.X += x;
+            position.Y += y;
+            position.Z += z;
+            thumb.Position = position;
+            thumb.Scale = new Scale3D(thumbSize, thumbSize, thumbSize);
+            thumb.ScaleMesh(thumbSize, thumbSize, thumbSize);
+            thumb.Color = col;
+            thumb.RelativeToAbsolute();
+            thumb.SetMesh();
+            thumbs.Add(thumb);
+            Adornments.Add(GetMesh(thumb));
+        }
+
+        private void LabelThumbs(Point3D size, String name = "")
+        {
+            labelLocations.Clear();
+            thumbLabels.Clear();
+            Overlay.Children.Clear();
+            foreach (Object3D th in thumbs)
+            {
+                if (name == "" || th.Name == name)
+                {
+                    switch (th.Name)
+                    {
+                        case "TopThumb":
+                            {
+                                AddLabel(th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
+                            }
+                            break;
+
+                        case "BottomThumb":
+                            {
+                                AddLabel(th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
+                            }
+                            break;
+
+                        case "LeftThumb":
+                            {
+                                FormattedText txt = new FormattedText(size.X.ToString(), System.Globalization.CultureInfo.CurrentCulture,
+                                   FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
+
+                                AddLabel(th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
+                            }
+                            break;
+
+                        case "RightThumb":
+                            {
+                                AddLabel(th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
+                            }
+                            break;
+
+                        case "FrontThumb":
+                            {
+                                if (Camera.Orientation != PolarCamera.Orientations.Back)
+                                {
+                                    AddLabel(th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
+                                }
+                            }
+                            break;
+
+                        case "BackThumb":
+                            {
+                                if (Camera.Orientation != PolarCamera.Orientations.Front)
+                                {
+                                    AddLabel(th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if (labelLocations.Count > 0)
+            {
+                PositionLabels();
+            }
         }
 
         private void MouseMoveBox(Point lastPos, Point newPos, bool ctrlDown)
@@ -248,61 +333,6 @@ namespace Make3D.Adorners
             }
 
             MoveBox(deltaX, deltaY, deltaZ);
-        }
-
-        private void MoveBox(double deltaX, double deltaY, double deltaZ)
-        {
-            Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
-            switch (ori)
-            {
-                case PolarCamera.Orientations.Front:
-                    {
-                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Back:
-                    {
-                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Left:
-                    {
-                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Right:
-                    {
-                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
-                    }
-                    break;
-            }
-
-            if (positionChange != null)
-            {
-                box.Position = new Point3D(box.Position.X + positionChange.X,
-                                            box.Position.Y + positionChange.Y,
-                                            box.Position.Z + positionChange.Z);
-                box.Remesh();
-                foreach (Object3D obj in SelectedObjects)
-                {
-                    obj.Position = new Point3D(obj.Position.X + positionChange.X,
-                    obj.Position.Y + positionChange.Y,
-                    obj.Position.Z + positionChange.Z);
-                    obj.Remesh();
-                    NotificationManager.Notify("PositionUpdated", obj);
-                }
-                MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
-                MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
-                MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
-                MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
-                MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
-                MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
-                NotificationManager.Notify("DocDirty", null);
-            }
         }
 
         private void MouseMoveThumb(Point lastPos, Point newPos)
@@ -488,8 +518,64 @@ namespace Make3D.Adorners
             MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
             MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
             MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
+            LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
             NotificationManager.Notify("DocDirty", null);
             NotificationManager.Notify("ScaleUpdated", null);
+        }
+
+        private void MoveBox(double deltaX, double deltaY, double deltaZ)
+        {
+            Point3D positionChange = new Point3D(0, 0, 0);
+            PolarCamera.Orientations ori = Camera.Orientation;
+            switch (ori)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
+                    }
+                    break;
+            }
+
+            if (positionChange != null)
+            {
+                box.Position = new Point3D(box.Position.X + positionChange.X,
+                                            box.Position.Y + positionChange.Y,
+                                            box.Position.Z + positionChange.Z);
+                box.Remesh();
+                foreach (Object3D obj in SelectedObjects)
+                {
+                    obj.Position = new Point3D(obj.Position.X + positionChange.X,
+                    obj.Position.Y + positionChange.Y,
+                    obj.Position.Z + positionChange.Z);
+                    obj.Remesh();
+                    NotificationManager.Notify("PositionUpdated", obj);
+                }
+                MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
+                MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
+                MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
+                MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
+                MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
+                MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
+                NotificationManager.Notify("DocDirty", null);
+            }
         }
 
         private void MoveThumb(Point3D p, double v1, double v2, double v3, string name)
@@ -505,10 +591,24 @@ namespace Make3D.Adorners
             }
         }
 
-        internal override void MouseUp()
+        private void OnScaleRefresh(object param)
         {
-            selectedThumb = null;
-            boxSelected = false;
+            Object3D ob = param as Object3D;
+            GenerateAdornments();
+        }
+
+        private void PositionLabels()
+        {
+            if (ViewPort != null)
+            {
+                List<Point> points = CameraUtils.Convert3DPoints(labelLocations, ViewPort);
+                for (int i = 0; i < labelLocations.Count; i++)
+                {
+                    Canvas.SetLeft(thumbLabels[i], points[i].X);
+                    Canvas.SetTop(thumbLabels[i], points[i].Y);
+                    Overlay.Children.Add(thumbLabels[i]);
+                }
+            }
         }
     }
 }

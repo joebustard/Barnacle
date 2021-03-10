@@ -11,9 +11,46 @@ namespace Make3D.ViewModels
     {
         private bool canScale;
 
+        private Color objectColour;
+
+        private string objectName;
+
+        private double percentScale;
+
+        private double rotationX;
+
+        private double rotationY;
+
+        private double rotationZ;
+
+        private Object3D selectedObject;
+
+        public ObjectPropertiesViewModel()
+        {
+            selectedObject = null;
+            RotateXCommand = new RelayCommand(OnRotateX);
+            RotateYCommand = new RelayCommand(OnRotateY);
+            RotateZCommand = new RelayCommand(OnRotateZ);
+            ScaleByPercentCommand = new RelayCommand(OnScaleByPercent);
+            MoveToFloorCommand = new RelayCommand(OnMoveToFloor);
+            MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
+            NudgeCommand = new RelayCommand(OnNudge);
+            NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
+            NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
+            NotificationManager.Subscribe("PositionUpdated", OnPositionUpdated);
+            rotationX = 90;
+            rotationY = 90;
+            rotationZ = 90;
+            PercentScale = 1;
+            CanScale = false;
+        }
+
         public bool CanScale
         {
-            get { return canScale; }
+            get
+            {
+                return canScale;
+            }
             set
             {
                 if (value != canScale)
@@ -24,27 +61,40 @@ namespace Make3D.ViewModels
             }
         }
 
-        private double percentScale;
+        public ICommand MoveToCentreCommand { get; set; }
 
-        public double PercentScale
+        public ICommand MoveToFloorCommand { get; set; }
+
+        public ICommand NudgeCommand { get; set; }
+
+        public Color ObjectColour
         {
-            get { return percentScale; }
+            get
+            {
+                return objectColour;
+            }
             set
             {
-                if (percentScale != value)
+                if (objectColour != value)
                 {
-                    percentScale = value;
-
+                    objectColour = value;
                     NotifyPropertyChanged();
+                    if (selectedObject != null)
+                    {
+                        CheckPoint();
+                        selectedObject.Color = objectColour;
+                        Document.Dirty = true;
+                    }
                 }
             }
         }
 
-        private string objectName;
-
         public String ObjectName
         {
-            get { return objectName; }
+            get
+            {
+                return objectName;
+            }
             set
             {
                 if (objectName != value)
@@ -65,23 +115,19 @@ namespace Make3D.ViewModels
             }
         }
 
-        private Color objectColour;
-
-        public Color ObjectColour
+        public double PercentScale
         {
-            get { return objectColour; }
+            get
+            {
+                return percentScale;
+            }
             set
             {
-                if (objectColour != value)
+                if (percentScale != value)
                 {
-                    objectColour = value;
+                    percentScale = value;
+
                     NotifyPropertyChanged();
-                    if (selectedObject != null)
-                    {
-                        CheckPoint();
-                        selectedObject.Color = objectColour;
-                        Document.Dirty = true;
-                    }
                 }
             }
         }
@@ -187,6 +233,65 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
+        public ICommand RotateXCommand { get; set; }
+
+        public ICommand RotateYCommand { get; set; }
+
+        public ICommand RotateZCommand { get; set; }
+
+        public double RotationX
+        {
+            get
+            {
+                return rotationX;
+            }
+
+            set
+            {
+                if (rotationX != value)
+                {
+                    rotationX = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double RotationY
+        {
+            get
+            {
+                return rotationY;
+            }
+
+            set
+            {
+                if (rotationY != value)
+                {
+                    rotationY = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double RotationZ
+        {
+            get
+            {
+                return rotationZ;
+            }
+
+            set
+            {
+                if (rotationZ != value)
+                {
+                    rotationZ = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ICommand ScaleByPercentCommand { get; set; }
 
         public String ScaleX
         {
@@ -300,63 +405,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private double rotationX;
-
-        public double RotationX
-        {
-            get
-            {
-                return rotationX;
-            }
-
-            set
-            {
-                if (rotationX != value)
-                {
-                    rotationX = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double rotationY;
-
-        public double RotationY
-        {
-            get
-            {
-                return rotationY;
-            }
-
-            set
-            {
-                if (rotationY != value)
-                {
-                    rotationY = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double rotationZ;
-
-        public double RotationZ
-        {
-            get
-            {
-                return rotationZ;
-            }
-
-            set
-            {
-                if (rotationZ != value)
-                {
-                    rotationZ = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         private double GetDouble(string value)
         {
             double res = 0.0;
@@ -370,61 +418,21 @@ namespace Make3D.ViewModels
             return res;
         }
 
-        private Object3D selectedObject;
-
-        public ICommand MoveToFloorCommand { get; set; }
-        public ICommand NudgeCommand { get; set; }
-        public ICommand MoveToCentreCommand { get; set; }
-        public ICommand RotateXCommand { get; set; }
-        public ICommand RotateYCommand { get; set; }
-        public ICommand RotateZCommand { get; set; }
-        public ICommand ScaleByPercentCommand { get; set; }
-
-        public ObjectPropertiesViewModel()
-        {
-            selectedObject = null;
-            RotateXCommand = new RelayCommand(OnRotateX);
-            RotateYCommand = new RelayCommand(OnRotateY);
-            RotateZCommand = new RelayCommand(OnRotateZ);
-            ScaleByPercentCommand = new RelayCommand(OnScaleByPercent);
-            MoveToFloorCommand = new RelayCommand(OnMoveToFloor);
-            MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
-            NudgeCommand = new RelayCommand(OnNudge);
-            NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
-            NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
-            NotificationManager.Subscribe("PositionUpdated", OnPositionUpdated);
-            rotationX = 90;
-            rotationY = 90;
-            rotationZ = 90;
-            PercentScale = 1;
-            CanScale = false;
-        }
-
-        private void OnScaleByPercent(object obj)
+        private void OnMoveToCentre(object obj)
         {
             if (selectedObject != null)
             {
-                double v = 100.0;
-                if (obj.ToString() == "+")
-                {
-                    v += percentScale;
-                }
-                else
-                {
-                    v -= percentScale;
-                }
-                v = v / 100.0;
-                CheckPoint();
-
-                selectedObject.ScaleMesh(v, v, v);
-                selectedObject.Remesh();
-                selectedObject.CalcScale(false);
-                NotifyPropertyChanged();
-
-                NotificationManager.Notify("ScaleRefresh", selectedObject);
+                NotificationManager.Notify("MoveObjectToCentre", selectedObject);
                 NotificationManager.Notify("RefreshAdorners", null);
-                OnScaleUpdated(null);
-                Document.Dirty = true;
+            }
+        }
+
+        private void OnMoveToFloor(object obj)
+        {
+            if (selectedObject != null)
+            {
+                NotificationManager.Notify("MoveObjectToFloor", selectedObject);
+                NotificationManager.Notify("RefreshAdorners", null);
             }
         }
 
@@ -485,6 +493,36 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnObjectSelected(object param)
+        {
+            selectedObject = param as Object3D;
+            if (selectedObject == null)
+            {
+                //objectColour = new SolidColorBrush(Colors.Transparent);
+                objectColour = Colors.White;
+                objectName = "";
+            }
+            else
+            {
+                objectColour = selectedObject.Color;
+                objectName = selectedObject.Name;
+                CanScale = selectedObject.IsSizable();
+            }
+            NotifyPropertyChanged("PositionX");
+            NotifyPropertyChanged("PositionY");
+            NotifyPropertyChanged("PositionZ");
+
+            NotifyPropertyChanged("ScaleX");
+            NotifyPropertyChanged("ScaleY");
+            NotifyPropertyChanged("ScaleZ");
+
+            NotifyPropertyChanged("RotationX");
+            NotifyPropertyChanged("RotationY");
+            NotifyPropertyChanged("RotationZ");
+            NotifyPropertyChanged("ObjectColour");
+            NotifyPropertyChanged("ObjectName");
+        }
+
         private void OnPositionUpdated(object param)
         {
             Object3D o = param as Object3D;
@@ -512,20 +550,6 @@ namespace Make3D.ViewModels
                 p2 = new Point3D(-rotationX, 0, 0);
             }
             RotateSelected(p2);
-        }
-
-        private void RotateSelected(Point3D p2)
-        {
-            if (selectedObject != null)
-            {
-                CheckPoint();
-                selectedObject.Rotate(p2);
-                selectedObject.Remesh();
-
-                NotifyPropertyChanged();
-                NotificationManager.Notify("Refresh", null);
-                Document.Dirty = true;
-            }
         }
 
         private void OnRotateY(object obj)
@@ -556,6 +580,34 @@ namespace Make3D.ViewModels
             RotateSelected(p2);
         }
 
+        private void OnScaleByPercent(object obj)
+        {
+            if (selectedObject != null)
+            {
+                double v = 100.0;
+                if (obj.ToString() == "+")
+                {
+                    v += percentScale;
+                }
+                else
+                {
+                    v -= percentScale;
+                }
+                v = v / 100.0;
+                CheckPoint();
+
+                selectedObject.ScaleMesh(v, v, v);
+                selectedObject.Remesh();
+                selectedObject.CalcScale(false);
+                NotifyPropertyChanged();
+
+                NotificationManager.Notify("ScaleRefresh", selectedObject);
+                NotificationManager.Notify("RefreshAdorners", null);
+                OnScaleUpdated(null);
+                Document.Dirty = true;
+            }
+        }
+
         private void OnScaleUpdated(object param)
         {
             NotifyPropertyChanged("ScaleX");
@@ -563,50 +615,19 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("ScaleZ");
         }
 
-        private void OnMoveToFloor(object obj)
+        private void RotateSelected(Point3D p2)
         {
             if (selectedObject != null)
             {
-                NotificationManager.Notify("MoveObjectToFloor", selectedObject);
-            }
-        }
+                CheckPoint();
+                selectedObject.Rotate(p2);
+                selectedObject.Remesh();
 
-        private void OnMoveToCentre(object obj)
-        {
-            if (selectedObject != null)
-            {
-                NotificationManager.Notify("MoveObjectToCentre", selectedObject);
+                NotifyPropertyChanged();
+                NotificationManager.Notify("ScaleRefresh", selectedObject);
+                NotificationManager.Notify("RefreshAdorners", null);
+                Document.Dirty = true;
             }
-        }
-
-        private void OnObjectSelected(object param)
-        {
-            selectedObject = param as Object3D;
-            if (selectedObject == null)
-            {
-                //objectColour = new SolidColorBrush(Colors.Transparent);
-                objectColour = Colors.White;
-                objectName = "";
-            }
-            else
-            {
-                objectColour = selectedObject.Color;
-                objectName = selectedObject.Name;
-                CanScale = selectedObject.IsSizable();
-            }
-            NotifyPropertyChanged("PositionX");
-            NotifyPropertyChanged("PositionY");
-            NotifyPropertyChanged("PositionZ");
-
-            NotifyPropertyChanged("ScaleX");
-            NotifyPropertyChanged("ScaleY");
-            NotifyPropertyChanged("ScaleZ");
-
-            NotifyPropertyChanged("RotationX");
-            NotifyPropertyChanged("RotationY");
-            NotifyPropertyChanged("RotationZ");
-            NotifyPropertyChanged("ObjectColour");
-            NotifyPropertyChanged("ObjectName");
         }
     }
 }
