@@ -176,6 +176,12 @@ namespace Make3D.Dialogs
                 cl.Add(p.X, p.Y);
             }
             cl.Length = Length;
+            cl.BackStart = BackStart;
+            cl.BackEnd = BackEnd;
+            cl.FrontStart = FrontStart;
+            cl.FrontEnd = FrontEnd;
+            cl.WholeStart = WholeStart;
+            cl.WholeEnd = WholeEnd;
             return cl;
         }
 

@@ -359,7 +359,7 @@ namespace Make3D.Dialogs
                     cl.WorkingImage.SetPixel(px, py, workingImage.GetPixel(px, py));
                 }
             }
-
+            cl.src = src;
             return cl;
         }
 
@@ -503,6 +503,35 @@ namespace Make3D.Dialogs
             RibScale.ScaleY = scale;
         }
 
+        private void ShowCenters()
+        {
+            int topi = imageEdge.BackStart;
+            PointF pt = imageEdge.EdgePoints[topi];
+
+            int bottomi = imageEdge.BackEnd;
+            PointF pb = imageEdge.EdgePoints[bottomi];
+
+            double x;
+            double y;
+            double my = pt.Y + (pb.Y - pt.Y) / 2;
+            for (y = pt.Y; y <= my; y++)
+            {
+                Mark((int)pt.X, (int)y, Color.DarkMagenta);
+            }
+            for (y = my; y <= pb.Y; y++)
+            {
+                Mark((int)pb.X, (int)y, Color.Teal);
+            }
+        }
+
+        private void ShowCenters_Click(object sender, RoutedEventArgs e)
+        {
+            if (src != null)
+            {
+                ShowWorkingImage();
+            }
+        }
+
         private void ShowEdge()
         {
             if (imageEdge.EdgePoints != null)
@@ -544,7 +573,10 @@ namespace Make3D.Dialogs
             {
                 ShowProfile();
             }
-
+            if (ShowCentersBut.IsChecked == true)
+            {
+                ShowCenters();
+            }
             SetImageSource();
         }
 

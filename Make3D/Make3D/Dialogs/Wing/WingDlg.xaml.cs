@@ -18,6 +18,8 @@ namespace Make3D.Dialogs
         private List<String> airfoilGroups;
         private string airFoilPath;
         private bool bottomModelChecked;
+        private double dihedralAngle;
+        private double dihedralLimit = 20;
         private List<String> rootairfoilNames;
         private string rootGroup;
         private double rootLength;
@@ -28,10 +30,8 @@ namespace Make3D.Dialogs
         private List<String> shapeNames;
         private double span;
         private double sweepAngle;
-        private double dihedralAngle;
         private Visibility sweepControlsVisible;
         private double sweepLimit = 60;
-        private double dihedralLimit = 20;
         private List<String> tipairfoilNames;
         private Visibility tipControlsVisible;
         private string tipGroup;
@@ -88,6 +88,33 @@ namespace Make3D.Dialogs
                 if (bottomModelChecked != value)
                 {
                     bottomModelChecked = value;
+                    NotifyPropertyChanged();
+                    Update();
+                }
+            }
+        }
+
+        public double DihedralAngle
+        {
+            get
+            {
+                return dihedralAngle;
+            }
+            set
+            {
+                if (dihedralAngle != value)
+                {
+                    dihedralAngle = value;
+                    if (dihedralAngle < -dihedralLimit)
+                    {
+                        dihedralAngle = -dihedralLimit;
+                    }
+
+                    if (dihedralAngle > sweepLimit)
+                    {
+                        dihedralAngle = sweepLimit;
+                    }
+
                     NotifyPropertyChanged();
                     Update();
                 }
@@ -310,33 +337,6 @@ namespace Make3D.Dialogs
             }
         }
 
-        public double DihedralAngle
-        {
-            get
-            {
-                return dihedralAngle;
-            }
-            set
-            {
-                if (dihedralAngle != value)
-                {
-                    dihedralAngle = value;
-                    if (dihedralAngle < -dihedralLimit)
-                    {
-                        dihedralAngle = -dihedralLimit;
-                    }
-
-                    if (dihedralAngle > sweepLimit)
-                    {
-                        dihedralAngle = sweepLimit;
-                    }
-
-                    NotifyPropertyChanged();
-                    Update();
-                }
-            }
-        }
-
         public Visibility SweepControlsVisible
         {
             get
@@ -489,6 +489,56 @@ namespace Make3D.Dialogs
             return Math.Sqrt((dx * dx) + (dy * dy));
         }
 
+        private void EllipseTip(List<Point> tipPnts, double mainRad, double tX, double tY, double tZ)
+        {
+            List<Point3D> tipEdge = new List<Point3D>();
+            double md = mainRad * 2;
+            double stepSize = 1.0 / (tipPnts.Count - 1);
+            if (!WholeModelChecked)
+            {
+                stepSize = stepSize * 2;
+            }
+            if (wholeModelChecked || topModelChecked)
+            {
+                for (double t = 0; t < 0.5; t += stepSize)
+                {
+                    Point elp = GetEllipsePoint(mainRad, mainRad / 10, t);
+                    Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                    tipEdge.Add(p);
+                }
+            }
+            if (wholeModelChecked || bottomModelChecked)
+            {
+                for (double t = 0.5; t >= 0; t -= stepSize)
+                {
+                    Point elp = GetEllipsePoint(mainRad, mainRad / 10, t);
+                    Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                    tipEdge.Add(p);
+                }
+            }
+
+            for (int i = 0; i < tipPnts.Count - 1; i++)
+            {
+                Point3D pd1 = new Point3D(tX + (tipPnts[i].X * md), tY + (tipPnts[i].Y * md), tZ);
+                Point3D pd2 = new Point3D(tipEdge[i].X, tipEdge[i].Y, tipEdge[i].Z);
+                Point3D pd3 = new Point3D(tipEdge[i + 1].X, tipEdge[i + 1].Y, tipEdge[i + 1].Z);
+                Point3D pd4 = new Point3D(tX + (tipPnts[i + 1].X * md), tY + (tipPnts[i + 1].Y * md), tZ);
+
+                int v1 = AddVertice(pd1);
+                int v2 = AddVertice(pd2);
+                int v3 = AddVertice(pd3);
+                int v4 = AddVertice(pd4);
+
+                Faces.Add(v1);
+                Faces.Add(v2);
+                Faces.Add(v3);
+
+                Faces.Add(v1);
+                Faces.Add(v3);
+                Faces.Add(v4);
+            }
+        }
+
         private void EnableControlsForShape()
         {
             switch (selectedShape)
@@ -628,7 +678,6 @@ namespace Make3D.Dialogs
                                 Point p3 = GetProfileAt(tipProfile, tipEdgeLength, endT);
                                 Point p4 = GetProfileAt(tipProfile, tipEdgeLength, startT);
 
-
                                 Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
                                 Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
                                 Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
@@ -649,12 +698,33 @@ namespace Make3D.Dialogs
                             }
 
                             TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
-                            TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
+                            if (selectedTipShape == "Cut Off")
+                            {
+                                TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
+                            }
+                            else
+                            if (selectedTipShape == "Ellipse")
+                            {
+                                EllipseTip(tipPnts, tl / 2, tipOffsetX, tipOffsetY, tipOffsetZ);
+                            }
+
                             CentreVertices();
                         }
                     }
                 }
             }
+        }
+
+        private Point GetEllipsePoint(double a, double b, double t)
+        {
+            Point res = new Point(0, 0);
+            if (t >= 0 && t <= 1)
+            {
+                double theta = t * Math.PI * 2;
+                res.X = a * Math.Cos(theta);
+                res.Y = b * Math.Sin(theta);
+            }
+            return res;
         }
 
         private Point GetProfileAt(List<Point> profile, double length, double t)
@@ -698,35 +768,6 @@ namespace Make3D.Dialogs
             return res;
         }
 
-        private void TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert)
-        {
-            TriangulationPolygon ply = new TriangulationPolygon();
-            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-            foreach (Point p in points)
-            {
-                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-            }
-            ply.Points = pf.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
-                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
-                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
-                if (invert)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
-            }
-        }
         private List<Point> GetProfilePoints(string grpName, string airfoil, double len, ref double dist)
         {
             List<Point> res = new List<Point>();
@@ -905,8 +946,38 @@ namespace Make3D.Dialogs
 
             tipShapeNames.Add("Cut Off");
             tipShapeNames.Add("Ellipse");
-            tipShapeNames.Add("Stadium");
+
             NotifyPropertyChanged("TipShapeNames");
+        }
+
+        private void TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (Point p in points)
+            {
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
         }
 
         private void Update()
