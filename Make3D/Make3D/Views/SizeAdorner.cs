@@ -61,14 +61,14 @@ namespace Make3D.Adorners
             box = null;
             boxSelected = false;
             bounds = new Bounds3D();
-            Overlay.Children.Clear();
+            Overlay?.Children.Clear();
         }
 
         internal override void GenerateAdornments()
         {
             Adornments.Clear();
             thumbs.Clear();
-            Overlay.Children.Clear();
+            Overlay?.Children.Clear();
             bool addSizeThumbs = true;
             bounds = new Bounds3D();
             foreach (Object3D obj in SelectedObjects)

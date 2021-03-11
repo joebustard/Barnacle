@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Make3D.Dialogs
 {
@@ -96,8 +93,8 @@ namespace Make3D.Dialogs
                 if (edgePoints[0].X < edgePoints[l].X)
                 {
                     double xm = edgePoints[0].X + (edgePoints[l].X - edgePoints[0].X) / 2;
-                    edgePoints.Insert(0, new PointF(((float)xm - 0.00001F), edgePoints[0].Y));
-                    edgePoints.Add(new PointF(((float)xm + 0.00001F), edgePoints[0].Y));
+                    edgePoints.Insert(0, new PointF(((float)xm - 0.000001F), edgePoints[0].Y));
+                    edgePoints.Add(new PointF(((float)xm + 0.000001F), edgePoints[0].Y));
                 }
             }
             else
@@ -105,7 +102,7 @@ namespace Make3D.Dialogs
                 // This can only mean that the top "line" of the edge is a single pixel.
                 // add a sneaky one to its right
                 double xm = edgePoints[0].X;
-                edgePoints.Add(new PointF(((float)xm + 0.00001F), edgePoints[0].Y));
+                edgePoints.Add(new PointF(((float)xm + 0.000001F), edgePoints[0].Y));
             }
 
             // find the two bottom points
@@ -130,8 +127,8 @@ namespace Make3D.Dialogs
                 {
                     // bottom is a line, split it at a mid point with two new dummies
                     double xm = edgePoints[bl].X + (edgePoints[br].X - edgePoints[bl].X) / 2;
-                    edgePoints.Insert(br, new PointF(((float)xm + 0.00001F), edgePoints[br].Y));
-                    edgePoints.Insert(bl + 1, new PointF(((float)xm - 0.00001F), edgePoints[br].Y));
+                    edgePoints.Insert(br, new PointF(((float)xm + 0.000001F), edgePoints[br].Y));
+                    edgePoints.Insert(bl + 1, new PointF(((float)xm - 0.000001F), edgePoints[br].Y));
                 }
                 else
                 {

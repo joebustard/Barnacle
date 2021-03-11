@@ -2268,6 +2268,8 @@ namespace Make3D.ViewModels
             }
 
             selectedObjectAdorner = new SizeAdorner(camera);
+            selectedObjectAdorner.Overlay = Overlay;
+            selectedObjectAdorner.ViewPort = ViewPort;
             selectedItems.Clear();
         }
 

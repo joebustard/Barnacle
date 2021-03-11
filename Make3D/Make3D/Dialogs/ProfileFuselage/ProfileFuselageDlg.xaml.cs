@@ -408,25 +408,31 @@ namespace Make3D.Dialogs
                             rightx = x;
                         }
 
-                        for (int proind = start; proind < end; proind++)
+                        for (int proind = start; proind <= end; proind++)
                         {
-                            System.Diagnostics.Debug.WriteLine($"proind {proind}");
-
-                            PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
-                            double v = pnt.X * TopView.Dimensions[i].Height / 2;
-                            double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
-
-                            v = pnt.Y * SideView.Dimensions[i].Height / 2;
-                            double y = -SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
-
-                            AddVertice(x, y, z);
-                            if (i == 0)
+                            if (proind < RibManager.Ribs[i].ProfilePoints.Count)
                             {
-                                leftEdge.Add(new PointF((float)y, (float)z));
+                                PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
+                                System.Diagnostics.Debug.WriteLine($"proind {proind} {pnt.X},{pnt.Y}");
+                                double v = pnt.X * TopView.Dimensions[i].Height / 2;
+                                double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
+
+                                v = pnt.Y * SideView.Dimensions[i].Height / 2;
+                                double y = -SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
+
+                                AddVertice(x, y, z);
+                                if (i == 0)
+                                {
+                                    leftEdge.Add(new PointF((float)y, (float)z));
+                                }
+                                if (i == RibManager.Ribs.Count - 1)
+                                {
+                                    rightEdge.Add(new PointF((float)y, (float)z));
+                                }
                             }
-                            if (i == RibManager.Ribs.Count - 1)
+                            else
                             {
-                                rightEdge.Add(new PointF((float)y, (float)z));
+                                System.Diagnostics.Debug.WriteLine($"ERROR proind {proind} ProfilePoints Count {RibManager.Ribs[i].ProfilePoints.Count}");
                             }
                         }
                     }
