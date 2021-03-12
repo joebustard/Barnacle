@@ -194,8 +194,11 @@ namespace Make3D.Dialogs
                             {
                                 topViewFilename = opDlg.FileName;
                                 TopView.ImageFilePath = topViewFilename;
-                                TopView.UpdateLayout();
-                                dirty = true;
+                                if (TopView.IsValid)
+                                {
+                                    TopView.UpdateLayout();
+                                    dirty = true;
+                                }
                             }
                             catch
                             {
@@ -213,7 +216,10 @@ namespace Make3D.Dialogs
                             {
                                 sideViewFilename = opDlg.FileName;
                                 SideView.ImageFilePath = sideViewFilename;
-                                SideView.UpdateLayout();
+                                if (SideView.IsValid)
+                                {
+                                    SideView.UpdateLayout();
+                                }
                                 dirty = true;
                             }
                             catch
@@ -383,9 +389,11 @@ namespace Make3D.Dialogs
                 Faces.Clear();
                 Vertices.Clear();
 
-                // o we have enough data to construct the model
+                // do we have enough data to construct the model
                 if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
                 {
+                    // there should be a marker and hence a dimension for every rib.
+                    // If ther isn't then somethins wrong
                     if (RibManager.Ribs.Count != TopView.Dimensions.Count)
                     {
                         System.Diagnostics.Debug.WriteLine($"Ribs {RibManager.Ribs.Count} TopView Dimensions {TopView.Dimensions.Count}");
@@ -414,7 +422,7 @@ namespace Make3D.Dialogs
                                 rightx = x;
                             }
 
-                            for (int proind = start; proind <= end; proind++)
+                            for (int proind = start; proind < end; proind++)
                             {
                                 if (proind < RibManager.Ribs[i].ProfilePoints.Count)
                                 {
@@ -443,40 +451,39 @@ namespace Make3D.Dialogs
                             }
                         }
                         facesPerRib = leftEdge.Count;
-                        // int right = Vertices.Count;
-                        // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
-                        int f = 0;
+
+                        int first = 0;
                         int g = 0;
-                        int first = f;
+                        int h = 0;
+
                         System.Diagnostics.Debug.WriteLine("Starting faces");
                         for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
                         {
-                            f = (blk * facesPerRib);
-                            first = f;
+                            first = (blk * facesPerRib);
+
                             for (int index = 0; index < facesPerRib; index++)
                             {
-                                g = f + 1;
+                                g = first + index;
+                                h = g + 1;
                                 if (index == facesPerRib - 1)
                                 {
-                                    g = first;
+                                    h = first;
                                 }
-                                Faces.Add(f);
-
-                                Faces.Add(f + facesPerRib);
-                                Faces.Add(g + facesPerRib);
-
-                                Faces.Add(f);
-                                Faces.Add(g + facesPerRib);
                                 Faces.Add(g);
 
-                                f++;
+                                Faces.Add(g + facesPerRib);
+                                Faces.Add(h + facesPerRib);
+
+                                Faces.Add(g);
+                                Faces.Add(h + facesPerRib);
+                                Faces.Add(h);
                             }
 
-                            Faces.Add(f);
-                            Faces.Add(f + facesPerRib);
+                            Faces.Add(first);
+                            Faces.Add(first + facesPerRib);
                             Faces.Add(first + facesPerRib);
 
-                            Faces.Add(f);
+                            Faces.Add(first);
                             Faces.Add(first + facesPerRib);
                             Faces.Add(first);
                         }
@@ -507,7 +514,14 @@ namespace Make3D.Dialogs
             if (s != "")
             {
                 filePath = s;
+                noteWindow.Owner = this;
+                noteWindow.Show();
+
+                RibManager.ControlsEnabled = false;
                 await Read(filePath);
+                noteWindow.Hide();
+                dirty = false;
+                RibManager.ControlsEnabled = true;
             }
         }
 
@@ -521,13 +535,16 @@ namespace Make3D.Dialogs
                 rc.Header = nme;
 
                 rc.FetchImage();
-                rc.ClearSinglePixels();
-                rc.FindEdge();
-                rc.GenerateProfilePoints(0);
-                rc.SetImageSource();
-
-                CreateLetter(nme, position, rc);
-                RibManager.Ribs.Add(rc);
+                if (rc.IsValid)
+                {
+                    rc.ClearSinglePixels();
+                    rc.FindEdge();
+                    rc.GenerateProfilePoints(0);
+                    rc.SetImageSource();
+                    rc.OnForceReload = RibManager.OnForceRibReload;
+                    CreateLetter(nme, position, rc);
+                    RibManager.Ribs.Add(rc);
+                }
             }
             catch (Exception ex)
             {
@@ -597,10 +614,11 @@ namespace Make3D.Dialogs
             RibManager.NextNameNumber = Convert.ToInt32(s);
             XmlElement topNode = docNode.SelectSingleNode("Top") as XmlElement;
             TopView.ImageFilePath = topNode.GetAttribute("Path");
+            TopView.UpdateDisplay();
             XmlElement sideNode = docNode.SelectSingleNode("Side") as XmlElement;
             SideView.ImageFilePath = sideNode.GetAttribute("Path");
             SideView.UpdateDisplay();
-            TopView.UpdateDisplay();
+
             RibManager.Ribs.Clear();
             Markers.Clear();
             XmlNodeList nodes = docNode.SelectNodes("Rib");

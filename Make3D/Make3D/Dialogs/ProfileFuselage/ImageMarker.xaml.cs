@@ -195,7 +195,7 @@ namespace Make3D.Dialogs
         public void UpdateDisplay()
         {
             elements.Clear();
-            if (imageFilePath != null && imageFilePath != "")
+            if (imageFilePath != null && imageFilePath != "" && isValid)
             {
                 Dimension pinDim = GetUpperAndLowerPoints(pinPos);
                 upperPoint = new Point(pinDim.P1.X, pinDim.P1.Y);
@@ -212,13 +212,19 @@ namespace Make3D.Dialogs
                     AddCircle((int)lowerPoint.X, (int)lowerPoint.Y, null);
                 }
                 Dimensions.Clear();
+                // update the markers
+                // If there is a selected marker, do it last so it appears in front of the
+                // the others
                 foreach (LetterMarker mk in markers)
                 {
-                    AddLetter(mk.Position, markerTop, mk.Letter, mk);
-                    Dimension dp = GetUpperAndLowerPoints(mk.Position);
-                    dimensions.Add(dp);
-                    AddCircle((int)dp.P1.X, (int)dp.P1.Y, mk);
-                    AddCircle((int)dp.P2.X, (int)dp.P2.Y, mk);
+                    if (selectedMarker != mk)
+                    {
+                        UpdateMarker(mk);
+                    }
+                }
+                if (selectedMarker != null)
+                {
+                    UpdateMarker(selectedMarker);
                 }
             }
             UpdateCanvas();
@@ -407,16 +413,19 @@ namespace Make3D.Dialogs
                 if (sender is Border)
                 {
                     selectedMarker = (sender as Border).Tag as LetterMarker;
+                    UpdateDisplay();
                 }
                 else
                 if (sender is TextBlock)
                 {
                     selectedMarker = (sender as TextBlock).Tag as LetterMarker;
+                    UpdateDisplay();
                 }
                 else
                 if (sender is Ellipse)
                 {
                     selectedMarker = (sender as Ellipse).Tag as LetterMarker;
+                    UpdateDisplay();
                 }
             }
         }
@@ -515,6 +524,7 @@ namespace Make3D.Dialogs
 
         private void LoadImage()
         {
+            isValid = false;
             if (File.Exists(imageFilePath))
             {
                 System.Drawing.Color c;
@@ -579,6 +589,10 @@ namespace Make3D.Dialogs
                     isValid = true;
                 }
                 UpdateDisplay();
+            }
+            else
+            {
+                MessageBox.Show($"Can't find image file {imageFilePath}");
             }
         }
 
@@ -649,6 +663,15 @@ namespace Make3D.Dialogs
             {
                 mainCanvas.Children.Add(el);
             }
+        }
+
+        private void UpdateMarker(LetterMarker mk)
+        {
+            AddLetter(mk.Position, markerTop, mk.Letter, mk);
+            Dimension dp = GetUpperAndLowerPoints(mk.Position);
+            dimensions.Add(dp);
+            AddCircle((int)dp.P1.X, (int)dp.P1.Y, mk);
+            AddCircle((int)dp.P2.X, (int)dp.P2.Y, mk);
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

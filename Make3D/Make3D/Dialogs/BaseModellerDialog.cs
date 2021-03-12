@@ -34,7 +34,7 @@ namespace Make3D.Dialogs
             polarCamera = new PolarCamera(100);
             polarCamera.HomeFront();
             LookDirection = new Vector3D(-polarCamera.CameraPos.X, -polarCamera.CameraPos.Y, -polarCamera.CameraPos.Z);
-            meshColour = Colors.CornflowerBlue;
+            meshColour = Colors.Gainsboro;
             editorParameters = new EditorParameters();
             floor = new Floor();
             grid = new Grid3D();
@@ -341,7 +341,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        internal void SweepPolarProfileTheta(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true)
+        internal void SweepPolarProfileTheta(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true, bool flipAxies = false, bool invert = false)
         {
             // now we have a lovely copy of the profile in polar coordinates.
             if (clear)
@@ -390,19 +390,37 @@ namespace Make3D.Dialogs
                     Point3D p2 = pc2.GetPoint3D();
                     Point3D p3 = pc3.GetPoint3D();
                     Point3D p4 = pc4.GetPoint3D();
-
+                    if (flipAxies)
+                    {
+                        FlipAxies(ref p1);
+                        FlipAxies(ref p2);
+                        FlipAxies(ref p3);
+                        FlipAxies(ref p4);
+                    }
                     int v1 = AddVertice(p1);
                     int v2 = AddVertice(p2);
                     int v3 = AddVertice(p3);
                     int v4 = AddVertice(p4);
+                    if (invert)
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v2);
 
-                    Faces.Add(v1);
-                    Faces.Add(v2);
-                    Faces.Add(v3);
+                        Faces.Add(v1);
+                        Faces.Add(v4);
+                        Faces.Add(v3);
+                    }
+                    else
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
 
-                    Faces.Add(v1);
-                    Faces.Add(v3);
-                    Faces.Add(v4);
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v4);
+                    }
                 }
             }
             if (sweepRange != 360.0)
@@ -428,10 +446,18 @@ namespace Make3D.Dialogs
                     int v1 = AddVertice(p1);
                     int v2 = AddVertice(p2);
                     int v3 = AddVertice(p3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v3);
-                    Faces.Add(v2);
+                    if (invert)
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
+                    }
+                    else
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v2);
+                    }
                 }
 
                 for (int index = 0; index < polarProfile.Count; index++)
@@ -457,9 +483,18 @@ namespace Make3D.Dialogs
                     int v2 = AddVertice(p2);
                     int v3 = AddVertice(p3);
 
-                    Faces.Add(v1);
-                    Faces.Add(v2);
-                    Faces.Add(v3);
+                    if (invert)
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v2);
+                    }
+                    else
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
+                    }
                 }
             }
         }
@@ -575,6 +610,11 @@ namespace Make3D.Dialogs
                     Faces.Add(c3);
                 }
             }
+        }
+
+        protected void FlipAxies(ref Point3D p1)
+        {
+            p1 = new Point3D(p1.X, p1.Z, p1.Y);
         }
 
         protected GeometryModel3D GetModel()

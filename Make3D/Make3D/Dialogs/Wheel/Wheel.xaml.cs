@@ -514,6 +514,14 @@ namespace Make3D.Dialogs
                         GenerateTyreProfile1(tyreInner, tyreOutter, rimThickness + 1);
                     }
                     break;
+
+                case "3":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile2(tyreInner, tyreOutter, rimThickness + 1);
+                    }
+                    break;
             }
         }
 
@@ -524,21 +532,36 @@ namespace Make3D.Dialogs
             double cx = inner;
 
             int rotDivisions = 36;
-            PolarCoordinate pcol;
+            polarProfile.Add(Polar(cx, 0, t));
+            polarProfile.Add(Polar(cx + (0.8 * outter), 0, t));
+            polarProfile.Add(Polar(cx + outter, 0, 0.9 * t));
+            polarProfile.Add(Polar(cx + outter, 0, 0.1 * t));
+            polarProfile.Add(Polar(cx + (0.8 * outter), 0, 0));
+            polarProfile.Add(Polar(cx, 0, 0));
 
-            pcol = Polar(inner, t, 0);
-            polarProfile.Add(pcol);
+            SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
+        }
 
-            pcol = Polar(outter, t, 0);
-            polarProfile.Add(pcol);
+        private void GenerateTyreProfile2(double inner, double outter, double t)
+        {
+            List<PolarCoordinate> polarProfile1 = new List<PolarCoordinate>();
+            List<PolarCoordinate> polarProfile2 = new List<PolarCoordinate>();
+            double cx = inner;
 
-            pcol = Polar(outter, 0, 0);
-            polarProfile.Add(pcol);
+            int rotDivisions = 36;
+            polarProfile1.Add(Polar(cx, 0, t));
+            polarProfile1.Add(Polar(cx + (0.8 * outter), 0, t));
+            polarProfile1.Add(Polar(cx + outter, 0, 0.9 * t));
+            polarProfile1.Add(Polar(cx + outter, 0, 0.1 * t));
+            polarProfile1.Add(Polar(cx + (0.8 * outter), 0, 0));
+            polarProfile1.Add(Polar(cx, 0, 0));
 
-            pcol = Polar(inner, 0, 0);
-            polarProfile.Add(pcol);
+            polarProfile2.Add(Polar(cx, 0, t));
+            polarProfile2.Add(Polar(cx + outter, 0, t));
+            polarProfile2.Add(Polar(cx + outter, 0, 0));
+            polarProfile2.Add(Polar(cx, 0, 0));
 
-            SweepPolarProfilePhi(polarProfile, 0, 0, 90, rotDivisions, false);
+            PartSweep(polarProfile1, polarProfile2, cx, 0, 5, rotDivisions, true, true);
         }
 
         private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta)
@@ -630,6 +653,171 @@ namespace Make3D.Dialogs
             // load back the tool specific parameters
         }
 
+        private void PartSweep(List<PolarCoordinate> polarProfile1, List<PolarCoordinate> polarProfile2, double cx, int cy, double sweepAngle, int rotDivisions, bool flipAxies, bool invert)
+        {
+            List<PolarCoordinate> profile = polarProfile1;
+            double numSegs = 360 / sweepAngle;
+            numSegs *= 2;
+
+            int segs = 0;
+            bool firstOne = true;
+            double sweep = (Math.PI * 2.0) / (numSegs - 1);
+
+            for (int i = 0; i < numSegs; i++)
+            {
+                if (firstOne)
+                {
+                    profile = polarProfile1;
+                }
+                else
+                {
+                    profile = polarProfile2;
+                }
+                double a = sweep * i;
+                int j = i + 1;
+                if (j == numSegs)
+                {
+                    j = 0;
+                }
+                double b = sweep * j;
+
+                for (int index = 0; index < profile.Count; index++)
+                {
+                    int index2 = index + 1;
+                    if (index2 == profile.Count)
+                    {
+                        index2 = 0;
+                    }
+                    PolarCoordinate pc1 = profile[index].Clone();
+                    PolarCoordinate pc2 = profile[index2].Clone();
+                    PolarCoordinate pc3 = profile[index2].Clone();
+                    PolarCoordinate pc4 = profile[index].Clone();
+                    pc1.Theta -= a;
+                    pc2.Theta -= a;
+                    pc3.Theta -= b;
+                    pc4.Theta -= b;
+
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+                    Point3D p4 = pc4.GetPoint3D();
+                    if (flipAxies)
+                    {
+                        FlipAxies(ref p1);
+                        FlipAxies(ref p2);
+                        FlipAxies(ref p3);
+                        FlipAxies(ref p4);
+                    }
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+                    int v4 = AddVertice(p4);
+                    if (invert)
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v2);
+
+                        Faces.Add(v1);
+                        Faces.Add(v4);
+                        Faces.Add(v3);
+                    }
+                    else
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
+
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v4);
+                    }
+                }
+
+                Point3D centreOfProfile = new Point3D(cx, 0, cy);
+                for (int index = 0; index < profile.Count; index++)
+                {
+                    int index2 = index + 1;
+                    if (index2 == profile.Count)
+                    {
+                        index2 = 0;
+                    }
+                    PolarCoordinate pc1 = profile[index].Clone();
+                    PolarCoordinate pc2 = profile[index2].Clone();
+                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
+                    pc3.SetPoint3D(centreOfProfile);
+
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+                    FlipAxies(ref p1);
+                    FlipAxies(ref p2);
+                    FlipAxies(ref p3);
+                    if (invert)
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
+                    }
+                    else
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v2);
+                    }
+                }
+
+                for (int index = 0; index < profile.Count; index++)
+                {
+                    int index2 = index + 1;
+                    if (index2 == profile.Count)
+                    {
+                        index2 = 0;
+                    }
+                    PolarCoordinate pc1 = profile[index].Clone();
+                    PolarCoordinate pc2 = profile[index2].Clone();
+                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
+                    pc3.SetPoint3D(centreOfProfile);
+                    pc1.Theta -= b;
+                    pc2.Theta -= b;
+                    pc3.Theta -= b;
+
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+                    FlipAxies(ref p1);
+                    FlipAxies(ref p2);
+                    FlipAxies(ref p3);
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+
+                    if (invert)
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v3);
+                        Faces.Add(v2);
+                    }
+                    else
+                    {
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
+                    }
+                }
+                segs++;
+                if (segs == 4)
+                {
+                    segs = 0;
+                    firstOne = !firstOne;
+                }
+            }
+        }
+
         private PolarCoordinate Polar(double x, double y, double z)
         {
             Point3D p3d = new Point3D(x, y, z);
@@ -693,6 +881,7 @@ namespace Make3D.Dialogs
 
             tyreStyles.Add("1");
             tyreStyles.Add("2");
+            tyreStyles.Add("3");
             SelectedTyreStyle = "1";
 
             LoadEditorParameters();

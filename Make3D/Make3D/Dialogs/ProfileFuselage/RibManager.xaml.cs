@@ -147,6 +147,24 @@ namespace Make3D.Dialogs
             }
         }
 
+        internal void OnForceRibReload(string s)
+        {
+            foreach (RibControl rc in Ribs)
+            {
+                if (rc.ImagePath == s)
+                {
+                    rc.FetchImage(true);
+                    if (rc.IsValid)
+                    {
+                        rc.ClearSinglePixels();
+                        rc.FindEdge();
+                        rc.GenerateProfilePoints(0);
+                        rc.SetImageSource();
+                    }
+                }
+            }
+        }
+
         private void AddRib_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
@@ -157,37 +175,40 @@ namespace Make3D.Dialogs
                 {
                     RibControl rc = new RibControl();
 
-                    rc.Width = 200;
-                    rc.Height = 200;
+                    // rc.Width = 200;
+                    // rc.Height = 200;
                     rc.ImagePath = dlg.FileName;
                     rc.FetchImage();
-
-                    rc.ClearSinglePixels();
-                    rc.FindEdge();
-
-                    rc.SetImageSource();
-
-                    string name = "" + NextNameLetter;
-                    if (NextNameNumber > 0)
+                    if (rc.IsValid)
                     {
-                        name += NextNameNumber.ToString();
-                    }
-                    NextNameLetter++;
-                    if (NextNameLetter == 'Z' + 1)
-                    {
-                        NextNameLetter = 'A';
-                        NextNameNumber++;
-                    }
-                    rc.Header = name;
-                    Ribs.Add(rc);
-                    NotifyPropertyChanged("Ribs");
-                    if (OnRibAdded != null)
-                    {
-                        OnRibAdded(name, rc);
+                        rc.ClearSinglePixels();
+                        rc.FindEdge();
+                        rc.GenerateProfilePoints(0);
+                        rc.SetImageSource();
+                        rc.OnForceReload = OnForceRibReload;
+                        string name = "" + NextNameLetter;
+                        if (NextNameNumber > 0)
+                        {
+                            name += NextNameNumber.ToString();
+                        }
+                        NextNameLetter++;
+                        if (NextNameLetter == 'Z' + 1)
+                        {
+                            NextNameLetter = 'A';
+                            NextNameNumber++;
+                        }
+                        rc.Header = name;
+                        Ribs.Add(rc);
+                        NotifyPropertyChanged("Ribs");
+                        if (OnRibAdded != null)
+                        {
+                            OnRibAdded(name, rc);
+                        }
                     }
                 }
-                catch
+                catch (Exception ex)
                 {
+                    MessageBox.Show(ex.Message, "AddRib_Clicked");
                 }
             }
         }

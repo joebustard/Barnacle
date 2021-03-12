@@ -15,21 +15,24 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class RibControl : UserControl
     {
+        public ForceRibReload OnForceReload;
         private int brx = int.MinValue;
 
         private int bry = int.MinValue;
 
         private double divisionLength;
 
-        // raw list of points font around the bitmap
-
         // private List<PointF> edgePoints;
         private ImageEdge imageEdge;
 
+        // raw list of points font around the bitmap
         private string imagePath;
 
+        private bool isValid;
         private double middleX;
+
         private double middleY;
+
         private List<PointF> profilePoints;
 
         private double scale;
@@ -54,7 +57,10 @@ namespace Make3D.Dialogs
             scale = 1;
             SetRibScale();
             imageEdge = new ImageEdge();
+            isValid = false;
         }
+
+        public delegate void ForceRibReload(string pth);
 
         public double EdgeLength
         {
@@ -86,6 +92,12 @@ namespace Make3D.Dialogs
                     imagePath = value;
                 }
             }
+        }
+
+        public bool IsValid
+        {
+            get { return isValid; }
+            set { isValid = value; }
         }
 
         public int NumDivisions { get; set; }
@@ -176,9 +188,9 @@ namespace Make3D.Dialogs
             }
         }
 
-        public void FetchImage()
+        public void FetchImage(bool forceReload = false)
         {
-            LoadImage(imagePath);
+            LoadImage(imagePath, forceReload);
         }
 
         public void FindEdge()
@@ -265,7 +277,7 @@ namespace Make3D.Dialogs
                 divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
             }
 
-            for (int i = startP; i <= endP; i++)
+            for (int i = startP; i < endP; i++)
             {
                 tmp.Add(new PointF((float)(imageEdge.EdgePoints[i].X - middleX), (float)(imageEdge.EdgePoints[i].Y - middleY)));
             }
@@ -360,6 +372,7 @@ namespace Make3D.Dialogs
                 }
             }
             cl.src = src;
+            cl.OnForceReload = OnForceReload;
             return cl;
         }
 
@@ -448,7 +461,13 @@ namespace Make3D.Dialogs
                     c = src.GetPixel(px, py);
                     if (c.R < 128 || c.G < 128 || c.B < 128)
                     {
-                        workingImage.SetPixel(px - tlx, py - tly, System.Drawing.Color.Black);
+                        int tx = px - tlx + 1;
+                        int ty = py - tly + 1;
+                        if ((tx < workingImage.Width - 1) &&
+                             (ty < workingImage.Height - 1))
+                        {
+                            workingImage.SetPixel(tx, ty, System.Drawing.Color.Black);
+                        }
                     }
                 }
             }
@@ -462,25 +481,85 @@ namespace Make3D.Dialogs
             return Math.Sqrt(diff);
         }
 
-        private void LoadImage(string imagePath)
-        {
-            if (File.Exists(imagePath))
-            {
-                if (src == null)
-                {
-                    //src = new System.Drawing.Bitmap(imagePath);
-                    src = LoadBitmapUnlocked(imagePath);
-                }
-                ShowWorkingImage();
-            }
-        }
-
         // Load a bitmap without locking it.
         private Bitmap LoadBitmapUnlocked(string file_name)
         {
             using (Bitmap bm = new Bitmap(file_name))
             {
                 return new Bitmap(bm);
+            }
+        }
+
+        private void LoadImage(string imagePath, bool force)
+        {
+            if (File.Exists(imagePath))
+            {
+                if (src == null || force)
+                {
+                    //src = new System.Drawing.Bitmap(imagePath);
+                    src = LoadBitmapUnlocked(imagePath);
+                    isValid = true;
+                }
+                ShowWorkingImage();
+            }
+            else
+            {
+                MessageBox.Show($"Cant find rib image {imagePath}");
+            }
+        }
+
+        private void LRT_Click(object sender, RoutedEventArgs e)
+        {
+            string caption = "Rib processing";
+            string txt =
+                @"This will reflect the pixels from the left of the middle (as determined by the top) to the right.
+The original image will be overwritten.
+All ribs that use the same image will be reloaded.
+The operation may take some time.
+";
+            MessageBoxResult res = MessageBox.Show(txt, caption, MessageBoxButton.YesNo);
+            if (res == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    int topi = imageEdge.BackStart;
+                    PointF pt = imageEdge.EdgePoints[topi];
+
+                    int bottomi = imageEdge.BackEnd;
+                    PointF pb = imageEdge.EdgePoints[bottomi];
+                    double y;
+                    CopySrcToWorking();
+
+                    System.Drawing.Bitmap tmp = new System.Drawing.Bitmap(workingImage);
+                    for (int px = 0; px < workingImage.Width; px++)
+                    {
+                        for (int py = 0; py < workingImage.Height; py++)
+                        {
+                            tmp.SetPixel(px, py, Color.White);
+                        }
+                    }
+                    Color c;
+                    for (y = 0; y < workingImage.Height; y++)
+                    {
+                        for (int i = 0; i < pt.X; i++)
+                        {
+                            c = workingImage.GetPixel((int)(pt.X - i), (int)y);
+                            tmp.SetPixel((int)(pt.X - i), (int)y, c);
+                            tmp.SetPixel((int)(pt.X + i), (int)y, c);
+                        }
+                    }
+
+                    tmp.Save(imagePath);
+                    FindEdge();
+                    if (OnForceReload != null)
+                    {
+                        OnForceReload(imagePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -505,6 +584,61 @@ namespace Make3D.Dialogs
 
         private void RibCanvas_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+        }
+
+        private void RLT_Click(object sender, RoutedEventArgs e)
+        {
+            string caption = "Rib processing";
+            string txt =
+                @"This will reflect the pixels from the right of the middle (as determined by the top) to the left.
+The original image will be overwritten.
+All ribs that use the same image will be reloaded.
+The operation may take some time.
+";
+            MessageBoxResult res = MessageBox.Show(txt, caption, MessageBoxButton.YesNo);
+            if (res == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    int topi = imageEdge.BackStart;
+                    PointF pt = imageEdge.EdgePoints[topi];
+
+                    int bottomi = imageEdge.BackEnd;
+                    PointF pb = imageEdge.EdgePoints[bottomi];
+                    double y;
+                    CopySrcToWorking();
+
+                    System.Drawing.Bitmap tmp = new System.Drawing.Bitmap(workingImage);
+                    for (int px = 0; px < workingImage.Width; px++)
+                    {
+                        for (int py = 0; py < workingImage.Height; py++)
+                        {
+                            tmp.SetPixel(px, py, Color.White);
+                        }
+                    }
+                    Color c;
+                    for (y = 0; y < workingImage.Height; y++)
+                    {
+                        for (int i = 0; i < pt.X; i++)
+                        {
+                            c = workingImage.GetPixel((int)(pt.X + i), (int)y);
+                            tmp.SetPixel((int)(pt.X - i), (int)y, c);
+                            tmp.SetPixel((int)(pt.X + i), (int)y, c);
+                        }
+                    }
+
+                    tmp.Save(imagePath);
+                    FindEdge();
+                    if (OnForceReload != null)
+                    {
+                        OnForceReload(imagePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
         }
 
         private void SetRibScale()
@@ -609,42 +743,6 @@ namespace Make3D.Dialogs
         {
             scale = 1.0;
             SetRibScale();
-        }
-
-        private void LRT_Click(object sender, RoutedEventArgs e)
-        {
-            int topi = imageEdge.BackStart;
-            PointF pt = imageEdge.EdgePoints[topi];
-
-            int bottomi = imageEdge.BackEnd;
-            PointF pb = imageEdge.EdgePoints[bottomi];
-            double y;
-            CopySrcToWorking();
-
-            System.Drawing.Bitmap tmp = new System.Drawing.Bitmap(workingImage);
-            for (int px = 0; px < workingImage.Width; px++)
-            {
-                for (int py = 0; py < workingImage.Height; py++)
-                {
-                    tmp.SetPixel(px, py, Color.White);
-                }
-            }
-            Color c;
-            for (y = 0; y < workingImage.Height; y++)
-            {
-                for (int i = 0; i < pt.X; i++)
-                {
-                    c = workingImage.GetPixel((int)(pt.X - i), (int)y);
-                    tmp.SetPixel((int)(pt.X - i), (int)y, c);
-                    tmp.SetPixel((int)(pt.X + i), (int)y, c);
-                }
-            }
-            tmp.Save("C:\\tmp\\t1.png");
-            FindEdge();
-        }
-
-        private void RLT_Click(object sender, RoutedEventArgs e)
-        {
         }
     }
 }

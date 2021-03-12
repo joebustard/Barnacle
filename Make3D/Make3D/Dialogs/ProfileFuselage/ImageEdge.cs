@@ -135,7 +135,7 @@ namespace Make3D.Dialogs
                     // bottom is a single pixel
                     // append another one just to its right
                     double xm = edgePoints[bl].X;
-                    edgePoints.Insert(bl + 1, new PointF(((float)xm + 0.00001F), edgePoints[br].Y));
+                    edgePoints.Insert(bl + 1, new PointF(((float)xm + 0.00001F), edgePoints[bl].Y));
                 }
             }
             for (int i = 0; i < edgePoints.Count; i++)
@@ -144,7 +144,7 @@ namespace Make3D.Dialogs
             }
 
             WholeStart = 0;
-            WholeEnd = edgePoints.Count - 1;
+            WholeEnd = edgePoints.Count;
 
             BackStart = 0;
             BackEnd = bl + 1;
@@ -160,9 +160,12 @@ namespace Make3D.Dialogs
         internal double CalcLength(int s, int e)
         {
             double len = 0;
-            for (int i = s + 1; i <= e; i++)
+            for (int i = s + 1; i < e; i++)
             {
-                len += Distance(edgePoints[i - 1], edgePoints[i]);
+                if (i < edgePoints.Count)
+                {
+                    len += Distance(edgePoints[i - 1], edgePoints[i]);
+                }
             }
 
             return len;
