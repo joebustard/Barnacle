@@ -468,9 +468,19 @@ namespace Make3D.Dialogs
             {
                 if (src == null)
                 {
-                    src = new System.Drawing.Bitmap(imagePath);
+                    //src = new System.Drawing.Bitmap(imagePath);
+                    src = LoadBitmapUnlocked(imagePath);
                 }
                 ShowWorkingImage();
+            }
+        }
+
+        // Load a bitmap without locking it.
+        private Bitmap LoadBitmapUnlocked(string file_name)
+        {
+            using (Bitmap bm = new Bitmap(file_name))
+            {
+                return new Bitmap(bm);
             }
         }
 
@@ -510,8 +520,6 @@ namespace Make3D.Dialogs
 
             int bottomi = imageEdge.BackEnd;
             PointF pb = imageEdge.EdgePoints[bottomi];
-
-            double x;
             double y;
             double my = pt.Y + (pb.Y - pt.Y) / 2;
             for (y = pt.Y; y <= my; y++)
@@ -601,6 +609,42 @@ namespace Make3D.Dialogs
         {
             scale = 1.0;
             SetRibScale();
+        }
+
+        private void LRT_Click(object sender, RoutedEventArgs e)
+        {
+            int topi = imageEdge.BackStart;
+            PointF pt = imageEdge.EdgePoints[topi];
+
+            int bottomi = imageEdge.BackEnd;
+            PointF pb = imageEdge.EdgePoints[bottomi];
+            double y;
+            CopySrcToWorking();
+
+            System.Drawing.Bitmap tmp = new System.Drawing.Bitmap(workingImage);
+            for (int px = 0; px < workingImage.Width; px++)
+            {
+                for (int py = 0; py < workingImage.Height; py++)
+                {
+                    tmp.SetPixel(px, py, Color.White);
+                }
+            }
+            Color c;
+            for (y = 0; y < workingImage.Height; y++)
+            {
+                for (int i = 0; i < pt.X; i++)
+                {
+                    c = workingImage.GetPixel((int)(pt.X - i), (int)y);
+                    tmp.SetPixel((int)(pt.X - i), (int)y, c);
+                    tmp.SetPixel((int)(pt.X + i), (int)y, c);
+                }
+            }
+            tmp.Save("C:\\tmp\\t1.png");
+            FindEdge();
+        }
+
+        private void RLT_Click(object sender, RoutedEventArgs e)
+        {
         }
     }
 }

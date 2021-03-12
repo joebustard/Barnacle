@@ -386,98 +386,105 @@ namespace Make3D.Dialogs
                 // o we have enough data to construct the model
                 if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
                 {
-                    // work out the range of faces we are going to do based upon whether we
-                    // are doing the whole model or just fron or back
-                    int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
-
-                    // assume its whole model
-                    int start = 0;
-                    int end = RibManager.Ribs[0].ProfilePoints.Count;
-
-                    double x = TopView.GetXmm(markers[0].Position);
-                    List<PointF> leftEdge = new List<PointF>();
-                    double leftx = x;
-                    List<PointF> rightEdge = new List<PointF>();
-                    double rightx = x;
-                    for (int i = 0; i < RibManager.Ribs.Count; i++)
+                    if (RibManager.Ribs.Count != TopView.Dimensions.Count)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Rib {i}");
-                        x = TopView.GetXmm(markers[i].Position);
-                        if (i == RibManager.Ribs.Count - 1)
-                        {
-                            rightx = x;
-                        }
-
-                        for (int proind = start; proind <= end; proind++)
-                        {
-                            if (proind < RibManager.Ribs[i].ProfilePoints.Count)
-                            {
-                                PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
-                                System.Diagnostics.Debug.WriteLine($"proind {proind} {pnt.X},{pnt.Y}");
-                                double v = pnt.X * TopView.Dimensions[i].Height / 2;
-                                double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
-
-                                v = pnt.Y * SideView.Dimensions[i].Height / 2;
-                                double y = -SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
-
-                                AddVertice(x, y, z);
-                                if (i == 0)
-                                {
-                                    leftEdge.Add(new PointF((float)y, (float)z));
-                                }
-                                if (i == RibManager.Ribs.Count - 1)
-                                {
-                                    rightEdge.Add(new PointF((float)y, (float)z));
-                                }
-                            }
-                            else
-                            {
-                                System.Diagnostics.Debug.WriteLine($"ERROR proind {proind} ProfilePoints Count {RibManager.Ribs[i].ProfilePoints.Count}");
-                            }
-                        }
+                        System.Diagnostics.Debug.WriteLine($"Ribs {RibManager.Ribs.Count} TopView Dimensions {TopView.Dimensions.Count}");
                     }
-                    facesPerRib = leftEdge.Count;
-                    // int right = Vertices.Count;
-                    // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
-                    int f = 0;
-                    int g = 0;
-                    int first = f;
-                    System.Diagnostics.Debug.WriteLine("Starting faces");
-                    for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
+                    else
                     {
-                        f = (blk * facesPerRib);
-                        first = f;
-                        for (int index = 0; index < facesPerRib; index++)
-                        {
-                            g = f + 1;
-                            if (index == facesPerRib - 1)
-                            {
-                                g = first;
-                            }
-                            Faces.Add(f);
+                        // work out the range of faces we are going to do based upon whether we
+                        // are doing the whole model or just fron or back
+                        int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
 
+                        // assume its whole model
+                        int start = 0;
+                        int end = RibManager.Ribs[0].ProfilePoints.Count;
+
+                        double x = TopView.GetXmm(markers[0].Position);
+                        List<PointF> leftEdge = new List<PointF>();
+                        double leftx = x;
+                        List<PointF> rightEdge = new List<PointF>();
+                        double rightx = x;
+                        for (int i = 0; i < RibManager.Ribs.Count; i++)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"Rib {i}");
+                            x = TopView.GetXmm(markers[i].Position);
+                            if (i == RibManager.Ribs.Count - 1)
+                            {
+                                rightx = x;
+                            }
+
+                            for (int proind = start; proind <= end; proind++)
+                            {
+                                if (proind < RibManager.Ribs[i].ProfilePoints.Count)
+                                {
+                                    PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
+                                    System.Diagnostics.Debug.WriteLine($"proind {proind} {pnt.X},{pnt.Y}");
+                                    double v = pnt.X * TopView.Dimensions[i].Height / 2;
+                                    double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
+
+                                    v = pnt.Y * SideView.Dimensions[i].Height / 2;
+                                    double y = -SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
+
+                                    AddVertice(x, y, z);
+                                    if (i == 0)
+                                    {
+                                        leftEdge.Add(new PointF((float)y, (float)z));
+                                    }
+                                    if (i == RibManager.Ribs.Count - 1)
+                                    {
+                                        rightEdge.Add(new PointF((float)y, (float)z));
+                                    }
+                                }
+                                else
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"ERROR proind {proind} ProfilePoints Count {RibManager.Ribs[i].ProfilePoints.Count}");
+                                }
+                            }
+                        }
+                        facesPerRib = leftEdge.Count;
+                        // int right = Vertices.Count;
+                        // AddVertice(x, -SideView.GetYmm(SideView.Dimensions[SideView.Dimensions.Count - 1].Mid.Y), 0);
+                        int f = 0;
+                        int g = 0;
+                        int first = f;
+                        System.Diagnostics.Debug.WriteLine("Starting faces");
+                        for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
+                        {
+                            f = (blk * facesPerRib);
+                            first = f;
+                            for (int index = 0; index < facesPerRib; index++)
+                            {
+                                g = f + 1;
+                                if (index == facesPerRib - 1)
+                                {
+                                    g = first;
+                                }
+                                Faces.Add(f);
+
+                                Faces.Add(f + facesPerRib);
+                                Faces.Add(g + facesPerRib);
+
+                                Faces.Add(f);
+                                Faces.Add(g + facesPerRib);
+                                Faces.Add(g);
+
+                                f++;
+                            }
+
+                            Faces.Add(f);
                             Faces.Add(f + facesPerRib);
-                            Faces.Add(g + facesPerRib);
+                            Faces.Add(first + facesPerRib);
 
                             Faces.Add(f);
-                            Faces.Add(g + facesPerRib);
-                            Faces.Add(g);
-
-                            f++;
+                            Faces.Add(first + facesPerRib);
+                            Faces.Add(first);
                         }
 
-                        Faces.Add(f);
-                        Faces.Add(f + facesPerRib);
-                        Faces.Add(first + facesPerRib);
-
-                        Faces.Add(f);
-                        Faces.Add(first + facesPerRib);
-                        Faces.Add(first);
+                        TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
+                        TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
+                        CentreVertices();
                     }
-
-                    TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
-                    TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
-                    CentreVertices();
                 }
             }
             catch (Exception ex)
