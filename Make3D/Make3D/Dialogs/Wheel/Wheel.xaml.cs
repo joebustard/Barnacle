@@ -533,10 +533,10 @@ namespace Make3D.Dialogs
 
             int rotDivisions = 36;
             polarProfile.Add(Polar(cx, 0, t));
-            polarProfile.Add(Polar(cx + (0.8 * outter), 0, t));
-            polarProfile.Add(Polar(cx + outter, 0, 0.9 * t));
-            polarProfile.Add(Polar(cx + outter, 0, 0.1 * t));
-            polarProfile.Add(Polar(cx + (0.8 * outter), 0, 0));
+            polarProfile.Add(Polar(cx + (0.8 * (outter - inner)), 0, t));
+            polarProfile.Add(Polar(outter, 0, 0.9 * t));
+            polarProfile.Add(Polar(outter, 0, 0.1 * t));
+            polarProfile.Add(Polar(cx + (0.8 * (outter - inner)), 0, 0));
             polarProfile.Add(Polar(cx, 0, 0));
 
             SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
@@ -550,15 +550,15 @@ namespace Make3D.Dialogs
 
             int rotDivisions = 36;
             polarProfile1.Add(Polar(cx, 0, t));
-            polarProfile1.Add(Polar(cx + (0.8 * outter), 0, t));
-            polarProfile1.Add(Polar(cx + outter, 0, 0.9 * t));
-            polarProfile1.Add(Polar(cx + outter, 0, 0.1 * t));
-            polarProfile1.Add(Polar(cx + (0.8 * outter), 0, 0));
+            polarProfile1.Add(Polar(cx + (0.8 * (outter - inner)), 0, t));
+            polarProfile1.Add(Polar(outter, 0, 0.9 * t));
+            polarProfile1.Add(Polar(outter, 0, 0.1 * t));
+            polarProfile1.Add(Polar(cx + (0.8 * (outter - inner)), 0, 0));
             polarProfile1.Add(Polar(cx, 0, 0));
 
             polarProfile2.Add(Polar(cx, 0, t));
-            polarProfile2.Add(Polar(cx + outter, 0, t));
-            polarProfile2.Add(Polar(cx + outter, 0, 0));
+            polarProfile2.Add(Polar(outter, 0, t));
+            polarProfile2.Add(Polar(outter, 0, 0));
             polarProfile2.Add(Polar(cx, 0, 0));
 
             PartSweep(polarProfile1, polarProfile2, cx, 0, 5, rotDivisions, true, true);
@@ -658,13 +658,15 @@ namespace Make3D.Dialogs
             List<PolarCoordinate> profile = polarProfile1;
             double numSegs = 360 / sweepAngle;
             numSegs *= 2;
-
+            bool inv1 = false;
+            bool inv2 = false;
             int segs = 0;
             bool firstOne = true;
             double sweep = (Math.PI * 2.0) / (numSegs - 1);
 
             for (int i = 0; i < numSegs; i++)
             {
+                inv1 = (i % 2 == 1);
                 if (firstOne)
                 {
                     profile = polarProfile1;
@@ -680,7 +682,7 @@ namespace Make3D.Dialogs
                     j = 0;
                 }
                 double b = sweep * j;
-
+                // do the side walls and main surfaces
                 for (int index = 0; index < profile.Count; index++)
                 {
                     int index2 = index + 1;
@@ -712,6 +714,7 @@ namespace Make3D.Dialogs
                     int v2 = AddVertice(p2);
                     int v3 = AddVertice(p3);
                     int v4 = AddVertice(p4);
+
                     if (invert)
                     {
                         Faces.Add(v1);
@@ -733,7 +736,7 @@ namespace Make3D.Dialogs
                         Faces.Add(v4);
                     }
                 }
-
+                // do spoke surfaces to close the sticky out bits of tread
                 Point3D centreOfProfile = new Point3D(cx, 0, cy);
                 for (int index = 0; index < profile.Count; index++)
                 {
@@ -746,28 +749,30 @@ namespace Make3D.Dialogs
                     PolarCoordinate pc2 = profile[index2].Clone();
                     PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
                     pc3.SetPoint3D(centreOfProfile);
-
+                    pc1.Theta -= a;
+                    pc2.Theta -= a;
+                    pc3.Theta -= a;
                     Point3D p1 = pc1.GetPoint3D();
                     Point3D p2 = pc2.GetPoint3D();
                     Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
                     FlipAxies(ref p1);
                     FlipAxies(ref p2);
                     FlipAxies(ref p3);
-                    if (invert)
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+
+                    if (inv1)
                     {
                         Faces.Add(v1);
-                        Faces.Add(v2);
                         Faces.Add(v3);
+                        Faces.Add(v2);
                     }
                     else
                     {
                         Faces.Add(v1);
-                        Faces.Add(v3);
                         Faces.Add(v2);
+                        Faces.Add(v3);
                     }
                 }
 
@@ -796,7 +801,7 @@ namespace Make3D.Dialogs
                     int v2 = AddVertice(p2);
                     int v3 = AddVertice(p3);
 
-                    if (invert)
+                    if (inv1)
                     {
                         Faces.Add(v1);
                         Faces.Add(v3);
@@ -809,6 +814,7 @@ namespace Make3D.Dialogs
                         Faces.Add(v3);
                     }
                 }
+
                 segs++;
                 if (segs == 4)
                 {

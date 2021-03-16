@@ -46,6 +46,7 @@ namespace Make3D.Dialogs
 
         private bool isValid;
 
+        private double leftLimit;
         private int letterMargin = 20;
 
         private Point lowerPoint;
@@ -53,12 +54,14 @@ namespace Make3D.Dialogs
         private int markerTop;
 
         private bool notifyMoved;
-        private int pinMargin = 20;
+        private Point oldPoint;
+        private int pinMargin = 30;
 
         private int pinPos;
 
         private bool pinSelected;
 
+        private double rightLimit;
         private double scale;
 
         private LetterMarker selectedMarker = null;
@@ -87,11 +90,13 @@ namespace Make3D.Dialogs
             dimensions = new List<Dimension>();
             isValid = false;
             notifyMoved = false;
+            leftLimit = double.MaxValue;
+            rightLimit = double.MinValue;
         }
 
         public delegate void CopyLetter(string name);
 
-        public delegate void MarkerMoved(string s, int x);
+        public delegate void MarkerMoved(string s, System.Drawing.Point p, bool finishedMove);
 
         public delegate void PinMoved(int x);
 
@@ -142,6 +147,22 @@ namespace Make3D.Dialogs
             get { return isValid; }
         }
 
+        public double LeftLimit
+        {
+            get
+            {
+                return leftLimit;
+            }
+            set
+            {
+                if (leftLimit != value)
+                {
+                    leftLimit = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public List<LetterMarker> Markers
 
         {
@@ -170,6 +191,22 @@ namespace Make3D.Dialogs
                 {
                     pinPos = value;
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public double RightLimit
+        {
+            get
+            {
+                return rightLimit;
+            }
+            set
+            {
+                if (rightLimit != value)
+                {
+                    rightLimit = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -267,7 +304,7 @@ namespace Make3D.Dialogs
             {
                 if (mk.Letter == s)
                 {
-                    mk.Position = x;
+                    mk.Position = new System.Drawing.Point(x, mk.Position.Y);
                     UpdateDisplay();
                 }
             }
@@ -408,6 +445,7 @@ namespace Make3D.Dialogs
         private void Br_MouseDown(object sender, MouseButtonEventArgs e)
         {
             pinSelected = false;
+            oldPoint = e.GetPosition(mainCanvas);
             if (selectedMarker == null)
             {
                 if (sender is Border)
@@ -435,12 +473,18 @@ namespace Make3D.Dialogs
             if (selectedMarker != null && e.LeftButton == MouseButtonState.Pressed)
             {
                 Point p = e.GetPosition(mainCanvas);
-                if (p.X >= tlx && p.X < brx)
+                double dx = p.X - oldPoint.X;
+                if (Math.Abs(dx) >= 1)
                 {
-                    notifyMoved = true;
-                    selectedMarker.Position = (int)p.X;
-                    UpdateDisplay();
+                    if (p.X >= leftLimit && p.X <= rightLimit)
+                    {
+                        notifyMoved = true;
+                        selectedMarker.Position = new System.Drawing.Point((int)p.X, selectedMarker.Position.Y);
+                        OnMarkerMoved(selectedMarker.Letter, selectedMarker.Position, false);
+                        // UpdateDisplay();
+                    }
                 }
+                // oldPoint = p;
             }
         }
 
@@ -450,7 +494,7 @@ namespace Make3D.Dialogs
             {
                 if (OnMarkerMoved != null && notifyMoved)
                 {
-                    OnMarkerMoved(selectedMarker.Letter, selectedMarker.Position);
+                    OnMarkerMoved(selectedMarker.Letter, selectedMarker.Position, true);
                     notifyMoved = false;
                 }
                 selectedMarker = null;
@@ -576,16 +620,18 @@ namespace Make3D.Dialogs
                             c = src.GetPixel(px, py);
                             if (c.R < 128 || c.G < 128 || c.B < 128)
                             {
-                                workingImage.SetPixel(px - tlx, py - tly, System.Drawing.Color.Black);
+                                workingImage.SetPixel(px - tlx + 1, py - tly + 1, System.Drawing.Color.Black);
                             }
                         }
                     }
                     brx -= tlx;
-                    tlx = 0;
+                    tlx = 1;
                     bry -= tly;
-                    tly = 0;
+                    tly = 1;
                     im = new Image();
                     im.Source = loadBitmap(workingImage);
+                    leftLimit = tlx;
+                    rightLimit = brx;
                     isValid = true;
                 }
                 UpdateDisplay();
@@ -632,7 +678,7 @@ namespace Make3D.Dialogs
                 if (e.LeftButton == MouseButtonState.Pressed)
                 {
                     Point p = e.GetPosition(mainCanvas);
-                    if (p.X >= tlx && p.X < brx)
+                    if (p.X >= leftLimit && p.X <= rightLimit)
                     {
                         pinPos = (int)p.X;
                         UpdateDisplay();
@@ -667,8 +713,8 @@ namespace Make3D.Dialogs
 
         private void UpdateMarker(LetterMarker mk)
         {
-            AddLetter(mk.Position, markerTop, mk.Letter, mk);
-            Dimension dp = GetUpperAndLowerPoints(mk.Position);
+            AddLetter(mk.Position.X, mk.Position.Y, mk.Letter, mk);
+            Dimension dp = GetUpperAndLowerPoints(mk.Position.X);
             dimensions.Add(dp);
             AddCircle((int)dp.P1.X, (int)dp.P1.Y, mk);
             AddCircle((int)dp.P2.X, (int)dp.P2.Y, mk);

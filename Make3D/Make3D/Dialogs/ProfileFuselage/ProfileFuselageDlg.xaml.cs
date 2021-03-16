@@ -171,13 +171,13 @@ namespace Make3D.Dialogs
             }
         }
 
-        public void MarkerMoved(string s, int x)
+        public void MarkerMoved(string s, System.Drawing.Point p, bool finishedMove)
         {
             dirty = true;
-            TopView.SetMarker(s, x);
-            SideView.SetMarker(s, x);
+            TopView.SetMarker(s, p.X);
+            SideView.SetMarker(s, p.X);
             SortRibs();
-            UpdateDisplay();
+            UpdateDisplay(finishedMove);
         }
 
         public async void OnCommand(string com)
@@ -197,6 +197,7 @@ namespace Make3D.Dialogs
                                 if (TopView.IsValid)
                                 {
                                     TopView.UpdateLayout();
+                                    UpdateLimits();
                                     dirty = true;
                                 }
                             }
@@ -219,6 +220,7 @@ namespace Make3D.Dialogs
                                 if (SideView.IsValid)
                                 {
                                     SideView.UpdateLayout();
+                                    UpdateLimits();
                                 }
                                 dirty = true;
                             }
@@ -267,14 +269,16 @@ namespace Make3D.Dialogs
         public void OnRibAdded(string name, RibControl rc)
         {
             int nextX = 0;
+            int nextY = 10;
             foreach (LetterMarker mk in markers)
             {
-                if (mk.Position >= nextX)
+                if (mk.Position.X >= nextX)
                 {
-                    nextX = mk.Position + 10;
+                    nextX = mk.Position.X + 10;
                 }
+                nextY = 40 - nextY;
             }
-            CreateLetter(name, nextX, rc);
+            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
             TopView.AddRib(name);
             SideView.AddRib(name);
             dirty = true;
@@ -302,15 +306,17 @@ namespace Make3D.Dialogs
 
         public void OnRibInserted(string name, RibControl rc)
         {
-            int nextX = 0;
+            int nextX = 10;
+            int nextY = 10;
             foreach (LetterMarker mk in markers)
             {
-                if (mk.Position >= nextX)
+                if (mk.Position.X >= nextX)
                 {
-                    nextX = mk.Position + 10;
+                    nextX = mk.Position.X + 10;
                 }
+                nextY = 40 - nextY;
             }
-            CreateLetter(name, nextX, rc);
+            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
 
             TopView.AddRib(name);
             SideView.AddRib(name);
@@ -367,7 +373,7 @@ namespace Make3D.Dialogs
             RibManager.CopyARib(name);
         }
 
-        private void CreateLetter(string v1, int v2, RibControl rib)
+        private void CreateLetter(string v1, System.Drawing.Point v2, RibControl rib)
         {
             LetterMarker mk = new LetterMarker(v1, v2);
             mk.Rib = rib;
@@ -408,7 +414,7 @@ namespace Make3D.Dialogs
                         int start = 0;
                         int end = RibManager.Ribs[0].ProfilePoints.Count;
 
-                        double x = TopView.GetXmm(markers[0].Position);
+                        double x = TopView.GetXmm(markers[0].Position.X);
                         List<PointF> leftEdge = new List<PointF>();
                         double leftx = x;
                         List<PointF> rightEdge = new List<PointF>();
@@ -416,7 +422,7 @@ namespace Make3D.Dialogs
                         for (int i = 0; i < RibManager.Ribs.Count; i++)
                         {
                             System.Diagnostics.Debug.WriteLine($"Rib {i}");
-                            x = TopView.GetXmm(markers[i].Position);
+                            x = TopView.GetXmm(markers[i].Position.X);
                             if (i == RibManager.Ribs.Count - 1)
                             {
                                 rightx = x;
@@ -525,7 +531,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        private async Task<bool> LoadRib(XmlElement el, string pth, string nme, int position)
+        private async Task<bool> LoadRib(XmlElement el, string pth, string nme, System.Drawing.Point position)
         {
             bool res = true;
             try
@@ -557,25 +563,27 @@ namespace Make3D.Dialogs
         private void OnRibInserted(string name, RibControl rc, RibControl after)
         {
             int nextX = 0;
+            int nextY = 10;
             for (int i = 0; i < markers.Count; i++)
             {
                 if (markers[i].Rib == after)
                 {
                     if (i < markers.Count - 1)
                     {
-                        nextX = markers[i].Position + (markers[i + 1].Position - markers[i].Position) / 2;
+                        nextX = markers[i].Position.X + (markers[i + 1].Position.X - markers[i].Position.X) / 2;
                     }
                     else
                     {
-                        nextX = markers[i].Position + 10;
+                        nextX = markers[i].Position.X + 10;
                     }
                 }
+                nextY = 40 - nextY;
             }
             if (nextX == 0 && markers.Count > 0)
             {
-                nextX = markers[markers.Count - 1].Position + 10;
+                nextX = markers[markers.Count - 1].Position.X + 10;
             }
-            CreateLetter(name, nextX, rc);
+            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
             TopView.AddRib(name);
             SideView.AddRib(name);
             UpdateDisplay();
@@ -622,7 +630,7 @@ namespace Make3D.Dialogs
             RibManager.Ribs.Clear();
             Markers.Clear();
             XmlNodeList nodes = docNode.SelectNodes("Rib");
-
+            int nextY = 10;
             foreach (XmlNode nd in nodes)
             {
                 XmlElement el = nd as XmlElement;
@@ -633,16 +641,20 @@ namespace Make3D.Dialogs
                 // noteWindow.Activate();
                 noteWindow.Refresh();
                 Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
+                System.Drawing.Point ribPos;
                 int position = Convert.ToInt16(el.GetAttribute("Position"));
+                ribPos = new System.Drawing.Point(position, nextY);
+                Task ribber = LoadRib(el, pth, nme, ribPos);
 
-                Task ribber = LoadRib(el, pth, nme, position);
                 await ribber;
+                nextY = 40 - nextY;
             }
 
             SortRibs();
             // need to update the top and side views BEFORE generating skin
             TopView.UpdateDisplay();
             SideView.UpdateDisplay();
+            UpdateLimits();
             GenerateSkin();
             Redisplay();
             noteWindow.Hide();
@@ -728,7 +740,7 @@ namespace Make3D.Dialogs
                     swapped = false;
                     for (int i = 0; i < markers.Count - 1; i++)
                     {
-                        if (markers[i].Position > markers[i + 1].Position)
+                        if (markers[i].Position.X > markers[i + 1].Position.X)
                         {
                             LetterMarker mk = markers[i];
                             markers[i] = markers[i + 1];
@@ -737,6 +749,12 @@ namespace Make3D.Dialogs
                         }
                     }
                 } while (swapped);
+                int nextY = 10;
+                foreach (LetterMarker mk in markers)
+                {
+                    mk.Position = new System.Drawing.Point(mk.Position.X, nextY);
+                    nextY = 40 - nextY;
+                }
                 SideView.Markers = markers;
                 TopView.Markers = markers;
                 ObservableCollection<RibControl> ribs = new ObservableCollection<RibControl>();
@@ -785,13 +803,39 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void UpdateDisplay()
+        private void UpdateDisplay(bool regenSkin = true)
         {
             SideView.UpdateDisplay();
             TopView.UpdateDisplay();
-            GenerateSkin();
+            if (regenSkin)
+            {
+                GenerateSkin();
+            }
             Redisplay();
             NotifyPropertyChanged("CameraPos");
+        }
+
+        private void UpdateLimits()
+        {
+            if (TopView.IsValid && SideView.IsValid)
+            {
+                double l = TopView.LeftLimit;
+                if (SideView.LeftLimit > l)
+                {
+                    l = SideView.LeftLimit;
+                }
+
+                double r = TopView.RightLimit;
+                if (SideView.RightLimit < r)
+                {
+                    r = SideView.RightLimit;
+                }
+
+                TopView.LeftLimit = l;
+                SideView.LeftLimit = l;
+                TopView.RightLimit = r;
+                SideView.RightLimit = r;
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -839,7 +883,7 @@ namespace Make3D.Dialogs
                 {
                     if (mk.Letter == ob.Header)
                     {
-                        ob.Write(doc, docNode, mk.Position, mk.Letter);
+                        ob.Write(doc, docNode, mk.Position.X, mk.Letter);
                         break;
                     }
                 }

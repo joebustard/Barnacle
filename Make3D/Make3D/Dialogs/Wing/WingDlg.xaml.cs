@@ -489,7 +489,7 @@ namespace Make3D.Dialogs
             return Math.Sqrt((dx * dx) + (dy * dy));
         }
 
-        private void EllipseTip(List<Point> tipPnts, double mainRad, double tX, double tY, double tZ)
+        private void EllipseTip(List<Point> tipPnts, double mainRad, double sideRad, double tX, double tY, double tZ)
         {
             List<Point3D> tipEdge = new List<Point3D>();
             double md = mainRad * 2;
@@ -502,8 +502,9 @@ namespace Make3D.Dialogs
             {
                 for (double t = 0; t < 0.5; t += stepSize)
                 {
-                    Point elp = GetEllipsePoint(mainRad, mainRad / 10, t);
-                    Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                    Point elp = GetEllipsePoint(mainRad, sideRad, t);
+                    //  Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                    Point3D p = new Point3D(elp.X, tY, elp.Y);
                     tipEdge.Add(p);
                 }
             }
@@ -511,8 +512,9 @@ namespace Make3D.Dialogs
             {
                 for (double t = 0.5; t >= 0; t -= stepSize)
                 {
-                    Point elp = GetEllipsePoint(mainRad, mainRad / 10, t);
-                    Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                    Point elp = GetEllipsePoint(mainRad, sideRad, t);
+                    // Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+                    Point3D p = new Point3D(elp.X, tY, elp.Y);
                     tipEdge.Add(p);
                 }
             }
@@ -520,8 +522,8 @@ namespace Make3D.Dialogs
             for (int i = 0; i < tipPnts.Count - 1; i++)
             {
                 Point3D pd1 = new Point3D(tX + (tipPnts[i].X * md), tY + (tipPnts[i].Y * md), tZ);
-                Point3D pd2 = new Point3D(tipEdge[i].X, tipEdge[i].Y, tipEdge[i].Z);
-                Point3D pd3 = new Point3D(tipEdge[i + 1].X, tipEdge[i + 1].Y, tipEdge[i + 1].Z);
+                Point3D pd2 = new Point3D(tX + mainRad - tipEdge[i].X, tipEdge[i].Y, tZ + tipEdge[i].Z);
+                Point3D pd3 = new Point3D(tX + mainRad - tipEdge[i + 1].X, tipEdge[i + 1].Y, tZ + tipEdge[i + 1].Z);
                 Point3D pd4 = new Point3D(tX + (tipPnts[i + 1].X * md), tY + (tipPnts[i + 1].Y * md), tZ);
 
                 int v1 = AddVertice(pd1);
@@ -703,11 +705,31 @@ namespace Make3D.Dialogs
                                 TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
                             }
                             else
-                            if (selectedTipShape == "Ellipse")
+                            if (selectedTipShape == "Ellipse 1")
                             {
-                                EllipseTip(tipPnts, tl / 2, tipOffsetX, tipOffsetY, tipOffsetZ);
+                                double mr = tl / 2;
+                                double sr = mr / 10;
+                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
                             }
-
+                            else
+                            if (selectedTipShape == "Ellipse 2")
+                            {
+                                double mr = tl / 2;
+                                double sr = mr / 5;
+                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                            }
+                            if (selectedTipShape == "Ellipse 3")
+                            {
+                                double mr = tl / 2;
+                                double sr = mr / 2;
+                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                            }
+                            if (selectedTipShape == "Ellipse 4")
+                            {
+                                double mr = tl / 2;
+                                double sr = mr;
+                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                            }
                             CentreVertices();
                         }
                     }
@@ -944,7 +966,10 @@ namespace Make3D.Dialogs
             NotifyPropertyChanged("ShapeNames");
 
             tipShapeNames.Add("Cut Off");
-            tipShapeNames.Add("Ellipse");
+            tipShapeNames.Add("Ellipse 1");
+            tipShapeNames.Add("Ellipse 2");
+            tipShapeNames.Add("Ellipse 3");
+            tipShapeNames.Add("Ellipse 4");
 
             NotifyPropertyChanged("TipShapeNames");
         }
