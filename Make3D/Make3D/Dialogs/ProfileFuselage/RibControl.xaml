@@ -16,13 +16,15 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
-            <Label x:Name="HeaderLabel" Grid.Row="0" Background="Blue" Foreground="Yellow" />
-            <ToggleButton x:Name="ShowCentersBut" Margin="2,1,0,1" Grid.Column="1" Click="ShowCenters_Click">
+            <Label x:Name="HeaderLabel" Grid.Column="0" Background="Blue" Foreground="Yellow" />
+            <Label x:Name="FNameLabel" Grid.Column="1" Background="Blue" Foreground="Yellow" />
+            <ToggleButton x:Name="ShowCentersBut" Margin="2,1,0,1" Grid.Column="2" Click="ShowCenters_Click">
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="Centre" />
@@ -37,10 +39,10 @@
                     </Style>
                 </ToggleButton.Style>
             </ToggleButton>
-            <Button x:Name="ZoomOut" Margin="2,1,0,1" Grid.Column="2" Click="ZoomOut_Click">-</Button>
-            <Button x:Name="ZoomReset" Margin="2,1,0,1" Grid.Column="3" Click="ZoomReset_Click">.</Button>
-            <Button x:Name="ZoomIn" Margin="2,1,0,1" Grid.Column="4" Click="ZoomIn_Click">+</Button>
-            <ToggleButton x:Name="ShowProfileBut" Margin="2,1,0,1" Grid.Column="5" Click="ShowProfile_Click">
+            <Button x:Name="ZoomOut" Margin="2,1,0,1" Grid.Column="3" Click="ZoomOut_Click">-</Button>
+            <Button x:Name="ZoomReset" Margin="2,1,0,1" Grid.Column="4" Click="ZoomReset_Click">.</Button>
+            <Button x:Name="ZoomIn" Margin="2,1,0,1" Grid.Column="5" Click="ZoomIn_Click">+</Button>
+            <ToggleButton x:Name="ShowProfileBut" Margin="2,1,0,1" Grid.Column="6" Click="ShowProfile_Click">
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="Outline" />

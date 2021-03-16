@@ -181,7 +181,7 @@ namespace Make3D.Models
             {
                 polarPos.Theta += dt;
                 polarPos.Phi += dp;
-                polarPos.Dump();
+
                 ConvertPolarTo3D();
             }
         }

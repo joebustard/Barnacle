@@ -1,23 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
-namespace TemplateLib
+namespace ProjectLib
 {
-    internal class ProjectFile
+    public class ProjectFile
     {
-
         public String Name { get; set; }
         public String Source { get; set; }
+
+        // should this file be exported when an export all command is issued
+        public bool Export { get; set; }
+
+        // should this file be added to the backup when a backup command is issued
+        public bool Backup { get; set; }
+
         public ProjectFile()
         {
             Name = String.Empty;
             Source = String.Empty;
-            
         }
+
         internal void Load(XmlDocument doc, XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -32,8 +34,6 @@ namespace TemplateLib
                 {
                     Source = ele.GetAttribute("Source");
                 }
-
-               
             }
         }
     }

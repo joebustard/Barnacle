@@ -4,15 +4,15 @@ using System.IO;
 
 namespace TemplateLib
 {
-    internal class ProjectFolder
+    internal class ProjectTemplateFolder
     {
         public String Name { get; set; }
 
-        public List<Substitution> Substitutions { get; set; }
+        public List<TemplateSubstitution> Substitutions { get; set; }
 
-        internal List<ProjectFile> files;
+        internal List<ProjectTemplateFile> files;
 
-        internal List<ProjectFile> Files
+        internal List<ProjectTemplateFile> Files
         {
             get { return files; }
             set
@@ -24,14 +24,14 @@ namespace TemplateLib
             }
         }
 
-        public ProjectFolder()
+        public ProjectTemplateFolder()
         {
-            Files = new List<ProjectFile>();
+            Files = new List<ProjectTemplateFile>();
         }
 
         internal void CreateFiles(string path)
         {
-            foreach (ProjectFile pf in Files)
+            foreach (ProjectTemplateFile pf in Files)
             {
                 string trg = System.IO.Path.Combine(path, pf.Name);
                 if (pf.Source != String.Empty)

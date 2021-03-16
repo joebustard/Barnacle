@@ -47,6 +47,7 @@
     </Description>
 
     <Folder Name=".">
+      <File Name="Tank.mpf" Source="templates/tankproject.txt" />
       <File Name="Hull.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Turrent.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="LeftRunningGear.txt" Source="templates/blankmodel1_35.txt" />

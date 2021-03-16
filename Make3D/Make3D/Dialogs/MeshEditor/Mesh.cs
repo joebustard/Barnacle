@@ -387,10 +387,6 @@ namespace Make3D.Dialogs.MeshEditor
         {
             foreach (MeshTriangle tri in Faces)
             {
-                System.Diagnostics.Debug.WriteLine($"{tri.P0},{tri.P1},{tri.P2}");
-            }
-            foreach (MeshTriangle tri in Faces)
-            {
                 if (tri.NeighbourP0P1 == null)
                 {
                     tri.NeighbourP0P1 = FindNeighbourTriangle(tri, tri.P0, tri.P1);

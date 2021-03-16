@@ -6,13 +6,12 @@ using System.Threading.Tasks;
 
 namespace TemplateLib
 {
-    internal class Substitution
+    internal class TemplateSubstitution
     {
-
-        public string Original { get; set;} 
+        public string Original { get; set;}
         public string Replacement { get; set; }
 
-        public Substitution()
+        public TemplateSubstitution()
         {
             Original = String.Empty;
             Replacement = String.Empty;

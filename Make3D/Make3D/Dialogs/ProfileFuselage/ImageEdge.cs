@@ -136,6 +136,7 @@ namespace Make3D.Dialogs
                     // append another one just to its right
                     double xm = edgePoints[bl].X;
                     edgePoints.Insert(bl + 1, new PointF(((float)xm + 0.00001F), edgePoints[bl].Y));
+                    br = bl + 1;
                 }
             }
             for (int i = 0; i < edgePoints.Count; i++)

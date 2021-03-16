@@ -802,7 +802,6 @@ namespace Make3D.Dialogs
                     double x = 1 - Convert.ToDouble(words[i]);
                     double y = Convert.ToDouble(words[i + 1]);
                     res.Add(new Point(x, y));
-                    System.Diagnostics.Debug.WriteLine($"{x},{y}");
                 }
 
                 for (int i = 1; i < res.Count; i++)

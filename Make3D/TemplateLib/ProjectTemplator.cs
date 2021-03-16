@@ -7,7 +7,7 @@ namespace TemplateLib
 {
     public class ProjectTemplator
     {
-        private List<ProjectDefinition> templates;
+        private List<ProjectTemplateDefinition> templates;
         public string TemplateDefinitionPath { get; set; }
 
         private string templateDefinitionExtension;
@@ -35,11 +35,11 @@ namespace TemplateLib
 
         public void AddSubstitution(string v1, string v2)
         {
-            Substitution sub = new Substitution();
+            TemplateSubstitution sub = new TemplateSubstitution();
             sub.Original = v1;
             sub.Replacement = v2;
 
-            foreach (ProjectDefinition pd in templates)
+            foreach (ProjectTemplateDefinition pd in templates)
             {
                 pd.Substitutions.Add(sub);
             }
@@ -47,7 +47,7 @@ namespace TemplateLib
 
         public ProjectTemplator()
         {
-            templates = new List<ProjectDefinition>();
+            templates = new List<ProjectTemplateDefinition>();
             TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory;
             TemplateDefinitionExtension = ".def";
         }
@@ -55,8 +55,8 @@ namespace TemplateLib
         public bool ProcessTemplate(string pth, string name)
         {
             bool res = false;
-            ProjectDefinition def = null;
-            foreach (ProjectDefinition d in templates)
+            ProjectTemplateDefinition def = null;
+            foreach (ProjectTemplateDefinition d in templates)
             {
                 if (d.Name == name)
                 {
@@ -70,7 +70,7 @@ namespace TemplateLib
                 {
                     Directory.CreateDirectory(pth);
                 }
-                foreach (ProjectFolder fld in def.Folders)
+                foreach (ProjectTemplateFolder fld in def.Folders)
                 {
                     fld.Substitutions = def.Substitutions;
                     string p = System.IO.Path.Combine(pth, fld.Name);
@@ -131,7 +131,7 @@ namespace TemplateLib
                 XmlNodeList defNodes = root.SelectNodes("ProjectDefinition");
                 foreach (XmlNode nd in defNodes)
                 {
-                    ProjectDefinition def = new ProjectDefinition();
+                    ProjectTemplateDefinition def = new ProjectTemplateDefinition();
                     def.Load(doc, nd);
                     templates?.Add(def);
                 }

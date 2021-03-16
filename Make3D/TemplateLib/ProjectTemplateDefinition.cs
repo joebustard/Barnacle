@@ -1,31 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace TemplateLib
 {
-  
-    public class ProjectDefinition
+    public class ProjectTemplateDefinition
     {
         internal String Name { get; set; }
         internal String Description { get; set; }
-        internal List<ProjectFolder> folders;
-        internal List<ProjectFolder> Folders
+        internal List<ProjectTemplateFolder> folders;
+
+        internal List<ProjectTemplateFolder> Folders
         {
             get { return folders; }
             set
             {
-                if ( value != folders)
+                if (value != folders)
                 {
                     folders = value;
                 }
             }
         }
-        private List<Substitution> substitutions;
-        internal List<Substitution> Substitutions
+
+        private List<TemplateSubstitution> substitutions;
+
+        internal List<TemplateSubstitution> Substitutions
         {
             get { return substitutions; }
             set
@@ -37,32 +36,31 @@ namespace TemplateLib
             }
         }
 
-        public ProjectDefinition()
+        public ProjectTemplateDefinition()
         {
             Name = String.Empty;
             Description = String.Empty;
-            Folders = new List<ProjectFolder>();
-            substitutions = new List<Substitution>();
-
+            Folders = new List<ProjectTemplateFolder>();
+            substitutions = new List<TemplateSubstitution>();
         }
 
         internal void Load(XmlDocument doc, XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
-            if ( ele != null )
+            if (ele != null)
             {
-                if ( ele.HasAttribute("Name"))
+                if (ele.HasAttribute("Name"))
                 {
                     Name = ele.GetAttribute("Name");
                 }
             }
             XmlNode des = nd.SelectSingleNode("Description");
-            if ( des != null)
+            if (des != null)
             {
                 Description = des.InnerText.Trim();
             }
             XmlNodeList flds = ele.SelectNodes("Folder");
-            foreach ( XmlNode fl in flds)
+            foreach (XmlNode fl in flds)
             {
                 XmlElement fel = fl as XmlElement;
                 if (fel != null && fel.HasAttribute("Name"))
@@ -70,14 +68,14 @@ namespace TemplateLib
                     String folderName = fel.GetAttribute("Name");
                     if (folderName != String.Empty)
                     {
-                        ProjectFolder nf = new ProjectFolder();
+                        ProjectTemplateFolder nf = new ProjectTemplateFolder();
                         nf.Name = folderName;
                         Folders.Add(nf);
 
                         XmlNodeList fileNodes = fel.SelectNodes("File");
-                        foreach( XmlNode filn in fileNodes)
+                        foreach (XmlNode filn in fileNodes)
                         {
-                            ProjectFile pf = new ProjectFile();
+                            ProjectTemplateFile pf = new ProjectTemplateFile();
                             pf.Load(doc, filn);
                             nf.Files.Add(pf);
                         }
@@ -98,7 +96,7 @@ namespace TemplateLib
 
                         if (original != String.Empty && rep != String.Empty)
                         {
-                            Substitution nf = new Substitution();
+                            TemplateSubstitution nf = new TemplateSubstitution();
                             nf.Original = original;
                             nf.Replacement = rep;
                             Substitutions.Add(nf);

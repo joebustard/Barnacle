@@ -46,7 +46,6 @@ namespace Make3D.Dialogs
             set { pointDistance = value; }
         }
 
-
         private double rotationDegrees;
         private double maxRotation;
         private int selectedPoint;
@@ -86,7 +85,6 @@ namespace Make3D.Dialogs
             }
             Redraw();
             Notify("Refresh");
-            
         }
 
         public void Redraw()
@@ -232,7 +230,7 @@ namespace Make3D.Dialogs
             ControlPoints.Clear();
             pointAngles.Clear();
             pointDistance.Clear();
-           
+
             Points.Clear();
             bzlines = new BezierLine[4];
             bzlines[0] = new BezierLine();
@@ -322,8 +320,6 @@ namespace Make3D.Dialogs
 
             return new Point(x, y);
         }
-
-      
 
         private static SolidColorBrush[] pointColours =
         {
@@ -474,7 +470,7 @@ Brushes.Green
 
             double x = (p.X - cx) / maxRadius;
             double y = (p.Y - cy) / maxRadius;
-            System.Diagnostics.Debug.WriteLine($"{selectedControlPoint}={x},{y}");
+
             switch (selectedControlPoint)
             {
                 case 0:
@@ -884,16 +880,16 @@ Brushes.Green
         public String ToEditorParameters()
         {
             string res = "";
-  
-            res += "Id="+ IdNumber.ToString()+",";
-            res += "D="+FuselageBulkHead.Depth.ToString() + ",";
-            res += "H="+ FuselageBulkHead.Height.ToString() + ",";
-            res += "X="+ FuselageBulkHead.OffsetX.ToString() + ",";
-            res += "Y="+ FuselageBulkHead.OffsetY.ToString() + ",";
-            res += "Z="+ FuselageBulkHead.OffsetZ.ToString() + ",";
+
+            res += "Id=" + IdNumber.ToString() + ",";
+            res += "D=" + FuselageBulkHead.Depth.ToString() + ",";
+            res += "H=" + FuselageBulkHead.Height.ToString() + ",";
+            res += "X=" + FuselageBulkHead.OffsetX.ToString() + ",";
+            res += "Y=" + FuselageBulkHead.OffsetY.ToString() + ",";
+            res += "Z=" + FuselageBulkHead.OffsetZ.ToString() + ",";
             foreach (Point p in Points)
             {
-                res += "P="+ p.X.ToString()+"!"+p.Y.ToString()+",";
+                res += "P=" + p.X.ToString() + "!" + p.Y.ToString() + ",";
             }
             foreach (Point p in ControlPoints)
             {

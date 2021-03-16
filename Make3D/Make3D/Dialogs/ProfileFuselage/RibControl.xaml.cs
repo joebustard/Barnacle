@@ -78,6 +78,7 @@ namespace Make3D.Dialogs
         }
 
         public string Header { get; set; }
+        private string FName;
 
         public string ImagePath
         {
@@ -90,6 +91,10 @@ namespace Make3D.Dialogs
                 if (value != imagePath)
                 {
                     imagePath = value;
+                    if (imagePath != "")
+                    {
+                        FName = System.IO.Path.GetFileNameWithoutExtension(imagePath);
+                    }
                 }
             }
         }
@@ -249,10 +254,14 @@ namespace Make3D.Dialogs
 
         public void GenerateProfilePoints(int modelType)
         {
+            System.Diagnostics.Debug.WriteLine("=================================== GenerateProfilePoints ================================");
+            System.Diagnostics.Debug.WriteLine($"{imagePath}");
+
             divisionLength = EdgeLength / (NumDivisions - 1);
 
             middleX = imageEdge.MiddleX;
             middleY = imageEdge.MiddleY;
+            System.Diagnostics.Debug.WriteLine($"MiddleX {middleX} middleY {middleY} ");
             profilePoints = new List<PointF>();
 
             List<PointF> tmp = new List<PointF>();
@@ -263,18 +272,21 @@ namespace Make3D.Dialogs
                 startP = imageEdge.WholeStart;
                 endP = imageEdge.WholeEnd;
                 divisionLength = imageEdge.Length / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
             }
             if (modelType == 1)
             {
                 startP = imageEdge.BackStart;
                 endP = imageEdge.BackEnd;
                 divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
             }
             if (modelType == 2)
             {
                 startP = imageEdge.FrontStart;
                 endP = imageEdge.FrontEnd;
                 divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
             }
 
             for (int i = startP; i < endP; i++)
@@ -309,7 +321,7 @@ namespace Make3D.Dialogs
                             double delta = overhang / d;
                             double nx = p0.X + (p1.X - p0.X) * delta;
                             double ny = p0.Y + (p1.Y - p0.Y) * delta;
-                            //   Mark((int)(nx + mx), (int)(ny + my), System.Windows.Media.Colors.LightGreen);
+
                             nx = nx / middleX;
                             ny = ny / middleY;
                             profilePoints.Add(new PointF((float)nx, (float)ny));
@@ -318,7 +330,7 @@ namespace Make3D.Dialogs
                         {
                             double nx = p0.X;
                             double ny = p0.Y;
-                            //   Mark((int)(nx + mx), (int)(ny + my), System.Windows.Media.Colors.LightGreen);
+
                             nx = nx / middleX;
                             ny = ny / middleY;
                             profilePoints.Add(new PointF((float)nx, (float)ny));
@@ -347,6 +359,7 @@ namespace Make3D.Dialogs
         public void UpdateHeaderLabel()
         {
             HeaderLabel.Content = Header;
+            FNameLabel.Content = FName;
         }
 
         internal RibControl Clone()
@@ -725,6 +738,7 @@ The operation may take some time.
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             HeaderLabel.Content = Header;
+            FNameLabel.Content = FName;
         }
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
