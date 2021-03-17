@@ -187,6 +187,7 @@ namespace Make3D.Dialogs
                 Faces.Add(c1);
                 Faces.Add(c2);
             }
+            CentreVertices();
         }
 
         private void GeneratePointParams()

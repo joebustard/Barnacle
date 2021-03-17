@@ -702,6 +702,7 @@ namespace Make3D.Models
             ob.Remesh();
             Content.Add(ob);
             ob.Name = "Object_" + Content.Count.ToString();
+            Dirty = true;
         }
 
         internal bool ContainsName(string name)

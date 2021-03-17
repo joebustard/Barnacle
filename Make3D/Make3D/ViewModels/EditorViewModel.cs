@@ -1080,6 +1080,7 @@ namespace Make3D.ViewModels
 
         private void FloorAllObjects()
         {
+            document.Dirty = true;
             foreach (Object3D ob in Document.Content)
             {
                 ob.MoveToFloor();
@@ -1088,6 +1089,7 @@ namespace Make3D.ViewModels
 
         private void FloorSelectedObjects()
         {
+            document.Dirty = true;
             for (int i = 0; i < selectedObjectAdorner.SelectedObjects.Count; i++)
             {
                 Object3D ob = selectedObjectAdorner.SelectedObjects[i];
@@ -1120,6 +1122,7 @@ namespace Make3D.ViewModels
 
         private bool GroupToMesh()
         {
+            document.Dirty = true;
             bool res = false;
             if (selectedObjectAdorner != null)
             {
@@ -1273,6 +1276,7 @@ namespace Make3D.ViewModels
                 Point3D target = floorMarker.Position;
 
                 MoveToPoint(target);
+                document.Dirty = true;
             }
         }
 
@@ -1353,6 +1357,7 @@ namespace Make3D.ViewModels
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
             {
                 CheckPoint();
+                document.Dirty = true;
                 string s = param.ToString();
                 AlignSelectedObjects(s);
                 selectedObjectAdorner.Refresh();
@@ -1545,7 +1550,7 @@ namespace Make3D.ViewModels
 
                                 theta += dTheta;
                             }
-
+                            document.Dirty = true;
                             RegenerateDisplayList();
                             UpdateSelectionDisplay();
                         }
@@ -1577,6 +1582,7 @@ namespace Make3D.ViewModels
                     ObjectClipboard.Add(o);
                     Document.DeleteObject(o);
                 }
+                document.Dirty = true;
                 selectedObjectAdorner.Clear();
                 RegenerateDisplayList();
                 NotificationManager.Notify("ObjectNamesChanged", null);
@@ -1589,6 +1595,7 @@ namespace Make3D.ViewModels
             if (s == "Optimum")
             {
                 OptimisePlacement();
+                document.Dirty = true;
             }
             else
             {
@@ -1598,6 +1605,7 @@ namespace Make3D.ViewModels
                 }
                 else
                 {
+                    document.Dirty = true;
                     double minx = double.MaxValue;
                     double miny = double.MaxValue;
                     double minz = double.MaxValue;
@@ -1729,6 +1737,7 @@ namespace Make3D.ViewModels
                 CheckPoint();
                 string s = param.ToString();
                 FlipSelectedObjects(s);
+                document.Dirty = true;
                 selectedObjectAdorner.Refresh();
                 RegenerateDisplayList();
             }
@@ -1790,7 +1799,7 @@ namespace Make3D.ViewModels
                             if (File.Exists(dlg.FileName))
                             {
                                 Document.ImportObjs(dlg.FileName);
-
+                                document.Dirty = true;
                                 RegenerateDisplayList();
                             }
                         }

@@ -87,17 +87,21 @@ namespace Make3D.Adorners
         internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
         {
             bool handled = false;
-            if (boxSelected)
+            // ignore if the left moouse button is up
+            if (e.LeftButton == MouseButtonState.Pressed)
             {
-                handled = true;
-                MouseMoveBox(lastPos, newPos, ctrlDown);
-            }
-            else
-            {
-                if (selectedThumb != null)
+                if (boxSelected)
                 {
                     handled = true;
-                    MouseMoveThumb(lastPos, newPos);
+                    MouseMoveBox(lastPos, newPos, ctrlDown);
+                }
+                else
+                {
+                    if (selectedThumb != null)
+                    {
+                        handled = true;
+                        MouseMoveThumb(lastPos, newPos);
+                    }
                 }
             }
             return handled;
