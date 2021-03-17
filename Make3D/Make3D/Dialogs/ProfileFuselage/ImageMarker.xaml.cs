@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -359,15 +360,16 @@ namespace Make3D.Dialogs
         {
             int by = bry + (2 * totalTopMargin);
             AddLine(x, y, x, y + by);
-            int dx = 10;
-            if (c.Length > 1)
-            {
-                dx *= c.Length;
-            }
+            Typeface typeface = new Typeface("Arial");
+            double txtWidth = new FormattedText(c, CultureInfo.CurrentUICulture,
+        FlowDirection.LeftToRight,
+        typeface, 14, Brushes.Black).Width;
+            double brd = 4;
+
             Border br = new Border();
-            Canvas.SetLeft(br, x - dx);
+            Canvas.SetLeft(br, x - (txtWidth / 2) - brd);
             Canvas.SetTop(br, y - 10);
-            br.Width = 2 * dx;
+            br.Width = txtWidth + 2 * brd;
             br.Height = 20;
             br.BorderBrush = System.Windows.Media.Brushes.Black;
             br.Background = System.Windows.Media.Brushes.Yellow;
@@ -379,12 +381,12 @@ namespace Make3D.Dialogs
             br.Tag = tag;
             br.ContextMenu = this.FindResource("cmLetter") as ContextMenu;
             elements.Add(br);
-            AddText(x - (dx / 2), y - 8, c, System.Windows.Media.Colors.Black, tag);
+            AddText(x - ((int)txtWidth / 2), y - 8, c, System.Windows.Media.Colors.Black, tag);
 
             br = new Border();
-            Canvas.SetLeft(br, x - dx);
+            Canvas.SetLeft(br, x - txtWidth / 2);
             Canvas.SetTop(br, y - 10 + by);
-            br.Width = 2 * dx;
+            br.Width = txtWidth;
             br.Height = 20;
             br.BorderBrush = System.Windows.Media.Brushes.Black;
             br.Background = System.Windows.Media.Brushes.Yellow;
@@ -397,7 +399,7 @@ namespace Make3D.Dialogs
             br.ContextMenu = this.FindResource("cmLetter") as ContextMenu;
 
             elements.Add(br);
-            AddText(x - (dx / 2), y - 8 + by, c, System.Windows.Media.Colors.Black, tag);
+            AddText(x - ((int)txtWidth / 2) + 3, y - 8 + by, c, System.Windows.Media.Colors.Black, tag);
         }
 
         private void AddLine(int v1, int v2, int v3, int v4)
@@ -414,6 +416,8 @@ namespace Make3D.Dialogs
         private void AddText(int x, int y, string text, System.Windows.Media.Color color, object tag)
         {
             TextBlock textBlock = new TextBlock();
+            textBlock.FontFamily = new FontFamily("Arial");
+            textBlock.FontSize = 14;
             textBlock.Text = text;
             textBlock.Foreground = new SolidColorBrush(color);
             textBlock.Background = new SolidColorBrush(Colors.Yellow);

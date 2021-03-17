@@ -148,9 +148,9 @@ namespace Make3D.Dialogs
             WholeEnd = edgePoints.Count;
 
             BackStart = 0;
-            BackEnd = bl + 1;
+            BackEnd = bl;
 
-            FrontStart = br + 1;
+            FrontStart = br;
             FrontEnd = WholeEnd;
             System.Diagnostics.Debug.WriteLine($" WholeStart {WholeStart}, WholeEnd {WholeEnd}");
             System.Diagnostics.Debug.WriteLine($" BackStart {BackStart}, BackEnd {BackEnd}");

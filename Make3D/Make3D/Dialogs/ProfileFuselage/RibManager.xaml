@@ -46,7 +46,7 @@
             <Button x:Name="LoadRibs" Grid.Row="10" Click="LoadRibs_Click" Content="Load" ToolTip="Load a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
             <Button x:Name="SaveRibs" Grid.Row="11" Click="SaveRibs_Click" Content="Save" ToolTip="Save a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
         </Grid>
-        <ListView Grid.Column="1" ItemsSource="{Binding Ribs}" SelectedItem="{Binding SelectedRib}">
+        <ListView Grid.Column="1" ItemsSource="{Binding Ribs}" SelectedItem="{Binding SelectedRib}" Background="Bisque">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"></StackPanel>

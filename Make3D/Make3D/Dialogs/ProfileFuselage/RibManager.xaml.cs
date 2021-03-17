@@ -14,6 +14,7 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class RibManager : UserControl, INotifyPropertyChanged
     {
+        public int numberOfProfilePoints;
         public CommandHandler OnCommandHandler;
 
         private bool controlsEnabled;
@@ -32,6 +33,7 @@ namespace Make3D.Dialogs
             NextNameNumber = 0;
             selectedRib = null;
             controlsEnabled = true;
+            numberOfProfilePoints = 80;
         }
 
         public delegate void CommandHandler(string command);
@@ -81,6 +83,26 @@ namespace Make3D.Dialogs
         public char NextNameLetter { get; set; }
 
         public int NextNameNumber { get; set; }
+
+        public int NumberOfProfilePoints
+        {
+            get
+            {
+                return numberOfProfilePoints;
+            }
+            internal set
+            {
+                if (value != numberOfProfilePoints)
+                {
+                    numberOfProfilePoints = value;
+                    foreach (RibControl rc in ribs)
+                    {
+                        rc.NumDivisions = numberOfProfilePoints;
+                    }
+                    GenerateProfiles();
+                }
+            }
+        }
 
         public RibAdded OnRibAdded { get; set; }
 

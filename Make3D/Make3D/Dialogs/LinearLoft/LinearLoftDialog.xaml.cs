@@ -30,45 +30,14 @@ namespace Make3D.Dialogs
             EditorParameters.ToolName = "LinearLoft";
             selectedPoint = -1;
             DataContext = this;
+            Camera.Distance = 2.0 * Camera.Distance;
         }
 
-        private void LineCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            selectedPoint = -1;
-
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                double rad = 3;
-                System.Windows.Point position = e.GetPosition(LineCanvas);
-                for (int i = 0; i < line.Count; i++)
-                {
-                    System.Windows.Point p = line[i];
-                    double x = p.X * LineCanvas.ActualWidth;
-                    double y = (1 - p.Y) * LineCanvas.ActualHeight;
-                    if (position.X >= x - rad && position.X <= x + rad)
-                    {
-                        if (position.Y >= y - rad && position.Y <= y + rad)
-                        {
-                            selectedPoint = i;
-
-                            break;
-                        }
-                    }
-                }
-            }
-            UpdateDisplay();
-        }
-
-        private void UpdateDisplay()
-        {
-            RedrawLine();
-            DisplayPoints();
-            GenerateShape();
-            RedrawShape();
-        }
-
-        private void LineCanvas_MouseUp(object sender, MouseButtonEventArgs e)
-        {
+            GeneratePointParams();
+            DialogResult = true;
+            Close();
         }
 
         private void DisplayPoints()
@@ -101,21 +70,6 @@ namespace Make3D.Dialogs
                     LineCanvas.Children.Add(el);
                 }
             }
-        }
-
-        private void LineCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
-            {
-                System.Windows.Point position = e.GetPosition(LineCanvas);
-
-                line[selectedPoint] = new Point(position.X / LineCanvas.ActualWidth, line[selectedPoint].Y);
-            }
-            else
-            {
-                selectedPoint = -1;
-            }
-            UpdateDisplay();
         }
 
         private void GeneratePointParams()
@@ -215,11 +169,50 @@ namespace Make3D.Dialogs
             UpdateDisplay();
         }
 
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        private void LineCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            GeneratePointParams();
-            DialogResult = true;
-            Close();
+            selectedPoint = -1;
+
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                double rad = 3;
+                System.Windows.Point position = e.GetPosition(LineCanvas);
+                for (int i = 0; i < line.Count; i++)
+                {
+                    System.Windows.Point p = line[i];
+                    double x = p.X * LineCanvas.ActualWidth;
+                    double y = (1 - p.Y) * LineCanvas.ActualHeight;
+                    if (position.X >= x - rad && position.X <= x + rad)
+                    {
+                        if (position.Y >= y - rad && position.Y <= y + rad)
+                        {
+                            selectedPoint = i;
+
+                            break;
+                        }
+                    }
+                }
+            }
+            UpdateDisplay();
+        }
+
+        private void LineCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
+            {
+                System.Windows.Point position = e.GetPosition(LineCanvas);
+
+                line[selectedPoint] = new Point(position.X / LineCanvas.ActualWidth, line[selectedPoint].Y);
+            }
+            else
+            {
+                selectedPoint = -1;
+            }
+            UpdateDisplay();
+        }
+
+        private void LineCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
         }
 
         private void RedrawLine()
@@ -267,6 +260,14 @@ namespace Make3D.Dialogs
                 }
                 MyModelGroup.Children.Add(gm);
             }
+        }
+
+        private void UpdateDisplay()
+        {
+            RedrawLine();
+            DisplayPoints();
+            GenerateShape();
+            RedrawShape();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

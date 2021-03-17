@@ -21,6 +21,7 @@ namespace Make3D.Dialogs
         private Bounds3D bounds;
         private Point3D cameraPosition;
         private EditorParameters editorParameters;
+        private double fieldOfView;
         private Vector3D lookDirection;
         private Point oldMousePos;
         private PolarCamera polarCamera;
@@ -33,7 +34,9 @@ namespace Make3D.Dialogs
             tris = new Int32Collection();
             polarCamera = new PolarCamera(100);
             polarCamera.HomeFront();
+
             LookDirection = new Vector3D(-polarCamera.CameraPos.X, -polarCamera.CameraPos.Y, -polarCamera.CameraPos.Z);
+            FieldOfView = 45;
             meshColour = Colors.Gainsboro;
             editorParameters = new EditorParameters();
             floor = new Floor();
@@ -194,6 +197,22 @@ namespace Make3D.Dialogs
             get
             {
                 return vertices;
+            }
+        }
+
+        protected double FieldOfView
+        {
+            get
+            {
+                return fieldOfView;
+            }
+            set
+            {
+                if (fieldOfView != value)
+                {
+                    fieldOfView = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 

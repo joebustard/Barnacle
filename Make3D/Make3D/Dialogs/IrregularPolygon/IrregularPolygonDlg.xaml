@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="IrregularPolygonDlg" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="IrregularPolygonDlg" Height="800" Width="800" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="4*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
+            <RowDefinition />
             <RowDefinition />
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
@@ -21,6 +22,7 @@
                 <RowDefinition />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
+
             <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="0" Grid.Column="0">
                 <UniformGrid>
                     <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" />
@@ -30,7 +32,35 @@
                 </UniformGrid>
             </Border>
         </Grid>
-        <Border Grid.Column="1" BorderThickness="4" BorderBrush="Blue" Background="Azure">
+        <Border Grid.Row="0"  Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
+            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+              MouseDown="Viewport_MouseDown"
+              MouseWheel="Viewport_MouseWheel">
+
+                <Viewport3D.Camera>
+                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                    </PerspectiveCamera>
+                </Viewport3D.Camera>
+
+                <ModelVisual3D>
+                    <ModelVisual3D.Content>
+                        <Model3DGroup>
+                            <AmbientLight Color="#FF808080" />
+                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                            </DirectionalLight>
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+
+                <ModelVisual3D x:Name = "MyModel">
+                    <ModelVisual3D.Content>
+                        <Model3DGroup x:Name="MyModelGroup">
+                        </Model3DGroup>
+                    </ModelVisual3D.Content>
+                </ModelVisual3D>
+            </Viewport3D>
+        </Border>
+        <Border Grid.Column="1" Grid.Row="1" BorderThickness="4" BorderBrush="Blue" Background="Azure">
             <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
                 <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
                     <Canvas.LayoutTransform>
@@ -44,12 +74,14 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Label x:Name="PositionLabel" Grid.Column="0" />
-            <Button Grid.Column="3" x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" />
-            <Button Grid.Column="4" x:Name="OkButton" Content="Ok" Click="Ok_Click" />
+            <CheckBox Content="Floor" Grid.Column="0" Margin="4,0,0,0" IsChecked="{Binding ShowFloor}" VerticalContentAlignment="Center" />
+            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" VerticalContentAlignment="Center" />
+            <Label x:Name="PositionLabel" Grid.Column="2" />
+            <Button Grid.Column="3" x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
+            <Button Grid.Column="4" x:Name="OkButton" Content="Ok" Click="Ok_Click" Margin="2,2,2,2" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

@@ -30,6 +30,8 @@ namespace Make3D.Dialogs
         private MeshGeometry3D mesh;
         private NoteWindow noteWindow;
 
+        private int numberOfDivisions;
+
         //  private PolarCamera polarCamera;
         private System.Windows.Point oldMousePos;
 
@@ -53,6 +55,7 @@ namespace Make3D.Dialogs
             dirty = false;
             filePath = "";
             noteWindow = new NoteWindow();
+            numberOfDivisions = 80;
         }
 
         public bool BackBody
@@ -111,6 +114,28 @@ namespace Make3D.Dialogs
                 if (markers != value)
                 {
                     markers = value;
+                }
+            }
+        }
+
+        public int NumberOfDivisions
+        {
+            get
+            {
+                return numberOfDivisions;
+            }
+            set
+            {
+                if (numberOfDivisions != value)
+                {
+                    if ((value >= 10) && (value <= 200))
+                    {
+                        numberOfDivisions = value;
+                        RibManager.NumberOfProfilePoints = numberOfDivisions;
+                        GenerateSkin();
+                        Redisplay();
+                        NotifyPropertyChanged();
+                    }
                 }
             }
         }
@@ -357,14 +382,14 @@ namespace Make3D.Dialogs
         private void Back_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeBack();
-            Camera.Distance = 2 * Bounds.Depth;
+            Camera.DistanceToFit(Bounds.Width, Bounds.Height);
             UpdateCameraPos();
         }
 
         private void Bottom_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeBottom();
-            Camera.Distance = 2 * Bounds.Width;
+            Camera.DistanceToFit(Bounds.Width, Bounds.Height);
             UpdateCameraPos();
         }
 
@@ -383,7 +408,7 @@ namespace Make3D.Dialogs
         private void Front_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeFront();
-            Camera.Distance = 2 * Bounds.Depth;
+            Camera.DistanceToFit(Bounds.Width, Bounds.Height);
             UpdateCameraPos();
         }
 
@@ -528,6 +553,26 @@ namespace Make3D.Dialogs
                 noteWindow.Hide();
                 dirty = false;
                 RibManager.ControlsEnabled = true;
+
+                s = EditorParameters.Get("Model");
+                if (s == "Whole")
+                {
+                    WholeBody = true;
+                }
+                else if (s == "Front")
+                {
+                    FrontBody = true;
+                }
+                else
+                if (s == "Back")
+                {
+                    BackBody = true;
+                }
+                s = EditorParameters.Get("NumberOfDivisions");
+                if (s != "")
+                {
+                    NumberOfDivisions = Convert.ToInt16(s);
+                }
             }
         }
 
@@ -715,6 +760,17 @@ namespace Make3D.Dialogs
             {
                 EditorParameters.Set("Path", filePath);
             }
+            string md = "Whole";
+            if (FrontBody)
+            {
+                md = "Front";
+            }
+            else
+            {
+                md = "Back";
+            }
+            EditorParameters.Set("Model", md);
+            EditorParameters.Set("NumberOfDivisions", numberOfDivisions.ToString());
         }
 
         private void SaveProject()
@@ -773,7 +829,7 @@ namespace Make3D.Dialogs
         private void Top_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeTop();
-            Camera.Distance = 2 * Bounds.Width;
+            Camera.DistanceToFit(Bounds.Width, Bounds.Height);
             UpdateCameraPos();
         }
 

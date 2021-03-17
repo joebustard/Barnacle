@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 using Image = System.Windows.Controls.Image;
 
@@ -36,6 +37,42 @@ namespace Make3D.Dialogs
             InitialisePoints();
 
             EditorParameters.ToolName = "Platelet";
+            DataContext = this;
+            Camera.Distance = Camera.Distance * 3.0;
+        }
+
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -69,18 +106,18 @@ namespace Make3D.Dialogs
         {
         }
 
-        private void CreateSideFace(int i)
+        private void CreateSideFace(List<System.Windows.Point> pnts, int i)
         {
             int v = i + 1;
-            if (v == points.Count)
+            if (v == pnts.Count)
             {
                 v = 0;
             }
 
-            int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
-            int c1 = AddVertice(points[i].X, points[i].Y, height);
-            int c2 = AddVertice(points[v].X, points[v].Y, height);
-            int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
+            int c0 = AddVertice(pnts[i].X, pnts[i].Y, 0.0);
+            int c1 = AddVertice(pnts[i].X, pnts[i].Y, height);
+            int c2 = AddVertice(pnts[v].X, pnts[v].Y, height);
+            int c3 = AddVertice(pnts[v].X, pnts[v].Y, 0.0);
             Faces.Add(c0);
             Faces.Add(c2);
             Faces.Add(c1);
@@ -133,6 +170,7 @@ namespace Make3D.Dialogs
 
         private void GenerateFaces()
         {
+            ClearShape();
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
             double top = 0;
             for (int i = 0; i < points.Count; i++)
@@ -156,16 +194,16 @@ namespace Make3D.Dialogs
                     tmp.Insert(0, new System.Windows.Point(x, y));
                 }
             }
-            points = tmp;
+
             // generate side triangles so original points are already in list
-            for (int i = 0; i < points.Count; i++)
+            for (int i = 0; i < tmp.Count; i++)
             {
-                CreateSideFace(i);
+                CreateSideFace(tmp, i);
             }
             // triangulate the basic polygon
             TriangulationPolygon ply = new TriangulationPolygon();
             List<PointF> pf = new List<PointF>();
-            foreach (System.Windows.Point p in points)
+            foreach (System.Windows.Point p in tmp)
             {
                 pf.Add(new PointF((float)p.X, (float)p.Y));
             }
@@ -323,11 +361,13 @@ namespace Make3D.Dialogs
             if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
             {
                 points[selectedPoint] = position;
+                GenerateFaces();
             }
             else
             {
                 selectedPoint = -1;
             }
+
             UpdateDisplay();
         }
 
@@ -348,6 +388,7 @@ namespace Make3D.Dialogs
             scale = 1;
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
+            GenerateFaces();
             UpdateDisplay();
         }
 
@@ -374,6 +415,29 @@ namespace Make3D.Dialogs
             }
             DisplayLines();
             DisplayPoints();
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                GeometryModel3D gm = GetModel();
+                MyModelGroup.Children.Add(gm);
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -394,6 +458,9 @@ namespace Make3D.Dialogs
                     points.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
                 }
             }
+            UpdateCameraPos();
+            MyModelGroup.Children.Clear();
+            GenerateFaces();
             UpdateDisplay();
         }
     }

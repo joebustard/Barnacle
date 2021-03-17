@@ -7,6 +7,48 @@ namespace Make3D.Models
 {
     public class PolarCamera
     {
+        private Point3D cameraPos;
+
+        private double distance;
+
+        private double fieldOfView;
+
+        private double homeDistance;
+
+        private Orientations orientation;
+
+        private PolarCoordinate polarBackHome;
+
+        private PolarCoordinate polarBottomHome;
+
+        private PolarCoordinate polarFrontHome;
+
+        private PolarCoordinate polarLeftHome;
+
+        private Point3D polarOrigin;
+
+        private PolarCoordinate polarPos;
+
+        private PolarCoordinate polarRightHome;
+
+        private PolarCoordinate polarTopHome;
+
+        public PolarCamera()
+        {
+            homeDistance = 300;
+            fieldOfView = 45;
+            polarOrigin = new Point3D(0, 0, 0);
+            Init();
+        }
+
+        public PolarCamera(double d)
+        {
+            homeDistance = d;
+            fieldOfView = 45;
+            polarOrigin = new Point3D(0, 0, 0);
+            Init();
+        }
+
         public enum Orientations
         {
             Front,
@@ -17,7 +59,36 @@ namespace Make3D.Models
             Bottom
         }
 
-        private Orientations orientation;
+        public Point3D CameraPos { get { return cameraPos; } }
+
+        public double Distance
+        {
+            get
+            {
+                return distance;
+            }
+            set
+            {
+                distance = value;
+                polarPos.Rho = distance;
+                ConvertPolarTo3D();
+            }
+        }
+
+        public double FieldOfView
+        {
+            get
+            {
+                return fieldOfView;
+            }
+            set
+            {
+                if (fieldOfView != value)
+                {
+                    fieldOfView = value;
+                }
+            }
+        }
 
         public Orientations Orientation
         {
@@ -27,43 +98,128 @@ namespace Make3D.Models
             }
         }
 
-        private PolarCoordinate polarFrontHome;
-        private PolarCoordinate polarBackHome;
-        private PolarCoordinate polarLeftHome;
-        private PolarCoordinate polarRightHome;
-        private PolarCoordinate polarTopHome;
-        private PolarCoordinate polarBottomHome;
-        private Point3D polarOrigin;
-        private PolarCoordinate polarPos;
-        private double homeDistance;
-        private double distance;
-
-        public double Distance
+        public void DistanceToFit(double w, double h)
         {
-            get { return distance; }
-            set
+            double l = w;
+            if (h > l)
             {
-                distance = value;
-                polarPos.Rho = distance;
+                l = h;
+            }
+            double fov_radians = FieldOfView * Math.PI / 180.0;
+            Distance = (l) / Math.Tan(fov_radians / 2);
+        }
+
+        internal void HomeBack()
+        {
+            Copy(polarBackHome);
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void HomeBottom()
+        {
+            Copy(polarBottomHome);
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void HomeFront()
+        {
+            Copy(polarFrontHome);
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void HomeLeft()
+        {
+            Copy(polarLeftHome);
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void HomeRight()
+        {
+            Copy(polarRightHome);
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void HomeTop()
+        {
+            Copy(polarTopHome);
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void LookAt(Point3D pnt)
+        {
+            polarOrigin = pnt;
+        }
+
+        internal void LooktoCenter()
+        {
+            polarOrigin = new Point3D(0, 0, 0);
+            ConvertPolarTo3D();
+        }
+
+        internal void Move(double dx, double dy)
+        {
+            double dt = 0;
+            double dp = 0;
+
+            var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
+            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
+
+            var dpiX = (int)dpiXProperty.GetValue(null, null);
+            var dpiY = (int)dpiYProperty.GetValue(null, null);
+            double mmx = (dx * 25.4) / dpiX;
+            if (Math.Abs(mmx) > 0.00001)
+            {
+                double theta = mmx / distance;
+                dt = Math.Atan(theta);
+            }
+            double mmy = (dy * 25.4) / dpiY;
+            if (Math.Abs(mmy) > 0.00001)
+            {
+                double theta = mmy / distance;
+                dp = Math.Atan(theta);
+            }
+            if (Math.Abs(dt) >= 0.001 || Math.Abs(dp) >= 0.001)
+            {
+                polarPos.Theta += dt;
+                polarPos.Phi += dp;
+
                 ConvertPolarTo3D();
             }
         }
 
-        private Point3D cameraPos;
-        public Point3D CameraPos { get { return cameraPos; } }
-
-        public PolarCamera()
+        internal void Zoom(double v)
         {
-            homeDistance = 300;
-            polarOrigin = new Point3D(0, 0, 0);
-            Init();
+            double d = polarPos.Rho * v / 100;
+            if (polarPos.Rho - d > 0)
+            {
+                polarPos.Rho -= d;
+            }
+            distance = polarPos.Rho;
+            ConvertPolarTo3D();
         }
 
-        public PolarCamera(double d)
+        private void ConvertPolarTo3D()
         {
-            homeDistance = d;
+            double x = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Cos(polarPos.Theta);
+            double z = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
+            double y = polarPos.Rho * Math.Cos(polarPos.Phi);
+            cameraPos = new Point3D(x + polarOrigin.X, y + polarOrigin.Y, z + polarOrigin.Z);
+            distance = polarPos.Rho;
+            SetOrientation();
+        }
 
-            Init();
+        private void Copy(PolarCoordinate p)
+        {
+            polarPos.Phi = p.Phi;
+            polarPos.Theta = p.Theta;
+            polarPos.Rho = p.Rho;
+            distance = polarPos.Rho;
         }
 
         private void Init()
@@ -82,30 +238,6 @@ namespace Make3D.Models
             Copy(polarFrontHome);
             ConvertPolarTo3D();
             orientation = Orientations.Front;
-        }
-
-        internal void LooktoCenter()
-        {
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        private void Copy(PolarCoordinate p)
-        {
-            polarPos.Phi = p.Phi;
-            polarPos.Theta = p.Theta;
-            polarPos.Rho = p.Rho;
-            distance = polarPos.Rho;
-        }
-
-        private void ConvertPolarTo3D()
-        {
-            double x = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Cos(polarPos.Theta);
-            double z = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
-            double y = polarPos.Rho * Math.Cos(polarPos.Phi);
-            cameraPos = new Point3D(x + polarOrigin.X, y + polarOrigin.Y, z + polarOrigin.Z);
-            distance = polarPos.Rho;
-            SetOrientation();
         }
 
         // calculates the direction that move drags on the GUI should move objects
@@ -142,95 +274,6 @@ namespace Make3D.Models
 
                 orientation = Orientations.Right;
             }
-        }
-
-        internal void Zoom(double v)
-        {
-            double d = polarPos.Rho * v / 100;
-            if (polarPos.Rho - d > 0)
-            {
-                polarPos.Rho -= d;
-            }
-            distance = polarPos.Rho;
-            ConvertPolarTo3D();
-        }
-
-        internal void Move(double dx, double dy)
-        {
-            double dt = 0;
-            double dp = 0;
-
-            var dpiXProperty = typeof(SystemParameters).GetProperty("DpiX", BindingFlags.NonPublic | BindingFlags.Static);
-            var dpiYProperty = typeof(SystemParameters).GetProperty("Dpi", BindingFlags.NonPublic | BindingFlags.Static);
-
-            var dpiX = (int)dpiXProperty.GetValue(null, null);
-            var dpiY = (int)dpiYProperty.GetValue(null, null);
-            double mmx = (dx * 25.4) / dpiX;
-            if (Math.Abs(mmx) > 0.00001)
-            {
-                double theta = mmx / distance;
-                dt = Math.Atan(theta);
-            }
-            double mmy = (dy * 25.4) / dpiY;
-            if (Math.Abs(mmy) > 0.00001)
-            {
-                double theta = mmy / distance;
-                dp = Math.Atan(theta);
-            }
-            if (Math.Abs(dt) >= 0.001 || Math.Abs(dp) >= 0.001)
-            {
-                polarPos.Theta += dt;
-                polarPos.Phi += dp;
-
-                ConvertPolarTo3D();
-            }
-        }
-
-        internal void HomeFront()
-        {
-            Copy(polarFrontHome);
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        internal void HomeBack()
-        {
-            Copy(polarBackHome);
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        internal void HomeRight()
-        {
-            Copy(polarRightHome);
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        internal void HomeLeft()
-        {
-            Copy(polarLeftHome);
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        internal void HomeTop()
-        {
-            Copy(polarTopHome);
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        internal void HomeBottom()
-        {
-            Copy(polarBottomHome);
-            polarOrigin = new Point3D(0, 0, 0);
-            ConvertPolarTo3D();
-        }
-
-        internal void LookAt(Point3D pnt)
-        {
-            polarOrigin = pnt;
         }
     }
 }

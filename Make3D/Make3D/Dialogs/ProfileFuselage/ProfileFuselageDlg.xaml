@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Profile Fueslage" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
+        Title="Profile Fueslage" Height="800" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -29,7 +29,7 @@
             <TabItem Header="Position">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" MinWidth="150" />
                         <ColumnDefinition Width="9*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -50,6 +50,10 @@
                         <RadioButton GroupName="BodyMode" Content="Whole" IsChecked="{Binding WholeBody}" />
                         <RadioButton GroupName="BodyMode" Content="Front" IsChecked="{Binding FrontBody}" />
                         <RadioButton GroupName="BodyMode" Content="Back" IsChecked="{Binding BackBody}" />
+                        <StackPanel Orientation="Horizontal">
+                            <Label VerticalContentAlignment="Center">Divisions</Label>
+                            <TextBox  VerticalContentAlignment="Center" Text="{Binding NumberOfDivisions}" Width="80" />
+                        </StackPanel>
                     </UniformGrid>
                     <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
                         <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
@@ -57,7 +61,7 @@
               MouseWheel="Viewport_MouseWheel">
 
                             <Viewport3D.Camera>
-                                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                                <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}" FieldOfView="{Binding FieldOfView}">
                                 </PerspectiveCamera>
                             </Viewport3D.Camera>
 

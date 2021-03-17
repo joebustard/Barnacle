@@ -7,6 +7,17 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800" Loaded="UserControl_Loaded">
     <Grid>
+
+        <Grid.Background>
+
+            <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+
+                <GradientStop Color="#FFEA0909" />
+                <GradientStop Color="#FF0FCFF4" Offset="1" />
+                <GradientStop Color="#FF1ECFD2" Offset="0.513" />
+                <GradientStop Color="#FFF9F8F8" />
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="25" />
             <RowDefinition />
@@ -22,6 +33,7 @@
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
+
             <Label x:Name="HeaderLabel" Grid.Column="0" Background="Blue" Foreground="Yellow" />
             <Label x:Name="FNameLabel" Grid.Column="1" Background="Blue" Foreground="Yellow" />
             <ToggleButton x:Name="ShowCentersBut" Margin="2,1,0,1" Grid.Column="2" Click="ShowCenters_Click">
@@ -74,5 +86,6 @@
                 <Button ToolTip="Right to left around top middle marker" Margin="2,0,0,0" Click="RLT_Click">RLT</Button>
             </StackPanel>
         </Grid>
+        <Border BorderThickness="4" BorderBrush="Blue" Grid.Column="0" Grid.ColumnSpan="7" Grid.RowSpan="5" />
     </Grid>
 </UserControl>
