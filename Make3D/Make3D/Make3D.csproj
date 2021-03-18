@@ -171,6 +171,7 @@
     <Compile Include="Models\FloorMarker.cs" />
     <Compile Include="Models\Grid.cs" />
     <Compile Include="Models\Group3D.cs" />
+    <Compile Include="Models\LineUtils.cs" />
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\MeshExtensions.cs" />
     <Compile Include="Models\MeshUtils.cs" />

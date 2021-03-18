@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make3D.Models;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,6 +14,7 @@ namespace Make3D
         public MainWindow()
         {
             InitializeComponent();
+            //  LineUtils.CoplanerTest();
             PrepareUndo();
         }
 
@@ -22,11 +24,6 @@ namespace Make3D
             undoer.Initialise(fld);
         }
 
-        private void Window_KeyUp(object sender, KeyEventArgs e)
-        {
-            NotificationManager.Notify("KeyUp", e);
-        }
-
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             IInputElement ele = Keyboard.FocusedElement;
@@ -34,6 +31,11 @@ namespace Make3D
             {
                 NotificationManager.Notify("KeyDown", e);
             }
+        }
+
+        private void Window_KeyUp(object sender, KeyEventArgs e)
+        {
+            NotificationManager.Notify("KeyUp", e);
         }
     }
 }

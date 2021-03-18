@@ -21,10 +21,14 @@ namespace Make3D.Dialogs
     public partial class PlateletDlg : BaseModellerDialog
     {
         private double height = 10;
+        private bool hollowShape;
         private BitmapImage localImage;
         private List<System.Windows.Point> points;
         private double scale;
         private int selectedPoint;
+        private Visibility showWidth;
+        private bool solidShape;
+        private int wallWidth;
         private WriteableBitmap wbx;
 
         public PlateletDlg()
@@ -34,11 +38,42 @@ namespace Make3D.Dialogs
 
             selectedPoint = -1;
             scale = 1.0;
+            wallWidth = 5;
+            solidShape = true;
+            hollowShape = false;
+            showWidth = Visibility.Hidden;
             InitialisePoints();
 
             EditorParameters.ToolName = "Platelet";
             DataContext = this;
+            SolidShape = true;
             Camera.Distance = Camera.Distance * 3.0;
+        }
+
+        public bool HollowShape
+        {
+            get
+            {
+                return hollowShape;
+            }
+            set
+            {
+                if (hollowShape != value)
+                {
+                    hollowShape = value;
+                    if (hollowShape == true)
+                    {
+                        ShowWidth = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowWidth = Visibility.Hidden;
+                    }
+
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
         }
 
         public override bool ShowAxies
@@ -71,6 +106,56 @@ namespace Make3D.Dialogs
                     showFloor = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public Visibility ShowWidth
+        {
+            get
+            {
+                return showWidth;
+            }
+            set
+            {
+                if (showWidth != value)
+                {
+                    showWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool SolidShape
+        {
+            get
+            {
+                return solidShape;
+            }
+            set
+            {
+                if (solidShape != value)
+                {
+                    solidShape = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public int WallWidth
+        {
+            get
+            {
+                return wallWidth;
+            }
+            set
+            {
+                if (wallWidth != value)
+                {
+                    wallWidth = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
                 }
             }
         }
@@ -170,6 +255,126 @@ namespace Make3D.Dialogs
 
         private void GenerateFaces()
         {
+            if (SolidShape)
+            {
+                GenerateSolid();
+            }
+            else
+            {
+                GenerateHollow();
+            }
+        }
+
+        private void GenerateHollow()
+        {
+            List<PointF> outerPolygon = new List<PointF>();
+            List<PointF> innerPolygon = new List<PointF>();
+            ClearShape();
+            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+            double top = 0;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Y > top)
+                {
+                    top = points[i].Y;
+                }
+            }
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (localImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                else
+                {
+                    double x = ToMM(points[i].X);
+                    double y = ToMM(top - points[i].Y);
+                    tmp.Insert(0, new System.Windows.Point(x, y));
+                }
+            }
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                outerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
+                innerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
+            }
+            outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
+            innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
+            outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+            innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth / 2.0F);
+            tmp.Clear();
+            for (int i = outerPolygon.Count - 1; i >= 0; i--)
+            {
+                tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i);
+            }
+
+            tmp.Clear();
+            for (int i = 0; i < innerPolygon.Count; i++)
+            {
+                tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i);
+            }
+
+            for (int i = 0; i < outerPolygon.Count; i++)
+            {
+                int j = i + 1;
+                if (j == outerPolygon.Count)
+                {
+                    j = 0;
+                }
+                int c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
+                int c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
+                int c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
+                int c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c0);
+                Faces.Add(c3);
+                Faces.Add(c2);
+
+                c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, height);
+                c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, height);
+                c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, height);
+                c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, height);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
+            }
+
+            CentreVertices();
+        }
+
+        private void GeneratePointParams()
+        {
+            String s = "";
+            for (int i = 0; i < points.Count; i++)
+            {
+                s += points[i].X.ToString() + "," + points[i].Y.ToString();
+                if (i < points.Count - 1)
+                {
+                    s += ",";
+                }
+            }
+            EditorParameters.Set("Points", s);
+        }
+
+        private void GenerateSolid()
+        {
             ClearShape();
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
             double top = 0;
@@ -226,20 +431,6 @@ namespace Make3D.Dialogs
                 Faces.Add(c2);
             }
             CentreVertices();
-        }
-
-        private void GeneratePointParams()
-        {
-            String s = "";
-            for (int i = 0; i < points.Count; i++)
-            {
-                s += points[i].X.ToString() + "," + points[i].Y.ToString();
-                if (i < points.Count - 1)
-                {
-                    s += ",";
-                }
-            }
-            EditorParameters.Set("Points", s);
         }
 
         private void ImageButton_Click(object sender, RoutedEventArgs e)
@@ -380,6 +571,12 @@ namespace Make3D.Dialogs
             scale *= 0.9;
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
+        }
+
+        private void Redisplay()
+        {
+            GenerateFaces();
+            UpdateDisplay();
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
