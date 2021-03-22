@@ -562,6 +562,80 @@ namespace Make3D.Models
             }
         }
 
+        internal void SkewMesh(int moveSide, double x, double y, double z)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue); ;
+            PointUtils.MinMax(relativeObjectVertices, ref min, ref max);
+            List<Point3D> tmp = new List<Point3D>();
+            foreach (Point3D p in relativeObjectVertices)
+            {
+                switch (moveSide)
+                {
+                    case 0:
+                        {
+                            if (p.X < 0)
+                            {
+                                double offset = (-p.X / max.X) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+
+                    case 1:
+                        {
+                            if (p.X > 0)
+                            {
+                                double offset = (p.X / max.X) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        {
+                            if (p.Z < 0)
+                            {
+                                double offset = (p.Z / max.Z) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        {
+                            if (p.Z > 0)
+                            {
+                                double offset = (p.Z / max.Z) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+                }
+            }
+            relativeObjectVertices.Clear();
+            foreach (Point3D p in tmp)
+            {
+                relativeObjectVertices.Add(p);
+            }
+        }
+
         internal void CalcScale(bool move = true)
         {
             // a quick function to calculate the scale of an object read in, into a unit sized object

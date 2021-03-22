@@ -190,6 +190,7 @@ namespace Make3D.Adorners
             l.Content = v2;
             l.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
             l.FontWeight = FontWeights.Bold;
+            l.FontSize = 18;
             thumbLabels.Add(l);
         }
 

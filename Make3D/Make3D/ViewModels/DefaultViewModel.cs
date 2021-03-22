@@ -20,6 +20,7 @@ namespace Make3D.ViewModels
         public List<ToolDef> loftedToolsToShow;
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
+        public List<ToolDef> generalToolsToShow;
         private static List<MruEntry> recentFilesList;
         private static string statusBlockText1;
         private static string statusBlockText2;
@@ -101,6 +102,7 @@ namespace Make3D.ViewModels
             SpurGearCommand = new RelayCommand(OnSpurGear);
             TankTrackCommand = new RelayCommand(OnTankTrack);
             MeshEditCommand = new RelayCommand(OnMeshEdit);
+
             DupVertexCommand = new RelayCommand(OnDupVertex);
             showFloorChecked = false;
 
@@ -160,6 +162,22 @@ namespace Make3D.ViewModels
                 if (aircraftToolsToShow != value)
                 {
                     aircraftToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<ToolDef> GeneralToolsToShow
+        {
+            get
+            {
+                return generalToolsToShow;
+            }
+            set
+            {
+                if (generalToolsToShow != value)
+                {
+                    generalToolsToShow = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -416,6 +434,7 @@ namespace Make3D.ViewModels
         public ICommand MarkerCommand { get; set; }
 
         public ICommand MeshEditCommand { get; set; }
+        public ICommand MeshSkewCommand { get; set; }
 
         public ICommand MultiPasteCommand { get; set; }
 
@@ -915,6 +934,14 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("AircraftToolsToShow");
         }
 
+        private void CreateGeneralToolMenu()
+        {
+            generalToolsToShow = new List<ToolDef>();
+            aircraftToolsToShow.Add(new ToolDef("Skew Mesh", true, "Skew", "Skew the points in a mesh."));
+
+            NotifyPropertyChanged("GeneralToolsToShow");
+        }
+
         private void CreateDecorativeToolMenu()
         {
             decorativeToolsToShow = new List<ToolDef>();
@@ -952,6 +979,7 @@ namespace Make3D.ViewModels
             CreateVehicleToolMenu();
             CreateAircraftToolMenu();
             CreateDecorativeToolMenu();
+            CreateGeneralToolMenu();
         }
 
         private void CreateVehicleToolMenu()
@@ -989,6 +1017,7 @@ namespace Make3D.ViewModels
             EnabledToolIst(b, vehicleToolsToShow);
             EnabledToolIst(b, aircraftToolsToShow);
             EnabledToolIst(b, decorativeToolsToShow);
+            EnabledToolIst(b, generalToolsToShow);
         }
 
         private void EnabledToolIst(bool b, List<ToolDef> defs)
