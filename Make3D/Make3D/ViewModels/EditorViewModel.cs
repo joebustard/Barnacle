@@ -103,6 +103,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Alignment", OnAlignment);
             NotificationManager.Subscribe("Distribute", OnDistribute);
             NotificationManager.Subscribe("Flip", OnFlip);
+
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
 
@@ -536,7 +537,7 @@ namespace Make3D.ViewModels
             }
         }
 
-        internal void Select(GeometryModel3D geo, Point3D hitPos, bool size, bool append = false)
+        internal void Select(GeometryModel3D geo, Point3D hitPos, bool size, bool append, bool control)
         {
             bool handled = false;
             NotificationManager.Notify("SetToolsVisibility", false);
@@ -547,7 +548,7 @@ namespace Make3D.ViewModels
             }
             if (!handled)
             {
-                handled = CheckIfContentSelected(geo, append, size);
+                handled = CheckIfContentSelected(geo, append, size, control);
             }
             if (!handled)
             {
@@ -826,7 +827,7 @@ namespace Make3D.ViewModels
             return res;
         }
 
-        private bool CheckIfContentSelected(GeometryModel3D geo, bool append, bool sizer)
+        private bool CheckIfContentSelected(GeometryModel3D geo, bool append, bool sizer, bool control)
         {
             bool handled = false;
             if (!append)
@@ -849,7 +850,7 @@ namespace Make3D.ViewModels
                 {
                     CameraLookObject = selectedItems[0].Position;
                     RemoveObjectAdorner();
-                    GenerateSelectionBox(selectedItems[0], sizer);
+                    GenerateSelectionBox(selectedItems[0], sizer, control);
                     NotificationManager.Notify("ObjectSelected", selectedItems[0]);
                     handled = true;
                 }
@@ -1100,13 +1101,22 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void GenerateSelectionBox(Object3D object3D, bool sizer)
+        private void GenerateSelectionBox(Object3D object3D, bool sizer, bool control)
         {
             if (sizer)
             {
-                selectedObjectAdorner = new SizeAdorner(camera);
-                selectedObjectAdorner.ViewPort = ViewPort;
-                selectedObjectAdorner.Overlay = Overlay;
+                if (control)
+                {
+                    selectedObjectAdorner = new SkewAdorner(camera);
+                    selectedObjectAdorner.ViewPort = ViewPort;
+                    selectedObjectAdorner.Overlay = Overlay;
+                }
+                else
+                {
+                    selectedObjectAdorner = new SizeAdorner(camera);
+                    selectedObjectAdorner.ViewPort = ViewPort;
+                    selectedObjectAdorner.Overlay = Overlay;
+                }
             }
             else
             {
@@ -1856,6 +1866,15 @@ namespace Make3D.ViewModels
                         if (checker.NumbeOfUnconnectedFaces > 0)
                         {
                             MessageBox.Show($"{checker.NumbeOfUnconnectedFaces} incompletely connected faces");
+                        }
+
+                        if (checker.NumberOfUnReferencedVertices > 0)
+                        {
+                            MessageBox.Show($"{checker.NumberOfUnReferencedVertices} unreferenced vertices");
+                        }
+                        if (checker.NumberOfNonExistentVertices > 0)
+                        {
+                            MessageBox.Show($"{checker.NumberOfNonExistentVertices} references to vertices that don't exist");
                         }
                     }
                 }

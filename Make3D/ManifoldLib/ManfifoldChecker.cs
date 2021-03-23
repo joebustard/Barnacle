@@ -13,6 +13,8 @@ namespace ManifoldLib
         public int NumberOfDuplicatedVertices { get; set; }
         public int NumberOfBadlyOrientatedEdges = 0;
         public int NumbeOfUnconnectedFaces { get; set; }
+        public int NumberOfUnReferencedVertices { get; set; }
+        public int NumberOfNonExistentVertices { get; set; }
         private List<Vertex> Vertices;
         private List<Face> Faces;
         private VertexTreeNode treeRoot;
@@ -29,6 +31,7 @@ namespace ManifoldLib
         {
             IsManifold = false;
             NumberOfDuplicatedVertices = 0;
+            NumberOfNonExistentVertices = 0;
             treeRoot = null;
             if ((Indices != null) && (Indices.Count >= 3))
             {
@@ -56,9 +59,14 @@ namespace ManifoldLib
                 {
                     Face f = new Face(Indices[i], Indices[i + 1], Indices[i + 2]);
                     Faces.Add(f);
+
+                    UpdateVertexFaceReferences(Indices[i]);
+                    UpdateVertexFaceReferences(Indices[i + 1]);
+                    UpdateVertexFaceReferences(Indices[i + 2]);
                 }
                 NumberOfBadlyOrientatedEdges = 0;
                 NumbeOfUnconnectedFaces = 0;
+
                 foreach (Face f in Faces)
                 {
                     f.CountSharedEdges(Faces);
@@ -68,6 +76,27 @@ namespace ManifoldLib
                         NumbeOfUnconnectedFaces++;
                     }
                 }
+
+                NumberOfUnReferencedVertices = 0;
+                foreach (Vertex v in Vertices)
+                {
+                    if (v.FaceReferencs == 0)
+                    {
+                        NumberOfUnReferencedVertices++;
+                    }
+                }
+            }
+        }
+
+        private void UpdateVertexFaceReferences(int vi)
+        {
+            if (vi >= 0 && vi < Vertices.Count)
+            {
+                Vertices[vi].FaceReferencs++;
+            }
+            else
+            {
+                NumberOfNonExistentVertices++;
             }
         }
 

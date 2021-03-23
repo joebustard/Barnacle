@@ -244,6 +244,7 @@
     <Compile Include="Dialogs\Exporting\STLExportedConfirmation.xaml.cs">
       <DependentUpon>STLExportedConfirmation.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\SkewAdorner.cs" />
     <Page Include="Dialogs\BezierFuselage\BulkheadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
