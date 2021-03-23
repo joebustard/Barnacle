@@ -13,9 +13,19 @@ namespace Make3D.Models
 {
     internal class Document : INotifyPropertyChanged
     {
-        public ProjectSettings ProjectSettings { get; set; }
-        private string caption;
+        public List<Object3D> Content;
         private static int nextId;
+        private string caption;
+        private bool dirty;
+
+        public Document()
+        {
+            ModelScales.Initialise();
+            Clear();
+            NotificationManager.Subscribe("DocDirty", OnDocDirty);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public static String NextName
         {
@@ -25,21 +35,6 @@ namespace Make3D.Models
                 return "Object_" + nextId.ToString();
             }
         }
-
-        public String DuplicateName(string s)
-        {
-            string res;
-            do
-            {
-                nextId++;
-                res = s + "_" + nextId.ToString();
-            }
-            while (ContainsName(res));
-
-            return res;
-        }
-
-        public List<Object3D> Content;
 
         public string Caption
         {
@@ -56,103 +51,6 @@ namespace Make3D.Models
                 }
             }
         }
-
-        internal void ReferenceFile(string fileName)
-        {
-            try
-            {
-                if (File.Exists(fileName))
-                {
-                    DateTime timeStamp = File.GetLastWriteTime(fileName);
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(fileName);
-                    XmlNode docNode = doc.SelectSingleNode("Document");
-                    XmlNodeList nodes = docNode.ChildNodes;
-                    foreach (XmlNode nd in nodes)
-                    {
-                        if (nd.Name == "obj")
-                        {
-                            ReferenceObject3D obj = new ReferenceObject3D();
-
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
-                            obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName))
-                            {
-                                Content.Add(obj);
-                            }
-                        }
-                        if (nd.Name == "groupobj")
-                        {
-                            ReferenceGroup3D obj = new ReferenceGroup3D();
-
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
-                            obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName))
-                            {
-                                Content.Add(obj);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private bool ReferencedObjectInContent(string name, string pth)
-        {
-            bool found = false;
-            ExternalReference rf = null;
-            foreach (Object3D obj in Content)
-            {
-                if (obj.Name == name)
-                {
-                    if (obj is ReferenceObject3D)
-                    {
-                        rf = (obj as ReferenceObject3D).Reference;
-                        if (rf.Path == pth)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                    else
-                    if (obj is ReferenceGroup3D)
-                    {
-                        rf = (obj as ReferenceGroup3D).Reference;
-                        if (rf.Path == pth)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            return found;
-        }
-
-        internal void Clear()
-        {
-            FilePath = "";
-            FileFilter = "Text Files (*.txt)|*.txt";
-            FileName = "Untitled";
-            Extension = ".txt";
-            Caption = "untitled";
-            Content = new List<Object3D>();
-            ProjectSettings = new ProjectSettings();
-            nextId = 0;
-            Dirty = false;
-        }
-
-        private bool dirty;
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         public bool Dirty
         {
@@ -175,20 +73,60 @@ namespace Make3D.Models
             }
         }
 
-        internal ObservableCollection<string> GetObjectNames()
-        {
-            ObservableCollection<string> res = new ObservableCollection<string>();
-            foreach (Object3D ob in Content)
-            {
-                res.Add(ob.Name);
-            }
-            return res;
-        }
-
         public string Extension { get; set; }
         public string FileFilter { get; set; }
         public string FileName { get; set; }
         public string FilePath { get; set; }
+        public ProjectSettings ProjectSettings { get; set; }
+
+        public static XmlElement FindExternalModel(string name, string path)
+        {
+            XmlElement res = null;
+            if (File.Exists(path))
+            {
+                try
+                {
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(path);
+                    XmlNode docNode = doc.SelectSingleNode("Document");
+                    XmlNodeList nodes = docNode.ChildNodes;
+                    foreach (XmlNode nd in nodes)
+                    {
+                        if (nd.Name == "obj" || nd.Name == "groupobj")
+                        {
+                            XmlElement ele = nd as XmlElement;
+                            if (ele.HasAttribute("Name"))
+                            {
+                                if (ele.GetAttribute("Name") == name)
+                                {
+                                    res = ele;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
+            return res;
+        }
+
+        public String DuplicateName(string s)
+        {
+            string res;
+            do
+            {
+                nextId++;
+                res = s + "_" + nextId.ToString();
+            }
+            while (ContainsName(res));
+
+            return res;
+        }
 
         public void Load(string fileName)
         {
@@ -198,13 +136,6 @@ namespace Make3D.Models
 
             Dirty = false;
             Caption = FileName;
-        }
-
-        internal void InsertFile(string fileName)
-        {
-            Read(fileName, false);
-
-            Dirty = false;
         }
 
         public virtual void Read(string file, bool clearFirst)
@@ -298,50 +229,64 @@ namespace Make3D.Models
             }
         }
 
-        internal string ExportAllPartsSeperately(string v, Bounds3D bnds)
+        public void Save(string fileName)
         {
-            String pth = System.IO.Path.GetDirectoryName(FilePath);
-            pth = System.IO.Path.Combine(pth, "export");
-            if (!Directory.Exists(pth))
-            {
-                Directory.CreateDirectory(pth);
-            }
-            string res = "";
-            double scalefactor = 1.0;
-            if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
-            {
-                scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
-            }
+            Write(fileName);
+            FilePath = fileName;
+            FileName = System.IO.Path.GetFileName(fileName);
+            Caption = FileName;
+            Dirty = false;
+        }
 
-            STLExporter exp = new STLExporter();
-
-            if (FileName == "")
+        public virtual void Write(string file)
+        {
+            XmlDocument doc = new XmlDocument();
+            XmlElement docNode = doc.CreateElement("Document");
+            docNode.SetAttribute("NextId", nextId.ToString());
+            ProjectSettings.Write(doc, docNode);
+            foreach (Object3D ob in Content)
             {
-                MessageBox.Show("Save the document first. So there is an export path");
+                ob.Write(doc, docNode);
             }
-            else
+            doc.AppendChild(docNode);
+            doc.Save(file);
+        }
+
+        internal void Add(Object3D leftObject)
+        {
+        }
+
+        internal void Clear()
+        {
+            FilePath = "";
+            FileFilter = "Text Files (*.txt)|*.txt";
+            FileName = "Untitled";
+            Extension = ".txt";
+            Caption = "untitled";
+            Content = new List<Object3D>();
+            ProjectSettings = new ProjectSettings();
+            nextId = 0;
+            Dirty = false;
+        }
+
+        internal bool ContainsName(string name)
+        {
+            bool res = false;
+            foreach (Object3D ob in Content)
             {
-                List<Object3D> exportList = new List<Object3D>();
-                foreach (Object3D ob in Content)
+                if (ob.Name == name)
                 {
-                    Object3D clone = ob.Clone();
-                    if (scalefactor != 1.0)
-                    {
-                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
-                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
-                    }
-                    if (ProjectSettings.FloorAll)
-                    {
-                        clone.MoveToFloor();
-                    }
-                    exportList.Add(clone);
-                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
-                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                    exportList.Clear();
+                    res = true;
+                    break;
                 }
-                res = pth;
             }
             return res;
+        }
+
+        internal void DeleteObject(Object3D o)
+        {
+            Content.Remove(o);
+            Dirty = true;
         }
 
         internal string ExportAll(string v, Bounds3D bnds)
@@ -420,6 +365,52 @@ namespace Make3D.Models
             return res;
         }
 
+        internal string ExportAllPartsSeperately(string v, Bounds3D bnds)
+        {
+            String pth = System.IO.Path.GetDirectoryName(FilePath);
+            pth = System.IO.Path.Combine(pth, "export");
+            if (!Directory.Exists(pth))
+            {
+                Directory.CreateDirectory(pth);
+            }
+            string res = "";
+            double scalefactor = 1.0;
+            if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
+            {
+                scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
+            }
+
+            STLExporter exp = new STLExporter();
+
+            if (FileName == "")
+            {
+                MessageBox.Show("Save the document first. So there is an export path");
+            }
+            else
+            {
+                List<Object3D> exportList = new List<Object3D>();
+                foreach (Object3D ob in Content)
+                {
+                    Object3D clone = ob.Clone();
+                    if (scalefactor != 1.0)
+                    {
+                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                    }
+                    if (ProjectSettings.FloorAll)
+                    {
+                        clone.MoveToFloor();
+                    }
+                    exportList.Add(clone);
+                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
+                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    exportList.Clear();
+                }
+                res = pth;
+            }
+            return res;
+        }
+
         internal string ExportSelectedParts(string v, Bounds3D bnds, List<Object3D> parts)
         {
             double scalefactor = 1.0;
@@ -473,91 +464,17 @@ namespace Make3D.Models
             return res;
         }
 
-        internal void DeleteObject(Object3D o)
+        internal ObservableCollection<string> GetObjectNames()
         {
-            Content.Remove(o);
-            Dirty = true;
-        }
-
-        private void GetInt(XmlElement docele, string nm, ref int res, int v)
-        {
-            res = v;
-            if (docele.HasAttribute(nm))
-            {
-                string s = docele.GetAttribute(nm);
-                if (s != "")
-                {
-                    res = Convert.ToInt32(s);
-                }
-            }
-        }
-
-        public void Save(string fileName)
-        {
-            Write(fileName);
-            FilePath = fileName;
-            FileName = System.IO.Path.GetFileName(fileName);
-            Caption = FileName;
-            Dirty = false;
-        }
-
-        public virtual void Write(string file)
-        {
-            XmlDocument doc = new XmlDocument();
-            XmlElement docNode = doc.CreateElement("Document");
-            docNode.SetAttribute("NextId", nextId.ToString());
-            ProjectSettings.Write(doc, docNode);
+            ObservableCollection<string> res = new ObservableCollection<string>();
             foreach (Object3D ob in Content)
             {
-                ob.Write(doc, docNode);
+                res.Add(ob.Name);
             }
-            doc.AppendChild(docNode);
-            doc.Save(file);
+            return res;
         }
 
-        internal void SplitGroup(Group3D grp)
-        {
-            Content.Remove(grp);
-            Content.Add(grp.LeftObject);
-            Content.Add(grp.RightObject);
-            grp.LeftObject.CalcScale(false);
-            grp.RightObject.CalcScale(false);
-            Dirty = true;
-        }
-
-        internal void Add(Object3D leftObject)
-        {
-        }
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        internal void ReplaceObjectsByGroup(Group3D grp)
-        {
-            Content.Remove(grp.LeftObject);
-            Content.Remove(grp.RightObject);
-            Content.Add(grp);
-            Dirty = true;
-        }
-
-        public Document()
-        {
-            ModelScales.Initialise();
-            Clear();
-            NotificationManager.Subscribe("DocDirty", OnDocDirty);
-        }
-
-        private void OnDocDirty(object param)
-        {
-            Dirty = true;
-        }
-
-        internal void GroupToMesh(Group3D grp)
+        internal Object3D GroupToMesh(Group3D grp)
         {
             Object3D neo = grp.ConvertToMesh();
 
@@ -567,6 +484,7 @@ namespace Make3D.Models
             Content.Add(neo);
 
             Dirty = true;
+            return neo;
         }
 
         internal void ImportObjs(string fileName)
@@ -705,54 +623,135 @@ namespace Make3D.Models
             Dirty = true;
         }
 
-        internal bool ContainsName(string name)
+        internal void InsertFile(string fileName)
         {
-            bool res = false;
-            foreach (Object3D ob in Content)
-            {
-                if (ob.Name == name)
-                {
-                    res = true;
-                    break;
-                }
-            }
-            return res;
+            Read(fileName, false);
+
+            Dirty = false;
         }
 
-        public static XmlElement FindExternalModel(string name, string path)
+        internal void ReferenceFile(string fileName)
         {
-            XmlElement res = null;
-            if (File.Exists(path))
+            try
             {
-                try
+                if (File.Exists(fileName))
                 {
+                    DateTime timeStamp = File.GetLastWriteTime(fileName);
                     XmlDocument doc = new XmlDocument();
-                    doc.Load(path);
+                    doc.Load(fileName);
                     XmlNode docNode = doc.SelectSingleNode("Document");
                     XmlNodeList nodes = docNode.ChildNodes;
                     foreach (XmlNode nd in nodes)
                     {
-                        if (nd.Name == "obj" || nd.Name == "groupobj")
+                        if (nd.Name == "obj")
                         {
-                            XmlElement ele = nd as XmlElement;
-                            if (ele.HasAttribute("Name"))
+                            ReferenceObject3D obj = new ReferenceObject3D();
+
+                            obj.Reference.Path = fileName;
+                            obj.Reference.TimeStamp = timeStamp;
+                            obj.BaseRead(nd);
+                            obj.SetMesh();
+                            if (!ReferencedObjectInContent(obj.Name, fileName))
                             {
-                                if (ele.GetAttribute("Name") == name)
-                                {
-                                    res = ele;
-                                    break;
-                                }
+                                Content.Add(obj);
+                            }
+                        }
+                        if (nd.Name == "groupobj")
+                        {
+                            ReferenceGroup3D obj = new ReferenceGroup3D();
+
+                            obj.Reference.Path = fileName;
+                            obj.Reference.TimeStamp = timeStamp;
+                            obj.BaseRead(nd);
+                            obj.SetMesh();
+                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            {
+                                Content.Add(obj);
                             }
                         }
                     }
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        internal void ReplaceObjectsByGroup(Group3D grp)
+        {
+            Content.Remove(grp.LeftObject);
+            Content.Remove(grp.RightObject);
+            Content.Add(grp);
+            Dirty = true;
+        }
+
+        internal void SplitGroup(Group3D grp)
+        {
+            Content.Remove(grp);
+            Content.Add(grp.LeftObject);
+            Content.Add(grp.RightObject);
+            grp.LeftObject.CalcScale(false);
+            grp.RightObject.CalcScale(false);
+            Dirty = true;
+        }
+
+        private void GetInt(XmlElement docele, string nm, ref int res, int v)
+        {
+            res = v;
+            if (docele.HasAttribute(nm))
+            {
+                string s = docele.GetAttribute(nm);
+                if (s != "")
                 {
-                    MessageBox.Show(ex.Message);
+                    res = Convert.ToInt32(s);
                 }
             }
+        }
 
-            return res;
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void OnDocDirty(object param)
+        {
+            Dirty = true;
+        }
+
+        private bool ReferencedObjectInContent(string name, string pth)
+        {
+            bool found = false;
+            ExternalReference rf = null;
+            foreach (Object3D obj in Content)
+            {
+                if (obj.Name == name)
+                {
+                    if (obj is ReferenceObject3D)
+                    {
+                        rf = (obj as ReferenceObject3D).Reference;
+                        if (rf.Path == pth)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                    else
+                    if (obj is ReferenceGroup3D)
+                    {
+                        rf = (obj as ReferenceGroup3D).Reference;
+                        if (rf.Path == pth)
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            return found;
         }
     }
 }

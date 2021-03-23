@@ -109,6 +109,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("BezierFuselage", OnFuselage);
 
             NotificationManager.Subscribe("MeshEdit", OnMeshEdit);
+            NotificationManager.Subscribe("MeshHull", OnMeshHull);
 
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
@@ -1935,6 +1936,30 @@ namespace Make3D.ViewModels
                 Document.Dirty = true;
                 RegenerateDisplayList();
                 NotificationManager.Notify("ObjectNamesChanged", null);
+            }
+        }
+
+        private void OnMeshHull(object param)
+        {
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() > 0)
+                {
+                    CheckPoint();
+                    foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                    {
+                        if (ob is Group3D)
+                        {
+                            Object3D tmp = Document.GroupToMesh(ob as Group3D);
+                            tmp.ConvertToHull();
+                        }
+                        else
+                        {
+                            ob.ConvertToHull();
+                        }
+                    }
+                    DeselectAll();
+                }
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using CSGLib;
+using HullLibrary;
 using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -9,36 +10,11 @@ namespace Make3D.Models
     public class Group3D : Object3D
     {
         private Scale3D groupScale;
-        private BooleanModeller modeller;
         private Object3D leftObject;
-
-        public Object3D LeftObject
-        {
-            get { return leftObject; }
-            set
-            {
-                if (leftObject != value)
-                {
-                    leftObject = value;
-                }
-            }
-        }
-
+        private Solid leftSolid;
+        private BooleanModeller modeller;
         private Object3D rightObject;
 
-        public Object3D RightObject
-        {
-            get { return rightObject; }
-            set
-            {
-                if (rightObject != value)
-                {
-                    rightObject = value;
-                }
-            }
-        }
-
-        private Solid leftSolid;
         private Solid rightSolid;
 
         public Group3D()
@@ -49,6 +25,96 @@ namespace Make3D.Models
             rightObject = null;
             rightSolid = null;
             XmlType = "groupobj";
+        }
+
+        public Object3D LeftObject
+        {
+            get
+            {
+                return leftObject;
+            }
+            set
+            {
+                if (leftObject != value)
+                {
+                    leftObject = value;
+                }
+            }
+        }
+
+        public Object3D RightObject
+        {
+            get
+            {
+                return rightObject;
+            }
+            set
+            {
+                if (rightObject != value)
+                {
+                    rightObject = value;
+                }
+            }
+        }
+
+        public override Object3D Clone()
+        {
+            Group3D res = new Group3D();
+            res.Name = this.Name;
+            res.Description = this.Description;
+            res.primType = this.primType;
+            res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
+
+            res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
+            res.Color = this.Color;
+            res.leftObject = this.leftObject.Clone();
+            res.rightObject = this.rightObject.Clone();
+            res.RelativeObjectVertices = new Point3DCollection();
+            foreach (Point3D po in this.RelativeObjectVertices)
+            {
+                Point3D pn = new Point3D(po.X, po.Y, po.Z);
+                res.RelativeObjectVertices.Add(po);
+            }
+            res.AbsoluteObjectVertices = new Point3DCollection();
+            foreach (Point3D po in this.AbsoluteObjectVertices)
+            {
+                Point3D pn = new Point3D(po.X, po.Y, po.Z);
+                res.AbsoluteObjectVertices.Add(po);
+            }
+            res.AbsoluteBounds = new Bounds3D();
+            res.AbsoluteBounds.Lower = new Point3D(this.AbsoluteBounds.Lower.X, this.AbsoluteBounds.Lower.Y, this.AbsoluteBounds.Lower.Z);
+            res.AbsoluteBounds.Upper = new Point3D(this.AbsoluteBounds.Upper.X, this.AbsoluteBounds.Upper.Y, this.AbsoluteBounds.Upper.Z);
+            res.TriangleIndices = new Int32Collection();
+            for (int i = 0; i < TriangleIndices.Count; i++)
+            {
+                res.TriangleIndices.Add(this.TriangleIndices[i]);
+            }
+            return res;
+        }
+
+        public override Object3D ConvertToMesh()
+        {
+            Object3D neo = new Object3D();
+            neo.Name = Name;
+            neo.Description = Description;
+            neo.PrimType = "Mesh";
+            neo.Color = Color;
+            neo.Scale = new Scale3D(Scale.X, Scale.Y, Scale.Z);
+
+            neo.Position = new Point3D(Position.X, Position.Y, Position.Z);
+            // var hullMaker = new ConvexHullCalculator();
+
+            //  hullMaker.GeneratePoint3DHull(RelativeObjectVertices, TriangleIndices);
+            neo.RelativeObjectVertices = RelativeObjectVertices;
+            RelativeObjectVertices = null;
+            neo.TriangleIndices = TriangleIndices;
+            TriangleIndices = null;
+            AbsoluteObjectVertices = AbsoluteObjectVertices;
+            AbsoluteObjectVertices = null;
+            neo.AbsoluteBounds = AbsoluteBounds;
+            AbsoluteBounds = null;
+            //neo.Unitise();
+            return neo;
         }
 
         internal bool Init()
@@ -69,63 +135,6 @@ namespace Make3D.Models
             }
 
             return result;
-        }
-
-        private void GetScaleFromAbsoluteExtent()
-        {
-            // a quick function to convert the coordinates of an object read in, into a unit sized object
-            // centered on 0,0,0
-            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-            foreach (Point3D pt in AbsoluteObjectVertices)
-            {
-                if (pt.X < min.X)
-                {
-                    min.X = pt.X;
-                }
-                if (pt.Y < min.Y)
-                {
-                    min.Y = pt.Y;
-                }
-                if (pt.Z < min.Z)
-                {
-                    min.Z = pt.Z;
-                }
-
-                if (pt.X > max.X)
-                {
-                    max.X = pt.X;
-                }
-                if (pt.Y > max.Y)
-                {
-                    max.Y = pt.Y;
-                }
-                if (pt.Z > max.Z)
-                {
-                    max.Z = pt.Z;
-                }
-            }
-
-            double scaleX = 1.0;
-            double dx = max.X - min.X;
-            if (dx > 0)
-            {
-                scaleX = dx;
-            }
-            double scaleY = 1.0;
-            double dY = max.Y - min.Y;
-            if (dY > 0)
-            {
-                scaleY = dY;
-            }
-
-            double scaleZ = 1.0;
-            double dZ = max.Z - min.Z;
-            if (dZ > 0)
-            {
-                scaleZ = dZ;
-            }
-            groupScale = new Scale3D(scaleX, scaleY, scaleZ);
         }
 
         internal bool PerformOperation()
@@ -203,29 +212,6 @@ namespace Make3D.Models
             return res;
         }
 
-        private void AbsoluteToRelative()
-        {
-            GetScaleFromAbsoluteExtent();
-
-            RelativeObjectVertices = new Point3DCollection();
-            foreach (Point3D pnt in AbsoluteObjectVertices)
-            {
-                Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
-                RelativeObjectVertices.Add(p);
-            }
-            scale = groupScale;
-        }
-
-        internal override void Remesh()
-        {
-            if (RelativeObjectVertices != null && RelativeObjectVertices.Count > 0)
-            {
-                RelativeToAbsolute();
-
-                SetMesh();
-            }
-        }
-
         internal override void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -297,25 +283,14 @@ namespace Make3D.Models
             SetMesh();
         }
 
-        private Object3D ReadObject(XmlNode nd)
+        internal override void Remesh()
         {
-            if (nd.Name == "obj")
+            if (RelativeObjectVertices != null && RelativeObjectVertices.Count > 0)
             {
-                Object3D obj = new Object3D();
-                obj.Read(nd);
+                RelativeToAbsolute();
 
-                obj.SetMesh();
-                return obj;
+                SetMesh();
             }
-            if (nd.Name == "groupobj")
-            {
-                Group3D obj = new Group3D();
-                obj.Read(nd);
-
-                obj.SetMesh();
-                return obj;
-            }
-            return null;
         }
 
         internal override XmlElement Write(XmlDocument doc, XmlElement docNode)
@@ -362,61 +337,95 @@ namespace Make3D.Models
             return ele;
         }
 
-        public override Object3D Clone()
+        private void AbsoluteToRelative()
         {
-            Group3D res = new Group3D();
-            res.Name = this.Name;
-            res.Description = this.Description;
-            res.primType = this.primType;
-            res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
+            GetScaleFromAbsoluteExtent();
 
-            res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
-            res.Color = this.Color;
-            res.leftObject = this.leftObject.Clone();
-            res.rightObject = this.rightObject.Clone();
-            res.RelativeObjectVertices = new Point3DCollection();
-            foreach (Point3D po in this.RelativeObjectVertices)
+            RelativeObjectVertices = new Point3DCollection();
+            foreach (Point3D pnt in AbsoluteObjectVertices)
             {
-                Point3D pn = new Point3D(po.X, po.Y, po.Z);
-                res.RelativeObjectVertices.Add(po);
+                Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
+                RelativeObjectVertices.Add(p);
             }
-            res.AbsoluteObjectVertices = new Point3DCollection();
-            foreach (Point3D po in this.AbsoluteObjectVertices)
-            {
-                Point3D pn = new Point3D(po.X, po.Y, po.Z);
-                res.AbsoluteObjectVertices.Add(po);
-            }
-            res.AbsoluteBounds = new Bounds3D();
-            res.AbsoluteBounds.Lower = new Point3D(this.AbsoluteBounds.Lower.X, this.AbsoluteBounds.Lower.Y, this.AbsoluteBounds.Lower.Z);
-            res.AbsoluteBounds.Upper = new Point3D(this.AbsoluteBounds.Upper.X, this.AbsoluteBounds.Upper.Y, this.AbsoluteBounds.Upper.Z);
-            res.TriangleIndices = new Int32Collection();
-            for (int i = 0; i < TriangleIndices.Count; i++)
-            {
-                res.TriangleIndices.Add(this.TriangleIndices[i]);
-            }
-            return res;
+            scale = groupScale;
         }
 
-        public override Object3D ConvertToMesh()
+        private void GetScaleFromAbsoluteExtent()
         {
-            Object3D neo = new Object3D();
-            neo.Name = Name;
-            neo.Description = Description;
-            neo.PrimType = "Mesh";
-            neo.Color = Color;
-            neo.Scale = new Scale3D(Scale.X, Scale.Y, Scale.Z);
+            // a quick function to convert the coordinates of an object read in, into a unit sized object
+            // centered on 0,0,0
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            foreach (Point3D pt in AbsoluteObjectVertices)
+            {
+                if (pt.X < min.X)
+                {
+                    min.X = pt.X;
+                }
+                if (pt.Y < min.Y)
+                {
+                    min.Y = pt.Y;
+                }
+                if (pt.Z < min.Z)
+                {
+                    min.Z = pt.Z;
+                }
 
-            neo.Position = new Point3D(Position.X, Position.Y, Position.Z);
-            neo.RelativeObjectVertices = RelativeObjectVertices;
-            RelativeObjectVertices = null;
-            neo.TriangleIndices = TriangleIndices;
-            TriangleIndices = null;
-            AbsoluteObjectVertices = AbsoluteObjectVertices;
-            AbsoluteObjectVertices = null;
-            neo.AbsoluteBounds = AbsoluteBounds;
-            AbsoluteBounds = null;
-            //neo.Unitise();
-            return neo;
+                if (pt.X > max.X)
+                {
+                    max.X = pt.X;
+                }
+                if (pt.Y > max.Y)
+                {
+                    max.Y = pt.Y;
+                }
+                if (pt.Z > max.Z)
+                {
+                    max.Z = pt.Z;
+                }
+            }
+
+            double scaleX = 1.0;
+            double dx = max.X - min.X;
+            if (dx > 0)
+            {
+                scaleX = dx;
+            }
+            double scaleY = 1.0;
+            double dY = max.Y - min.Y;
+            if (dY > 0)
+            {
+                scaleY = dY;
+            }
+
+            double scaleZ = 1.0;
+            double dZ = max.Z - min.Z;
+            if (dZ > 0)
+            {
+                scaleZ = dZ;
+            }
+            groupScale = new Scale3D(scaleX, scaleY, scaleZ);
+        }
+
+        private Object3D ReadObject(XmlNode nd)
+        {
+            if (nd.Name == "obj")
+            {
+                Object3D obj = new Object3D();
+                obj.Read(nd);
+
+                obj.SetMesh();
+                return obj;
+            }
+            if (nd.Name == "groupobj")
+            {
+                Group3D obj = new Group3D();
+                obj.Read(nd);
+
+                obj.SetMesh();
+                return obj;
+            }
+            return null;
         }
     }
 }

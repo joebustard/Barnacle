@@ -504,6 +504,10 @@
     <Folder Include="Adorners\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ClassLibrary1\HullLIbrary.csproj">
+      <Project>{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}</Project>
+      <Name>HullLIbrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CSGLib\CSGLib.csproj">
       <Project>{CB0CAFAC-72AB-4D29-A570-D6F97519BBD3}</Project>
       <Name>CSGLib</Name>

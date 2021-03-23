@@ -101,6 +101,7 @@ namespace Make3D.ViewModels
             SpurGearCommand = new RelayCommand(OnSpurGear);
             TankTrackCommand = new RelayCommand(OnTankTrack);
             MeshEditCommand = new RelayCommand(OnMeshEdit);
+            MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
             showFloorChecked = false;
 
@@ -416,6 +417,8 @@ namespace Make3D.ViewModels
         public ICommand MarkerCommand { get; set; }
 
         public ICommand MeshEditCommand { get; set; }
+
+        public ICommand MeshHullCommand { get; set; }
 
         public ICommand MultiPasteCommand { get; set; }
 
@@ -1105,6 +1108,11 @@ namespace Make3D.ViewModels
         {
             string s = obj.ToString();
             NotificationManager.Notify("Group", s);
+        }
+
+        private void OnHullEdit(object obj)
+        {
+            NotificationManager.Notify("MeshHull", null);
         }
 
         private void OnImport(object obj)

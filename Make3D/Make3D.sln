@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConvertAerofoilsToXML", "Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectLib", "ProjectLib\ProjectLib.csproj", "{FF76323F-C79C-4E3F-BE42-EFA9F9A9DE48}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HullLIbrary", "ClassLibrary1\HullLIbrary.csproj", "{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,6 +73,10 @@ Global
 		{FF76323F-C79C-4E3F-BE42-EFA9F9A9DE48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF76323F-C79C-4E3F-BE42-EFA9F9A9DE48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF76323F-C79C-4E3F-BE42-EFA9F9A9DE48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
