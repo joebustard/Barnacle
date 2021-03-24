@@ -40,7 +40,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="25" />
-            <ColumnDefinition Width="50" />
+            <ColumnDefinition Width="55" />
             <ColumnDefinition Width="25" />
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Object</Label>
@@ -51,19 +51,19 @@
                                    VerticalAlignment="Top" Grid.Row="2" Grid.ColumnSpan="3"  IsOpen="False" SelectedColor="{Binding ObjectColour}" />
         <Label Grid.Row="3"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Position</Label>
         <Label Grid.Row="4"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Red">X</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" FontSize="10" Text="{Binding PositionX}" />
+        <TextBox Grid.Row="4" Grid.Column="1" FontSize="14" Text="{Binding PositionX}" />
         <UniformGrid Grid.Row="4" Grid.Column="2" Columns="1">
             <Button  FontSize="9" Content="+" Command="{Binding NudgeCommand}" CommandParameter="X+" />
             <Button  FontSize="9" Content="-" Command="{Binding NudgeCommand}" CommandParameter="X-" />
         </UniformGrid>
         <Label Grid.Row="5"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Green">Y</Label>
-        <TextBox Grid.Row="5" Grid.Column="1" FontSize="10" Text="{Binding PositionY}" />
+        <TextBox Grid.Row="5" Grid.Column="1" FontSize="14" Text="{Binding PositionY}" />
         <UniformGrid Grid.Row="5" Grid.Column="2" Columns="1">
             <Button  FontSize="9" Content="+" Command="{Binding NudgeCommand}" CommandParameter="Y+" />
             <Button  FontSize="9" Content="-" Command="{Binding NudgeCommand}" CommandParameter="Y-" />
         </UniformGrid>
         <Label Grid.Row="6"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
-        <TextBox Grid.Row="6" Grid.Column="1" FontSize="10" Text="{Binding PositionZ}" />
+        <TextBox Grid.Row="6" Grid.Column="1" FontSize="14" Text="{Binding PositionZ}" />
         <UniformGrid Grid.Row="6" Grid.Column="2" Columns="1">
             <Button  FontSize="9" Content="+" Command="{Binding NudgeCommand}" CommandParameter="Z+" />
             <Button  FontSize="9" Content="-" Command="{Binding NudgeCommand}" CommandParameter="Z-" />
@@ -74,15 +74,15 @@
         </UniformGrid>
         <Label Grid.Row="8"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="10" Background="Blue" Foreground="AliceBlue">Size</Label>
         <Label Grid.Row="9"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Red" Grid.RowSpan="2">L(X)</Label>
-        <TextBox Grid.Row="9" Grid.Column="1" FontSize="10" Text="{Binding ScaleX }" Grid.RowSpan="2" IsEnabled="{Binding CanScale}" />
+        <TextBox Grid.Row="9" Grid.Column="1" FontSize="14" Text="{Binding ScaleX }" Grid.RowSpan="2" IsEnabled="{Binding CanScale}" />
 
         <Label Grid.Row="10"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Green">H(Y)</Label>
-        <TextBox Grid.Row="10" Grid.Column="1" FontSize="9" Text="{Binding ScaleY }" IsEnabled="{Binding CanScale}" />
+        <TextBox Grid.Row="10" Grid.Column="1" FontSize="14" Text="{Binding ScaleY }" IsEnabled="{Binding CanScale}" />
 
         <Label Grid.Row="11"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">W(Z)</Label>
-        <TextBox Grid.Row="11" Grid.Column="1" FontSize="9" Text="{Binding ScaleZ }" IsEnabled="{Binding CanScale}" />
+        <TextBox Grid.Row="11" Grid.Column="1" FontSize="14" Text="{Binding ScaleZ }" IsEnabled="{Binding CanScale}" />
         <Label Grid.Row="12"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="10" Background="Blue" Foreground="AliceBlue">Percent</Label>
-        <TextBox Grid.Row="13" Grid.Column="1" FontSize="10" Text="{Binding PercentScale}"  IsEnabled="{Binding CanScale}" />
+        <TextBox Grid.Row="13" Grid.Column="1" FontSize="14" Text="{Binding PercentScale}"  IsEnabled="{Binding CanScale}" />
         <UniformGrid Grid.Row="13" Grid.Column="2" Columns="1">
             <Button  FontSize="9" Content="+" Command="{Binding ScaleByPercentCommand}" CommandParameter="+"  IsEnabled="{Binding CanScale}" />
             <Button  FontSize="9" Content="-" Command="{Binding ScaleByPercentCommand}" CommandParameter="-"  IsEnabled="{Binding CanScale}" />
@@ -90,20 +90,20 @@
 
         <Label Grid.Row="14"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" FontSize="10" Background="Blue" Foreground="AliceBlue">Rotation</Label>
         <Label Grid.Row="15"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Red">X</Label>
-        <TextBox Grid.Row="15" Grid.Column="1" FontSize="10" Text="{Binding RotationX}" />
+        <TextBox Grid.Row="15" Grid.Column="1" FontSize="14" Text="{Binding RotationX}" />
         <UniformGrid Grid.Row="15" Grid.Column="2" Columns="1">
             <Button  FontSize="9" Content="+" Command="{Binding RotateXCommand}" CommandParameter="+" />
             <Button  FontSize="9" Content="-" Command="{Binding RotateXCommand}" CommandParameter="-" />
         </UniformGrid>
 
         <Label Grid.Row="16"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Green">Y</Label>
-        <TextBox Grid.Row="16" Grid.Column="1" FontSize="9" Text="{Binding RotationY}" />
+        <TextBox Grid.Row="16" Grid.Column="1" FontSize="14" Text="{Binding RotationY}" />
         <UniformGrid Grid.Row="16" Grid.Column="2" Columns="1">
             <Button FontSize="9" Content="+" Command="{Binding RotateYCommand}" CommandParameter="+" />
             <Button FontSize="9" Content="-" Command="{Binding RotateYCommand}" CommandParameter="-" />
         </UniformGrid>
         <Label Grid.Row="17"   HorizontalContentAlignment="Center" FontSize="9"  Foreground="Blue">Z</Label>
-        <TextBox Grid.Row="17" Grid.Column="1" FontSize="9" Text="{Binding RotationZ}" />
+        <TextBox Grid.Row="17" Grid.Column="1" FontSize="14" Text="{Binding RotationZ}" />
         <UniformGrid Grid.Row="17" Grid.Column="2" Columns="1">
             <Button  FontSize="9" Content="+" Command="{Binding RotateZCommand}" CommandParameter="+" />
             <Button  FontSize="9" Content="+" Command="{Binding RotateZCommand}" CommandParameter="-" />
