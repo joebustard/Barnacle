@@ -38,10 +38,67 @@ namespace ManifoldLib
                 if ((Points != null) && (Points.Count >= 3))
                 {
                     Vertices.Clear();
-                    for (int i = 0; i < Points.Count; i++)
+
+                    // list may be already be sorted which would result in a very
+                    // deep, thin tree and break the stack
+                    // Doesn't hurt to insert in sections
+                    if (Points.Count > 0 && Points.Count < 10)
                     {
-                        AddPointToTree(i, Points[i]);
+                        for (int i = 0; i < Points.Count; i++)
+                        {
+                            AddPointToTree(i, Points[i]);
+                        }
                     }
+                    else
+                    {
+                        int low = 0;
+                        int high = Points.Count - 1;
+                        int mid = (high - low) / 2;
+                        int mid1 = mid - 1;
+                        int mid2 = mid + 1;
+                        bool more = true;
+                        bool[] used = new bool[Points.Count];
+                        for (int i = 0; i < Points.Count; i++)
+                        {
+                            used[i] = false;
+                        }
+                        AddPointToTree(mid, Points[mid]);
+                        used[mid] = true;
+                        do
+                        {
+                            System.Diagnostics.Debug.WriteLine($"{low},{mid1},{mid2},{high}");
+                            if (low < Points.Count && !used[low])
+                            {
+                                AddPointToTree(low, Points[low]);
+                                used[low] = true;
+                            }
+
+                            if (mid1 >= 0 && !used[mid1])
+                            {
+                                AddPointToTree(mid1, Points[mid1]);
+                                used[mid1] = true;
+                            }
+                            if (high >= 0 && !used[high])
+                            {
+                                AddPointToTree(high, Points[high]);
+                                used[high] = true;
+                            }
+                            if (mid2 <= Points.Count - 1 && !used[mid2])
+                            {
+                                AddPointToTree(mid2, Points[mid2]);
+                                used[mid2] = true;
+                            }
+                            low++;
+                            mid1--;
+                            mid2++;
+                            high--;
+                            if (mid1 <= 0 && mid2 >= Points.Count)
+                            {
+                                more = false;
+                            }
+                        } while (more);
+                    }
+
                     SortTree();
 
                     foreach (Point3D p in Points)
@@ -170,9 +227,64 @@ namespace ManifoldLib
                 if ((Points != null) && (Points.Count >= 3))
                 {
                     Vertices.Clear();
-                    for (int i = 0; i < Points.Count; i++)
+                    // list may be already be sorted which would result in a very
+                    // deep, thin tree and break the stack
+                    // Doesn't hurt to insert in sections
+                    if (Points.Count > 0 && Points.Count < 10)
                     {
-                        AddPointToTree(i, Points[i]);
+                        for (int i = 0; i < Points.Count; i++)
+                        {
+                            AddPointToTree(i, Points[i]);
+                        }
+                    }
+                    else
+                    {
+                        int low = 0;
+                        int high = Points.Count - 1;
+                        int mid = (high - low) / 2;
+                        int mid1 = mid - 1;
+                        int mid2 = mid + 1;
+                        bool more = true;
+                        bool[] used = new bool[Points.Count];
+                        for (int i = 0; i < Points.Count; i++)
+                        {
+                            used[i] = false;
+                        }
+                        AddPointToTree(mid, Points[mid]);
+                        used[mid] = true;
+                        do
+                        {
+                            System.Diagnostics.Debug.WriteLine($"{low},{mid1},{mid2},{high}");
+                            if (low < Points.Count && !used[low])
+                            {
+                                AddPointToTree(low, Points[low]);
+                                used[low] = true;
+                            }
+
+                            if (mid1 >= 0 && !used[mid1])
+                            {
+                                AddPointToTree(mid1, Points[mid1]);
+                                used[mid1] = true;
+                            }
+                            if (high >= 0 && !used[high])
+                            {
+                                AddPointToTree(high, Points[high]);
+                                used[high] = true;
+                            }
+                            if (mid2 <= Points.Count - 1 && !used[mid2])
+                            {
+                                AddPointToTree(mid2, Points[mid2]);
+                                used[mid2] = true;
+                            }
+                            low++;
+                            mid1--;
+                            mid2++;
+                            high--;
+                            if (mid1 <= 0 && mid2 >= Points.Count)
+                            {
+                                more = false;
+                            }
+                        } while (more);
                     }
                     Vertices = SortTree();
                 }
