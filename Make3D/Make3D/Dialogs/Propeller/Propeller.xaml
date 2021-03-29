@@ -28,25 +28,56 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label Width="100">No. of Blades</Label>
                 <Slider Value="{Binding NumberOfBlades}" Minimum="2" Maximum="8" Width="200" />
                 <TextBox Text="{Binding NumberOfBlades}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Label Width="100">Blade Length</Label>
                 <Slider Value="{Binding BladeLength}" Minimum="10" Maximum="100" Width="200" />
                 <TextBox Text="{Binding BladeLength}" Width="50" />
             </StackPanel>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label Width="100">Root Offset</Label>
+                <Slider Value="{Binding RootOffset}" Minimum="0" Maximum="100" Width="200" />
+                <TextBox Text="{Binding RootOffset}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <Label Width="100">Blade Root</Label>
+                <Slider Value="{Binding BladeRoot}" Minimum="5" Maximum="20" Width="200" />
+                <TextBox Text="{Binding BladeRoot}" Width="50" />
+            </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label Width="100">Blade Mid</Label>
+                <Slider Value="{Binding BladeMid}" Minimum="5" Maximum="20" Width="200" />
+                <TextBox Text="{Binding BladeMid}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <Label Width="100">Blade Tip</Label>
+                <Slider Value="{Binding BladeTip}" Minimum="5" Maximum="20" Width="200" />
+                <TextBox Text="{Binding BladeTip}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="7" Orientation="Horizontal">
+                <Label Width="100">Blade Angle</Label>
+                <Slider Value="{Binding BladeAngle}" Minimum="0" Maximum="90" Width="200" />
+                <TextBox Text="{Binding BladeAngle}" Width="50" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="9" Orientation="Horizontal">
+                <Label Width="100">Blade Profile</Label>
+                <ComboBox Width="100"  Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding AirfoilGroups}" SelectedItem="{Binding RootGroup}" />
+                <ComboBox Width="100"  Margin="0,0,10,0" ItemsSource="{Binding AirfoilNames}" VerticalAlignment="Center" SelectedItem="{Binding SelectedRootAirfoil}" />
+            </StackPanel>
+            <StackPanel Grid.Row="10" Orientation="Horizontal">
                 <Label Width="100">Hub Type</Label>
                 <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Flat</RadioButton>
                 <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Domed</RadioButton>
                 <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Cone</RadioButton>
             </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
