@@ -18,6 +18,8 @@ namespace ProjectLib
         {
             Name = String.Empty;
             Source = String.Empty;
+            Backup = false;
+            Export = false;
         }
 
         internal void Load(XmlDocument doc, XmlNode nd)
@@ -33,6 +35,14 @@ namespace ProjectLib
                 if (ele.HasAttribute("Source"))
                 {
                     Source = ele.GetAttribute("Source");
+                }
+                if (ele.HasAttribute("Backup"))
+                {
+                    Backup = Convert.ToBoolean(ele.GetAttribute("Backup"));
+                }
+                if (ele.HasAttribute("Export"))
+                {
+                    Export = Convert.ToBoolean(ele.GetAttribute("Export"));
                 }
             }
         }

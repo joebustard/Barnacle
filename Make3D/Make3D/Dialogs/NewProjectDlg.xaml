@@ -24,7 +24,7 @@
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Label Grid.Row="1" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Project Name</Label>
-        <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="200" TextChanged="TextBox_TextChanged" />
+        <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Left" Width="200" FontSize="16" TextChanged="TextBox_TextChanged" />
 
         <Label Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Left">Template</Label>
 

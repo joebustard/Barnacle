@@ -71,6 +71,12 @@ namespace TemplateLib
                         ProjectTemplateFolder nf = new ProjectTemplateFolder();
                         nf.Name = folderName;
                         Folders.Add(nf);
+                        // add ALL attributes to the folders attribute dictionary
+                        XmlAttributeCollection atrs = fel.Attributes;
+                        foreach (XmlAttribute a in atrs)
+                        {
+                            nf.Attributes[a.Name] = a.Value;
+                        }
 
                         XmlNodeList fileNodes = fel.SelectNodes("File");
                         foreach (XmlNode filn in fileNodes)

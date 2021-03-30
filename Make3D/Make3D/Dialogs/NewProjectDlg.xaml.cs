@@ -16,6 +16,7 @@ namespace Make3D.Dialogs
         private Dictionary<string, string> descriptions;
         private string projectRoot;
         private String projPath;
+        private string projName;
         private string selectedTemplate;
 
         public NewProjectDlg()
@@ -31,7 +32,7 @@ namespace Make3D.Dialogs
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
-            if (templator.ProcessTemplate(projPath, selectedTemplate))
+            if (templator.ProcessTemplate(projName, projPath, selectedTemplate))
             {
                 DialogResult = true;
                 Close();
@@ -41,7 +42,8 @@ namespace Make3D.Dialogs
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             bool ok = true;
-            string name = (sender as TextBox).Text;
+            projName = (sender as TextBox).Text;
+            string name = projName;
             if (!name.StartsWith("\\"))
             {
                 name = "\\" + name;

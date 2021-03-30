@@ -16,10 +16,11 @@
       A place to save any limpet scripts
       These folders are simply placeholders. Nothing is created in them.
     </Description>
-    <Folder Name="images" />
-    <Folder Name="export" />
-    <Folder Name="gcode" />
-    <Folder Name="scripts" />
+    <Folder Name="images" Explorer="True" Clean="False" />
+
+    <Folder Name="export" Explorer="False" Clean="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" />
+    <Folder Name="scripts" Explorer="True" Clean="False" />
     <Folder Name="docs">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
     </Folder>
@@ -46,7 +47,7 @@
       A place to save any limpet scripts
     </Description>
 
-    <Folder Name=".">
+    <Folder Name="." Explorer="True" Clean="False">
       <File Name="Tank.mpf" Source="templates/tankproject.txt" />
       <File Name="Hull.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Turrent.txt" Source="templates/blankmodel1_35.txt" />
@@ -60,22 +61,22 @@
       <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="assemblies">
+    <Folder Name="assemblies" Explorer="True" Clean="False">
       <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="TurrentAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="backup" />
-    <Folder Name="docs">
+    <Folder Name="backup" Explorer="False" Clean="False" />
+    <Folder Name="docs" Explorer="False" Clean="False">
       <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
-    <Folder Name="images" />
-    <Folder Name="export" />
-    <Folder Name="gcode" />
-    <Folder Name="scripts" />
+    <Folder Name="images" Explorer="True" Clean="False" />
+    <Folder Name="export" Explorer="False" Clean="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" />
+    <Folder Name="scripts" Explorer="True" Clean="False" />
   </ProjectDefinition>
 
   <!--  Aircraft Model Template -->
@@ -100,7 +101,7 @@
       /scripts
       A place to save any limpet scripts
     </Description>
-    <Folder Name=".">
+    <Folder Name="." Explorer="True" Clean="False">
       <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Wings.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="UnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
@@ -110,21 +111,21 @@
       <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="assemblies">
+    <Folder Name="assemblies" Explorer="True" Clean="False">
       <File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="backup" />
-    <Folder Name="docs">
+    <Folder Name="backup" Explorer="False" Clean="False" />
+    <Folder Name="docs" Explorer="False" Clean="False">
       <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
     </Folder>
-    <Folder Name="images" />
-    <Folder Name="images\ribs" />
-    <Folder Name="export" />
-    <Folder Name="gcode" />
-    <Folder Name="scripts" />
+    <Folder Name="images" Explorer="True" Clean="False" />
+    <Folder Name="images\ribs" Explorer="True" Clean="False" />
+    <Folder Name="export" Explorer="False" Clean="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" />
+    <Folder Name="scripts" Explorer="True" Clean="False" />
   </ProjectDefinition>
 </Defs>

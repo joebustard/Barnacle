@@ -52,13 +52,13 @@ namespace TemplateLib
             TemplateDefinitionExtension = ".def";
         }
 
-        public bool ProcessTemplate(string pth, string name)
+        public bool ProcessTemplate(string projName, string pth, string templateName)
         {
             bool res = false;
             ProjectTemplateDefinition def = null;
             foreach (ProjectTemplateDefinition d in templates)
             {
-                if (d.Name == name)
+                if (d.Name == templateName)
                 {
                     def = d;
                     break;
@@ -80,9 +80,45 @@ namespace TemplateLib
                     }
                     fld.CreateFiles(p);
                 }
+
+                CreateSolution(projName, pth, def);
+
                 res = true;
             }
             return res;
+        }
+
+        private void CreateSolution(string projName, string pth, ProjectTemplateDefinition def)
+        {
+            XmlDocument solutionDoc = new XmlDocument();
+            XmlNode root = solutionDoc.CreateElement("Project");
+            solutionDoc.AppendChild(root);
+            foreach (ProjectTemplateFolder fld in def.Folders)
+            {
+                XmlElement fldEl = solutionDoc.CreateElement("Folder");
+                root.AppendChild(fldEl);
+                foreach (string s in fld.Attributes.Keys)
+                {
+                    string v = fld.Attributes[s];
+                    fldEl.SetAttribute(s, v);
+                }
+
+                foreach (ProjectTemplateFile fi in fld.Files)
+                {
+                    XmlElement fil = solutionDoc.CreateElement("File");
+                    foreach (string s in fi.Attributes.Keys)
+                    {
+                        if (s != "Source")
+                        {
+                            string v = fld.Attributes[s];
+                            fil.SetAttribute(s, v);
+                        }
+                    }
+                    fldEl.AppendChild(fil);
+                }
+            }
+            projName = System.IO.Path.Combine(pth, projName + ".bmf");
+            solutionDoc.Save(projName);
         }
 
         public void ScanForTemplates()

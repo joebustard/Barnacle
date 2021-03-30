@@ -9,7 +9,7 @@ namespace TemplateLib
         public String Name { get; set; }
 
         public List<TemplateSubstitution> Substitutions { get; set; }
-
+        public Dictionary<string, string> Attributes { get; set; }
         internal List<ProjectTemplateFile> files;
 
         internal List<ProjectTemplateFile> Files
@@ -27,6 +27,7 @@ namespace TemplateLib
         public ProjectTemplateFolder()
         {
             Files = new List<ProjectTemplateFile>();
+            Attributes = new Dictionary<string, string>();
         }
 
         internal void CreateFiles(string path)
