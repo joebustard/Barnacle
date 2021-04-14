@@ -47,13 +47,6 @@ namespace Make3D.Dialogs
             bounds = new Bounds3D();
         }
 
-        protected double Distance(Point p1, Point p2)
-        {
-            double dx = p2.X - p1.X;
-            double dy = p2.Y - p1.Y;
-            return Math.Sqrt((dx * dx) + (dy * dy));
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds
@@ -638,9 +631,31 @@ namespace Make3D.Dialogs
             }
         }
 
+        protected double Distance(Point p1, Point p2)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            return Math.Sqrt((dx * dx) + (dy * dy));
+        }
+
         protected void FlipAxies(ref Point3D p1)
         {
             p1 = new Point3D(p1.X, p1.Z, p1.Y);
+        }
+
+        protected void FloorVertices()
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(Vertices, ref min, ref max);
+
+            Vector3D offset = new Vector3D(0, -min.Y, 0);
+            bounds.Zero();
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Vertices[i] += offset;
+                bounds.Adjust(Vertices[i]);
+            }
         }
 
         protected GeometryModel3D GetModel()

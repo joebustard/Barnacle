@@ -1,9 +1,12 @@
-﻿using PolygonTriangulationLib;
+﻿using EarClipperLib;
+using Make3D.Models;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
@@ -25,23 +28,16 @@ namespace Make3D.Dialogs
         private double bladeMid;
         private double bladeRoot;
         private double bladeTip;
+        private bool domedHub;
+        private bool flatHub;
+        private double hubHeight;
+        private double hubRadius;
+        private bool loaded;
+        private double midOffset;
         private int numberOfBlades;
         private string rootGroup;
         private double rootOffset;
         private string selectedAirfoil;
-        private bool loaded;
-        private double midOffset;
-
-        public double MidOffset
-        {
-            get { return midOffset; }
-            set
-            {
-                midOffset = value;
-                NotifyPropertyChanged();
-                UpdateDisplay();
-            }
-        }
 
         public Propeller()
         {
@@ -55,7 +51,11 @@ namespace Make3D.Dialogs
             BladeRoot = 8;
             BladeMid = 10;
             BladeTip = 6;
-            BladeAngle = 45;
+            BladeAngle = 10;
+            HubRadius = 5;
+            HubHeight = 5;
+            FlatHub = true;
+            DomedHub = false;
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
             airFoilDoc = new XmlDocument();
             airfoilNames = new List<string>();
@@ -181,6 +181,88 @@ namespace Make3D.Dialogs
             }
         }
 
+        public bool DomedHub
+        {
+            get
+            {
+                return domedHub;
+            }
+            set
+            {
+                if (domedHub != value)
+                {
+                    domedHub = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool FlatHub
+        {
+            get
+            {
+                return flatHub;
+            }
+            set
+            {
+                if (flatHub != value)
+                {
+                    flatHub = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double HubHeight
+        {
+            get
+            {
+                return hubHeight;
+            }
+            set
+            {
+                if (hubHeight != value)
+                {
+                    hubHeight = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double HubRadius
+        {
+            get
+            {
+                return hubRadius;
+            }
+            set
+            {
+                if (hubRadius != value)
+                {
+                    hubRadius = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double MidOffset
+        {
+            get
+            {
+                return midOffset;
+            }
+            set
+            {
+                midOffset = value;
+                NotifyPropertyChanged();
+                UpdateDisplay();
+            }
+        }
+
         public int NumberOfBlades
         {
             get
@@ -217,6 +299,10 @@ namespace Make3D.Dialogs
 
                     NotifyPropertyChanged();
                     AirfoilNames = names;
+                    if (names.Count > 0)
+                    {
+                        SelectedAirfoil = names[0];
+                    }
                 }
             }
         }
@@ -296,259 +382,7 @@ namespace Make3D.Dialogs
             Close();
         }
 
-        private void GenerateShape()
-        {
-            ClearShape();
-            GenerateBlade();
-        }
-
-        private void LoadAirFoils()
-        {
-            if (File.Exists(airFoilPath))
-            {
-                airFoilDoc.Load(airFoilPath);
-                XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
-                XmlNodeList grps = root.SelectNodes("grp");
-                foreach (XmlNode gn in grps)
-                {
-                    airfoilGroups.Add((gn as XmlElement).GetAttribute("Name"));
-                }
-                NotifyPropertyChanged("AirfoilGroups");
-            }
-        }
-
-        private void LoadEditorParameters()
-        {
-            // load back the tool specific parameters
-        }
-
-        private void UpdateDisplay()
-        {
-            if (loaded)
-            {
-                GenerateShape();
-                Redisplay();
-            }
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
-        }
-
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-        }
-
-        private void SetProfiles(string grpName, List<string> names)
-        {
-            XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
-            names.Clear();
-            XmlNodeList grps = root.SelectNodes("grp");
-            foreach (XmlNode gn in grps)
-            {
-                if (grpName == (gn as XmlElement).GetAttribute("Name"))
-                {
-                    XmlNodeList nodeList = gn.SelectNodes("af");
-                    foreach (XmlNode nd in nodeList)
-                    {
-                        XmlElement el = nd as XmlElement;
-                        names.Add(el.GetAttribute("Name"));
-                    }
-                }
-            }
-        }
-
-        private void TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert)
-        {
-            TriangulationPolygon ply = new TriangulationPolygon();
-            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-            foreach (Point p in points)
-            {
-                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-            }
-            ply.Points = pf.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
-                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
-                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
-                if (invert)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
-            }
-        }
-
-        private void GenerateBlade()
-        {
-            if (RootGroup != "" && SelectedAirfoil != "")
-            {
-                double rootEdgeLength = 0;
-                double midEdgeLength = 0;
-                double tipEdgeLength = 0;
-                double offsetX = 0;
-                double offsetY = 0;
-                double oz = rootOffset;
-                double midoffsetZ = midOffset;
-                double tipoffsetZ = bladeLength;
-
-                List<Point> rootProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeRoot, ref rootEdgeLength);
-                List<Point> midProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeMid, ref midEdgeLength);
-                List<Point> tipProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeTip, ref tipEdgeLength);
-
-                Vertices.Clear();
-                Faces.Clear();
-                double dtheta = (Math.PI * 2) / NumberOfBlades;
-                double theta = 0;
-                for (int b = 0; b < numberOfBlades; b++)
-                {
-                    double dt = 0.01;
-                    double startT = 0;
-                    double endT = 1;
-                    double rtoff = bladeMid - bladeRoot;
-                    double tpoff = bladeMid - bladeTip;
-                    double xoff = -(bladeMid / 2);
-                    List<Point> rootPnts = new List<Point>();
-                    List<Point> tipPnts = new List<Point>();
-                    for (double t = startT; t < endT; t += dt)
-                    {
-                        Point p1 = GetProfileAt(rootProfile, rootEdgeLength, t);
-                        rootPnts.Add(p1);
-                        Point p2 = GetProfileAt(rootProfile, rootEdgeLength, t + dt);
-                        Point p3 = GetProfileAt(midProfile, midEdgeLength, t + dt);
-                        Point p4 = GetProfileAt(midProfile, midEdgeLength, t);
-
-                        Point3D pd1 = new Point3D((p1.X * bladeRoot) + rtoff + xoff, p1.Y * bladeRoot + offsetY, oz);
-                        Point3D pd2 = new Point3D((p2.X * bladeRoot) + rtoff + xoff, p2.Y * bladeRoot + offsetY, oz);
-                        Point3D pd3 = new Point3D((p3.X * bladeMid) + xoff, (p3.Y * bladeMid) + offsetY, midoffsetZ + oz);
-                        Point3D pd4 = new Point3D((p4.X * bladeMid) + xoff, (p4.Y * bladeMid) + offsetY, midoffsetZ + oz);
-
-                        pd1 = RotatePoint(pd1, theta);
-                        pd2 = RotatePoint(pd2, theta);
-                        pd3 = RotatePoint(pd3, theta);
-                        pd4 = RotatePoint(pd4, theta);
-
-                        /*
-                        Point3D pd1 = new Point3D((p1.X * bladeRoot) + rtoff, 0, p1.Y * bladeRoot + offsetY);
-                        Point3D pd2 = new Point3D((p2.X * bladeRoot) + rtoff, 0, p2.Y * bladeRoot + offsetY);
-                        Point3D pd3 = new Point3D((p3.X * bladeMid), midoffsetZ, (p3.Y * bladeMid) + offsetY);
-                        Point3D pd4 = new Point3D((p4.X * bladeMid), midoffsetZ, (p4.Y * bladeMid) + offsetY);
-                        */
-                        int v1 = AddVertice(pd1);
-                        int v2 = AddVertice(pd2);
-                        int v3 = AddVertice(pd3);
-                        int v4 = AddVertice(pd4);
-
-                        Faces.Add(v1);
-                        Faces.Add(v3);
-                        Faces.Add(v2);
-
-                        Faces.Add(v1);
-                        Faces.Add(v4);
-                        Faces.Add(v3);
-
-                        p1 = GetProfileAt(midProfile, rootEdgeLength, t);
-
-                        p2 = GetProfileAt(midProfile, rootEdgeLength, t + dt);
-                        p3 = GetProfileAt(tipProfile, midEdgeLength, t + dt);
-                        p4 = GetProfileAt(tipProfile, midEdgeLength, t);
-                        tipPnts.Add(p4);
-
-                        pd1 = new Point3D(p1.X * bladeMid + xoff, p1.Y * bladeMid + offsetY, midoffsetZ + oz);
-                        pd2 = new Point3D(p2.X * bladeMid + xoff, p2.Y * bladeMid + offsetY, midoffsetZ + oz);
-                        pd3 = new Point3D((p3.X * bladeTip) + tpoff + xoff, (p3.Y * bladeTip) + offsetY, tipoffsetZ + oz);
-                        pd4 = new Point3D((p4.X * bladeTip) + tpoff + xoff, (p4.Y * bladeTip) + offsetY, tipoffsetZ + oz);
-
-                        pd1 = RotatePoint(pd1, theta);
-                        pd2 = RotatePoint(pd2, theta);
-                        pd3 = RotatePoint(pd3, theta);
-                        pd4 = RotatePoint(pd4, theta);
-
-                        v1 = AddVertice(pd1);
-                        v2 = AddVertice(pd2);
-                        v3 = AddVertice(pd3);
-                        v4 = AddVertice(pd4);
-
-                        Faces.Add(v1);
-                        Faces.Add(v3);
-                        Faces.Add(v2);
-
-                        Faces.Add(v1);
-                        Faces.Add(v4);
-                        Faces.Add(v3);
-                    }
-
-                    double mr = bladeTip / 2;
-                    double sr = mr / 10;
-                    EllipseTip(tipPnts, mr, sr, offsetX + tpoff, offsetY, tipoffsetZ);
-                    TriangulatePerimiter(rootPnts, rootEdgeLength, 0, 0, 0, true);
-                    theta += dtheta;
-                }
-
-                // dont centre until all blades are in place
-                // CentreVertices();
-            }
-        }
-
-        private Point3D RotatePoint(Point3D p, double theta)
-        {
-            Point3D res;
-            double s = Math.Sin(theta);
-            double c = Math.Cos(theta);
-            double x = p.X * c - p.Z * s;
-            double z = p.X * s + p.Z * c;
-
-            res = new Point3D(x, p.Y, z);
-
-            return res;
-        }
-
-        private Point GetEllipsePoint(double a, double b, double t)
-        {
-            Point res = new Point(0, 0);
-            if (t >= 0 && t <= 1)
-            {
-                double theta = t * Math.PI * 2;
-                res.X = a * Math.Cos(theta);
-                res.Y = b * Math.Sin(theta);
-            }
-            return res;
-        }
-
-        private void EllipseTip(List<Point> tipPnts, double mainRad, double sideRad, double tX, double tY, double tZ)
+        private void EllipseTip(List<Point> tipPnts, double mainRad, double sideRad, double tX, double tY, double tZ, double tilt, double rotate)
         {
             List<Point3D> tipEdge = new List<Point3D>();
             double md = mainRad * 2;
@@ -576,6 +410,18 @@ namespace Make3D.Dialogs
                 Point3D pd3 = new Point3D(tX + mainRad - tipEdge[i + 1].X, tipEdge[i + 1].Y, tZ + tipEdge[i + 1].Z);
                 Point3D pd4 = new Point3D(tX + (tipPnts[i + 1].X * md), tY + (tipPnts[i + 1].Y * md), tZ);
 
+                pd1 = RotatePointAroundZ(pd1, tilt);
+                pd1 = RotatePoint(pd1, rotate);
+
+                pd2 = RotatePointAroundZ(pd2, tilt);
+                pd2 = RotatePoint(pd2, rotate);
+
+                pd3 = RotatePointAroundZ(pd3, tilt);
+                pd3 = RotatePoint(pd3, rotate);
+
+                pd4 = RotatePointAroundZ(pd4, tilt);
+                pd4 = RotatePoint(pd4, rotate);
+
                 int v1 = AddVertice(pd1);
                 int v2 = AddVertice(pd2);
                 int v3 = AddVertice(pd3);
@@ -589,6 +435,213 @@ namespace Make3D.Dialogs
                 Faces.Add(v3);
                 Faces.Add(v4);
             }
+        }
+
+        private void GenerateBlades()
+        {
+            if (RootGroup != "" && SelectedAirfoil != "")
+            {
+                double rootEdgeLength = 0;
+                double midEdgeLength = 0;
+                double tipEdgeLength = 0;
+                double offsetX = 0;
+                double offsetY = 0;
+                double oz = rootOffset;
+                double midoffsetZ = midOffset;
+                double tipoffsetZ = bladeLength;
+                double tilt = bladeAngle * Math.PI * 2 / 360.0;
+                List<Point> rootProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeRoot, ref rootEdgeLength);
+                List<Point> midProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeMid, ref midEdgeLength);
+                List<Point> tipProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeTip, ref tipEdgeLength);
+
+                Vertices.Clear();
+                Faces.Clear();
+                double dtheta = (Math.PI * 2) / NumberOfBlades;
+                double theta = 0;
+
+                for (int b = 0; b < numberOfBlades; b++)
+                {
+                    GenerateSingleBlade(rootEdgeLength, midEdgeLength, offsetY, oz, midoffsetZ, tipoffsetZ, tilt, rootProfile, midProfile, tipProfile, theta);
+
+                    theta += dtheta;
+                }
+            }
+        }
+
+        private void GenerateDomedHub()
+        {
+            Point3DCollection cylPnts = new Point3DCollection();
+            Int32Collection cylTris = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCap(ref cylPnts, ref cylTris, ref normals);
+
+            int faceOff = Vertices.Count;
+            foreach (Point3D p in cylPnts)
+            {
+                Vertices.Add(new Point3D(p.X * hubRadius, p.Z * hubHeight + (hubHeight / 2), p.Y * hubRadius));
+            }
+            foreach (int i in cylTris)
+            {
+                Faces.Add(i + faceOff);
+            }
+        }
+
+        private void GenerateFlatHub()
+        {
+            Point3DCollection cylPnts = new Point3DCollection();
+            Int32Collection cylTris = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCylinder(ref cylPnts, ref cylTris, ref normals);
+
+            int faceOff = Vertices.Count;
+            foreach (Point3D p in cylPnts)
+            {
+                Vertices.Add(new Point3D(p.X * hubRadius, p.Y * hubHeight + (hubHeight / 2), p.Z * hubRadius));
+            }
+            foreach (int i in cylTris)
+            {
+                Faces.Add(i + faceOff);
+            }
+        }
+
+        private void GenerateHub()
+        {
+            if (flatHub)
+            {
+                GenerateFlatHub();
+            }
+            if (domedHub)
+            {
+                GenerateDomedHub();
+            }
+        }
+
+        private void GenerateShape()
+        {
+            ClearShape();
+            GenerateBlades();
+            GenerateHub();
+            FloorVertices();
+        }
+
+        private void GenerateSingleBlade(double rootEdgeLength, double midEdgeLength, double offsetY, double oz, double midoffsetZ, double tipoffsetZ, double tilt, List<Point> rootProfile, List<Point> midProfile, List<Point> tipProfile, double theta)
+        {
+            double dt = 0.01;
+            double startT = 0;
+            double endT = 1;
+            double rtoff = bladeMid - bladeRoot;
+            double tpoff = bladeMid - bladeTip;
+            double xoff = -(bladeMid / 2);
+            List<Vector3m> rootPoints = new List<Vector3m>();
+            List<Point> tipPnts = new List<Point>();
+            for (double t = startT; t < endT; t += dt)
+            {
+                Point p1 = GetProfileAt(rootProfile, rootEdgeLength, t);
+
+                Point p2 = GetProfileAt(rootProfile, rootEdgeLength, t + dt);
+                Point p3 = GetProfileAt(midProfile, midEdgeLength, t + dt);
+                Point p4 = GetProfileAt(midProfile, midEdgeLength, t);
+
+                Point3D pd1 = new Point3D((p1.X * bladeRoot) + rtoff + xoff, p1.Y * bladeRoot + offsetY, oz);
+                Point3D pd2 = new Point3D((p2.X * bladeRoot) + rtoff + xoff, p2.Y * bladeRoot + offsetY, oz);
+                Point3D pd3 = new Point3D((p3.X * bladeMid) + xoff, (p3.Y * bladeMid) + offsetY, midoffsetZ + oz);
+                Point3D pd4 = new Point3D((p4.X * bladeMid) + xoff, (p4.Y * bladeMid) + offsetY, midoffsetZ + oz);
+
+                pd1 = RotatePointAroundZ(pd1, tilt);
+                pd1 = RotatePoint(pd1, theta);
+
+                pd2 = RotatePointAroundZ(pd2, tilt);
+                pd2 = RotatePoint(pd2, theta);
+
+                pd3 = RotatePointAroundZ(pd3, tilt);
+                pd3 = RotatePoint(pd3, theta);
+
+                pd4 = RotatePointAroundZ(pd4, tilt);
+                pd4 = RotatePoint(pd4, theta);
+
+                rootPoints.Add(new Vector3m(pd1.X, pd1.Y, pd1.Z));
+
+                int v1 = AddVertice(pd1);
+                int v2 = AddVertice(pd2);
+                int v3 = AddVertice(pd3);
+                int v4 = AddVertice(pd4);
+
+                Faces.Add(v1);
+                Faces.Add(v3);
+                Faces.Add(v2);
+
+                Faces.Add(v1);
+                Faces.Add(v4);
+                Faces.Add(v3);
+
+                p1 = GetProfileAt(midProfile, rootEdgeLength, t);
+
+                p2 = GetProfileAt(midProfile, rootEdgeLength, t + dt);
+                p3 = GetProfileAt(tipProfile, midEdgeLength, t + dt);
+                p4 = GetProfileAt(tipProfile, midEdgeLength, t);
+
+                pd1 = new Point3D(p1.X * bladeMid + xoff, p1.Y * bladeMid + offsetY, midoffsetZ + oz);
+                pd2 = new Point3D(p2.X * bladeMid + xoff, p2.Y * bladeMid + offsetY, midoffsetZ + oz);
+                pd3 = new Point3D((p3.X * bladeTip) + tpoff + xoff, (p3.Y * bladeTip) + offsetY, tipoffsetZ + oz);
+                pd4 = new Point3D((p4.X * bladeTip) + tpoff + xoff, (p4.Y * bladeTip) + offsetY, tipoffsetZ + oz);
+
+                pd1 = RotatePointAroundZ(pd1, tilt);
+                pd1 = RotatePoint(pd1, theta);
+
+                pd2 = RotatePointAroundZ(pd2, tilt);
+                pd2 = RotatePoint(pd2, theta);
+
+                pd3 = RotatePointAroundZ(pd3, tilt);
+                pd3 = RotatePoint(pd3, theta);
+
+                pd4 = RotatePointAroundZ(pd4, tilt);
+                pd4 = RotatePoint(pd4, theta);
+
+                tipPnts.Add(p4);
+
+                v1 = AddVertice(pd1);
+                v2 = AddVertice(pd2);
+                v3 = AddVertice(pd3);
+                v4 = AddVertice(pd4);
+
+                Faces.Add(v1);
+                Faces.Add(v3);
+                Faces.Add(v2);
+
+                Faces.Add(v1);
+                Faces.Add(v4);
+                Faces.Add(v3);
+            }
+
+            double mr = bladeTip / 2;
+            double sr = mr / 10;
+            EllipseTip(tipPnts, mr, sr, tpoff + xoff, offsetY, tipoffsetZ + oz, tilt, theta);
+
+            EarClipping earClipping = new EarClipping();
+            earClipping.SetPoints(rootPoints);
+            earClipping.Triangulate();
+            var res = earClipping.Result;
+            for (int i = 0; i < res.Count; i += 3)
+            {
+                int v1 = AddVertice(res[i].X, res[i].Y, res[i].Z);
+                int v2 = AddVertice(res[i + 1].X, res[i + 1].Y, res[i + 1].Z);
+                int v3 = AddVertice(res[i + 2].X, res[i + 2].Y, res[i + 2].Z);
+                Faces.Add(v1);
+                Faces.Add(v2);
+                Faces.Add(v3);
+            }
+        }
+
+        private Point GetEllipsePoint(double a, double b, double t)
+        {
+            Point res = new Point(0, 0);
+            if (t >= 0 && t <= 1)
+            {
+                double theta = t * Math.PI * 2;
+                res.X = a * Math.Cos(theta);
+                res.Y = b * Math.Sin(theta);
+            }
+            return res;
         }
 
         private Point GetProfileAt(List<Point> profile, double length, double t)
@@ -679,6 +732,142 @@ namespace Make3D.Dialogs
                 }
             }
             return res;
+        }
+
+        private void LoadAirFoils()
+        {
+            if (File.Exists(airFoilPath))
+            {
+                airFoilDoc.Load(airFoilPath);
+                XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
+                XmlNodeList grps = root.SelectNodes("grp");
+                foreach (XmlNode gn in grps)
+                {
+                    airfoilGroups.Add((gn as XmlElement).GetAttribute("Name"));
+                }
+                NotifyPropertyChanged("AirfoilGroups");
+            }
+        }
+
+        private void LoadEditorParameters()
+        {
+            // load back the tool specific parameters
+        }
+
+        private void Redisplay()
+        {
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                GeometryModel3D gm = GetModel();
+                MyModelGroup.Children.Add(gm);
+            }
+        }
+
+        private Point3D RotatePoint(Point3D p, double theta)
+        {
+            Point3D res;
+            double s = Math.Sin(theta);
+            double c = Math.Cos(theta);
+            double x = p.X * c - p.Z * s;
+            double z = p.X * s + p.Z * c;
+
+            res = new Point3D(x, p.Y, z);
+
+            return res;
+        }
+
+        private Point3D RotatePointAroundZ(Point3D p, double theta)
+        {
+            Point3D res;
+            double s = Math.Sin(theta);
+            double c = Math.Cos(theta);
+            double x = p.X * c - p.Y * s;
+            double y = p.X * s + p.Y * c;
+
+            res = new Point3D(x, y, p.Z);
+
+            return res;
+        }
+
+        private void SaveEditorParmeters()
+        {
+            // save the parameters for the tool
+        }
+
+        private void SetProfiles(string grpName, List<string> names)
+        {
+            XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
+            names.Clear();
+            XmlNodeList grps = root.SelectNodes("grp");
+            foreach (XmlNode gn in grps)
+            {
+                if (grpName == (gn as XmlElement).GetAttribute("Name"))
+                {
+                    XmlNodeList nodeList = gn.SelectNodes("af");
+                    foreach (XmlNode nd in nodeList)
+                    {
+                        XmlElement el = nd as XmlElement;
+                        names.Add(el.GetAttribute("Name"));
+                    }
+                }
+            }
+        }
+
+        private void TriangulatePerimiter(List<Point> points, double l, double xo, double yo, double z, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (Point p in points)
+            {
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
+
+        private void UpdateDisplay()
+        {
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

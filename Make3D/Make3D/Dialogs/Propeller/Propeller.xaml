@@ -30,6 +30,8 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label Width="100">No. of Blades</Label>
@@ -76,13 +78,22 @@
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label Width="100">Blade Profile</Label>
                 <ComboBox Width="100"  Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding AirfoilGroups}" SelectedItem="{Binding RootGroup}" />
-                <ComboBox Width="100"  Margin="0,0,10,0" ItemsSource="{Binding AirfoilNames}" VerticalAlignment="Center" SelectedItem="{Binding SelectedRootAirfoil}" />
+                <ComboBox Width="100"  Margin="0,0,10,0" ItemsSource="{Binding AirfoilNames}" VerticalAlignment="Center" SelectedItem="{Binding SelectedAirfoil}" />
             </StackPanel>
             <StackPanel Grid.Row="10" Orientation="Horizontal">
                 <Label Width="100">Hub Type</Label>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Flat</RadioButton>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Domed</RadioButton>
-                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center">Cone</RadioButton>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center" IsChecked="{Binding FlatHub}">Flat</RadioButton>
+                <RadioButton GroupName="HubGroup" Margin="8,0,0,0" VerticalAlignment="Center" IsChecked="{Binding DomedHub}">Domed</RadioButton>
+            </StackPanel>
+            <StackPanel Grid.Row="11" Orientation="Horizontal">
+                <Label Width="100">Hub Radius</Label>
+                <Slider Value="{Binding HubRadius}" Minimum="0" Maximum="100" Width="200" />
+                <TextBox Text="{Binding HubRadius}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="12" Orientation="Horizontal">
+                <Label Width="100">Hub Height</Label>
+                <Slider Value="{Binding HubHeight}" Minimum="0" Maximum="100" Width="200" />
+                <TextBox Text="{Binding HubHeight}" Width="50" />
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">

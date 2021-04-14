@@ -514,6 +514,10 @@
       <Project>{CB0CAFAC-72AB-4D29-A570-D6F97519BBD3}</Project>
       <Name>CSGLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EarClipperLib\EarClipperLib.csproj">
+      <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>
+      <Name>EarClipperLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManifoldLib\ManifoldLib.csproj">
       <Project>{DABC6ACF-3F5E-469B-BCC0-6F676287B245}</Project>
       <Name>ManifoldLib</Name>
