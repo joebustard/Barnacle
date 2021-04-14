@@ -32,6 +32,7 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label Width="100">No. of Blades</Label>
@@ -94,6 +95,16 @@
                 <Label Width="100">Hub Height</Label>
                 <Slider Value="{Binding HubHeight}" Minimum="0" Maximum="100" Width="200" />
                 <TextBox Text="{Binding HubHeight}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="13" Orientation="Horizontal">
+                <Label Width="100">Hub Offset</Label>
+                <Slider Value="{Binding HubOffset}" Minimum="-10" Maximum="10" Width="200" />
+                <TextBox Text="{Binding HubOffset}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="14" Orientation="Horizontal">
+                <Label Width="100">Spoke Radius</Label>
+                <Slider Value="{Binding SpokeRadius}" Minimum="1" Maximum="20" Width="200" />
+                <TextBox Text="{Binding SpokeRadius}" Width="50" />
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">

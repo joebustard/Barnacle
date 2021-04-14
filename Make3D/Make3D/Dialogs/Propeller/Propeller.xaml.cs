@@ -54,6 +54,8 @@ namespace Make3D.Dialogs
             BladeAngle = 10;
             HubRadius = 5;
             HubHeight = 5;
+            HubOffset = 0;
+            SpokeRadius = 3;
             FlatHub = true;
             DomedHub = false;
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
@@ -61,6 +63,19 @@ namespace Make3D.Dialogs
             airfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             loaded = false;
+        }
+
+        private double spokeRadius;
+
+        public double SpokeRadius
+        {
+            get { return spokeRadius; }
+            set
+            {
+                spokeRadius = value;
+                NotifyPropertyChanged();
+                UpdateDisplay();
+            }
         }
 
         public List<string> AirfoilGroups
@@ -437,6 +452,19 @@ namespace Make3D.Dialogs
             }
         }
 
+        private double hubOffset;
+
+        public double HubOffset
+        {
+            get { return hubOffset; }
+            set
+            {
+                hubOffset = value;
+                NotifyPropertyChanged();
+                UpdateDisplay();
+            }
+        }
+
         private void GenerateBlades()
         {
             if (RootGroup != "" && SelectedAirfoil != "")
@@ -444,7 +472,6 @@ namespace Make3D.Dialogs
                 double rootEdgeLength = 0;
                 double midEdgeLength = 0;
                 double tipEdgeLength = 0;
-                double offsetX = 0;
                 double offsetY = 0;
                 double oz = rootOffset;
                 double midoffsetZ = midOffset;
@@ -478,7 +505,7 @@ namespace Make3D.Dialogs
             int faceOff = Vertices.Count;
             foreach (Point3D p in cylPnts)
             {
-                Vertices.Add(new Point3D(p.X * hubRadius, p.Z * hubHeight + (hubHeight / 2), p.Y * hubRadius));
+                Vertices.Add(new Point3D(p.X * hubRadius, p.Z * hubHeight + (hubHeight / 2) + hubOffset, p.Y * hubRadius));
             }
             foreach (int i in cylTris)
             {
@@ -496,7 +523,7 @@ namespace Make3D.Dialogs
             int faceOff = Vertices.Count;
             foreach (Point3D p in cylPnts)
             {
-                Vertices.Add(new Point3D(p.X * hubRadius, p.Y * hubHeight + (hubHeight / 2), p.Z * hubRadius));
+                Vertices.Add(new Point3D(p.X * hubRadius, p.Y * hubHeight + (hubHeight / 2) + hubOffset, p.Z * hubRadius));
             }
             foreach (int i in cylTris)
             {
@@ -506,6 +533,10 @@ namespace Make3D.Dialogs
 
         private void GenerateHub()
         {
+            // if (rootOffset > hubRadius)
+            {
+                GenerateSpokes();
+            }
             if (flatHub)
             {
                 GenerateFlatHub();
@@ -513,6 +544,32 @@ namespace Make3D.Dialogs
             if (domedHub)
             {
                 GenerateDomedHub();
+            }
+        }
+
+        private void GenerateSpokes()
+        {
+            Point3DCollection cylPnts = new Point3DCollection();
+            Int32Collection cylTris = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCylinder(ref cylPnts, ref cylTris, ref normals);
+            double spokeDiameter = spokeRadius * 2;
+            double dtheta = (Math.PI * 2) / NumberOfBlades;
+            double theta = 0;
+            for (int b = 0; b < numberOfBlades; b++)
+            {
+                int faceOff = Vertices.Count;
+                foreach (Point3D p in cylPnts)
+                {
+                    Point3D np = new Point3D(p.X * spokeDiameter, -p.Z * spokeDiameter, (p.Y + 0.5) * rootOffset);
+                    np = RotatePoint(np, theta);
+                    Vertices.Add(np);
+                }
+                foreach (int i in cylTris)
+                {
+                    Faces.Add(i + faceOff);
+                }
+                theta += dtheta;
             }
         }
 
