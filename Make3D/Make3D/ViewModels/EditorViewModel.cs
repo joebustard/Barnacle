@@ -121,6 +121,7 @@ namespace Make3D.ViewModels
 
             NotificationManager.Subscribe("ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("RemoveDupVertices", OnRemoveDupVertices);
+            NotificationManager.Subscribe("UnrefVertices", OnRemoveUnrefVertices);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -131,6 +132,21 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void OnRemoveUnrefVertices(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to process");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    RemoveUnrefVertices(ob);
+                }
+            }
         }
 
         private enum CameraModes
@@ -613,6 +629,18 @@ namespace Make3D.ViewModels
             checker.RemoveDuplicateVertices();
             ob.RelativeObjectVertices = checker.Points;
             ob.TriangleIndices = checker.Indices;
+            ob.Remesh();
+        }
+
+        private static void RemoveUnrefVertices(Object3D ob)
+        {
+            ManifoldChecker checker = new ManifoldChecker();
+            checker.Points = ob.RelativeObjectVertices;
+            checker.Indices = ob.TriangleIndices;
+            checker.RemoveUnreferencedVertices();
+            ob.RelativeObjectVertices = checker.Points;
+            ob.TriangleIndices = checker.Indices;
+            ob.Remesh();
         }
 
         private void AlignSelectedObjects(string s)
@@ -1704,30 +1732,58 @@ namespace Make3D.ViewModels
             string s = param as string;
             if (s != null)
             {
-                bool all = true;
-                if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
+                if (s == "AllModels")
                 {
-                    ExportSelectedDialog seldlg = new ExportSelectedDialog();
-                    seldlg.ShowDialog();
-                    if (seldlg.Result == ExportSelectedDialog.ExportChoice.Selected)
-                    {
-                        all = false;
-                    }
-                }
-                string exportedPath = "";
-                if (all)
-                {
-                    exportedPath = Document.ExportAll(param.ToString(), allBounds);
+                    ExportAllModels();
                 }
                 else
                 {
-                    exportedPath = Document.ExportSelectedParts(param.ToString(), allBounds, selectedObjectAdorner.SelectedObjects);
-                }
+                    bool all = true;
+                    if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
+                    {
+                        ExportSelectedDialog seldlg = new ExportSelectedDialog();
+                        seldlg.ShowDialog();
+                        if (seldlg.Result == ExportSelectedDialog.ExportChoice.Selected)
+                        {
+                            all = false;
+                        }
+                    }
+                    string exportedPath = "";
+                    if (all)
+                    {
+                        exportedPath = Document.ExportAll(param.ToString(), allBounds);
+                    }
+                    else
+                    {
+                        exportedPath = Document.ExportSelectedParts(param.ToString(), allBounds, selectedObjectAdorner.SelectedObjects);
+                    }
 
-                STLExportedConfirmation dlg = new STLExportedConfirmation();
-                dlg.ExportPath = exportedPath;
-                if (dlg.ShowDialog() == true)
+                    STLExportedConfirmation dlg = new STLExportedConfirmation();
+                    dlg.ExportPath = exportedPath;
+                    if (dlg.ShowDialog() == true)
+                    {
+                    }
+                }
+            }
+        }
+
+        private void ExportAllModels()
+        {
+            String pth = Document.FilePath;
+            if (Document.Dirty)
+            {
+                MessageBox.Show("Document must be saved first");
+            }
+            else
+            {
+                if (pth != String.Empty)
                 {
+                    pth = System.IO.Path.GetDirectoryName(pth);
+
+                    string[] filenames = System.IO.Directory.GetFiles(pth, "*.txt");
+
+                    ProjectExporter pe = new ProjectExporter();
+                    pe.Export(filenames, pth + "\\export");
                 }
             }
         }
@@ -2072,6 +2128,7 @@ namespace Make3D.ViewModels
 
         private void OnNewDocument(object param)
         {
+            selectedObjectAdorner?.Clear();
             RegenerateDisplayList();
             HomeCamera();
             selectedItems = new List<Object3D>();

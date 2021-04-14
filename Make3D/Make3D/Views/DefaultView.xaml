@@ -110,8 +110,9 @@
                         <Custom:RibbonButton x:Name="ImportSTL" Label="STL" Command="{Binding ImportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Export" Label="Export">
-                        <Custom:RibbonButton x:Name="STL" Label="STL" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
-                        <Custom:RibbonButton x:Name="STLParts" Label="STL Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export each part into its own STL file" />
+                        <Custom:RibbonButton x:Name="AllModels" Label="Project" Command="{Binding ExportCommand}" CommandParameter="AllModels" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export all models in project" />
+                        <Custom:RibbonButton x:Name="STL" Label="Model" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export the current model" />
+                        <Custom:RibbonButton x:Name="STLParts" Label="Separate Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export each part into its own separate file" />
                     </Custom:RibbonMenuButton>
                     <!--
                     <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
@@ -195,6 +196,8 @@
                     <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate Faces" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
                     <Custom:RibbonButton x:Name="ManifoldButton" Label="Test Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
                     <Custom:RibbonButton x:Name="DupVertexButton" Label="Remove Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
+
+                    <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Remove Unreferenced Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
 

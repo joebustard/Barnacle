@@ -5,11 +5,61 @@ namespace ManifoldLib
 {
     public class VertexTreeNode
     {
+        public enum NodeColour
+        {
+            Red,
+            Black
+        }
+
         private const double tolerance = 1E-6;
+        private int leftHeight;
+        private int rightHeight;
+        private int midHeight;
+        public NodeColour Colour;
+
+        private static VertexTreeNode RotateLeft(VertexTreeNode node)
+        {
+            VertexTreeNode x = node.Right;
+            node.Right = x.Left;
+            x.Left = node;
+            x.Colour = node.Colour;
+            node.Colour = NodeColour.Red;
+            return x;
+        }
+
+        private static VertexTreeNode RotateRight(VertexTreeNode node)
+        {
+            VertexTreeNode x = node.Left;
+            node.Left = x.Right;
+            x.Right = node;
+            x.Colour = node.Colour;
+            node.Colour = NodeColour.Red;
+            return x;
+        }
+
+        private static void ColourFlip(VertexTreeNode node)
+        {
+            node.Colour = NodeColour.Red;
+            node.Left.Colour = NodeColour.Black;
+            node.Right.Colour = NodeColour.Black;
+        }
+
+        private static bool IsRed(VertexTreeNode node)
+        {
+            bool res = true;
+            if (node != null && node.Colour == NodeColour.Black)
+            {
+                res = false;
+            }
+            return res;
+        }
 
         public VertexTreeNode(Vertex v)
         {
             Vertex = v;
+            leftHeight = 0;
+            rightHeight = 0;
+            midHeight = 0;
         }
 
         public VertexTreeNode Left
@@ -32,47 +82,59 @@ namespace ManifoldLib
             get; set;
         }
 
-        public void Add(Vertex v)
+        public static VertexTreeNode Add(Vertex v, VertexTreeNode node)
         {
-            double dx = v.Pos.X - Vertex.Pos.X;
-            if (dx < -tolerance)
+            VertexTreeNode result = node;
+            if (node == null)
             {
-                // left
-                if (Left == null)
-                {
-                    Left = new VertexTreeNode(v);
-                }
-                else
-                {
-                    Left.Add(v);
-                }
+                result = new VertexTreeNode(v);
+                result.Colour = NodeColour.Red;
             }
             else
             {
-                // right
-                if (dx > tolerance)
+                double dx = v.Pos.X - node.Vertex.Pos.X;
+                if (dx < -tolerance)
                 {
-                    if (Right == null)
-                    {
-                        Right = new VertexTreeNode(v);
-                    }
-                    else
-                    {
-                        Right.Add(v);
-                    }
+                    node.Left = Add(v, node.Left);
                 }
                 else
                 {
-                    if (Mid == null)
+                    // right
+                    if (dx > tolerance)
                     {
-                        Mid = new VertexTreeNode(v);
+                        node.Right = Add(v, node.Right);
                     }
                     else
                     {
-                        Mid.Add(v);
+                        node.Mid = Add(v, node.Mid);
                     }
                 }
             }
+            if (node != null)
+            {
+                if (IsRed(node.Right) && !IsRed(node.Left))
+                {
+                    node = RotateLeft(node);
+                }
+                if (IsRed(node.Left) && !IsRed(node.Right?.Right))
+                {
+                    node = RotateRight(node);
+                }
+
+                if (IsRed(node.Left) && !IsRed(node.Right))
+                {
+                    ColourFlip(node);
+                }
+            }
+            return result;
+        }
+
+        private void BalanceLeft(VertexTreeNode parent)
+        {
+        }
+
+        private void BalanceRight(VertexTreeNode parent)
+        {
         }
 
         internal void AddToList(List<Vertex> tmp)

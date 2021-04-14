@@ -15,5 +15,10 @@ namespace ManifoldLib
             DuplicateOf = -1;
             FaceReferencs = 0;
         }
+
+        internal void Dump()
+        {
+            System.Diagnostics.Debug.WriteLine($" {Pos.X},{Pos.Y},{Pos.Z}, original {OriginalNumber} Dup {DuplicateOf} new number {NewNumber}");
+        }
     }
 }

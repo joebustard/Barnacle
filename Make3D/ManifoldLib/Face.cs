@@ -73,5 +73,17 @@ namespace ManifoldLib
                 }
             }
         }
+
+        internal void Dump(List<Vertex> vertices)
+        {
+            System.Diagnostics.Debug.WriteLine("- F -");
+            foreach (Edge e in Edges)
+            {
+                System.Diagnostics.Debug.WriteLine($" P0 {e.P0}= {vertices[e.P0].Pos.X},{vertices[e.P0].Pos.Y},{vertices[e.P0].Pos.Z}");
+                System.Diagnostics.Debug.WriteLine($" P1 {e.P1}= {vertices[e.P1].Pos.X},{vertices[e.P1].Pos.Y},{vertices[e.P1].Pos.Z}");
+                System.Diagnostics.Debug.WriteLine($" NP0 {e.P0}= {vertices[e.NP0].Pos.X},{vertices[e.NP0].Pos.Y},{vertices[e.NP0].Pos.Z}");
+                System.Diagnostics.Debug.WriteLine($" NP1 {e.P1}= {vertices[e.NP1].Pos.X},{vertices[e.NP1].Pos.Y},{vertices[e.NP1].Pos.Z}");
+            }
+        }
     }
 }

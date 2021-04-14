@@ -6,10 +6,14 @@
         {
             P0 = p0;
             P1 = p1;
+            NP0 = 0;
+            NP1 = 0;
         }
 
         public int P0 { get; set; }
         public int P1 { get; set; }
+        public int NP0 { get; set; }
+        public int NP1 { get; set; }
 
         internal bool EqualTo(Edge ft, bool reverse)
         {

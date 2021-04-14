@@ -30,6 +30,17 @@ namespace Make3D.Models
             pnts.Add(new Point3D(0.5, 0.5, -0.5));
             pnts.Add(new Point3D(0.5, 0.5, 0.5));
             pnts.Add(new Point3D(-0.5, 0.5, 0.5));
+            // for tests
+            pnts.Add(new Point3D(0.5, 0.5, 0.5));
+            pnts.Add(new Point3D(-0.5, -0.5, -0.5));
+            pnts.Add(new Point3D(-0.5, 0.5, -0.5));
+            pnts.Add(new Point3D(0.5, -0.5, -0.5));
+            pnts.Add(new Point3D(0.5, -0.5, 0.5));
+            pnts.Add(new Point3D(-0.5, -0.5, 0.5));
+
+            pnts.Add(new Point3D(0.5, 0.5, -0.5));
+
+            pnts.Add(new Point3D(-0.5, 0.5, 0.5));
 
             indices = new Int32Collection();
             AddTriangle(indices, 3, 2, 6);

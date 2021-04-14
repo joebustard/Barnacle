@@ -168,7 +168,7 @@ namespace ManifoldLib
                 if (i < tmp.Count - 1)
                 {
                     Vertex v = tmp[i];
-                    tmp[i].NewNumber = i;
+                    // tmp[i].NewNumber = i;
                     int j = i + 1;
 
                     bool more = true;
@@ -187,7 +187,7 @@ namespace ManifoldLib
                                 // System.Diagnostics.Debug.WriteLine($" duplicate of ${i}");
                                 more = true;
                                 tmp[j].DuplicateOf = i;
-                                tmp[j].NewNumber = j;
+                                //   tmp[j].NewNumber = j;
                                 j++;
                                 NumberOfDuplicatedVertices++;
                             }
@@ -196,6 +196,10 @@ namespace ManifoldLib
                     i = j;
                     // System.Diagnostics.Debug.WriteLine($"{v.OriginalNumber}, {v.Pos.X},{v.Pos.Y},{v.Pos.Z}");
                 }
+            }
+            foreach (Vertex ve in tmp)
+            {
+                ve.Dump();
             }
             return tmp;
         }
@@ -206,15 +210,9 @@ namespace ManifoldLib
             v.Pos = new Point3D(p.X, p.Y, p.Z);
             v.DuplicateOf = -1;
             v.OriginalNumber = i;
-            v.NewNumber = i;
-            if (treeRoot == null)
-            {
-                treeRoot = new VertexTreeNode(v);
-            }
-            else
-            {
-                treeRoot.Add(v);
-            }
+            v.NewNumber = -1;
+
+            treeRoot = VertexTreeNode.Add(v, treeRoot);
         }
 
         public void RemoveDuplicateVertices()
@@ -227,115 +225,134 @@ namespace ManifoldLib
                 if ((Points != null) && (Points.Count >= 3))
                 {
                     Vertices.Clear();
-                    // list may be already be sorted which would result in a very
-                    // deep, thin tree and break the stack
-                    // Doesn't hurt to insert in sections
-                    if (Points.Count > 0 && Points.Count < 10)
+                    int moveto = 0;
+                    for (int i = 0; i < Points.Count; i++)
                     {
-                        for (int i = 0; i < Points.Count; i++)
+                        if (Indices.Contains(i))
+                        {
+                            Vertex v = new Vertex();
+                            v.Pos = new Point3D(Points[i].X, Points[i].Y, Points[i].Z);
+                            v.OriginalNumber = i;
+                            v.NewNumber = moveto;
+
+                            Vertices.Add(v);
+                            moveto++;
+                        }
+                    }
+
+                    Faces.Clear();
+                    for (int i = 0; i < Indices.Count; i += 3)
+                    {
+                        Face f = new Face(Indices[i], Indices[i + 1], Indices[i + 2]);
+                        Faces.Add(f);
+                    }
+
+                    foreach (Face f in Faces)
+                    {
+                        foreach (Edge e in f.Edges)
+                        {
+                            for (int i = 0; i < Vertices.Count; i++)
+                            {
+                                if (Vertices[i].OriginalNumber == e.P0)
+                                {
+                                    e.NP0 = Vertices[i].NewNumber;
+                                }
+                                if (Vertices[i].OriginalNumber == e.P1)
+                                {
+                                    e.NP1 = Vertices[i].NewNumber;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                VerticesToPoints();
+            }
+        }
+
+        public void RemoveUnreferencedVertices()
+        {
+            if ((Indices != null) && (Indices.Count >= 3))
+            {
+                if ((Points != null) && (Points.Count >= 3))
+                {
+                    Vertices.Clear();
+
+                    for (int i = 0; i < Points.Count; i++)
+                    {
+                        if (Indices.Contains(i))
                         {
                             AddPointToTree(i, Points[i]);
                         }
                     }
-                    else
-                    {
-                        int low = 0;
-                        int high = Points.Count - 1;
-                        int mid = (high - low) / 2;
-                        int mid1 = mid - 1;
-                        int mid2 = mid + 1;
-                        bool more = true;
-                        bool[] used = new bool[Points.Count];
-                        for (int i = 0; i < Points.Count; i++)
-                        {
-                            used[i] = false;
-                        }
-                        AddPointToTree(mid, Points[mid]);
-                        used[mid] = true;
-                        do
-                        {
-                            System.Diagnostics.Debug.WriteLine($"{low},{mid1},{mid2},{high}");
-                            if (low < Points.Count && !used[low])
-                            {
-                                AddPointToTree(low, Points[low]);
-                                used[low] = true;
-                            }
 
-                            if (mid1 >= 0 && !used[mid1])
-                            {
-                                AddPointToTree(mid1, Points[mid1]);
-                                used[mid1] = true;
-                            }
-                            if (high >= 0 && !used[high])
-                            {
-                                AddPointToTree(high, Points[high]);
-                                used[high] = true;
-                            }
-                            if (mid2 <= Points.Count - 1 && !used[mid2])
-                            {
-                                AddPointToTree(mid2, Points[mid2]);
-                                used[mid2] = true;
-                            }
-                            low++;
-                            mid1--;
-                            mid2++;
-                            high--;
-                            if (mid1 <= 0 && mid2 >= Points.Count)
-                            {
-                                more = false;
-                            }
-                        } while (more);
-                    }
                     Vertices = SortTree();
-                }
 
-                Faces.Clear();
-                for (int i = 0; i < Indices.Count; i += 3)
-                {
-                    Face f = new Face(Indices[i], Indices[i + 1], Indices[i + 2]);
-                    Faces.Add(f);
-                }
-
-                int removed = 0;
-                for (int i = 0; i < Vertices.Count; i++)
-                {
-                    if (Vertices[i].DuplicateOf != -1)
+                    System.Diagnostics.Debug.WriteLine("Faces before");
+                    Faces.Clear();
+                    for (int i = 0; i < Indices.Count; i += 3)
                     {
-                        removed++;
+                        Face f = new Face(Indices[i], Indices[i + 1], Indices[i + 2]);
+                        Faces.Add(f);
+                        f.Dump(Vertices);
                     }
-                    else
+                    int neo = 0;
+                    for (int i = 0; i < Vertices.Count; i++)
                     {
-                        Vertices[i].NewNumber -= removed;
-                    }
-                }
-
-                foreach (Face f in Faces)
-                {
-                    foreach (Edge e in f.Edges)
-                    {
-                        if (Vertices[e.P0].DuplicateOf != -1)
+                        if (Vertices[i].DuplicateOf == -1)
                         {
-                            e.P0 = Vertices[e.P0].NewNumber;
+                            Vertices[i].NewNumber = neo;
+                            neo++;
                         }
-
-                        if (Vertices[e.P1].DuplicateOf != -1)
+                        else
                         {
-                            e.P1 = Vertices[e.P1].NewNumber;
+                            Vertices[i].NewNumber = -1;
                         }
                     }
-                }
-            }
 
-            List<Vertex> tmp = new List<Vertex>();
-            for (int i = 0; i < Vertices.Count; i++)
-            {
-                if (Vertices[i].DuplicateOf == -1)
-                {
-                    tmp.Add(Vertices[i]);
+                    System.Diagnostics.Debug.WriteLine("------");
+                    for (int i = 0; i < Vertices.Count; i++)
+                    {
+                        Vertices[i].Dump();
+                    }
+
+                    foreach (Face f in Faces)
+                    {
+                        foreach (Edge e in f.Edges)
+                        {
+                            for (int i = 0; i < Vertices.Count; i++)
+                            {
+                                if (Vertices[i].OriginalNumber == e.P0 && Vertices[i].NewNumber != -1)
+                                {
+                                    e.NP0 = Vertices[i].NewNumber;
+                                }
+                                if (Vertices[i].OriginalNumber == e.P1 && Vertices[i].NewNumber != -1)
+                                {
+                                    e.NP1 = Vertices[i].NewNumber;
+                                }
+                            }
+                        }
+                    }
+                    System.Diagnostics.Debug.WriteLine(" Creating tmp");
+                    List<Vertex> tmp = new List<Vertex>();
+                    for (int i = 0; i < Vertices.Count; i++)
+                    {
+                        if (Vertices[i].DuplicateOf == -1)
+                        {
+                            tmp.Add(Vertices[i]);
+                            Vertices[i].Dump();
+                        }
+                    }
+                    Vertices = tmp;
+                    System.Diagnostics.Debug.WriteLine("Faces after");
+                    foreach (Face f in Faces)
+                    {
+                        f.Dump(Vertices);
+                    }
                 }
+
+                VerticesToPoints();
             }
-            Vertices = tmp;
-            VerticesToPoints();
         }
 
         private void VerticesToPoints()
@@ -350,7 +367,7 @@ namespace ManifoldLib
             {
                 foreach (Edge e in f.Edges)
                 {
-                    Indices.Add(e.P0);
+                    Indices.Add(e.NP0);
                 }
             }
         }

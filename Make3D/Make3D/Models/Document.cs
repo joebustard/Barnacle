@@ -25,6 +25,40 @@ namespace Make3D.Models
             NotificationManager.Subscribe("DocDirty", OnDocDirty);
         }
 
+        internal void AutoExport(string name, Bounds3D bnds)
+        {
+            double scalefactor = 1.0;
+            if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
+            {
+                scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
+            }
+
+            List<Object3D> exportList = new List<Object3D>();
+            foreach (Object3D ob in Content)
+            {
+                Object3D clone = ob.Clone();
+                if (scalefactor != 1.0)
+                {
+                    clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                    clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                }
+                if (ProjectSettings.FloorAll)
+                {
+                    clone.MoveToFloor();
+                }
+                exportList.Add(clone);
+            }
+
+            STLExporter exp = new STLExporter();
+            string pth = System.IO.Path.GetDirectoryName(name);
+            if (!Directory.Exists(pth))
+            {
+                Directory.CreateDirectory(pth);
+            }
+
+            exp.Export(name, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public static String NextName

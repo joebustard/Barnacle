@@ -46,22 +46,28 @@
                 <Slider Value="{Binding RootOffset}" Minimum="0" Maximum="100" Width="200" />
                 <TextBox Text="{Binding RootOffset}" Width="50" />
             </StackPanel>
+
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label Width="100">Blade Root</Label>
+                <Label Width="100">Mid Offset</Label>
+                <Slider Value="{Binding MidOffset}" Minimum="5" Maximum="20" Width="200" />
+                <TextBox Text="{Binding MidOffset}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label Width="100">Balde Root</Label>
                 <Slider Value="{Binding BladeRoot}" Minimum="5" Maximum="20" Width="200" />
                 <TextBox Text="{Binding BladeRoot}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label Width="100">Blade Mid</Label>
                 <Slider Value="{Binding BladeMid}" Minimum="5" Maximum="20" Width="200" />
                 <TextBox Text="{Binding BladeMid}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <StackPanel Grid.Row="7" Orientation="Horizontal">
                 <Label Width="100">Blade Tip</Label>
                 <Slider Value="{Binding BladeTip}" Minimum="5" Maximum="20" Width="200" />
                 <TextBox Text="{Binding BladeTip}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
+            <StackPanel Grid.Row="8" Orientation="Horizontal">
                 <Label Width="100">Blade Angle</Label>
                 <Slider Value="{Binding BladeAngle}" Minimum="0" Maximum="90" Width="200" />
                 <TextBox Text="{Binding BladeAngle}" Width="50" />

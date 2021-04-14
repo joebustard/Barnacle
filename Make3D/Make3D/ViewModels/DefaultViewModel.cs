@@ -103,6 +103,7 @@ namespace Make3D.ViewModels
             MeshEditCommand = new RelayCommand(OnMeshEdit);
             MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
+            UnrefVertexCommand = new RelayCommand(OnUnrefVertex);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -144,6 +145,11 @@ namespace Make3D.ViewModels
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
             EnableAllTools(true);
+        }
+
+        private void OnUnrefVertex(object obj)
+        {
+            NotificationManager.Notify("UnrefVertices", null);
         }
 
         public ICommand AddCommand { get; set; }
@@ -278,6 +284,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand DupVertexCommand { get; set; }
+        public ICommand UnrefVertexCommand { get; set; }
 
         public ICommand ExitCommand { get; set; }
 
