@@ -14,21 +14,12 @@ namespace Make3D.Adorners
     {
         private Bounds3D bounds;
         private Object3D box;
-        private bool boxSelected;
+
         private List<Point3D> labelLocations;
+        private MoveSide moveSide;
         private Object3D selectedThumb;
         private List<Label> thumbLabels;
         private List<Object3D> thumbs;
-
-        private enum MoveSide
-        {
-            Left,
-            Right,
-            Front,
-            Back
-        }
-
-        private MoveSide moveSide;
 
         public SkewAdorner(PolarCamera camera)
         {
@@ -45,6 +36,14 @@ namespace Make3D.Adorners
             ViewPort = null;
             NotificationManager.Subscribe("ScaleRefresh", OnScaleRefresh);
             moveSide = MoveSide.Back;
+        }
+
+        private enum MoveSide
+        {
+            Left,
+            Right,
+            Front,
+            Back
         }
 
         public Bounds3D Bounds
@@ -124,7 +123,7 @@ namespace Make3D.Adorners
                 if (box.Mesh == geo.Geometry)
                 {
                     handled = true;
-                    boxSelected = true;
+                    //boxSelected = true;
                 }
                 else
                 {

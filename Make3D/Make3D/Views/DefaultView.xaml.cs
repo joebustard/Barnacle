@@ -25,37 +25,16 @@ namespace Make3D.Views
             NotificationManager.Subscribe("Reference", ReferenceModel);
             NotificationManager.Subscribe("OpenRecentFile", OpenRecentFile);
             NotificationManager.Subscribe("CheckExit", CheckExit);
+            NotificationManager.Subscribe("ProjectChanged", ProjectChanged);
+            NotificationManager.Subscribe("OpenProject", OpenProject);
         }
 
-        private void NewFile(object param)
+        public void CheckPoint()
         {
-            CheckSaveFirst(null);
-            BaseViewModel.Document.Clear();
-            //   Caption = BaseViewModel.Document.Caption;
-            NotificationManager.Notify("NewDocument", null);
-        }
-
-        private void NewProject(object param)
-        {
-            CheckSaveFirst(null);
-            BaseViewModel.Document.Clear();
-
-            NotificationManager.Notify("NewDocument", null);
-            NewProjectDlg dlg = new NewProjectDlg();
-            if (dlg.ShowDialog() == true)
+            if (BaseViewModel.Document != null)
             {
-            }
-        }
-
-        private void ReferenceModel(object param)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = BaseViewModel.Document.FileFilter;
-            if (dlg.ShowDialog() == true)
-            {
-                CheckPoint();
-                BaseViewModel.Document.ReferenceFile(dlg.FileName);
-                NotificationManager.Notify("Refresh", null);
+                string s = undoer.GetNextCheckPointName();
+                BaseViewModel.Document.Write(s);
             }
         }
 
@@ -88,18 +67,10 @@ namespace Make3D.Views
             }
         }
 
-        private void OpenFile(object sender)
+        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            CheckSaveFirst(sender);
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Filter = BaseViewModel.Document.FileFilter;
-            if (dlg.ShowDialog() == true)
-            {
-                BaseViewModel.Document.Load(dlg.FileName);
-
-                NotificationManager.Notify("Refresh", null);
-                undoer.ClearUndoFiles();
-            }
+            Scroller.Width = MyGrid.Width;
+            Scroller.Height = MyGrid.Height;
         }
 
         private void InsertFile(object sender)
@@ -114,12 +85,93 @@ namespace Make3D.Views
             }
         }
 
-        public void CheckPoint()
+        private void LoadFileLastOpenedInProject()
         {
-            if (BaseViewModel.Document != null)
+            string p = BaseViewModel.Project.BaseFolder;
+            p = System.IO.Path.GetDirectoryName(p);
+            p = p + BaseViewModel.Project.FirstFile;
+
+            // is it a model file.
+            if (System.IO.Path.GetExtension(p) == ".txt")
             {
-                string s = undoer.GetNextCheckPointName();
-                BaseViewModel.Document.Write(s);
+                if (p != BaseViewModel.Document.FilePath)
+                {
+                    CheckSaveFirst(null);
+
+                    if (File.Exists(p))
+                    {
+                        BaseViewModel.Document.Load(p);
+                        NotificationManager.Notify("Refresh", null);
+                    }
+                }
+            }
+        }
+
+        private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+        }
+
+        private void NewFile(object param)
+        {
+            CheckSaveFirst(null);
+            BaseViewModel.Document.Clear();
+            //   Caption = BaseViewModel.Document.Caption;
+            NotificationManager.Notify("NewDocument", null);
+        }
+
+        private void NewProject(object param)
+        {
+            CheckSaveFirst(null);
+            BaseViewModel.Document.Clear();
+
+            NotificationManager.Notify("NewDocument", null);
+            NewProjectDlg dlg = new NewProjectDlg();
+            if (dlg.ShowDialog() == true)
+            {
+                if (dlg.ProjectPath != "")
+                {
+                    if (BaseViewModel.Project.Open(dlg.ProjectPath))
+                    {
+                        SolutionExplorer.ProjectChanged(BaseViewModel.Project.ProjectFolders);
+                        String initialFile = BaseViewModel.Project.FirstFile;
+                        BaseViewModel.Document.Load(initialFile);
+
+                        NotificationManager.Notify("Refresh", null);
+                        undoer.ClearUndoFiles();
+                    }
+                }
+            }
+        }
+
+        private void OpenFile(object sender)
+        {
+            CheckSaveFirst(sender);
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = BaseViewModel.Document.FileFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                BaseViewModel.Document.Load(dlg.FileName);
+
+                NotificationManager.Notify("Refresh", null);
+                undoer.ClearUndoFiles();
+            }
+        }
+
+        private void OpenProject(object param)
+        {
+            CheckSaveFirst(null);
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = BaseViewModel.Document.ProjectFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                BaseViewModel.Project.Open(dlg.FileName);
+                SolutionExplorer.ProjectChanged(BaseViewModel.Project.ProjectFolders);
+                if (BaseViewModel.Project.FirstFile != "")
+                {
+                    LoadFileLastOpenedInProject();
+                }
+                NotificationManager.Notify("Refresh", null);
+                undoer.ClearUndoFiles();
             }
         }
 
@@ -136,6 +188,23 @@ namespace Make3D.Views
             else
             {
                 MessageBox.Show("Can't find:" + f);
+            }
+        }
+
+        private void ProjectChanged(object param)
+        {
+            SolutionExplorer.ProjectChanged(param);
+        }
+
+        private void ReferenceModel(object param)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Filter = BaseViewModel.Document.FileFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                CheckPoint();
+                BaseViewModel.Document.ReferenceFile(dlg.FileName);
+                NotificationManager.Notify("Refresh", null);
             }
         }
 
@@ -161,14 +230,132 @@ namespace Make3D.Views
             }
         }
 
-        private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void SolutionChangeRequest(string changeEvent, string parameter1, string parameter2)
         {
-            Scroller.Width = MyGrid.Width;
-            Scroller.Height = MyGrid.Height;
+            switch (changeEvent)
+            {
+                case "SelectFile":
+                    {
+                        string fName = parameter1;
+                        string p = BaseViewModel.Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+
+                        // is it a model file.
+                        if (System.IO.Path.GetExtension(p) == ".txt")
+                        {
+                            if (p != BaseViewModel.Document.FilePath)
+                            {
+                                CheckSaveFirst(null);
+
+                                if (File.Exists(p))
+                                {
+                                    BaseViewModel.Document.Load(p);
+                                    NotificationManager.Notify("Refresh", null);
+                                    BaseViewModel.Project.FirstFile = fName;
+                                    //  UndoManager.Clear();
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case "NewFolder":
+                    {
+                        String fName = parameter1;
+                        string p = BaseViewModel.Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+                        try
+                        {
+                            Directory.CreateDirectory(p);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                    break;
+
+                case "RenameFolder":
+                    {
+                        String fName = parameter1;
+                        string p = BaseViewModel.Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        string old = p + fName;
+                        // string ren = System.IO.Path.GetFileName( parameter2);
+                        string ren = p + parameter2;
+                        try
+                        {
+                            Directory.Move(old, ren);
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                    break;
+
+                case "NewFile":
+                    {
+                        string fName = parameter1;
+                        string p = BaseViewModel.Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+
+                        // is it a model file.
+                        if (System.IO.Path.GetExtension(p) == ".txt")
+                        {
+                            if (p != BaseViewModel.Document.FilePath)
+                            {
+                                CheckSaveFirst(null);
+                                BaseViewModel.Document.Clear();
+                                BaseViewModel.Document.Save(p);
+                                if (File.Exists(p))
+                                {
+                                    BaseViewModel.Document.Load(p);
+                                    NotificationManager.Notify("Refresh", null);
+                                    //  UndoManager.Clear();
+                                }
+                            }
+                        }
+                    }
+                    break;
+
+                case "RenameFile":
+                    {
+                        String fName = parameter1;
+                        string p = BaseViewModel.Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        string old = p + fName;
+                        // string ren = System.IO.Path.GetFileName( parameter2);
+                        string ren = p + parameter2;
+                        try
+                        {
+                            if (System.IO.Path.GetExtension(old) == ".txt")
+                            {
+                                if (old == BaseViewModel.Document.FilePath)
+                                {
+                                    CheckSaveFirst(null);
+                                }
+                                if (File.Exists(ren))
+                                {
+                                    File.Delete(ren);
+                                }
+                                File.Move(old, ren);
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                    }
+                    break;
+            }
+            BaseViewModel.Project.Save();
         }
 
-        private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            SolutionExplorer.SolutionChanged = SolutionChangeRequest;
+            SolutionExplorer.ProjectChanged(BaseViewModel.Project.ProjectFolders);
         }
     }
 }

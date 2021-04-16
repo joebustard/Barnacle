@@ -12,28 +12,51 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class NewProjectDlg : Window
     {
-        private ProjectTemplator templator;
         private Dictionary<string, string> descriptions;
         private string projectRoot;
-        private String projPath;
         private string projName;
+        private String projPath;
         private string selectedTemplate;
+        private ProjectTemplator templator;
 
         public NewProjectDlg()
         {
             InitializeComponent();
         }
 
+        public string ProjectName
+        {
+            get { return projName; }
+        }
+
+        public string ProjectPath
+        {
+            get { return projPath; }
+        }
+
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
+            projPath = "";
+            projName = "";
             Close();
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TemplateBox.SelectedIndex != -1)
+            {
+                string n = TemplateBox.SelectedItem.ToString();
+                DescriptionBox.Text = descriptions[n];
+                selectedTemplate = n;
+            }
         }
 
         private void OK_Click(object sender, RoutedEventArgs e)
         {
             if (templator.ProcessTemplate(projName, projPath, selectedTemplate))
             {
+                projPath = templator.SolutionPath;
                 DialogResult = true;
                 Close();
             }
@@ -93,16 +116,6 @@ namespace Make3D.Dialogs
             }
 
             OK_Button.IsEnabled = ok;
-        }
-
-        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (TemplateBox.SelectedIndex != -1)
-            {
-                string n = TemplateBox.SelectedItem.ToString();
-                DescriptionBox.Text = descriptions[n];
-                selectedTemplate = n;
-            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

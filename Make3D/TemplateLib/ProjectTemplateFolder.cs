@@ -1,20 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 
 namespace TemplateLib
 {
     internal class ProjectTemplateFolder
     {
+        internal List<ProjectTemplateFile> files;
+
+        public ProjectTemplateFolder()
+        {
+            Files = new List<ProjectTemplateFile>();
+            Attributes = new Dictionary<string, string>();
+        }
+
+        public Dictionary<string, string> Attributes { get; set; }
         public String Name { get; set; }
 
         public List<TemplateSubstitution> Substitutions { get; set; }
-        public Dictionary<string, string> Attributes { get; set; }
-        internal List<ProjectTemplateFile> files;
 
         internal List<ProjectTemplateFile> Files
         {
-            get { return files; }
+            get
+            {
+                return files;
+            }
             set
             {
                 if (value != files)
@@ -22,12 +33,6 @@ namespace TemplateLib
                     files = value;
                 }
             }
-        }
-
-        public ProjectTemplateFolder()
-        {
-            Files = new List<ProjectTemplateFile>();
-            Attributes = new Dictionary<string, string>();
         }
 
         internal void CreateFiles(string path)
@@ -54,6 +59,50 @@ namespace TemplateLib
                     {
                         File.Create(trg);
                     }
+                }
+            }
+        }
+
+        internal void CreateSolutionEntry(XmlDocument solutionDoc, XmlElement root)
+        {
+            bool appendToRoot = false;
+            if (Attributes.ContainsKey("Name"))
+            {
+                String n = Attributes["Name"];
+                if (n == ".")
+                {
+                    appendToRoot = true;
+                }
+            }
+            XmlElement fldEl = solutionDoc.CreateElement("Folder");
+            if (!appendToRoot)
+            {
+                root.AppendChild(fldEl);
+            }
+            foreach (string s in Attributes.Keys)
+            {
+                string v = Attributes[s];
+                fldEl.SetAttribute(s, v);
+            }
+
+            foreach (ProjectTemplateFile fi in Files)
+            {
+                XmlElement fil = solutionDoc.CreateElement("File");
+                foreach (string s in fi.Attributes.Keys)
+                {
+                    if (s != "Source")
+                    {
+                        string v = fi.Attributes[s];
+                        fil.SetAttribute(s, v);
+                    }
+                }
+                if (!appendToRoot)
+                {
+                    fldEl.AppendChild(fil);
+                }
+                else
+                {
+                    root.AppendChild(fil);
                 }
             }
         }

@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -42,9 +43,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Project.cs" />
-    <Compile Include="ProjectFile.cs" />
-    <Compile Include="ProjectFolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\VisualSolutionExplorerLib\VisualSolutionExplorerLib.csproj">
+      <Project>{a5705ae8-b1aa-445c-8790-294e6b95e401}</Project>
+      <Name>VisualSolutionExplorerLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

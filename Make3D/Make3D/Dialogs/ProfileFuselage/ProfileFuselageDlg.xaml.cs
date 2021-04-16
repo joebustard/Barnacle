@@ -32,9 +32,6 @@ namespace Make3D.Dialogs
 
         private int numberOfDivisions;
 
-        //  private PolarCamera polarCamera;
-        private System.Windows.Point oldMousePos;
-
         private string sideViewFilename;
         private string topViewFilename;
         private Point3DCollection vertices;

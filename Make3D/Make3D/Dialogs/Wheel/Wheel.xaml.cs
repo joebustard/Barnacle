@@ -20,11 +20,15 @@ namespace Make3D.Dialogs
         private double hubThickness;
         private double rimOutter;
         private List<String> rimStyles;
+
         private double rimThickness;
         private string selectedHubStyle;
         private string selectedRimStyle;
+
         private string selectedTyreStyle;
+
         private Double twop = Math.PI * 2.0;
+
         private double tyreDepth;
         private List<String> tyreStyles;
 
@@ -651,6 +655,19 @@ namespace Make3D.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            if (EditorParameters.Get("AxelBore") != "")
+            {
+                AxelBore = Convert.ToDouble(EditorParameters.Get("AxelBore"));
+                HubInner = Convert.ToDouble(EditorParameters.Get("HubInner"));
+                HubOutter = Convert.ToDouble(EditorParameters.Get("HubOutter"));
+                RimOutter = Convert.ToDouble(EditorParameters.Get("RimOutter"));
+                HubThickness = Convert.ToDouble(EditorParameters.Get("HubThickness"));
+                RimThickness = Convert.ToDouble(EditorParameters.Get("RimThickness"));
+                SelectedHubStyle = EditorParameters.Get("SelectedHubStyle");
+                SelectedRimStyle = EditorParameters.Get("SelectedRimStyle");
+                SelectedTyreStyle = EditorParameters.Get("SelectedTyreStyle");
+                TyreDepth = Convert.ToDouble(EditorParameters.Get("TyreDepth"));
+            }
         }
 
         private void PartSweep(List<PolarCoordinate> polarProfile1, List<PolarCoordinate> polarProfile2, double cx, int cy, double sweepAngle, int rotDivisions, bool flipAxies, bool invert)
@@ -659,7 +676,7 @@ namespace Make3D.Dialogs
             double numSegs = 360 / sweepAngle;
             numSegs *= 2;
             bool inv1 = false;
-            bool inv2 = false;
+
             int segs = 0;
             bool firstOne = true;
             double sweep = (Math.PI * 2.0) / (numSegs - 1);
@@ -862,6 +879,16 @@ namespace Make3D.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+            EditorParameters.Set("AxelBore", axelBore.ToString());
+            EditorParameters.Set("HubInner", hubInner.ToString());
+            EditorParameters.Set("HubOutter", hubOutter.ToString());
+            EditorParameters.Set("RimOutter", rimOutter.ToString());
+            EditorParameters.Set("HubThickness", hubThickness.ToString());
+            EditorParameters.Set("RimThickness", rimThickness.ToString());
+            EditorParameters.Set("SelectedHubStyle", selectedHubStyle);
+            EditorParameters.Set("SelectedRimStyle", selectedRimStyle);
+            EditorParameters.Set("SelectedTyreStyle", selectedTyreStyle);
+            EditorParameters.Set("TyreDepth", tyreDepth.ToString());
         }
 
         private void UpdateDisplay()

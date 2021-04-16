@@ -8,23 +8,7 @@ namespace Make3D
 
     public static class NotificationManager
     {
-        private struct ObserverDef
-        {
-            public string messageName;
-            public RXMessage observer;
-            public bool alive;
-        }
-
         private static List<ObserverDef> observers = new List<ObserverDef>();
-
-        public static void Subscribe(string name, RXMessage fnc)
-        {
-            ObserverDef df = new ObserverDef();
-            df.messageName = name;
-            df.observer = fnc;
-            df.alive = true;
-            observers.Add(df);
-        }
 
         public static void Notify(string name, object param)
         {
@@ -35,7 +19,7 @@ namespace Make3D
                 tmp.Add(df);
             }
 
-            for (int i =0; i < tmp.Count; i ++)
+            for (int i = 0; i < tmp.Count; i++)
             {
                 ObserverDef df = tmp[i];
                 if (df.messageName == name)
@@ -48,6 +32,7 @@ namespace Make3D
                         }
                         catch (Exception ex)
                         {
+                            System.Diagnostics.Debug.WriteLine(ex.Message);
                             df.alive = false;
                             adjust = true;
                         }
@@ -55,7 +40,7 @@ namespace Make3D
                 }
             }
 
-            if ( adjust)
+            if (adjust)
             {
                 observers.Clear();
                 for (int i = 0; i < tmp.Count; i++)
@@ -67,7 +52,15 @@ namespace Make3D
                     }
                 }
             }
+        }
 
+        public static void Subscribe(string name, RXMessage fnc)
+        {
+            ObserverDef df = new ObserverDef();
+            df.messageName = name;
+            df.observer = fnc;
+            df.alive = true;
+            observers.Add(df);
         }
 
         public static void Unsubscribe(String s)
@@ -82,6 +75,13 @@ namespace Make3D
                 }
             }
             observers = obs;
+        }
+
+        private struct ObserverDef
+        {
+            public bool alive;
+            public string messageName;
+            public RXMessage observer;
         }
     }
 }

@@ -16,12 +16,15 @@
       A place to save any limpet scripts
       These folders are simply placeholders. Nothing is created in them.
     </Description>
-    <Folder Name="images" Explorer="True" Clean="False" />
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
+    <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
 
-    <Folder Name="export" Explorer="False" Clean="True" />
-    <Folder Name="gcode" Explorer="False" Clean="True" />
-    <Folder Name="scripts" Explorer="True" Clean="False" />
-    <Folder Name="docs">
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" />
+    <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
     </Folder>
   </ProjectDefinition>
@@ -47,8 +50,7 @@
       A place to save any limpet scripts
     </Description>
 
-    <Folder Name="." Explorer="True" Clean="False">
-      <File Name="Tank.mpf" Source="templates/tankproject.txt" />
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Hull.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Turrent.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="LeftRunningGear.txt" Source="templates/blankmodel1_35.txt" />
@@ -61,22 +63,22 @@
       <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="assemblies" Explorer="True" Clean="False">
+    <Folder Name="assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="TurrentAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="backup" Explorer="False" Clean="False" />
-    <Folder Name="docs" Explorer="False" Clean="False">
+    <Folder Name="backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
-    <Folder Name="images" Explorer="True" Clean="False" />
-    <Folder Name="export" Explorer="False" Clean="True" />
-    <Folder Name="gcode" Explorer="False" Clean="True" />
-    <Folder Name="scripts" Explorer="True" Clean="False" />
+    <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />
+    <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
   </ProjectDefinition>
 
   <!--  Aircraft Model Template -->
@@ -101,7 +103,7 @@
       /scripts
       A place to save any limpet scripts
     </Description>
-    <Folder Name="." Explorer="True" Clean="False">
+    <Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
       <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Wings.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="UnderCarriage.txt" Source="templates/blankmodel1_35.txt" />
@@ -111,21 +113,21 @@
       <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="assemblies" Explorer="True" Clean="False">
+    <Folder Name="assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="FuselageAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="backup" Explorer="False" Clean="False" />
-    <Folder Name="docs" Explorer="False" Clean="False">
+    <Folder Name="backup" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True" />
+    <Folder Name="docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
     </Folder>
-    <Folder Name="images" Explorer="True" Clean="False" />
-    <Folder Name="images\ribs" Explorer="True" Clean="False" />
-    <Folder Name="export" Explorer="False" Clean="True" />
-    <Folder Name="gcode" Explorer="False" Clean="True" />
-    <Folder Name="scripts" Explorer="True" Clean="False" />
+    <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="images\ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
   </ProjectDefinition>
 </Defs>

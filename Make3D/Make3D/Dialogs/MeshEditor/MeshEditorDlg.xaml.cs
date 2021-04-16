@@ -15,42 +15,26 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class MeshEditorDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private Mesh mesh;
+        private Int32Collection editingFaceIndices;
 
         // these are the points and indices of the shape we are editing.
         // We can't use the normal Mesh and Faces as these will be be used for the "soper Mesh"
         // of wire frame rects and selectable points.
         private Point3DCollection editingPoints;
 
-        private Int32Collection selectedPointIndices;
-
-        private Int32Collection editingFaceIndices;
-
         private List<Dialogs.MeshEditor.MeshTriangle> editingTriangles;
-
         private GeometryModel3D lastHitModel;
         private Point3D lastHitPoint;
-        private bool showWireFrame;
-        private MeshTriangle lastSelectedTriangle;
-        private int lastSelectedPoint;
         private Point lastMousePos;
+        private int lastSelectedPoint;
+        private MeshTriangle lastSelectedTriangle;
+        private Mesh mesh;
         private Point3D offsetOrigin;
-
-        public bool ShowWireFrame
-        {
-            get { return showWireFrame; }
-            set
-            {
-                if (showWireFrame != value)
-                {
-                    showWireFrame = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        private Int32Collection selectedPointIndices;
+        private bool showWireFrame;
+        private MeshGeometry3D unselectedFaces;
 
         private MeshGeometry3D wireFrameFaces;
-        private MeshGeometry3D unselectedFaces;
 
         public MeshEditorDlg()
         {
@@ -66,87 +50,57 @@ namespace Make3D.Dialogs
             lastSelectedTriangle = null;
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        public bool ShowWireFrame
         {
-            UpdateCameraPos();
-            MyModelGroup.Children.Clear();
-            // we should have been loaded with an editing mesh.
-            // If not create base one
-            if (editingPoints.Count == 0)
+            get
             {
-                GenerateCube(ref editingPoints, ref editingFaceIndices, 50);
+                return showWireFrame;
             }
-            CreateInitialMesh();
-
-            Redisplay();
-        }
-
-        private void CreateInitialMesh()
-        {
-            for (int i = 0; i < editingPoints.Count; i++)
+            set
             {
-                mesh.AddVertex(editingPoints[i]);
-            }
-            for (int i = 0; i < editingFaceIndices.Count; i += 3)
-            {
-                mesh.AddFace(editingFaceIndices[i], editingFaceIndices[i + 1], editingFaceIndices[i + 2]);
-            }
-            mesh.FindNeighbours();
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
+                if (showWireFrame != value)
                 {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
+                    showWireFrame = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
+        {
+            Point mouseposition = args.GetPosition(viewport3D1);
+            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
+            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+
+            //test for a result in the Viewport3D
+            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
+        }
+
+        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
+        {
+            HitTestResultBehavior result = HitTestResultBehavior.Continue;
+            RayHitTestResult rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
+            {
+                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+
+                if (rayMeshResult != null)
+                {
+                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    if (lastHitModel == null)
                     {
-                        MyModelGroup.Children.Add(m);
+                        // UpdateResultInfo(rayMeshResult);
+                        lastHitModel = hitgeo;
+                        lastHitPoint = rayMeshResult.PointHit;
                     }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                MyModelGroup.Children.Add(mesh.GetModels());
-                if (lastSelectedPoint != -1)
-                {
-                    MyModelGroup.Children.Add(mesh.Vertices[lastSelectedPoint].Model);
+                    result = HitTestResultBehavior.Stop;
                 }
             }
-        }
 
-        private void CreateWireFrame()
-        {
-        }
-
-        internal void SetInitialMesh(Point3DCollection points, Int32Collection triangleIndices)
-        {
-            editingPoints.Clear();
-            editingFaceIndices.Clear();
-            Bounds3D bnds = new Bounds3D();
-            foreach (Point3D p in points)
-            {
-                bnds.Adjust(p);
-            }
-            offsetOrigin = new Point3D(bnds.MidPoint().X, -bnds.Lower.Y, bnds.MidPoint().Z);
-            foreach (Point3D p in points)
-            {
-                Point3D np = new Point3D(p.X, p.Y - bnds.Lower.Y, p.Z);
-                editingPoints.Add(np);
-            }
-            foreach (int i in triangleIndices)
-            {
-                editingFaceIndices.Add(i);
-            }
+            return result;
         }
 
         internal void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, double width)
@@ -289,6 +243,123 @@ namespace Make3D.Dialogs
             }
         }
 
+        internal void KeyDown(Key key, bool shift, bool ctrl)
+        {
+            switch (key)
+            {
+                case Key.Up:
+                    {
+                        if (ctrl)
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Back, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Back, 1.0);
+                            }
+                        }
+                        else
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Up, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Up, 1.0);
+                            }
+                        }
+                    }
+                    break;
+
+                case Key.Down:
+                    {
+                        if (ctrl)
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                            }
+                        }
+                        else
+                        {
+                            if (shift)
+                            {
+                                Nudge(Adorner.NudgeDirection.Down, 0.1);
+                            }
+                            else
+                            {
+                                Nudge(Adorner.NudgeDirection.Down, 1.0);
+                            }
+                        }
+                    }
+                    break;
+
+                case Key.Left:
+                    {
+                        if (shift)
+                        {
+                            Nudge(Adorner.NudgeDirection.Left, 0.1);
+                        }
+                        else
+                        {
+                            Nudge(Adorner.NudgeDirection.Left, 1.0);
+                        }
+                    }
+                    break;
+
+                case Key.Right:
+                    {
+                        if (shift)
+                        {
+                            Nudge(Adorner.NudgeDirection.Right, 0.1);
+                        }
+                        else
+                        {
+                            Nudge(Adorner.NudgeDirection.Right, 1.0);
+                        }
+                    }
+                    break;
+            }
+        }
+
+        internal void SetInitialMesh(Point3DCollection points, Int32Collection triangleIndices)
+        {
+            editingPoints.Clear();
+            editingFaceIndices.Clear();
+            Bounds3D bnds = new Bounds3D();
+            foreach (Point3D p in points)
+            {
+                bnds.Adjust(p);
+            }
+            offsetOrigin = new Point3D(bnds.MidPoint().X, -bnds.Lower.Y, bnds.MidPoint().Z);
+            foreach (Point3D p in points)
+            {
+                Point3D np = new Point3D(p.X, p.Y - bnds.Lower.Y, p.Z);
+                editingPoints.Add(np);
+            }
+            foreach (int i in triangleIndices)
+            {
+                editingFaceIndices.Add(i);
+            }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            Vertices.Clear();
+            Faces.Clear();
+            mesh.Export(Vertices, Faces);
+            mesh.Clear();
+            DialogResult = true;
+            Close();
+        }
+
         private int AddPoint(Point3DCollection positions, Point3D v)
         {
             int res = -1;
@@ -307,6 +378,42 @@ namespace Make3D.Dialogs
                 res = positions.Count - 1;
             }
             return res;
+        }
+
+        private void ClearSelection_Click(object sender, RoutedEventArgs e)
+        {
+            mesh.SelectAll(false);
+        }
+
+        private void CreateInitialMesh()
+        {
+            for (int i = 0; i < editingPoints.Count; i++)
+            {
+                mesh.AddVertex(editingPoints[i]);
+            }
+            for (int i = 0; i < editingFaceIndices.Count; i += 3)
+            {
+                mesh.AddFace(editingFaceIndices[i], editingFaceIndices[i + 1], editingFaceIndices[i + 2]);
+            }
+            mesh.FindNeighbours();
+        }
+
+        private void CreateWireFrame()
+        {
+        }
+
+        private void Divide_Click(object sender, RoutedEventArgs e)
+        {
+            mesh.DivideSelectedFaces();
+            //     GenerateSuperMesh();
+            Redisplay();
+        }
+
+        private void DivideLong_Click(object sender, RoutedEventArgs e)
+        {
+            mesh.DivideLongSideSelectedFaces();
+            //     GenerateSuperMesh();
+            Redisplay();
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -329,13 +436,6 @@ namespace Make3D.Dialogs
 
                 base.Viewport_MouseDown(viewport3D1, e);
             }
-        }
-
-        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            // lastSelectedPoint = -1;
-            lastSelectedTriangle = null;
-            e.Handled = true;
         }
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -366,6 +466,42 @@ namespace Make3D.Dialogs
                     lastMousePos = newPos;
                 }
             }
+        }
+
+        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            // lastSelectedPoint = -1;
+            lastSelectedTriangle = null;
+            e.Handled = true;
+        }
+
+        private void MeshGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
+        }
+
+        private void MouseMoveControlPoint(int pindex, Point lastPos, Point newPos, bool ctrlDown)
+        {
+            double dr = Math.Sqrt(Camera.Distance);
+            double deltaX = (newPos.X - lastPos.X) / dr;
+
+            double deltaY;
+            double deltaZ;
+
+            if (!ctrlDown)
+            {
+                deltaY = -(newPos.Y - lastPos.Y) / dr;
+                deltaZ = 0;
+            }
+            else
+            {
+                deltaY = 0;
+                deltaZ = -(newPos.Y - lastPos.Y) / dr;
+            }
+
+            MovePoint(pindex, deltaX, deltaY, deltaZ);
+
+            //Redisplay();
         }
 
         private void MouseMoveSelectedTriangle(Point lastPos, Point newPos, bool ctrlDown)
@@ -458,266 +594,6 @@ namespace Make3D.Dialogs
             Redisplay();
         }
 
-        private void MouseMoveControlPoint(int pindex, Point lastPos, Point newPos, bool ctrlDown)
-        {
-            double dr = Math.Sqrt(Camera.Distance);
-            double deltaX = (newPos.X - lastPos.X) / dr;
-
-            double deltaY;
-            double deltaZ;
-
-            if (!ctrlDown)
-            {
-                deltaY = -(newPos.Y - lastPos.Y) / dr;
-                deltaZ = 0;
-            }
-            else
-            {
-                deltaY = 0;
-                deltaZ = -(newPos.Y - lastPos.Y) / dr;
-            }
-
-            MovePoint(pindex, deltaX, deltaY, deltaZ);
-
-            //Redisplay();
-        }
-
-        private void MovePoint(int pindex, double deltaX, double deltaY, double deltaZ)
-        {
-            Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
-            switch (ori)
-            {
-                case PolarCamera.Orientations.Front:
-                    {
-                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Back:
-                    {
-                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Left:
-                    {
-                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Right:
-                    {
-                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
-                    }
-                    break;
-            }
-
-            if (positionChange != null)
-            {
-                mesh.MovePoint(pindex, positionChange);
-            }
-        }
-
-        public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
-        {
-            Point mouseposition = args.GetPosition(viewport3D1);
-            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
-            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
-            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
-            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
-
-            //test for a result in the Viewport3D
-            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
-        }
-
-        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
-        {
-            HitTestResultBehavior result = HitTestResultBehavior.Continue;
-            RayHitTestResult rayResult = rawresult as RayHitTestResult;
-
-            if (rayResult != null)
-            {
-                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
-
-                if (rayMeshResult != null)
-                {
-                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-                    if (lastHitModel == null)
-                    {
-                        // UpdateResultInfo(rayMeshResult);
-                        lastHitModel = hitgeo;
-                        lastHitPoint = rayMeshResult.PointHit;
-                    }
-                    result = HitTestResultBehavior.Stop;
-                }
-            }
-
-            return result;
-        }
-
-        private void ClearSelection_Click(object sender, RoutedEventArgs e)
-        {
-            mesh.SelectAll(false);
-        }
-
-        private void SelectAll_Click(object sender, RoutedEventArgs e)
-        {
-            mesh.SelectAll(true);
-        }
-
-        private void Divide_Click(object sender, RoutedEventArgs e)
-        {
-            mesh.DivideSelectedFaces();
-            //     GenerateSuperMesh();
-            Redisplay();
-        }
-
-        private void DivideLong_Click(object sender, RoutedEventArgs e)
-        {
-            mesh.DivideLongSideSelectedFaces();
-            //     GenerateSuperMesh();
-            Redisplay();
-        }
-
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            Vertices.Clear();
-            Faces.Clear();
-            mesh.Export(Vertices, Faces);
-            mesh.Clear();
-            DialogResult = true;
-            Close();
-        }
-
-        internal void KeyDown(Key key, bool shift, bool ctrl)
-        {
-            switch (key)
-            {
-                case Key.Up:
-                    {
-                        if (ctrl)
-                        {
-                            if (shift)
-                            {
-                                Nudge(Adorner.NudgeDirection.Back, 0.1);
-                            }
-                            else
-                            {
-                                Nudge(Adorner.NudgeDirection.Back, 1.0);
-                            }
-                        }
-                        else
-                        {
-                            if (shift)
-                            {
-                                Nudge(Adorner.NudgeDirection.Up, 0.1);
-                            }
-                            else
-                            {
-                                Nudge(Adorner.NudgeDirection.Up, 1.0);
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Down:
-                    {
-                        if (ctrl)
-                        {
-                            if (shift)
-                            {
-                                Nudge(Adorner.NudgeDirection.Forward, 0.1);
-                            }
-                            else
-                            {
-                                Nudge(Adorner.NudgeDirection.Forward, 1.0);
-                            }
-                        }
-                        else
-                        {
-                            if (shift)
-                            {
-                                Nudge(Adorner.NudgeDirection.Down, 0.1);
-                            }
-                            else
-                            {
-                                Nudge(Adorner.NudgeDirection.Down, 1.0);
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Left:
-                    {
-                        if (shift)
-                        {
-                            Nudge(Adorner.NudgeDirection.Left, 0.1);
-                        }
-                        else
-                        {
-                            Nudge(Adorner.NudgeDirection.Left, 1.0);
-                        }
-                    }
-                    break;
-
-                case Key.Right:
-                    {
-                        if (shift)
-                        {
-                            Nudge(Adorner.NudgeDirection.Right, 0.1);
-                        }
-                        else
-                        {
-                            Nudge(Adorner.NudgeDirection.Right, 1.0);
-                        }
-                    }
-                    break;
-            }
-        }
-
-        private void Nudge(Adorner.NudgeDirection dir, double v)
-        {
-            switch (dir)
-            {
-                case Adorner.NudgeDirection.Left:
-                    {
-                        MoveBox(-v, 0, 0);
-                    }
-                    break;
-
-                case Adorner.NudgeDirection.Right:
-                    {
-                        MoveBox(v, 0, 0);
-                    }
-                    break;
-
-                case Adorner.NudgeDirection.Up:
-                    {
-                        MoveBox(0, v, 0);
-                    }
-                    break;
-
-                case Adorner.NudgeDirection.Down:
-                    {
-                        MoveBox(0, -v, 0);
-                    }
-                    break;
-
-                case Adorner.NudgeDirection.Forward:
-                    {
-                        MoveBox(0, 0, -v);
-                    }
-                    break;
-
-                case Adorner.NudgeDirection.Back:
-                    {
-                        MoveBox(0, 0, v);
-                    }
-                    break;
-            }
-        }
-
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
@@ -763,9 +639,133 @@ namespace Make3D.Dialogs
             Redisplay();
         }
 
-        private void MeshGrid_KeyDown(object sender, KeyEventArgs e)
+        private void MovePoint(int pindex, double deltaX, double deltaY, double deltaZ)
         {
-            KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
+            Point3D positionChange = new Point3D(0, 0, 0);
+            PolarCamera.Orientations ori = Camera.Orientation;
+            switch (ori)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Left:
+                    {
+                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Right:
+                    {
+                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
+                    }
+                    break;
+            }
+
+            if (positionChange != null)
+            {
+                mesh.MovePoint(pindex, positionChange);
+            }
+        }
+
+        private void Nudge(Adorner.NudgeDirection dir, double v)
+        {
+            switch (dir)
+            {
+                case Adorner.NudgeDirection.Left:
+                    {
+                        MoveBox(-v, 0, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Right:
+                    {
+                        MoveBox(v, 0, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Up:
+                    {
+                        MoveBox(0, v, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Down:
+                    {
+                        MoveBox(0, -v, 0);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Forward:
+                    {
+                        MoveBox(0, 0, -v);
+                    }
+                    break;
+
+                case Adorner.NudgeDirection.Back:
+                    {
+                        MoveBox(0, 0, v);
+                    }
+                    break;
+            }
+        }
+
+        private void Redisplay()
+        {
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                MyModelGroup.Children.Add(mesh.GetModels());
+                if (lastSelectedPoint != -1)
+                {
+                    MyModelGroup.Children.Add(mesh.Vertices[lastSelectedPoint].Model);
+                }
+            }
+        }
+
+        private void SelectAll_Click(object sender, RoutedEventArgs e)
+        {
+            mesh.SelectAll(true);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateCameraPos();
+            MyModelGroup.Children.Clear();
+            // we should have been loaded with an editing mesh.
+            // If not create base one
+            if (editingPoints.Count == 0)
+            {
+                GenerateCube(ref editingPoints, ref editingFaceIndices, 50);
+            }
+            CreateInitialMesh();
+
+            Redisplay();
         }
     }
 }

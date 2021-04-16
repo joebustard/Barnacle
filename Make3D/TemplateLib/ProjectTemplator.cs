@@ -7,14 +7,25 @@ namespace TemplateLib
 {
     public class ProjectTemplator
     {
-        private List<ProjectTemplateDefinition> templates;
-        public string TemplateDefinitionPath { get; set; }
-
         private string templateDefinitionExtension;
+        private List<ProjectTemplateDefinition> templates;
+
+        public ProjectTemplator()
+        {
+            templates = new List<ProjectTemplateDefinition>();
+            TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory;
+            TemplateDefinitionExtension = ".def";
+        }
+
+        public string ProjectTarget { get; set; }
+        public string SolutionPath { get; set; }
 
         public string TemplateDefinitionExtension
         {
-            get { return templateDefinitionExtension; }
+            get
+            {
+                return templateDefinitionExtension;
+            }
             set
             {
                 if (value != templateDefinitionExtension)
@@ -31,7 +42,7 @@ namespace TemplateLib
             }
         }
 
-        public string ProjectTarget { get; set; }
+        public string TemplateDefinitionPath { get; set; }
 
         public void AddSubstitution(string v1, string v2)
         {
@@ -45,11 +56,21 @@ namespace TemplateLib
             }
         }
 
-        public ProjectTemplator()
+        public void GetTemplateDetails(int i, ref string name, ref string description)
         {
-            templates = new List<ProjectTemplateDefinition>();
-            TemplateDefinitionPath = AppDomain.CurrentDomain.BaseDirectory;
-            TemplateDefinitionExtension = ".def";
+            name = String.Empty;
+            description = String.Empty;
+
+            if (i < templates.Count)
+            {
+                name = templates[i].Name;
+                description = templates[i].Description;
+            }
+        }
+
+        public int NumberOfTemplates()
+        {
+            return templates.Count;
         }
 
         public bool ProcessTemplate(string projName, string pth, string templateName)
@@ -88,39 +109,6 @@ namespace TemplateLib
             return res;
         }
 
-        private void CreateSolution(string projName, string pth, ProjectTemplateDefinition def)
-        {
-            XmlDocument solutionDoc = new XmlDocument();
-            XmlNode root = solutionDoc.CreateElement("Project");
-            solutionDoc.AppendChild(root);
-            foreach (ProjectTemplateFolder fld in def.Folders)
-            {
-                XmlElement fldEl = solutionDoc.CreateElement("Folder");
-                root.AppendChild(fldEl);
-                foreach (string s in fld.Attributes.Keys)
-                {
-                    string v = fld.Attributes[s];
-                    fldEl.SetAttribute(s, v);
-                }
-
-                foreach (ProjectTemplateFile fi in fld.Files)
-                {
-                    XmlElement fil = solutionDoc.CreateElement("File");
-                    foreach (string s in fi.Attributes.Keys)
-                    {
-                        if (s != "Source")
-                        {
-                            string v = fld.Attributes[s];
-                            fil.SetAttribute(s, v);
-                        }
-                    }
-                    fldEl.AppendChild(fil);
-                }
-            }
-            projName = System.IO.Path.Combine(pth, projName + ".bmf");
-            solutionDoc.Save(projName);
-        }
-
         public void ScanForTemplates()
         {
             if (TemplateDefinitionPath != String.Empty)
@@ -139,21 +127,18 @@ namespace TemplateLib
             }
         }
 
-        public int NumberOfTemplates()
+        private void CreateSolution(string projName, string pth, ProjectTemplateDefinition def)
         {
-            return templates.Count;
-        }
-
-        public void GetTemplateDetails(int i, ref string name, ref string description)
-        {
-            name = String.Empty;
-            description = String.Empty;
-
-            if (i < templates.Count)
+            XmlDocument solutionDoc = new XmlDocument();
+            XmlElement root = solutionDoc.CreateElement("Project");
+            root.SetAttribute("ProjectName", projName);
+            solutionDoc.AppendChild(root);
+            foreach (ProjectTemplateFolder fld in def.Folders)
             {
-                name = templates[i].Name;
-                description = templates[i].Description;
+                fld.CreateSolutionEntry(solutionDoc, root);
             }
+            SolutionPath = System.IO.Path.Combine(pth, projName + ".bmf");
+            solutionDoc.Save(SolutionPath);
         }
 
         private void LoadDefinition(string f)

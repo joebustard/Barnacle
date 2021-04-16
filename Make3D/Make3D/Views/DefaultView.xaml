@@ -8,8 +8,10 @@
           xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              xmlns:local="clr-namespace:Make3D.Views"
              xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
+
+             xmlns:vsx1="clr-namespace:VisualSolutionExplorer;assembly=VisualSolutionExplorerLib"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="1000">
+             d:DesignHeight="450" d:DesignWidth="1000" Loaded="UserControl_Loaded">
     <UserControl.DataContext>
         <ViewModels:DefaultViewModel />
     </UserControl.DataContext>
@@ -64,14 +66,17 @@
                         </Grid>
                     </Custom:RibbonApplicationMenu.AuxiliaryPaneContent>
                     <Custom:RibbonApplicationMenuItem x:Name="New1"  Header="New" ImageSource="/images/buttons/new_file.png" Command="{Binding NewCommand}" ToolTip="Create a new file." />
-                    <Custom:RibbonApplicationMenuItem x:Name="NewProjectMenu"  Header="New Project" ImageSource="/images/buttons/new_file.png" Command="{Binding NewProjectCommand}" ToolTip="Create a folder structure for a new project" />
                     <Custom:RibbonApplicationMenuItem x:Name="Open1" Header="Open" ImageSource="/images/buttons/human_document_open.png" Command="{Binding OpenCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save1" Header="Save" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Save2" Header="Save As" ImageSource="/images/buttons/document_save_as.png" Command="{Binding SaveAsCommand}" />
                     <Custom:RibbonApplicationMenuItem x:Name="Insert" Header="Insert" ImageSource="/images/buttons/human_document_open.png" Command="{Binding InsertCommand}" ToolTip="Insert the entire contents of an external model into this one" />
 
                     <Custom:RibbonApplicationMenuItem x:Name="Reference" Header="Reference" ImageSource="/images/buttons/human_document_open.png" Command="{Binding ReferenceCommand}" ToolTip="Reference the contents of an external model. Objects can be moved and rotated but sized." />
+                    <Custom:RibbonSeparator />
+                    <Custom:RibbonApplicationMenuItem x:Name="NewProjectMenu"  Header="New Project" ImageSource="/images/buttons/new_file.png" Command="{Binding NewProjectCommand}" ToolTip="Create a  new project" />
+                    <Custom:RibbonApplicationMenuItem x:Name="OpenProjectMenu"  Header="Open Project" ImageSource="/images/buttons/new_file.png" Command="{Binding OpenProjectCommand}" ToolTip="Open an existing project" />
 
+                    <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Header="Exit" ImageSource="/images/buttons/exit.png" Command="{Binding ExitCommand}" />
                 </Custom:RibbonApplicationMenu>
             </Custom:Ribbon.ApplicationMenu>
@@ -222,13 +227,22 @@
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <DockPanel LastChildFill="True">
-                <ScrollViewer>
-                    <StackPanel Width="75">
-                        <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
-                        <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
-                    </StackPanel>
-                </ScrollViewer>
-                <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+                <TabControl Width="200" HorizontalContentAlignment="Left">
+                    <TabItem Header="Edit">
+                        <Grid HorizontalAlignment="Stretch">
+                            <ScrollViewer>
+                                <StackPanel Width="75" HorizontalAlignment="Left">
+                                    <local:CameraPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding CameraPaletteVisible}" />
+                                    <local:ObjectPalette HorizontalAlignment="Left" VerticalAlignment="Stretch" Width="75" Visibility="{Binding ToolPaletteVisible}" />
+                                </StackPanel>
+                            </ScrollViewer>
+                            <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch" />
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Solution">
+                        <vsx1:SolutionExplorerControl x:Name="SolutionExplorer" />
+                    </TabItem>
+                </TabControl>
                 <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                     <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
                 </ScrollViewer>

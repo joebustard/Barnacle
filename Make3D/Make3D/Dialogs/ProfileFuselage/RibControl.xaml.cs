@@ -16,11 +16,10 @@ namespace Make3D.Dialogs
     public partial class RibControl : UserControl
     {
         public ForceRibReload OnForceReload;
-        private int brx = int.MinValue;
-
-        private int bry = int.MinValue;
 
         private double divisionLength;
+
+        private string FName;
 
         // private List<PointF> edgePoints;
         private ImageEdge imageEdge;
@@ -78,7 +77,6 @@ namespace Make3D.Dialogs
         }
 
         public string Header { get; set; }
-        private string FName;
 
         public string ImagePath
         {

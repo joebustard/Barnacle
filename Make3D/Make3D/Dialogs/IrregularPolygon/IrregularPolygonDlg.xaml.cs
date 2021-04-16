@@ -29,7 +29,6 @@ namespace Make3D.Dialogs
         private Visibility showWidth;
         private bool solidShape;
         private int wallWidth;
-        private WriteableBitmap wbx;
 
         public PlateletDlg()
         {

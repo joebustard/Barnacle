@@ -60,6 +60,7 @@ namespace Make3D.ViewModels
             subViewMan = new SubViewManager();
             NewCommand = new RelayCommand(OnNew);
             NewProjectCommand = new RelayCommand(OnNewProject);
+            OpenProjectCommand = new RelayCommand(OnOpenProject);
             OpenCommand = new RelayCommand(OnOpen);
             OpenRecentFileCommand = new RelayCommand(OnOpenRecent);
             SaveCommand = new RelayCommand(OnSave);
@@ -145,11 +146,7 @@ namespace Make3D.ViewModels
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
             EnableAllTools(true);
-        }
-
-        private void OnUnrefVertex(object obj)
-        {
-            NotificationManager.Notify("UnrefVertices", null);
+            NotificationManager.Notify("ProjectChanged", Project.ProjectFolders);
         }
 
         public ICommand AddCommand { get; set; }
@@ -284,7 +281,6 @@ namespace Make3D.ViewModels
         }
 
         public ICommand DupVertexCommand { get; set; }
-        public ICommand UnrefVertexCommand { get; set; }
 
         public ICommand ExitCommand { get; set; }
 
@@ -447,6 +443,8 @@ namespace Make3D.ViewModels
         }
 
         public ICommand OpenCommand { get; set; }
+
+        public ICommand OpenProjectCommand { get; set; }
 
         public ICommand OpenRecentFileCommand { get; set; }
 
@@ -841,6 +839,8 @@ namespace Make3D.ViewModels
 
         public ICommand UndoCommand { get; set; }
 
+        public ICommand UnrefVertexCommand { get; set; }
+
         public List<ToolDef> VehicleToolsToShow
         {
             get
@@ -1168,6 +1168,11 @@ namespace Make3D.ViewModels
             Caption = BaseViewModel.Document.Caption;
         }
 
+        private void OnOpenProject(object obj)
+        {
+            NotificationManager.Notify("OpenProject", null);
+        }
+
         private void OnOpenRecent(object obj)
         {
             string f = obj.ToString();
@@ -1265,6 +1270,11 @@ namespace Make3D.ViewModels
         private void OnUndo(object obj)
         {
             NotificationManager.Notify("Undo", null);
+        }
+
+        private void OnUnrefVertex(object obj)
+        {
+            NotificationManager.Notify("UnrefVertices", null);
         }
 
         private void OnView(object obj)

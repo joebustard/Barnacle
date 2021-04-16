@@ -1,4 +1,5 @@
 ﻿using Make3D.Models;
+using ProjectLib;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -11,6 +12,8 @@ namespace Make3D.ViewModels
     {
         // only one document shared between all the views
         protected static Document document;
+
+        protected static Project project;
 
         protected bool lastChangeWasNudge;
 
@@ -26,6 +29,11 @@ namespace Make3D.ViewModels
             {
                 document = new Document();
             }
+            if (project == null)
+            {
+                project = new Project();
+                project.CreateDefault();
+            }
             document.PropertyChanged += Document_PropertyChanged;
         }
 
@@ -34,6 +42,11 @@ namespace Make3D.ViewModels
         public static Document Document
         {
             get { return document; }
+        }
+
+        public static Project Project
+        {
+            get { return project; }
         }
 
         public SolidColorBrush FillColor

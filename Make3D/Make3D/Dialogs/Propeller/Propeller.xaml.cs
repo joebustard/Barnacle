@@ -31,6 +31,7 @@ namespace Make3D.Dialogs
         private bool domedHub;
         private bool flatHub;
         private double hubHeight;
+        private double hubOffset;
         private double hubRadius;
         private bool loaded;
         private double midOffset;
@@ -38,6 +39,8 @@ namespace Make3D.Dialogs
         private string rootGroup;
         private double rootOffset;
         private string selectedAirfoil;
+
+        private double spokeRadius;
 
         public Propeller()
         {
@@ -63,19 +66,6 @@ namespace Make3D.Dialogs
             airfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             loaded = false;
-        }
-
-        private double spokeRadius;
-
-        public double SpokeRadius
-        {
-            get { return spokeRadius; }
-            set
-            {
-                spokeRadius = value;
-                NotifyPropertyChanged();
-                UpdateDisplay();
-            }
         }
 
         public List<string> AirfoilGroups
@@ -247,6 +237,20 @@ namespace Make3D.Dialogs
             }
         }
 
+        public double HubOffset
+        {
+            get
+            {
+                return hubOffset;
+            }
+            set
+            {
+                hubOffset = value;
+                NotifyPropertyChanged();
+                UpdateDisplay();
+            }
+        }
+
         public double HubRadius
         {
             get
@@ -390,6 +394,20 @@ namespace Make3D.Dialogs
             }
         }
 
+        public double SpokeRadius
+        {
+            get
+            {
+                return spokeRadius;
+            }
+            set
+            {
+                spokeRadius = value;
+                NotifyPropertyChanged();
+                UpdateDisplay();
+            }
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -449,19 +467,6 @@ namespace Make3D.Dialogs
                 Faces.Add(v1);
                 Faces.Add(v3);
                 Faces.Add(v4);
-            }
-        }
-
-        private double hubOffset;
-
-        public double HubOffset
-        {
-            get { return hubOffset; }
-            set
-            {
-                hubOffset = value;
-                NotifyPropertyChanged();
-                UpdateDisplay();
             }
         }
 
@@ -544,32 +549,6 @@ namespace Make3D.Dialogs
             if (domedHub)
             {
                 GenerateDomedHub();
-            }
-        }
-
-        private void GenerateSpokes()
-        {
-            Point3DCollection cylPnts = new Point3DCollection();
-            Int32Collection cylTris = new Int32Collection();
-            Vector3DCollection normals = new Vector3DCollection();
-            PrimitiveGenerator.GenerateCylinder(ref cylPnts, ref cylTris, ref normals);
-            double spokeDiameter = spokeRadius * 2;
-            double dtheta = (Math.PI * 2) / NumberOfBlades;
-            double theta = 0;
-            for (int b = 0; b < numberOfBlades; b++)
-            {
-                int faceOff = Vertices.Count;
-                foreach (Point3D p in cylPnts)
-                {
-                    Point3D np = new Point3D(p.X * spokeDiameter, -p.Z * spokeDiameter, (p.Y + 0.5) * rootOffset);
-                    np = RotatePoint(np, theta);
-                    Vertices.Add(np);
-                }
-                foreach (int i in cylTris)
-                {
-                    Faces.Add(i + faceOff);
-                }
-                theta += dtheta;
             }
         }
 
@@ -686,6 +665,32 @@ namespace Make3D.Dialogs
                 Faces.Add(v1);
                 Faces.Add(v2);
                 Faces.Add(v3);
+            }
+        }
+
+        private void GenerateSpokes()
+        {
+            Point3DCollection cylPnts = new Point3DCollection();
+            Int32Collection cylTris = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCylinder(ref cylPnts, ref cylTris, ref normals);
+            double spokeDiameter = spokeRadius * 2;
+            double dtheta = (Math.PI * 2) / NumberOfBlades;
+            double theta = 0;
+            for (int b = 0; b < numberOfBlades; b++)
+            {
+                int faceOff = Vertices.Count;
+                foreach (Point3D p in cylPnts)
+                {
+                    Point3D np = new Point3D(p.X * spokeDiameter, -p.Z * spokeDiameter, (p.Y + 0.5) * rootOffset);
+                    np = RotatePoint(np, theta);
+                    Vertices.Add(np);
+                }
+                foreach (int i in cylTris)
+                {
+                    Faces.Add(i + faceOff);
+                }
+                theta += dtheta;
             }
         }
 
@@ -809,6 +814,24 @@ namespace Make3D.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            if (EditorParameters.Get("BladeLength") != "")
+            {
+                BladeLength = Convert.ToDouble(EditorParameters.Get("BladeLength"));
+                BladeAngle = Convert.ToDouble(EditorParameters.Get("BladeAngle"));
+                BladeRoot = Convert.ToDouble(EditorParameters.Get("BladeRoot"));
+                BladeMid = Convert.ToDouble(EditorParameters.Get("BladeMid"));
+                BladeTip = Convert.ToDouble(EditorParameters.Get("BladeTip"));
+                DomedHub = Convert.ToBoolean(EditorParameters.Get("DomedHub"));
+                FlatHub = Convert.ToBoolean(EditorParameters.Get("FlatHub"));
+                HubHeight = Convert.ToDouble(EditorParameters.Get("HubHeight"));
+                HubRadius = Convert.ToDouble(EditorParameters.Get("HubRadius"));
+                HubOffset = Convert.ToDouble(EditorParameters.Get("HubOffset"));
+                MidOffset = Convert.ToDouble(EditorParameters.Get("MidOffset"));
+                NumberOfBlades = Convert.ToInt32(EditorParameters.Get("NumberOfBlades"));
+                RootGroup = EditorParameters.Get("RootGroup");
+                RootOffset = Convert.ToDouble(EditorParameters.Get("RootOffset"));
+                SelectedAirfoil = EditorParameters.Get("SelectedAirfoil");
+            }
         }
 
         private void Redisplay()
@@ -867,6 +890,23 @@ namespace Make3D.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+
+            EditorParameters.Set("BladeLength", bladeLength.ToString());
+            EditorParameters.Set("BladeAngle", bladeAngle.ToString());
+            EditorParameters.Set("BladeRoot", bladeRoot.ToString());
+            EditorParameters.Set("BladeMid", bladeMid.ToString());
+            EditorParameters.Set("BladeTip", bladeTip.ToString());
+            EditorParameters.Set("DomedHub", domedHub.ToString());
+            EditorParameters.Set("FlatHub", flatHub.ToString());
+            EditorParameters.Set("HubHeight", hubHeight.ToString());
+            EditorParameters.Set("HubRadius", hubRadius.ToString());
+            EditorParameters.Set("HubOffset", hubOffset.ToString());
+            EditorParameters.Set("MidOffset", midOffset.ToString());
+            EditorParameters.Set("HubOffset", hubOffset.ToString());
+            EditorParameters.Set("NumberOfBlades", numberOfBlades.ToString());
+            EditorParameters.Set("RootGroup", rootGroup);
+            EditorParameters.Set("RootOffset", rootOffset.ToString());
+            EditorParameters.Set("SelectedAirfoil", selectedAirfoil);
         }
 
         private void SetProfiles(string grpName, List<string> names)
