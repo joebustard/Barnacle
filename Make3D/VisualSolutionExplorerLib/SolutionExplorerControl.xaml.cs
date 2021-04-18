@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Controls;
-using System.Xml;
 
 namespace VisualSolutionExplorer
 {
@@ -48,13 +46,14 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public void ProjectChanged(object param)
+        public void ProjectChanged(Project prj)
         {
-            List<ProjectFolder> fldrs = param as List<ProjectFolder>;
+            List<ProjectFolder> fldrs = prj.ProjectFolders;
             if (fldrs != null)
             {
                 Folders = fldrs;
                 viewModel.SetContent(Folders);
+                ProjectViewModel.ProjectFilePath = Project.BaseFolder;
             }
         }
 

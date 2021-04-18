@@ -1,10 +1,11 @@
 ﻿using Make3D.Models;
-using ProjectLib;
+
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Controls;
 using System.Windows.Media;
+using VisualSolutionExplorer;
 
 namespace Make3D.ViewModels
 {

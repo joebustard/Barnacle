@@ -1,9 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using static VisualSolutionExplorer.ProjectFileViewModel;
 
 namespace VisualSolutionExplorer
 {
@@ -103,8 +101,14 @@ namespace VisualSolutionExplorer
                 string ext = System.IO.Path.GetExtension(fName);
                 if (ext == ".txt")
                 {
-                    string target = _folder.FolderPath + "\\" + ren;
-                    System.IO.File.Copy(fName, _folder.FolderPath + "\\" + ren);
+                    string p = Project.BaseFolder;
+                    p = System.IO.Path.GetDirectoryName(p);
+
+                    string target = p + _folder.FolderPath + "\\" + ren;
+                    if (fName.ToLower() != target.ToLower())
+                    {
+                        System.IO.File.Copy(fName, target);
+                    }
                     _folder.AddExistingFile(ren);
                     Sort();
                     NotifySolutionChanged("AddExistingFile", target, "");
@@ -135,6 +139,12 @@ namespace VisualSolutionExplorer
 
         public void NotifySolutionChanged(string e, string p1, string p2)
         {
+            if (e == "RemoveFile")
+            {
+                _folder.RemoveFile(p1);
+                LoadChildren();
+            }
+
             if (SolutionChanged != null)
             {
                 SolutionChanged(e, p1, p2);

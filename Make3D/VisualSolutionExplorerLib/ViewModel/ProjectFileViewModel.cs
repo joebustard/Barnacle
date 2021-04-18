@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
@@ -19,6 +18,7 @@ namespace VisualSolutionExplorer
             _projectFile = projfile;
             contextMenu = new FileContextMenuViewModel();
             contextMenu.OnRenameFile = RenameFile;
+            contextMenu.OnRemoveFile = RemoveFile;
             FileClickCommand = new RelayCommand(OnFileClickCommand);
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
@@ -162,6 +162,12 @@ namespace VisualSolutionExplorer
         {
             _projectFile.RecordOldName();
             IsEditing = true;
+        }
+
+        private void RemoveFile()
+        {
+            // can't remove yourself, have to ask the containing folder to do it
+            NotifySolutionChanged("RemoveFile", _projectFile.FileName, _projectFile.FilePath);
         }
 
         private void SetIcon()

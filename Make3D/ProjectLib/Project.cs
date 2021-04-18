@@ -9,14 +9,14 @@ namespace ProjectLib
     public class Project
     {
         public List<ProjectFolder> folders;
-        private string projectFilePath;
+        private static string ProjectFilePath;
 
         public Project()
         {
             ProjectName = String.Empty;
             Description = String.Empty;
             BaseFolder = String.Empty;
-            projectFilePath = String.Empty;
+            ProjectFilePath = String.Empty;
             ProjectFolders = new List<ProjectFolder>();
             FirstFile = "";
         }
@@ -131,7 +131,7 @@ namespace ProjectLib
                 Load(doc, root);
                 res = true;
                 BaseFolder = System.IO.Path.GetDirectoryName(projectPath);
-                projectFilePath = projectPath;
+                ProjectFilePath = projectPath;
             }
             catch (Exception ex)
             {
@@ -143,9 +143,9 @@ namespace ProjectLib
 
         public void Save()
         {
-            if (projectFilePath != String.Empty)
+            if (ProjectFilePath != String.Empty)
             {
-                SaveFile(projectFilePath);
+                SaveFile(ProjectFilePath);
             }
         }
 

@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using VisualSolutionExplorer;
 
 namespace Make3D.Views
 {
@@ -87,7 +88,7 @@ namespace Make3D.Views
 
         private void LoadFileLastOpenedInProject()
         {
-            string p = BaseViewModel.Project.BaseFolder;
+            string p = Project.BaseFolder;
             p = System.IO.Path.GetDirectoryName(p);
             p = p + BaseViewModel.Project.FirstFile;
 
@@ -132,7 +133,7 @@ namespace Make3D.Views
                 {
                     if (BaseViewModel.Project.Open(dlg.ProjectPath))
                     {
-                        SolutionExplorer.ProjectChanged(BaseViewModel.Project.ProjectFolders);
+                        SolutionExplorer.ProjectChanged(BaseViewModel.Project);
                         String initialFile = BaseViewModel.Project.FirstFile;
                         BaseViewModel.Document.Load(initialFile);
 
@@ -165,7 +166,7 @@ namespace Make3D.Views
             if (dlg.ShowDialog() == true)
             {
                 BaseViewModel.Project.Open(dlg.FileName);
-                SolutionExplorer.ProjectChanged(BaseViewModel.Project.ProjectFolders);
+                SolutionExplorer.ProjectChanged(BaseViewModel.Project);
                 if (BaseViewModel.Project.FirstFile != "")
                 {
                     LoadFileLastOpenedInProject();
@@ -193,7 +194,8 @@ namespace Make3D.Views
 
         private void ProjectChanged(object param)
         {
-            SolutionExplorer.ProjectChanged(param);
+            Project prj = param as Project;
+            SolutionExplorer.ProjectChanged(prj);
         }
 
         private void ReferenceModel(object param)
@@ -237,7 +239,7 @@ namespace Make3D.Views
                 case "SelectFile":
                     {
                         string fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
+                        string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
@@ -263,14 +265,14 @@ namespace Make3D.Views
                 case "NewFolder":
                     {
                         String fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
+                        string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
                         try
                         {
                             Directory.CreateDirectory(p);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                         }
                     }
@@ -279,7 +281,7 @@ namespace Make3D.Views
                 case "RenameFolder":
                     {
                         String fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
+                        string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         string old = p + fName;
                         // string ren = System.IO.Path.GetFileName( parameter2);
@@ -288,7 +290,7 @@ namespace Make3D.Views
                         {
                             Directory.Move(old, ren);
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                         }
                     }
@@ -297,7 +299,7 @@ namespace Make3D.Views
                 case "NewFile":
                     {
                         string fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
+                        string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
@@ -323,7 +325,7 @@ namespace Make3D.Views
                 case "RenameFile":
                     {
                         String fName = parameter1;
-                        string p = BaseViewModel.Project.BaseFolder;
+                        string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         string old = p + fName;
                         // string ren = System.IO.Path.GetFileName( parameter2);
@@ -343,7 +345,7 @@ namespace Make3D.Views
                                 File.Move(old, ren);
                             }
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                         }
                     }
@@ -355,7 +357,7 @@ namespace Make3D.Views
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             SolutionExplorer.SolutionChanged = SolutionChangeRequest;
-            SolutionExplorer.ProjectChanged(BaseViewModel.Project.ProjectFolders);
+            SolutionExplorer.ProjectChanged(BaseViewModel.Project);
         }
     }
 }

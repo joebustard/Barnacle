@@ -19,6 +19,7 @@
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
+    <Folder Name="backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
     <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
 
     <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows.Input;
 
 namespace VisualSolutionExplorer
@@ -20,11 +16,13 @@ namespace VisualSolutionExplorer
 
             ICommand deleteFile = new RelayCommand(OnDeleteFile);
             contextMenuActions.Add(new ContextMenuAction("Delete", deleteFile, "Delete the file from disk and remove it from the project"));
-            ICommand removeFile = new RelayCommand(OnRemoveFile);
+            ICommand removeFile = new RelayCommand(HandleRemoveFile);
             contextMenuActions.Add(new ContextMenuAction("Remove", removeFile, "Remove the file from the project but do not delete it"));
         }
 
         public delegate void RenameFile();
+
+        public delegate void RemoveFile();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -45,6 +43,7 @@ namespace VisualSolutionExplorer
         }
 
         public RenameFile OnRenameFile { get; set; }
+        public RemoveFile OnRemoveFile { get; set; }
 
         protected virtual void NotifyPropertyChanged(string propertyName)
         {
@@ -56,8 +55,12 @@ namespace VisualSolutionExplorer
         {
         }
 
-        private void OnRemoveFile(object obj)
+        private void HandleRemoveFile(object obj)
         {
+            if (OnRemoveFile != null)
+            {
+                OnRemoveFile();
+            }
         }
 
         private void OnRenFile(object obj)

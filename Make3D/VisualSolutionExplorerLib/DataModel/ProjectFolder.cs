@@ -7,7 +7,7 @@ namespace VisualSolutionExplorer
     public class ProjectFolder : IComparable<ProjectFolder>
     {
         public string SupportedFileExtension;
-        private readonly List<ProjectFile> _projectFiles = new List<ProjectFile>();
+        private List<ProjectFile> _projectFiles = new List<ProjectFile>();
         private List<ProjectFolder> _projectFolders = null;
         private bool supportsFiles;
         private bool supportsSubFolders;
@@ -133,6 +133,19 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal void RemoveFile(string p1)
+        {
+            List<ProjectFile> tmp = new List<ProjectFile>();
+            for (int i = 0; i < _projectFiles.Count; i++)
+            {
+                if (_projectFiles[i].FileName != p1)
+                {
+                    tmp.Add(_projectFiles[i]);
+                }
+            }
+            _projectFiles = tmp;
+        }
+
         public void RepathSubFolders(String parentName)
         {
             FolderPath = parentName + "\\" + FolderName;
@@ -148,6 +161,14 @@ namespace VisualSolutionExplorer
             el.SetAttribute("Explorer", Explorer.ToString());
             el.SetAttribute("Clean", Clean.ToString());
             root.AppendChild(el);
+            foreach (ProjectFile pfi in _projectFiles)
+            {
+                pfi.Save(solutionDoc, el);
+            }
+            foreach (ProjectFolder fld in _projectFolders)
+            {
+                fld.Save(solutionDoc, root);
+            }
         }
 
         internal void AddExistingFile(string ren)

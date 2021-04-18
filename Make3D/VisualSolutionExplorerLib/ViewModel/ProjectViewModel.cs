@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Input;
 
 namespace VisualSolutionExplorer
 {
     public class ProjectViewModel : INotifyPropertyChanged
     {
+        public static string ProjectFilePath;
         private ObservableCollection<ProjectFolderViewModel> folders;
 
         public ProjectViewModel()
