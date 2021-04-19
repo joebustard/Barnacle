@@ -12,6 +12,7 @@ namespace VisualSolutionExplorer
         private List<ProjectFolder> _projectFolders = null;
         private bool supportsFiles;
         private bool supportsSubFolders;
+        public bool Export { get; set; }
 
         public ProjectFolder(string name)
         {
@@ -19,6 +20,7 @@ namespace VisualSolutionExplorer
             _projectFolders = new List<ProjectFolder>();
             _projectFiles = new List<ProjectFile>();
             SupportedFileExtension = "txt";
+            Export = false;
         }
 
         public ProjectFolder()
@@ -31,6 +33,7 @@ namespace VisualSolutionExplorer
             Clean = false;
             Explorer = false;
             AutoLoad = false;
+            Export = false;
         }
 
         public Boolean AutoLoad { get; set; }
@@ -96,6 +99,7 @@ namespace VisualSolutionExplorer
             fo.SupportsSubFolders = SupportsSubFolders;
             fo.SupportsFiles = SupportsFiles;
             fo.SupportedFileExtension = SupportedFileExtension;
+            fo.Export = Export;
             _projectFolders.Add(fo);
             _projectFolders.Sort();
             fo.FolderPath = FolderPath + "\\" + folderName;
@@ -120,6 +124,7 @@ namespace VisualSolutionExplorer
                 SupportsFiles = GetBoolean(ele, "AddFiles");
                 Clean = GetBoolean(ele, "Clean");
                 Explorer = GetBoolean(ele, "Explorer");
+                Export = GetBoolean(ele, "Export");
                 XmlNodeList fileNodes = ele.SelectNodes("File");
                 foreach (XmlNode filn in fileNodes)
                 {
@@ -159,6 +164,10 @@ namespace VisualSolutionExplorer
             {
                 el.SetAttribute("AutoLoad", AutoLoad.ToString());
             }
+            if (Export)
+            {
+                el.SetAttribute("Export", Export.ToString());
+            }
             root.AppendChild(el);
             foreach (ProjectFile pfi in _projectFiles)
             {
@@ -176,6 +185,24 @@ namespace VisualSolutionExplorer
             pf.FileName = ren;
             ProjectFiles.Add(pf);
             pf.FilePath = FolderPath + "\\" + pf.FileName;
+        }
+
+        internal void GetRxportFiles(string ext, string baseFolder, List<string> filesToExport)
+        {
+            if (Export)
+            {
+                foreach (ProjectFile pf in ProjectFiles)
+                {
+                    if (System.IO.Path.GetExtension(pf.FileName) == ext)
+                    {
+                        filesToExport.Add(baseFolder + pf.FilePath);
+                    }
+                }
+                foreach (ProjectFolder pfo in ProjectFolders)
+                {
+                    pfo.GetRxportFiles(ext, baseFolder, filesToExport);
+                }
+            }
         }
 
         internal void RecordOldName()

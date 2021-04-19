@@ -117,6 +117,8 @@
                         <Custom:RibbonButton x:Name="AllModels" Label="Project" Command="{Binding ExportCommand}" CommandParameter="AllModels" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export all models in project" />
                         <Custom:RibbonButton x:Name="STL" Label="Model" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export the current model" />
                         <Custom:RibbonButton x:Name="STLParts" Label="Separate Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export each part into its own separate file" />
+
+                        <Custom:RibbonButton x:Name="Clean" Label="Clean" Command="{Binding ExportCommand}" CommandParameter="Clean" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Delete all exported stl and gcode" />
                     </Custom:RibbonMenuButton>
                     <!--
                     <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">

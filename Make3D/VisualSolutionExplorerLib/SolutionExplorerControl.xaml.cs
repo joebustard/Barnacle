@@ -58,6 +58,11 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public void Refresh()
+        {
+            viewModel.Refresh();
+        }
+
         private void TreeView_SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
         {
             TreeView item = sender as TreeView;

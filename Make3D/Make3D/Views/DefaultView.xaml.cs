@@ -29,6 +29,12 @@ namespace Make3D.Views
             NotificationManager.Subscribe("ProjectChanged", ProjectChanged);
             NotificationManager.Subscribe("OpenProject", OpenProject);
             NotificationManager.Subscribe("ReloadProject", ReloadProject);
+            NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
+        }
+
+        private void RefreshAfterExport(object param)
+        {
+            SolutionExplorer.Refresh();
         }
 
         public void CheckPoint()

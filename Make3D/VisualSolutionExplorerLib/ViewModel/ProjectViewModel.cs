@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -63,10 +62,19 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public void Refresh()
+        {
+            Project?.Refresh();
+            foreach (ProjectFolderViewModel pfm in Folders)
+            {
+                pfm.Sort();
+            }
+        }
+
         public void SetContent(List<ProjectFolder> folders)
         {
             this.folders = new ObservableCollection<ProjectFolderViewModel>();
-
+            Project?.Refresh();
             foreach (var fld in folders)
             {
                 fld.RepathSubFolders("");

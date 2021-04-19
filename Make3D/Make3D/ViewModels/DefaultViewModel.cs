@@ -974,10 +974,6 @@ namespace Make3D.ViewModels
 
         private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "PageNumber" || e.PropertyName == "SelectedPage")
-            {
-                //           StatusBlockText3 = "Page " + (Document.PageNumber + 1).ToString() + " of " + (Document.NumberOfPages.ToString());
-            }
         }
 
         private void EnableAllTools(bool b)

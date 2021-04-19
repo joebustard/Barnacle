@@ -1732,6 +1732,11 @@ namespace Make3D.ViewModels
             string s = param as string;
             if (s != null)
             {
+                if (s == "Clean")
+                {
+                    CleanExports();
+                }
+                else
                 if (s == "AllModels")
                 {
                     ExportAllModels();
@@ -1767,24 +1772,51 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void CleanExports()
+        {
+            if (MessageBox.Show("Delete all exported stl and gcode files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                string[] files = Directory.GetFiles(pth + "\\export", "*.stl");
+                foreach (string f in files)
+                {
+                    try
+                    {
+                        File.Delete(f);
+                    }
+                    catch
+                    {
+                    }
+                }
+                files = Directory.GetFiles(pth + "\\gcode", "*.gcode");
+                foreach (string f in files)
+                {
+                    try
+                    {
+                        File.Delete(f);
+                    }
+                    catch
+                    {
+                    }
+                }
+                NotificationManager.Notify("ExportRefresh", null);
+            }
+        }
+
         private void ExportAllModels()
         {
-            String pth = Document.FilePath;
             if (Document.Dirty)
             {
                 MessageBox.Show("Document must be saved first");
             }
             else
             {
-                if (pth != String.Empty)
-                {
-                    pth = System.IO.Path.GetDirectoryName(pth);
+                string[] filenames = BaseViewModel.Project.GetRxportFiles(".txt");
+                String pth = VisualSolutionExplorer.Project.BaseFolder;
 
-                    string[] filenames = System.IO.Directory.GetFiles(pth, "*.txt");
-
-                    ProjectExporter pe = new ProjectExporter();
-                    pe.Export(filenames, pth + "\\export");
-                }
+                ProjectExporter pe = new ProjectExporter();
+                pe.Export(filenames, pth + "\\export");
+                NotificationManager.Notify("ExportRefresh", null);
             }
         }
 
@@ -1795,6 +1827,7 @@ namespace Make3D.ViewModels
             STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
             dlg.ExportPath = exportedPath;
             dlg.ShowDialog();
+            NotificationManager.Notify("ExportRefresh", null);
         }
 
         private void OnFlip(object param)

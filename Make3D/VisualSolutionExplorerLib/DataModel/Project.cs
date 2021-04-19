@@ -56,6 +56,7 @@ namespace VisualSolutionExplorer
             pfo.Clean = false;
             pfo.SupportsSubFolders = true;
             pfo.SupportsFiles = true;
+            pfo.Export = true;
             ProjectFolders.Add(pfo);
             ProjectFile pfi = new ProjectFile();
             pfi.FileName = "Untitled.txt";
@@ -83,6 +84,8 @@ namespace VisualSolutionExplorer
             pfo.SupportsFiles = true;
             pfo.Clean = false;
             pfo.SupportsSubFolders = true;
+            pfo.Export = true;
+
             // CANT just use a single folder as the root, it has to be a list so treeview can work
             ProjectFolders.Add(pfo);
 
@@ -143,7 +146,7 @@ namespace VisualSolutionExplorer
 
         public void Refresh()
         {
-            if (ProjectFolders != null && ProjectFolders.Count > 0)
+            if (ProjectFolders != null && ProjectFolders.Count > 0 && BaseFolder != "")
             {
                 String folderRoot = System.IO.Path.GetDirectoryName(BaseFolder);
                 ProjectFolders[0].Refresh(folderRoot);
@@ -180,6 +183,18 @@ namespace VisualSolutionExplorer
             }
 
             solutionDoc.Save(solutionPath);
+        }
+
+        public string[] GetRxportFiles(string v)
+        {
+            List<String> filesToExport = new List<string>();
+            String fln = System.IO.Path.GetDirectoryName(BaseFolder);
+            foreach (ProjectFolder pfo in ProjectFolders)
+            {
+                pfo.GetRxportFiles(v, fln, filesToExport);
+            }
+
+            return filesToExport.ToArray();
         }
     }
 }
