@@ -24,7 +24,7 @@ namespace VisualSolutionExplorer
             StopEditing = new RelayCommand(OnStopEditing);
             if (_projectFile != null)
             {
-                IconToShow = (IconType)_projectFile.IconNumber;
+                SetIconForExt();
             }
             else
             {
@@ -38,7 +38,8 @@ namespace VisualSolutionExplorer
         public enum IconType
         {
             TextIcon,
-            ImageIcon
+            ImageIcon,
+            StlIcon
         }
 
         public FileContextMenuViewModel ContextMenu
@@ -70,6 +71,7 @@ namespace VisualSolutionExplorer
                 if (value != _projectFile.FileName)
                 {
                     _projectFile.FileName = value;
+                    SetIconForExt();
                     OnPropertyChanged("FileName");
                 }
             }
@@ -158,16 +160,16 @@ namespace VisualSolutionExplorer
             }
         }
 
-        private void RenameFile()
-        {
-            _projectFile.RecordOldName();
-            IsEditing = true;
-        }
-
         private void RemoveFile()
         {
             // can't remove yourself, have to ask the containing folder to do it
             NotifySolutionChanged("RemoveFile", _projectFile.FileName, _projectFile.FilePath);
+        }
+
+        private void RenameFile()
+        {
+            _projectFile.RecordOldName();
+            IsEditing = true;
         }
 
         private void SetIcon()
@@ -180,6 +182,12 @@ namespace VisualSolutionExplorer
                     }
                     break;
 
+                case IconType.StlIcon:
+                    {
+                        icon = new BitmapImage(ImageUri("stl.png"));
+                    }
+                    break;
+
                 default:
                     {
                         icon = new BitmapImage(ImageUri("File.png"));
@@ -187,6 +195,35 @@ namespace VisualSolutionExplorer
                     break;
             }
             OnPropertyChanged("Icon");
+        }
+
+        private void SetIconForExt()
+        {
+            if (_projectFile != null)
+            {
+                String ext = System.IO.Path.GetExtension(_projectFile.FileName);
+                ext = ext.ToLower();
+                switch (ext)
+                {
+                    case ".stl":
+                        {
+                            IconToShow = IconType.StlIcon;
+                        }
+                        break;
+
+                    case ".png":
+                        {
+                            IconToShow = IconType.ImageIcon;
+                        }
+                        break;
+
+                    default:
+                        {
+                            IconToShow = IconType.TextIcon;
+                        }
+                        break;
+                }
+            }
         }
     }
 }

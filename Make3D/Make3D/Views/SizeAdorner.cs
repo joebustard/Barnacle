@@ -523,6 +523,7 @@ namespace Make3D.Adorners
             MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
             MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
             MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
+            // LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
             LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
             NotificationManager.Notify("DocDirty", null);
             NotificationManager.Notify("ScaleUpdated", null);
@@ -579,6 +580,7 @@ namespace Make3D.Adorners
                 MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
                 MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
                 MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
+                LabelThumbs(box.AbsoluteBounds.Size());
                 NotificationManager.Notify("DocDirty", null);
             }
         }

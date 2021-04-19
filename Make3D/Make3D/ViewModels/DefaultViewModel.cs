@@ -146,7 +146,7 @@ namespace Make3D.ViewModels
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
             EnableAllTools(true);
-            NotificationManager.Notify("ProjectChanged", Project.ProjectFolders);
+            NotificationManager.Notify("ProjectChanged", Project);
         }
 
         public ICommand AddCommand { get; set; }

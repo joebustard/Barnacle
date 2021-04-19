@@ -47,6 +47,7 @@
             <ToolBar>
                 <Button Content="-" ToolTip="Collapse Tree" Command="{Binding CollapseTree}" />
                 <Button Content="+" ToolTip="Expand Tree" Command="{Binding ExpandTree}" />
+                <Button Content="R" ToolTip="Refresh" Command="{Binding RefreshTree}" />
             </ToolBar>
         </ToolBarTray>
         <TreeView ItemsSource="{Binding Folders}" SelectedItemChanged="TreeView_SelectedItemChanged">

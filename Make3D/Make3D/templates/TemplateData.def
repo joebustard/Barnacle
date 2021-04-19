@@ -22,8 +22,8 @@
     <Folder Name="backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
     <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
 
-    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />
-    <Folder Name="gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" />
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" Autoload="True" />
     <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
     <Folder Name="docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
@@ -64,7 +64,7 @@
       <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+    <Folder Name="ssemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="TurrentAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
@@ -77,8 +77,8 @@
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />
-    <Folder Name="gcode" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" />
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" />
     <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
   </ProjectDefinition>
 
@@ -127,8 +127,8 @@
     </Folder>
     <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
     <Folder Name="images\ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="gcode" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True" />
     <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
   </ProjectDefinition>
 </Defs>

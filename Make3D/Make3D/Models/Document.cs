@@ -718,6 +718,24 @@ namespace Make3D.Models
             }
         }
 
+        internal void RenameCurrent(string old, string renamed)
+        {
+            if (FilePath == old)
+            {
+                FilePath = renamed;
+                FileName = System.IO.Path.GetFileName(renamed);
+                Caption = FileName;
+            }
+        }
+
+        internal void RenameFolder(string old, string renamed)
+        {
+            if (FilePath.StartsWith(old))
+            {
+                FilePath = FilePath.Replace(old, renamed);
+            }
+        }
+
         internal void ReplaceObjectsByGroup(Group3D grp)
         {
             Content.Remove(grp.LeftObject);

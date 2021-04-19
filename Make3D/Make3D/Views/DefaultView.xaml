@@ -8,7 +8,6 @@
           xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              xmlns:local="clr-namespace:Make3D.Views"
              xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
-
              xmlns:vsx1="clr-namespace:VisualSolutionExplorer;assembly=VisualSolutionExplorerLib"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="1000" Loaded="UserControl_Loaded">

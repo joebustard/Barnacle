@@ -28,6 +28,7 @@ namespace Make3D.Views
             NotificationManager.Subscribe("CheckExit", CheckExit);
             NotificationManager.Subscribe("ProjectChanged", ProjectChanged);
             NotificationManager.Subscribe("OpenProject", OpenProject);
+            NotificationManager.Subscribe("ReloadProject", ReloadProject);
         }
 
         public void CheckPoint()
@@ -108,6 +109,16 @@ namespace Make3D.Views
             }
         }
 
+        private void LoadNamedProject(string projName)
+        {
+            BaseViewModel.Project.Open(projName);
+            SolutionExplorer.ProjectChanged(BaseViewModel.Project);
+            if (BaseViewModel.Project.FirstFile != "")
+            {
+                LoadFileLastOpenedInProject();
+            }
+        }
+
         private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
         }
@@ -165,12 +176,7 @@ namespace Make3D.Views
             dlg.Filter = BaseViewModel.Document.ProjectFilter;
             if (dlg.ShowDialog() == true)
             {
-                BaseViewModel.Project.Open(dlg.FileName);
-                SolutionExplorer.ProjectChanged(BaseViewModel.Project);
-                if (BaseViewModel.Project.FirstFile != "")
-                {
-                    LoadFileLastOpenedInProject();
-                }
+                LoadNamedProject(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
                 undoer.ClearUndoFiles();
             }
@@ -208,6 +214,12 @@ namespace Make3D.Views
                 BaseViewModel.Document.ReferenceFile(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
             }
+        }
+
+        private void ReloadProject(object param)
+        {
+            string projName = param.ToString();
+            LoadNamedProject(projName);
         }
 
         private void SaveAsFile(object sender)
@@ -285,10 +297,13 @@ namespace Make3D.Views
                         p = System.IO.Path.GetDirectoryName(p);
                         string old = p + fName;
                         // string ren = System.IO.Path.GetFileName( parameter2);
-                        string ren = p + parameter2;
+                        string renamed = p + parameter2;
                         try
                         {
-                            Directory.Move(old, ren);
+                            // does the old directory contain the document we currently have open?
+                            // if so we need to tell the document to sortitself out
+                            BaseViewModel.Document.RenameFolder(old, renamed);
+                            Directory.Move(old, renamed);
                         }
                         catch (Exception)
                         {
@@ -337,6 +352,10 @@ namespace Make3D.Views
                                 if (old == BaseViewModel.Document.FilePath)
                                 {
                                     CheckSaveFirst(null);
+                                    // just incase we are renaming the currently open doc
+                                    // make sure document knows the name has changed to avoid it saveing back into the old
+                                    // file name
+                                    BaseViewModel.Document.RenameCurrent(old, ren);
                                 }
                                 if (File.Exists(ren))
                                 {

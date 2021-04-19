@@ -48,6 +48,7 @@ namespace VisualSolutionExplorer
 
         public void ProjectChanged(Project prj)
         {
+            viewModel.Project = prj;
             List<ProjectFolder> fldrs = prj.ProjectFolders;
             if (fldrs != null)
             {

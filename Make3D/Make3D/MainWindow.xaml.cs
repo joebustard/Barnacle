@@ -37,5 +37,26 @@ namespace Make3D
         {
             NotificationManager.Notify("KeyUp", e);
         }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            // check if we have been opened with a project file name on the command line
+            //string filter = BaseViewModel.Document.ProjectFilter;
+
+            string[] args = Environment.GetCommandLineArgs();
+            string startProject = "";
+            foreach (string s in args)
+            {
+                if (s.EndsWith(".bmf"))
+                {
+                    startProject = s;
+                    break;
+                }
+            }
+            if (startProject != "")
+            {
+                NotificationManager.Notify("ReloadProject", startProject);
+            }
+        }
     }
 }

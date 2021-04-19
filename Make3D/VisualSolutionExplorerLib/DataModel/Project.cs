@@ -7,8 +7,8 @@ namespace VisualSolutionExplorer
 {
     public class Project
     {
-        public List<ProjectFolder> folders;
         public static string ProjectFilePath;
+        public List<ProjectFolder> folders;
 
         public Project()
         {
@@ -83,6 +83,7 @@ namespace VisualSolutionExplorer
             pfo.SupportsFiles = true;
             pfo.Clean = false;
             pfo.SupportsSubFolders = true;
+            // CANT just use a single folder as the root, it has to be a list so treeview can work
             ProjectFolders.Add(pfo);
 
             XmlNode des = nd.SelectSingleNode("Description");
@@ -138,6 +139,15 @@ namespace VisualSolutionExplorer
             }
 
             return res;
+        }
+
+        public void Refresh()
+        {
+            if (ProjectFolders != null && ProjectFolders.Count > 0)
+            {
+                String folderRoot = System.IO.Path.GetDirectoryName(BaseFolder);
+                ProjectFolders[0].Refresh(folderRoot);
+            }
         }
 
         public void Save()

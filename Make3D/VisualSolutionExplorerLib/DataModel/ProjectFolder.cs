@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 namespace VisualSolutionExplorer
@@ -29,7 +30,10 @@ namespace VisualSolutionExplorer
 
             Clean = false;
             Explorer = false;
+            AutoLoad = false;
         }
+
+        public Boolean AutoLoad { get; set; }
 
         // should this folder be cleared when a clean command is issued
         public bool Clean { get; set; }
@@ -108,6 +112,10 @@ namespace VisualSolutionExplorer
                     FolderName = ele.GetAttribute("Name");
                 }
 
+                if (ele.HasAttribute("AutoLoad"))
+                {
+                    AutoLoad = GetBoolean(ele, "AutoLoad");
+                }
                 SupportsSubFolders = GetBoolean(ele, "AddSubs");
                 SupportsFiles = GetBoolean(ele, "AddFiles");
                 Clean = GetBoolean(ele, "Clean");
@@ -133,19 +141,6 @@ namespace VisualSolutionExplorer
             }
         }
 
-        internal void RemoveFile(string p1)
-        {
-            List<ProjectFile> tmp = new List<ProjectFile>();
-            for (int i = 0; i < _projectFiles.Count; i++)
-            {
-                if (_projectFiles[i].FileName != p1)
-                {
-                    tmp.Add(_projectFiles[i]);
-                }
-            }
-            _projectFiles = tmp;
-        }
-
         public void RepathSubFolders(String parentName)
         {
             FolderPath = parentName + "\\" + FolderName;
@@ -160,6 +155,10 @@ namespace VisualSolutionExplorer
             el.SetAttribute("AddFiles", SupportsFiles.ToString());
             el.SetAttribute("Explorer", Explorer.ToString());
             el.SetAttribute("Clean", Clean.ToString());
+            if (AutoLoad)
+            {
+                el.SetAttribute("AutoLoad", AutoLoad.ToString());
+            }
             root.AppendChild(el);
             foreach (ProjectFile pfi in _projectFiles)
             {
@@ -182,6 +181,40 @@ namespace VisualSolutionExplorer
         internal void RecordOldName()
         {
             OldName = FolderName;
+        }
+
+        internal void Refresh(String baseFolder)
+        {
+            // in practice refresh just means update any autoloading folders
+            // with the actual files on disk.
+            if (AutoLoad)
+            {
+                _projectFiles.Clear();
+                string[] fNames = Directory.GetFiles(baseFolder + FolderPath);
+                foreach (String fn in fNames)
+                {
+                    string nm = System.IO.Path.GetFileName(fn);
+                    AddExistingFile(nm);
+                }
+            }
+
+            foreach (ProjectFolder pfo in _projectFolders)
+            {
+                pfo.Refresh(baseFolder);
+            }
+        }
+
+        internal void RemoveFile(string p1)
+        {
+            List<ProjectFile> tmp = new List<ProjectFile>();
+            for (int i = 0; i < _projectFiles.Count; i++)
+            {
+                if (_projectFiles[i].FileName != p1)
+                {
+                    tmp.Add(_projectFiles[i]);
+                }
+            }
+            _projectFiles = tmp;
         }
 
         internal void UpdatePath()

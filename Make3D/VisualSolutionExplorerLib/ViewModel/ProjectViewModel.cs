@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -13,8 +14,10 @@ namespace VisualSolutionExplorer
         public ProjectViewModel()
         {
             folders = null;
+            Project = null;
             CollapseTree = new RelayCommand(OnCollapseTree);
             ExpandTree = new RelayCommand(OnExpandTree);
+            RefreshTree = new RelayCommand(OnRefreshTree);
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -39,6 +42,9 @@ namespace VisualSolutionExplorer
                 }
             }
         }
+
+        public Project Project { get; set; }
+        public ICommand RefreshTree { get; set; }
 
         public SolutionChangedDelegate SolutionChanged { get; set; }
 
@@ -93,6 +99,16 @@ namespace VisualSolutionExplorer
                 pfm.Sort();
                 pfm.Expand();
             }
+        }
+
+        private void OnRefreshTree(object obj)
+        {
+            Project?.Refresh();
+            foreach (ProjectFolderViewModel pfm in folders)
+            {
+                pfm.Sort();
+            }
+            NotifyPropertyChanged("Folders");
         }
     }
 }
