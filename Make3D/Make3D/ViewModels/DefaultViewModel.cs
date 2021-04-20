@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make3D.Models.Mru;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -20,7 +21,7 @@ namespace Make3D.ViewModels
         public List<ToolDef> loftedToolsToShow;
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
-        private static List<MruEntry> recentFilesList;
+
         private static string statusBlockText1;
         private static string statusBlockText2;
         private static string statusBlockText3;
@@ -110,7 +111,6 @@ namespace Make3D.ViewModels
             ExitCommand = new RelayCommand(OnExit);
 
             Caption = BaseViewModel.Document.Caption;
-            recentFilesList = new List<MruEntry>();
 
             FillColor = Brushes.White;
             SelectedObjectName = "";
@@ -119,11 +119,8 @@ namespace Make3D.ViewModels
             FontSize = "14";
             snapMarginChecked = true;
             StatusBlockText1 = "Status Text 1";
-            StatusBlockText2 = "Snap Margin On";
-            if (recentFilesList != null)
-            {
-                LoadMru();
-            }
+            StatusBlockText2 = "V" + SoftwareVersion;
+
             ShowFloorChecked = true;
             ShowFloorMarkerChecked = true;
             ShowAxiesChecked = true;
@@ -494,16 +491,7 @@ namespace Make3D.ViewModels
         {
             get
             {
-                return recentFilesList;
-            }
-
-            set
-            {
-                if (recentFilesList != value)
-                {
-                    recentFilesList = value;
-                    NotifyPropertyChanged();
-                }
+                return RecentlyUsedManager.RecentFilesList;
             }
         }
 
@@ -894,25 +882,6 @@ namespace Make3D.ViewModels
             MainRibbon = mainRibbon;
         }
 
-        private string AbbreviatePath(string fileName, int max)
-        {
-            string result = "";
-            string[] fldrs = fileName.Split('\\');
-            int last = fldrs.GetLength(0) - 1;
-            int i = 0;
-            while ((result.Length + fldrs[last].Length < max) && i < last)
-            {
-                result += fldrs[i] + "\\";
-                i++;
-            }
-            if (last != i)
-            {
-                result += "....\\";
-            }
-            result += fldrs[last];
-            return result;
-        }
-
         private void CreateAircraftToolMenu()
         {
             aircraftToolsToShow = new List<ToolDef>();
@@ -1005,23 +974,6 @@ namespace Make3D.ViewModels
                 {
                     df.IsActive = b;
                 }
-            }
-        }
-
-        private void LoadMru()
-        {
-            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            if (Directory.Exists(mruPath))
-            {
-                StreamReader fin = new StreamReader(mruPath + "\\Mru.txt");
-                while (!fin.EndOfStream)
-                {
-                    String s = fin.ReadLine();
-                    string shortName = AbbreviatePath(s, 30);
-                    MruEntry m = new MruEntry(shortName, s);
-                    recentFilesList.Add(m);
-                }
-                fin.Close();
             }
         }
 
@@ -1156,6 +1108,7 @@ namespace Make3D.ViewModels
         private void OnNewProject(object obj)
         {
             NotificationManager.Notify("NewProject", null);
+            CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
         }
 
         private void OnOpen(object obj)
@@ -1167,6 +1120,7 @@ namespace Make3D.ViewModels
         private void OnOpenProject(object obj)
         {
             NotificationManager.Notify("OpenProject", null);
+            CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
         }
 
         private void OnOpenRecent(object obj)
@@ -1206,14 +1160,14 @@ namespace Make3D.ViewModels
         {
             NotificationManager.Notify("SaveFile", null);
             Caption = BaseViewModel.Document.Caption;
-            UpdateRecentFiles(BaseViewModel.Document.FilePath);
+            //UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
 
         private void OnSaveAs(object obj)
         {
             NotificationManager.Notify("SaveAsFile", null);
             Caption = BaseViewModel.Document.Caption;
-            UpdateRecentFiles(BaseViewModel.Document.FilePath);
+            //  UpdateRecentFiles(BaseViewModel.Document.FilePath);
         }
 
         private void OnSelect(object obj)
@@ -1308,21 +1262,6 @@ namespace Make3D.ViewModels
         private void ReturnToDefaultView(object param)
         {
             OnView("PageEdit");
-        }
-
-        private void SaveMru()
-        {
-            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-            if (!Directory.Exists(mruPath))
-            {
-                Directory.CreateDirectory(mruPath);
-            }
-            StreamWriter fout = new StreamWriter(mruPath + "\\Mru.txt");
-            foreach (MruEntry me in recentFilesList)
-            {
-                fout.WriteLine(me.Path);
-            }
-            fout.Close();
         }
 
         private void SetActive(string s, List<ToolDef> defs)
@@ -1420,27 +1359,8 @@ namespace Make3D.ViewModels
 
         private void UpdateRecentFiles(string fileName)
         {
-            bool found = false;
-            foreach (MruEntry mru in recentFilesList)
-            {
-                if (mru.Path == fileName)
-                {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-            {
-                string shortName = AbbreviatePath(fileName, 30);
-                MruEntry m = new MruEntry(shortName, fileName);
-                recentFilesList.Insert(0, m);
-                if (recentFilesList.Count > 6)
-                {
-                    recentFilesList.RemoveAt(recentFilesList.Count - 1);
-                }
-                SaveMru();
-                CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
-            }
+            RecentlyUsedManager.UpdateRecentFiles(fileName);
+            CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
         }
     }
 }

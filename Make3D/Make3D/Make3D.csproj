@@ -175,6 +175,7 @@
     <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\MeshExtensions.cs" />
     <Compile Include="Models\MeshUtils.cs" />
+    <Compile Include="Models\Mru\MostRecentlyUsedManager.cs" />
     <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
     <Compile Include="Models\PointUtils.cs" />
@@ -187,18 +188,29 @@
     <Compile Include="Models\ReferenceObject3D.cs" />
     <Compile Include="Models\STLExporter.cs" />
     <Compile Include="Models\ToolFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.tt</DependentUpon>
+    </Compile>
     <Compile Include="undoer.cs" />
+    <Compile Include="ViewModels\NewProjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Dialogs\CircularPasteDlg.xaml.cs">
       <DependentUpon>CircularPasteDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="ViewModels\ToolDef.cs" />
     <Compile Include="Views\ColourDialog.xaml.cs">
       <DependentUpon>ColourDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MultiPasteDlg.xaml.cs">
       <DependentUpon>MultiPasteDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\NewProjectView.xaml.cs">
+      <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\RotationAdorner.cs" />
     <Compile Include="Views\SizeAdorner.cs" />
@@ -220,7 +232,7 @@
     <Compile Include="ViewModels\DefaultViewModel.cs" />
     <Compile Include="ViewModels\EditorViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\MruEntry.cs" />
+    <Compile Include="Models\Mru\MruEntry.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\SubViewManager.cs" />
     <Compile Include="ViewModels\ObjectPaletteViewModel.cs" />
@@ -246,6 +258,9 @@
       <DependentUpon>STLExportedConfirmation.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SkewAdorner.cs" />
+    <Compile Include="Views\StartupView.xaml.cs">
+      <DependentUpon>StartupView.xaml</DependentUpon>
+    </Compile>
     <Page Include="Dialogs\BezierFuselage\BulkheadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -418,6 +433,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\NewProjectView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ObjectPalette.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -434,11 +453,12 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\StartupView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -594,9 +614,16 @@
     <Resource Include="Dialogs\Wing\Airfoils\Airfoils.xml">
       <SubType>Designer</SubType>
     </Resource>
+    <Content Include="Properties\AssemblyInfo.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
+    </Content>
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

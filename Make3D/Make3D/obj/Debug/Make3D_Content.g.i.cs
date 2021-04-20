@@ -8,11 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cap.txt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("parabaloid.txt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("polygon.txt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("pyramid.txt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("torus.txt")]
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("tube.txt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("properties/assemblyinfo.tt")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("templates/templatedata.def")]
 
 

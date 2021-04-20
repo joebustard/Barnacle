@@ -39,7 +39,8 @@ namespace VisualSolutionExplorer
         {
             TextIcon,
             ImageIcon,
-            StlIcon
+            StlIcon,
+            GCodeIcon
         }
 
         public FileContextMenuViewModel ContextMenu
@@ -188,6 +189,12 @@ namespace VisualSolutionExplorer
                     }
                     break;
 
+                case IconType.GCodeIcon:
+                    {
+                        icon = new BitmapImage(ImageUri("gcode.png"));
+                    }
+                    break;
+
                 default:
                     {
                         icon = new BitmapImage(ImageUri("File.png"));
@@ -214,6 +221,12 @@ namespace VisualSolutionExplorer
                     case ".png":
                         {
                             IconToShow = IconType.ImageIcon;
+                        }
+                        break;
+
+                    case ".gcode":
+                        {
+                            IconToShow = IconType.GCodeIcon;
                         }
                         break;
 

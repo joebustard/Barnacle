@@ -12,6 +12,6 @@
         <ViewModels:MainWindowViewModel />
     </Window.DataContext>
     <Grid>
-        <Views:DefaultView x:Name="DefView" Margin="2,2,2,2" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True" />
+        <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
     </Grid>
 </Window>

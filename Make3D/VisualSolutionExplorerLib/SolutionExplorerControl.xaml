@@ -45,9 +45,15 @@
     <DockPanel>
         <ToolBarTray DockPanel.Dock="Top">
             <ToolBar>
-                <Button Content="-" ToolTip="Collapse Tree" Command="{Binding CollapseTree}" />
-                <Button Content="+" ToolTip="Expand Tree" Command="{Binding ExpandTree}" />
-                <Button Content="R" ToolTip="Refresh" Command="{Binding RefreshTree}" />
+                <Button  ToolTip="Collapse Tree" Command="{Binding CollapseTree}">
+                    <Image Width="24" Height="24" Source="Images\Minus.png" />
+                </Button>
+                <Button  ToolTip="Expand Tree" Command="{Binding ExpandTree}">
+                    <Image Width="24" Height="24" Source="Images\Plus.png" />
+                </Button>
+                <Button ToolTip="Refresh" Command="{Binding RefreshTree}">
+                    <Image Width="24" Height="24" Source="Images\Refresh.png" />
+                </Button>
             </ToolBar>
         </ToolBarTray>
         <TreeView ItemsSource="{Binding Folders}" SelectedItemChanged="TreeView_SelectedItemChanged">

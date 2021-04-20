@@ -1,5 +1,5 @@
 ﻿using Make3D.Models;
-
+using Make3D.Models.Mru;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -16,6 +16,8 @@ namespace Make3D.ViewModels
 
         protected static Project project;
 
+        protected static MostRecentlyUsedManager recentlyUsedManager;
+
         protected bool lastChangeWasNudge;
 
         private static SolidColorBrush _fillBrushColor = Brushes.Black;
@@ -23,6 +25,8 @@ namespace Make3D.ViewModels
         private static SolidColorBrush _strokeBrushColor = Brushes.Black;
 
         private static string selectedFont;
+
+        private string softwareVersion;
 
         public BaseViewModel()
         {
@@ -34,6 +38,11 @@ namespace Make3D.ViewModels
             {
                 project = new Project();
                 project.CreateDefault();
+            }
+            if (recentlyUsedManager == null)
+            {
+                recentlyUsedManager = new MostRecentlyUsedManager();
+                recentlyUsedManager.Name = "Mru";
             }
             document.PropertyChanged += Document_PropertyChanged;
         }
@@ -48,6 +57,11 @@ namespace Make3D.ViewModels
         public static Project Project
         {
             get { return project; }
+        }
+
+        public static MostRecentlyUsedManager RecentlyUsedManager
+        {
+            get { return recentlyUsedManager; }
         }
 
         public SolidColorBrush FillColor
@@ -82,6 +96,19 @@ namespace Make3D.ViewModels
                     NotifyPropertyChanged();
                     NotificationManager.Notify("FontName", selectedFont);
                 }
+            }
+        }
+
+        public String SoftwareVersion
+        {
+            get
+            {
+                if (softwareVersion == null || softwareVersion == "")
+                {
+                    softwareVersion = FindSoftwareVersion();
+                }
+
+                return softwareVersion;
             }
         }
 
@@ -147,6 +174,13 @@ namespace Make3D.ViewModels
             {
                 NotifyPropertyChanged("Caption");
             }
+        }
+
+        private string FindSoftwareVersion()
+        {
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+            return $"{version}";
         }
     }
 }

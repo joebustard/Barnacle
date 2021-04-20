@@ -49,7 +49,7 @@
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
                             <Border Grid.Row="0">
-                                <TextBlock Text="Recent Items"
+                                <TextBlock Text="Recent Projects"
 									FontWeight="Bold"
 									Margin="5" />
                             </Border>

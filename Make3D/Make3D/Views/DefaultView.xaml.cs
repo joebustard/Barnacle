@@ -32,11 +32,6 @@ namespace Make3D.Views
             NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
         }
 
-        private void RefreshAfterExport(object param)
-        {
-            SolutionExplorer.Refresh();
-        }
-
         public void CheckPoint()
         {
             if (BaseViewModel.Document != null)
@@ -150,6 +145,7 @@ namespace Make3D.Views
                 {
                     if (BaseViewModel.Project.Open(dlg.ProjectPath))
                     {
+                        BaseViewModel.RecentlyUsedManager.UpdateRecentFiles(dlg.ProjectPath);
                         SolutionExplorer.ProjectChanged(BaseViewModel.Project);
                         String initialFile = BaseViewModel.Project.FirstFile;
                         BaseViewModel.Document.Load(initialFile);
@@ -185,6 +181,7 @@ namespace Make3D.Views
                 LoadNamedProject(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
                 undoer.ClearUndoFiles();
+                BaseViewModel.RecentlyUsedManager.UpdateRecentFiles(dlg.FileName);
             }
         }
 
@@ -194,9 +191,7 @@ namespace Make3D.Views
             string f = sender.ToString();
             if (File.Exists(f))
             {
-                BaseViewModel.Document.Load(f);
-                NotificationManager.Notify("Refresh", null);
-                // UndoManager.Clear();
+                LoadNamedProject(f);
             }
             else
             {
@@ -220,6 +215,11 @@ namespace Make3D.Views
                 BaseViewModel.Document.ReferenceFile(dlg.FileName);
                 NotificationManager.Notify("Refresh", null);
             }
+        }
+
+        private void RefreshAfterExport(object param)
+        {
+            SolutionExplorer.Refresh();
         }
 
         private void ReloadProject(object param)

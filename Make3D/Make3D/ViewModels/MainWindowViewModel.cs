@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make3D.Views;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -12,8 +13,19 @@ namespace Make3D.ViewModels
 {
     internal class MainWindowViewModel : BaseViewModel, INotifyPropertyChanged
     {
-
         private string caption;
+        private Control subview;
+
+        internal MainWindowViewModel()
+        {
+            Caption = "";
+            base.PropertyChanged += MainWindowViewModel_PropertyChanged;
+            SubView = new StartupView();
+            NotificationManager.Subscribe("StartWithNewProject", StartWithNewProject);
+            NotificationManager.Subscribe("NewProjectBack", NewProjectBack);
+            NotificationManager.Subscribe("ShowEditor", ShowEditor);
+        }
+
         public string Caption
         {
             get
@@ -22,26 +34,51 @@ namespace Make3D.ViewModels
             }
             set
             {
-                if ( caption != value)
+                if (caption != value)
                 {
                     caption = value;
                     NotifyPropertyChanged();
                 }
             }
-
         }
-        internal MainWindowViewModel()
+
+        public Control SubView
         {
-            Caption = Document.Caption;
-            base.PropertyChanged += MainWindowViewModel_PropertyChanged;
+            get
+            {
+                return subview;
+            }
+            set
+            {
+                if (subview != value)
+                {
+                    subview = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         private void MainWindowViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if ( e.PropertyName == "Caption")
+            if (e.PropertyName == "Caption")
             {
                 Caption = Document.Caption;
             }
+        }
+
+        private void NewProjectBack(object param)
+        {
+            SubView = new StartupView();
+        }
+
+        private void ShowEditor(object param)
+        {
+            SubView = new DefaultView();
+        }
+
+        private void StartWithNewProject(object param)
+        {
+            SubView = new NewProjectView();
         }
     }
 }

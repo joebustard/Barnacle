@@ -10,35 +10,6 @@ namespace Make3D.ViewModels
 {
     public class SubViewManager
     {
-        public UserControl GetView(string name)
-        {
-            name = name.ToLower().Trim();
-            UserControl result = null;
-            if (name == "default")
-            {
-                result = new DefaultView();
-            }
-            if (name == "editor")
-            {
-                result = new EditorView();
-            }
-            /*
-            if (name == "about")
-            {
-                result = new AboutBoxView();
-            }
-            if (name == "printpreview")
-            {
-                result = new PrintPreviewView();
-            }
-            if (name == "pageedit")
-            {
-                result = new PageEditView();
-            }
-            */
-            return result;
-        }
-
         public void CloseCurrent()
         {
             NotificationManager.Unsubscribe("Copy");
@@ -56,6 +27,39 @@ namespace Make3D.ViewModels
             NotificationManager.Unsubscribe("StrokeColour");
             NotificationManager.Unsubscribe("Alignment");
             NotificationManager.Unsubscribe("Size");
+        }
+
+        public UserControl GetView(string name)
+        {
+            name = name.ToLower().Trim();
+            UserControl result = null;
+            if (name == "default")
+            {
+                result = new DefaultView();
+            }
+            if (name == "editor")
+            {
+                result = new EditorView();
+            }
+            if (name == "startup")
+            {
+                result = new StartupView();
+            }
+            /*
+            if (name == "about")
+            {
+                result = new AboutBoxView();
+            }
+            if (name == "printpreview")
+            {
+                result = new PrintPreviewView();
+            }
+            if (name == "pageedit")
+            {
+                result = new PageEditView();
+            }
+            */
+            return result;
         }
     }
 }
