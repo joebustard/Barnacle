@@ -181,10 +181,27 @@ namespace VisualSolutionExplorer
 
         internal void AddExistingFile(string ren)
         {
-            ProjectFile pf = new ProjectFile();
-            pf.FileName = ren;
-            ProjectFiles.Add(pf);
-            pf.FilePath = FolderPath + "\\" + pf.FileName;
+            if (!FileAlreadyPresent(ren))
+            {
+                ProjectFile pf = new ProjectFile();
+                pf.FileName = ren;
+                ProjectFiles.Add(pf);
+                pf.FilePath = FolderPath + "\\" + pf.FileName;
+            }
+        }
+
+        private bool FileAlreadyPresent(string ren)
+        {
+            bool found = false;
+            foreach (ProjectFile pfi in ProjectFiles)
+            {
+                if (pfi.FilePath == ren)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            return found;
         }
 
         internal void GetRxportFiles(string ext, string baseFolder, List<string> filesToExport)

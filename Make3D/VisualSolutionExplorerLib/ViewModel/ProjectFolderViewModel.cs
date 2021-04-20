@@ -94,24 +94,27 @@ namespace VisualSolutionExplorer
         public void AddExistingFile()
         {
             OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Multiselect = true;
             if (dlg.ShowDialog() == true)
             {
-                String fName = dlg.FileName;
-                string ren = System.IO.Path.GetFileName(fName);
-                string ext = System.IO.Path.GetExtension(fName);
-                if (ext == ".txt")
+                foreach (String fName in dlg.FileNames)
                 {
-                    string p = Project.BaseFolder;
-                    p = System.IO.Path.GetDirectoryName(p);
-
-                    string target = p + _folder.FolderPath + "\\" + ren;
-                    if (fName.ToLower() != target.ToLower())
+                    string ren = System.IO.Path.GetFileName(fName);
+                    string ext = System.IO.Path.GetExtension(fName);
+                    if (ext == ".txt")
                     {
-                        System.IO.File.Copy(fName, target);
+                        string p = Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+
+                        string target = p + _folder.FolderPath + "\\" + ren;
+                        if (fName.ToLower() != target.ToLower())
+                        {
+                            System.IO.File.Copy(fName, target);
+                        }
+                        _folder.AddExistingFile(ren);
+                        Sort();
+                        NotifySolutionChanged("AddExistingFile", target, "");
                     }
-                    _folder.AddExistingFile(ren);
-                    Sort();
-                    NotifySolutionChanged("AddExistingFile", target, "");
                 }
             }
         }

@@ -197,6 +197,7 @@
     <Compile Include="undoer.cs" />
     <Compile Include="ViewModels\NewProjectViewModel.cs" />
     <Compile Include="ViewModels\ObjectPropertiesViewModel.cs" />
+    <Compile Include="ViewModels\RecentProjectViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="Dialogs\CircularPasteDlg.xaml.cs">
       <DependentUpon>CircularPasteDlg.xaml</DependentUpon>
@@ -614,6 +615,7 @@
     <Resource Include="Dialogs\Wing\Airfoils\Airfoils.xml">
       <SubType>Designer</SubType>
     </Resource>
+    <Resource Include="Images\Buttons\open.png" />
     <Content Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>

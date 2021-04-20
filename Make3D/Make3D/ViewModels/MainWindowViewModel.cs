@@ -1,12 +1,5 @@
 ﻿using Make3D.Views;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace Make3D.ViewModels
@@ -18,12 +11,21 @@ namespace Make3D.ViewModels
 
         internal MainWindowViewModel()
         {
-            Caption = "";
+            Caption = "Start Centre";
             base.PropertyChanged += MainWindowViewModel_PropertyChanged;
             SubView = new StartupView();
             NotificationManager.Subscribe("StartWithNewProject", StartWithNewProject);
             NotificationManager.Subscribe("NewProjectBack", NewProjectBack);
             NotificationManager.Subscribe("ShowEditor", ShowEditor);
+            NotificationManager.Subscribe("StartWithOldProject", StartWithOldProject);
+        }
+
+        private void StartWithOldProject(object param)
+        {
+            string projPath = param.ToString();
+            RecentlyUsedManager.UpdateRecentFiles(projPath);
+            NotificationManager.Notify("ShowEditor", null);
+            NotificationManager.Notify("ReloadProject", projPath);
         }
 
         public string Caption
