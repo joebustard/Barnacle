@@ -65,6 +65,27 @@ namespace VisualSolutionExplorer
             FirstFile = pfi.FilePath;
         }
 
+        public void CreateNewFile()
+        {
+            // ask the root folder to create a new file
+            if (ProjectFolders != null && ProjectFolders.Count > 0 && BaseFolder != "")
+            {
+                ProjectFolders[0].CreateNewFile();
+            }
+        }
+
+        public string[] GetRxportFiles(string v)
+        {
+            List<String> filesToExport = new List<string>();
+            String fln = System.IO.Path.GetDirectoryName(BaseFolder);
+            foreach (ProjectFolder pfo in ProjectFolders)
+            {
+                pfo.GetRxportFiles(v, fln, filesToExport);
+            }
+
+            return filesToExport.ToArray();
+        }
+
         public void Load(XmlDocument doc, XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -183,18 +204,6 @@ namespace VisualSolutionExplorer
             }
 
             solutionDoc.Save(solutionPath);
-        }
-
-        public string[] GetRxportFiles(string v)
-        {
-            List<String> filesToExport = new List<string>();
-            String fln = System.IO.Path.GetDirectoryName(BaseFolder);
-            foreach (ProjectFolder pfo in ProjectFolders)
-            {
-                pfo.GetRxportFiles(v, fln, filesToExport);
-            }
-
-            return filesToExport.ToArray();
         }
     }
 }

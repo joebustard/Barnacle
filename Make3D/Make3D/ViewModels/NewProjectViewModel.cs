@@ -126,8 +126,8 @@ namespace Make3D.ViewModels
                         ok = false;
                     }
 
-                    // can't reuse the project directory
-                    if (Directory.Exists(projPath))
+                    // Does the projectfile already exist
+                    if (File.Exists(projPath + name + ".bmf"))
                     {
                         ok = false;
                     }

@@ -1,4 +1,5 @@
 ﻿using Make3D.Models.Mru;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,71 +10,29 @@ namespace Make3D.ViewModels
 {
     internal class StartupViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private String appIdentity;
+        private Visibility openVisible;
         private List<RecentProjectViewModel> recentProjects;
 
-        public List<RecentProjectViewModel> RecentProjects
-        {
-            get { return recentProjects; }
-            set
-            {
-                if (value != recentProjects)
-                {
-                    recentProjects = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private Visibility openVisible;
-
-        public Visibility OpenVisible
-        {
-            get { return openVisible; }
-            set
-            {
-                openVisible = value;
-                NotifyPropertyChanged();
-            }
-        }
-
         private RecentProjectViewModel selectedProject;
-
-        public RecentProjectViewModel SelectedProject
-        {
-            get { return selectedProject; }
-            set
-            {
-                if (value != selectedProject)
-                {
-                    selectedProject = value;
-                    NotifyPropertyChanged();
-                    if (selectedProject != null)
-                    {
-                        OpenVisible = Visibility.Visible;
-                    }
-                    else
-                    {
-                        OpenVisible = Visibility.Hidden;
-                    }
-                }
-            }
-        }
-
-        private String appIdentity;
 
         public StartupViewModel()
         {
             AppIdentity = "Barnacle V" + SoftwareVersion;
             NewProjectCommand = new RelayCommand(OnNewProjectCommand);
             OpenProjectCommand = new RelayCommand(OnOpenProjectCommand);
+            BrowseProjectCommand = new RelayCommand(OnBrowseProjectCommand);
             recentProjects = new List<RecentProjectViewModel>();
             foreach (MruEntry mu in RecentlyUsedManager.RecentFilesList)
             {
-                RecentProjectViewModel vm = new RecentProjectViewModel();
-                vm.Path = mu.Path;
-                vm.Title = System.IO.Path.GetFileNameWithoutExtension(mu.Path);
+                if (System.IO.Path.GetExtension(mu.Path) == ".bmf")
+                {
+                    RecentProjectViewModel vm = new RecentProjectViewModel();
+                    vm.Path = mu.Path;
+                    vm.Title = System.IO.Path.GetFileNameWithoutExtension(mu.Path);
 
-                recentProjects.Add(vm);
+                    recentProjects.Add(vm);
+                }
             }
 
             NotifyPropertyChanged("RecentProjects");
@@ -96,8 +55,75 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand BrowseProjectCommand { get; set; }
         public ICommand NewProjectCommand { get; set; }
         public ICommand OpenProjectCommand { get; set; }
+
+        public Visibility OpenVisible
+        {
+            get
+            {
+                return openVisible;
+            }
+            set
+            {
+                openVisible = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public List<RecentProjectViewModel> RecentProjects
+        {
+            get
+            {
+                return recentProjects;
+            }
+            set
+            {
+                if (value != recentProjects)
+                {
+                    recentProjects = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public RecentProjectViewModel SelectedProject
+        {
+            get
+            {
+                return selectedProject;
+            }
+            set
+            {
+                if (value != selectedProject)
+                {
+                    selectedProject = value;
+                    NotifyPropertyChanged();
+                    if (selectedProject != null)
+                    {
+                        OpenVisible = Visibility.Visible;
+                    }
+                    else
+                    {
+                        OpenVisible = Visibility.Hidden;
+                    }
+                }
+            }
+        }
+
+        private void OnBrowseProjectCommand(object obj)
+        {
+            string projectRoot = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            projectRoot += "\\Barnacle";
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.InitialDirectory = projectRoot;
+            dlg.Filter = Document.ProjectFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                NotificationManager.Notify("StartWithOldProject", dlg.FileName);
+            }
+        }
 
         private void OnNewProjectCommand(object obj)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 
 namespace VisualSolutionExplorer
@@ -37,6 +38,11 @@ namespace VisualSolutionExplorer
         }
 
         public SolutionChangedDelegate SolutionChanged { get; set; }
+
+        public void CreateNewFile()
+        {
+            viewModel.CreateNewFile();
+        }
 
         public void NotifySolutionChanged(string e, string p1, string p2)
         {

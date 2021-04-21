@@ -9,12 +9,14 @@ namespace Make3D.Models.Mru
 {
     public class MostRecentlyUsedManager
     {
+        private int numberToRemember;
         private List<MruEntry> recentFilesList;
 
         public MostRecentlyUsedManager()
         {
             recentFilesList = new List<MruEntry>();
             Name = "Mru";
+            NumberToRemember = 10;
             LoadMru();
         }
 
@@ -22,6 +24,21 @@ namespace Make3D.Models.Mru
         /// Name should be just mru or recentfiles or recentprocs. No path or extension
         /// </summary>
         public string Name { get; set; }
+
+        public int NumberToRemember
+        {
+            get
+            {
+                return numberToRemember;
+            }
+            set
+            {
+                if (value > 0 && value < 100)
+                {
+                    numberToRemember = value;
+                }
+            }
+        }
 
         public List<MruEntry> RecentFilesList
         {
@@ -59,7 +76,7 @@ namespace Make3D.Models.Mru
                 string shortName = AbbreviatePath(fileName, 30);
                 MruEntry m = new MruEntry(shortName, fileName);
                 recentFilesList.Insert(0, m);
-                if (recentFilesList.Count > 10)
+                if (recentFilesList.Count > NumberToRemember)
                 {
                     recentFilesList.RemoveAt(recentFilesList.Count - 1);
                 }

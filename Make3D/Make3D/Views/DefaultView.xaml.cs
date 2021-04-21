@@ -127,9 +127,7 @@ namespace Make3D.Views
         private void NewFile(object param)
         {
             CheckSaveFirst(null);
-            BaseViewModel.Document.Clear();
-            //   Caption = BaseViewModel.Document.Caption;
-            NotificationManager.Notify("NewDocument", null);
+            SolutionExplorer.CreateNewFile();
         }
 
         private void NewProject(object param)
@@ -307,7 +305,7 @@ namespace Make3D.Views
                         try
                         {
                             // does the old directory contain the document we currently have open?
-                            // if so we need to tell the document to sortitself out
+                            // if so we need to tell the document to sort itself out
                             BaseViewModel.Document.RenameFolder(old, renamed);
                             Directory.Move(old, renamed);
                         }
@@ -359,7 +357,7 @@ namespace Make3D.Views
                                 {
                                     CheckSaveFirst(null);
                                     // just incase we are renaming the currently open doc
-                                    // make sure document knows the name has changed to avoid it saveing back into the old
+                                    // make sure document knows the name has changed to avoid it saving back into the old
                                     // file name
                                     BaseViewModel.Document.RenameCurrent(old, ren);
                                 }

@@ -616,6 +616,7 @@
       <SubType>Designer</SubType>
     </Resource>
     <Resource Include="Images\Buttons\open.png" />
+    <Resource Include="Images\Buttons\ExistingProject.png" />
     <Content Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>

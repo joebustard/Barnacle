@@ -152,8 +152,8 @@
     <Folder Name="backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
     <Folder Name="images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
 
-    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" />
-    <Folder Name="gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" Autoload="True" />
+    <Folder Name="export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" />
+    <Folder Name="gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" />
     <Folder Name="scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
     <Folder Name="docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
     </Folder>

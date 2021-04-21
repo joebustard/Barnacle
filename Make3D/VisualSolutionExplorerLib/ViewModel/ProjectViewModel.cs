@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -83,6 +84,14 @@ namespace VisualSolutionExplorer
                 this.folders.Add(pvm);
             }
             NotifyPropertyChanged("Folders");
+        }
+
+        internal void CreateNewFile()
+        {
+            if (folders.Count > 0)
+            {
+                folders[0].CreateNewFile();
+            }
         }
 
         protected void NotifyPropertyChanged(string propertyName)
