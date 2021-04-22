@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Views"
         mc:Ignorable="d"
-        Title="STL Exported Confirmation" Height="200" Width="800" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="Window_Loaded">
+        Title="STL Exported Confirmation" Height="200" Width="800" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />

@@ -8,9 +8,21 @@ namespace Make3D.ViewModels
     {
         private int buttonAreaHeight;
 
+        private Visibility cameraPaletteVisible;
+
+        public CameraViewModel()
+        {
+            CameraCommand = new RelayCommand(OnCameraCommand);
+            NotificationManager.Subscribe("CameraPaletteVisible", OnCameraPaletteVisibleChanged);
+            ButtonAreaHeight = 100;
+        }
+
         public int ButtonAreaHeight
         {
-            get { return buttonAreaHeight; }
+            get
+            {
+                return buttonAreaHeight;
+            }
             set
             {
                 if (buttonAreaHeight != value)
@@ -22,7 +34,6 @@ namespace Make3D.ViewModels
         }
 
         public ICommand CameraCommand { get; set; }
-        private Visibility cameraPaletteVisible;
 
         public Visibility CameraPaletteVisible
         {
@@ -39,13 +50,6 @@ namespace Make3D.ViewModels
                     NotifyPropertyChanged();
                 }
             }
-        }
-
-        public CameraViewModel()
-        {
-            CameraCommand = new RelayCommand(OnCameraCommand);
-            NotificationManager.Subscribe("CameraPaletteVisible", OnCameraPaletteVisibleChanged);
-            ButtonAreaHeight = 4 * 36;
         }
 
         private void OnCameraCommand(object obj)

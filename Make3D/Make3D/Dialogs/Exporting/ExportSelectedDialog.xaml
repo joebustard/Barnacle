@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Model Or Selection" Height="130" Width="200" WindowStyle="SingleBorderWindow"  ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowState="Normal">
+        Title="Model Or Selection" Height="130" Width="290" WindowStyle="SingleBorderWindow"  ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowState="Normal" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />

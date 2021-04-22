@@ -4,17 +4,19 @@
     <Description>
       Creates a basic folder structure to save the new model.
       The folders are
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
       /export
       A place to save any STL files exported from the project
       /gcode
       A place to save 3D Printer files created by the external slicer.
+      /docs
+      A place to store documentation such as design notes and build instructions
+      /images
+      A place to save any image files that will be used to create the model
       /scripts
       A place to save any limpet scripts
-      These folders are simply placeholders. Nothing is created in them.
+
+      These folders are simply placeholders.
+      A single model file called untitled.txt is created in the project root.
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
@@ -39,14 +41,14 @@
       A place to store sub assembly models
       /backup
       A place to store backups of the parts as they are developed
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
       /export
       A place to save any STL files exported from the project
       /gcode
       A place to save 3D Printer files created by the external slicer.
+      /docs
+      A place to store documentation such as design notes and build instructions
+      /images
+      A place to save any image files that will be used to create the model
       /scripts
       A place to save any limpet scripts
     </Description>
@@ -91,16 +93,16 @@
       A place to store sub assembly models
       /backup
       A place to store backups of the parts as they are developed
+      /export
+      A place to save any STL files exported from the project
+      /gcode
+      A place to save 3D Printer files created by the external slicer.
       /docs
       A place to store documentation such as design notes and build instructions
       /images
       A place to save any image files that will be used to create the model
       /images/ribs
       A place to save rib images to create the fuselage
-      /export
-      A place to save any STL files exported from the project
-      /gcode
-      A place to save 3D Printer files created by the external slicer.
       /scripts
       A place to save any limpet scripts
     </Description>
@@ -134,18 +136,21 @@
   <ProjectDefinition Name="Blank">
     <Description>
       Creates a basic folder structure without models.
+
       The folders are
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
       /export
       A place to save any STL files exported from the project
       /gcode
       A place to save 3D Printer files created by the external slicer.
+      /docs
+      A place to store documentation such as design notes and build instructions
+      /images
+      A place to save any image files that will be used to create the model
       /scripts
       A place to save any limpet scripts
-      These folders are simply placeholders. Nothing is created in them.
+
+      These folders are simply placeholders.
+      Nothing is created in them.
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
     </Folder>

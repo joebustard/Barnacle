@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Mesh Editor" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" MouseDown="Grid_MouseDown" MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" KeyDown="MeshGrid_KeyDown">
+        Title="Mesh Editor" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" MouseDown="Grid_MouseDown" MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" KeyDown="MeshGrid_KeyDown" Background="{StaticResource WindowBackBrush }">
     <Grid x:Name="MeshGrid" VerticalAlignment="Stretch" KeyDown="MeshGrid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -15,8 +15,8 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
-        
-        <Grid Grid.Column="0" Grid.Row="0" >
+
+        <Grid Grid.Column="0" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="32" />
                 <RowDefinition Height="32" />

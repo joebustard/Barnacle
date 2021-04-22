@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Make3D.Views"
               xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        Title="Pick Colour" Height="450" Width="800">
+        Title="Pick Colour" Height="450" Width="800" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.ColumnDefinitions>
         </Grid.ColumnDefinitions>

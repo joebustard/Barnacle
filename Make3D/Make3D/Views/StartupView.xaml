@@ -7,7 +7,7 @@
                           xmlns:Views="clr-namespace:Make3D.Views"
           xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource WindowBackBrush }">
     <UserControl.DataContext>
         <ViewModels:StartupViewModel />
     </UserControl.DataContext>
@@ -28,9 +28,9 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Content="{Binding AppIdentity}" FontSize="18" Margin="321,0,100,0" Width="144" />
-        <Button Grid.Row="2" Grid.Column="2" HorizontalAlignment="Center" MaxHeight="100" MaxWidth="200" FontSize="18" Command="{Binding NewProjectCommand}"  Width="120">New Project</Button>
-        <Button Grid.Row="4" Grid.Column="2" HorizontalAlignment="Center" MaxHeight="100" MaxWidth="200" FontSize="18" Command="{Binding BrowseProjectCommand}"  Width="120">Browse</Button>
-        <Button Grid.Row="6" Grid.Column="1" HorizontalAlignment="Center" MaxHeight="100" MaxWidth="200" FontSize="18" Command="{Binding OpenProjectCommand}"  Width="120" Visibility="{Binding OpenVisible}">Open Project</Button>
+        <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource LargeButton}" Command="{Binding NewProjectCommand}">New Project</Button>
+        <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource LargeButton}"  Command="{Binding BrowseProjectCommand}"  >Browse</Button>
+        <Button Grid.Row="6" Grid.Column="1" Style="{StaticResource LargeButton}"  Command="{Binding OpenProjectCommand}"   Visibility="{Binding OpenVisible}">Open Project</Button>
         <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center"  VerticalAlignment="Center" FontSize="18" Margin="205,11,230,11" Height="34" Width="130">Recent Projects</Label>
         <ListView Grid.Row="2" Grid.Column="1" Grid.RowSpan="4" Margin="4,4,4,4" BorderThickness="4" ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
             <ListView.ItemsPanel>

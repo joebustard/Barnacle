@@ -7,7 +7,7 @@
 
              xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="800">
+             d:DesignHeight="300" d:DesignWidth="800" Background="{StaticResource WindowBackBrush }">
     <UserControl.DataContext>
         <ViewModels:ObjectPaletteViewModel />
     </UserControl.DataContext>
@@ -16,56 +16,53 @@
             <RowDefinition Height="20" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Objects</Label>
+        <Label Grid.Row="0" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Primitives</Label>
 
-        <UniformGrid Grid.Row="1" Columns="2" VerticalAlignment="Top" MinHeight="280">
+        <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top" MinHeight="160">
 
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Box" ToolTip="Add a box object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Box" ToolTip="Add a box object">
                 <Image Source="/Make3D;component/Images/Buttons/Square.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Sphere" ToolTip="Add a sphere object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Sphere" ToolTip="Add a sphere object">
                 <Image Source="/Make3D;component/Images/Buttons/Circle.png" />
             </Button>
 
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Cylinder" ToolTip="Add a cylinder object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cylinder" ToolTip="Add a cylinder object">
                 <Image Source="/Make3D;component/Images/Buttons/Cylinder.png" />
             </Button>
 
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Roof" ToolTip="Add a roof object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Roof" ToolTip="Add a roof object">
                 <Image Source="/Make3D;component/Images/Buttons/Roof.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Cone" ToolTip="Add a cone object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cone" ToolTip="Add a cone object">
                 <Image Source="/Make3D;component/Images/Buttons/Cone.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid object">
                 <Image Source="/Make3D;component/Images/Buttons/Pyramid.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="RoundRoof" ToolTip="Add a round roof object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RoundRoof" ToolTip="Add a round roof object">
                 <Image Source="/Make3D;component/Images/Buttons/RoundRoof.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Torus" ToolTip="Add a torus object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Torus" ToolTip="Add a torus object">
                 <Image Source="/Make3D;component/Images/Buttons/Torus.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Cap" ToolTip="Add a cap object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cap" ToolTip="Add a cap object">
                 <Image Source="/Make3D;component/Images/Buttons/Cap.png" />
             </Button>
 
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Polygon" ToolTip="Add a polygon object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Polygon" ToolTip="Add a polygon object">
                 <Image Source="/Make3D;component/Images/Buttons/Polygon.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Tube" ToolTip="Add a tube object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Tube" ToolTip="Add a tube object">
                 <Image Source="/Make3D;component/Images/Buttons/Tube.png" />
             </Button>
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="RightAngle" ToolTip="Add a right angle object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RightAngle" ToolTip="Add a right angle object">
                 <Image Source="/Make3D;component/Images/Buttons/RightAngle.png" />
             </Button>
 
-            <Button Width="35" Height="35" Command="{Binding AddCommand}" CommandParameter="Pointy" ToolTip="Add a  pointy object" Margin="0,0,2,2">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pointy" ToolTip="Add a  pointy object">
                 <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
             </Button>
-
-          
-
         </UniformGrid>
     </Grid>
 </UserControl>
