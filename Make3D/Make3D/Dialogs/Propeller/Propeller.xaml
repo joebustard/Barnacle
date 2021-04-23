@@ -107,7 +107,7 @@
                 <TextBox Text="{Binding SpokeRadius}" Width="50" />
             </StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -155,6 +155,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />

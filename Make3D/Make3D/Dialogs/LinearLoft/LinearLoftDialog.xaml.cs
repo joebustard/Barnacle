@@ -18,6 +18,7 @@ namespace Make3D.Dialogs
 
     {
         private List<Point> line;
+
         private int numDivisions = 36;
 
         private int selectedPoint;
@@ -31,6 +32,40 @@ namespace Make3D.Dialogs
             selectedPoint = -1;
             DataContext = this;
             Camera.Distance = 2.0 * Camera.Distance;
+        }
+
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)

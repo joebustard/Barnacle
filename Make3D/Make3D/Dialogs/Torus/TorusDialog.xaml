@@ -31,14 +31,15 @@
                 <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="4*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Main Radius</Label>
-            <TextBox Grid.Column="1" Grid.Row="1" x:Name="MainRadiusBox" VerticalAlignment="Center" TextChanged="MainRadiusBox_TextChanged" />
-            <Grid Grid.Row="1" Grid.Column="2">
+            <Label Grid.Column="1" Grid.Row="1" VerticalAlignment="Center">Main Radius</Label>
+            <TextBox Grid.Column="2" Grid.Row="1" x:Name="MainRadiusBox" VerticalAlignment="Center" TextChanged="MainRadiusBox_TextChanged" />
+            <Grid Grid.Row="1" Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -47,9 +48,9 @@
                 <Button x:Name="MainRadiusMinus" Grid.Row="1" Click="MainRadiusMinus_Click">-</Button>
             </Grid>
 
-            <Label Grid.Column="0" Grid.Row="3" VerticalAlignment="Center">Horizontal Radius</Label>
-            <TextBox Grid.Column="1" Grid.Row="3" x:Name="HorizontalRadiusBox" VerticalAlignment="Center" TextChanged="HorizontalRadiusBox_TextChanged" />
-            <Grid Grid.Row="3" Grid.Column="2">
+            <Label Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">Horizontal Radius</Label>
+            <TextBox Grid.Column="2" Grid.Row="3" x:Name="HorizontalRadiusBox" VerticalAlignment="Center" TextChanged="HorizontalRadiusBox_TextChanged" />
+            <Grid Grid.Row="3" Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -58,9 +59,9 @@
                 <Button x:Name="HorizontalRadiusMinus" Grid.Row="1" Click="HorizontalRadiusMinus_Click">-</Button>
             </Grid>
 
-            <Label Grid.Column="0" Grid.Row="5" VerticalAlignment="Center">Vertical Radius</Label>
-            <TextBox Grid.Column="1" Grid.Row="5" x:Name="VerticalRadiusBox" VerticalAlignment="Center" TextChanged="VerticalRadiusBox_TextChanged" />
-            <Grid Grid.Row="5" Grid.Column="2">
+            <Label Grid.Column="1" Grid.Row="5" VerticalAlignment="Center">Vertical Radius</Label>
+            <TextBox Grid.Column="2" Grid.Row="5" x:Name="VerticalRadiusBox" VerticalAlignment="Center" TextChanged="VerticalRadiusBox_TextChanged" />
+            <Grid Grid.Row="5" Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
@@ -69,9 +70,9 @@
                 <Button x:Name="VerticalRadiusMinus" Grid.Row="1" Click="VerticalRadiusMinus_Click">-</Button>
             </Grid>
 
-            <Label Grid.Column="0" Grid.Row="7" VerticalAlignment="Center">Stretch</Label>
-            <TextBox Grid.Column="1" Grid.Row="7" x:Name="StretchBox" VerticalAlignment="Center" TextChanged="StretchBox_TextChanged" />
-            <Grid Grid.Row="7" Grid.Column="2">
+            <Label Grid.Column="1" Grid.Row="7" VerticalAlignment="Center">Stretch</Label>
+            <TextBox Grid.Column="2" Grid.Row="7" x:Name="StretchBox" VerticalAlignment="Center" TextChanged="StretchBox_TextChanged" />
+            <Grid Grid.Row="7" Grid.Column="3">
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition />
@@ -79,9 +80,9 @@
                 <Button x:Name="StretchPlus" Grid.Row="0" Click="StretchPlus_Click">+</Button>
                 <Button x:Name="StretchMinus" Grid.Row="1" Click="StretchMinus_Click">-</Button>
             </Grid>
-            <Label Grid.Column="0" Grid.Row="9" VerticalAlignment="Center">Type</Label>
+            <Label Grid.Column="1" Grid.Row="9" VerticalAlignment="Center">Type</Label>
 
-            <Grid Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="3">
+            <Grid Grid.Row="9" Grid.Column="2" Grid.ColumnSpan="3">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
@@ -93,10 +94,11 @@
                 <RadioButton x:Name="TypeCButton" Content="C" Grid.Column="2" Checked="TypeCButton_Checked" />
                 <RadioButton x:Name="TypeDButton" Content="D" Grid.Column="3" Checked="TypeDButton_Checked" />
             </Grid>
-            <Label x:Name="LumpsLabel" Grid.Row="10" Grid.Column="0">Lumps</Label>
-            <Slider x:Name="LumpSlider"  Grid.Column="1" Grid.ColumnSpan="2" Grid.Row="10" Minimum="1" Maximum="10" Value="2" ValueChanged="LumpSlider_ValueChanged" Height="31" VerticalAlignment="Bottom" />
+            <Label x:Name="LumpsLabel" Grid.Row="10" Grid.Column="1">Lumps</Label>
+            <Slider x:Name="LumpSlider"  Grid.Column="2" Grid.ColumnSpan="2" Grid.Row="10" Minimum="1" Maximum="10" Value="2" ValueChanged="LumpSlider_ValueChanged" Height="31" VerticalAlignment="Bottom" />
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" BorderBrush="Blue" BorderThickness="4">
+
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}" BorderThickness="4">
             <Viewport3D Name="viewport3D1"    MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -123,12 +125,21 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-
+        <Grid Grid.Column="0" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
+            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
+        </Grid>
         <Grid Grid.Column="1" Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />

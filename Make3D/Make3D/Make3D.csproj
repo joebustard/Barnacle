@@ -617,10 +617,10 @@
     </Resource>
     <Resource Include="Images\Buttons\open.png" />
     <Resource Include="Images\Buttons\ExistingProject.png" />
-    <Content Include="Properties\AssemblyInfo.tt">
+    <None Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
-    </Content>
+    </None>
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -638,7 +638,13 @@ Exit 0
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
+    <PreBuildEvent>rem update build number
+"$(DevEnvDir)TextTransform.exe"  "$(ProjectDir)Properties\AssemblyInfo.tt"</PreBuildEvent>
+  </PropertyGroup>
+  <!-- This line could already present in file. If it is so just skip it  -->
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- process *.tt templates on each build  -->
+  <PropertyGroup>
+    <TransformOnBuild>true</TransformOnBuild>
   </PropertyGroup>
 </Project>

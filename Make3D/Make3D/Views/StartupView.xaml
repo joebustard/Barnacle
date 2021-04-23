@@ -27,11 +27,12 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="1" HorizontalAlignment="Center" Content="{Binding AppIdentity}" FontSize="18" Margin="321,0,100,0" Width="144" />
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="3" Content="{Binding AppIdentity}" FontSize="20"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
         <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource LargeButton}" Command="{Binding NewProjectCommand}">New Project</Button>
         <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource LargeButton}"  Command="{Binding BrowseProjectCommand}"  >Browse</Button>
         <Button Grid.Row="6" Grid.Column="1" Style="{StaticResource LargeButton}"  Command="{Binding OpenProjectCommand}"   Visibility="{Binding OpenVisible}">Open Project</Button>
-        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center"  VerticalAlignment="Center" FontSize="18" Margin="205,11,230,11" Height="34" Width="130">Recent Projects</Label>
+        <Label Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center"  HorizontalContentAlignment="Center"
+ VerticalContentAlignment="Center" FontSize="18"  Height="34" Width="150">Recent Projects</Label>
         <ListView Grid.Row="2" Grid.Column="1" Grid.RowSpan="4" Margin="4,4,4,4" BorderThickness="4" ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -41,7 +42,7 @@
             <ListView.ItemTemplate>
 
                 <DataTemplate>
-                    <Border BorderThickness="2,2,2,2" BorderBrush="BlanchedAlmond" ToolTip="{Binding Path}">
+                    <Border BorderThickness="4,4,4,4" BorderBrush="BlanchedAlmond" ToolTip="{Binding Path}">
                         <StackPanel Orientation="Vertical" ToolTip="{Binding Path}">
                             <Image Width="48" Height="48" Source="/Make3D;component/Images/Buttons/ExistingProject.png" ToolTip="{Binding Path}" />
                             <Label HorizontalContentAlignment="Center" FontSize="16" Width="160" Content="{Binding Title}" ToolTip="{Binding Path}" />

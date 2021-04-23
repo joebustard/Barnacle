@@ -120,6 +120,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />

@@ -19,14 +19,14 @@
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
-            <Label x:Name="Number" Grid.Column="0" HorizontalAlignment="Stretch" Background="Blue" Foreground="AliceBlue" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+            <Label x:Name="Number" Grid.Column="0" HorizontalAlignment="Stretch"  VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
 
-            <TextBox x:Name="PositionX" Grid.Column="1" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionX_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+            <TextBox x:Name="PositionX" Grid.Column="1" HorizontalAlignment="Stretch"  TextChanged="PositionX_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
 
-            <TextBox x:Name="PositionY" Grid.Column="2" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionY_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
-            <TextBox x:Name="PositionZ" Grid.Column="3" HorizontalAlignment="Stretch" Background="AliceBlue" Foreground="Blue" TextChanged="PositionZ_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+            <TextBox x:Name="PositionY" Grid.Column="2" HorizontalAlignment="Stretch"  TextChanged="PositionY_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
+            <TextBox x:Name="PositionZ" Grid.Column="3" HorizontalAlignment="Stretch"  TextChanged="PositionZ_TextChanged" VerticalContentAlignment="Center" GotFocus="UserControl_GotFocus" />
         </Grid>
-        <Border Grid.Row="1" Background="Transparent" BorderBrush="Brown" BorderThickness="3" GotFocus="UserControl_GotFocus">
+        <Border Grid.Row="1" Style="{StaticResource ControlBorder}" Background="Transparent"  GotFocus="UserControl_GotFocus">
             <Canvas x:Name="PointCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDown="PointCanvas_MouseDown" MouseLeave="PointCanvas_MouseLeave" MouseMove="PointCanvas_MouseMove" MouseUp="PointCanvas_MouseUp" Background="BlanchedAlmond" GotFocus="UserControl_GotFocus" />
         </Border>
         <Grid Grid.Row="2">
@@ -36,7 +36,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Button x:Name="ResetButton" Content="Reset" Grid.Column="0" Click="ResetButton_Click" Margin="2,2,2,2" GotFocus="UserControl_GotFocus" />

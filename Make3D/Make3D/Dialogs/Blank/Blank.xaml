@@ -35,7 +35,7 @@
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 

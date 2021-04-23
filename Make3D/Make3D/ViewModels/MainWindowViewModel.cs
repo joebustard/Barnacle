@@ -11,21 +11,13 @@ namespace Make3D.ViewModels
 
         internal MainWindowViewModel()
         {
-            Caption = "Start Centre";
+            Caption = "";
             base.PropertyChanged += MainWindowViewModel_PropertyChanged;
             SubView = new StartupView();
             NotificationManager.Subscribe("StartWithNewProject", StartWithNewProject);
             NotificationManager.Subscribe("NewProjectBack", NewProjectBack);
             NotificationManager.Subscribe("ShowEditor", ShowEditor);
             NotificationManager.Subscribe("StartWithOldProject", StartWithOldProject);
-        }
-
-        private void StartWithOldProject(object param)
-        {
-            string projPath = param.ToString();
-            RecentlyUsedManager.UpdateRecentFiles(projPath);
-            NotificationManager.Notify("ShowEditor", null);
-            NotificationManager.Notify("ReloadProject", projPath);
         }
 
         public string Caption
@@ -81,6 +73,14 @@ namespace Make3D.ViewModels
         private void StartWithNewProject(object param)
         {
             SubView = new NewProjectView();
+        }
+
+        private void StartWithOldProject(object param)
+        {
+            string projPath = param.ToString();
+            RecentlyUsedManager.UpdateRecentFiles(projPath);
+            NotificationManager.Notify("ShowEditor", null);
+            NotificationManager.Notify("ReloadProject", projPath);
         }
     }
 }

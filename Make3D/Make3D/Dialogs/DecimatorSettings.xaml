@@ -5,20 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Decimator Settings" Height="130" Width="600" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
+        Title="Decimator Settings" Height="160" Width="600" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
             <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" x:Name="OriginalFacesLabel" />
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
+        <Label Grid.Row="0" x:Name="OriginalFacesLabel" Margin="10,0,0,0" />
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0,0,0">
             <Label>Target Faces</Label>
             <TextBox x:Name="TargetBox" Width="100" Margin="8,2,2,2" />
         </StackPanel>
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />

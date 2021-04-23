@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Make3D.Dialogs"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="Cornsilk">
+    <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
             <ColumnDefinition />
@@ -14,20 +14,20 @@
         <Grid Grid.Column="0" Background="Azure">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <Label Grid.Row="1" Background="Blue" Foreground="AliceBlue" HorizontalContentAlignment="Center" FontSize="14">Images</Label>
+            <Label Grid.Row="1" Style="{StaticResource InverseLabel}"  FontSize="14">Images</Label>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
@@ -36,22 +36,24 @@
                 <Button x:Name="LoadTop" Grid.Column="0" Click="LoadTop_Click" Content="Top image" IsEnabled="{Binding ControlsEnabled}" />
                 <Button x:Name="LoadSide" Grid.Column="1" Click="LoadSide_Click" Content="Side image" IsEnabled="{Binding ControlsEnabled}" />
             </Grid>
-            <Label Grid.Row="4" Background="Blue" Foreground="AliceBlue" HorizontalContentAlignment="Center" FontSize="14">Ribs</Label>
+            <Label Grid.Row="4" Style="{StaticResource InverseLabel}"   FontSize="14">Ribs</Label>
             <Button x:Name="AddRib" Grid.Row="5" Click="AddRib_Click" Content="Append" ToolTip="Add a new rib at the end" IsEnabled="{Binding ControlsEnabled}" />
             <Button x:Name="CopyRib" Grid.Row="6" Click="CopyRib_Click" Content="Copy" ToolTip="Copy the selected rib and insert a copy immediatey after it" IsEnabled="{Binding ControlsEnabled}" />
 
             <Button x:Name="DeleteRib" Grid.Row="7" Click="DeleteRib_Click" Content="Delete" ToolTip="Delete the selected rib" IsEnabled="{Binding ControlsEnabled}" />
 
-            <Label Grid.Row="9" Background="Blue" Foreground="AliceBlue" HorizontalContentAlignment="Center" FontSize="14">Rib Files</Label>
+            <Label Grid.Row="9" Style="{StaticResource InverseLabel}"  FontSize="14">Rib Files</Label>
             <Button x:Name="LoadRibs" Grid.Row="10" Click="LoadRibs_Click" Content="Load" ToolTip="Load a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
             <Button x:Name="SaveRibs" Grid.Row="11" Click="SaveRibs_Click" Content="Save" ToolTip="Save a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
         </Grid>
-        <ListView Grid.Column="1" ItemsSource="{Binding Ribs}" SelectedItem="{Binding SelectedRib}" Background="Bisque">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"></StackPanel>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-        </ListView>
+        <Border Style="{StaticResource ControlBorder}" Grid.Column="1">
+            <ListView ItemsSource="{Binding Ribs}" SelectedItem="{Binding SelectedRib}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+            </ListView>
+        </Border>
     </Grid>
 </UserControl>

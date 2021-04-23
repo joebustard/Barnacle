@@ -34,6 +34,69 @@ namespace Make3D.Dialogs
             EditorParameters.ToolName = "TwoShape";
         }
 
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    Redraw();
+                }
+            }
+        }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    Redraw();
+                }
+            }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            EditorParameters.Set("TopNumberOfPoints", TopShape.NumberOfPoints.ToString());
+            EditorParameters.Set("TopDistances", TopShape.GetDistances());
+            EditorParameters.Set("TopRotation", TopShape.RotationDegrees.ToString());
+
+            EditorParameters.Set("BottomNumberOfPoints", BottomShape.NumberOfPoints.ToString());
+            EditorParameters.Set("BottomDistances", BottomShape.GetDistances());
+            EditorParameters.Set("BottomRotation", BottomShape.RotationDegrees.ToString());
+
+            EditorParameters.Set("ScaleX", sizeX.ToString());
+            EditorParameters.Set("ScaleY", sizeY.ToString());
+            EditorParameters.Set("ScaleZ", sizeZ.ToString());
+            DialogResult = true;
+            Close();
+        }
+
+        private List<double> GetDoubles(int v, string s)
+        {
+            List<double> res = new List<double>();
+            string[] words = s.Split(',');
+            for (int i = 0; i < v && i < words.GetLength(0); i++)
+            {
+                double d = Convert.ToDouble(words[i]);
+                res.Add(d);
+            }
+            return res;
+        }
+
         private void OnBottomPointsChanged(List<Point> pnts)
         {
             bottomPoints = pnts;
@@ -158,7 +221,6 @@ namespace Make3D.Dialogs
                     Faces.Add(f + offset);
                 }
 
-
                 GeometryModel3D gm = GetModel();
                 MyModelGroup.Children.Clear();
                 if (floor != null)
@@ -253,35 +315,6 @@ namespace Make3D.Dialogs
             SizeX.Text = sizeX.ToString();
             SizeY.Text = sizeY.ToString();
             SizeZ.Text = sizeZ.ToString();
-        }
-
-        private List<double> GetDoubles(int v, string s)
-        {
-            List<double> res = new List<double>();
-            string[] words = s.Split(',');
-            for (int i = 0; i < v && i < words.GetLength(0); i++)
-            {
-                double d = Convert.ToDouble(words[i]);
-                res.Add(d);
-            }
-            return res;
-        }
-
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            EditorParameters.Set("TopNumberOfPoints", TopShape.NumberOfPoints.ToString());
-            EditorParameters.Set("TopDistances", TopShape.GetDistances());
-            EditorParameters.Set("TopRotation", TopShape.RotationDegrees.ToString());
-
-            EditorParameters.Set("BottomNumberOfPoints", BottomShape.NumberOfPoints.ToString());
-            EditorParameters.Set("BottomDistances", BottomShape.GetDistances());
-            EditorParameters.Set("BottomRotation", BottomShape.RotationDegrees.ToString());
-
-            EditorParameters.Set("ScaleX", sizeX.ToString());
-            EditorParameters.Set("ScaleY", sizeY.ToString());
-            EditorParameters.Set("ScaleZ", sizeZ.ToString());
-            DialogResult = true;
-            Close();
         }
     }
 }

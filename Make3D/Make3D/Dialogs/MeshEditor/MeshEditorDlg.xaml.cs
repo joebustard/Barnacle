@@ -50,6 +50,40 @@ namespace Make3D.Dialogs
             lastSelectedTriangle = null;
         }
 
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
         public bool ShowWireFrame
         {
             get

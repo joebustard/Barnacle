@@ -28,7 +28,8 @@
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <Custom:Ribbon  x:Name="MainRibbon" Grid.Row="0"  MinHeight="100" SelectionChanged="MainRibbon_SelectionChanged">
+        <Custom:Ribbon  x:Name="MainRibbon" Grid.Row="0"  MinHeight="140" SelectionChanged="MainRibbon_SelectionChanged" Background="{StaticResource WindowBackBrush}" Foreground="{StaticResource TextBrush}" FontSize="14">
+
             <Custom:Ribbon.QuickAccessToolBar>
                 <Custom:RibbonQuickAccessToolBar>
                     <Custom:RibbonButton x:Name="New" SmallImageSource="/images/buttons/new_file.png" Command="{Binding NewCommand}" />

@@ -23,7 +23,7 @@
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
 
-            <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="0" Grid.Column="0" Padding="2,2,2,10">
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="0" Grid.Column="0" Padding="2,2,2,10">
                 <StackPanel>
                     <UniformGrid>
                         <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" />
@@ -40,7 +40,7 @@
                 </StackPanel>
             </Border>
         </Grid>
-        <Border Grid.Row="0"  Grid.Column="1" Background="AliceBlue" BorderThickness="4" MouseMove="Viewport_MouseMove" BorderBrush="Blue">
+        <Border Grid.Row="0"  Grid.Column="1" Style="{StaticResource ControlBorder}" MouseMove="Viewport_MouseMove">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown"
               MouseWheel="Viewport_MouseWheel">
@@ -68,7 +68,7 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Border Grid.Column="1" Grid.Row="1" BorderThickness="4" BorderBrush="Blue" Background="Azure">
+        <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ControlBorder}">
             <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
                 <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
                     <Canvas.LayoutTransform>
@@ -84,6 +84,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <CheckBox Content="Floor" Grid.Column="0" Margin="4,0,0,0" IsChecked="{Binding ShowFloor}" VerticalContentAlignment="Center" />
             <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" VerticalContentAlignment="Center" />

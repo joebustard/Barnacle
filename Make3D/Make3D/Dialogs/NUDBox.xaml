@@ -16,7 +16,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBox Name="NUDTextBox"  Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" TextAlignment="Left" PreviewKeyDown="NUDTextBox_PreviewKeyDown" PreviewKeyUp="NUDTextBox_PreviewKeyUp" TextChanged="NUDTextBox_TextChanged" MaxWidth="30" />
-        <RepeatButton Name="NUDButtonUP"  Grid.Column="1" Grid.Row="0" FontSize="8" FontFamily="Marlett" VerticalContentAlignment="Center"  Height="13" Click="NUDButtonUP_Click">5</RepeatButton>
-        <RepeatButton Name="NUDButtonDown"  Grid.Column="1" Grid.Row="1" FontSize="8"  FontFamily="Marlett" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"  VerticalAlignment="Bottom" Click="NUDButtonDown_Click">6</RepeatButton>
+        <RepeatButton Name="NUDButtonUP"  Grid.Column="1" Grid.Row="0" FontSize="8" FontFamily="Marlett"  Height="13" Click="NUDButtonUP_Click">5</RepeatButton>
+        <RepeatButton Name="NUDButtonDown"  Grid.Column="1" Grid.Row="1" FontSize="8"  FontFamily="Marlett"  HorizontalContentAlignment="Center"  VerticalAlignment="Bottom" Click="NUDButtonDown_Click">6</RepeatButton>
     </Grid>
 </UserControl>

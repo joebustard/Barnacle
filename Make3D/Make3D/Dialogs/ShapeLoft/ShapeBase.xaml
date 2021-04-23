@@ -8,15 +8,16 @@
              d:DesignHeight="450" d:DesignWidth="400" Loaded="UserControl_Loaded" SizeChanged="PointCanvas_SizeChanged" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
+            <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="2*" />
         </Grid.ColumnDefinitions>
-        <Label x:Name="HeaderLabel" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" HorizontalContentAlignment="Center" Background="Blue" Foreground="AliceBlue">Header</Label>
-        <Grid Grid.Column="0" Grid.Row="1">
+        <Label x:Name="HeaderLabel" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Style="{StaticResource InverseLabel}"  FontSize="14">Header</Label>
+        <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -58,6 +59,6 @@
             <Label Grid.Column="0" Grid.Row="4">Point Distance</Label>
             <Label Grid.Column="1" Grid.Row="4" x:Name="DistanceLabel" />
         </Grid>
-        <Canvas x:Name="PointCanvas" Grid.Column="1"  Grid.Row="1" MaxWidth="600" MaxHeight="600" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AntiqueWhite" MouseDown="PointCanvas_MouseDown" MouseMove="PointCanvas_MouseMove" MouseUp="PointCanvas_MouseUp" MouseLeave="PointCanvas_MouseLeave" SizeChanged="PointCanvas_SizeChanged" />
+        <Canvas x:Name="PointCanvas" Grid.Column="2"  Grid.Row="1" MaxWidth="600" MaxHeight="600" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="AntiqueWhite" MouseDown="PointCanvas_MouseDown" MouseMove="PointCanvas_MouseMove" MouseUp="PointCanvas_MouseUp" MouseLeave="PointCanvas_MouseLeave" SizeChanged="PointCanvas_SizeChanged" />
     </Grid>
 </UserControl>

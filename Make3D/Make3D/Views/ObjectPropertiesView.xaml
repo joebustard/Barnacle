@@ -92,13 +92,13 @@
         </UniformGrid>
         <Label Grid.Row="11"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}" >Size</Label>
         <Label Grid.Row="12"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Red" Grid.RowSpan="3" >L(X)</Label>
-        <TextBox Grid.Row="12" Grid.Column="1" FontSize="14" Text="{Binding ScaleX }" Grid.RowSpan="3" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
+        <TextBox Grid.Row="12" Grid.Column="1" FontSize="14" Text="{Binding ScaleX }"  IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
 
         <Label Grid.Row="13"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Green"   Grid.RowSpan="2">H(Y)</Label>
-        <TextBox Grid.Row="13" Grid.Column="1" FontSize="14" Text="{Binding ScaleY }" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2"  Grid.RowSpan="2" />
+        <TextBox Grid.Row="13" Grid.Column="1" FontSize="14" Text="{Binding ScaleY }" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
 
         <Label Grid.Row="14"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Blue"  Grid.RowSpan="2">W(Z)</Label>
-        <TextBox Grid.Row="14" Grid.Column="1" FontSize="14" Text="{Binding ScaleZ }" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2"  Grid.RowSpan="2" />
+        <TextBox Grid.Row="14" Grid.Column="1" FontSize="14" Text="{Binding ScaleZ }" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
 
         <Label Grid.Row="15"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}"  >Percent</Label>
         <TextBox Grid.Row="16" Grid.Column="1" FontSize="14" Text="{Binding PercentScale}"  IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2"  Grid.RowSpan="2" />

@@ -12,10 +12,11 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="450" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Grid.Row="0">
+        <Grid Grid.Column="1" Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
@@ -66,7 +67,7 @@
                 <TextBox Width="30" Text="{Binding DihedralAngle}" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
+        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -95,11 +96,12 @@
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="0" Grid.Row="1" Margin="10,0">
+        <Grid Grid.Column="1" Grid.Row="1" Margin="10,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -109,11 +111,12 @@
             <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
         </Grid>
 
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Column="2" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />

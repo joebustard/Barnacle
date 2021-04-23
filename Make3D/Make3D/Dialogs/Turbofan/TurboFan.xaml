@@ -33,57 +33,57 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">No. of Blades</Label>
                 <Slider Value="{Binding NumberOfBlades}" Minimum="4" Maximum="100" Width="200" />
                 <TextBox Text="{Binding NumberOfBlades}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">Blade Overlap</Label>
                 <Slider Value="{Binding BladeOverlap}" Minimum="0" Maximum="99" Width="200" />
                 <TextBox Text="{Binding BladeOverlap}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
+            <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">Blade Length</Label>
                 <Slider Value="{Binding BladeLength}" Minimum="10" Maximum="100" Width="200" />
                 <TextBox Text="{Binding BladeLength}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <StackPanel Grid.Row="4" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">Blade Pitch</Label>
                 <Slider Value="{Binding BladePitch}" Minimum="1" Maximum="90" Width="200" />
                 <TextBox Text="{Binding BladePitch}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
+            <StackPanel Grid.Row="5" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">Blade Thickness</Label>
                 <Slider Value="{Binding BladeThickness}" Minimum="1" Maximum="5" Width="200" />
                 <TextBox Text="{Binding BladeThickness}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <StackPanel Grid.Row="6" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">Hub Radius</Label>
                 <Slider Value="{Binding HubRadius}" Minimum="1" Maximum="100" Width="200" />
                 <TextBox Text="{Binding HubRadius}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
+            <StackPanel Grid.Row="7" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="100">Blade Alignment</Label>
                 <RadioButton GroupName="BladeAlignGroup" VerticalAlignment="Center" IsChecked="{Binding Anticlockwise}">Anti-clockwise</RadioButton>
                 <RadioButton GroupName="BladeAlignGroup" Margin="8,0,0,0" IsChecked="{Binding Clockwise}"  VerticalAlignment="Center">Clockwise</RadioButton>
             </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
+            <StackPanel Grid.Row="9" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="90" ToolTip="Include a solid disk behind the blades">Backing Disk</Label>
                 <CheckBox VerticalAlignment="Center" IsChecked="{Binding SupportDisk}"></CheckBox>
             </StackPanel>
-            <StackPanel Grid.Row="10" Orientation="Horizontal">
+            <StackPanel Grid.Row="10" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="90" >Disk Thickness</Label>
                 <Slider Value="{Binding DiskThickness}" Minimum="1" Maximum="10" Width="200" LargeChange="1" />
                 <TextBox Text="{Binding DiskThickness}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="11" Orientation="Horizontal">
+            <StackPanel Grid.Row="11" Orientation="Horizontal" Margin="10,0,0,0">
                 <Label Width="90" >Disk Offset</Label>
                 <Slider Value="{Binding DiskOffset}" Minimum="0.0" Maximum="1" Width="200" LargeChange="0.1"  TickFrequency="0.1" />
                 <TextBox Text="{Binding DiskOffset}" Width="50" />
             </StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -131,6 +131,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />

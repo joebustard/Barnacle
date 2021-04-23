@@ -27,7 +27,7 @@
                 <RowDefinition />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
-            <Border BorderBrush="Blue" BorderThickness="2" Grid.Row="0" Grid.Column="0">
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="0" Grid.Column="0">
                 <UniformGrid>
                     <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" />
                     <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2" />
@@ -35,30 +35,30 @@
                     <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2" />
                 </UniformGrid>
             </Border>
-            <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Type</Label>
                 <ComboBox VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding TrackTypes}" SelectedItem="{Binding SelectedTrackType}" MinWidth="100"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="2">
+            <StackPanel Orientation="Horizontal" Grid.Row="2"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">No. Of Links</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding NoOfLinks}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowLinkMarkers}">Link Markers</CheckBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Thickness</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Thickness}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowOutline}">Outline</CheckBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="4">
+            <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Spud Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding SpudSize}" MinWidth="50"></TextBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="5">
+            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center" Visibility="{Binding ShowGuideSize}">Guide Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding GuideSize}" MinWidth="50" Visibility="{Binding ShowGuideSize}"></TextBox>
             </StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" BorderThickness="4" BorderBrush="Blue">
+        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -85,7 +85,7 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Border Grid.Column="1" Grid.Row="1" BorderThickness="4" BorderBrush="Blue" Background="Azure">
+        <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ControlBorder}" Background="Azure">
             <ScrollViewer  HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
                 <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
                     <Canvas.LayoutTransform>
@@ -105,6 +105,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
             </Grid.ColumnDefinitions>
             <Label x:Name="PositionLabel" Grid.Column="0" />
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />

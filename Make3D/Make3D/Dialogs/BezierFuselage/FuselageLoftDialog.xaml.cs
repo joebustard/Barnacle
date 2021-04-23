@@ -51,6 +51,47 @@ namespace Make3D.Dialogs
             }
         }
 
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    Redraw();
+                }
+            }
+        }
+
+        public override bool ShowFloor
+        {
+            get
+            {
+                return showFloor;
+            }
+            set
+            {
+                if (showFloor != value)
+                {
+                    showFloor = value;
+                    NotifyPropertyChanged();
+                    Redraw();
+                }
+            }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            RecordEditorParameters();
+            DialogResult = true;
+            Close();
+        }
+
         private void AddBulkhead_Click(object sender, RoutedEventArgs e)
         {
             double distance = bulkHeads[bulkHeads.Count - 1].GetDistance() + 5;
@@ -79,6 +120,13 @@ namespace Make3D.Dialogs
 
                 bulkHeads[i + 1].Set(pnts, ctrls, dists);
             }
+        }
+
+        private void GetXY(string v, ref double x, ref double y)
+        {
+            string[] words = v.Split('!');
+            x = Convert.ToDouble(words[0]);
+            y = Convert.ToDouble(words[1]);
         }
 
         private void InsertBulkhead_Click(object sender, RoutedEventArgs e)
@@ -131,11 +179,84 @@ namespace Make3D.Dialogs
             }
         }
 
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        private void PerformAction(int id, string cmd)
         {
-            RecordEditorParameters();
-            DialogResult = true;
-            Close();
+            if (cmd == "CopyToNext")
+            {
+                CopyOn(id);
+            }
+            else if (cmd == "Refresh")
+            {
+                if (bulkHeads.Count > 1)
+                {
+                    Redraw();
+                }
+            }
+            else if (cmd == "BulkheadFocused")
+            {
+                selectedBulkhead = id;
+            }
+        }
+
+        private int PointsPerBulkHead()
+        {
+            double res = bulkHeads[0].BzLines.GetLength(0);
+            res = res * (1.0 / bezierStep) + 1;
+
+            return (int)res;
+        }
+
+        private void PrependBulkhead_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (BulkheadControl c in bulkHeads)
+            {
+                c.IdNumber++;
+                c.FuselageBulkHead.OffsetX += 5;
+            }
+
+            FuselageBulkhead fb = new FuselageBulkhead();
+            fb.Depth = 40;
+            fb.Height = 40;
+            fb.OffsetX = 0;
+
+            BulkheadControl bhc = new BulkheadControl();
+            bhc.FuselageBulkHead = fb;
+            bhc.OnPerformAction += PerformAction;
+            bhc.IdNumber = 1;
+            bulkHeads.Insert(0, bhc);
+            bhc.CopyToNextButton.Visibility = Visibility.Visible;
+
+            foreach (BulkheadControl c in bulkHeads)
+            {
+                c.Redraw();
+            }
+            NotifyPropertyChanged("BulkHeads");
+        }
+
+        private void Read(string f)
+        {
+            try
+            {
+                ObservableCollection<BulkheadControl> tmp = new ObservableCollection<BulkheadControl>();
+                XmlDocument doc = new XmlDocument();
+                doc.Load(f);
+
+                XmlNode docNode = doc.SelectSingleNode("Fuselage");
+                XmlNodeList nodeList = docNode.SelectNodes("Bulkhead");
+                foreach (XmlNode nd in nodeList)
+                {
+                    BulkheadControl bhc = new BulkheadControl();
+                    bhc.Read(doc, nd);
+                    bhc.OnPerformAction += PerformAction;
+                    tmp.Add(bhc);
+                }
+                BulkHeads = tmp;
+                NotifyPropertyChanged("BulkHeads");
+                Redraw();
+            }
+            catch
+            {
+            }
         }
 
         private void RecordEditorParameters()
@@ -147,6 +268,132 @@ namespace Make3D.Dialogs
                 string text = bulkHeads[i].ToEditorParameters();
                 EditorParameters.Set(name, text);
             }
+        }
+
+        private void Redraw()
+        {
+            double radius = 5;
+            if (bulkHeads != null && bulkHeads.Count > 0 && bulkHeads[bulkHeads.Count - 1].BzLines[0] != null)
+            {
+                int pointsPerBulkHead = PointsPerBulkHead();
+                // create a place to store the indices of the vertices for each bulkhead.
+                // Used to make the triangles
+                indexFrame = new int[bulkHeads.Count, pointsPerBulkHead];
+                Vertices.Clear();
+
+                // create a place to store all the points from the bulkheads
+                List<Point>[] blkPoints = new List<Point>[bulkHeads.Count];
+                for (int i = 0; i < bulkHeads.Count; i++)
+                {
+                    blkPoints[i] = new List<Point>();
+                }
+
+                double x = 0;
+
+                int pntIndex;
+
+                // calculate the points for each bulk head
+                for (int blk = 0; blk < bulkHeads.Count; blk++)
+                {
+                    pntIndex = 0;
+
+                    x = bulkHeads[blk].FuselageBulkHead.OffsetX;
+
+                    for (int line = 0; line < bulkHeads[blk].BzLines.GetLength(0); line++)
+                    {
+                        double lim = 1;
+                        if (line == 3)
+                        {
+                            lim += bezierStep;
+                        }
+                        for (double t = 0; t < lim; t += bezierStep)
+                        {
+                            Point p = bulkHeads[blk].BzLines[line].GetCoord(t);
+                            blkPoints[blk].Add(p);
+                            int v = AddVertice(new Point3D(x, -p.Y * radius, p.X * radius));
+                            indexFrame[blk, pntIndex++] = v;
+                        }
+                    }
+                }
+
+                Faces.Clear();
+
+                int g;
+                for (int blk = 0; blk < bulkHeads.Count - 1; blk++)
+                {
+                    for (int f = 0; f < pointsPerBulkHead; f++)
+                    {
+                        g = f + 1;
+                        if (g >= pointsPerBulkHead)
+                        {
+                            g = 0;
+                        }
+                        Faces.Add(indexFrame[blk, f]);
+                        Faces.Add(indexFrame[blk + 1, g]);
+                        Faces.Add(indexFrame[blk + 1, f]);
+
+                        Faces.Add(indexFrame[blk, f]);
+                        Faces.Add(indexFrame[blk, g]);
+                        Faces.Add(indexFrame[blk + 1, g]);
+                    }
+                }
+                // close left side
+                int leftCentre = AddVertice(new Point3D(0, 0, 0));
+                for (int i = 0; i < pointsPerBulkHead - 1; i++)
+                {
+                    Faces.Add(leftCentre);
+                    Faces.Add(indexFrame[0, i + 1]);
+                    Faces.Add(indexFrame[0, i]);
+                }
+
+                // close right side
+                int rightCentre = AddVertice(new Point3D(x, 0, 0));
+                for (int i = 0; i < pointsPerBulkHead - 1; i++)
+                {
+                    Faces.Add(rightCentre);
+                    Faces.Add(indexFrame[bulkHeads.Count - 1, i]);
+                    Faces.Add(indexFrame[bulkHeads.Count - 1, i + 1]);
+                }
+
+                CentreVertices();
+                SetMesh();
+            }
+        }
+
+        private void SaveBulkhead_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = filter;
+            if (dlg.ShowDialog() == true)
+            {
+                string f = dlg.FileName;
+                Write(f);
+            }
+        }
+
+        private void SetMesh()
+        {
+            GeometryModel3D gm = GetModel();
+            MyModelGroup.Children.Clear();
+            if (floor != null)
+            {
+                MyModelGroup.Children.Add(floor.FloorMesh);
+                foreach (GeometryModel3D m in grid.Group.Children)
+                {
+                    MyModelGroup.Children.Add(m);
+                }
+            }
+            MyModelGroup.Children.Add(gm);
+        }
+
+        private void TopBulkhead_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (BulkheadControl ob in bulkHeads)
+            {
+                ob.MoveToTop();
+            }
+            NotifyPropertyChanged("BulkHeads");
+            Redraw();
         }
 
         private bool UnpackEditorParameters()
@@ -259,219 +506,6 @@ namespace Make3D.Dialogs
                 }
             }
             return found;
-        }
-
-        private void GetXY(string v, ref double x, ref double y)
-        {
-            string[] words = v.Split('!');
-            x = Convert.ToDouble(words[0]);
-            y = Convert.ToDouble(words[1]);
-        }
-
-        private void PerformAction(int id, string cmd)
-        {
-            if (cmd == "CopyToNext")
-            {
-                CopyOn(id);
-            }
-            else if (cmd == "Refresh")
-            {
-                if (bulkHeads.Count > 1)
-                {
-                    Redraw();
-                }
-            }
-            else if (cmd == "BulkheadFocused")
-            {
-                selectedBulkhead = id;
-            }
-        }
-
-        private void PrependBulkhead_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (BulkheadControl c in bulkHeads)
-            {
-                c.IdNumber++;
-                c.FuselageBulkHead.OffsetX += 5;
-            }
-
-            FuselageBulkhead fb = new FuselageBulkhead();
-            fb.Depth = 40;
-            fb.Height = 40;
-            fb.OffsetX = 0;
-
-            BulkheadControl bhc = new BulkheadControl();
-            bhc.FuselageBulkHead = fb;
-            bhc.OnPerformAction += PerformAction;
-            bhc.IdNumber = 1;
-            bulkHeads.Insert(0, bhc);
-            bhc.CopyToNextButton.Visibility = Visibility.Visible;
-
-            foreach (BulkheadControl c in bulkHeads)
-            {
-                c.Redraw();
-            }
-            NotifyPropertyChanged("BulkHeads");
-        }
-
-        private void Read(string f)
-        {
-            try
-            {
-                ObservableCollection<BulkheadControl> tmp = new ObservableCollection<BulkheadControl>();
-                XmlDocument doc = new XmlDocument();
-                doc.Load(f);
-
-                XmlNode docNode = doc.SelectSingleNode("Fuselage");
-                XmlNodeList nodeList = docNode.SelectNodes("Bulkhead");
-                foreach (XmlNode nd in nodeList)
-                {
-                    BulkheadControl bhc = new BulkheadControl();
-                    bhc.Read(doc, nd);
-                    bhc.OnPerformAction += PerformAction;
-                    tmp.Add(bhc);
-                }
-                BulkHeads = tmp;
-                NotifyPropertyChanged("BulkHeads");
-                Redraw();
-            }
-            catch
-            {
-            }
-        }
-
-        private void Redraw()
-        {
-            double radius = 5;
-            if (bulkHeads != null && bulkHeads.Count > 0 && bulkHeads[bulkHeads.Count - 1].BzLines[0] != null)
-            {
-                int pointsPerBulkHead = PointsPerBulkHead();
-                // create a place to store the indices of the vertices for each bulkhead.
-                // Used to make the triangles
-                indexFrame = new int[bulkHeads.Count, pointsPerBulkHead];
-                Vertices.Clear();
-
-                // create a place to store all the points from the bulkheads
-                List<Point>[] blkPoints = new List<Point>[bulkHeads.Count];
-                for (int i = 0; i < bulkHeads.Count; i++)
-                {
-                    blkPoints[i] = new List<Point>();
-                }
-
-                double x = 0;
-
-                int pntIndex;
-
-                // calculate the points for each bulk head
-                for (int blk = 0; blk < bulkHeads.Count; blk++)
-                {
-                    pntIndex = 0;
-
-                    x = bulkHeads[blk].FuselageBulkHead.OffsetX;
-
-                    for (int line = 0; line < bulkHeads[blk].BzLines.GetLength(0); line++)
-                    {
-                        double lim = 1;
-                        if (line == 3)
-                        {
-                            lim += bezierStep;
-                        }
-                        for (double t = 0; t < lim; t += bezierStep)
-                        {
-                            Point p = bulkHeads[blk].BzLines[line].GetCoord(t);
-                            blkPoints[blk].Add(p);
-                            int v = AddVertice(new Point3D(x, -p.Y * radius, p.X * radius));
-                            indexFrame[blk, pntIndex++] = v;
-                        }
-                    }
-                }
-
-                Faces.Clear();
-
-                int g;
-                for (int blk = 0; blk < bulkHeads.Count - 1; blk++)
-                {
-                    for (int f = 0; f < pointsPerBulkHead; f++)
-                    {
-                        g = f + 1;
-                        if (g >= pointsPerBulkHead)
-                        {
-                            g = 0;
-                        }
-                        Faces.Add(indexFrame[blk, f]);
-                        Faces.Add(indexFrame[blk + 1, g]);
-                        Faces.Add(indexFrame[blk + 1, f]);
-
-                        Faces.Add(indexFrame[blk, f]);
-                        Faces.Add(indexFrame[blk, g]);
-                        Faces.Add(indexFrame[blk + 1, g]);
-                    }
-                }
-                // close left side
-                int leftCentre = AddVertice(new Point3D(0, 0, 0));
-                for (int i = 0; i < pointsPerBulkHead - 1; i++)
-                {
-                    Faces.Add(leftCentre);
-                    Faces.Add(indexFrame[0, i + 1]);
-                    Faces.Add(indexFrame[0, i]);
-                }
-
-                // close right side
-                int rightCentre = AddVertice(new Point3D(x, 0, 0));
-                for (int i = 0; i < pointsPerBulkHead - 1; i++)
-                {
-                    Faces.Add(rightCentre);
-                    Faces.Add(indexFrame[bulkHeads.Count - 1, i]);
-                    Faces.Add(indexFrame[bulkHeads.Count - 1, i + 1]);
-                }
-
-                CentreVertices();
-                SetMesh();
-            }
-        }
-
-        private int PointsPerBulkHead()
-        {
-            double res = bulkHeads[0].BzLines.GetLength(0);
-            res = res * (1.0 / bezierStep) + 1;
-
-            return (int)res;
-        }
-
-        private void SaveBulkhead_Click(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.Filter = filter;
-            if (dlg.ShowDialog() == true)
-            {
-                string f = dlg.FileName;
-                Write(f);
-            }
-        }
-
-        private void SetMesh()
-        {
-            GeometryModel3D gm = GetModel();
-            MyModelGroup.Children.Clear();
-            if (floor != null)
-            {
-                MyModelGroup.Children.Add(floor.FloorMesh);
-                foreach (GeometryModel3D m in grid.Group.Children)
-                {
-                    MyModelGroup.Children.Add(m);
-                }
-            }
-            MyModelGroup.Children.Add(gm);
-        }
-
-        private void TopBulkhead_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (BulkheadControl ob in bulkHeads)
-            {
-                ob.MoveToTop();
-            }
-            NotifyPropertyChanged("BulkHeads");
-            Redraw();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

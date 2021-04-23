@@ -43,8 +43,8 @@
 
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="9*" />
+                <ColumnDefinition Width="160" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
@@ -56,11 +56,11 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Content="Prepend Bulkhead" x:Name="PrependBulkhead" Click="PrependBulkhead_Click" Margin="2,2,2,2" ToolTip="Insert a new bulkhead before the first one" />
-                <Button Grid.Row="1" Content="Insert Bulkhead" x:Name="InsertBulkhead" Click="InsertBulkhead_Click" Margin="2,2,2,2" ToolTip="insert a new bulkhead after the current one" />
-                <Button Grid.Row="2" Content="Append Bulkhead" x:Name="AddBulkhead" Click="AddBulkhead_Click" Margin="2,2,2,2" ToolTip="Add a new bulkhead after the last one" />
+                <Button Grid.Row="0" Width="140" Content="Prepend Bulkhead" x:Name="PrependBulkhead" Click="PrependBulkhead_Click" Margin="2,2,2,2" ToolTip="Insert a new bulkhead before the first one" />
+                <Button Grid.Row="1" Width="140" Content="Insert Bulkhead" x:Name="InsertBulkhead" Click="InsertBulkhead_Click" Margin="2,2,2,2" ToolTip="insert a new bulkhead after the current one" />
+                <Button Grid.Row="2" Width="140" Content="Append Bulkhead" x:Name="AddBulkhead" Click="AddBulkhead_Click" Margin="2,2,2,2" ToolTip="Add a new bulkhead after the last one" />
 
-                <Button Grid.Row="3" Content="Level Bulkhead Tops" x:Name="TopBulkhead" Click="TopBulkhead_Click" Margin="2,2,2,2" ToolTip="Level bulkhead tops" />
+                <Button Grid.Row="3" Width="140" Content="Level Bulkhead Tops" x:Name="TopBulkhead" Click="TopBulkhead_Click" Margin="2,2,2,2" ToolTip="Level bulkhead tops" />
 
                 <Button Grid.Row="5" Content="Load" x:Name="LoadBulkhead" Click="LoadBulkhead_Click" Margin="2,2,2,2" ToolTip="Load fuselage definition from file" />
                 <Button Grid.Row="6" Content="Save" x:Name="SaveBulkhead" Click="SaveBulkhead_Click" Margin="2,2,2,2" ToolTip="Save fuselage definition in file" />
@@ -73,18 +73,30 @@
                 </ListView.ItemsPanel>
             </ListView>
         </Grid>
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox Content="Floor" Grid.Column="1" IsChecked="{Binding ShowFloor}" />
+                <CheckBox Content="Axies" Grid.Column="2" IsChecked="{Binding ShowAxies}" />
+            </Grid>
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="10" />
                 </Grid.ColumnDefinitions>
-                <Button x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-                <Button x:Name="OkButton" Content="Ok" Grid.Column="1" Click="Ok_Click" Margin="2,2,2,2" />
+                <Button Grid.Column="1" x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
+                <Button x:Name="OkButton" Content="Ok" Grid.Column="2" Click="Ok_Click" Margin="2,2,2,2" />
             </Grid>
         </Grid>
     </Grid>

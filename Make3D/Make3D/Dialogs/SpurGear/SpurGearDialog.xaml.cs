@@ -14,15 +14,15 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class SpurGearDialog : BaseModellerDialog, INotifyPropertyChanged
     {
-        private double thickness;
-        private double outterRadius;
         private int numberOfTeeth;
-        private double teethBaseWidth;
-        private double teethBaseHeight;
-        private double teethTopWidth;
-        private double teethTopHeight;
-        private bool updateDisplayWhenChanged;
+        private double outterRadius;
         private List<System.Windows.Point> points;
+        private double teethBaseHeight;
+        private double teethBaseWidth;
+        private double teethTopHeight;
+        private double teethTopWidth;
+        private double thickness;
+        private bool updateDisplayWhenChanged;
 
         public SpurGearDialog()
         {
@@ -34,25 +34,17 @@ namespace Make3D.Dialogs
             points = new List<System.Windows.Point>();
         }
 
-        public double Thickness
+        public int NumberOfTeeth
         {
-            get => thickness;
+            get => numberOfTeeth;
             set
             {
-                if (thickness != value)
+                if (numberOfTeeth != value)
                 {
-                    thickness = value;
+                    numberOfTeeth = value;
                     NotifyPropertyChanged();
                     Redisplay();
                 }
-            }
-        }
-
-        private void Redisplay()
-        {
-            if (updateDisplayWhenChanged)
-            {
-                GenerateShape();
             }
         }
 
@@ -70,28 +62,34 @@ namespace Make3D.Dialogs
             }
         }
 
-        public int NumberOfTeeth
+        public override bool ShowAxies
         {
-            get => numberOfTeeth;
+            get
+            {
+                return showAxies;
+            }
             set
             {
-                if (numberOfTeeth != value)
+                if (showAxies != value)
                 {
-                    numberOfTeeth = value;
+                    showAxies = value;
                     NotifyPropertyChanged();
                     Redisplay();
                 }
             }
         }
 
-        public double TeethBaseWidth
+        public override bool ShowFloor
         {
-            get => teethBaseWidth;
+            get
+            {
+                return showFloor;
+            }
             set
             {
-                if (teethBaseWidth != value)
+                if (showFloor != value)
                 {
-                    teethBaseWidth = value;
+                    showFloor = value;
                     NotifyPropertyChanged();
                     Redisplay();
                 }
@@ -112,14 +110,14 @@ namespace Make3D.Dialogs
             }
         }
 
-        public double TeethTopWidth
+        public double TeethBaseWidth
         {
-            get => teethTopWidth;
+            get => teethBaseWidth;
             set
             {
-                if (teethTopWidth != value)
+                if (teethBaseWidth != value)
                 {
-                    teethTopWidth = value;
+                    teethBaseWidth = value;
                     NotifyPropertyChanged();
                     Redisplay();
                 }
@@ -138,6 +136,47 @@ namespace Make3D.Dialogs
                     Redisplay();
                 }
             }
+        }
+
+        public double TeethTopWidth
+        {
+            get => teethTopWidth;
+            set
+            {
+                if (teethTopWidth != value)
+                {
+                    teethTopWidth = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        public double Thickness
+        {
+            get => thickness;
+            set
+            {
+                if (thickness != value)
+                {
+                    thickness = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            EditorParameters.Set("Thickness", Thickness.ToString("F4"));
+            EditorParameters.Set("Radius", Radius.ToString("F4"));
+            EditorParameters.Set("NumberOfTeeth", NumberOfTeeth.ToString());
+            EditorParameters.Set("TeethBaseHeight", TeethBaseHeight.ToString("F4"));
+            EditorParameters.Set("TeethBaseWidth", TeethBaseWidth.ToString("F4"));
+            EditorParameters.Set("TeethTopHeight", TeethTopHeight.ToString("F4"));
+            EditorParameters.Set("TeethTopWidth", TeethTopWidth.ToString("F4"));
+            DialogResult = true;
+            Close();
         }
 
         private void BaseModellerDialog_Loaded(object sender, RoutedEventArgs e)
@@ -166,6 +205,44 @@ namespace Make3D.Dialogs
             GenerateShape();
             updateDisplayWhenChanged = true;
             UpdateCameraPos();
+        }
+
+        private void CreateSideFace(int i)
+        {
+            int v = i + 1;
+            if (v == points.Count)
+            {
+                v = 0;
+            }
+
+            int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
+            int c1 = AddVertice(points[i].X, points[i].Y, thickness);
+            int c2 = AddVertice(points[v].X, points[v].Y, thickness);
+            int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c1);
+
+            Faces.Add(c0);
+            Faces.Add(c3);
+            Faces.Add(c2);
+        }
+
+        private void DisplayFlatView(List<System.Windows.Point> pnts)
+        {
+            FlatView.Children.Clear();
+            double cx = FlatView.ActualWidth / 2;
+            double cy = FlatView.ActualHeight / 2;
+            Polyline pl = new Polyline();
+            pl.Stroke = System.Windows.Media.Brushes.Blue;
+            pl.StrokeThickness = 1;
+            List<System.Windows.Point> canvasPnts = new List<System.Windows.Point>();
+            foreach (System.Windows.Point p in pnts)
+            {
+                System.Windows.Point np = new System.Windows.Point(cx + p.X, cy + p.Y);
+                pl.Points.Add(np);
+            }
+            FlatView.Children.Add(pl);
         }
 
         private void GenerateShape()
@@ -313,55 +390,12 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void CreateSideFace(int i)
+        private void Redisplay()
         {
-            int v = i + 1;
-            if (v == points.Count)
+            if (updateDisplayWhenChanged)
             {
-                v = 0;
+                GenerateShape();
             }
-
-            int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
-            int c1 = AddVertice(points[i].X, points[i].Y, thickness);
-            int c2 = AddVertice(points[v].X, points[v].Y, thickness);
-            int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c1);
-
-            Faces.Add(c0);
-            Faces.Add(c3);
-            Faces.Add(c2);
-        }
-
-        private void DisplayFlatView(List<System.Windows.Point> pnts)
-        {
-            FlatView.Children.Clear();
-            double cx = FlatView.ActualWidth / 2;
-            double cy = FlatView.ActualHeight / 2;
-            Polyline pl = new Polyline();
-            pl.Stroke = System.Windows.Media.Brushes.Blue;
-            pl.StrokeThickness = 1;
-            List<System.Windows.Point> canvasPnts = new List<System.Windows.Point>();
-            foreach (System.Windows.Point p in pnts)
-            {
-                System.Windows.Point np = new System.Windows.Point(cx + p.X, cy + p.Y);
-                pl.Points.Add(np);
-            }
-            FlatView.Children.Add(pl);
-        }
-
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            EditorParameters.Set("Thickness", Thickness.ToString("F4"));
-            EditorParameters.Set("Radius", Radius.ToString("F4"));
-            EditorParameters.Set("NumberOfTeeth", NumberOfTeeth.ToString());
-            EditorParameters.Set("TeethBaseHeight", TeethBaseHeight.ToString("F4"));
-            EditorParameters.Set("TeethBaseWidth", TeethBaseWidth.ToString("F4"));
-            EditorParameters.Set("TeethTopHeight", TeethTopHeight.ToString("F4"));
-            EditorParameters.Set("TeethTopWidth", TeethTopWidth.ToString("F4"));
-            DialogResult = true;
-            Close();
         }
     }
 }
