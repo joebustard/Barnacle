@@ -101,7 +101,7 @@
     <Resource Include="Images\stl.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\gcode.png" />
+    <Resource Include="Images\gcode.png" />
     <Resource Include="Images\Minus.png" />
     <Resource Include="Images\Plus.png" />
     <Resource Include="Images\Refresh.png" />

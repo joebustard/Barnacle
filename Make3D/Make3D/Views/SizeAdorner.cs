@@ -562,26 +562,29 @@ namespace Make3D.Adorners
 
             if (positionChange != null)
             {
-                box.Position = new Point3D(box.Position.X + positionChange.X,
-                                            box.Position.Y + positionChange.Y,
-                                            box.Position.Z + positionChange.Z);
-                box.Remesh();
-                foreach (Object3D obj in SelectedObjects)
+                if (box != null)
                 {
-                    obj.Position = new Point3D(obj.Position.X + positionChange.X,
-                    obj.Position.Y + positionChange.Y,
-                    obj.Position.Z + positionChange.Z);
-                    obj.Remesh();
-                    NotificationManager.Notify("PositionUpdated", obj);
+                    box.Position = new Point3D(box.Position.X + positionChange.X,
+                                                box.Position.Y + positionChange.Y,
+                                                box.Position.Z + positionChange.Z);
+                    box.Remesh();
+                    foreach (Object3D obj in SelectedObjects)
+                    {
+                        obj.Position = new Point3D(obj.Position.X + positionChange.X,
+                        obj.Position.Y + positionChange.Y,
+                        obj.Position.Z + positionChange.Z);
+                        obj.Remesh();
+                        NotificationManager.Notify("PositionUpdated", obj);
+                    }
+                    MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
+                    MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
+                    MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
+                    MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
+                    MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
+                    MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
+                    LabelThumbs(box.AbsoluteBounds.Size());
+                    NotificationManager.Notify("DocDirty", null);
                 }
-                MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
-                MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
-                MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
-                MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
-                MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
-                MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
-                LabelThumbs(box.AbsoluteBounds.Size());
-                NotificationManager.Notify("DocDirty", null);
             }
         }
 

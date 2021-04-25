@@ -205,5 +205,27 @@ namespace VisualSolutionExplorer
 
             solutionDoc.Save(solutionPath);
         }
+
+        public static string AbsPathToProjectPath(string rf)
+        {
+            
+            String folderRoot = System.IO.Path.GetDirectoryName(BaseFolder);
+            if ( rf.StartsWith(BaseFolder))
+            {
+                rf = rf.Substring(BaseFolder.Length);
+            }
+            return rf;
+        }
+        public static string ProjectPathToAbsPath(string rf)
+        {
+
+           
+            if (!rf.StartsWith("\\"))
+            {
+                rf = "\\"+rf;
+            }
+            rf = BaseFolder + rf;
+            return rf;
+        }
     }
 }

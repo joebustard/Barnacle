@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
+using VisualSolutionExplorer;
 
 namespace Make3D.Models
 {
@@ -19,6 +20,7 @@ namespace Make3D.Models
         private string caption;
         private bool dirty;
 
+        private List<String> referencedFiles;
         public Document()
         {
             ModelScales.Initialise();
@@ -150,6 +152,7 @@ namespace Make3D.Models
                 if (clearFirst)
                 {
                     Content.Clear();
+                    referencedFiles.Clear();
                 }
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
@@ -165,14 +168,15 @@ namespace Make3D.Models
                 XmlNodeList nodes = docNode.ChildNodes;
                 foreach (XmlNode nd in nodes)
                 {
-                    if (nd.Name == "Settings")
+                    string ndname = nd.Name.ToLower();
+                    if (ndname == "settings")
                     {
                         ProjectSettings prj = new ProjectSettings();
                         prj.Read(nd);
 
                         ProjectSettings = prj;
                     }
-                    if (nd.Name == "obj")
+                    if (ndname == "obj")
                     {
                         Object3D obj = new Object3D();
                         obj.Read(nd);
@@ -184,7 +188,7 @@ namespace Make3D.Models
                         }
                         Content.Add(obj);
                     }
-                    if (nd.Name == "refobj")
+                    if (ndname == "refobj")
                     {
                         ReferenceObject3D obj = new ReferenceObject3D();
                         obj.Read(nd);
@@ -207,7 +211,7 @@ namespace Make3D.Models
                             }
                         }
                     }
-                    if (nd.Name == "groupobj")
+                    if (ndname == "groupobj")
                     {
                         Group3D obj = new Group3D();
                         obj.Read(nd);
@@ -215,7 +219,7 @@ namespace Make3D.Models
                         obj.SetMesh();
                         Content.Add(obj);
                     }
-                    if (nd.Name == "refgroupobj")
+                    if (ndname == "refgroupobj")
                     {
                         ReferenceGroup3D obj = new ReferenceGroup3D();
                         obj.Read(nd);
@@ -226,6 +230,17 @@ namespace Make3D.Models
                             Content.Add(obj);
                         }
                     }
+
+                    if (ndname == "fileref")
+                    {
+                        string fn = (nd as XmlElement).GetAttribute("Name");
+                        fn = Project.ProjectPathToAbsPath(fn);
+                        referencedFiles.Add(fn);
+                    }
+                }
+                foreach( string fn in referencedFiles)
+                {
+                    LoadReferencedFile(fn);
                 }
             }
             catch (Exception ex)
@@ -249,6 +264,13 @@ namespace Make3D.Models
             XmlElement docNode = doc.CreateElement("Document");
             docNode.SetAttribute("NextId", nextId.ToString());
             ProjectSettings.Write(doc, docNode);
+            foreach (String rf in referencedFiles)
+            {
+                string fn = Project.AbsPathToProjectPath(rf);
+                XmlElement fileRef= doc.CreateElement("FileRef");
+                fileRef.SetAttribute("Name", fn);
+                docNode.AppendChild(fileRef);
+            }
             foreach (Object3D ob in Content)
             {
                 ob.Write(doc, docNode);
@@ -307,6 +329,7 @@ namespace Make3D.Models
             ProjectSettings = new ProjectSettings();
             nextId = 0;
             Dirty = false;
+            referencedFiles = new List<string>();
         }
 
         internal bool ContainsName(string name)
@@ -671,6 +694,16 @@ namespace Make3D.Models
         }
 
         internal void ReferenceFile(string fileName)
+        {
+            LoadReferencedFile(fileName);
+            Dirty = true;
+            if (!referencedFiles.Contains(fileName))
+            {
+                referencedFiles.Add(fileName);
+            }
+        }
+
+        private void LoadReferencedFile(string fileName)
         {
             try
             {

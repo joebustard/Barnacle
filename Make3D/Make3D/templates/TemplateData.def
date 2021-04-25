@@ -121,6 +121,7 @@
       <File Name="WingsAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="UnderCarriageAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="WholeAircraftAssembly.txt" Source="templates/WholeAircraftAssembly1_35.txt" />
     </Folder>
     <Folder Name="backup" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True" />
     <Folder Name="docs" Explorer="False" Clean="False" Export="True" AddSubs="True" AddFiles="True">
