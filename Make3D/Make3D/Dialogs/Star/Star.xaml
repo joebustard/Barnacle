@@ -45,7 +45,13 @@
                 <Slider Value="{Binding PointLength}" Minimum="1" Maximum="100" Width="200" />
                 <TextBox Text="{Binding PointLength}" Width="50" />
             </StackPanel>
+
             <StackPanel Grid.Row="7" Orientation="Horizontal">
+                <Label Width="100">Thickness</Label>
+                <Slider Value="{Binding Thickness}" Minimum="1" Maximum="100" Width="200" />
+                <TextBox Text="{Binding Thickness}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <RadioButton GroupName="FacetGroup" IsChecked="{Binding FlatChecked}">Flat</RadioButton>
                 <RadioButton Margin="10,0,0,0" GroupName="FacetGroup" IsChecked="{Binding FacetChecked}">Facetted</RadioButton>
             </StackPanel>
