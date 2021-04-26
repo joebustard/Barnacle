@@ -185,13 +185,27 @@ namespace VisualSolutionExplorer
 
                 case IconType.StlIcon:
                     {
-                        icon = new BitmapImage(ImageUri("stl.png"));
+                        if (_projectFile.OutOfDate)
+                        {
+                            icon = new BitmapImage(ImageUri("outofdatestl.png"));
+                        }
+                        else
+                        {
+                            icon = new BitmapImage(ImageUri("stl.png"));
+                        }
                     }
                     break;
 
                 case IconType.GCodeIcon:
                     {
-                        icon = new BitmapImage(ImageUri("gcode.png"));
+                        if (_projectFile.OutOfDate)
+                        {
+                            icon = new BitmapImage(ImageUri("outofdategcode.png"));
+                        }
+                        else
+                        {
+                            icon = new BitmapImage(ImageUri("gcode.png"));
+                        }
                     }
                     break;
 

@@ -12,10 +12,11 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="10" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0" Grid.Row="0">
+        <Grid Grid.Column="1" Grid.Row="0">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
@@ -29,13 +30,28 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Label Width="100">No. of Points</Label>
+                <Slider Value="{Binding NumberOfPoints}" Minimum="2" Maximum="10" Width="200" />
+                <TextBox Text="{Binding NumberOfPoints}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label Width="100">Centre Radius</Label>
+                <Slider Value="{Binding CentreRadius}" Minimum="1" Maximum="100" Width="200" />
+                <TextBox Text="{Binding CentreRadius}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label Width="100">Point Length</Label>
+                <Slider Value="{Binding PointLength}" Minimum="1" Maximum="100" Width="200" />
+                <TextBox Text="{Binding PointLength}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="7" Orientation="Horizontal">
+                <RadioButton GroupName="FacetGroup" IsChecked="{Binding FlatChecked}">Flat</RadioButton>
+                <RadioButton Margin="10,0,0,0" GroupName="FacetGroup" IsChecked="{Binding FacetChecked}">Facetted</RadioButton>
+            </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -68,7 +84,7 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="0" Grid.Row="1">
+        <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -78,7 +94,7 @@
             <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
         </Grid>
 
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Column="2" Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />

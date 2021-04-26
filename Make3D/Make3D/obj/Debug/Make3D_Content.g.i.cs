@@ -8,7 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("properties/assemblyinfo.tt")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("templates/templatedata.def")]
 
 

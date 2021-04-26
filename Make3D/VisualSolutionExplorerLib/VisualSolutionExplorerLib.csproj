@@ -106,5 +106,11 @@
     <Resource Include="Images\Plus.png" />
     <Resource Include="Images\Refresh.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\outofdategcode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\outofdatestl.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

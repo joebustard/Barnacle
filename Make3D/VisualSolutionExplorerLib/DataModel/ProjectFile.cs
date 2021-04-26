@@ -17,6 +17,7 @@ namespace VisualSolutionExplorer
             Source = String.Empty;
             Backup = false;
             Export = false;
+            OutOfDate = false;
         }
 
         // should this file be added to the backup when a backup command is issued
@@ -26,7 +27,6 @@ namespace VisualSolutionExplorer
         public bool Export { get; set; }
 
         public string FileName { get; set; }
-
         public string FilePath { get; internal set; }
 
         public int IconNumber
@@ -58,7 +58,7 @@ namespace VisualSolutionExplorer
         }
 
         public string OldName { get; set; }
-
+        public bool OutOfDate { get; set; }
         public String Source { get; set; }
 
         public int CompareTo(ProjectFile comparePart)

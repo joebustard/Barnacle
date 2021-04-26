@@ -356,6 +356,7 @@ namespace Make3D.Dialogs
             double spokeTipDTheta = 0;
             double numSubs = 10;
             double twopi = Math.PI * 2;
+            double theta = 0;
             GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta);
             double actualInner = hubInner;
             if (axelBore > actualInner)
@@ -367,47 +368,62 @@ namespace Make3D.Dialogs
             {
                 actualOutter = actualInner;
             }
-
-            double theta = 0;
-            bool inSpoke = true;
-            while (theta <= twopi)
+            if (numSpoke > 1)
             {
-                if (inSpoke)
+                bool inSpoke = true;
+                while (theta <= twopi)
                 {
-                    // create spoke points
-                    theta += spokeTipDTheta;
-                    // creat gap points
-                    // Add a gap
-                    double dt = spokeDTheta / numSubs;
-                    for (int i = 0; i < numSubs; i++)
+                    if (inSpoke)
                     {
-                        theta += dt;
-                        if (theta < twopi)
+                        // create spoke points
+                        theta += spokeTipDTheta;
+                        // creat gap points
+                        // Add a gap
+                        double dt = spokeDTheta / numSubs;
+                        for (int i = 0; i < numSubs; i++)
                         {
-                            double x = actualOutter * Math.Cos(theta);
-                            double y = actualOutter * Math.Sin(theta);
-                            hubExternalPoints.Add(new System.Windows.Point(x, y));
+                            theta += dt;
+                            if (theta < twopi)
+                            {
+                                double x = actualOutter * Math.Cos(theta);
+                                double y = actualOutter * Math.Sin(theta);
+                                hubExternalPoints.Add(new System.Windows.Point(x, y));
+                            }
                         }
                     }
-                }
-                else
-                {
-                    theta += spokeTipDTheta;
-                    // creat gap points
-                    // Add a gap
-                    double dt = gapDTheta / numSubs;
-                    for (int i = 0; i < numSubs; i++)
+                    else
                     {
-                        theta += dt;
-                        if (theta < twopi)
+                        theta += spokeTipDTheta;
+                        // creat gap points
+                        // Add a gap
+                        double dt = gapDTheta / numSubs;
+                        for (int i = 0; i < numSubs; i++)
                         {
-                            double x = actualInner * Math.Cos(theta);
-                            double y = actualInner * Math.Sin(theta);
-                            hubExternalPoints.Add(new System.Windows.Point(x, y));
+                            theta += dt;
+                            if (theta < twopi)
+                            {
+                                double x = actualInner * Math.Cos(theta);
+                                double y = actualInner * Math.Sin(theta);
+                                hubExternalPoints.Add(new System.Windows.Point(x, y));
+                            }
                         }
                     }
+                    inSpoke = !inSpoke;
                 }
-                inSpoke = !inSpoke;
+            }
+            else
+            {
+                double dt = twopi / 60.0;
+                for (int i = 0; i < 60; i++)
+                {
+                    if (theta < twopi)
+                    {
+                        double x = actualOutter * Math.Cos(theta);
+                        double y = actualOutter * Math.Sin(theta);
+                        hubExternalPoints.Add(new System.Windows.Point(x, y));
+                    }
+                    theta += dt;
+                }
             }
             // generate side triangles so original points are already in list
 
@@ -526,6 +542,22 @@ namespace Make3D.Dialogs
                         GenerateTyreProfile2(tyreInner, tyreOutter, rimThickness + 1);
                     }
                     break;
+
+                case "4":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile3(tyreInner, tyreOutter, rimThickness + 1, 5, true);
+                    }
+                    break;
+
+                case "5":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile3(tyreInner, tyreOutter, rimThickness + 1, 2.5, false);
+                    }
+                    break;
             }
         }
 
@@ -565,7 +597,41 @@ namespace Make3D.Dialogs
             polarProfile2.Add(Polar(outter, 0, 0));
             polarProfile2.Add(Polar(cx, 0, 0));
 
-            PartSweep(polarProfile1, polarProfile2, cx, 0, 5, rotDivisions, true, true);
+            PartSweep(polarProfile1, polarProfile2, cx, 0, 5, rotDivisions, true, true, false);
+        }
+
+        private void GenerateTyreProfile3(double inner, double outter, double thickness, double sweep, bool offsetOneHalf)
+        {
+            List<PolarCoordinate> polarProfile1 = new List<PolarCoordinate>();
+            List<PolarCoordinate> polarProfile2 = new List<PolarCoordinate>();
+            double cx = inner;
+            double t1 = thickness / 2;
+            int rotDivisions = 36;
+            polarProfile1.Add(Polar(cx, 0, thickness));
+            polarProfile1.Add(Polar(cx + (0.9 * (outter - inner)), 0, thickness));
+            polarProfile1.Add(Polar(cx + (0.9 * (outter - inner)), 0, t1));
+            polarProfile1.Add(Polar(cx, 0, t1));
+
+            polarProfile2.Add(Polar(cx, 0, thickness));
+            polarProfile2.Add(Polar(outter, 0, thickness));
+            polarProfile2.Add(Polar(outter, 0, t1));
+            polarProfile2.Add(Polar(cx, 0, t1));
+
+            PartSweep(polarProfile1, polarProfile2, cx, t1, sweep, rotDivisions, true, true, false);
+            polarProfile1 = new List<PolarCoordinate>();
+            polarProfile2 = new List<PolarCoordinate>();
+
+            polarProfile1.Add(Polar(cx, 0, t1));
+            polarProfile1.Add(Polar(outter, 0, t1));
+            polarProfile1.Add(Polar(outter, 0, 0));
+            polarProfile1.Add(Polar(cx, 0, 0));
+
+            polarProfile2.Add(Polar(cx, 0, t1));
+            polarProfile2.Add(Polar(cx + (0.9 * (outter - inner)), 0, t1));
+            polarProfile2.Add(Polar(cx + (0.9 * (outter - inner)), 0, 0));
+            polarProfile2.Add(Polar(cx, 0, 0));
+
+            PartSweep(polarProfile1, polarProfile2, cx, 0, sweep, rotDivisions, true, true, offsetOneHalf);
         }
 
         private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta)
@@ -605,6 +671,15 @@ namespace Make3D.Dialogs
                         spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
                         spokeDTheta = 0.75 * spokeGapDTheta;
                         spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                    }
+                    break;
+
+                case "5":
+                    {
+                        numSpoke = 1;
+                        spokeGapDTheta = 0;
+                        spokeDTheta = Math.PI * 2; ;
+                        spokeTipDTheta = 0;
                     }
                     break;
             }
@@ -670,7 +745,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void PartSweep(List<PolarCoordinate> polarProfile1, List<PolarCoordinate> polarProfile2, double cx, int cy, double sweepAngle, int rotDivisions, bool flipAxies, bool invert)
+        private void PartSweep(List<PolarCoordinate> polarProfile1, List<PolarCoordinate> polarProfile2, double cx, double cy, double sweepAngle, int rotDivisions, bool flipAxies, bool invert, bool sweepOffset)
         {
             List<PolarCoordinate> profile = polarProfile1;
             double numSegs = 360 / sweepAngle;
@@ -693,12 +768,20 @@ namespace Make3D.Dialogs
                     profile = polarProfile2;
                 }
                 double a = sweep * i;
+                if (sweepOffset)
+                {
+                    a += (sweep / 2.0);
+                }
                 int j = i + 1;
                 if (j == numSegs)
                 {
                     j = 0;
                 }
                 double b = sweep * j;
+                if (sweepOffset)
+                {
+                    b += (sweep / 2.0);
+                }
                 // do the side walls and main surfaces
                 for (int index = 0; index < profile.Count; index++)
                 {
@@ -904,7 +987,8 @@ namespace Make3D.Dialogs
             hubStyles.Add("2");
             hubStyles.Add("3");
             hubStyles.Add("4");
-            selectedHubStyle = "1";
+            hubStyles.Add("5");
+            SelectedHubStyle = "1";
 
             rimStyles.Add("1");
             rimStyles.Add("2");
@@ -915,6 +999,8 @@ namespace Make3D.Dialogs
             tyreStyles.Add("1");
             tyreStyles.Add("2");
             tyreStyles.Add("3");
+            tyreStyles.Add("4");
+            tyreStyles.Add("5");
             SelectedTyreStyle = "1";
 
             LoadEditorParameters();

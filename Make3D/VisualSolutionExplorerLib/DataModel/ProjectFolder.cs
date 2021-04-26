@@ -12,28 +12,17 @@ namespace VisualSolutionExplorer
         private List<ProjectFolder> _projectFolders = null;
         private bool supportsFiles;
         private bool supportsSubFolders;
-        public bool Export { get; set; }
 
         public ProjectFolder(string name)
         {
             this.FolderName = name;
-            _projectFolders = new List<ProjectFolder>();
-            _projectFiles = new List<ProjectFile>();
-            SupportedFileExtension = "txt";
-            Export = false;
+            Init();
         }
 
         public ProjectFolder()
         {
             this.FolderName = "";
-            _projectFolders = new List<ProjectFolder>();
-            _projectFiles = new List<ProjectFile>();
-            SupportedFileExtension = "txt";
-
-            Clean = false;
-            Explorer = false;
-            AutoLoad = false;
-            Export = false;
+            Init();
         }
 
         public Boolean AutoLoad { get; set; }
@@ -44,10 +33,9 @@ namespace VisualSolutionExplorer
         // should this folder appear  on the project tree
         public bool Explorer { get; set; }
 
+        public bool Export { get; set; }
         public string FolderName { get; set; }
-
         public string FolderPath { get; set; }
-
         public string OldName { get; set; }
 
         public List<ProjectFile> ProjectFiles
@@ -72,6 +60,8 @@ namespace VisualSolutionExplorer
             get { return supportsSubFolders; }
             set { supportsSubFolders = value; }
         }
+
+        public string TimeDependency { get; set; }
 
         public int CompareTo(ProjectFolder comparePart)
         {
@@ -119,6 +109,10 @@ namespace VisualSolutionExplorer
                 if (ele.HasAttribute("AutoLoad"))
                 {
                     AutoLoad = GetBoolean(ele, "AutoLoad");
+                }
+                if (ele.HasAttribute("TimeDependency"))
+                {
+                    TimeDependency = ele.GetAttribute("TimeDependency");
                 }
                 SupportsSubFolders = GetBoolean(ele, "AddSubs");
                 SupportsFiles = GetBoolean(ele, "AddFiles");
@@ -168,6 +162,10 @@ namespace VisualSolutionExplorer
             {
                 el.SetAttribute("Export", Export.ToString());
             }
+            if (TimeDependency != "")
+            {
+                el.SetAttribute("TimeDependency", TimeDependency);
+            }
             root.AppendChild(el);
             foreach (ProjectFile pfi in _projectFiles)
             {
@@ -190,18 +188,39 @@ namespace VisualSolutionExplorer
             }
         }
 
-        private bool FileAlreadyPresent(string ren)
+        internal void CheckTimeDependency(String baseFolder)
         {
-            bool found = false;
-            foreach (ProjectFile pfi in ProjectFiles)
+            // in practice refresh just means update any autoloading folders
+            // with the actual files on disk.
+            if (TimeDependency != "")
             {
-                if (pfi.FilePath == ren)
+                string srcFolder = baseFolder + "\\" + TimeDependency;
+                foreach (ProjectFile pfc in _projectFiles)
                 {
-                    found = true;
-                    break;
+                    pfc.OutOfDate = false;
+                    // does this file have an equivalent in the source folder.
+                    string targetPath = System.IO.Path.GetDirectoryName(baseFolder) + pfc.FilePath;
+                    string targetName = System.IO.Path.GetFileNameWithoutExtension(targetPath);
+                    // Is the source newer that the target?
+                    string[] srcNames = Directory.GetFiles(srcFolder, targetName + ".*");
+                    if (srcNames.GetLength(0) == 1)
+                    {
+                        DateTime srcTime = File.GetLastWriteTime(srcNames[0]);
+                        DateTime trgTime = File.GetLastWriteTime(targetPath);
+
+                        if (srcTime > trgTime)
+                        {
+                            // mark the target a out of date
+                            pfc.OutOfDate = true;
+                        }
+                    }
                 }
             }
-            return found;
+
+            foreach (ProjectFolder pfo in _projectFolders)
+            {
+                pfo.CheckTimeDependency(baseFolder);
+            }
         }
 
         internal void GetRxportFiles(string ext, string baseFolder, List<string> filesToExport)
@@ -269,6 +288,20 @@ namespace VisualSolutionExplorer
             SetSubPaths();
         }
 
+        private bool FileAlreadyPresent(string ren)
+        {
+            bool found = false;
+            foreach (ProjectFile pfi in ProjectFiles)
+            {
+                if (pfi.FilePath == ren)
+                {
+                    found = true;
+                    break;
+                }
+            }
+            return found;
+        }
+
         private bool FileNameUsed(string name)
         {
             bool found = false;
@@ -330,6 +363,18 @@ namespace VisualSolutionExplorer
                 i++;
             }
             return tmpName;
+        }
+
+        private void Init()
+        {
+            _projectFolders = new List<ProjectFolder>();
+            _projectFiles = new List<ProjectFile>();
+            SupportedFileExtension = "txt";
+            Export = false;
+            Clean = false;
+            Explorer = false;
+            AutoLoad = false;
+            TimeDependency = "";
         }
 
         private void SetSubPaths()
