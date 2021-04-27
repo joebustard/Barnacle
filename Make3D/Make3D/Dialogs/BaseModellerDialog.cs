@@ -594,7 +594,7 @@ namespace Make3D.Dialogs
 
         // run around around a list of points
         // assume the start and end are linked.
-        protected void CreateSideFaces(List<Point> points, double thickness, bool rev)
+        protected void CreateSideFaces(List<Point> points, double thickness, bool rev, double zOff =0)
         {
             for (int i = 0; i < points.Count; i++)
             {
@@ -604,10 +604,10 @@ namespace Make3D.Dialogs
                     v = 0;
                 }
 
-                int c0 = AddVertice(points[i].X, points[i].Y, 0.0);
-                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
-                int c2 = AddVertice(points[v].X, points[v].Y, thickness);
-                int c3 = AddVertice(points[v].X, points[v].Y, 0.0);
+                int c0 = AddVertice(points[i].X, points[i].Y, zOff);
+                int c1 = AddVertice(points[i].X, points[i].Y, zOff + thickness);
+                int c2 = AddVertice(points[v].X, points[v].Y, zOff+thickness);
+                int c3 = AddVertice(points[v].X, points[v].Y, zOff);
                 if (rev)
                 {
                     Faces.Add(c0);

@@ -72,6 +72,11 @@
                 <ComboBox Width="150" ItemsSource="{Binding TyreStyles}" SelectedItem="{Binding SelectedTyreStyle}" />
             </StackPanel>
             <StackPanel Grid.Row="11" Orientation="Horizontal" Margin="10,0,10,0">
+                <Label Width="100">Tyre Thickness</Label>
+                <Slider Width="200" Value="{Binding TyreThickness}" Minimum="1.0" Maximum="100.0" />
+                <TextBox Text="{Binding TyreThickness}" Width="100" />
+            </StackPanel>
+            <StackPanel Grid.Row="12" Orientation="Horizontal" Margin="10,0,10,0">
                 <Label Width="100">Tyre Depth</Label>
                 <Slider Width="200" Value="{Binding TyreDepth}" Minimum="1.0" Maximum="100.0" />
                 <TextBox Text="{Binding TyreDepth}" Width="100" />

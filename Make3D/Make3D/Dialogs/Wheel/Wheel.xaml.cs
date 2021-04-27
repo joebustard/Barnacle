@@ -43,6 +43,7 @@ namespace Make3D.Dialogs
             axelBore = 5;
             hubThickness = 10;
             rimThickness = 12;
+            tyreThickness = 10;
             rimOutter = 5;
             hubStyles = new List<string>();
             rimStyles = new List<string>();
@@ -283,6 +284,23 @@ namespace Make3D.Dialogs
                 }
             }
         }
+        private double tyreThickness;
+        public double TyreThickness
+        {
+            get
+            {
+                return tyreThickness;
+            }
+            set
+            {
+                if (tyreThickness != value)
+                {
+                    tyreThickness = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
 
         public List<String> TyreStyles
         {
@@ -357,7 +375,9 @@ namespace Make3D.Dialogs
             double numSubs = 10;
             double twopi = Math.PI * 2;
             double theta = 0;
-            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta);
+            double hubRingInner = -1;
+            double hubRIngOutter = -1;
+            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta, ref hubRingInner, ref hubRIngOutter) ;
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
@@ -449,6 +469,10 @@ namespace Make3D.Dialogs
                 CreateHubSurface(hubInternalPoints, hubExternalPoints, 0.0, true);
                 CreateHubSurface(hubInternalPoints, hubExternalPoints, hubThickness, false);
             }
+            if ( hubRingInner != -1)
+            {
+                GenerateRing(0, 0, hubThickness, hubRingInner, hubRIngOutter, 4);
+            }
         }
 
         private void GenerateRim()
@@ -501,10 +525,10 @@ namespace Make3D.Dialogs
 
                 theta += dt;
             }
-            CreateSideFaces(outters, thicky, true);
-            CreateSideFaces(inners, thicky, false);
-            CreateHubSurface(inners, outters, 0.0, true);
-            CreateHubSurface(inners, outters, thicky, false);
+            CreateSideFaces(outters, thicky, true,cz);
+            CreateSideFaces(inners, thicky, false,cz);
+            CreateHubSurface(inners, outters, cz, true);
+            CreateHubSurface(inners, outters, thicky+cz, false);
         }
 
         private void GenerateShape()
@@ -523,7 +547,7 @@ namespace Make3D.Dialogs
                     {
                         double tyreInner = actualRimOutter;
                         double tyreOutter = tyreInner + tyreDepth;
-                        GenerateRing(0, 0, 0, tyreInner, tyreOutter, rimThickness + 1);
+                        GenerateRing(0, 0, 0, tyreInner, tyreOutter, tyreThickness);
                     }
                     break;
 
@@ -531,7 +555,7 @@ namespace Make3D.Dialogs
                     {
                         double tyreInner = actualRimOutter;
                         double tyreOutter = tyreInner + tyreDepth;
-                        GenerateTyreProfile1(tyreInner, tyreOutter, rimThickness + 1);
+                        GenerateTyreProfile1(tyreInner, tyreOutter, tyreThickness);
                     }
                     break;
 
@@ -539,7 +563,7 @@ namespace Make3D.Dialogs
                     {
                         double tyreInner = actualRimOutter;
                         double tyreOutter = tyreInner + tyreDepth;
-                        GenerateTyreProfile2(tyreInner, tyreOutter, rimThickness + 1);
+                        GenerateTyreProfile2(tyreInner, tyreOutter, tyreThickness);
                     }
                     break;
 
@@ -547,7 +571,7 @@ namespace Make3D.Dialogs
                     {
                         double tyreInner = actualRimOutter;
                         double tyreOutter = tyreInner + tyreDepth;
-                        GenerateTyreProfile3(tyreInner, tyreOutter, rimThickness + 1, 5, true);
+                        GenerateTyreProfile3(tyreInner, tyreOutter, tyreThickness, 5, true);
                     }
                     break;
 
@@ -555,7 +579,7 @@ namespace Make3D.Dialogs
                     {
                         double tyreInner = actualRimOutter;
                         double tyreOutter = tyreInner + tyreDepth;
-                        GenerateTyreProfile3(tyreInner, tyreOutter, rimThickness + 1, 2.5, false);
+                        GenerateTyreProfile3(tyreInner, tyreOutter, tyreThickness, 2.5, false);
                     }
                     break;
             }
@@ -634,7 +658,7 @@ namespace Make3D.Dialogs
             PartSweep(polarProfile1, polarProfile2, cx, 0, sweep, rotDivisions, true, true, offsetOneHalf);
         }
 
-        private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta)
+        private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta, ref double hri, ref double hro)
         {
             switch (selectedHubStyle)
             {
@@ -682,6 +706,17 @@ namespace Make3D.Dialogs
                         spokeTipDTheta = 0;
                     }
                     break;
+
+                case "6":
+                    {
+                        numSpoke = 4;
+                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
+                        spokeDTheta = 0.75 * spokeGapDTheta;
+                        spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                        hri = axelBore;
+                        hro = hri + 2;
+                    }
+                    break;
             }
         }
 
@@ -719,7 +754,7 @@ namespace Make3D.Dialogs
                 case "4":
                     {
                         ringRadius.Add(rimOutter / 2);
-                        ringThickness.Add(rimThickness * 0.5);
+                        ringThickness.Add(hubThickness);
                         ringRadius.Add(rimOutter / 2);
                         ringThickness.Add(rimThickness);
                     }
@@ -741,7 +776,11 @@ namespace Make3D.Dialogs
                 SelectedHubStyle = EditorParameters.Get("SelectedHubStyle");
                 SelectedRimStyle = EditorParameters.Get("SelectedRimStyle");
                 SelectedTyreStyle = EditorParameters.Get("SelectedTyreStyle");
-                TyreDepth = Convert.ToDouble(EditorParameters.Get("TyreDepth"));
+                TyreDepth = EditorParameters.GetDouble("TyreDepth");
+                if (EditorParameters.Get("TyreThickness") != "")
+                {
+                    TyreThickness =EditorParameters.GetDouble("TyreThickness");
+                }
             }
         }
 
@@ -988,6 +1027,7 @@ namespace Make3D.Dialogs
             hubStyles.Add("3");
             hubStyles.Add("4");
             hubStyles.Add("5");
+            hubStyles.Add("6");
             SelectedHubStyle = "1";
 
             rimStyles.Add("1");

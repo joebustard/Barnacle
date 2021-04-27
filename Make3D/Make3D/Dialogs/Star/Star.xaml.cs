@@ -186,6 +186,11 @@ namespace Make3D.Dialogs
 
                 pnts.Add(new Point(x, y));
                 innerpnts.Add(new Point(x, y));
+                if (i % 2 == 0)
+                {
+                    outerpnts.Add(new Point(x, y));
+                }
+                
                 if (i % 2 == 1)
                 {
                     x = (pointLength + centreRadius) * Math.Cos(theta);
@@ -280,6 +285,27 @@ namespace Make3D.Dialogs
                 }
                 i++;
                 skip = !skip;
+            }
+
+
+            for (i = 0; i < outerpnts.Count; i++)
+            {
+                int j = i + 1;
+                if (j >= outerpnts.Count)
+                {
+                    j = 0;
+                }
+                int p1 = AddVertice(new Point3D(outerpnts[i].X, 0, outerpnts[i].Y));
+                int p2 = AddVertice(new Point3D(outerpnts[i].X, thickness, outerpnts[i].Y));
+                int p3 = AddVertice(new Point3D(outerpnts[j].X, thickness, outerpnts[j].Y));
+                int p4 = AddVertice(new Point3D(outerpnts[j].X, 0, outerpnts[j].Y));
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(p3);
+               
+                Faces.Add(p1);
+                Faces.Add(p3);
+                Faces.Add(p4);
             }
         }
 
