@@ -43,6 +43,7 @@
 
                 <DataTemplate>
                     <Border BorderThickness="4,4,4,4" BorderBrush="BlanchedAlmond" ToolTip="{Binding Path}">
+
                         <StackPanel Orientation="Vertical" ToolTip="{Binding Path}">
                             <Image Width="48" Height="48" Source="/Make3D;component/Images/Buttons/ExistingProject.png" ToolTip="{Binding Path}" />
                             <Label HorizontalContentAlignment="Center" FontSize="16" Width="160" Content="{Binding Title}" ToolTip="{Binding Path}" />

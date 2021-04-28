@@ -12,27 +12,12 @@ namespace Make3D.Dialogs
     public partial class Star : BaseModellerDialog, INotifyPropertyChanged
     {
         private double centreRadius;
+        private bool facet2Checked;
         private bool facetChecked;
         private bool flatChecked;
         private int numberOfPoints;
-        private double thickness;
-
-        public double Thickness
-        {
-            get { return thickness; }
-            set 
-            {
-                if (thickness != value)
-                {
-                    thickness = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-
         private double pointLength;
+        private double thickness;
 
         public Star()
         {
@@ -52,6 +37,23 @@ namespace Make3D.Dialogs
                 if (centreRadius != value)
                 {
                     centreRadius = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool Facet2Checked
+        {
+            get
+            {
+                return facet2Checked;
+            }
+            set
+            {
+                if (facet2Checked != value)
+                {
+                    facet2Checked = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -160,6 +162,23 @@ namespace Make3D.Dialogs
             }
         }
 
+        public double Thickness
+        {
+            get
+            {
+                return thickness;
+            }
+            set
+            {
+                if (thickness != value)
+                {
+                    thickness = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -167,10 +186,223 @@ namespace Make3D.Dialogs
             Close();
         }
 
-        private void GenerateShape()
+        private void GenerateFacettedStar()
         {
-            ClearShape();
+            double theta = 0;
+            double dtheta;
+            int divs = numberOfPoints;
+            dtheta = Math.PI * 2.0 / divs;
+            int i = 0;
+            List<Point> pnts = new List<Point>();
+            List<Point> innerpnts = new List<Point>();
+            List<Point> midpnts = new List<Point>();
+            List<Point> outerpnts = new List<Point>();
+            for (i = 0; i < divs; i++)
+            {
+                double x = centreRadius * Math.Cos(theta);
+                double y = centreRadius * Math.Sin(theta);
 
+                innerpnts.Add(new Point(x, y));
+                theta += dtheta / 2.0;
+
+                x = centreRadius * Math.Cos(theta);
+                y = centreRadius * Math.Sin(theta);
+                midpnts.Add(new Point(x, y));
+
+                x = (pointLength + centreRadius) * Math.Cos(theta);
+                y = (pointLength + centreRadius) * Math.Sin(theta);
+
+                outerpnts.Add(new Point(x, y));
+
+                theta += dtheta / 2;
+            }
+            // bottom of Points
+            i = 0;
+            double h2 = thickness / 2.0;
+
+            while (i < innerpnts.Count)
+            {
+                int j = i + 1;
+                if (j >= innerpnts.Count)
+                {
+                    j = 0;
+                }
+
+                int p1 = AddVertice(new Point3D(innerpnts[i].X, h2, innerpnts[i].Y));
+                int p2 = AddVertice(new Point3D(midpnts[i].X, 0, midpnts[i].Y));
+                int p3 = AddVertice(new Point3D(outerpnts[i].X, h2, outerpnts[i].Y));
+                int p4 = AddVertice(new Point3D(innerpnts[j].X, h2, innerpnts[j].Y));
+
+                int p5 = AddVertice(new Point3D(midpnts[i].X, thickness, midpnts[i].Y));
+
+                // bottom of points
+                Faces.Add(p1);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p2);
+                Faces.Add(p3);
+                Faces.Add(p4);
+
+                // top of points
+                Faces.Add(p1);
+                Faces.Add(p5);
+                Faces.Add(p3);
+
+                Faces.Add(p5);
+                Faces.Add(p4);
+                Faces.Add(p3);
+                i++;
+            }
+
+            i = 0;
+
+            while (i < innerpnts.Count)
+            {
+                int j = i + 1;
+                if (j >= innerpnts.Count)
+                {
+                    j = 0;
+                }
+
+                int p1 = AddVertice(new Point3D(innerpnts[i].X, h2, innerpnts[i].Y));
+                int p2 = AddVertice(new Point3D(midpnts[i].X, 0, midpnts[i].Y));
+                int p3 = AddVertice(new Point3D(0, h2, 0));
+                int p4 = AddVertice(new Point3D(innerpnts[j].X, h2, innerpnts[j].Y));
+
+                int p5 = AddVertice(new Point3D(midpnts[i].X, thickness, midpnts[i].Y));
+
+                // bottom of points
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(p3);
+
+                Faces.Add(p2);
+                Faces.Add(p4);
+                Faces.Add(p3);
+
+                // top of points
+                Faces.Add(p1);
+                Faces.Add(p3);
+                Faces.Add(p5);
+
+                Faces.Add(p5);
+                Faces.Add(p3);
+                Faces.Add(p4);
+                i++;
+            }
+        }
+
+        private void GenerateFacettedStar2()
+        {
+            double theta = 0;
+            double dtheta;
+            int divs = numberOfPoints;
+            dtheta = Math.PI * 2.0 / divs;
+            int i = 0;
+            List<Point> pnts = new List<Point>();
+            List<Point> innerpnts = new List<Point>();
+            List<Point> midpnts = new List<Point>();
+            List<Point> outerpnts = new List<Point>();
+            for (i = 0; i < divs; i++)
+            {
+                double x = centreRadius * Math.Cos(theta);
+                double y = centreRadius * Math.Sin(theta);
+
+                innerpnts.Add(new Point(x, y));
+                theta += dtheta / 2.0;
+
+                x = centreRadius * Math.Cos(theta);
+                y = centreRadius * Math.Sin(theta);
+                midpnts.Add(new Point(x, y));
+
+                x = (pointLength + centreRadius) * Math.Cos(theta);
+                y = (pointLength + centreRadius) * Math.Sin(theta);
+
+                outerpnts.Add(new Point(x, y));
+
+                theta += dtheta / 2;
+            }
+            // bottom of Points
+            i = 0;
+            double h2 = thickness / 2.0;
+
+            while (i < innerpnts.Count)
+            {
+                int j = i + 1;
+                if (j >= innerpnts.Count)
+                {
+                    j = 0;
+                }
+
+                int p1 = AddVertice(new Point3D(innerpnts[i].X, h2, innerpnts[i].Y));
+                int p2 = AddVertice(new Point3D(midpnts[i].X, 0, midpnts[i].Y));
+                int p3 = AddVertice(new Point3D(outerpnts[i].X, h2, outerpnts[i].Y));
+                int p4 = AddVertice(new Point3D(innerpnts[j].X, h2, innerpnts[j].Y));
+
+                int p5 = AddVertice(new Point3D(midpnts[i].X, thickness, midpnts[i].Y));
+
+                // bottom of points
+                Faces.Add(p1);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p2);
+                Faces.Add(p3);
+                Faces.Add(p4);
+
+                // top of points
+                Faces.Add(p1);
+                Faces.Add(p5);
+                Faces.Add(p3);
+
+                Faces.Add(p5);
+                Faces.Add(p4);
+                Faces.Add(p3);
+                i++;
+            }
+
+            i = 0;
+
+            while (i < innerpnts.Count)
+            {
+                int j = i + 1;
+                if (j >= innerpnts.Count)
+                {
+                    j = 0;
+                }
+
+                int p1 = AddVertice(new Point3D(innerpnts[i].X, h2, innerpnts[i].Y));
+                int p2 = AddVertice(new Point3D(midpnts[i].X, 0, midpnts[i].Y));
+                int p3 = AddVertice(new Point3D(0, 0, 0));
+                int p4 = AddVertice(new Point3D(innerpnts[j].X, h2, innerpnts[j].Y));
+
+                int p5 = AddVertice(new Point3D(0, thickness, 0));
+                int p6 = AddVertice(new Point3D(midpnts[i].X, thickness, midpnts[i].Y));
+                // bottom of points
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(p3);
+
+                Faces.Add(p2);
+                Faces.Add(p4);
+                Faces.Add(p3);
+
+                // top of points
+                Faces.Add(p1);
+                Faces.Add(p5);
+                Faces.Add(p6);
+
+                Faces.Add(p6);
+                Faces.Add(p5);
+                Faces.Add(p4);
+
+                i++;
+            }
+        }
+
+        private void GenerateFlatStar()
+        {
             double theta = 0;
             double dtheta;
             int divs = numberOfPoints * 2;
@@ -190,7 +422,7 @@ namespace Make3D.Dialogs
                 {
                     outerpnts.Add(new Point(x, y));
                 }
-                
+
                 if (i % 2 == 1)
                 {
                     x = (pointLength + centreRadius) * Math.Cos(theta);
@@ -224,7 +456,6 @@ namespace Make3D.Dialogs
                     Faces.Add(p1);
                     Faces.Add(p3);
                     Faces.Add(p2);
-
                 }
                 if (skip)
                 {
@@ -234,7 +465,7 @@ namespace Make3D.Dialogs
                 skip = !skip;
             }
 
-            for ( i = 0; i <innerpnts.Count; i++)
+            for (i = 0; i < innerpnts.Count; i++)
             {
                 int j = i + 1;
                 if (j >= innerpnts.Count)
@@ -247,7 +478,7 @@ namespace Make3D.Dialogs
                 Faces.Add(p1);
                 Faces.Add(p2);
                 Faces.Add(p3);
-                 p1 = AddVertice(new Point3D(innerpnts[i].X, thickness, innerpnts[i].Y));
+                p1 = AddVertice(new Point3D(innerpnts[i].X, thickness, innerpnts[i].Y));
                 p2 = AddVertice(new Point3D(innerpnts[j].X, thickness, innerpnts[j].Y));
                 p3 = AddVertice(new Point3D(0, thickness, 0));
                 Faces.Add(p1);
@@ -277,7 +508,6 @@ namespace Make3D.Dialogs
                     Faces.Add(p1);
                     Faces.Add(p2);
                     Faces.Add(p3);
-
                 }
                 if (skip)
                 {
@@ -286,7 +516,6 @@ namespace Make3D.Dialogs
                 i++;
                 skip = !skip;
             }
-
 
             for (i = 0; i < outerpnts.Count; i++)
             {
@@ -302,16 +531,40 @@ namespace Make3D.Dialogs
                 Faces.Add(p1);
                 Faces.Add(p2);
                 Faces.Add(p3);
-               
+
                 Faces.Add(p1);
                 Faces.Add(p3);
                 Faces.Add(p4);
             }
         }
 
+        private void GenerateShape()
+        {
+            ClearShape();
+
+            if (FlatChecked)
+            {
+                GenerateFlatStar();
+            }
+
+            if (FacetChecked)
+            {
+                GenerateFacettedStar();
+            }
+            if (Facet2Checked)
+            {
+                GenerateFacettedStar2();
+            }
+        }
+
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters
+            FlatChecked = EditorParameters.GetBoolean("FlatChecked", true);
+            FacetChecked = EditorParameters.GetBoolean("FacetChecked");
+            Facet2Checked = EditorParameters.GetBoolean("Facet2Checked");
+            CentreRadius = EditorParameters.GetDouble("CentreRadius", 10);
+            NumberOfPoints = EditorParameters.GetInt("NumberOfPoints", 2);
+            PointLength = EditorParameters.GetDouble("PointLength", 10);
         }
 
         private void Redisplay()
@@ -343,7 +596,18 @@ namespace Make3D.Dialogs
 
         private void SaveEditorParmeters()
         {
-            // save the parameters for the tool
+            EditorParameters.Set("FlatChecked", FlatChecked.ToString());
+            EditorParameters.Set("FacetChecked", FacetChecked.ToString());
+            EditorParameters.Set("Facet2Checked", Facet2Checked.ToString());
+            EditorParameters.Set("CentreRadius", CentreRadius.ToString());
+            EditorParameters.Set("NumberOfPoints", NumberOfPoints.ToString());
+            EditorParameters.Set("PointLength", PointLength.ToString());
+        }
+
+        private void UpdateDisplay()
+        {
+            GenerateShape();
+            Redisplay();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -359,11 +623,6 @@ namespace Make3D.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
 
-            Redisplay();
-        }
-        private void UpdateDisplay()
-        {
-            GenerateShape();
             Redisplay();
         }
     }

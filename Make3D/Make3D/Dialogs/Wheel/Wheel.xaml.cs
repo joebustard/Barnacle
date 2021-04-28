@@ -14,23 +14,28 @@ namespace Make3D.Dialogs
     {
         private double actualRimOutter;
         private double axelBore;
+        private bool buttress;
         private double hubInner;
         private double hubOutter;
         private List<String> hubStyles;
         private double hubThickness;
+        private bool noSpoke;
         private double rimOutter;
         private List<String> rimStyles;
 
         private double rimThickness;
+        private double ringRadius;
         private string selectedHubStyle;
         private string selectedRimStyle;
 
         private string selectedTyreStyle;
 
+        private bool showHubRing;
         private Double twop = Math.PI * 2.0;
 
         private double tyreDepth;
         private List<String> tyreStyles;
+        private double tyreThickness;
 
         public Wheel()
         {
@@ -45,6 +50,9 @@ namespace Make3D.Dialogs
             rimThickness = 12;
             tyreThickness = 10;
             rimOutter = 5;
+            showHubRing = false;
+            ringRadius = 2;
+            noSpoke = true;
             hubStyles = new List<string>();
             rimStyles = new List<string>();
             tyreStyles = new List<string>();
@@ -61,6 +69,23 @@ namespace Make3D.Dialogs
                 if (axelBore != value)
                 {
                     axelBore = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool Buttress
+        {
+            get
+            {
+                return buttress;
+            }
+            set
+            {
+                if (buttress != value)
+                {
+                    buttress = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -135,6 +160,22 @@ namespace Make3D.Dialogs
             }
         }
 
+        public bool NoSpoke
+        {
+            get
+            {
+                return noSpoke;
+            }
+            set
+            {
+                if (noSpoke != value)
+                {
+                    noSpoke = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public double RimOutter
         {
             get
@@ -177,6 +218,23 @@ namespace Make3D.Dialogs
                 if (rimThickness != value)
                 {
                     rimThickness = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double RingRadius
+        {
+            get
+            {
+                return ringRadius;
+            }
+            set
+            {
+                if (ringRadius != value)
+                {
+                    ringRadius = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -268,6 +326,23 @@ namespace Make3D.Dialogs
             }
         }
 
+        public bool ShowHubRing
+        {
+            get
+            {
+                return showHubRing;
+            }
+            set
+            {
+                if (showHubRing != value)
+                {
+                    showHubRing = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public double TyreDepth
         {
             get
@@ -279,23 +354,6 @@ namespace Make3D.Dialogs
                 if (tyreDepth != value)
                 {
                     tyreDepth = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-        private double tyreThickness;
-        public double TyreThickness
-        {
-            get
-            {
-                return tyreThickness;
-            }
-            set
-            {
-                if (tyreThickness != value)
-                {
-                    tyreThickness = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -313,6 +371,23 @@ namespace Make3D.Dialogs
                 if (tyreStyles != value)
                 {
                     tyreStyles = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double TyreThickness
+        {
+            get
+            {
+                return tyreThickness;
+            }
+            set
+            {
+                if (tyreThickness != value)
+                {
+                    tyreThickness = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -365,9 +440,10 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void GenerateHub()
+        private void GenerateButtress()
         {
-            List<Point> hubExternalPoints = new List<Point>();
+            List<Point> spokeOutterPnts = new List<Point>();
+            List<Point> spokeInnerPnts = new List<Point>();
             double numSpoke = 0;
             double gapDTheta = 0;
             double spokeDTheta = 0;
@@ -377,7 +453,7 @@ namespace Make3D.Dialogs
             double theta = 0;
             double hubRingInner = -1;
             double hubRIngOutter = -1;
-            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta, ref hubRingInner, ref hubRIngOutter) ;
+            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta, ref hubRingInner, ref hubRIngOutter);
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
@@ -404,6 +480,69 @@ namespace Make3D.Dialogs
                         {
                             theta += dt;
                             if (theta < twopi)
+                            {
+                                double x = actualInner * Math.Cos(theta);
+                                double y = actualInner * Math.Sin(theta);
+                                spokeInnerPnts.Add(new System.Windows.Point(x, y));
+
+                                x = actualOutter * Math.Cos(theta);
+                                y = actualOutter * Math.Sin(theta);
+                                spokeOutterPnts.Add(new System.Windows.Point(x, y));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        theta += spokeTipDTheta;
+                    }
+                    inSpoke = !inSpoke;
+                }
+            }
+
+            // generate side triangles so original points are already in list
+
+            CreateSideFaces(spokeOutterPnts, hubThickness, true);
+        }
+
+        private void GenerateHub()
+        {
+            List<Point> hubExternalPoints = new List<Point>();
+            double numSpoke = 0;
+            double gapDTheta = 0;
+            double spokeDTheta = 0;
+            double spokeTipDTheta = 0;
+            double numSubs = 10;
+            double twopi = Math.PI * 2;
+            double theta = 0;
+            double hubRingInner = -1;
+            double hubRIngOutter = -1;
+            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta, ref hubRingInner, ref hubRIngOutter);
+            double actualInner = hubInner;
+            if (axelBore > actualInner)
+            {
+                actualInner = axelBore + 1;
+            }
+            double actualOutter = hubOutter + actualInner;
+            if (actualOutter < actualInner)
+            {
+                actualOutter = actualInner;
+            }
+            if (numSpoke > 1)
+            {
+                bool inSpoke = true;
+                while (theta <= twopi)
+                {
+                    if (inSpoke)
+                    {
+                        // create spoke points
+                        theta += spokeTipDTheta;
+                        // creat gap points
+                        // Add a gap
+                        double dt = spokeDTheta / numSubs;
+                        for (int i = 0; i < numSubs; i++)
+                        {
+                            theta += dt;
+                            if (theta <= twopi)
                             {
                                 double x = actualOutter * Math.Cos(theta);
                                 double y = actualOutter * Math.Sin(theta);
@@ -469,9 +608,10 @@ namespace Make3D.Dialogs
                 CreateHubSurface(hubInternalPoints, hubExternalPoints, 0.0, true);
                 CreateHubSurface(hubInternalPoints, hubExternalPoints, hubThickness, false);
             }
-            if ( hubRingInner != -1)
+            if (hubRingInner != -1 && showHubRing)
             {
-                GenerateRing(0, 0, hubThickness, hubRingInner, hubRIngOutter, 4);
+                // allow a little overlap
+                GenerateRing(0, 0, hubThickness - 0.01, hubRingInner, hubRIngOutter, 4);
             }
         }
 
@@ -525,10 +665,10 @@ namespace Make3D.Dialogs
 
                 theta += dt;
             }
-            CreateSideFaces(outters, thicky, true,cz);
-            CreateSideFaces(inners, thicky, false,cz);
+            CreateSideFaces(outters, thicky, true, cz);
+            CreateSideFaces(inners, thicky, false, cz);
             CreateHubSurface(inners, outters, cz, true);
-            CreateHubSurface(inners, outters, thicky+cz, false);
+            CreateHubSurface(inners, outters, thicky + cz, false);
         }
 
         private void GenerateShape()
@@ -712,12 +852,22 @@ namespace Make3D.Dialogs
                         numSpoke = 4;
                         spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
                         spokeDTheta = 0.75 * spokeGapDTheta;
-                        spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
-                        hri = axelBore;
-                        hro = hri + 2;
+                        spokeTipDTheta = spokeDTheta;
+                    }
+                    break;
+
+                case "7":
+                    {
+                        numSpoke = 8;
+                        double dt = (twop / numSpoke + 1);
+                        spokeGapDTheta = dt * .6;
+                        spokeDTheta = dt * .4;
+                        spokeTipDTheta = spokeDTheta;
                     }
                     break;
             }
+            hri = axelBore;
+            hro = hri + ringRadius;
         }
 
         private void GetRimParams(List<double> ringRadius, List<double> ringThickness)
@@ -777,10 +927,11 @@ namespace Make3D.Dialogs
                 SelectedRimStyle = EditorParameters.Get("SelectedRimStyle");
                 SelectedTyreStyle = EditorParameters.Get("SelectedTyreStyle");
                 TyreDepth = EditorParameters.GetDouble("TyreDepth");
-                if (EditorParameters.Get("TyreThickness") != "")
-                {
-                    TyreThickness =EditorParameters.GetDouble("TyreThickness");
-                }
+                ShowHubRing = EditorParameters.GetBoolean("ShowHubRing");
+                RingRadius = EditorParameters.GetDouble("RingRadius", 1.0);
+                NoSpoke = EditorParameters.GetBoolean("NoSpoke", true);
+                Buttress = EditorParameters.GetBoolean("Buttress", false);
+                TyreThickness = EditorParameters.GetDouble("TyreThickness", 10.0);
             }
         }
 
@@ -1011,6 +1162,8 @@ namespace Make3D.Dialogs
             EditorParameters.Set("SelectedRimStyle", selectedRimStyle);
             EditorParameters.Set("SelectedTyreStyle", selectedTyreStyle);
             EditorParameters.Set("TyreDepth", tyreDepth.ToString());
+            EditorParameters.Set("ShowHubRing", showHubRing.ToString());
+            EditorParameters.Set("RingRadius", showHubRing.ToString());
         }
 
         private void UpdateDisplay()
@@ -1028,6 +1181,7 @@ namespace Make3D.Dialogs
             hubStyles.Add("4");
             hubStyles.Add("5");
             hubStyles.Add("6");
+            hubStyles.Add("7");
             SelectedHubStyle = "1";
 
             rimStyles.Add("1");
