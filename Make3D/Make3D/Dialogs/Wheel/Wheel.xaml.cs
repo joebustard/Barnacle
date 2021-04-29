@@ -445,7 +445,7 @@ namespace Make3D.Dialogs
             List<Point> spokeOutterPnts = new List<Point>();
             List<Point> spokeInnerPnts = new List<Point>();
             double numSpoke = 0;
-            double gapDTheta = 0;
+            double gapRatio = 0;
             double spokeDTheta = 0;
             double spokeTipDTheta = 0;
             double numSubs = 10;
@@ -453,7 +453,7 @@ namespace Make3D.Dialogs
             double theta = 0;
             double hubRingInner = -1;
             double hubRIngOutter = -1;
-            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta, ref hubRingInner, ref hubRIngOutter);
+            GetHubParams(ref numSpoke, ref gapRatio,  ref hubRingInner, ref hubRIngOutter);
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
@@ -508,7 +508,7 @@ namespace Make3D.Dialogs
         {
             List<Point> hubExternalPoints = new List<Point>();
             double numSpoke = 0;
-            double gapDTheta = 0;
+            double gapRatio = 0;
             double spokeDTheta = 0;
             double spokeTipDTheta = 0;
             double numSubs = 10;
@@ -516,7 +516,7 @@ namespace Make3D.Dialogs
             double theta = 0;
             double hubRingInner = -1;
             double hubRIngOutter = -1;
-            GetHubParams(ref numSpoke, ref gapDTheta, ref spokeDTheta, ref spokeTipDTheta, ref hubRingInner, ref hubRIngOutter);
+            GetHubParams(ref numSpoke, ref gapRatio,  ref hubRingInner, ref hubRIngOutter);
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
@@ -529,46 +529,49 @@ namespace Make3D.Dialogs
             }
             if (numSpoke > 1)
             {
-                bool inSpoke = true;
-                while (theta <= twopi)
-                {
-                    if (inSpoke)
+                /*
+                    bool inSpoke = true;
+                    while (theta <= twopi)
                     {
-                        // create spoke points
-                        theta += spokeTipDTheta;
-                        // creat gap points
-                        // Add a gap
-                        double dt = spokeDTheta / numSubs;
-                        for (int i = 0; i < numSubs; i++)
+                        if (inSpoke)
                         {
-                            theta += dt;
-                            if (theta <= twopi)
+                            // create spoke points
+                            theta += spokeTipDTheta;
+                            // creat gap points
+                            // Add a gap
+                            double dt = spokeDTheta / numSubs;
+                            for (int i = 0; i < numSubs; i++)
                             {
-                                double x = actualOutter * Math.Cos(theta);
-                                double y = actualOutter * Math.Sin(theta);
-                                hubExternalPoints.Add(new System.Windows.Point(x, y));
+                                theta += dt;
+                                if (theta <= twopi)
+                                {
+                                    double x = actualOutter * Math.Cos(theta);
+                                    double y = actualOutter * Math.Sin(theta);
+                                    hubExternalPoints.Add(new System.Windows.Point(x, y));
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        theta += spokeTipDTheta;
-                        // creat gap points
-                        // Add a gap
-                        double dt = gapDTheta / numSubs;
-                        for (int i = 0; i < numSubs; i++)
+                        else
                         {
-                            theta += dt;
-                            if (theta < twopi)
+                            theta += spokeTipDTheta;
+                            // creat gap points
+                            // Add a gap
+                            double dt = gapDTheta / numSubs;
+                            for (int i = 0; i < numSubs; i++)
                             {
-                                double x = actualInner * Math.Cos(theta);
-                                double y = actualInner * Math.Sin(theta);
-                                hubExternalPoints.Add(new System.Windows.Point(x, y));
+                                theta += dt;
+                                if (theta < twopi)
+                                {
+                                    double x = actualInner * Math.Cos(theta);
+                                    double y = actualInner * Math.Sin(theta);
+                                    hubExternalPoints.Add(new System.Windows.Point(x, y));
+                                }
                             }
                         }
+                        inSpoke = !inSpoke;
                     }
-                    inSpoke = !inSpoke;
-                }
+                    */
+                hubExternalPoints = GenerateSpokePoints(numSpoke, gapRatio, actualInner, actualOutter);
             }
             else
             {
@@ -798,76 +801,101 @@ namespace Make3D.Dialogs
             PartSweep(polarProfile1, polarProfile2, cx, 0, sweep, rotDivisions, true, true, offsetOneHalf);
         }
 
-        private void GetHubParams(ref double numSpoke, ref double spokeGapDTheta, ref double spokeDTheta, ref double spokeTipDTheta, ref double hri, ref double hro)
+        private void GetHubParams(ref double numSpoke, ref double gapToSpkeRatio, ref double hri, ref double hro)
         {
             switch (selectedHubStyle)
             {
                 case "1":
                     {
-                        numSpoke = 8;
-                        spokeGapDTheta = twop / (numSpoke * 2.0);
-                        spokeDTheta = spokeGapDTheta;
-                        spokeTipDTheta = 0;
+                        numSpoke = 0;
+                        gapToSpkeRatio = 0.5;
                     }
                     break;
 
                 case "2":
                     {
-                        numSpoke = 8;
-                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
-                        spokeDTheta = spokeGapDTheta / 2;
-                        spokeTipDTheta = spokeDTheta;
+                        numSpoke = 4;
+                        gapToSpkeRatio = 1;
                     }
                     break;
 
                 case "3":
                     {
-                        numSpoke = 12;
-                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
-                        spokeDTheta = 0.9 * spokeGapDTheta;
-                        spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                        numSpoke = 4;
+                        gapToSpkeRatio = 2;
                     }
                     break;
 
                 case "4":
                     {
-                        numSpoke = 4;
-                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
-                        spokeDTheta = 0.75 * spokeGapDTheta;
-                        spokeTipDTheta = (spokeGapDTheta - spokeDTheta) / 2.0;
+                        numSpoke = 5;
+                        gapToSpkeRatio = 0.5;
                     }
                     break;
 
                 case "5":
                     {
-                        numSpoke = 1;
-                        spokeGapDTheta = 0;
-                        spokeDTheta = Math.PI * 2; ;
-                        spokeTipDTheta = 0;
+                        numSpoke = 5;
+                        gapToSpkeRatio = 1;
                     }
                     break;
 
                 case "6":
                     {
-                        numSpoke = 4;
-                        spokeGapDTheta = twop / ((numSpoke + 1) * 2.0);
-                        spokeDTheta = 0.75 * spokeGapDTheta;
-                        spokeTipDTheta = spokeDTheta;
+                        numSpoke = 5;
+                        gapToSpkeRatio = 2;
                     }
                     break;
 
                 case "7":
                     {
-                        numSpoke = 8;
-                        double dt = (twop / numSpoke + 1);
-                        spokeGapDTheta = dt * .6;
-                        spokeDTheta = dt * .4;
-                        spokeTipDTheta = spokeDTheta;
+                        numSpoke = 6;
+                        gapToSpkeRatio = 1;
                     }
                     break;
             }
             hri = axelBore;
             hro = hri + ringRadius;
+        }
+
+        private List<Point> GenerateSpokePoints(double numSpokes, double gapToSpkeRatio, double inR, double outR)
+        {
+            List<Point> pnts = new List<Point>();
+            double a = (Math.PI * 2.0) / (numSpokes * (1 + gapToSpkeRatio));
+            double b = a * gapToSpkeRatio;
+            double theta;
+            double dTheta = a / 10;
+            double dTheta2 = b / 10;
+
+            theta = -(dTheta * 5.0); 
+            double sweep;
+            for (int i = 0; i <numSpokes; i ++)
+            {
+               theta = ((double)i * (a + b))- (dTheta * 5.0);
+                sweep = 0;
+                while ( sweep < a)
+                {
+                    double x = outR * Math.Cos(theta);
+                    double y = outR * Math.Sin(theta);
+                    pnts.Add(new Point(x, y));
+
+                    sweep += dTheta;
+                    theta += dTheta;
+                }
+
+                sweep = 0;
+                while (sweep < b)
+                {
+                    double x = inR * Math.Cos(theta);
+                    double y = inR * Math.Sin(theta);
+                    pnts.Add(new Point(x, y));
+
+                    sweep += dTheta2;
+                    theta += dTheta2;
+                }
+                
+            }
+            return pnts;
         }
 
         private void GetRimParams(List<double> ringRadius, List<double> ringThickness)
