@@ -1,6 +1,7 @@
 ﻿using Make3D.Adorners;
 using Make3D.Dialogs;
 using Make3D.Models;
+using Make3D.Models.CatmullClarke;
 using Make3D.Views;
 using ManifoldLib;
 using MeshDecimator;
@@ -103,6 +104,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Alignment", OnAlignment);
             NotificationManager.Subscribe("Distribute", OnDistribute);
             NotificationManager.Subscribe("Flip", OnFlip);
+            NotificationManager.Subscribe("Catmull", OnCatmull);
 
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
@@ -132,6 +134,32 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
+        }
+
+        private void OnCatmull(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to process");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    Catmull(ob);
+                }
+            }
+        }
+
+        private void Catmull(Object3D ob)
+        {
+            CatmullSmoother cms = new CatmullSmoother();
+            Point3DCollection p3col = ob.RelativeObjectVertices;
+            Int32Collection icol = ob.TriangleIndices;
+
+            cms.Smooth(ref p3col, ref icol);
+            ob.Remesh();
+
         }
 
         private void OnRemoveUnrefVertices(object param)

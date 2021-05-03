@@ -233,11 +233,29 @@ namespace ManifoldLib
                             Vertex v = new Vertex();
                             v.Pos = new Point3D(Points[i].X, Points[i].Y, Points[i].Z);
                             v.OriginalNumber = i;
-                            v.NewNumber = moveto;
-
-                            Vertices.Add(v);
-                            moveto++;
+                            v.NewNumber = -1;
+                            InsertVertice(v);
+                            // Vertices.Add(v);
+                            //  moveto++;
                         }
+                    }
+
+                    int dupof = 0;
+                    int newid = 0;
+                    Vertices[0].NewNumber = newid;
+                    for (int i = 1; i < Vertices.Count; i++)
+                    {
+                        if (PointUtils.equals(Vertices[dupof].Pos, Vertices[i].Pos))
+                        {
+                            Vertices[i].DuplicateOf = Vertices[dupof].OriginalNumber;
+
+                        }
+                        else
+                        {
+                            dupof = i;
+                            newid++;
+                        }
+                        Vertices[i].NewNumber = newid;
                     }
 
                     Faces.Clear();
@@ -267,6 +285,93 @@ namespace ManifoldLib
                 }
 
                 VerticesToPoints();
+            }
+        }
+
+        private void InsertVertice(Vertex v)
+        {
+            if (Vertices.Count >= 3)
+            {
+                if (Vertices[0].GreaterOrEqual(v))
+                {
+                    Vertices.Insert(0, v);
+                }
+                else
+                {
+                    if (v.GreaterOrEqual(Vertices[Vertices.Count - 1]))
+                    {
+                        Vertices.Add(v);
+                    }
+                    else
+                    {
+                        InsertVertice(v, 0, Vertices.Count - 1);
+                    }
+                }
+
+            }
+            else
+            if (Vertices.Count == 2)
+            {
+                if (Vertices[0].GreaterOrEqual(v))
+                {
+                    Vertices.Insert(0, v);
+                }
+                else
+                {
+                    if (v.GreaterOrEqual(Vertices[1]))
+                    {
+                        Vertices.Add(v);
+                    }
+                    else
+                    {
+                        Vertices.Insert(1, v);
+                    }
+                }
+            }
+            else
+            if (Vertices.Count == 1)
+            {
+                if (Vertices[0].GreaterOrEqual(v))
+                {
+                    Vertices.Insert(0, v);
+                }
+                else
+                {
+                    Vertices.Add(v);
+                }
+            }
+            else
+            if (Vertices.Count == 0)
+            {
+                Vertices.Add(v);
+            }
+
+        }
+
+        private void InsertVertice(Vertex v, int low, int high)
+        {
+            int mid = low + (high - low) / 2;
+            if ((high - low) < 1000)
+            {
+                for (int i = low; i < high; i++)
+                {
+                    if (v.GreaterOrEqual(Vertices[i]) && (Vertices[i + 1].GreaterOrEqual(v)))
+                    {
+                        Vertices.Insert(i + 1, v);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                if (v.GreaterOrEqual(Vertices[mid]))
+                {
+                    InsertVertice(v, mid, high);
+                }
+                else
+                {
+                    InsertVertice(v, low, mid);
+                }
             }
         }
 
@@ -360,7 +465,10 @@ namespace ManifoldLib
             Points.Clear();
             foreach (Vertex v in Vertices)
             {
-                Points.Add(v.Pos);
+                if (v.DuplicateOf == -1)
+                {
+                    Points.Add(v.Pos);
+                }
             }
             Indices.Clear();
             foreach (Face f in Faces)

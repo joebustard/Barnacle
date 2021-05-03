@@ -1,0 +1,15 @@
+<Document NextId="0">
+  <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1/35" SwapAxis="True" FloorAll="True">
+    <Rotation X="0" Y="0" Z="0" />
+  </Settings>
+  <FileRef Name="\Body.txt" />
+  <FileRef Name="\Chassis.txt" />  
+  <FileRef Name="\Details.txt" />  
+  <FileRef Name="\DoorsAndHatches.txt" />
+  <FileRef Name="\Engine.txt" />
+  <FileRef Name="\Lights.txt" />
+  <FileRef Name="\Suspension.txt" />
+  <FileRef Name="\Turret.txt" />
+  <FileRef Name="\Weapons.txt" />
+  <FileRef Name="\Wheels.txt" />  
+</Document>

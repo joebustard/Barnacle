@@ -29,7 +29,21 @@ namespace Make3D.Dialogs
         private Visibility showWidth;
         private bool solidShape;
         private int wallWidth;
+        private bool showOrtho;
+        public bool ShowOrtho
+        {
+            get { return showOrtho; }
+            set
+            {
+                if (value != showOrtho)
+                {
+                    showOrtho = value;
 
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
         public PlateletDlg()
         {
             InitializeComponent();
@@ -40,6 +54,7 @@ namespace Make3D.Dialogs
             wallWidth = 5;
             solidShape = true;
             hollowShape = false;
+            showOrtho = true;
             showWidth = Visibility.Hidden;
             InitialisePoints();
 
@@ -186,6 +201,26 @@ namespace Make3D.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
+        private void DashLine(double x1, double y1, double x2, double y2)
+        {
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 2;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.2);
+            ln.StrokeDashArray.Add(0.2);
+
+            ln.Fill = br;
+            ln.X1 = x1;
+            ln.Y1 = y1;
+            ln.X2 = x2;
+            ln.Y2 = y2;
+            
+            MainCanvas.Children.Add(ln);
+        }
         private void AddPointClicked(object sender, RoutedEventArgs e)
         {
         }
@@ -248,6 +283,14 @@ namespace Make3D.Dialogs
                     el.MouseDown += MainCanvas_MouseDown;
                     el.MouseMove += MainCanvas_MouseMove;
                     MainCanvas.Children.Add(el);
+
+                    if (selectedPoint == i && showOrtho)
+                    {
+                        DashLine(p.X, 0, p.X, MainCanvas.ActualHeight-1);
+                        DashLine(0,p.Y, MainCanvas.ActualWidth-1, p.Y);
+
+                    }
+
                 }
             }
         }

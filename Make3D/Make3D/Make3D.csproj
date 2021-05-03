@@ -164,6 +164,9 @@
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\CameraUtils.cs" />
+    <Compile Include="Models\CatmullClarke\CatFace.cs" />
+    <Compile Include="Models\CatmullClarke\CatmullSmoother.cs" />
+    <Compile Include="Models\CatmullClarke\CatPoint.cs" />
     <Compile Include="Models\EditorParameter.cs" />
     <Compile Include="Models\EditorParameters.cs" />
     <Compile Include="Models\ExternalReference.cs" />

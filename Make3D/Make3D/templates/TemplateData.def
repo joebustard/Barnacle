@@ -62,17 +62,68 @@
       <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="RightRunningGear.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Suspension.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="Turrent.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="Wheels.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
     <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
       <File Name="HullAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="TurrentAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="TurretAssembly.txt" Source="templates/TurretAssembly1_35.txt" />
       <File Name="LeftRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="RightRunningGearAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
-      <File Name="WholeTankAssembly.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="WholeTankAssembly.txt" Source="templates/WholeTankAssembly1_35.txt" />
+    </Folder>
+    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
+      <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
+    </Folder>
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True"  TimeDependency="." />
+    <Folder Name="Gcode" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+  </ProjectDefinition>
+
+   <!--  Armoured Car Model Template -->
+  <ProjectDefinition Name="Armoured Car">
+    <Description>
+      Creates a  folder structure with empty 1/35 scale models for a typical armoured car model kit.
+      The folders are
+      /assemblies
+      A place to store sub assembly models
+      /backup
+      A place to store backups of the parts as they are developed
+      /export
+      A place to save any STL files exported from the project
+      /gcode
+      A place to save 3D Printer files created by the external slicer.
+      /docs
+      A place to store documentation such as design notes and build instructions
+      /images
+      A place to save any image files that will be used to create the model
+      /scripts
+      A place to save any limpet scripts
+    </Description>
+
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="Body.txt" Source="templates/blankmodel1_35.txt" />    
+      <File Name="Chassis.txt" Source="templates/blankmodel1_35.txt" />    
+      <File Name="Details.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="DoorsAndHatches.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Engine.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Lights.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Suspension.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Turret.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Weapons.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Wheels.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
+    <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+      <File Name="BodyAssembly.txt" Source="templates/bodyassembly1_35.txt" />
+      <File Name="TurretAssembly.txt" Source="templates/TurretAssembly1_35.txt" />
+      <File Name="ChassisAssembly.txt" Source="templates/ChassisAssembly1_35.txt" />
+      <File Name="EngineAssembly.txt" Source="templates/EngineAssembly1_35.txt" />
+      <File Name="WholeArmouredCarAssembly.txt" Source="templates/WholeArmouredCarAssembly1_35.txt" />
     </Folder>
     <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
     <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">

@@ -1,4 +1,5 @@
-﻿using System.Windows.Media.Media3D;
+﻿using System;
+using System.Windows.Media.Media3D;
 
 namespace ManifoldLib
 {
@@ -19,6 +20,44 @@ namespace ManifoldLib
         internal void Dump()
         {
             System.Diagnostics.Debug.WriteLine($" {Pos.X},{Pos.Y},{Pos.Z}, original {OriginalNumber} Dup {DuplicateOf} new number {NewNumber}");
+        }
+        const double tol = 0.000001;
+        internal bool GreaterOrEqual(Vertex v)
+        {
+            bool res = false;
+
+            if (Pos.X - v.Pos.X > tol)
+            {
+                res = true;
+            }
+            else
+            {
+                if (Math.Abs(Pos.X - v.Pos.X) < tol)
+                {
+                    if (Pos.Y - v.Pos.Y > tol)
+                    {
+                        res = true;
+                    }
+                    else
+                    {
+                        if (Math.Abs(Pos.Y - v.Pos.Y) < tol)
+                        {
+                            if (Math.Abs(Pos.Z - v.Pos.Z) < tol)
+                            {
+                                res = true;
+                            }
+                            else
+                            if (Pos.Z - v.Pos.Z > tol)
+                            {
+                                res = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            return res;
         }
     }
 }

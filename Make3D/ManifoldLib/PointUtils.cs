@@ -54,7 +54,10 @@ namespace ManifoldLib
         {
             return equals(p.X, x) && equals(p.Y, y) && equals(p.Z, z);
         }
-
+        public static bool equals(Point3D p1, Point3D p2)
+        {
+            return equals(p1.X, p2.X) && equals(p1.Y, p2.Y) && equals(p1.Z, p2.Z);
+        }
         public static bool equals(double v1, double v2)
         {
             if (Math.Abs(v1 - v2) < EqualityTolerance)

@@ -106,6 +106,7 @@ namespace Make3D.ViewModels
             MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
             UnrefVertexCommand = new RelayCommand(OnUnrefVertex);
+            MeshSmoothCommand = new RelayCommand(OnCatmull);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -146,6 +147,12 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("ProjectChanged", Project);
         }
 
+        private void OnCatmull(object obj)
+        {
+            NotificationManager.Notify("Catmull", null);
+        }
+
+        public ICommand MeshSmoothCommand { get; set; }
         public ICommand AddCommand { get; set; }
 
         public ICommand AddPageCommand { get; set; }
