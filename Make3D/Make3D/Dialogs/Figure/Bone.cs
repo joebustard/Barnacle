@@ -1,0 +1,287 @@
+﻿using Make3D.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
+
+namespace Make3D.Dialogs.Figure
+{
+    internal class Bone
+    {
+        private Point3D endPos;
+        private double height;
+        private double length;
+        private Point3D midPos;
+        private Point3D startPos;
+        private double xrot;
+        private double xRotRadians;
+        private double yrot;
+        private double yRotRadians;
+        private double zrot;
+        private double zRotRadians;
+
+        public Bone()
+        {
+            Name = "";
+            ModelName = "";
+            Length = 0;
+            Width = 5;
+            height = 5;
+            XRot = 0;
+            YRot = 0;
+            ZRot = 0;
+            xRotRadians = 0;
+            yRotRadians = 0;
+            zRotRadians = 0;
+            MinXRot = -359.0;
+            MaxXRot = 359;
+            MinYRot = -359;
+            MaxYRot = 359;
+            SubBones = new List<Bone>();
+        }
+
+        public Point3D EndPosition
+        {
+            get => endPos;
+            set
+            {
+                if (value != endPos)
+                {
+                    endPos = value;
+                    // UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, Rad(_XRot), Rad(_YRot), length);
+                }
+            }
+        }
+
+        public double Height
+        {
+            get
+            {
+                return height;
+            }
+            set
+            {
+                if (height != value)
+                {
+                    height = value;
+                    //    UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
+                }
+            }
+        }
+
+        public double Length
+        {
+            get
+            {
+                return length;
+            }
+            set
+            {
+                if (length != value)
+                {
+                    length = value;
+                    //    UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
+                }
+            }
+        }
+
+        public double MaxXRot { get; set; }
+        public double MaxYRot { get; set; }
+        public double MaxZRot { get; set; }
+
+        public Point3D MidPosition
+        {
+            get => midPos;
+            set
+            {
+                if (value != midPos)
+                {
+                    midPos = value;
+                    // UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, Rad(_XRot), Rad(_YRot), length);
+                }
+            }
+        }
+
+        public double MinXRot { get; set; }
+        public double MinYRot { get; set; }
+        public double MinZRot { get; set; }
+        public string ModelName { get; set; }
+        public string Name { get; set; }
+        public double Nxr { get; set; }
+        public double Nyr { get; set; }
+        public double Nzr { get; set; }
+
+        public Point3D StartPosition
+        {
+            get => startPos;
+            set
+            {
+                if (value != startPos)
+                {
+                    startPos = value;
+                    //      UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
+                }
+            }
+        }
+
+        public List<Bone> SubBones { get; set; }
+
+        public double Width { get; set; }
+
+        public double XRot
+        {
+            get => xrot;
+            set
+            {
+                if (xrot != value)
+                {
+                    xrot = value;
+                    xRotRadians = Rad(xrot);
+                    //     UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians,zRotRadians, length);
+                }
+            }
+        }
+
+        public double YRot
+        {
+            get => yrot;
+            set
+            {
+                if (yrot != value)
+                {
+                    yrot = value;
+                    yRotRadians = Rad(yrot);
+                    //      UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
+                }
+            }
+        }
+
+        public double ZRot
+        {
+            get => zrot;
+            set
+            {
+                if (zrot != value)
+                {
+                    zrot = value;
+                    zRotRadians = Rad(zrot);
+                    //     UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
+                }
+            }
+        }
+
+        public Bone AddSub(string n, double l, double w, double h, double xr, double yr, double zr, double minx, double maxx, double miny, double maxy, double minz, double maxz, string boneModel = "bone")
+
+        {
+            Bone res = new Bone()
+            {
+                Name = n,
+                Length = l,
+                Width = w,
+                Height = h,
+                XRot = xr,
+                YRot = yr,
+                ZRot = zr,
+                MinXRot = minx,
+                MaxXRot = maxx,
+                MinYRot = miny,
+                MaxYRot = maxy,
+                MinZRot = minz,
+                MaxZRot = minz,
+                ModelName = boneModel
+            };
+
+            SubBones.Add(res);
+
+            return res;
+        }
+
+        // only call this on the root bone
+        public void Update()
+        {
+            UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians);
+        }
+
+        internal void Dump(int v)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb = sb.Append(' ', v * 2);
+            string indent = sb.ToString();
+            System.Diagnostics.Debug.WriteLine($"{indent}{Name} {startPos.X},{startPos.Y},{startPos.Z} => {endPos.X},{endPos.Y},{endPos.Z}");
+
+            System.Diagnostics.Debug.WriteLine($"{indent}[");
+            foreach (Bone b in SubBones)
+            {
+                b.Dump(v + 1);
+            }
+            System.Diagnostics.Debug.WriteLine($"{indent}]");
+        }
+
+        internal void GetSubPositions(List<BoneDisplayRecord> pnts)
+        {
+            foreach (Bone bn in SubBones)
+            {
+                BoneDisplayRecord br = new BoneDisplayRecord();
+                br.Name = bn.Name;
+                br.ModelName = bn.ModelName;
+                br.Position = new Point3D(bn.MidPosition.X, bn.MidPosition.Y, bn.MidPosition.Z);
+                br.MarkerPosition = new Point3D(bn.StartPosition.X, bn.StartPosition.Y, bn.StartPosition.Z);
+                br.Rotation = new Point3D(Rad(bn.Nxr), Rad(bn.Nyr), Rad(bn.Nzr));
+                br.Scale = new Scale3D(bn.Length, bn.Height, bn.Width);
+                pnts.Add(br);
+                bn.GetSubPositions(pnts);
+            }
+        }
+
+        private Matrix3D CalculateRotationMatrix(double x, double y, double z)
+        {
+            Matrix3D matrix = new Matrix3D();
+
+            matrix.Rotate(new Quaternion(new Vector3D(1, 0, 0), x));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 1, 0) * matrix, y));
+            matrix.Rotate(new Quaternion(new Vector3D(0, 0, 1) * matrix, z));
+
+            return matrix;
+        }
+
+        private double Rad(double v)
+        {
+            return (v * Math.PI) / 180.0;
+        }
+
+        private Point3D RotatedPoint(double length, double nxr, double nyr, double nzr)
+        {
+            Matrix3D m3d = CalculateRotationMatrix(nxr, nyr, nzr);
+            MatrixTransform3D transform = new MatrixTransform3D(m3d);
+            Point3D res = transform.Transform(new Point3D(length, 0, 0));
+
+            return res;
+        }
+
+        private void UpdateSubBones(double x, double y, double z, double parentXr, double parentYr, double parentZr)
+        {
+            if (SubBones != null)
+            {
+                double sx = x;
+                double sy = y;
+                double sz = z;
+                StartPosition = new Point3D(x, y, z);
+                Nxr = parentXr + XRot;
+                Nyr = parentYr + YRot;
+                Nzr = parentZr + ZRot;
+                Point3D rotn = RotatedPoint(Length, Nxr, Nyr, Nzr);
+                endPos = new Point3D(sx + rotn.X, sy + rotn.Y, sz + rotn.Z);
+
+                rotn = RotatedPoint(Length / 2.0, Nxr, Nyr, Nzr);
+                midPos = new Point3D(sx + rotn.X, sy + rotn.Y, sz + rotn.Z);
+
+                foreach (Bone b in SubBones)
+                {
+                    b.UpdateSubBones(endPos.X, endPos.Y, endPos.Z, Nxr, Nyr, Nzr);
+                }
+            }
+        }
+    }
+}

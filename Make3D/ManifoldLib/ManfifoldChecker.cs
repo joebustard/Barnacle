@@ -225,7 +225,7 @@ namespace ManifoldLib
                 if ((Points != null) && (Points.Count >= 3))
                 {
                     Vertices.Clear();
-                    int moveto = 0;
+
                     for (int i = 0; i < Points.Count; i++)
                     {
                         if (Indices.Contains(i))
@@ -235,8 +235,7 @@ namespace ManifoldLib
                             v.OriginalNumber = i;
                             v.NewNumber = -1;
                             InsertVertice(v);
-                            // Vertices.Add(v);
-                            //  moveto++;
+
                         }
                     }
 

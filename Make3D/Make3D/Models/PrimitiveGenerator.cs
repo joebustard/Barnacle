@@ -30,17 +30,7 @@ namespace Make3D.Models
             pnts.Add(new Point3D(0.5, 0.5, -0.5));
             pnts.Add(new Point3D(0.5, 0.5, 0.5));
             pnts.Add(new Point3D(-0.5, 0.5, 0.5));
-            // for tests
-            pnts.Add(new Point3D(0.5, 0.5, 0.5));
-            pnts.Add(new Point3D(-0.5, -0.5, -0.5));
-            pnts.Add(new Point3D(-0.5, 0.5, -0.5));
-            pnts.Add(new Point3D(0.5, -0.5, -0.5));
-            pnts.Add(new Point3D(0.5, -0.5, 0.5));
-            pnts.Add(new Point3D(-0.5, -0.5, 0.5));
-
-            pnts.Add(new Point3D(0.5, 0.5, -0.5));
-
-            pnts.Add(new Point3D(-0.5, 0.5, 0.5));
+           
 
             indices = new Int32Collection();
             AddTriangle(indices, 3, 2, 6);
@@ -925,6 +915,32 @@ namespace Make3D.Models
             indices.Add(4);
             indices.Add(1);
             indices.Add(0);
+            SwitchInsideOut(indices);
+        }
+        internal static void GeneratePyramid2(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            pnts.Add(new Point3D(0.000, 0.500, 0.000));
+            pnts.Add(new Point3D(-0.500, -0.500, 0.500));
+            pnts.Add(new Point3D(0, -0.500, -0.500));
+            pnts.Add(new Point3D(0.500, -0.500, 0.500));
+            
+            indices.Add(0);
+            indices.Add(1);
+            indices.Add(2);
+
+            indices.Add(2);
+            indices.Add(3);
+            indices.Add(0);
+
+            indices.Add(3);
+            indices.Add(1);
+            indices.Add(0);
+
+            indices.Add(1);
+            indices.Add(3);
+            indices.Add(2);
+
+
             SwitchInsideOut(indices);
         }
 

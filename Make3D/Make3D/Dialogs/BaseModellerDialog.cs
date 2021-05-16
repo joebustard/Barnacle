@@ -15,6 +15,8 @@ namespace Make3D.Dialogs
         protected Axies axies;
         protected Floor floor;
         protected Grid3D grid;
+        protected GeometryModel3D lastHitModel;
+        protected Point3D lastHitPoint;
         protected System.Windows.Media.Color meshColour;
         protected bool showAxies;
         protected bool showFloor;
@@ -301,63 +303,49 @@ namespace Make3D.Dialogs
                 }
             }
             return;
-            if (sweepRange != 360.0)
+          
+        }
+
+        public void Log(string s )
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+        
+        public void HitTest(Viewport3D viewport3D1,object sender, System.Windows.Input.MouseButtonEventArgs args)
+        {
+            Point mouseposition = args.GetPosition(viewport3D1);
+            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
+            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+
+            //test for a result in the Viewport3D
+            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
+        }
+
+        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
+        {
+            HitTestResultBehavior result = HitTestResultBehavior.Continue;
+            RayHitTestResult rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
             {
-                // both ends will be open.
-                Point3D centreOfProfile = new Point3D(cx, 0, cy);
-                for (int index = 0; index < polarProfile.Count; index++)
+                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+
+                if (rayMeshResult != null)
                 {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
+                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    if (lastHitModel == null)
                     {
-                        index2 = 0;
+                        // UpdateResultInfo(rayMeshResult);
+                        lastHitModel = hitgeo;
+                        lastHitPoint = rayMeshResult.PointHit;
                     }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
-                    pc3.SetPoint3D(centreOfProfile);
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v3);
-                    Faces.Add(v2);
-                }
-
-                for (int index = 0; index < polarProfile.Count; index++)
-                {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
-                    {
-                        index2 = 0;
-                    }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
-                    pc3.SetPoint3D(centreOfProfile);
-                    pc1.Phi -= sweep;
-                    pc2.Phi -= sweep;
-                    pc3.Phi -= sweep;
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v2);
-                    Faces.Add(v3);
+                    result = HitTestResultBehavior.Stop;
                 }
             }
+
+            return result;
         }
 
         internal void SweepPolarProfileTheta(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true, bool flipAxies = false, bool invert = false)

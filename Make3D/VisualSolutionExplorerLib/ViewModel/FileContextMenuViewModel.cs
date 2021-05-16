@@ -14,13 +14,14 @@ namespace VisualSolutionExplorer
             ICommand renameFile = new RelayCommand(OnRenFile);
             contextMenuActions.Add(new ContextMenuAction("Rename", renameFile, "Rename the file"));
 
-            ICommand deleteFile = new RelayCommand(OnDeleteFile);
+            ICommand deleteFile = new RelayCommand(HandleDeleteFile);
             contextMenuActions.Add(new ContextMenuAction("Delete", deleteFile, "Delete the file from disk and remove it from the project"));
             ICommand removeFile = new RelayCommand(HandleRemoveFile);
             contextMenuActions.Add(new ContextMenuAction("Remove", removeFile, "Remove the file from the project but do not delete it"));
         }
 
         public delegate void RenameFile();
+        public delegate void DeleteFile();
 
         public delegate void RemoveFile();
 
@@ -45,14 +46,20 @@ namespace VisualSolutionExplorer
         public RenameFile OnRenameFile { get; set; }
         public RemoveFile OnRemoveFile { get; set; }
 
+        public DeleteFile OnDeleteFile { get; set; }
+
         protected virtual void NotifyPropertyChanged(string propertyName)
         {
             if (this.PropertyChanged != null)
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void OnDeleteFile(object obj)
+        private void HandleDeleteFile(object obj)
         {
+        if ( OnDeleteFile != null)
+        {
+                OnDeleteFile();
+        }
         }
 
         private void HandleRemoveFile(object obj)

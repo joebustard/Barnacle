@@ -6,7 +6,7 @@
       The folders are
       /export
       A place to save any STL files exported from the project
-      /gcode
+      /printer
       A place to save 3D Printer files created by the external slicer.
       /docs
       A place to store documentation such as design notes and build instructions
@@ -22,11 +22,11 @@
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
     <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
 
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="." />
-    <Folder Name="Gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
     </Folder>
@@ -43,7 +43,7 @@
       A place to store backups of the parts as they are developed
       /export
       A place to save any STL files exported from the project
-      /gcode
+      /printer
       A place to save 3D Printer files created by the external slicer.
       /docs
       A place to store documentation such as design notes and build instructions
@@ -74,15 +74,15 @@
       <File Name="EngineAssembly.txt" Source="templates/blankmodel1_35.txt" />
       <File Name="WholeTankAssembly.txt" Source="templates/WholeTankAssembly1_35.txt" />
     </Folder>
-    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+    <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True"  TimeDependency="." />
-    <Folder Name="Gcode" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
   </ProjectDefinition>
 
    <!--  Armoured Car Model Template -->
@@ -96,7 +96,7 @@
       A place to store backups of the parts as they are developed
       /export
       A place to save any STL files exported from the project
-      /gcode
+      /printer
       A place to save 3D Printer files created by the external slicer.
       /docs
       A place to store documentation such as design notes and build instructions
@@ -125,15 +125,15 @@
       <File Name="EngineAssembly.txt" Source="templates/EngineAssembly1_35.txt" />
       <File Name="WholeArmouredCarAssembly.txt" Source="templates/WholeArmouredCarAssembly1_35.txt" />
     </Folder>
-    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+    <Folder Name="Backup" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+    <Folder Name="Docs" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/tankbom.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True"  TimeDependency="." />
-    <Folder Name="Gcode" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
   </ProjectDefinition>
 
   <!--  Aircraft Model Template -->
@@ -147,7 +147,7 @@
       A place to store backups of the parts as they are developed
       /export
       A place to save any STL files exported from the project
-      /gcode
+      /printer
       A place to save 3D Printer files created by the external slicer.
       /docs
       A place to store documentation such as design notes and build instructions
@@ -180,10 +180,10 @@
       <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
     </Folder>
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+    <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True"  TimeDependency="." />
-    <Folder Name="Gcode" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
   </ProjectDefinition>
   <ProjectDefinition Name="Blank">
@@ -193,7 +193,7 @@
       The folders are
       /export
       A place to save any STL files exported from the project
-      /gcode
+      /Printer
       A place to save 3D Printer files created by the external slicer.
       /docs
       A place to store documentation such as design notes and build instructions
@@ -207,13 +207,13 @@
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
     </Folder>
-    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="True" Clean="False" Export="False" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True" />
 
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-    <Folder Name="Gcode" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
-    <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
+    <Folder Name="Export" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+    <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True"  AddFiles="True" AutoLoad="True">
     </Folder>
   </ProjectDefinition>
 </Defs>

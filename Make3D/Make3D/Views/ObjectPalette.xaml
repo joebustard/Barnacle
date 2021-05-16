@@ -37,7 +37,7 @@
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cone" ToolTip="Add a cone object">
                 <Image Source="/Make3D;component/Images/Buttons/Cone.png" />
             </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid object">
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid with a square base">
                 <Image Source="/Make3D;component/Images/Buttons/Pyramid.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RoundRoof" ToolTip="Add a round roof object">
@@ -62,6 +62,10 @@
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pointy" ToolTip="Add a  pointy object">
                 <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
+            </Button>
+
+            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid2" ToolTip="Add a pyramid with a triangular base">
+                <Image Source="/Make3D;component/Images/Buttons/Pyramid2.png" />
             </Button>
         </UniformGrid>
     </Grid>

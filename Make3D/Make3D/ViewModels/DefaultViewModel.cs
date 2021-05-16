@@ -106,7 +106,7 @@ namespace Make3D.ViewModels
             MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
             UnrefVertexCommand = new RelayCommand(OnUnrefVertex);
-            MeshSmoothCommand = new RelayCommand(OnCatmull);
+            MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -147,9 +147,9 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("ProjectChanged", Project);
         }
 
-        private void OnCatmull(object obj)
+        private void OnLoopSmooth(object obj)
         {
-            NotificationManager.Notify("Catmull", null);
+            NotificationManager.Notify("LoopSmooth", null);
         }
 
         public ICommand MeshSmoothCommand { get; set; }
@@ -926,7 +926,7 @@ namespace Make3D.ViewModels
             parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
             parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
-            parametricToolsToShow.Add(new ToolDef("Filet", true, "Filet", "Create a support filet."));
+            parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
             NotifyPropertyChanged("ParametricToolsToShow");
         }

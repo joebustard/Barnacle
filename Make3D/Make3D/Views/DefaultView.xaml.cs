@@ -275,6 +275,17 @@ namespace Make3D.Views
                                 }
                             }
                         }
+                        else
+                        {
+                            // throw the file at the operating system
+
+                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                            {
+                                FileName = p,
+                                UseShellExecute = true,
+                                Verb = "open"
+                            });
+                        }
                     }
                     break;
 
@@ -367,6 +378,42 @@ namespace Make3D.Views
                                 }
                                 File.Move(old, ren);
                             }
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    break;
+
+                case "DeleteFile":
+                    {
+                        String fName = parameter1;
+
+
+                        try
+                        {
+
+                            bool deletingCurrent = false;
+                            if (fName == BaseViewModel.Document.FilePath)
+                            {
+                                deletingCurrent = true;
+                            }
+                            if (File.Exists(fName))
+                            {
+                                File.Delete(fName);
+                                if ( deletingCurrent)
+                                {
+                                    String open = BaseViewModel.Project.DefaultFileToOpen();
+                                    if (File.Exists(open))
+                                    {
+                                        BaseViewModel.Document.Clear();
+                                            BaseViewModel.Document.Load(open);
+                                        NotificationManager.Notify("Refresh", null);
+                                        //  UndoManager.Clear();
+                                    }
+                                }
+                            }
+
                         }
                         catch (Exception)
                         {

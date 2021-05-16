@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows;
 using System.Xml;
 
 namespace VisualSolutionExplorer
@@ -266,7 +267,7 @@ namespace VisualSolutionExplorer
                 pfo.Refresh(baseFolder);
             }
         }
-
+         
         internal void RemoveFile(string p1)
         {
             List<ProjectFile> tmp = new List<ProjectFile>();
@@ -280,6 +281,40 @@ namespace VisualSolutionExplorer
             _projectFiles = tmp;
         }
 
+
+        internal bool DeleteFile(string p1)
+        {
+            bool res = false;
+          
+                List<ProjectFile> tmp = new List<ProjectFile>();
+                for (int i = 0; i < _projectFiles.Count; i++)
+                {
+                    if (_projectFiles[i].FilePath != p1)
+                    {
+                        tmp.Add(_projectFiles[i]);
+                    }
+
+                }
+                _projectFiles = tmp;
+                res = true;
+            
+
+            return res;
+        }
+
+        internal string DefaultFileToOpen()
+        {
+            string res = "";
+            foreach (ProjectFile s in ProjectFiles)
+            {
+                if (System.IO.Path.GetExtension(s.FilePath) == "txt")
+                {
+                    res = s.FilePath;
+                    break;
+                }
+            }
+            return res;
+        }
         internal void UpdatePath()
         {
             String pth = System.IO.Path.GetDirectoryName(FolderPath);

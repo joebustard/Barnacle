@@ -39,12 +39,12 @@
                         <RowDefinition Height="1*" />
                     </Grid.RowDefinitions>
                     <UniformGrid Grid.Column="0" Grid.Row="0" Columns="2">
-                        <Button x:Name="Front" Content="Front" Click="Front_Click" />
-                        <Button x:Name="Back" Content="Back" Click="Back_Click" />
-                        <Button x:Name="Left" Content="Left" Click="Left_Click" />
-                        <Button x:Name="Right" Content="Right" Click="Right_Click" />
-                        <Button x:Name="Top" Content="Top" Click="Top_Click" />
-                        <Button x:Name="Bottom" Content="Bottom" Click="Bottom_Click" />
+                        <Button x:Name="FrontButton" Content="Front" Click="Front_Click" />
+                        <Button x:Name="BackButton" Content="Back" Click="Back_Click" />
+                        <Button x:Name="LeftButton" Content="Left" Click="Left_Click" />
+                        <Button x:Name="RightButton" Content="Right" Click="Right_Click" />
+                        <Button x:Name="TopButton" Content="Top" Click="Top_Click" />
+                        <Button x:Name="BottomButton" Content="Bottom" Click="Bottom_Click" />
                     </UniformGrid>
                     <UniformGrid Grid.Row="1" Margin="4,4,4,4" Columns="1">
                         <RadioButton GroupName="BodyMode" Content="Whole" IsChecked="{Binding WholeBody}" />

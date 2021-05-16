@@ -18,6 +18,7 @@ namespace VisualSolutionExplorer
             CollapseTree = new RelayCommand(OnCollapseTree);
             ExpandTree = new RelayCommand(OnExpandTree);
             RefreshTree = new RelayCommand(OnRefreshTree);
+            
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -127,5 +128,7 @@ namespace VisualSolutionExplorer
             }
             NotifyPropertyChanged("Folders");
         }
+
+       
     }
 }

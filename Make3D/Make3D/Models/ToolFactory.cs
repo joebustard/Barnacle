@@ -80,6 +80,10 @@ namespace Make3D.Models
                 case "TurboFan":
                     res = new TurboFan();
                     break;
+
+                case "Figure":
+                    res = new FigureDlg();
+                    break;
             }
             return res;
         }

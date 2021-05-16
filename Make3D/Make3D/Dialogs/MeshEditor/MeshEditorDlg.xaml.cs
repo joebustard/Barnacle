@@ -22,9 +22,6 @@ namespace Make3D.Dialogs
         // of wire frame rects and selectable points.
         private Point3DCollection editingPoints;
 
-        private List<Dialogs.MeshEditor.MeshTriangle> editingTriangles;
-        private GeometryModel3D lastHitModel;
-        private Point3D lastHitPoint;
         private Point lastMousePos;
         private int lastSelectedPoint;
         private MeshTriangle lastSelectedTriangle;
@@ -100,43 +97,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
-        {
-            Point mouseposition = args.GetPosition(viewport3D1);
-            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
-            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
-            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
-            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
-
-            //test for a result in the Viewport3D
-            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
-        }
-
-        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
-        {
-            HitTestResultBehavior result = HitTestResultBehavior.Continue;
-            RayHitTestResult rayResult = rawresult as RayHitTestResult;
-
-            if (rayResult != null)
-            {
-                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
-
-                if (rayMeshResult != null)
-                {
-                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-                    if (lastHitModel == null)
-                    {
-                        // UpdateResultInfo(rayMeshResult);
-                        lastHitModel = hitgeo;
-                        lastHitPoint = rayMeshResult.PointHit;
-                    }
-                    result = HitTestResultBehavior.Stop;
-                }
-            }
-
-            return result;
-        }
-
+       
         internal void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, double width)
         {
             // this is not the normal cube.
@@ -459,7 +420,7 @@ namespace Make3D.Dialogs
             }
             lastHitModel = null;
             lastHitPoint = new Point3D(0, 0, 0);
-            HitTest(sender, e);
+            HitTest(viewport3D1,sender, e);
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {

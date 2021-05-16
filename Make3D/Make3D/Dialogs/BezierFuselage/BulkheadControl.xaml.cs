@@ -51,7 +51,7 @@ namespace Make3D.Dialogs
         private int selectedPoint;
         private int selectedControlPoint;
         private bool snapPoint;
-        private bool linkPoints;
+        private bool linkPoints=false;
         private BezierLine[] bzlines;
 
         public BezierLine[] BzLines

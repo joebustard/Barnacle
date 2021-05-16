@@ -10,6 +10,7 @@ namespace Make3D.Models
 {
     internal class LineUtils
     {
+        
         public static void CoplanerTest()
         {
             List<PointF> points = new List<PointF>();

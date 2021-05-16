@@ -453,7 +453,7 @@ namespace Make3D.Dialogs
             double theta = 0;
             double hubRingInner = -1;
             double hubRIngOutter = -1;
-            GetHubParams(ref numSpoke, ref gapRatio,  ref hubRingInner, ref hubRIngOutter);
+            GetHubParams(ref numSpoke, ref gapRatio, ref hubRingInner, ref hubRIngOutter);
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
@@ -509,14 +509,13 @@ namespace Make3D.Dialogs
             List<Point> hubExternalPoints = new List<Point>();
             double numSpoke = 0;
             double gapRatio = 0;
-            double spokeDTheta = 0;
-            double spokeTipDTheta = 0;
+
             double numSubs = 10;
             double twopi = Math.PI * 2;
             double theta = 0;
             double hubRingInner = -1;
             double hubRIngOutter = -1;
-            GetHubParams(ref numSpoke, ref gapRatio,  ref hubRingInner, ref hubRIngOutter);
+            GetHubParams(ref numSpoke, ref gapRatio, ref hubRingInner, ref hubRIngOutter);
             double actualInner = hubInner;
             if (axelBore > actualInner)
             {
@@ -773,10 +772,13 @@ namespace Make3D.Dialogs
             List<PolarCoordinate> polarProfile2 = new List<PolarCoordinate>();
             double cx = inner;
             double t1 = thickness / 2;
+
+            double offset = 00.8;
             int rotDivisions = 36;
             polarProfile1.Add(Polar(cx, 0, thickness));
-            polarProfile1.Add(Polar(cx + (0.9 * (outter - inner)), 0, thickness));
-            polarProfile1.Add(Polar(cx + (0.9 * (outter - inner)), 0, t1));
+            polarProfile1.Add(Polar(cx + (offset * (outter - inner)), 0, thickness));
+            //polarProfile1.Add(Polar(cx + (offset * (outter - inner)), 0, t1));
+            polarProfile1.Add(Polar(cx + ((outter - inner)), 0, t1));
             polarProfile1.Add(Polar(cx, 0, t1));
 
             polarProfile2.Add(Polar(cx, 0, thickness));
@@ -794,8 +796,10 @@ namespace Make3D.Dialogs
             polarProfile1.Add(Polar(cx, 0, 0));
 
             polarProfile2.Add(Polar(cx, 0, t1));
-            polarProfile2.Add(Polar(cx + (0.9 * (outter - inner)), 0, t1));
-            polarProfile2.Add(Polar(cx + (0.9 * (outter - inner)), 0, 0));
+            polarProfile2.Add(Polar(cx + ((outter - inner)), 0, t1));
+            //polarProfile2.Add(Polar(cx + (offset * (outter - inner)), 0, t1));
+            polarProfile2.Add(Polar(cx + (offset * (outter - inner)), 0, 0));
+
             polarProfile2.Add(Polar(cx, 0, 0));
 
             PartSweep(polarProfile1, polarProfile2, cx, 0, sweep, rotDivisions, true, true, offsetOneHalf);
@@ -808,51 +812,53 @@ namespace Make3D.Dialogs
                 case "1":
                     {
                         numSpoke = 0;
-                        gapToSpkeRatio = 0.5;
+                        gapToSpkeRatio = 0.25;
                     }
                     break;
 
                 case "2":
                     {
                         numSpoke = 4;
-                        gapToSpkeRatio = 1;
+                        gapToSpkeRatio = 0.5;
                     }
                     break;
 
                 case "3":
                     {
-                        numSpoke = 4;
-                        gapToSpkeRatio = 2;
+                        numSpoke = 5;
+                        gapToSpkeRatio = 0.75;
                     }
                     break;
 
                 case "4":
                     {
-                        numSpoke = 5;
-                        gapToSpkeRatio = 0.5;
+                        numSpoke = 7;
+                        gapToSpkeRatio = 0.25;
                     }
                     break;
 
                 case "5":
                     {
-                        numSpoke = 5;
-                        gapToSpkeRatio = 1;
+                        numSpoke = 8;
+                        gapToSpkeRatio = .5;
                     }
                     break;
 
                 case "6":
                     {
-                        numSpoke = 5;
-                        gapToSpkeRatio = 2;
+                        numSpoke = 9;
+                        gapToSpkeRatio = .75;
                     }
                     break;
 
                 case "7":
                     {
-                        numSpoke = 6;
-                        gapToSpkeRatio = 1;
+                        numSpoke = 10;
+                        gapToSpkeRatio = 0.25;
                     }
                     break;
+
+ 
             }
             hri = axelBore;
             hro = hri + ringRadius;
@@ -861,39 +867,42 @@ namespace Make3D.Dialogs
         private List<Point> GenerateSpokePoints(double numSpokes, double gapToSpkeRatio, double inR, double outR)
         {
             List<Point> pnts = new List<Point>();
-            double a = (Math.PI * 2.0) / (numSpokes * (1 + gapToSpkeRatio));
-            double b = a * gapToSpkeRatio;
-            double theta;
-            double dTheta = a / 10;
-            double dTheta2 = b / 10;
+            double ds = (Math.PI * 2.0) / numSpokes;
+            double a = ds / 2.0;
+       //     Log($" ds ={ds},a={a}");
 
-            theta = -(dTheta * 5.0); 
+            double theta;
+            double dTheta = a / 20;
+            int sp = 1;
+            theta = 0;
             double sweep;
-            for (int i = 0; i <numSpokes; i ++)
+            double r;
+            bool inside = false;
+            while (theta < Math.PI * 2.0)
             {
-               theta = ((double)i * (a + b))- (dTheta * 5.0);
+
+                inside = !inside;
                 sweep = 0;
-                while ( sweep < a)
+                if (inside)
                 {
-                    double x = outR * Math.Cos(theta);
-                    double y = outR * Math.Sin(theta);
+                    r = inR;
+                }
+                else
+                {
+                    r = outR;
+                }
+
+                while (sweep < a && theta < Math.PI * 2.0)
+                {
+                //    Log($"spoke {sp} sweep ={sweep}, theta ={theta}");
+                    double x = r * Math.Cos(theta);
+                    double y = r * Math.Sin(theta);
                     pnts.Add(new Point(x, y));
 
                     sweep += dTheta;
                     theta += dTheta;
                 }
-
-                sweep = 0;
-                while (sweep < b)
-                {
-                    double x = inR * Math.Cos(theta);
-                    double y = inR * Math.Sin(theta);
-                    pnts.Add(new Point(x, y));
-
-                    sweep += dTheta2;
-                    theta += dTheta2;
-                }
-                
+                sp++;
             }
             return pnts;
         }
@@ -1210,7 +1219,7 @@ namespace Make3D.Dialogs
             hubStyles.Add("5");
             hubStyles.Add("6");
             hubStyles.Add("7");
-            SelectedHubStyle = "1";
+            SelectedHubStyle = "4";
 
             rimStyles.Add("1");
             rimStyles.Add("2");

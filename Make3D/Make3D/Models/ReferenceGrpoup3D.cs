@@ -32,7 +32,7 @@ namespace Make3D.Models
             base.Read(nd);
         }
 
-        internal virtual void Read(XmlNode nd)
+        internal override void Read(XmlNode nd)
         {
             RefValid = false;
 

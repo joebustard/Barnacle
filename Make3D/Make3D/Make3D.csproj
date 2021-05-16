@@ -91,6 +91,11 @@
     <Compile Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml.cs">
       <DependentUpon>FuselageLoftDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Figure\Bone.cs" />
+    <Compile Include="Dialogs\Figure\BoneDisplayRecord.cs" />
+    <Compile Include="Dialogs\Figure\FigureDlg.xaml.cs">
+      <DependentUpon>FigureDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Filet\Filet.xaml.cs">
       <DependentUpon>Filet.xaml</DependentUpon>
     </Compile>
@@ -164,9 +169,12 @@
     <Compile Include="Models\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\CameraUtils.cs" />
-    <Compile Include="Models\CatmullClarke\CatFace.cs" />
-    <Compile Include="Models\CatmullClarke\CatmullSmoother.cs" />
-    <Compile Include="Models\CatmullClarke\CatPoint.cs" />
+    <Compile Include="Models\LoopSmoothing\LoopCoord.cs" />
+    <Compile Include="Models\LoopSmoothing\LoopEdge.cs" />
+    <Compile Include="Models\LoopSmoothing\LoopFace.cs" />
+    <Compile Include="Models\LoopSmoothing\LoopSmoother.cs" />
+    <Compile Include="Models\LoopSmoothing\LoopPoint.cs" />
+    <Compile Include="Models\LoopSmoothing\LoopUtils.cs" />
     <Compile Include="Models\EditorParameter.cs" />
     <Compile Include="Models\EditorParameters.cs" />
     <Compile Include="Models\ExternalReference.cs" />
@@ -286,6 +294,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\BezierFuselage\FuselageLoftDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Figure\FigureDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -624,6 +636,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
     </None>
+    <Resource Include="Images\Buttons\pyramid2.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -635,8 +648,10 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)templates
 mkdir $(TargetDir)data
+mkdir $(TargetDir)data\figure
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
 copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
+copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
 Exit 0
 </PostBuildEvent>
   </PropertyGroup>

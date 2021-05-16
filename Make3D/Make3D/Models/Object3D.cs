@@ -558,6 +558,12 @@ namespace Make3D.Models
                     }
                     break;
 
+                case "pyramid2":
+                    {
+                        PrimitiveGenerator.GeneratePyramid2(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
+                    }
+                    break;
                 case "torus":
                     {
                         PrimitiveGenerator.GenerateTorus(ref pnts, ref indices, ref normals);

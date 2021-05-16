@@ -1,7 +1,7 @@
 ﻿using Make3D.Adorners;
 using Make3D.Dialogs;
 using Make3D.Models;
-using Make3D.Models.CatmullClarke;
+using Make3D.Models.LoopSmoothing;
 using Make3D.Views;
 using ManifoldLib;
 using MeshDecimator;
@@ -18,6 +18,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Workflow;
+
 
 namespace Make3D.ViewModels
 {
@@ -104,7 +105,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Alignment", OnAlignment);
             NotificationManager.Subscribe("Distribute", OnDistribute);
             NotificationManager.Subscribe("Flip", OnFlip);
-            NotificationManager.Subscribe("Catmull", OnCatmull);
+            NotificationManager.Subscribe("LoopSmooth", OnLoopSmooth);
 
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
@@ -136,7 +137,7 @@ namespace Make3D.ViewModels
             RegenerateDisplayList();
         }
 
-        private void OnCatmull(object param)
+        private void OnLoopSmooth(object param)
         {
             if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
             {
@@ -146,21 +147,25 @@ namespace Make3D.ViewModels
             {
                 foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                 {
-                    Catmull(ob);
+                    LoopSmooth(ob);
                 }
             }
         }
 
-        private void Catmull(Object3D ob)
+        private void LoopSmooth(Object3D ob)
         {
-            CatmullSmoother cms = new CatmullSmoother();
+            CheckPoint();
+            LoopSmoother cms = new LoopSmoother();
             Point3DCollection p3col = ob.RelativeObjectVertices;
             Int32Collection icol = ob.TriangleIndices;
 
             cms.Smooth(ref p3col, ref icol);
+            ob.RelativeObjectVertices = p3col;
+            ob.TriangleIndices = icol;
             ob.Remesh();
 
-        }
+        
+            }
 
         private void OnRemoveUnrefVertices(object param)
         {
@@ -328,9 +333,7 @@ namespace Make3D.ViewModels
             {
                 selectedObjectAdorner.Clear();
             }
-            // RemoveObjectAdorner();
-            //  ResetSelectionColours();
-            //  selectedObjectAdorner = new SizeAdorner(camera);
+
             selectedItems.Clear();
             Overlay.Children.Clear();
             RegenerateDisplayList();
@@ -1763,11 +1766,13 @@ namespace Make3D.ViewModels
                 if (s == "Clean")
                 {
                     CleanExports();
+                   
                 }
                 else
                 if (s == "AllModels")
                 {
                     ExportAllModels();
+                    NotificationManager.Notify("RefreshSolution", null);
                 }
                 else
                 {
@@ -1802,7 +1807,7 @@ namespace Make3D.ViewModels
 
         private void CleanExports()
         {
-            if (MessageBox.Show("Delete all exported stl and gcode files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Delete all exported stl and printer files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
                 string[] files = Directory.GetFiles(pth + "\\export", "*.stl");
@@ -1828,6 +1833,7 @@ namespace Make3D.ViewModels
                     }
                 }
                 NotificationManager.Notify("ExportRefresh", null);
+               
             }
         }
 
@@ -1877,10 +1883,21 @@ namespace Make3D.ViewModels
             DisplayModeller(dlg);
         }
 
-        private async void OnGroup(object param)
+        private  void OnGroup(object param)
         {
             string s = param.ToString().ToLower();
-            if (s == "mesh")
+            if (s == "test")
+            {
+                CheckPoint();
+                if (Test())
+                {
+                    selectedObjectAdorner.Clear();
+                    RegenerateDisplayList();
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                }
+            }
+            else
+           if (s == "mesh")
             {
                 CheckPoint();
                 if (GroupToMesh())
@@ -1907,6 +1924,12 @@ namespace Make3D.ViewModels
                 RegenerateDisplayList();
                 NotificationManager.Notify("ObjectNamesChanged", null);
             }
+        }
+
+        private bool Test()
+        {
+
+            return true;
         }
 
         private void OnImport(object param)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows.Input;
 
 namespace VisualSolutionExplorer
@@ -135,17 +136,43 @@ namespace VisualSolutionExplorer
             LoadChildren();
         }
 
+
+
         public void ExploreFolder()
         {
-            NotifySolutionChanged("ExploreFolder", _folder.FolderPath, "");
+            // NotifySolutionChanged("ExploreFolder", _folder.FolderPath, "");
+            string root = Path.GetDirectoryName(ProjectViewModel.ProjectFilePath);
+            string pth = root + _folder.FolderPath;
+            if (!pth.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                pth += Path.DirectorySeparatorChar;
+            }
+            if (Directory.Exists(pth))
+            {
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                {
+                    FileName = pth,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+            }
         }
 
         public void NotifySolutionChanged(string e, string p1, string p2)
         {
+            
             if (e == "RemoveFile")
             {
                 _folder.RemoveFile(p1);
                 LoadChildren();
+            }
+            else
+            if (e == "DeleteFile" )
+            {
+                _folder.DeleteFile(p1);
+                LoadChildren();
+                
             }
 
             if (SolutionChanged != null)

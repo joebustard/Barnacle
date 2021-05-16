@@ -12,9 +12,7 @@ namespace ManifoldLib
         }
 
         private const double tolerance = 1E-6;
-        private int leftHeight;
-        private int rightHeight;
-        private int midHeight;
+
         public NodeColour Colour;
 
         private static VertexTreeNode RotateLeft(VertexTreeNode node)
@@ -57,9 +55,6 @@ namespace ManifoldLib
         public VertexTreeNode(Vertex v)
         {
             Vertex = v;
-            leftHeight = 0;
-            rightHeight = 0;
-            midHeight = 0;
         }
 
         public VertexTreeNode Left

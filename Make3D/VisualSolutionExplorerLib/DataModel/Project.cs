@@ -9,7 +9,7 @@ namespace VisualSolutionExplorer
     {
         public static string ProjectFilePath;
         public List<ProjectFolder> folders;
-
+        DateTime creationDate;
         public Project()
         {
             ProjectName = String.Empty;
@@ -18,6 +18,7 @@ namespace VisualSolutionExplorer
             ProjectFilePath = String.Empty;
             ProjectFolders = new List<ProjectFolder>();
             FirstFile = "";
+            creationDate = DateTime.Now;
         }
 
         public static String BaseFolder { get; set; }
@@ -83,6 +84,7 @@ namespace VisualSolutionExplorer
             pfo.ProjectFiles.Add(pfi);
             pfo.RepathSubFolders("");
             FirstFile = pfi.FilePath;
+            creationDate = DateTime.Now;
         }
 
         public void CreateNewFile()
@@ -118,6 +120,11 @@ namespace VisualSolutionExplorer
                 if (ele.HasAttribute("Open"))
                 {
                     FirstFile = ele.GetAttribute("Open");
+                }
+                if (ele.HasAttribute("Created"))
+                {
+                    string d = ele.GetAttribute("Created");
+                    DateTime.TryParse(d, out creationDate);
                 }
             }
             ProjectFolder pfo = new ProjectFolder();
@@ -212,6 +219,8 @@ namespace VisualSolutionExplorer
             {
                 root.SetAttribute("Open", FirstFile);
             }
+
+            root.SetAttribute("Created", creationDate.ToString());
             solutionDoc.AppendChild(root);
             // The first project folder is a dummy one
             // Save its contents rather than it
@@ -225,6 +234,20 @@ namespace VisualSolutionExplorer
             }
 
             solutionDoc.Save(solutionPath);
+        }
+        public   string DefaultFileToOpen()
+        {
+            string res = "";
+            foreach (ProjectFolder pfm in ProjectFolders[0].ProjectFolders)
+            {
+                res = pfm.DefaultFileToOpen();
+                if (res != "")
+                {
+                    break;
+                }
+            }
+
+            return res;
         }
     }
 }

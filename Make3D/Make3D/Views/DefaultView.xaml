@@ -180,13 +180,16 @@
 
                         <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                         <Custom:RibbonSeparator />
+
+                        <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonSeparator />
                         <Custom:RibbonButton x:Name="GroupToMesh" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
-                <Custom:RibbonGroup Name="ToolGroup" Header="Tools" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
-                    <Custom:RibbonMenuButton x:Name="ParametricTools" Label="Parametric Shapes" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding ParametricToolsToShow}">
+                <Custom:RibbonGroup Name="ToolGroup" Header="Shapes" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
+                    <Custom:RibbonMenuButton x:Name="ParametricTools" Label="Parametric" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding ParametricToolsToShow}">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="LoftTools" Label="Lofted Shapes"
+                    <Custom:RibbonMenuButton x:Name="LoftTools" Label="Lofted"
                         ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding LoftedToolsToShow}">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="VehicleTools" Label="Vehicles" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding VehicleToolsToShow}">
@@ -198,14 +201,20 @@
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="MeshGroup" Header="Mesh">
+                    <Custom:RibbonMenuButton Label="Edit">
                     <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                     <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
                     <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
-                    <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate Faces" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
-                    <Custom:RibbonButton x:Name="ManifoldButton" Label="Test Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
-                    <Custom:RibbonButton x:Name="DupVertexButton" Label="Remove Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton Label="Fix">
+                    <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
 
-                    <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Remove Unreferenced Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
+                    <Custom:RibbonButton x:Name="ManifoldButton" Label="Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
+
+                    <Custom:RibbonButton x:Name="DupVertexButton" Label="Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
+
+                    <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Rem Unref Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
 
