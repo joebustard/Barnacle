@@ -1,5 +1,6 @@
 ﻿using Make3D.Dialogs.MeshEditor;
 using Make3D.Models;
+using Make3D.Models.Adorners;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -97,7 +98,6 @@ namespace Make3D.Dialogs
             }
         }
 
-       
         internal void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, double width)
         {
             // this is not the normal cube.
@@ -420,7 +420,7 @@ namespace Make3D.Dialogs
             }
             lastHitModel = null;
             lastHitPoint = new Point3D(0, 0, 0);
-            HitTest(viewport3D1,sender, e);
+            HitTest(viewport3D1, sender, e);
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {

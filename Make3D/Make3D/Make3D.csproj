@@ -96,6 +96,7 @@
     <Compile Include="Dialogs\Figure\FigureDlg.xaml.cs">
       <DependentUpon>FigureDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Figure\JointMarker.cs" />
     <Compile Include="Dialogs\Filet\Filet.xaml.cs">
       <DependentUpon>Filet.xaml</DependentUpon>
     </Compile>
@@ -166,7 +167,7 @@
     <Compile Include="Dialogs\Wing\WingDlg.xaml.cs">
       <DependentUpon>WingDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\Adorner.cs" />
+    <Compile Include="Adorners\Adorner.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\CameraUtils.cs" />
     <Compile Include="Models\LoopSmoothing\LoopCoord.cs" />
@@ -224,8 +225,8 @@
     <Compile Include="Views\NewProjectView.xaml.cs">
       <DependentUpon>NewProjectView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RotationAdorner.cs" />
-    <Compile Include="Views\SizeAdorner.cs" />
+    <Compile Include="Adorners\RotationAdorner.cs" />
+    <Compile Include="Adorners\SizeAdorner.cs" />
     <Compile Include="Models\Bounds3D.cs" />
     <Compile Include="Models\IcoSphereCreator.cs" />
     <Compile Include="Models\Object3D.cs" />
@@ -269,7 +270,7 @@
     <Compile Include="Dialogs\Exporting\STLExportedConfirmation.xaml.cs">
       <DependentUpon>STLExportedConfirmation.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SkewAdorner.cs" />
+    <Compile Include="Adorners\SkewAdorner.cs" />
     <Compile Include="Views\StartupView.xaml.cs">
       <DependentUpon>StartupView.xaml</DependentUpon>
     </Compile>
@@ -538,9 +539,7 @@
     <Resource Include="Images\Buttons\Text.png" />
     <Resource Include="Images\Buttons\View.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Adorners\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\ClassLibrary1\HullLIbrary.csproj">
       <Project>{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}</Project>

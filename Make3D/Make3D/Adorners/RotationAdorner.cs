@@ -6,16 +6,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Views
+namespace Make3D.Models.Adorners
 {
     public class RotationAdorner : Adorner
     {
+        private Bounds3D bounds;
+        private bool selectedSphere = false;
         private Object3D sphere;
         private Object3D xAxis;
         private Object3D yAxis;
         private Object3D zAxis;
-        private bool selectedSphere = false;
-        private Bounds3D bounds;
 
         public RotationAdorner(PolarCamera camera)
         {
@@ -34,25 +34,6 @@ namespace Make3D.Views
         }
 
         internal PolarCamera Camera { get; set; }
-
-        internal override bool Select(GeometryModel3D geo)
-        {
-            bool handled = false;
-            if (sphere != null)
-            {
-                if (sphere.Mesh == geo.Geometry)
-                {
-                    handled = true;
-                    selectedSphere = true;
-                }
-            }
-
-            return handled;
-        }
-
-        private void OnScaleRefresh(object param)
-        {
-        }
 
         public override void AdornObject(Object3D obj)
         {
@@ -73,6 +54,60 @@ namespace Make3D.Views
             Point3D midp = bounds.MidPoint();
             Point3D size = bounds.Size();
             CreateAdornments(midp, size);
+        }
+
+        internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
+        {
+            bool handled = false;
+            if (e.LeftButton == MouseButtonState.Pressed && selectedSphere)
+            {
+                double dr = Math.Sqrt(Camera.Distance);
+                double deltaX = (newPos.X - lastPos.X) / dr;
+
+                double deltaY;
+                double deltaZ;
+
+                if (!ctrlDown)
+                {
+                    deltaY = -(newPos.Y - lastPos.Y) / dr;
+                    deltaZ = 0;
+                }
+                else
+                {
+                    deltaY = 0;
+                    deltaZ = -(newPos.Y - lastPos.Y) / dr;
+                }
+
+                Rotate(deltaX, deltaY, deltaZ);
+                handled = true;
+            }
+            return handled;
+        }
+
+        internal override void MouseUp()
+        {
+            selectedSphere = false;
+        }
+
+        internal override bool Select(GeometryModel3D geo)
+        {
+            bool handled = false;
+            if (sphere != null)
+            {
+                if (sphere.Mesh == geo.Geometry)
+                {
+                    handled = true;
+                    selectedSphere = true;
+                }
+            }
+
+            return handled;
+        }
+
+        private static void RotateSingleObject(Point3D positionChange, Object3D obj)
+        {
+            obj.Rotate(positionChange);
+            obj.Remesh();
         }
 
         private void CreateAdornments(Point3D position, Point3D size)
@@ -124,32 +159,8 @@ namespace Make3D.Views
             return rect;
         }
 
-        internal override bool MouseMove(Point lastPos, Point newPos, MouseEventArgs e, bool ctrlDown)
+        private void OnScaleRefresh(object param)
         {
-            bool handled = false;
-            if (e.LeftButton == MouseButtonState.Pressed && selectedSphere)
-            {
-                double dr = Math.Sqrt(Camera.Distance);
-                double deltaX = (newPos.X - lastPos.X) / dr;
-
-                double deltaY;
-                double deltaZ;
-
-                if (!ctrlDown)
-                {
-                    deltaY = -(newPos.Y - lastPos.Y) / dr;
-                    deltaZ = 0;
-                }
-                else
-                {
-                    deltaY = 0;
-                    deltaZ = -(newPos.Y - lastPos.Y) / dr;
-                }
-
-                Rotate(deltaX, deltaY, deltaZ);
-                handled = true;
-            }
-            return handled;
         }
 
         private void Rotate(double deltaX, double deltaY, double deltaZ)
@@ -195,17 +206,6 @@ namespace Make3D.Views
                 }
                 NotificationManager.Notify("DocDirty", null);
             }
-        }
-
-        private static void RotateSingleObject(Point3D positionChange, Object3D obj)
-        {
-            obj.Rotate(positionChange);
-            obj.Remesh();
-        }
-
-        internal override void MouseUp()
-        {
-            selectedSphere = false;
         }
     }
 }

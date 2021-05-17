@@ -98,7 +98,7 @@ namespace Make3D.Models
             }
         }
 
-        public void DistanceToFit(double w, double h)
+        public void DistanceToFit(double w, double h, double min = 0)
         {
             double l = w;
             if (h > l)
@@ -107,6 +107,10 @@ namespace Make3D.Models
             }
             double fov_radians = FieldOfView * Math.PI / 180.0;
             Distance = (l) / Math.Tan(fov_radians / 2);
+            if (Distance < min)
+            {
+                Distance = min;
+            }
         }
 
         internal void HomeBack()
@@ -226,7 +230,7 @@ namespace Make3D.Models
         {
             polarFrontHome = new PolarCoordinate(1.53, 1.243, homeDistance);
             polarBackHome = new PolarCoordinate(4.568, 1.243, homeDistance);
-            polarRightHome = new PolarCoordinate(0.0, 1.483, homeDistance);
+            polarRightHome = new PolarCoordinate(0.0, 1.243, homeDistance);
 
             polarLeftHome = new PolarCoordinate(3.130, 1.243, homeDistance);
 

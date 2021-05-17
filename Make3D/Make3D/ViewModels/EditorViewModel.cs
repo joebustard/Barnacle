@@ -1,8 +1,7 @@
-﻿using Make3D.Adorners;
-using Make3D.Dialogs;
+﻿using Make3D.Dialogs;
 using Make3D.Models;
+using Make3D.Models.Adorners;
 using Make3D.Models.LoopSmoothing;
-using Make3D.Views;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
@@ -18,7 +17,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Workflow;
-
 
 namespace Make3D.ViewModels
 {
@@ -135,51 +133,6 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             RegenerateDisplayList();
-        }
-
-        private void OnLoopSmooth(object param)
-        {
-            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
-            {
-                MessageBox.Show("Nothing selected to process");
-            }
-            else
-            {
-                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                {
-                    LoopSmooth(ob);
-                }
-            }
-        }
-
-        private void LoopSmooth(Object3D ob)
-        {
-            CheckPoint();
-            LoopSmoother cms = new LoopSmoother();
-            Point3DCollection p3col = ob.RelativeObjectVertices;
-            Int32Collection icol = ob.TriangleIndices;
-
-            cms.Smooth(ref p3col, ref icol);
-            ob.RelativeObjectVertices = p3col;
-            ob.TriangleIndices = icol;
-            ob.Remesh();
-
-        
-            }
-
-        private void OnRemoveUnrefVertices(object param)
-        {
-            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
-            {
-                MessageBox.Show("Nothing selected to process");
-            }
-            else
-            {
-                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-                {
-                    RemoveUnrefVertices(ob);
-                }
-            }
         }
 
         private enum CameraModes
@@ -853,7 +806,9 @@ namespace Make3D.ViewModels
 
         private void BackCamera()
         {
+            ResetSelection();
             camera.HomeBack();
+            SetCameraDistance();
             NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(-1, 1, 0);
             LookToCenter();
@@ -862,7 +817,9 @@ namespace Make3D.ViewModels
 
         private void BottomCamera()
         {
+            ResetSelection();
             camera.HomeBottom();
+            SetCameraDistance();
             NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(-1, 0, -1);
             LookToCenter();
@@ -942,6 +899,37 @@ namespace Make3D.ViewModels
                 }
             }
             return handled;
+        }
+
+        private void CleanExports()
+        {
+            if (MessageBox.Show("Delete all exported stl and printer files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                string[] files = Directory.GetFiles(pth + "\\export", "*.stl");
+                foreach (string f in files)
+                {
+                    try
+                    {
+                        File.Delete(f);
+                    }
+                    catch
+                    {
+                    }
+                }
+                files = Directory.GetFiles(pth + "\\gcode", "*.gcode");
+                foreach (string f in files)
+                {
+                    try
+                    {
+                        File.Delete(f);
+                    }
+                    catch
+                    {
+                    }
+                }
+                NotificationManager.Notify("ExportRefresh", null);
+            }
         }
 
         private void Decimate()
@@ -1070,6 +1058,23 @@ namespace Make3D.ViewModels
                 {
                     NotificationManager.Notify("SetSingleToolsVisible", toolName);
                 }
+            }
+        }
+
+        private void ExportAllModels()
+        {
+            if (Document.Dirty)
+            {
+                MessageBox.Show("Document must be saved first");
+            }
+            else
+            {
+                string[] filenames = BaseViewModel.Project.GetRxportFiles(".txt");
+                String pth = VisualSolutionExplorer.Project.BaseFolder;
+
+                ProjectExporter pe = new ProjectExporter();
+                pe.Export(filenames, pth + "\\export");
+                NotificationManager.Notify("ExportRefresh", null);
             }
         }
 
@@ -1209,7 +1214,9 @@ namespace Make3D.ViewModels
 
         private void HomeCamera()
         {
+            ResetSelection();
             camera.HomeFront();
+            SetCameraDistance();
             NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(1, 1, 0);
             LookToCenter();
@@ -1218,7 +1225,10 @@ namespace Make3D.ViewModels
 
         private void LeftCamera()
         {
+            ResetSelection();
             camera.HomeLeft();
+            // true because we are looking from the side
+            SetCameraDistance(true);
             NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(0, 1, 1);
             LookToCenter();
@@ -1285,6 +1295,19 @@ namespace Make3D.ViewModels
             v.Normalize();
             LookDirection = v;
             NotifyPropertyChanged("LookDirection");
+        }
+
+        private void LoopSmooth(Object3D ob)
+        {
+            CheckPoint();
+            LoopSmoother cms = new LoopSmoother();
+            Point3DCollection p3col = ob.RelativeObjectVertices;
+            Int32Collection icol = ob.TriangleIndices;
+
+            cms.Smooth(ref p3col, ref icol);
+            ob.RelativeObjectVertices = p3col;
+            ob.TriangleIndices = icol;
+            ob.Remesh();
         }
 
         private bool MakeGroup3D(string s)
@@ -1766,7 +1789,6 @@ namespace Make3D.ViewModels
                 if (s == "Clean")
                 {
                     CleanExports();
-                   
                 }
                 else
                 if (s == "AllModels")
@@ -1805,55 +1827,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void CleanExports()
-        {
-            if (MessageBox.Show("Delete all exported stl and printer files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                String pth = VisualSolutionExplorer.Project.BaseFolder;
-                string[] files = Directory.GetFiles(pth + "\\export", "*.stl");
-                foreach (string f in files)
-                {
-                    try
-                    {
-                        File.Delete(f);
-                    }
-                    catch
-                    {
-                    }
-                }
-                files = Directory.GetFiles(pth + "\\gcode", "*.gcode");
-                foreach (string f in files)
-                {
-                    try
-                    {
-                        File.Delete(f);
-                    }
-                    catch
-                    {
-                    }
-                }
-                NotificationManager.Notify("ExportRefresh", null);
-               
-            }
-        }
-
-        private void ExportAllModels()
-        {
-            if (Document.Dirty)
-            {
-                MessageBox.Show("Document must be saved first");
-            }
-            else
-            {
-                string[] filenames = BaseViewModel.Project.GetRxportFiles(".txt");
-                String pth = VisualSolutionExplorer.Project.BaseFolder;
-
-                ProjectExporter pe = new ProjectExporter();
-                pe.Export(filenames, pth + "\\export");
-                NotificationManager.Notify("ExportRefresh", null);
-            }
-        }
-
         private void OnExportParts(object param)
         {
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
@@ -1883,7 +1856,7 @@ namespace Make3D.ViewModels
             DisplayModeller(dlg);
         }
 
-        private  void OnGroup(object param)
+        private void OnGroup(object param)
         {
             string s = param.ToString().ToLower();
             if (s == "test")
@@ -1926,12 +1899,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private bool Test()
-        {
-
-            return true;
-        }
-
         private void OnImport(object param)
         {
             if (selectedObjectAdorner != null)
@@ -1971,6 +1938,21 @@ namespace Make3D.ViewModels
                         }
                     }
                     break;
+            }
+        }
+
+        private void OnLoopSmooth(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to process");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    LoopSmooth(ob);
+                }
             }
         }
 
@@ -2310,6 +2292,21 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnRemoveUnrefVertices(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
+            {
+                MessageBox.Show("Nothing selected to process");
+            }
+            else
+            {
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    RemoveUnrefVertices(ob);
+                }
+            }
+        }
+
         private void OnShowAxies(object param)
         {
             showAxies = (param as bool?) == true;
@@ -2439,6 +2436,7 @@ namespace Make3D.ViewModels
                 {
                     modelItems.Remove(md);
                 }
+                selectedObjectAdorner.Clear();
             }
         }
 
@@ -2566,7 +2564,10 @@ namespace Make3D.ViewModels
 
         private void RightCamera()
         {
+            ResetSelection();
             camera.HomeRight();
+            // true because we are looking from the side
+            SetCameraDistance(true);
             NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(0, 1, -1);
             LookToCenter();
@@ -2744,6 +2745,36 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void SetCameraDistance(bool sideView = false)
+        {
+            double w = allBounds.Upper.X;
+            double h = allBounds.Upper.Y;
+            double d = allBounds.Upper.Z;
+
+            if (Math.Abs(allBounds.Lower.X) > w)
+            {
+                w = Math.Abs(allBounds.Lower.X);
+            }
+
+            if (Math.Abs(allBounds.Lower.Y) > h)
+            {
+                h = Math.Abs(allBounds.Lower.Y);
+            }
+
+            if (Math.Abs(allBounds.Lower.Z) > d)
+            {
+                d = Math.Abs(allBounds.Lower.Z);
+            }
+            if (sideView)
+            {
+                camera.DistanceToFit(d, h, w * 1.5);
+            }
+            else
+            {
+                camera.DistanceToFit(w, h, d * 1.5);
+            }
+        }
+
         private void SetSelectionColours()
         {
             List<GeometryModel3D> tmp = modelItems.OfType<GeometryModel3D>().ToList();
@@ -2782,8 +2813,14 @@ namespace Make3D.ViewModels
             }
         }
 
+        private bool Test()
+        {
+            return true;
+        }
+
         private void TopCamera()
         {
+            ResetSelection();
             camera.HomeTop();
             NotifyPropertyChanged("CameraPos");
             CameraScrollDelta = new Point3D(1, 0, 1);

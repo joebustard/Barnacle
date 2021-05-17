@@ -8,7 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Adorners
+namespace Make3D.Models.Adorners
 {
     internal class SkewAdorner : Adorner
     {

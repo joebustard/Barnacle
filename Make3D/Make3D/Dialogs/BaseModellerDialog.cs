@@ -18,6 +18,7 @@ namespace Make3D.Dialogs
         protected GeometryModel3D lastHitModel;
         protected Point3D lastHitPoint;
         protected System.Windows.Media.Color meshColour;
+        protected Point oldMousePos;
         protected bool showAxies;
         protected bool showFloor;
         private Bounds3D bounds;
@@ -25,7 +26,6 @@ namespace Make3D.Dialogs
         private EditorParameters editorParameters;
         private double fieldOfView;
         private Vector3D lookDirection;
-        private Point oldMousePos;
         private PolarCamera polarCamera;
         private Int32Collection tris;
         private Point3DCollection vertices;
@@ -218,6 +218,48 @@ namespace Make3D.Dialogs
             }
         }
 
+        public void HitTest(Viewport3D viewport3D1, object sender, System.Windows.Input.MouseButtonEventArgs args)
+        {
+            Point mouseposition = args.GetPosition(viewport3D1);
+            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
+            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+
+            //test for a result in the Viewport3D
+            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
+        }
+
+        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
+        {
+            HitTestResultBehavior result = HitTestResultBehavior.Continue;
+            RayHitTestResult rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
+            {
+                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+
+                if (rayMeshResult != null)
+                {
+                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    if (lastHitModel == null)
+                    {
+                        // UpdateResultInfo(rayMeshResult);
+                        lastHitModel = hitgeo;
+                        lastHitPoint = rayMeshResult.PointHit;
+                    }
+                    result = HitTestResultBehavior.Stop;
+                }
+            }
+
+            return result;
+        }
+
+        public void Log(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
         public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -303,49 +345,6 @@ namespace Make3D.Dialogs
                 }
             }
             return;
-          
-        }
-
-        public void Log(string s )
-        {
-            System.Diagnostics.Debug.WriteLine(s);
-        }
-        
-        public void HitTest(Viewport3D viewport3D1,object sender, System.Windows.Input.MouseButtonEventArgs args)
-        {
-            Point mouseposition = args.GetPosition(viewport3D1);
-            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
-            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
-            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
-            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
-
-            //test for a result in the Viewport3D
-            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
-        }
-
-        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
-        {
-            HitTestResultBehavior result = HitTestResultBehavior.Continue;
-            RayHitTestResult rayResult = rawresult as RayHitTestResult;
-
-            if (rayResult != null)
-            {
-                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
-
-                if (rayMeshResult != null)
-                {
-                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-                    if (lastHitModel == null)
-                    {
-                        // UpdateResultInfo(rayMeshResult);
-                        lastHitModel = hitgeo;
-                        lastHitPoint = rayMeshResult.PointHit;
-                    }
-                    result = HitTestResultBehavior.Stop;
-                }
-            }
-
-            return result;
         }
 
         internal void SweepPolarProfileTheta(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true, bool flipAxies = false, bool invert = false)
@@ -582,7 +581,7 @@ namespace Make3D.Dialogs
 
         // run around around a list of points
         // assume the start and end are linked.
-        protected void CreateSideFaces(List<Point> points, double thickness, bool rev, double zOff =0)
+        protected void CreateSideFaces(List<Point> points, double thickness, bool rev, double zOff = 0)
         {
             for (int i = 0; i < points.Count; i++)
             {
@@ -594,7 +593,7 @@ namespace Make3D.Dialogs
 
                 int c0 = AddVertice(points[i].X, points[i].Y, zOff);
                 int c1 = AddVertice(points[i].X, points[i].Y, zOff + thickness);
-                int c2 = AddVertice(points[v].X, points[v].Y, zOff+thickness);
+                int c2 = AddVertice(points[v].X, points[v].Y, zOff + thickness);
                 int c3 = AddVertice(points[v].X, points[v].Y, zOff);
                 if (rev)
                 {
@@ -673,7 +672,7 @@ namespace Make3D.Dialogs
             Close();
         }
 
-        protected void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        protected virtual void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
             if (vp != null)
@@ -685,7 +684,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        protected void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        protected virtual void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
             if (vp != null)
@@ -703,7 +702,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        protected void Viewport_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        protected virtual void Viewport_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
             if (vp != null)

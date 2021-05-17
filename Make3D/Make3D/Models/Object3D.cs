@@ -372,7 +372,7 @@ namespace Make3D.Models
             }
         }
 
-        public void Rotate(Point3D RotateBy)
+        public virtual void Rotate(Point3D RotateBy)
         {
             double r1 = DegreesToRad(RotateBy.Y);
             double r2 = DegreesToRad(RotateBy.Z);
@@ -399,6 +399,18 @@ namespace Make3D.Models
                 double r1 = Rotation.Y;
                 double r2 = Rotation.Z;
                 double r3 = Rotation.X;
+
+                relativeObjectVertices = RotatePoints(relativeObjectVertices, r1, r2, r3);
+            }
+        }
+
+        public void RotateRad2(Point3D Rotation)
+        {
+            if (relativeObjectVertices != null)
+            {
+                double r1 = Rotation.X;
+                double r2 = Rotation.Z;
+                double r3 = Rotation.Y;
 
                 relativeObjectVertices = RotatePoints(relativeObjectVertices, r1, r2, r3);
             }
@@ -564,6 +576,7 @@ namespace Make3D.Models
                         AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
                     }
                     break;
+
                 case "torus":
                     {
                         PrimitiveGenerator.GenerateTorus(ref pnts, ref indices, ref normals);
@@ -611,80 +624,6 @@ namespace Make3D.Models
                         //   obj.LoadObject(pth + obType+".txt");
                     }
                     break;
-            }
-        }
-
-        internal void SkewMesh(int moveSide, double x, double y, double z)
-        {
-            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue); ;
-            PointUtils.MinMax(relativeObjectVertices, ref min, ref max);
-            List<Point3D> tmp = new List<Point3D>();
-            foreach (Point3D p in relativeObjectVertices)
-            {
-                switch (moveSide)
-                {
-                    case 0:
-                        {
-                            if (p.X < 0)
-                            {
-                                double offset = (-p.X / max.X) * (1 - y);
-                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
-                            }
-                            else
-                            {
-                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
-                            }
-                        }
-                        break;
-
-                    case 1:
-                        {
-                            if (p.X > 0)
-                            {
-                                double offset = (p.X / max.X) * (1 - y);
-                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
-                            }
-                            else
-                            {
-                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
-                            }
-                        }
-                        break;
-
-                    case 3:
-                        {
-                            if (p.Z < 0)
-                            {
-                                double offset = (p.Z / max.Z) * (1 - y);
-                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
-                            }
-                            else
-                            {
-                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
-                            }
-                        }
-                        break;
-
-                    case 2:
-                        {
-                            if (p.Z > 0)
-                            {
-                                double offset = (p.Z / max.Z) * (1 - y);
-                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
-                            }
-                            else
-                            {
-                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
-                            }
-                        }
-                        break;
-                }
-            }
-            relativeObjectVertices.Clear();
-            foreach (Point3D p in tmp)
-            {
-                relativeObjectVertices.Add(p);
             }
         }
 
@@ -871,6 +810,80 @@ namespace Make3D.Models
             surfaceMesh.Normals = normals;
         }
 
+        internal void SkewMesh(int moveSide, double x, double y, double z)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue); ;
+            PointUtils.MinMax(relativeObjectVertices, ref min, ref max);
+            List<Point3D> tmp = new List<Point3D>();
+            foreach (Point3D p in relativeObjectVertices)
+            {
+                switch (moveSide)
+                {
+                    case 0:
+                        {
+                            if (p.X < 0)
+                            {
+                                double offset = (-p.X / max.X) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+
+                    case 1:
+                        {
+                            if (p.X > 0)
+                            {
+                                double offset = (p.X / max.X) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        {
+                            if (p.Z < 0)
+                            {
+                                double offset = (p.Z / max.Z) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        {
+                            if (p.Z > 0)
+                            {
+                                double offset = (p.Z / max.Z) * (1 - y);
+                                tmp.Add(new Point3D(p.X, p.Y - (p.Y * offset), p.Z));
+                            }
+                            else
+                            {
+                                tmp.Add(new Point3D(p.X, p.Y, p.Z));
+                            }
+                        }
+                        break;
+                }
+            }
+            relativeObjectVertices.Clear();
+            foreach (Point3D p in tmp)
+            {
+                relativeObjectVertices.Add(p);
+            }
+        }
+
         internal virtual XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
             XmlElement ele = doc.CreateElement(XmlType);
@@ -913,6 +926,11 @@ namespace Make3D.Models
             }
 
             return ele;
+        }
+
+        protected double DegreesToRad(double x)
+        {
+            return ((x / 360.0) * Math.PI * 2);
         }
 
         protected double GetDouble(XmlNode pn, string v)
@@ -963,11 +981,6 @@ namespace Make3D.Models
             }
             absoluteBounds.Lower = l;
             absoluteBounds.Upper = u;
-        }
-
-        private double DegreesToRad(double x)
-        {
-            return ((x / 360.0) * Math.PI * 2);
         }
 
         private Point3D RotateMesh(Point3D cp)

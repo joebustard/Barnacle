@@ -14,6 +14,9 @@ namespace Make3D.Dialogs.Figure
         private double height;
         private double length;
         private Point3D midPos;
+        private double parentxrot;
+        private double parentyrot;
+        private double parentzrot;
         private Point3D startPos;
         private double xrot;
         private double xRotRadians;
@@ -39,6 +42,9 @@ namespace Make3D.Dialogs.Figure
             MaxXRot = 359;
             MinYRot = -359;
             MaxYRot = 359;
+            parentxrot = 0;
+            parentyrot = 0;
+            parentzrot = 0;
             SubBones = new List<Bone>();
         }
 
@@ -201,7 +207,16 @@ namespace Make3D.Dialogs.Figure
         // only call this on the root bone
         public void Update()
         {
-            UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians);
+            UpdateSubBones(EndPosition.X, EndPosition.Y, EndPosition.Z, xRotRadians, yRotRadians, zRotRadians);
+        }
+
+        internal void AllChildNames(List<string> res)
+        {
+            foreach (Bone bn in SubBones)
+            {
+                res.Add(bn.Name);
+                bn.AllChildNames(res);
+            }
         }
 
         internal void Dump(int v)
@@ -228,8 +243,10 @@ namespace Make3D.Dialogs.Figure
                 br.ModelName = bn.ModelName;
                 br.Position = new Point3D(bn.MidPosition.X, bn.MidPosition.Y, bn.MidPosition.Z);
                 br.MarkerPosition = new Point3D(bn.StartPosition.X, bn.StartPosition.Y, bn.StartPosition.Z);
-                br.Rotation = new Point3D(Rad(bn.Nxr), Rad(bn.Nyr), Rad(bn.Nzr));
+                // br.Rotation = new Point3D(Rad(bn.Nxr), Rad(bn.Nyr), Rad(bn.Nzr));
+                br.Rotation = new Point3D(bn.Nxr, bn.Nyr, bn.Nzr);
                 br.Scale = new Scale3D(bn.Length, bn.Height, bn.Width);
+                br.Bone = bn;
                 pnts.Add(br);
                 bn.GetSubPositions(pnts);
             }
@@ -246,6 +263,11 @@ namespace Make3D.Dialogs.Figure
             return matrix;
         }
 
+        private double Degrees(double v)
+        {
+            return (v * 180.0 / Math.PI);
+        }
+
         private double Rad(double v)
         {
             return (v * Math.PI) / 180.0;
@@ -253,7 +275,7 @@ namespace Make3D.Dialogs.Figure
 
         private Point3D RotatedPoint(double length, double nxr, double nyr, double nzr)
         {
-            Matrix3D m3d = CalculateRotationMatrix(nxr, nyr, nzr);
+            Matrix3D m3d = CalculateRotationMatrix(Degrees(nxr), Degrees(nyr), Degrees(nzr));
             MatrixTransform3D transform = new MatrixTransform3D(m3d);
             Point3D res = transform.Transform(new Point3D(length, 0, 0));
 
@@ -268,9 +290,10 @@ namespace Make3D.Dialogs.Figure
                 double sy = y;
                 double sz = z;
                 StartPosition = new Point3D(x, y, z);
-                Nxr = parentXr + XRot;
-                Nyr = parentYr + YRot;
-                Nzr = parentZr + ZRot;
+
+                Nxr = parentXr + xRotRadians;
+                Nyr = parentYr + yRotRadians;
+                Nzr = parentZr + zRotRadians;
                 Point3D rotn = RotatedPoint(Length, Nxr, Nyr, Nzr);
                 endPos = new Point3D(sx + rotn.X, sy + rotn.Y, sz + rotn.Z);
 

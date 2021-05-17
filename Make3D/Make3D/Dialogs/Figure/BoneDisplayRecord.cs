@@ -15,6 +15,7 @@ namespace Make3D.Dialogs.Figure
             ModelName = "bone";
         }
 
+        public Bone Bone { get; set; }
         public Point3D MarkerPosition { get; set; }
         public string ModelName { get; internal set; }
         public string Name { get; internal set; }

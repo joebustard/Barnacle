@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
         Title="Figure" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
-    <Grid VerticalAlignment="Stretch" MouseDown="Grid_MouseDown">
+    <Grid VerticalAlignment="Stretch" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="25" />

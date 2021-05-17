@@ -1,10 +1,12 @@
 ﻿using Make3D.Dialogs.Figure;
 using Make3D.Models;
+using Make3D.Models.Adorners;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -16,12 +18,14 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class FigureDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private Adorner adorner;
+
         // Yes this tool does have its own doucment.
         // Its used to load the models that will be available
         private Document document;
 
         private Point lastMousePos;
-        private List<Object3D> markers;
+        private List<JointMarker> markers;
         private Object3D selectedBone;
         private Object3D selectedMarker;
         private int selectedTabItem;
@@ -33,9 +37,10 @@ namespace Make3D.Dialogs
             InitializeComponent();
             ToolName = "Figure";
             DataContext = this;
-            markers = new List<Object3D>();
+            markers = new List<JointMarker>();
             skeletonMeshs = new List<Object3D>();
             document = new Document();
+            adorner = null;
         }
 
         public int SelectedTabItem
@@ -96,6 +101,20 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        protected override void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Point newPos = e.GetPosition(viewport3D1);
+            if (adorner != null && adorner.MouseMove(oldMousePos, newPos, e, false) == true)
+            {
+                oldMousePos = newPos;
+                skeleton.Update();
+            }
+            else
+            {
+                base.Viewport_MouseMove(sender, e);
+            }
+        }
+
         private static GeometryModel3D GetMesh(Object3D obj)
         {
             GeometryModel3D gm = new GeometryModel3D();
@@ -127,6 +146,21 @@ namespace Make3D.Dialogs
             return res;
         }
 
+        private Object3D CheckHit(GeometryModel3D search, List<JointMarker> markers)
+        {
+            Object3D res = null;
+            foreach (Object3D ob in markers)
+            {
+                if (ob.Mesh == search.Geometry)
+                {
+                    res = ob;
+                    break;
+                }
+            }
+
+            return res;
+        }
+
         private void ClearFigure()
         {
         }
@@ -135,6 +169,12 @@ namespace Make3D.Dialogs
         {
             markers.Clear();
             skeletonMeshs.Clear();
+        }
+
+        private void CreateAdorner()
+        {
+            adorner = new RotationAdorner(Camera);
+            adorner.AdornObject(selectedMarker);
         }
 
         private void CreateDefaultSkeleton()
@@ -180,19 +220,21 @@ namespace Make3D.Dialogs
             // force recalculation of positions.
             double y = vert1.Length + vert2.Length + vert3.Length + vert4.Length + rul.Length + rll.Length + rft.Length;
             skeleton.StartPosition = new Point3D(0, y, 0);
+            skeleton.EndPosition = new Point3D(0, y, 0);
             skeleton.Update();
             skeleton.Dump(0);
         }
 
-        private void CreateMarker(Point3D position, double size, Color col, string name)
+        private void CreateMarker(Point3D position, double size, Color col, string name, Bone bn)
         {
-            Object3D marker = new Object3D();
+            JointMarker marker = new JointMarker();
 
             Point3DCollection pnts = new Point3DCollection();
             Int32Collection indices = new Int32Collection();
             Vector3DCollection normals = new Vector3DCollection();
             PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
             marker.Name = name;
+            marker.Bone = bn;
             marker.RelativeObjectVertices = pnts;
             marker.TriangleIndices = indices;
             marker.Normals = normals;
@@ -203,13 +245,14 @@ namespace Make3D.Dialogs
             marker.Color = col;
             marker.RelativeToAbsolute();
             marker.SetMesh();
+            marker.Dirty = false;
             markers.Add(marker);
         }
 
         private Object3D FindMarkerForBone(String name)
         {
             Object3D res = null;
-            foreach (Object3D ob in markers)
+            foreach (JointMarker ob in markers)
             {
                 if (ob.Name == name)
                 {
@@ -245,12 +288,12 @@ namespace Make3D.Dialogs
         {
             markers.Clear();
             skeletonMeshs.Clear();
-            CreateMarker(skeleton.StartPosition, 4, Colors.Green, "Root");
+            CreateMarker(skeleton.StartPosition, 4, Colors.Green, "Root", skeleton);
             List<BoneDisplayRecord> brecs = new List<BoneDisplayRecord>();
             skeleton.GetSubPositions(brecs);
             foreach (BoneDisplayRecord p in brecs)
             {
-                CreateMarker(p.MarkerPosition, 4, Colors.Blue, p.Name);
+                CreateMarker(p.MarkerPosition, 4, Colors.Blue, p.Name, p.Bone);
                 foreach (Object3D ob in document.Content)
                 {
                     if (ob.Name.ToLower() == p.ModelName)
@@ -278,23 +321,54 @@ namespace Make3D.Dialogs
             }
             lastHitModel = null;
             lastHitPoint = new Point3D(0, 0, 0);
-            selectedBone = null;
-            selectedMarker = null;
-            HitTest(viewport3D1,sender, e);
+
+            HitTest(viewport3D1, sender, e);
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {
-                selectedMarker = CheckHit(lastHitModel, markers);
-                if (selectedMarker == null)
+                bool handled = false;
+                // was it the adorner
+                if (adorner != null)
                 {
-                    selectedBone = CheckHit(lastHitModel, skeletonMeshs);
-                    if (selectedBone != null)
-                    {
-                        selectedMarker = FindMarkerForBone(selectedBone.Name);
-                    }
+                    handled = adorner.Select(lastHitModel);
                 }
 
-                base.Viewport_MouseDown(viewport3D1, e);
+                if (!handled)
+                {
+                    // not adorner so maybe something in the model
+                    selectedBone = null;
+                    selectedMarker = null;
+                    selectedMarker = CheckHit(lastHitModel, markers);
+                    if (selectedMarker == null)
+                    {
+                        selectedBone = CheckHit(lastHitModel, skeletonMeshs);
+                        if (selectedBone != null)
+                        {
+                            selectedMarker = FindMarkerForBone(selectedBone.Name);
+                        }
+                    }
+                    if (selectedMarker != null)
+                    {
+                        CreateAdorner();
+                        Redisplay();
+                    }
+                    base.Viewport_MouseDown(viewport3D1, e);
+                }
+            }
+        }
+
+        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (adorner != null)
+            {
+                adorner.MouseUp();
+                JointMarker mk = adorner.SelectedObjects[0] as JointMarker;
+
+                if (mk != null && mk.Dirty)
+                {
+                    RefreshSkeleton(mk.Bone);
+                    mk.Dirty = false;
+                }
             }
         }
 
@@ -369,7 +443,100 @@ namespace Make3D.Dialogs
 
                     MyModelGroup.Children.Add(gm2);
                 }
+                if (adorner != null)
+                {
+                    foreach (Model3D md in adorner.Adornments)
+                    {
+                        MyModelGroup.Children.Add(md);
+                    }
+                }
             }
+        }
+
+        private void RefreshSkeleton(Bone joint)
+        {
+            List<String> names = new List<string>();
+            joint.AllChildNames(names);
+            // remove all the markers and meshs for the children of the bone.
+            foreach (string child in names)
+            {
+                for (int i = 0; i < markers.Count; i++)
+                {
+                    if (markers[i].Name == child)
+                    {
+                        markers.RemoveAt(i);
+                        break;
+                    }
+                }
+
+                for (int i = 0; i < skeletonMeshs.Count; i++)
+                {
+                    if (skeletonMeshs[i].Name == child)
+                    {
+                        skeletonMeshs.RemoveAt(i);
+                        i--;
+                    }
+                }
+            }
+
+            for (int i = 0; i < skeletonMeshs.Count; i++)
+            {
+                if (skeletonMeshs[i].Name == joint.Name)
+                {
+                    skeletonMeshs.RemoveAt(i);
+                    i--;
+                }
+            }
+            List<BoneDisplayRecord> brecs = new List<BoneDisplayRecord>();
+            skeleton.GetSubPositions(brecs);
+
+            foreach (string child in names)
+            {
+                foreach (BoneDisplayRecord p in brecs)
+                {
+                    if (p.Name == child)
+                    {
+                        CreateMarker(p.MarkerPosition, 4, Colors.Blue, p.Name, p.Bone);
+                        foreach (Object3D ob in document.Content)
+                        {
+                            if (ob.Name.ToLower() == p.ModelName)
+                            {
+                                Object3D cl = ob.Clone();
+                                // Name the object after the bone it represents
+                                cl.Name = p.Name;
+                                cl.Position = p.Position;
+                                cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
+                                cl.RotateRad2(p.Rotation);
+                                cl.Remesh();
+                                cl.SetMesh();
+                                skeletonMeshs.Add(cl);
+                            }
+                        }
+                    }
+                }
+            }
+            foreach (BoneDisplayRecord p in brecs)
+            {
+                if (p.Name == joint.Name)
+                {
+                    foreach (Object3D ob in document.Content)
+                    {
+                        if (ob.Name.ToLower() == p.ModelName)
+                        {
+                            Object3D cl = ob.Clone();
+                            // Name the object after the bone it represents
+                            cl.Name = p.Name;
+                            cl.Position = p.Position;
+                            cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
+                            cl.RotateRad2(p.Rotation);
+                            cl.Remesh();
+                            cl.SetMesh();
+                            skeletonMeshs.Add(cl);
+                        }
+                    }
+                }
+            }
+            Redisplay();
         }
 
         private void SaveEditorParmeters()
