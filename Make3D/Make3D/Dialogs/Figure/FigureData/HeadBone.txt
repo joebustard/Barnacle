@@ -2,9 +2,9 @@
   <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1" SwapAxis="True" FloorAll="True">
     <Rotation X="0" Y="0" Z="0" />
   </Settings>
-  <obj Name="Object_7" Description="box" Colour="#FFFFC0CB" Primitive="Mesh">
+  <obj Name="HeadBone" Description="box" Colour="#FFFFC0CB" Primitive="Mesh">
     <Position X="0" Y="0" Z="0" />
-    <Scale X="1" Y="1" Z="1.4142135623731" />
+    <Scale X="1" Y="1" Z="1.41422" />
     <v X="-0.50000" Y="-0.50000" Z="0.00000" />
     <v X="0.00000" Y="-0.50000" Z="-0.70711" />
     <v X="0.50000" Y="-0.50000" Z="0.00000" />

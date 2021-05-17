@@ -181,11 +181,11 @@ namespace Make3D.Dialogs
         {
             skeleton = new Bone();
             skeleton.Name = "Root";
-            Bone neck = skeleton.AddSub("Neck", 4, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
+            Bone neck = skeleton.AddSub("Neck", 8, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
             Bone head = neck.AddSub("Head", 10, 9, 9, 0, 0, 0, -5, 5, 85, 95, 0, 0, "headbone");
 
             // spine
-            Bone vert1 = skeleton.AddSub("Vert1", 5, 5, 5, 0, 0, 270, -5, 5, 85, 95, 0, 0);
+            Bone vert1 = skeleton.AddSub("Vert1", 8, 5, 5, 0, 0, 270, -5, 5, 85, 95, 0, 0);
             Bone vert2 = vert1.AddSub("Vert2", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
             Bone vert3 = vert2.AddSub("Vert3", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
             Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
@@ -288,7 +288,8 @@ namespace Make3D.Dialogs
         {
             markers.Clear();
             skeletonMeshs.Clear();
-            CreateMarker(skeleton.StartPosition, 4, Colors.Green, "Root", skeleton);
+            skeleton.Update();
+            CreateMarker(skeleton.StartPosition, 6, Colors.Green, "Root", skeleton);
             List<BoneDisplayRecord> brecs = new List<BoneDisplayRecord>();
             skeleton.GetSubPositions(brecs);
             foreach (BoneDisplayRecord p in brecs)
@@ -304,6 +305,7 @@ namespace Make3D.Dialogs
                         cl.Position = p.Position;
                         cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
                         cl.RotateRad(p.Rotation);
+                        cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
                         cl.Remesh();
                         cl.SetMesh();
                         skeletonMeshs.Add(cl);
@@ -506,7 +508,7 @@ namespace Make3D.Dialogs
                                 cl.Name = p.Name;
                                 cl.Position = p.Position;
                                 cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
-                                cl.RotateRad2(p.Rotation);
+                                cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
                                 cl.Remesh();
                                 cl.SetMesh();
                                 skeletonMeshs.Add(cl);
@@ -528,7 +530,7 @@ namespace Make3D.Dialogs
                             cl.Name = p.Name;
                             cl.Position = p.Position;
                             cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
-                            cl.RotateRad2(p.Rotation);
+                            cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
                             cl.Remesh();
                             cl.SetMesh();
                             skeletonMeshs.Add(cl);

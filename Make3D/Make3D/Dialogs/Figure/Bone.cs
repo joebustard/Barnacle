@@ -14,9 +14,7 @@ namespace Make3D.Dialogs.Figure
         private double height;
         private double length;
         private Point3D midPos;
-        private double parentxrot;
-        private double parentyrot;
-        private double parentzrot;
+
         private Point3D startPos;
         private double xrot;
         private double xRotRadians;
@@ -35,6 +33,9 @@ namespace Make3D.Dialogs.Figure
             XRot = 0;
             YRot = 0;
             ZRot = 0;
+            Nxr = 0;
+            Nyr = 0;
+            Nzr = 0;
             xRotRadians = 0;
             yRotRadians = 0;
             zRotRadians = 0;
@@ -42,9 +43,7 @@ namespace Make3D.Dialogs.Figure
             MaxXRot = 359;
             MinYRot = -359;
             MaxYRot = 359;
-            parentxrot = 0;
-            parentyrot = 0;
-            parentzrot = 0;
+
             SubBones = new List<Bone>();
         }
 
@@ -190,6 +189,7 @@ namespace Make3D.Dialogs.Figure
                 XRot = xr,
                 YRot = yr,
                 ZRot = zr,
+                
                 MinXRot = minx,
                 MaxXRot = maxx,
                 MinYRot = miny,
@@ -199,6 +199,9 @@ namespace Make3D.Dialogs.Figure
                 ModelName = boneModel
             };
 
+            res.Nxr = Nxr + res.xRotRadians;
+            res.Nyr = Nyr + res.yRotRadians;
+            res.Nzr = Nzr + res.zRotRadians;
             SubBones.Add(res);
 
             return res;
@@ -263,12 +266,12 @@ namespace Make3D.Dialogs.Figure
             return matrix;
         }
 
-        private double Degrees(double v)
+        public static double Degrees(double v)
         {
             return (v * 180.0 / Math.PI);
         }
 
-        private double Rad(double v)
+        public static  double Rad(double v)
         {
             return (v * Math.PI) / 180.0;
         }
@@ -282,6 +285,19 @@ namespace Make3D.Dialogs.Figure
             return res;
         }
 
+        public  Point3DCollection RotatedPointCollection(Point3DCollection src, double nxr, double nyr, double nzr)
+        {
+            Point3DCollection res = new Point3DCollection();
+            Matrix3D m3d = CalculateRotationMatrix(Degrees(nxr), Degrees(nyr), Degrees(nzr));
+            MatrixTransform3D transform = new MatrixTransform3D(m3d);
+
+            for (int i = 0; i < src.Count; i++)
+            {
+
+                res.Add(transform.Transform(src[i]));
+            }
+            return res;
+        }
         private void UpdateSubBones(double x, double y, double z, double parentXr, double parentYr, double parentZr)
         {
             if (SubBones != null)

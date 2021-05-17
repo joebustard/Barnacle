@@ -19,14 +19,13 @@ namespace Make3D.Dialogs.Figure
         public Bone Bone { get; set; }
         public bool Dirty { get; set; }
 
-        public override void Rotate(Point3D RotateBy)
+        public override void Rotate(Point3D rot)
         {
-            //double r1 = DegreesToRad(RotateBy.Y);
-            //double r2 = DegreesToRad(RotateBy.Z);
-            //double r3 = DegreesToRad(RotateBy.X);
-            double r1 = RotateBy.Z;
-            double r2 = RotateBy.Y;
-            double r3 = RotateBy.X;
+            System.Diagnostics.Debug.WriteLine($"ad rot {rot.X},{rot.Y},{rot.Z}");
+
+            double r1 = rot.X;
+            double r2 = rot.Y;
+            double r3 = rot.Z;
             if (Bone != null)
             {
                 Bone.XRot += r1;
