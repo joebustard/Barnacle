@@ -10,6 +10,9 @@ namespace Make3D.Dialogs.Figure
 {
     internal class JointMarker : Object3D
     {
+
+        public delegate void BoneRotate(Bone bn);
+        public BoneRotate OnBoneRotated { get; set; }
         public JointMarker()
         {
             Bone = null;
@@ -28,6 +31,10 @@ namespace Make3D.Dialogs.Figure
                 Bone.XRot += rot.X;
                 Bone.YRot += rot.Y;
                 Bone.ZRot += rot.Z;
+                if (OnBoneRotated != null)
+                {
+                    OnBoneRotated(Bone);
+                }
                 Dirty = true;
             }
         }

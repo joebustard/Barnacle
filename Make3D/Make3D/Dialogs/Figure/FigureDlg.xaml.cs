@@ -1,6 +1,7 @@
 ﻿using Make3D.Dialogs.Figure;
 using Make3D.Models;
 using Make3D.Models.Adorners;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Xml;
 
 namespace Make3D.Dialogs
 {
@@ -698,11 +700,20 @@ namespace Make3D.Dialogs
                         MaximumXRot = selectedBone.MaxXRot;
                         MaximumYRot = selectedBone.MaxYRot;
                         MaximumZRot = selectedBone.MaxZRot;
+
+                        selectedMarker.OnBoneRotated +=   OnBoneRotated;   
                     }
                     base.Viewport_MouseDown(viewport3D1, e);
                     Redisplay();
                 }
             }
+        }
+
+        private void OnBoneRotated(Bone bn)
+        {
+            SelectedXRot = bn.XRot;
+            SelectedYRot = bn.YRot;
+            SelectedZRot = bn.ZRot;
         }
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -885,6 +896,23 @@ namespace Make3D.Dialogs
             MyModelGroup.Children.Clear();
 
             Redisplay();
+        }
+
+        private void ResetPoseClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void SavePoseClicked(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog dlg = new SaveFileDialog();
+            if ( dlg.ShowDialog() == true)
+            {
+                XmlDocument doc = new XmlDocument();
+                XmlElement docNode = doc.CreateElement("Pose");
+                doc.AppendChild(docNode);
+                skeleton.Save(doc, docNode);
+                doc.Save(dlg.FileName);
+            }
         }
     }
 }

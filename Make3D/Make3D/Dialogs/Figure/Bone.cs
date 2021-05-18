@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
+using System.Xml;
 
 namespace Make3D.Dialogs.Figure
 {
@@ -315,6 +316,25 @@ namespace Make3D.Dialogs.Figure
                 {
                     b.UpdateSubBones(endPos.X, endPos.Y, endPos.Z, Nxr, Nyr, Nzr);
                 }
+            }
+        }
+
+        internal void Save(XmlDocument doc, XmlElement parent)
+        {
+            XmlElement ele = doc.CreateElement("Bone");
+            ele.SetAttribute("Name", Name);
+            ele.SetAttribute("Xr", XRot.ToString());
+            ele.SetAttribute("Yr", YRot.ToString());
+            ele.SetAttribute("Zr", ZRot.ToString());
+            ele.SetAttribute("W", Width.ToString());
+            ele.SetAttribute("L", Length.ToString());
+            ele.SetAttribute("H", Height.ToString());
+            ele.SetAttribute("M", ModelName);
+            parent.AppendChild(ele);
+
+            foreach( Bone bn in SubBones)
+            {
+                bn.Save(doc, ele);
             }
         }
     }
