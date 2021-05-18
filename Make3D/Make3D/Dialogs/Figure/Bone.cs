@@ -43,7 +43,8 @@ namespace Make3D.Dialogs.Figure
             MaxXRot = 359;
             MinYRot = -359;
             MaxYRot = 359;
-
+            MinZRot = -359;
+            MaxZRot = 359;
             SubBones = new List<Bone>();
         }
 
@@ -55,7 +56,6 @@ namespace Make3D.Dialogs.Figure
                 if (value != endPos)
                 {
                     endPos = value;
-                    // UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, Rad(_XRot), Rad(_YRot), length);
                 }
             }
         }
@@ -71,7 +71,6 @@ namespace Make3D.Dialogs.Figure
                 if (height != value)
                 {
                     height = value;
-                    //    UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
                 }
             }
         }
@@ -87,7 +86,6 @@ namespace Make3D.Dialogs.Figure
                 if (length != value)
                 {
                     length = value;
-                    //    UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
                 }
             }
         }
@@ -104,7 +102,6 @@ namespace Make3D.Dialogs.Figure
                 if (value != midPos)
                 {
                     midPos = value;
-                    // UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, Rad(_XRot), Rad(_YRot), length);
                 }
             }
         }
@@ -126,7 +123,6 @@ namespace Make3D.Dialogs.Figure
                 if (value != startPos)
                 {
                     startPos = value;
-                    //      UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
                 }
             }
         }
@@ -144,7 +140,6 @@ namespace Make3D.Dialogs.Figure
                 {
                     xrot = value;
                     xRotRadians = Rad(xrot);
-                    //     UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians,zRotRadians, length);
                 }
             }
         }
@@ -158,7 +153,6 @@ namespace Make3D.Dialogs.Figure
                 {
                     yrot = value;
                     yRotRadians = Rad(yrot);
-                    //      UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
                 }
             }
         }
@@ -172,9 +166,18 @@ namespace Make3D.Dialogs.Figure
                 {
                     zrot = value;
                     zRotRadians = Rad(zrot);
-                    //     UpdateSubBones(StartPosition.X, StartPosition.Y, StartPosition.Z, xRotRadians, yRotRadians, zRotRadians, length);
                 }
             }
+        }
+
+        public static double Degrees(double v)
+        {
+            return (v * 180.0 / Math.PI);
+        }
+
+        public static double Rad(double v)
+        {
+            return (v * Math.PI) / 180.0;
         }
 
         public Bone AddSub(string n, double l, double w, double h, double xr, double yr, double zr, double minx, double maxx, double miny, double maxy, double minz, double maxz, string boneModel = "bone")
@@ -189,13 +192,15 @@ namespace Make3D.Dialogs.Figure
                 XRot = xr,
                 YRot = yr,
                 ZRot = zr,
-                
+
                 MinXRot = minx,
                 MaxXRot = maxx,
+
                 MinYRot = miny,
                 MaxYRot = maxy,
+
                 MinZRot = minz,
-                MaxZRot = minz,
+                MaxZRot = maxz,
                 ModelName = boneModel
             };
 
@@ -204,6 +209,19 @@ namespace Make3D.Dialogs.Figure
             res.Nzr = Nzr + res.zRotRadians;
             SubBones.Add(res);
 
+            return res;
+        }
+
+        public Point3DCollection RotatedPointCollection(Point3DCollection src, double nxr, double nyr, double nzr)
+        {
+            Point3DCollection res = new Point3DCollection();
+            Matrix3D m3d = CalculateRotationMatrix(Degrees(nxr), Degrees(nyr), Degrees(nzr));
+            MatrixTransform3D transform = new MatrixTransform3D(m3d);
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                res.Add(transform.Transform(src[i]));
+            }
             return res;
         }
 
@@ -246,7 +264,7 @@ namespace Make3D.Dialogs.Figure
                 br.ModelName = bn.ModelName;
                 br.Position = new Point3D(bn.MidPosition.X, bn.MidPosition.Y, bn.MidPosition.Z);
                 br.MarkerPosition = new Point3D(bn.StartPosition.X, bn.StartPosition.Y, bn.StartPosition.Z);
-                // br.Rotation = new Point3D(Rad(bn.Nxr), Rad(bn.Nyr), Rad(bn.Nzr));
+
                 br.Rotation = new Point3D(bn.Nxr, bn.Nyr, bn.Nzr);
                 br.Scale = new Scale3D(bn.Length, bn.Height, bn.Width);
                 br.Bone = bn;
@@ -266,16 +284,6 @@ namespace Make3D.Dialogs.Figure
             return matrix;
         }
 
-        public static double Degrees(double v)
-        {
-            return (v * 180.0 / Math.PI);
-        }
-
-        public static  double Rad(double v)
-        {
-            return (v * Math.PI) / 180.0;
-        }
-
         private Point3D RotatedPoint(double length, double nxr, double nyr, double nzr)
         {
             Matrix3D m3d = CalculateRotationMatrix(Degrees(nxr), Degrees(nyr), Degrees(nzr));
@@ -285,19 +293,6 @@ namespace Make3D.Dialogs.Figure
             return res;
         }
 
-        public  Point3DCollection RotatedPointCollection(Point3DCollection src, double nxr, double nyr, double nzr)
-        {
-            Point3DCollection res = new Point3DCollection();
-            Matrix3D m3d = CalculateRotationMatrix(Degrees(nxr), Degrees(nyr), Degrees(nzr));
-            MatrixTransform3D transform = new MatrixTransform3D(m3d);
-
-            for (int i = 0; i < src.Count; i++)
-            {
-
-                res.Add(transform.Transform(src[i]));
-            }
-            return res;
-        }
         private void UpdateSubBones(double x, double y, double z, double parentXr, double parentYr, double parentZr)
         {
             if (SubBones != null)

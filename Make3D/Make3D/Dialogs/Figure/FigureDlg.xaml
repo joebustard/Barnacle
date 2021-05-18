@@ -53,12 +53,58 @@
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
+                        <Label Grid.Row="0" Style="{StaticResource InverseLabel}">Skeleton</Label>
+                        <StackPanel Grid.Row="2" Orientation="Horizontal">
+                            <Label Width="40">Bone</Label>
+                            <Label Width="100" Content="{Binding SelectedBoneName}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="3" Orientation="Horizontal">
+                            <Label Width="40" HorizontalContentAlignment="Right">Xr</Label>
+                            <TextBox Width="60" Text="{Binding SelectedXRot}" Margin="0,2,2,2" />
+                            <Label Width="40" HorizontalContentAlignment="Right">Yr</Label>
+                            <TextBox Width="60" Text="{Binding SelectedYRot}" Margin="0,2,2,2" />
+                            <Label Width="40" HorizontalContentAlignment="Right">Zr</Label>
+                            <TextBox Width="60" Text="{Binding SelectedZRot}" Margin="0,2,2,2" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="4" Orientation="Horizontal">
+                            <Label Width="40" HorizontalContentAlignment="Right">L</Label>
+                            <TextBox Width="60" Text="{Binding SelectedLength}" Margin="0,2,2,2" />
+                            <Label Width="40" HorizontalContentAlignment="Right">W</Label>
+                            <TextBox Width="60" Text="{Binding SelectedWidth}" Margin="0,2,2,2" />
+                            <Label Width="40" HorizontalContentAlignment="Right">H</Label>
+                            <TextBox Width="60" Text="{Binding SelectedHeight}" Margin="0,2,2,2" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="5" Orientation="Horizontal">
+                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding EditLimits}">Edit Limits</CheckBox>
+                        </StackPanel>
+                        <StackPanel Grid.Row="6" Orientation="Horizontal">
+                            <Label Width="40" HorizontalContentAlignment="Right" Visibility="{Binding LimitsVisible}">Min Xr</Label>
+                            <TextBox Width="60" Text="{Binding MinimumXRot}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
+                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Min Yr</Label>
+                            <TextBox Width="60" Text="{Binding MinimumYRot}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
+                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Min Zr</Label>
+                            <TextBox Width="60" Text="{Binding MinimumZRot}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="7" Orientation="Horizontal">
+                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Max Xr</Label>
+                            <TextBox Width="60" Text="{Binding MaximumXRot}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
+                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Max Yr</Label>
+                            <TextBox Width="60" Text="{Binding MaxiumYRot}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
+                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Max Zr</Label>
+                            <TextBox Width="60" Text="{Binding MaximumZRot}" Margin="0,2,2,2" Visibility="{Binding LimitsVisible}" />
+                        </StackPanel>
+                        <Label Grid.Row="9" Style="{StaticResource InverseLabel}">Pose</Label>
+                        <StackPanel Grid.Row="10" Orientation="Horizontal">
+                            <Button Margin="2,2,2,2" ToolTip="Reset the skeleton to its default pose">Reset</Button>
+                            <Button Margin="2,2,2,2" ToolTip="Save the current pose">Save</Button>
+                            <Button Margin="2,2,2,2" ToolTip="Load a pose">Load</Button>
+                        </StackPanel>
+                        <StackPanel Grid.Row="11" Orientation="Horizontal"></StackPanel>
                     </Grid>
                 </TabItem>
             </TabControl>

@@ -24,11 +24,26 @@ namespace Make3D.Dialogs
         // Its used to load the models that will be available
         private Document document;
 
+        private bool editLimits;
         private Point lastMousePos;
+        private Visibility limitsVisible;
         private List<JointMarker> markers;
-        private Object3D selectedBone;
-        private Object3D selectedMarker;
+        private double maxiumXRot;
+        private double maxiumYRot;
+        private double maxiumZRot;
+        private double minimumXRot;
+        private double minimumYRot;
+        private double minimumZRot;
+        private Bone selectedBone;
+        private String selectedBoneName;
+        private double selectedHeight;
+        private double selectedLength;
+        private JointMarker selectedMarker;
         private int selectedTabItem;
+        private double selectedWidth;
+        private double selectedXRot;
+        private double selectedYRot;
+        private double selectedZRot;
         private Bone skeleton;
         private List<Object3D> skeletonMeshs;
 
@@ -41,6 +56,228 @@ namespace Make3D.Dialogs
             skeletonMeshs = new List<Object3D>();
             document = new Document();
             adorner = null;
+            EditLimits = false;
+            LimitsVisible = Visibility.Hidden;
+        }
+
+        public bool EditLimits
+        {
+            get
+            {
+                return editLimits;
+            }
+            set
+            {
+                if (editLimits != value)
+                {
+                    editLimits = value;
+                    if (editLimits)
+                    {
+                        LimitsVisible = Visibility.Visible;
+                    }
+                    else
+                    {
+                        LimitsVisible = Visibility.Hidden;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility LimitsVisible
+        {
+            get
+            {
+                return limitsVisible;
+            }
+            set
+            {
+                if (limitsVisible != value)
+                {
+                    limitsVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MaximumXRot
+        {
+            get
+            {
+                return maxiumXRot;
+            }
+            set
+            {
+                if (maxiumXRot != value)
+                {
+                    maxiumXRot = value;
+                    if (selectedBone.MaxXRot != maxiumXRot)
+                    {
+                        selectedBone.MaxXRot = maxiumXRot;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MaximumYRot
+        {
+            get
+            {
+                return maxiumYRot;
+            }
+            set
+            {
+                if (maxiumYRot != value)
+                {
+                    maxiumYRot = value;
+                    if (selectedBone.MaxYRot != maxiumYRot)
+                    {
+                        selectedBone.MaxYRot = maxiumYRot;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MaximumZRot
+        {
+            get
+            {
+                return maxiumZRot;
+            }
+            set
+            {
+                if (maxiumZRot != value)
+                {
+                    maxiumZRot = value;
+                    if (selectedBone.MaxZRot != maxiumZRot)
+                    {
+                        selectedBone.MaxZRot = maxiumZRot;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MinimumXRot
+        {
+            get
+            {
+                return minimumXRot;
+            }
+            set
+            {
+                if (minimumXRot != value)
+                {
+                    minimumXRot = value;
+                    if (selectedBone.MinXRot != minimumXRot)
+                    {
+                        selectedBone.MinXRot = minimumXRot;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MinimumYRot
+        {
+            get
+            {
+                return minimumYRot;
+            }
+            set
+            {
+                if (minimumYRot != value)
+                {
+                    minimumYRot = value;
+                    if (selectedBone.MinYRot != minimumYRot)
+                    {
+                        selectedBone.MinYRot = minimumYRot;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double MinimumZRot
+        {
+            get
+            {
+                return minimumZRot;
+            }
+            set
+            {
+                if (minimumZRot != value)
+                {
+                    minimumZRot = value;
+                    if (selectedBone.MinZRot != minimumZRot)
+                    {
+                        selectedBone.MinZRot = minimumZRot;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String SelectedBoneName
+        {
+            get
+            {
+                return selectedBoneName;
+            }
+            set
+            {
+                if (selectedBoneName != value)
+                {
+                    selectedBoneName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double SelectedHeight
+        {
+            get
+            {
+                return selectedHeight;
+            }
+            set
+            {
+                if (selectedHeight != value)
+                {
+                    selectedHeight = value;
+                    if (selectedBone.Height != selectedHeight)
+                    {
+                        selectedBone.Height = selectedHeight;
+                        skeleton.Update();
+                        RefreshSkeleton(selectedBone);
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double SelectedLength
+        {
+            get
+            {
+                return selectedLength;
+            }
+            set
+            {
+                if (selectedLength != value)
+                {
+                    selectedLength = value;
+                    if (selectedBone.Length != selectedLength)
+                    {
+                        selectedBone.Length = selectedLength;
+                        skeleton.Update();
+                        RefreshSkeleton(selectedBone);
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public int SelectedTabItem
@@ -56,6 +293,94 @@ namespace Make3D.Dialogs
                     selectedTabItem = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public double SelectedWidth
+        {
+            get
+            {
+                return selectedWidth;
+            }
+            set
+            {
+                if (selectedWidth != value)
+                {
+                    selectedWidth = value;
+                    if (selectedBone.Width != selectedWidth)
+                    {
+                        selectedBone.Width = selectedWidth;
+                        skeleton.Update();
+                        RefreshSkeleton(selectedBone);
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double SelectedXRot
+        {
+            get
+            {
+                return selectedXRot;
+            }
+            set
+            {
+                if (selectedXRot != value)
+                {
+                    selectedXRot = value;
+                    if (selectedBone.XRot != selectedXRot)
+                    {
+                        selectedBone.XRot = selectedXRot;
+                        skeleton.Update();
+                        RefreshSkeleton(selectedBone);
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double SelectedYRot
+        {
+            get
+            {
+                return selectedYRot;
+            }
+            set
+            {
+                if (selectedYRot != value)
+                {
+                    selectedYRot = value;
+                    if (selectedBone.YRot != selectedYRot)
+                    {
+                        selectedBone.YRot = selectedYRot;
+                        skeleton.Update();
+                        RefreshSkeleton(selectedBone);
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double SelectedZRot
+        {
+            get
+            {
+                return selectedZRot;
+            }
+            set
+            {
+                if (selectedZRot != value)
+                {
+                    selectedZRot = value;
+                    if (selectedBone.ZRot != selectedZRot)
+                    {
+                        selectedBone.ZRot = selectedZRot;
+                        skeleton.Update();
+                        RefreshSkeleton(selectedBone);
+                    }
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -146,10 +471,10 @@ namespace Make3D.Dialogs
             return res;
         }
 
-        private Object3D CheckHit(GeometryModel3D search, List<JointMarker> markers)
+        private JointMarker CheckHit(GeometryModel3D search, List<JointMarker> markers)
         {
-            Object3D res = null;
-            foreach (Object3D ob in markers)
+            JointMarker res = null;
+            foreach (JointMarker ob in markers)
             {
                 if (ob.Mesh == search.Geometry)
                 {
@@ -177,12 +502,31 @@ namespace Make3D.Dialogs
             adorner.AdornObject(selectedMarker);
         }
 
+        private void CreateBoneModel(BoneDisplayRecord p)
+        {
+            foreach (Object3D ob in document.Content)
+            {
+                if (ob.Name.ToLower() == p.ModelName)
+                {
+                    Object3D cl = ob.Clone();
+                    // Name the object after the bone it represents
+                    cl.Name = p.Name;
+                    cl.Position = p.Position;
+                    cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
+                    cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
+                    cl.Remesh();
+                    cl.SetMesh();
+                    skeletonMeshs.Add(cl);
+                }
+            }
+        }
+
         private void CreateDefaultSkeleton()
         {
             skeleton = new Bone();
             skeleton.Name = "Root";
             Bone neck = skeleton.AddSub("Neck", 8, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
-            Bone head = neck.AddSub("Head", 10, 9, 9, 0, 0, 0, -5, 5, 85, 95, 0, 0, "headbone");
+            Bone head = neck.AddSub("Head", 10, 14, 12, 0, -90, -90, -5, 5, 85, 95, 0, 0, "headbone");
 
             // spine
             Bone vert1 = skeleton.AddSub("Vert1", 8, 5, 5, 0, 0, 270, -5, 5, 85, 95, 0, 0);
@@ -213,14 +557,15 @@ namespace Make3D.Dialogs
             Bone lul = pl.AddSub("LeftUpperLeg", 17, 5, 5, 0, 0, -85, -1, -1, -1, -1, -1, -1);
             Bone lll = lul.AddSub("LeftLowerLeg", 16, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1);
 
-            Bone rft = rll.AddSub("RightFoot", 1, 9, 9, -90, 0, 10, -1, -1, -1, -1, -1, -1, "footbone");
+            Bone rft = rll.AddSub("RightFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone");
 
-            Bone lft = lll.AddSub("LeftFoot", 1, 9, 9, -90, 0, -10, -1, -1, -1, -1, -1, -1, "footbone");
+            Bone lft = lll.AddSub("LeftFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone");
 
             // force recalculation of positions.
-            double y = vert1.Length + vert2.Length + vert3.Length + vert4.Length + rul.Length + rll.Length + rft.Length;
+            double y = vert1.Length + vert2.Length + vert3.Length + vert4.Length + rul.Length + rll.Length + rft.Height;
             skeleton.StartPosition = new Point3D(0, y, 0);
             skeleton.EndPosition = new Point3D(0, y, 0);
+
             skeleton.Update();
             skeleton.Dump(0);
         }
@@ -249,9 +594,9 @@ namespace Make3D.Dialogs
             markers.Add(marker);
         }
 
-        private Object3D FindMarkerForBone(String name)
+        private JointMarker FindMarkerForBone(String name)
         {
-            Object3D res = null;
+            JointMarker res = null;
             foreach (JointMarker ob in markers)
             {
                 if (ob.Name == name)
@@ -295,22 +640,7 @@ namespace Make3D.Dialogs
             foreach (BoneDisplayRecord p in brecs)
             {
                 CreateMarker(p.MarkerPosition, 4, Colors.Blue, p.Name, p.Bone);
-                foreach (Object3D ob in document.Content)
-                {
-                    if (ob.Name.ToLower() == p.ModelName)
-                    {
-                        Object3D cl = ob.Clone();
-                        // Name the object after the bone it represents
-                        cl.Name = p.Name;
-                        cl.Position = p.Position;
-                        cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
-                        cl.RotateRad(p.Rotation);
-                        cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
-                        cl.Remesh();
-                        cl.SetMesh();
-                        skeletonMeshs.Add(cl);
-                    }
-                }
+                CreateBoneModel(p);
             }
         }
 
@@ -337,24 +667,40 @@ namespace Make3D.Dialogs
 
                 if (!handled)
                 {
+                    adorner?.Clear();
+
                     // not adorner so maybe something in the model
-                    selectedBone = null;
+                    Object3D hitBone = null;
                     selectedMarker = null;
                     selectedMarker = CheckHit(lastHitModel, markers);
                     if (selectedMarker == null)
                     {
-                        selectedBone = CheckHit(lastHitModel, skeletonMeshs);
-                        if (selectedBone != null)
+                        hitBone = CheckHit(lastHitModel, skeletonMeshs);
+                        if (hitBone != null)
                         {
-                            selectedMarker = FindMarkerForBone(selectedBone.Name);
+                            selectedMarker = FindMarkerForBone(hitBone.Name);
                         }
                     }
                     if (selectedMarker != null)
                     {
                         CreateAdorner();
-                        Redisplay();
+                        SelectedBoneName = selectedMarker.Name;
+                        selectedBone = selectedMarker.Bone;
+                        SelectedXRot = selectedMarker.Bone.XRot;
+                        SelectedYRot = selectedMarker.Bone.YRot;
+                        SelectedZRot = selectedMarker.Bone.ZRot;
+                        SelectedWidth = selectedBone.Width;
+                        SelectedHeight = selectedBone.Height;
+                        SelectedLength = selectedBone.Length;
+                        MinimumXRot = selectedBone.MinXRot;
+                        MinimumYRot = selectedBone.MinYRot;
+                        MinimumZRot = selectedBone.MinZRot;
+                        MaximumXRot = selectedBone.MaxXRot;
+                        MaximumYRot = selectedBone.MaxYRot;
+                        MaximumZRot = selectedBone.MaxZRot;
                     }
                     base.Viewport_MouseDown(viewport3D1, e);
+                    Redisplay();
                 }
             }
         }
@@ -364,12 +710,15 @@ namespace Make3D.Dialogs
             if (adorner != null)
             {
                 adorner.MouseUp();
-                JointMarker mk = adorner.SelectedObjects[0] as JointMarker;
-
-                if (mk != null && mk.Dirty)
+                if (adorner.SelectedObjects.Count > 0)
                 {
-                    RefreshSkeleton(mk.Bone);
-                    mk.Dirty = false;
+                    JointMarker mk = adorner.SelectedObjects[0] as JointMarker;
+
+                    if (mk != null && mk.Dirty)
+                    {
+                        RefreshSkeleton(mk.Bone);
+                        mk.Dirty = false;
+                    }
                 }
             }
         }
@@ -499,21 +848,7 @@ namespace Make3D.Dialogs
                     if (p.Name == child)
                     {
                         CreateMarker(p.MarkerPosition, 4, Colors.Blue, p.Name, p.Bone);
-                        foreach (Object3D ob in document.Content)
-                        {
-                            if (ob.Name.ToLower() == p.ModelName)
-                            {
-                                Object3D cl = ob.Clone();
-                                // Name the object after the bone it represents
-                                cl.Name = p.Name;
-                                cl.Position = p.Position;
-                                cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
-                                cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
-                                cl.Remesh();
-                                cl.SetMesh();
-                                skeletonMeshs.Add(cl);
-                            }
-                        }
+                        CreateBoneModel(p);
                     }
                 }
             }
@@ -521,21 +856,7 @@ namespace Make3D.Dialogs
             {
                 if (p.Name == joint.Name)
                 {
-                    foreach (Object3D ob in document.Content)
-                    {
-                        if (ob.Name.ToLower() == p.ModelName)
-                        {
-                            Object3D cl = ob.Clone();
-                            // Name the object after the bone it represents
-                            cl.Name = p.Name;
-                            cl.Position = p.Position;
-                            cl.ScaleMesh(p.Scale.X, p.Scale.Y, p.Scale.Z);
-                            cl.RelativeObjectVertices = p.Bone.RotatedPointCollection(cl.RelativeObjectVertices, p.Rotation.X, p.Rotation.Y, p.Rotation.Z);
-                            cl.Remesh();
-                            cl.SetMesh();
-                            skeletonMeshs.Add(cl);
-                        }
-                    }
+                    CreateBoneModel(p);
                 }
             }
             Redisplay();

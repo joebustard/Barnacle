@@ -23,14 +23,11 @@ namespace Make3D.Dialogs.Figure
         {
             System.Diagnostics.Debug.WriteLine($"ad rot {rot.X},{rot.Y},{rot.Z}");
 
-            double r1 = rot.X;
-            double r2 = rot.Y;
-            double r3 = rot.Z;
             if (Bone != null)
             {
-                Bone.XRot += r1;
-                Bone.YRot += r2;
-                Bone.ZRot += r3;
+                Bone.XRot += rot.X;
+                Bone.YRot += rot.Y;
+                Bone.ZRot += rot.Z;
                 Dirty = true;
             }
         }
