@@ -20,6 +20,7 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class FigureDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private const string poseFilter = "Pose Files (*.pose)|*.pose";
         private Adorner adorner;
 
         // Yes this tool does have its own doucment.
@@ -27,6 +28,7 @@ namespace Make3D.Dialogs
         private Document document;
 
         private bool editLimits;
+        private List<Object3D> figureMeshs;
         private Point lastMousePos;
         private Visibility limitsVisible;
         private List<JointMarker> markers;
@@ -36,6 +38,7 @@ namespace Make3D.Dialogs
         private double minimumXRot;
         private double minimumYRot;
         private double minimumZRot;
+        private string poseFolder;
         private Bone selectedBone;
         private String selectedBoneName;
         private double selectedHeight;
@@ -56,10 +59,13 @@ namespace Make3D.Dialogs
             DataContext = this;
             markers = new List<JointMarker>();
             skeletonMeshs = new List<Object3D>();
+            figureMeshs = new List<Object3D>();
             document = new Document();
             adorner = null;
             EditLimits = false;
             LimitsVisible = Visibility.Hidden;
+            poseFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            poseFolder = System.IO.Path.Combine(poseFolder, "Barnacle\\Poses");
         }
 
         public bool EditLimits
@@ -490,6 +496,7 @@ namespace Make3D.Dialogs
 
         private void ClearFigure()
         {
+            figureMeshs.Clear();
         }
 
         private void ClearSkeleton()
@@ -528,7 +535,7 @@ namespace Make3D.Dialogs
             skeleton = new Bone();
             skeleton.Name = "Root";
             Bone neck = skeleton.AddSub("Neck", 8, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
-            Bone head = neck.AddSub("Head", 10, 14, 12, 0, -90, -90, -5, 5, 85, 95, 0, 0, "headbone");
+            Bone head = neck.AddSub("Head", 10, 14, 12, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
 
             // spine
             Bone vert1 = skeleton.AddSub("Vert1", 8, 5, 5, 0, 0, 270, -5, 5, 85, 95, 0, 0);
@@ -545,7 +552,7 @@ namespace Make3D.Dialogs
             Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1);
             Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1);
             Bone lla = lua.AddSub("LeftLowerArm", 10, 5, 5, 0, 0, -10, -1, -1, -1, -1, -1, -1);
-            Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "handbone");
+            Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "handbone", "lefthand1");
 
             // pelvis
             Bone pr = vert4.AddSub("RightPelvis", 5, 5, 5, 0, 0, -90, -1, -1, -1, -1, -1, -1);
@@ -613,6 +620,15 @@ namespace Make3D.Dialogs
 
         private void GenerateFigure()
         {
+            skeleton.Update();
+
+            List<BoneDisplayRecord> brecs = new List<BoneDisplayRecord>();
+            // true for figure
+            skeleton.GetSubPositions(brecs, true);
+            foreach (BoneDisplayRecord p in brecs)
+            {
+                CreateBoneModel(p);
+            }
         }
 
         private void GenerateShape()
@@ -701,19 +717,12 @@ namespace Make3D.Dialogs
                         MaximumYRot = selectedBone.MaxYRot;
                         MaximumZRot = selectedBone.MaxZRot;
 
-                        selectedMarker.OnBoneRotated +=   OnBoneRotated;   
+                        selectedMarker.OnBoneRotated += OnBoneRotated;
                     }
                     base.Viewport_MouseDown(viewport3D1, e);
                     Redisplay();
                 }
             }
-        }
-
-        private void OnBoneRotated(Bone bn)
-        {
-            SelectedXRot = bn.XRot;
-            SelectedYRot = bn.YRot;
-            SelectedZRot = bn.ZRot;
         }
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -763,6 +772,44 @@ namespace Make3D.Dialogs
                     }
                 }
             }
+        }
+
+        private void LoadPoseClicked(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.InitialDirectory = poseFolder;
+            dlg.Filter = poseFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                XmlDocument doc = new XmlDocument();
+
+                doc.Load(dlg.FileName);
+                XmlNode root = doc.FirstChild;
+                XmlElement ele = root as XmlElement;
+                double X = 0;
+                double Y = 0;
+                double Z = 0;
+                if (ele.HasAttribute("X"))
+                {
+                    X = Convert.ToDouble(ele.GetAttribute("X"));
+                    Y = Convert.ToDouble(ele.GetAttribute("Y"));
+                    Z = Convert.ToDouble(ele.GetAttribute("Z"));
+                }
+                XmlNode nd = root.FirstChild;
+                skeleton = new Bone();
+                skeleton.StartPosition = new Point3D(X, Y, Z);
+                skeleton.EndPosition = new Point3D(X, Y, Z);
+                skeleton.Load(nd as XmlElement);
+
+                UpdateDisplay();
+            }
+        }
+
+        private void OnBoneRotated(Bone bn)
+        {
+            SelectedXRot = bn.XRot;
+            SelectedYRot = bn.YRot;
+            SelectedZRot = bn.ZRot;
         }
 
         private void Redisplay()
@@ -873,9 +920,42 @@ namespace Make3D.Dialogs
             Redisplay();
         }
 
+        private void ResetPoseClicked(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+        }
+
+        private void SavePoseClicked(object sender, RoutedEventArgs e)
+        {
+            if (!Directory.Exists(poseFolder))
+            {
+                try
+                {
+                    Directory.CreateDirectory(poseFolder);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Couldn't create Pose folder:" + poseFolder);
+                }
+            }
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.InitialDirectory = poseFolder;
+            dlg.Filter = poseFilter;
+            if (dlg.ShowDialog() == true)
+            {
+                XmlDocument doc = new XmlDocument();
+                XmlElement docNode = doc.CreateElement("Pose");
+                doc.AppendChild(docNode);
+                docNode.SetAttribute("X", skeleton.StartPosition.X.ToString());
+                docNode.SetAttribute("Y", skeleton.StartPosition.Y.ToString());
+                docNode.SetAttribute("Z", skeleton.StartPosition.Z.ToString());
+                skeleton.Save(doc, docNode);
+                doc.Save(dlg.FileName);
+            }
         }
 
         private void UpdateDisplay()
@@ -896,23 +976,6 @@ namespace Make3D.Dialogs
             MyModelGroup.Children.Clear();
 
             Redisplay();
-        }
-
-        private void ResetPoseClicked(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void SavePoseClicked(object sender, RoutedEventArgs e)
-        {
-            SaveFileDialog dlg = new SaveFileDialog();
-            if ( dlg.ShowDialog() == true)
-            {
-                XmlDocument doc = new XmlDocument();
-                XmlElement docNode = doc.CreateElement("Pose");
-                doc.AppendChild(docNode);
-                skeleton.Save(doc, docNode);
-                doc.Save(dlg.FileName);
-            }
         }
     }
 }

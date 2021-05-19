@@ -2436,7 +2436,6 @@ namespace Make3D.ViewModels
                 {
                     modelItems.Remove(md);
                 }
-                selectedObjectAdorner.Clear();
             }
         }
 

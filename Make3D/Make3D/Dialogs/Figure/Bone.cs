@@ -61,6 +61,8 @@ namespace Make3D.Dialogs.Figure
             }
         }
 
+        public string FigureModelName { get; set; }
+
         public double Height
         {
             get
@@ -181,7 +183,7 @@ namespace Make3D.Dialogs.Figure
             return (v * Math.PI) / 180.0;
         }
 
-        public Bone AddSub(string n, double l, double w, double h, double xr, double yr, double zr, double minx, double maxx, double miny, double maxy, double minz, double maxz, string boneModel = "bone")
+        public Bone AddSub(string n, double l, double w, double h, double xr, double yr, double zr, double minx, double maxx, double miny, double maxy, double minz, double maxz, string boneModel = "bone", string figureModel = "bone")
 
         {
             Bone res = new Bone()
@@ -202,7 +204,8 @@ namespace Make3D.Dialogs.Figure
 
                 MinZRot = minz,
                 MaxZRot = maxz,
-                ModelName = boneModel
+                ModelName = boneModel.ToLower(),
+                FigureModelName = figureModel.ToLower()
             };
 
             res.Nxr = Nxr + res.xRotRadians;
@@ -256,13 +259,20 @@ namespace Make3D.Dialogs.Figure
             System.Diagnostics.Debug.WriteLine($"{indent}]");
         }
 
-        internal void GetSubPositions(List<BoneDisplayRecord> pnts)
+        internal void GetSubPositions(List<BoneDisplayRecord> pnts, bool figure = false)
         {
             foreach (Bone bn in SubBones)
             {
                 BoneDisplayRecord br = new BoneDisplayRecord();
                 br.Name = bn.Name;
-                br.ModelName = bn.ModelName;
+                if (figure)
+                {
+                    br.ModelName = bn.FigureModelName;
+                }
+                else
+                {
+                    br.ModelName = bn.ModelName;
+                }
                 br.Position = new Point3D(bn.MidPosition.X, bn.MidPosition.Y, bn.MidPosition.Z);
                 br.MarkerPosition = new Point3D(bn.StartPosition.X, bn.StartPosition.Y, bn.StartPosition.Z);
 
@@ -270,7 +280,45 @@ namespace Make3D.Dialogs.Figure
                 br.Scale = new Scale3D(bn.Length, bn.Height, bn.Width);
                 br.Bone = bn;
                 pnts.Add(br);
-                bn.GetSubPositions(pnts);
+                bn.GetSubPositions(pnts, figure);
+            }
+        }
+
+        internal void Load(XmlElement e)
+        {
+            Name = e.GetAttribute("Name");
+            XRot = Convert.ToDouble(e.GetAttribute("Xr"));
+            YRot = Convert.ToDouble(e.GetAttribute("Yr"));
+            ZRot = Convert.ToDouble(e.GetAttribute("Zr"));
+            Width = Convert.ToDouble(e.GetAttribute("W"));
+            Height = Convert.ToDouble(e.GetAttribute("H"));
+            Length = Convert.ToDouble(e.GetAttribute("L"));
+            ModelName = e.GetAttribute("M");
+            XmlNodeList nl = e.SelectNodes("Bone");
+            foreach (XmlNode n in nl)
+            {
+                Bone bn = new Bone();
+                SubBones.Add(bn);
+                bn.Load(n as XmlElement);
+            }
+        }
+
+        internal void Save(XmlDocument doc, XmlElement parent)
+        {
+            XmlElement ele = doc.CreateElement("Bone");
+            ele.SetAttribute("Name", Name);
+            ele.SetAttribute("Xr", XRot.ToString());
+            ele.SetAttribute("Yr", YRot.ToString());
+            ele.SetAttribute("Zr", ZRot.ToString());
+            ele.SetAttribute("W", Width.ToString());
+            ele.SetAttribute("L", Length.ToString());
+            ele.SetAttribute("H", Height.ToString());
+            ele.SetAttribute("M", ModelName);
+            parent.AppendChild(ele);
+
+            foreach (Bone bn in SubBones)
+            {
+                bn.Save(doc, ele);
             }
         }
 
@@ -316,25 +364,6 @@ namespace Make3D.Dialogs.Figure
                 {
                     b.UpdateSubBones(endPos.X, endPos.Y, endPos.Z, Nxr, Nyr, Nzr);
                 }
-            }
-        }
-
-        internal void Save(XmlDocument doc, XmlElement parent)
-        {
-            XmlElement ele = doc.CreateElement("Bone");
-            ele.SetAttribute("Name", Name);
-            ele.SetAttribute("Xr", XRot.ToString());
-            ele.SetAttribute("Yr", YRot.ToString());
-            ele.SetAttribute("Zr", ZRot.ToString());
-            ele.SetAttribute("W", Width.ToString());
-            ele.SetAttribute("L", Length.ToString());
-            ele.SetAttribute("H", Height.ToString());
-            ele.SetAttribute("M", ModelName);
-            parent.AppendChild(ele);
-
-            foreach( Bone bn in SubBones)
-            {
-                bn.Save(doc, ele);
             }
         }
     }

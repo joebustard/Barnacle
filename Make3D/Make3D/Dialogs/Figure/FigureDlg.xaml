@@ -101,8 +101,8 @@
                         <Label Grid.Row="9" Style="{StaticResource InverseLabel}">Pose</Label>
                         <StackPanel Grid.Row="10" Orientation="Horizontal">
                             <Button Margin="2,2,2,2" ToolTip="Reset the skeleton to its default pose" Click="ResetPoseClicked">Reset</Button>
-                            <Button Margin="2,2,2,2" ToolTip="Save the current pose"  Click="SavePoseClicked">Save</Button >
-                            <Button Margin="2,2,2,2" ToolTip="Load a pose">Load</Button>
+                            <Button Margin="2,2,2,2" ToolTip="Save the current pose"  Click="SavePoseClicked">Save</Button>
+                            <Button Margin="2,2,2,2" ToolTip="Load a pose" Click="LoadPoseClicked">Load</Button>
                         </StackPanel>
                         <StackPanel Grid.Row="11" Orientation="Horizontal"></StackPanel>
                     </Grid>
