@@ -535,7 +535,7 @@ namespace Make3D.Dialogs
             skeleton = new Bone();
             skeleton.Name = "Root";
             Bone neck = skeleton.AddSub("Neck", 8, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
-            Bone head = neck.AddSub("Head", 10, 14, 12, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
+            Bone head = neck.AddSub("Head", 10, 12, 10, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
 
             // spine
             Bone vert1 = skeleton.AddSub("Vert1", 8, 5, 5, 0, 0, 270, -5, 5, 85, 95, 0, 0);
@@ -547,7 +547,7 @@ namespace Make3D.Dialogs
             Bone rs = skeleton.AddSub("RightShoulder", 7, 5, 5, 0, 0, 180, -1, -1, -1, -1, -1, -1);
             Bone rua = rs.AddSub("RightUpperArm", 10, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1);
             Bone rla = rua.AddSub("RightLowerArm", 10, 5, 5, 0, 0, 10, -1, -1, -1, -1, -1, -1);
-            Bone rh = rla.AddSub("RightHand", 5, 2.5, 2.5, 0, 0, 10, -1, -1, -1, -1, -1, -1, "handbone");
+            Bone rh = rla.AddSub("RightHand", 10, 4, 4, 0, 0, 10, -1, -1, -1, -1, -1, -1, "handbone");
 
             Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1);
             Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1);
@@ -560,15 +560,15 @@ namespace Make3D.Dialogs
             Bone pl = vert4.AddSub("LeftPelvis", 5, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
 
             // legs
-            Bone rul = pr.AddSub("RightUpperLeg", 17, 5, 5, 0, 0, 85, -1, -1, -1, -1, -1, -1);
-            Bone rll = rul.AddSub("RightLowerLeg", 16, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1);
+            Bone rul = pr.AddSub("RightUpperLeg", 17, 10, 8, 3, 270, 85, -1, -1, -1, -1, -1, -1, "bone", "rightthigh1");
+            Bone rll = rul.AddSub("RightLowerLeg", 16, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1, "bone", "lowerrightleg1");
 
-            Bone lul = pl.AddSub("LeftUpperLeg", 17, 5, 5, 0, 0, -85, -1, -1, -1, -1, -1, -1);
-            Bone lll = lul.AddSub("LeftLowerLeg", 16, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1);
+            Bone lul = pl.AddSub("LeftUpperLeg", 17, 10, 8, 0, -84, -85, -1, -1, -1, -1, -1, -1, "bone", "leftthigh1");
+            Bone lll = lul.AddSub("LeftLowerLeg", 16, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1, "bone", "lowerleftleg1");
 
-            Bone rft = rll.AddSub("RightFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone");
+            Bone rft = rll.AddSub("RightFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone", "rightfoot1");
 
-            Bone lft = lll.AddSub("LeftFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone");
+            Bone lft = lll.AddSub("LeftFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone", "leftfoot1");
 
             // force recalculation of positions.
             double y = vert1.Length + vert2.Length + vert3.Length + vert4.Length + rul.Length + rll.Length + rft.Height;
@@ -769,6 +769,16 @@ namespace Make3D.Dialogs
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message);
+                    }
+                }
+
+                foreach (Object3D ob in document.Content)
+                {
+                    ob.CalcScale(false);
+                    Scale3D p = ob.Scale;
+                    if (p.X > 0 && p.Y > 0 && p.Z > 0)
+                    {
+                        ob.ScaleMesh(1.0 / p.X, 1.0 / p.Y, 1.0 / p.Z);
                     }
                 }
             }

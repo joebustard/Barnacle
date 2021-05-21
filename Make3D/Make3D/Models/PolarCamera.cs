@@ -111,6 +111,10 @@ namespace Make3D.Models
             {
                 Distance = min;
             }
+            if (Distance < homeDistance)
+            {
+                Distance = homeDistance;
+            }
         }
 
         internal void HomeBack()

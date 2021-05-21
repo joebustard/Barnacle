@@ -18,7 +18,6 @@ namespace VisualSolutionExplorer
             CollapseTree = new RelayCommand(OnCollapseTree);
             ExpandTree = new RelayCommand(OnExpandTree);
             RefreshTree = new RelayCommand(OnRefreshTree);
-            
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -55,7 +54,7 @@ namespace VisualSolutionExplorer
             {
                 SolutionChanged(e, p1, p2);
             }
-            if (e == "RenameFile" || e == "RenameFolder")
+            if (e == "RenameFile" || e == "RenameFolder" || e == "CopyFile")
             {
                 foreach (ProjectFolderViewModel pfm in Folders)
                 {
@@ -128,7 +127,5 @@ namespace VisualSolutionExplorer
             }
             NotifyPropertyChanged("Folders");
         }
-
-       
     }
 }

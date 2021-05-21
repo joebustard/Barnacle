@@ -136,8 +136,6 @@ namespace VisualSolutionExplorer
             LoadChildren();
         }
 
-
-
         public void ExploreFolder()
         {
             // NotifySolutionChanged("ExploreFolder", _folder.FolderPath, "");
@@ -149,7 +147,6 @@ namespace VisualSolutionExplorer
             }
             if (Directory.Exists(pth))
             {
-
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
                 {
                     FileName = pth,
@@ -161,20 +158,25 @@ namespace VisualSolutionExplorer
 
         public void NotifySolutionChanged(string e, string p1, string p2)
         {
-            
             if (e == "RemoveFile")
             {
                 _folder.RemoveFile(p1);
                 LoadChildren();
             }
             else
-            if (e == "DeleteFile" )
+            if (e == "DeleteFile")
             {
                 _folder.DeleteFile(p1);
                 LoadChildren();
-                
             }
-
+            if (e == "CopyFile")
+            {
+                string old = p2;
+                string newish = _folder.CopyFile(p1);
+                LoadChildren();
+                p1 = old;
+                p2 = _folder.FolderPath + "\\" + newish;
+            }
             if (SolutionChanged != null)
             {
                 SolutionChanged(e, p1, p2);

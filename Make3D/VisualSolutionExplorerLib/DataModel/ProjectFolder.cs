@@ -224,6 +224,50 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal string CopyFile(string p)
+        {
+            string newName = GetValidCopyName(p);
+
+            string fileName = System.IO.Path.GetFileName(newName);
+            ProjectFile fi = new ProjectFile(fileName);
+            _projectFiles.Add(fi);
+            _projectFiles.Sort();
+            fi.FilePath = FolderPath + "\\" + fileName;
+            return newName;
+        }
+
+        internal string DefaultFileToOpen()
+        {
+            string res = "";
+            foreach (ProjectFile s in ProjectFiles)
+            {
+                if (System.IO.Path.GetExtension(s.FilePath) == "txt")
+                {
+                    res = s.FilePath;
+                    break;
+                }
+            }
+            return res;
+        }
+
+        internal bool DeleteFile(string p1)
+        {
+            bool res = false;
+
+            List<ProjectFile> tmp = new List<ProjectFile>();
+            for (int i = 0; i < _projectFiles.Count; i++)
+            {
+                if (_projectFiles[i].FilePath != p1)
+                {
+                    tmp.Add(_projectFiles[i]);
+                }
+            }
+            _projectFiles = tmp;
+            res = true;
+
+            return res;
+        }
+
         internal void GetRxportFiles(string ext, string baseFolder, List<string> filesToExport)
         {
             if (Export)
@@ -267,7 +311,7 @@ namespace VisualSolutionExplorer
                 pfo.Refresh(baseFolder);
             }
         }
-         
+
         internal void RemoveFile(string p1)
         {
             List<ProjectFile> tmp = new List<ProjectFile>();
@@ -281,40 +325,6 @@ namespace VisualSolutionExplorer
             _projectFiles = tmp;
         }
 
-
-        internal bool DeleteFile(string p1)
-        {
-            bool res = false;
-          
-                List<ProjectFile> tmp = new List<ProjectFile>();
-                for (int i = 0; i < _projectFiles.Count; i++)
-                {
-                    if (_projectFiles[i].FilePath != p1)
-                    {
-                        tmp.Add(_projectFiles[i]);
-                    }
-
-                }
-                _projectFiles = tmp;
-                res = true;
-            
-
-            return res;
-        }
-
-        internal string DefaultFileToOpen()
-        {
-            string res = "";
-            foreach (ProjectFile s in ProjectFiles)
-            {
-                if (System.IO.Path.GetExtension(s.FilePath) == "txt")
-                {
-                    res = s.FilePath;
-                    break;
-                }
-            }
-            return res;
-        }
         internal void UpdatePath()
         {
             String pth = System.IO.Path.GetDirectoryName(FolderPath);
@@ -398,6 +408,29 @@ namespace VisualSolutionExplorer
                 i++;
             }
             return tmpName;
+        }
+
+        private string GetValidCopyName(string p)
+        {
+            String noext = System.IO.Path.GetFileNameWithoutExtension(p);
+            String ext = System.IO.Path.GetExtension(p);
+
+            string res = "";
+            int i = 1;
+            bool found = false;
+            while (!found)
+            {
+                string cn = noext + " (" + i.ToString() + ")" + ext;
+
+                if (!File.Exists(Project.ProjectPathToAbsPath(cn)))
+                {
+                    found = true;
+                    res = cn;
+                }
+                i++;
+            }
+
+            return res;
         }
 
         private void Init()

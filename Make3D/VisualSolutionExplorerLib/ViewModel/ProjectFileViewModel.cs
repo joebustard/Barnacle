@@ -21,6 +21,7 @@ namespace VisualSolutionExplorer
             contextMenu.OnRenameFile = RenameFile;
             contextMenu.OnRemoveFile = RemoveFile;
             contextMenu.OnDeleteFile = DeleteFile;
+            contextMenu.OnCopyFile = CopyFile;
             FileClickCommand = new RelayCommand(OnFileClickCommand);
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
@@ -33,15 +34,6 @@ namespace VisualSolutionExplorer
                 IconToShow = IconType.TextIcon;
             }
             SetIcon();
-        }
-
-        private void DeleteFile()
-        {
-            if (MessageBox.Show("Permanently delete file:" + _projectFile.FileName, "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                // can't remove yourself, have to ask the containing folder to do it
-                NotifySolutionChanged("DeleteFile", _projectFile.FilePath, "Y");
-            }
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -148,6 +140,21 @@ namespace VisualSolutionExplorer
             if (SolutionChanged != null)
             {
                 SolutionChanged(e, p1, p2);
+            }
+        }
+
+        private void CopyFile()
+        {
+            // can't Copy yourself, have to ask the containing folder to do it
+            NotifySolutionChanged("CopyFile", _projectFile.FileName, _projectFile.FilePath);
+        }
+
+        private void DeleteFile()
+        {
+            if (MessageBox.Show("Permanently delete file:" + _projectFile.FileName, "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                // can't remove yourself, have to ask the containing folder to do it
+                NotifySolutionChanged("DeleteFile", _projectFile.FilePath, "Y");
             }
         }
 

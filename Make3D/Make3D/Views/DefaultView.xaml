@@ -129,9 +129,10 @@
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
                     <Custom:RibbonMenuButton x:Name="Flip" Label="Flip">
-                        <Custom:RibbonButton x:Name="HorizontalFlip" Label="Horizontal" Command="{Binding FlipCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Flip objects vertices horizontally." />
-                        <Custom:RibbonButton x:Name="VerticalFlip" Label="Vertical" Command="{Binding FlipCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so their right edges match." />
-                        <Custom:RibbonButton x:Name="InsideFlip" Label="Inside out" Command="{Binding FlipCommand}" CommandParameter="Inside" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so their right edges match." />
+                        <Custom:RibbonButton x:Name="HorizontalFlip" Label="Horizontal" Command="{Binding FlipCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Flip objects vertices horizontally (left to right)." />
+                        <Custom:RibbonButton x:Name="VerticalFlip" Label="Vertical" Command="{Binding FlipCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Flip objects vertices vertically (top to bottom)." />
+                        <Custom:RibbonButton x:Name="DistalFlip" Label="Distal" Command="{Binding FlipCommand}" CommandParameter="Distal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Flip Flip objects vertices distally {back to front)." />
+                        <Custom:RibbonButton x:Name="InsideFlip" Label="Inside out" Command="{Binding FlipCommand}" CommandParameter="Inside" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Flip inside out." />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Alignment" Label="Align">
                         <Custom:RibbonButton x:Name="LeftAlignment" Label="Left" Command="{Binding AlignCommand}" CommandParameter="Left" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Align objects so their left edges match the first selected." />
@@ -202,18 +203,18 @@
 
                 <Custom:RibbonGroup Name="MeshGroup" Header="Mesh">
                     <Custom:RibbonMenuButton Label="Edit">
-                    <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
-                    <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
+                        <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                        <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
+                        <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
-                    <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
+                        <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
 
-                    <Custom:RibbonButton x:Name="ManifoldButton" Label="Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
+                        <Custom:RibbonButton x:Name="ManifoldButton" Label="Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
 
-                    <Custom:RibbonButton x:Name="DupVertexButton" Label="Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
+                        <Custom:RibbonButton x:Name="DupVertexButton" Label="Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
 
-                    <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Rem Unref Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
+                        <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Rem Unref Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>

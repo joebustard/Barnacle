@@ -287,6 +287,7 @@ namespace Make3D.Dialogs.Figure
         internal void Load(XmlElement e)
         {
             Name = e.GetAttribute("Name");
+            Name = e.GetAttribute("Name");
             XRot = Convert.ToDouble(e.GetAttribute("Xr"));
             YRot = Convert.ToDouble(e.GetAttribute("Yr"));
             ZRot = Convert.ToDouble(e.GetAttribute("Zr"));
@@ -294,6 +295,7 @@ namespace Make3D.Dialogs.Figure
             Height = Convert.ToDouble(e.GetAttribute("H"));
             Length = Convert.ToDouble(e.GetAttribute("L"));
             ModelName = e.GetAttribute("M");
+            FigureModelName = e.GetAttribute("FM");
             XmlNodeList nl = e.SelectNodes("Bone");
             foreach (XmlNode n in nl)
             {
@@ -307,6 +309,7 @@ namespace Make3D.Dialogs.Figure
         {
             XmlElement ele = doc.CreateElement("Bone");
             ele.SetAttribute("Name", Name);
+
             ele.SetAttribute("Xr", XRot.ToString());
             ele.SetAttribute("Yr", YRot.ToString());
             ele.SetAttribute("Zr", ZRot.ToString());
@@ -314,6 +317,7 @@ namespace Make3D.Dialogs.Figure
             ele.SetAttribute("L", Length.ToString());
             ele.SetAttribute("H", Height.ToString());
             ele.SetAttribute("M", ModelName);
+            ele.SetAttribute("FM", FigureModelName);
             parent.AppendChild(ele);
 
             foreach (Bone bn in SubBones)

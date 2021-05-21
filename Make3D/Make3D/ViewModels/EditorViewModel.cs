@@ -1132,6 +1132,14 @@ namespace Make3D.ViewModels
                             }
                             break;
 
+                        case "Distal":
+                            {
+                                ob.FlipZ();
+                                ob.FlipInside();
+                                ob.Remesh();
+                            }
+                            break;
+
                         case "Inside":
                             {
                                 ob.FlipInside();

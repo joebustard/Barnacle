@@ -352,6 +352,21 @@ namespace Make3D.Views
                     }
                     break;
 
+                case "CopyFile":
+                    {
+                        string p = Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        string fname1 = p + parameter1;
+                        string fname2 = p + parameter2;
+
+                        if (fname1 == BaseViewModel.Document.FilePath)
+                        {
+                            CheckSaveFirst(null);
+                        }
+                        File.Copy(fname1, fname2);
+                    }
+                    break;
+
                 case "RenameFile":
                     {
                         String fName = parameter1;
@@ -387,12 +402,11 @@ namespace Make3D.Views
 
                 case "DeleteFile":
                     {
-                        String fName = parameter1;
-
-
+                        string p = Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        String fName = p + parameter1;
                         try
                         {
-
                             bool deletingCurrent = false;
                             if (fName == BaseViewModel.Document.FilePath)
                             {
@@ -401,22 +415,22 @@ namespace Make3D.Views
                             if (File.Exists(fName))
                             {
                                 File.Delete(fName);
-                                if ( deletingCurrent)
+                                if (deletingCurrent)
                                 {
                                     String open = BaseViewModel.Project.DefaultFileToOpen();
                                     if (File.Exists(open))
                                     {
                                         BaseViewModel.Document.Clear();
-                                            BaseViewModel.Document.Load(open);
+                                        BaseViewModel.Document.Load(open);
                                         NotificationManager.Notify("Refresh", null);
                                         //  UndoManager.Clear();
                                     }
                                 }
                             }
-
                         }
-                        catch (Exception)
+                        catch (Exception ex)
                         {
+                            MessageBox.Show(ex.Message);
                         }
                     }
                     break;

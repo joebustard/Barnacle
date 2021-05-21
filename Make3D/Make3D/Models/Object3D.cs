@@ -710,6 +710,21 @@ namespace Make3D.Models
             }
         }
 
+        internal void FlipZ()
+        {
+            if (PrimType == "Mesh")
+            {
+                Point3DCollection tmp = new Point3DCollection();
+                foreach (Point3D v in relativeObjectVertices)
+                {
+                    Point3D pn = new Point3D(v.X, v.Y, -v.Z);
+                    tmp.Add(pn);
+                }
+                relativeObjectVertices = tmp;
+                Remesh();
+            }
+        }
+
         internal List<Face> GetFaces()
         {
             List<Face> faces = new List<Face>();
