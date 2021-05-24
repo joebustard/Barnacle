@@ -9,9 +9,9 @@ namespace VisualSolutionExplorer
     /// Base class for all ViewModel classes displayed by TreeViewItems.
     /// This acts as an adapter between a raw data object and a TreeViewItem.
     /// </summary>
-    public class TreeViewItemViewModel :  INotifyPropertyChanged
+    public class TreeViewItemViewModel : INotifyPropertyChanged
     {
-        private static readonly TreeViewItemViewModel DummyChild = new TreeViewItemViewModel();
+        public static readonly TreeViewItemViewModel Root = new TreeViewItemViewModel();
 
         private readonly ObservableCollection<TreeViewItemViewModel> _children;
         private readonly TreeViewItemViewModel _parent;
@@ -26,7 +26,7 @@ namespace VisualSolutionExplorer
             _children = new ObservableCollection<TreeViewItemViewModel>();
 
             if (lazyLoadChildren)
-                _children.Add(DummyChild);
+                _children.Add(Root);
         }
 
         // This is used to create the DummyChild instance.
@@ -49,7 +49,7 @@ namespace VisualSolutionExplorer
         /// </summary>
         public bool HasDummyChild
         {
-            get { return this.Children.Count == 1 && this.Children[0] == DummyChild; }
+            get { return this.Children.Count == 1 && this.Children[0] == Root; }
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace VisualSolutionExplorer
                 // Lazy load the child items, if necessary.
                 if (this.HasDummyChild)
                 {
-                    this.Children.Remove(DummyChild);
+                    this.Children.Remove(Root);
                     this.LoadChildren();
                 }
             }
@@ -106,6 +106,14 @@ namespace VisualSolutionExplorer
         public TreeViewItemViewModel Parent
         {
             get { return _parent; }
+        }
+
+        public static void Reload()
+        {
+            if (Root != null)
+            {
+                Root.LoadChildren();
+            }
         }
 
         /// <summary>

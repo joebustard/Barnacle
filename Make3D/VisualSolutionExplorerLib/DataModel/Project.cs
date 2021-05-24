@@ -9,7 +9,8 @@ namespace VisualSolutionExplorer
     {
         public static string ProjectFilePath;
         public List<ProjectFolder> folders;
-        DateTime creationDate;
+        private DateTime creationDate;
+
         public Project()
         {
             ProjectName = String.Empty;
@@ -62,7 +63,7 @@ namespace VisualSolutionExplorer
             string t = "\\"+System.IO.Path.GetFileName(BaseFolder);
             if (rf.StartsWith(t))
             {
-                rf = rf.Substring(t.Length); 
+                rf = rf.Substring(t.Length);
             }
             if (!rf.StartsWith("\\"))
             {
@@ -70,6 +71,15 @@ namespace VisualSolutionExplorer
             }
             rf = BaseFolder + rf;
             return rf;
+        }
+
+        public void AddFileToFolder(string folderPath, string fName)
+        {
+            folderPath = AbsPathToProjectPath(folderPath);
+            foreach (ProjectFolder pf in ProjectFolders)
+            {
+                pf.AddFileToProject(folderPath, fName);
+            }
         }
 
         public void CreateDefault()
@@ -101,7 +111,22 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public string[] GetRxportFiles(string v)
+        public string DefaultFileToOpen()
+        {
+            string res = "";
+            foreach (ProjectFolder pfm in ProjectFolders[0].ProjectFolders)
+            {
+                res = pfm.DefaultFileToOpen();
+                if (res != "")
+                {
+                    break;
+                }
+            }
+
+            return res;
+        }
+
+        public string[] GetExportFiles(string v)
         {
             List<String> filesToExport = new List<string>();
             String fln = System.IO.Path.GetDirectoryName(BaseFolder);
@@ -207,12 +232,25 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public void RemoveFileFromFolder(string fName)
+        {
+            fName = AbsPathToProjectPath(fName);
+            foreach (ProjectFolder pf in ProjectFolders)
+            {
+                pf.RemoveFileFromProject(fName);
+            }
+        }
+
         public void Save()
         {
             if (ProjectFilePath != String.Empty)
             {
                 SaveFile(ProjectFilePath);
             }
+        }
+
+        public void UpdateFolders()
+        {
         }
 
         private void SaveFile(string solutionPath)
@@ -239,43 +277,6 @@ namespace VisualSolutionExplorer
             }
 
             solutionDoc.Save(solutionPath);
-        }
-        public   string DefaultFileToOpen()
-        {
-            string res = "";
-            foreach (ProjectFolder pfm in ProjectFolders[0].ProjectFolders)
-            {
-                res = pfm.DefaultFileToOpen();
-                if (res != "")
-                {
-                    break;
-                }
-            }
-
-            return res;
-        }
-
-        public void RemoveFileFromFolder(string fName)
-        {
-            fName = AbsPathToProjectPath(fName);
-           foreach( ProjectFolder pf in ProjectFolders)
-           {
-                pf.RemoveFileFromProject(fName);
-           }
-        }
-
-        public void AddFileToFolder(string folderPath, string fName)
-        {
-            folderPath = AbsPathToProjectPath(folderPath);
-            foreach (ProjectFolder pf in ProjectFolders)
-            {
-                pf.AddFileToProject(folderPath,fName);
-            }
-        }
-
-        public void UpdateFolders()
-        {
-
         }
     }
 }

@@ -27,11 +27,15 @@ namespace Make3D.ViewModels
             {
                 if (System.IO.Path.GetExtension(mu.Path) == ".bmf")
                 {
-                    RecentProjectViewModel vm = new RecentProjectViewModel();
-                    vm.Path = mu.Path;
-                    vm.Title = System.IO.Path.GetFileNameWithoutExtension(mu.Path);
+                    // only add projects if the bmf file still exists.
+                    if (System.IO.File.Exists(mu.Path))
+                    {
+                        RecentProjectViewModel vm = new RecentProjectViewModel();
+                        vm.Path = mu.Path;
+                        vm.Title = System.IO.Path.GetFileNameWithoutExtension(mu.Path);
 
-                    recentProjects.Add(vm);
+                        recentProjects.Add(vm);
+                    }
                 }
             }
 

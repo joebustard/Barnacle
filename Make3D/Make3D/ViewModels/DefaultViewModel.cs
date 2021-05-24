@@ -107,6 +107,7 @@ namespace Make3D.ViewModels
             DupVertexCommand = new RelayCommand(OnDupVertex);
             UnrefVertexCommand = new RelayCommand(OnUnrefVertex);
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
+            ResetOriginCommand = new RelayCommand(OnReorigin);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -147,12 +148,6 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("ProjectChanged", Project);
         }
 
-        private void OnLoopSmooth(object obj)
-        {
-            NotificationManager.Notify("LoopSmooth", null);
-        }
-
-        public ICommand MeshSmoothCommand { get; set; }
         public ICommand AddCommand { get; set; }
 
         public ICommand AddPageCommand { get; set; }
@@ -427,6 +422,8 @@ namespace Make3D.ViewModels
 
         public ICommand MeshHullCommand { get; set; }
 
+        public ICommand MeshSmoothCommand { get; set; }
+
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
@@ -505,6 +502,8 @@ namespace Make3D.ViewModels
         public ICommand RedoCommand { get; set; }
 
         public ICommand ReferenceCommand { get; set; }
+
+        public ICommand ResetOriginCommand { get; set; }
 
         public bool RightTextAlignment
         {
@@ -1087,6 +1086,11 @@ namespace Make3D.ViewModels
             NotificationManager.Notify("InsertFile", obj);
         }
 
+        private void OnLoopSmooth(object obj)
+        {
+            NotificationManager.Notify("LoopSmooth", null);
+        }
+
         private void OnManifoldTest(object obj)
         {
             NotificationManager.Notify("ManifoldTest", null);
@@ -1161,6 +1165,11 @@ namespace Make3D.ViewModels
         private void OnReference(object obj)
         {
             NotificationManager.Notify("Reference", null);
+        }
+
+        private void OnReorigin(object obj)
+        {
+            NotificationManager.Notify("Reorigin", null);
         }
 
         private void OnSave(object obj)

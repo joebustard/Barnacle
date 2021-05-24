@@ -189,6 +189,27 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal bool AddFileToProject(string folderPath, string fName)
+        {
+            bool found = false;
+            if (folderPath == FolderPath || folderPath == FolderPath + "\\")
+            {
+                found = true;
+                ProjectFile pfi = new ProjectFile();
+                pfi.FileName = fName;
+                _projectFiles.Add(pfi);
+                SetSubPaths();
+            }
+            else
+            {
+                foreach (ProjectFolder pfo in ProjectFolders)
+                {
+                    found = pfo.AddFileToProject(folderPath, fName);
+                }
+            }
+            return found;
+        }
+
         internal void CheckTimeDependency(String baseFolder)
         {
             // in practice refresh just means update any autoloading folders
@@ -234,53 +255,6 @@ namespace VisualSolutionExplorer
             _projectFiles.Sort();
             fi.FilePath = FolderPath + "\\" + fileName;
             return newName;
-        }
-
-        internal bool RemoveFileFromProject(string fPath)
-        {
-            bool found = false;
-            for (int i = 0; i < _projectFiles.Count; i++)
-            {
-                if (_projectFiles[i].FilePath == fPath)
-                {
-                    found = true;
-                    _projectFiles.RemoveAt(i);
-                }
-            }
-            if (!found)
-            {
-                foreach (ProjectFolder fld in _projectFolders)
-                {
-                    found = fld.RemoveFileFromProject(fPath);
-                    if ( found)
-                    {
-                        break;
-                    }
-                }
-            }
-            return found;
-        }
-
-        internal bool AddFileToProject(string folderPath, string fName)
-        {
-            bool found = false;
-            if ( folderPath == FolderName)
-            {
-                found = true;
-                ProjectFile pfi = new ProjectFile();
-                pfi.FileName = fName;
-                _projectFiles.Add(pfi);
-                UpdatePath();
-
-            }
-            else
-            { 
-            foreach( ProjectFolder pfo in ProjectFolders)
-            {
-                    found = pfo.AddFileToProject(folderPath, fName);
-            }
-            }
-            return found;
         }
 
         internal string DefaultFileToOpen()
@@ -370,6 +344,31 @@ namespace VisualSolutionExplorer
                 }
             }
             _projectFiles = tmp;
+        }
+
+        internal bool RemoveFileFromProject(string fPath)
+        {
+            bool found = false;
+            for (int i = 0; i < _projectFiles.Count; i++)
+            {
+                if (_projectFiles[i].FilePath == fPath)
+                {
+                    found = true;
+                    _projectFiles.RemoveAt(i);
+                }
+            }
+            if (!found)
+            {
+                foreach (ProjectFolder fld in _projectFolders)
+                {
+                    found = fld.RemoveFileFromProject(fPath);
+                    if (found)
+                    {
+                        break;
+                    }
+                }
+            }
+            return found;
         }
 
         internal void UpdatePath()

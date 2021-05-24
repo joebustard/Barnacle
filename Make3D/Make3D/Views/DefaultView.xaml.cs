@@ -438,15 +438,23 @@ namespace Make3D.Views
                 case "DragFile":
                     {
                         String fName = System.IO.Path.GetFileName(parameter1);
-                        string targetFile = parameter2 + "\\" + fName;
+                        string targetFile = parameter2;
+                        // if file is being dragged to the project root the target will end in \
+                        // but if its dragged to a subfolder it wont.
+                        if (targetFile.EndsWith("\\"))
+                        {
+                            targetFile += fName;
+                        }
+                        else
+                        {
+                            targetFile += "\\" + fName;
+                        }
                         if (File.Exists(targetFile))
                         {
                             MessageBox.Show("Unable to move file. A file with the same name already exists.");
                         }
                         else
                         {
-
-
                             try
                             {
                                 bool movingCurrent = false;
@@ -466,7 +474,7 @@ namespace Make3D.Views
 
                                 if (movingCurrent)
                                 {
-                                // open from the new location
+                                    // open from the new location
                                     String open = targetFile;
                                     if (File.Exists(open))
                                     {
@@ -477,15 +485,13 @@ namespace Make3D.Views
                                     }
                                 }
                             }
-
                             catch (Exception ex)
                             {
                                 MessageBox.Show(ex.Message);
                             }
-                           
                         }
                     }
-                    
+
                     break;
             }
             BaseViewModel.Project.Save();

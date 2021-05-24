@@ -104,6 +104,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Distribute", OnDistribute);
             NotificationManager.Subscribe("Flip", OnFlip);
             NotificationManager.Subscribe("LoopSmooth", OnLoopSmooth);
+            NotificationManager.Subscribe("Reorigin", OnReorigin);
 
             NotificationManager.Subscribe("Size", OnSize);
             NotificationManager.Subscribe("Undo", OnUndo);
@@ -1069,7 +1070,7 @@ namespace Make3D.ViewModels
             }
             else
             {
-                string[] filenames = BaseViewModel.Project.GetRxportFiles(".txt");
+                string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
@@ -2315,6 +2316,19 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnReorigin(object param)
+        {
+            if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count != 1)
+            {
+                MessageBox.Show("Must have a single object selected to re-origin it");
+            }
+            else
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                Reorigin(ob);
+            }
+        }
+
         private void OnShowAxies(object param)
         {
             showAxies = (param as bool?) == true;
@@ -2444,6 +2458,17 @@ namespace Make3D.ViewModels
                 {
                     modelItems.Remove(md);
                 }
+            }
+        }
+
+        private void Reorigin(Object3D ob)
+        {
+            ReoriginDlg dlg = new ReoriginDlg();
+            dlg.SetObject(ob);
+            if (dlg.ShowDialog() == true)
+            {
+                ob.Remesh();
+                RegenerateDisplayList();
             }
         }
 

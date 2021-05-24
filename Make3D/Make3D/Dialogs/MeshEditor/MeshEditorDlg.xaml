@@ -24,6 +24,7 @@
                 <RowDefinition Height="32" />
                 <RowDefinition Height="32" />
             </Grid.RowDefinitions>
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="32" />
                 <ColumnDefinition Width="32" />

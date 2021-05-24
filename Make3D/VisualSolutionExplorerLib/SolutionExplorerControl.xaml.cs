@@ -10,12 +10,14 @@ namespace VisualSolutionExplorer
 {
     public partial class SolutionExplorerControl : UserControl
     {
-        private List<ProjectFolder> folders;
-        private ProjectViewModel viewModel;
         private Point _lastMouseDown;
+
         //TreeViewItem draggedItem, _target;
-        TreeViewItem draggedItem, _target;
+        private TreeViewItem draggedItem, _target;
+
+        private List<ProjectFolder> folders;
         private Point startPoint;
+        private ProjectViewModel viewModel;
 
         public SolutionExplorerControl()
         {
@@ -57,7 +59,11 @@ namespace VisualSolutionExplorer
             if (SolutionChanged != null)
             {
                 SolutionChanged(e, p1, p2);
-
+            }
+            if (e == "DragFile")
+            {
+                // force rebuilding of tree.
+                viewModel.SetContent(Folders);
             }
         }
 
@@ -76,69 +82,6 @@ namespace VisualSolutionExplorer
         public void Refresh()
         {
             viewModel.Refresh();
-        }
-
-        private void TreeView_SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
-        {
-            TreeView item = sender as TreeView;
-            if (e.OldValue != null)
-            {
-                object ob = e.OldValue;
-
-                if (ob is ProjectFolderViewModel)
-                {
-                    ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
-                    pfovm.IsEditing = false;
-                }
-            }
-            if (e.NewValue != null)
-            {
-                object ob = e.NewValue;
-
-                if (ob is ProjectFolderViewModel)
-                {
-                    ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
-                    pfovm.IsEditing = false;
-                }
-            }
-        }
-
-
-
-
-
-
-        private void Tree_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-            startPoint = e.GetPosition(null);
-        }
-
-
-
-        private void Tree_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                var mousePos = e.GetPosition(null);
-                var diff = startPoint - mousePos;
-
-                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance
-                    || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
-                {
-                    var treeView = sender as TreeView;
-                    var treeViewItem = Helper.TryFindParent<TreeViewItem>((DependencyObject)e.OriginalSource);
-
-                    if (treeView == null || treeViewItem == null)
-                        return;
-
-                    var fileViewModel = treeView.SelectedItem as ProjectFileViewModel;
-                    if (fileViewModel == null)
-                        return;
-
-                    var dragData = new DataObject(fileViewModel);
-                    DragDrop.DoDragDrop(treeViewItem, dragData, DragDropEffects.Move);
-                }
-            }
         }
 
         private void DropTree_DragEnter(object sender, DragEventArgs e)
@@ -171,7 +114,63 @@ namespace VisualSolutionExplorer
                     string target = dropTarget.FolderPath;
                     target = Project.ProjectPathToAbsPath(target);
                     NotifySolutionChanged("DragFile", src, target);
-                    viewModel.SetContent(Folders);
+                    viewModel.Folders[0].IsExpanded = true;
+                }
+            }
+        }
+
+        private void Tree_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var mousePos = e.GetPosition(null);
+                var diff = startPoint - mousePos;
+
+                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance
+                    || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    var treeView = sender as TreeView;
+                    var treeViewItem = Helper.TryFindParent<TreeViewItem>((DependencyObject)e.OriginalSource);
+
+                    if (treeView == null || treeViewItem == null)
+                        return;
+
+                    var fileViewModel = treeView.SelectedItem as ProjectFileViewModel;
+                    if (fileViewModel == null)
+                        return;
+
+                    var dragData = new DataObject(fileViewModel);
+                    DragDrop.DoDragDrop(treeViewItem, dragData, DragDropEffects.Move);
+                }
+            }
+        }
+
+        private void Tree_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            startPoint = e.GetPosition(null);
+        }
+
+        private void TreeView_SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
+        {
+            TreeView item = sender as TreeView;
+            if (e.OldValue != null)
+            {
+                object ob = e.OldValue;
+
+                if (ob is ProjectFolderViewModel)
+                {
+                    ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
+                    pfovm.IsEditing = false;
+                }
+            }
+            if (e.NewValue != null)
+            {
+                object ob = e.NewValue;
+
+                if (ob is ProjectFolderViewModel)
+                {
+                    ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
+                    pfovm.IsEditing = false;
                 }
             }
         }

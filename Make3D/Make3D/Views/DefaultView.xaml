@@ -108,7 +108,7 @@
                     <ComboBox x:Name="SelectObjectNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select an object by its name" ItemsSource="{Binding ObjectNames}" SelectedItem="{Binding SelectedObjectName}" />
                 </Custom:RibbonGroup>
 
-                <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
+                <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/Project.png">
                     <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                     <Custom:RibbonMenuButton x:Name="Import" Label="Import">
                         <Custom:RibbonButton x:Name="ImportOBJ" Label="OBJ" Command="{Binding ImportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
@@ -201,7 +201,7 @@
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
 
-                <Custom:RibbonGroup Name="MeshGroup" Header="Mesh">
+                <Custom:RibbonGroup Name="MeshGroup" Header="Mesh" LargeImageSource="/Make3D;component/Images/Buttons/BigGear.png">
                     <Custom:RibbonMenuButton Label="Edit">
                         <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                         <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
@@ -217,6 +217,8 @@
                         <Custom:RibbonButton x:Name="DupVertexButton" Label="Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
 
                         <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Rem Unref Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
+
+                        <Custom:RibbonButton x:Name="SetZeroButton" Label="Reset Origin" Command="{Binding ResetOriginCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Set or Reset the origin point of a selected mesh" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
