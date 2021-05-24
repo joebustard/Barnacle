@@ -50,15 +50,20 @@ namespace VisualSolutionExplorer
         public static string AbsPathToProjectPath(string rf)
         {
             String folderRoot = System.IO.Path.GetDirectoryName(BaseFolder);
-            if (rf.StartsWith(BaseFolder))
+            if (rf.StartsWith(folderRoot))
             {
-                rf = rf.Substring(BaseFolder.Length);
+                rf = rf.Substring(folderRoot.Length);
             }
             return rf;
         }
 
         public static string ProjectPathToAbsPath(string rf)
         {
+            string t = "\\"+System.IO.Path.GetFileName(BaseFolder);
+            if (rf.StartsWith(t))
+            {
+                rf = rf.Substring(t.Length); 
+            }
             if (!rf.StartsWith("\\"))
             {
                 rf = "\\" + rf;
@@ -248,6 +253,29 @@ namespace VisualSolutionExplorer
             }
 
             return res;
+        }
+
+        public void RemoveFileFromFolder(string fName)
+        {
+            fName = AbsPathToProjectPath(fName);
+           foreach( ProjectFolder pf in ProjectFolders)
+           {
+                pf.RemoveFileFromProject(fName);
+           }
+        }
+
+        public void AddFileToFolder(string folderPath, string fName)
+        {
+            folderPath = AbsPathToProjectPath(folderPath);
+            foreach (ProjectFolder pf in ProjectFolders)
+            {
+                pf.AddFileToProject(folderPath,fName);
+            }
+        }
+
+        public void UpdateFolders()
+        {
+
         }
     }
 }

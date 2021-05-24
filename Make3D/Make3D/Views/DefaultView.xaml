@@ -205,7 +205,9 @@
                     <Custom:RibbonMenuButton Label="Edit">
                         <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                         <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
-                        <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
+                        <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Loop smoothing" />
+
+                        <Custom:RibbonButton x:Name="MeshRecenterButton" Label="Re-Origin" Command="{Binding MeshReoriginCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
                         <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows.Controls;
 
 namespace VisualSolutionExplorer
 {
@@ -8,7 +9,7 @@ namespace VisualSolutionExplorer
     /// Base class for all ViewModel classes displayed by TreeViewItems.
     /// This acts as an adapter between a raw data object and a TreeViewItem.
     /// </summary>
-    public class TreeViewItemViewModel : INotifyPropertyChanged
+    public class TreeViewItemViewModel :  INotifyPropertyChanged
     {
         private static readonly TreeViewItemViewModel DummyChild = new TreeViewItemViewModel();
 

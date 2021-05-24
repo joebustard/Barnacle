@@ -127,5 +127,12 @@ namespace VisualSolutionExplorer
             }
             NotifyPropertyChanged("Folders");
         }
+
+        internal void RemoveFileFromFolder(ProjectFileViewModel fileViewModel)
+        {
+
+            ProjectFolderViewModel pfm = fileViewModel.Parent as  ProjectFolderViewModel;
+            pfm.RemoveFileFromFolder(fileViewModel.ProjectFile);
+        }
     }
 }

@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using VisualSolutionExplorerLib;
 
 namespace VisualSolutionExplorer
 {
@@ -8,6 +12,10 @@ namespace VisualSolutionExplorer
     {
         private List<ProjectFolder> folders;
         private ProjectViewModel viewModel;
+        private Point _lastMouseDown;
+        //TreeViewItem draggedItem, _target;
+        TreeViewItem draggedItem, _target;
+        private Point startPoint;
 
         public SolutionExplorerControl()
         {
@@ -49,6 +57,7 @@ namespace VisualSolutionExplorer
             if (SolutionChanged != null)
             {
                 SolutionChanged(e, p1, p2);
+
             }
         }
 
@@ -90,6 +99,79 @@ namespace VisualSolutionExplorer
                 {
                     ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
                     pfovm.IsEditing = false;
+                }
+            }
+        }
+
+
+
+
+
+
+        private void Tree_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            startPoint = e.GetPosition(null);
+        }
+
+
+
+        private void Tree_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                var mousePos = e.GetPosition(null);
+                var diff = startPoint - mousePos;
+
+                if (Math.Abs(diff.X) > SystemParameters.MinimumHorizontalDragDistance
+                    || Math.Abs(diff.Y) > SystemParameters.MinimumVerticalDragDistance)
+                {
+                    var treeView = sender as TreeView;
+                    var treeViewItem = Helper.TryFindParent<TreeViewItem>((DependencyObject)e.OriginalSource);
+
+                    if (treeView == null || treeViewItem == null)
+                        return;
+
+                    var fileViewModel = treeView.SelectedItem as ProjectFileViewModel;
+                    if (fileViewModel == null)
+                        return;
+
+                    var dragData = new DataObject(fileViewModel);
+                    DragDrop.DoDragDrop(treeViewItem, dragData, DragDropEffects.Move);
+                }
+            }
+        }
+
+        private void DropTree_DragEnter(object sender, DragEventArgs e)
+        {
+            if (!e.Data.GetDataPresent(typeof(ProjectFileViewModel)))
+            {
+                e.Effects = DragDropEffects.None;
+            }
+        }
+
+        private void DropTree_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(typeof(ProjectFileViewModel)))
+            {
+                var fileViewModel = e.Data.GetData(typeof(ProjectFileViewModel)) as ProjectFileViewModel;
+                var treeViewItem = Helper.TryFindParent<TreeViewItem>((DependencyObject)e.OriginalSource);
+
+                var dropTarget = treeViewItem.Header as ProjectFolderViewModel;
+
+                if (dropTarget == null || fileViewModel == null)
+                    return;
+                MessageBoxResult res = MessageBox.Show("Move " + fileViewModel.FileName + " to " + dropTarget.FolderName, "Move File", MessageBoxButton.YesNo);
+
+                if (res == MessageBoxResult.Yes)
+                {
+                    // move the file
+                    string src = fileViewModel.ProjectFile.FilePath;
+
+                    src = Project.ProjectPathToAbsPath(src);
+                    string target = dropTarget.FolderPath;
+                    target = Project.ProjectPathToAbsPath(target);
+                    NotifySolutionChanged("DragFile", src, target);
+                    viewModel.SetContent(Folders);
                 }
             }
         }

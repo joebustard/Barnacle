@@ -3,7 +3,7 @@
     <Rotation X="0" Y="0" Z="0" />
   </Settings>
   <obj Name="footbone" Description="" Colour="#FFDCDCDC" Primitive="Mesh">
-    <Position X="0" Y="0" Z="0" />
+    <Position X="0" Y="-2" Z="0" />
     <Scale X="5.0625" Y="5.0625" Z="5.0625" />
     <EditorParameters ToolName="Stadium">
       <P Name="Radius1" Val="5" />

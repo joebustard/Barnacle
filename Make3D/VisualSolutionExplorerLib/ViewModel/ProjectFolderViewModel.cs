@@ -91,6 +91,21 @@ namespace VisualSolutionExplorer
 
         public SolutionChangedDelegate SolutionChanged { get; set; }
         public ICommand StopEditing { get; set; }
+        public string FolderPath
+        {
+            get
+            {
+                if (_folder == null)
+                {
+                    return "";
+                }
+                else
+                {
+                    return _folder.FolderPath;
+                }
+            }
+
+        }
 
         public void AddExistingFile()
         {
@@ -134,6 +149,11 @@ namespace VisualSolutionExplorer
             NotifySolutionChanged("NewFolder", f, "");
             IsExpanded = true;
             LoadChildren();
+        }
+
+        internal void RemoveFileFromFolder(ProjectFile file)
+        {
+            _folder.ProjectFiles.Remove(file);
         }
 
         public void ExploreFolder()
@@ -181,6 +201,14 @@ namespace VisualSolutionExplorer
             {
                 SolutionChanged(e, p1, p2);
             }
+
+        }
+
+        internal void AddFileReference(ProjectFileViewModel fileViewModel)
+        {
+            ProjectFile pf = fileViewModel.ProjectFile;
+            pf.FilePath = ""; // not valid anymore
+            _folder.ProjectFiles.Add(pf);
         }
 
         internal void Collapse()
@@ -224,9 +252,9 @@ namespace VisualSolutionExplorer
                 pfo.SolutionChanged = NotifySolutionChanged;
                 base.Children.Add(pfo);
             }
-            foreach (ProjectFile state in _folder.ProjectFiles)
+            foreach (ProjectFile file in _folder.ProjectFiles)
             {
-                ProjectFileViewModel pfi = new ProjectFileViewModel(state, this);
+                ProjectFileViewModel pfi = new ProjectFileViewModel(file, this);
                 pfi.SolutionChanged = NotifySolutionChanged;
                 base.Children.Add(pfi);
             }

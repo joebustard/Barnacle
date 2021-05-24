@@ -434,6 +434,59 @@ namespace Make3D.Views
                         }
                     }
                     break;
+
+                case "DragFile":
+                    {
+                        String fName = System.IO.Path.GetFileName(parameter1);
+                        string targetFile = parameter2 + "\\" + fName;
+                        if (File.Exists(targetFile))
+                        {
+                            MessageBox.Show("Unable to move file. A file with the same name already exists.");
+                        }
+                        else
+                        {
+
+
+                            try
+                            {
+                                bool movingCurrent = false;
+                                if (parameter1 == BaseViewModel.Document.FilePath)
+                                {
+                                    movingCurrent = true;
+                                    CheckSaveFirst(null);
+                                }
+
+                                File.Move(parameter1, targetFile);
+
+                                // removee file reference from original projectfolderviewmodel
+                                BaseViewModel.Project.RemoveFileFromFolder(parameter1);
+
+                                // add file reference to the target folder
+                                BaseViewModel.Project.AddFileToFolder(parameter2, fName);
+
+                                if (movingCurrent)
+                                {
+                                // open from the new location
+                                    String open = targetFile;
+                                    if (File.Exists(open))
+                                    {
+                                        BaseViewModel.Document.Clear();
+                                        BaseViewModel.Document.Load(open);
+                                        NotificationManager.Notify("Refresh", null);
+                                        //  UndoManager.Clear();
+                                    }
+                                }
+                            }
+
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show(ex.Message);
+                            }
+                           
+                        }
+                    }
+                    
+                    break;
             }
             BaseViewModel.Project.Save();
         }

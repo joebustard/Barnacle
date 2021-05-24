@@ -309,13 +309,16 @@ namespace Make3D.Dialogs.Figure
         {
             XmlElement ele = doc.CreateElement("Bone");
             ele.SetAttribute("Name", Name);
+            
+            ele.SetAttribute("L", Length.ToString());
+            ele.SetAttribute("W", Width.ToString());
+
+            ele.SetAttribute("H", Height.ToString());
 
             ele.SetAttribute("Xr", XRot.ToString());
             ele.SetAttribute("Yr", YRot.ToString());
             ele.SetAttribute("Zr", ZRot.ToString());
-            ele.SetAttribute("W", Width.ToString());
-            ele.SetAttribute("L", Length.ToString());
-            ele.SetAttribute("H", Height.ToString());
+
             ele.SetAttribute("M", ModelName);
             ele.SetAttribute("FM", FigureModelName);
             parent.AppendChild(ele);

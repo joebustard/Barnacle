@@ -46,6 +46,10 @@ namespace VisualSolutionExplorer
             GCodeIcon
         }
 
+        public ProjectFile ProjectFile
+        {
+            get { return _projectFile; }
+        }
         public FileContextMenuViewModel ContextMenu
         {
             get

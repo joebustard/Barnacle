@@ -24,8 +24,8 @@
     <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
 
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
@@ -80,8 +80,8 @@
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
   </ProjectDefinition>
 
@@ -131,8 +131,8 @@
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
   </ProjectDefinition>
 
@@ -182,8 +182,8 @@
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" Autoload="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
+    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
   </ProjectDefinition>
   <ProjectDefinition Name="Blank">
