@@ -1,0 +1,21 @@
+<Project ProjectName="FigureData" Open="\FigureData\LowerRightArm1.txt" Created="17/05/2021 16:27:20">
+  <File Name="Bone.txt" Backup="False" Export="True" />
+  <File Name="FootBone.txt" Backup="False" Export="True" />
+  <File Name="HeadBone.txt" Backup="False" Export="True" />
+  <File Name="LeftFoot1.txt" Backup="False" Export="True" />
+  <File Name="LeftHand1.txt" Backup="False" Export="True" />
+  <File Name="LeftHandBone.txt" Backup="False" Export="True" />
+  <File Name="LeftThigh1.txt" Backup="False" Export="True" />
+  <File Name="LowerLeftLeg1.txt" Backup="False" Export="True" />
+  <File Name="LowerRightArm1.txt" Backup="False" Export="True" />
+  <File Name="LowerRightLeg1.txt" Backup="False" Export="True" />
+  <File Name="MaleHead1.txt" Backup="False" Export="True" />
+  <File Name="RightFoot1.txt" Backup="False" Export="True" />
+  <File Name="RightHand1.txt" Backup="False" Export="True" />
+  <File Name="RightHandBone.txt" Backup="False" Export="True" />
+  <File Name="RightShoe1.txt" Backup="False" Export="True" />
+  <File Name="RightThigh1.txt" Backup="False" Export="True" />
+  <File Name="SourceFigure (1).txt" Backup="False" Export="True" />
+  <File Name="SourceFigure.txt" Backup="False" Export="True" />
+  <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" />
+</Project>

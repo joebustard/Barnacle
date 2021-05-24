@@ -60,7 +60,8 @@
             <ColumnDefinition Width="25*" />
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}"  Grid.RowSpan="2">Object</Label>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="9" Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="14" Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
+
         <!--
         <Button Grid.Row="2" Grid.Column="1" Background="{Binding ObjectColour}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Content=" " Click="Button_Click" />-->
         <xctk:ColorPicker x:Name="_colorPicker"

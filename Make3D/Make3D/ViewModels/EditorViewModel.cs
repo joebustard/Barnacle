@@ -2720,25 +2720,28 @@ namespace Make3D.ViewModels
 
         private void SelectObjectByName(object param)
         {
-            string nm = param.ToString();
-
-            ResetSelection();
-
-            if (Document.Content.Count > 0)
+            if (param != null)
             {
-                NotificationManager.Notify("SetToolsVisibility", false);
-                foreach (Object3D ob in Document.Content)
+                string nm = param.ToString();
+
+                ResetSelection();
+
+                if (Document.Content.Count > 0)
                 {
-                    if (ob.Name == nm)
+                    NotificationManager.Notify("SetToolsVisibility", false);
+                    foreach (Object3D ob in Document.Content)
                     {
-                        selectedItems.Add(ob);
-                        selectedObjectAdorner.AdornObject(ob);
-                        NotificationManager.Notify("ObjectSelected", ob);
-                        EnableTool(ob);
+                        if (ob.Name == nm)
+                        {
+                            selectedItems.Add(ob);
+                            selectedObjectAdorner.AdornObject(ob);
+                            NotificationManager.Notify("ObjectSelected", ob);
+                            EnableTool(ob);
+                        }
                     }
                 }
+                UpdateSelectionDisplay();
             }
-            UpdateSelectionDisplay();
         }
 
         private void SelectPrevious()

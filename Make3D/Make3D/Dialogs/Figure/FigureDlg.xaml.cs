@@ -515,7 +515,7 @@ namespace Make3D.Dialogs
         {
             foreach (Object3D ob in document.Content)
             {
-                if (ob.Name.ToLower() == p.ModelName)
+                if (ob.Name.ToLower() == p.ModelName.ToLower())
                 {
                     Object3D cl = ob.Clone();
                     // Name the object after the bone it represents
@@ -543,16 +543,17 @@ namespace Make3D.Dialogs
             Bone vert3 = vert2.AddSub("Vert3", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
             Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
 
+
             // arms
             Bone rs = skeleton.AddSub("RightShoulder", 7, 5, 5, 0, 0, 180, -1, -1, -1, -1, -1, -1);
             Bone rua = rs.AddSub("RightUpperArm", 10, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1);
-            Bone rla = rua.AddSub("RightLowerArm", 10, 5, 5, 0, 0, 10, -1, -1, -1, -1, -1, -1);
-            Bone rh = rla.AddSub("RightHand", 10, 4, 4, 0, 0, 10, -1, -1, -1, -1, -1, -1, "handbone");
+            Bone rla = rua.AddSub("RightLowerArm", 10, 5, 5, 0, 0, 10, -1, -1, -1, -1, -1, -1,"bone","lowerrightarm1");
+            Bone rh = rla.AddSub("RightHand", 10, 4, 4, 0, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone","righthand1");
 
             Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1);
             Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1);
             Bone lla = lua.AddSub("LeftLowerArm", 10, 5, 5, 0, 0, -10, -1, -1, -1, -1, -1, -1);
-            Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "handbone", "lefthand1");
+            Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "lefthandbone", "lefthand1");
 
             // pelvis
             Bone pr = vert4.AddSub("RightPelvis", 5, 5, 5, 0, 0, -90, -1, -1, -1, -1, -1, -1);
