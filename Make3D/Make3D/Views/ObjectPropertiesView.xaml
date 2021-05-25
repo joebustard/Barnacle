@@ -87,9 +87,10 @@
             <Button  Style="{StaticResource SmallButton}" Content="+" Command="{Binding NudgeCommand}" CommandParameter="Z+" />
             <Button  Style="{StaticResource SmallButton}" Content="-" Command="{Binding NudgeCommand}" CommandParameter="Z-" />
         </UniformGrid>
-        <UniformGrid Grid.Row="10" Grid.ColumnSpan="2" VerticalAlignment="Stretch" Rows="1">
+        <UniformGrid Grid.Row="10" Grid.ColumnSpan="3" VerticalAlignment="Stretch" Rows="1">
             <Button x:Name="SetFloor" Content="Floor" Style="{StaticResource SmallButton}" FontSize="10" Command="{Binding MoveToFloorCommand}" ToolTip="Set object on the floor" />
             <Button x:Name="SetCentre" Content="Centre" Style="{StaticResource SmallButton}" FontSize="10" Command="{Binding MoveToCentreCommand}" ToolTip="Move object to centre of the floor" />
+            <Button x:Name="SetZero" Content="Zero" Style="{StaticResource SmallButton}" FontSize="10" Command="{Binding MoveToZeroCommand}" ToolTip="Move object to centre of the floor" />
         </UniformGrid>
         <Label Grid.Row="11"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}" >Size</Label>
         <Label Grid.Row="12"   HorizontalContentAlignment="Center" FontSize="10"  Foreground="Red" Grid.RowSpan="3" >L(X)</Label>

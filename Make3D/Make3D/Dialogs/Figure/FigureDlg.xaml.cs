@@ -534,25 +534,25 @@ namespace Make3D.Dialogs
         {
             skeleton = new Bone();
             skeleton.Name = "Root";
-            Bone neck = skeleton.AddSub("Neck", 8, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
+            Bone neck = skeleton.AddSub("Neck", 3, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
             Bone head = neck.AddSub("Head", 10, 12, 10, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
-
+            /*
             // spine
-            Bone vert1 = skeleton.AddSub("Vert1", 8, 5, 5, 0, 0, 270, -5, 5, 85, 95, 0, 0);
+            Bone vert1 = skeleton.AddSub("Vert1", 10, 10, 15, 0, 0, 270, -5, 5, 85, 95, 0, 0, "bone", "chest1");
+
             Bone vert2 = vert1.AddSub("Vert2", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
             Bone vert3 = vert2.AddSub("Vert3", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
             Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
 
-
             // arms
-            Bone rs = skeleton.AddSub("RightShoulder", 7, 5, 5, 0, 0, 180, -1, -1, -1, -1, -1, -1);
-            Bone rua = rs.AddSub("RightUpperArm", 10, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1);
-            Bone rla = rua.AddSub("RightLowerArm", 10, 5, 5, 0, 0, 10, -1, -1, -1, -1, -1, -1,"bone","lowerrightarm1");
-            Bone rh = rla.AddSub("RightHand", 10, 4, 4, 0, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone","righthand1");
+            Bone rs = skeleton.AddSub("RightShoulder", 7, 5, 5, 0, 0, 180, -1, -1, -1, -1, -1, -1, "bone", "rightshoulder1");
+            Bone rua = rs.AddSub("RightUpperArm", 10, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1, "bone", "upperrightarm1");
+            Bone rla = rua.AddSub("RightLowerArm", 10, 5, 5, 0, 0, 10, -1, -1, -1, -1, -1, -1, "bone", "lowerrightarm1");
+            Bone rh = rla.AddSub("RightHand", 10, 4, 4, 0, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone", "righthand1");
 
-            Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1);
-            Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1);
-            Bone lla = lua.AddSub("LeftLowerArm", 10, 5, 5, 0, 0, -10, -1, -1, -1, -1, -1, -1);
+            Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1, "bone", "leftshoulder1");
+            Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1, "bone", "upperleftarm1");
+            Bone lla = lua.AddSub("LeftLowerArm", 10, 5, 5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "bone", "lowerleftarm1");
             Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "lefthandbone", "lefthand1");
 
             // pelvis
@@ -573,6 +573,10 @@ namespace Make3D.Dialogs
 
             // force recalculation of positions.
             double y = vert1.Length + vert2.Length + vert3.Length + vert4.Length + rul.Length + rll.Length + rft.Height;
+
+            */
+
+            double y = 40; // remove me
             skeleton.StartPosition = new Point3D(0, y, 0);
             skeleton.EndPosition = new Point3D(0, y, 0);
 

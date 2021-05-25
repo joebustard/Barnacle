@@ -141,6 +141,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("SetToolsVisibility", SetToolVisibility);
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             NotificationManager.Subscribe("ObjectNamesChanged", ObjectNamesChanged);
+            NotificationManager.Subscribe("Loading", LoadingNewFile);
 
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
@@ -981,6 +982,10 @@ namespace Make3D.ViewModels
                     df.IsActive = b;
                 }
             }
+        }
+
+        private void LoadingNewFile(object param)
+        {
         }
 
         private void ObjectNamesChanged(object param)

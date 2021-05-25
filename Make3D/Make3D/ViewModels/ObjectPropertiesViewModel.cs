@@ -1,6 +1,7 @@
 ﻿using Make3D.Models;
 using System;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -34,6 +35,7 @@ namespace Make3D.ViewModels
             ScaleByPercentCommand = new RelayCommand(OnScaleByPercent);
             MoveToFloorCommand = new RelayCommand(OnMoveToFloor);
             MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
+            MoveToZeroCommand = new RelayCommand(OnMoveToZero);
             NudgeCommand = new RelayCommand(OnNudge);
             NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
             NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
@@ -62,9 +64,8 @@ namespace Make3D.ViewModels
         }
 
         public ICommand MoveToCentreCommand { get; set; }
-
         public ICommand MoveToFloorCommand { get; set; }
-
+        public ICommand MoveToZeroCommand { get; set; }
         public ICommand NudgeCommand { get; set; }
 
         public Color ObjectColour
@@ -424,6 +425,9 @@ namespace Make3D.ViewModels
             {
                 NotificationManager.Notify("MoveObjectToCentre", selectedObject);
                 NotificationManager.Notify("RefreshAdorners", null);
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("PositionY");
+                NotifyPropertyChanged("PositionZ");
             }
         }
 
@@ -433,6 +437,27 @@ namespace Make3D.ViewModels
             {
                 NotificationManager.Notify("MoveObjectToFloor", selectedObject);
                 NotificationManager.Notify("RefreshAdorners", null);
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("PositionY");
+                NotifyPropertyChanged("PositionZ");
+            }
+        }
+
+        private void OnMoveToZero(object obj)
+        {
+            if (selectedObject.Position.X != 0.0 || selectedObject.Position.Y != 0.0 || selectedObject.Position.Z != 0.0)
+            {
+                CheckPoint();
+
+                Point3D p2 = new Point3D(0, 0, 0);
+                selectedObject.Position = p2;
+                NotifyPropertyChanged();
+                NotificationManager.Notify("ScaleRefresh", selectedObject);
+                NotificationManager.Notify("RefreshAdorners", null);
+                Document.Dirty = true;
+                NotifyPropertyChanged("PositionX");
+                NotifyPropertyChanged("PositionY");
+                NotifyPropertyChanged("PositionZ");
             }
         }
 
@@ -593,18 +618,14 @@ namespace Make3D.ViewModels
                 {
                     v -= percentScale;
                 }
-                v = v / 100.0;
-                CheckPoint();
-
-                selectedObject.ScaleMesh(v, v, v);
-                selectedObject.Remesh();
-                selectedObject.CalcScale(false);
-                NotifyPropertyChanged();
-
-                NotificationManager.Notify("ScaleRefresh", selectedObject);
-                NotificationManager.Notify("RefreshAdorners", null);
-                OnScaleUpdated(null);
-                Document.Dirty = true;
+                if (v > 0)
+                {
+                    v = ScaleBy(v);
+                }
+                else
+                {
+                    MessageBox.Show("Scale Invalid. Operation ignored", "Warning");
+                }
             }
         }
 
@@ -628,6 +649,23 @@ namespace Make3D.ViewModels
                 NotificationManager.Notify("RefreshAdorners", null);
                 Document.Dirty = true;
             }
+        }
+
+        private double ScaleBy(double v)
+        {
+            v = v / 100.0;
+            CheckPoint();
+
+            selectedObject.ScaleMesh(v, v, v);
+            selectedObject.Remesh();
+            selectedObject.CalcScale(false);
+            NotifyPropertyChanged();
+
+            NotificationManager.Notify("ScaleRefresh", selectedObject);
+            NotificationManager.Notify("RefreshAdorners", null);
+            OnScaleUpdated(null);
+            Document.Dirty = true;
+            return v;
         }
     }
 }

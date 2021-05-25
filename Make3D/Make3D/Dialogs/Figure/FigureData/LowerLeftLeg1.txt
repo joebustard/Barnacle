@@ -2,9 +2,9 @@
   <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1" SwapAxis="True" FloorAll="True">
     <Rotation X="0" Y="0" Z="0" />
   </Settings>
-  <obj Name="LowerLeftLeg1" Description="" Colour="#FFFF0000" Primitive="Mesh">
+  <obj Name="LowerLeftLeg1" Description="" Colour="#FFE9967A" Primitive="Mesh">
     <Position X="0" Y="0" Z="0" />
-    <Scale X="17.9211405521569" Y="6.55346123023216" Z="5.55762606230562" />
+    <Scale X="18.06594" Y="6.60049" Z="5.39698" />
     <v X="-7.43720" Y="2.80826" Z="-0.85395" />
     <v X="-8.53465" Y="3.02853" Z="-1.51132" />
     <v X="-7.52439" Y="2.71432" Z="-1.40803" />

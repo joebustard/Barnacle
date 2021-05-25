@@ -2,7 +2,7 @@
   <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1" SwapAxis="True" FloorAll="True">
     <Rotation X="0" Y="0" Z="0" />
   </Settings>
-  <obj Name="LeftHand1" Description="" Colour="#FFFFB6C1" Primitive="Mesh">
+  <obj Name="LeftHand1" Description="" Colour="#FFE9967A" Primitive="Mesh">
     <Position X="0" Y="0" Z="0" />
     <Scale X="20" Y="20" Z="20" />
     <v X="4.98420" Y="9.99860" Z="-3.34860" />

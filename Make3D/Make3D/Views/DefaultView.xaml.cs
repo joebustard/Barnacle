@@ -268,6 +268,7 @@ namespace Make3D.Views
 
                                 if (File.Exists(p))
                                 {
+                                    NotificationManager.Notify("Loading", null);
                                     BaseViewModel.Document.Load(p);
                                     NotificationManager.Notify("Refresh", null);
                                     BaseViewModel.Project.FirstFile = fName;

@@ -124,6 +124,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("RemoveDupVertices", OnRemoveDupVertices);
             NotificationManager.Subscribe("UnrefVertices", OnRemoveUnrefVertices);
+            NotificationManager.Subscribe("Loading", LoadingNewFile);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -1242,6 +1243,22 @@ namespace Make3D.ViewModels
             CameraScrollDelta = new Point3D(0, 1, 1);
             LookToCenter();
             zoomPercent = 100;
+        }
+
+        private void LoadingNewFile(object param)
+        {
+            // about to switch files
+            // dont leave the adorners hanging around
+
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.Clear();
+            }
+
+            selectedItems.Clear();
+            Overlay.Children.Clear();
+            // dont leave obect palette show the details of an obect whih doesn't exist in the new file
+            NotificationManager.Notify("ObjectSelected", null);
         }
 
         private bool Loft(Object3D obj, string obType)
