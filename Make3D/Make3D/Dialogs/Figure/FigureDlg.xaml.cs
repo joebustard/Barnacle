@@ -534,13 +534,14 @@ namespace Make3D.Dialogs
         {
             skeleton = new Bone();
             skeleton.Name = "Root";
-            Bone neck = skeleton.AddSub("Neck", 3, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
-            Bone head = neck.AddSub("Head", 10, 12, 10, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
-            /*
-            // spine
-            Bone vert1 = skeleton.AddSub("Vert1", 10, 10, 15, 0, 0, 270, -5, 5, 85, 95, 0, 0, "bone", "chest1");
+            Bone neck = skeleton.AddSub("Neck", 3.0875, 9.88, 11065, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
+            Bone head = neck.AddSub("Head", 20.218, 19.4, 15.4, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
 
-            Bone vert2 = vert1.AddSub("Vert2", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
+            // spine
+            Bone vert1 = skeleton.AddSub("Vert1", 20.675, 26.954, 18.82, 0, 0, 270, -5, 5, 85, 95, 0, 0, "bone", "chest1");
+
+            Bone vert2 = vert1.AddSub("Vert2", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "lowerchest1");
+            /*
             Bone vert3 = vert2.AddSub("Vert3", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
             Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
 

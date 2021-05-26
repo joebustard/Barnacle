@@ -1,4 +1,4 @@
-<Project ProjectName="FigureData" Open="\FigureData\Neck1.txt" Created="17/05/2021 16:27:20">
+<Project ProjectName="FigureData" Open="\FigureData\Assemblies\Figure.txt" Created="17/05/2021 16:27:20">
   <File Name="Bone.txt" Backup="False" Export="True" />
   <File Name="Chest1.txt" Backup="False" Export="True" />
   <File Name="FootBone.txt" Backup="False" Export="True" />
@@ -8,6 +8,7 @@
   <File Name="LeftHandBone.txt" Backup="False" Export="True" />
   <File Name="LeftShoulder1.txt" Backup="False" Export="True" />
   <File Name="LeftThigh1.txt" Backup="False" Export="True" />
+  <File Name="LowerChest1.txt" Backup="False" Export="True" />
   <File Name="LowerLeftArm1.txt" Backup="False" Export="True" />
   <File Name="LowerLeftLeg1.txt" Backup="False" Export="True" />
   <File Name="LowerRightArm1.txt" Backup="False" Export="True" />
@@ -25,4 +26,7 @@
   <File Name="UpperLeftArm1.txt" Backup="False" Export="True" />
   <File Name="UpperRightArm1.txt" Backup="False" Export="True" />
   <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" />
+  <Folder Name="Assemblies" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="True">
+    <File Name="Figure.txt" Backup="False" Export="False" />
+  </Folder>
 </Project>

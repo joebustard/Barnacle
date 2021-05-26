@@ -98,23 +98,25 @@ namespace VisualSolutionExplorer
             {
                 var fileViewModel = e.Data.GetData(typeof(ProjectFileViewModel)) as ProjectFileViewModel;
                 var treeViewItem = Helper.TryFindParent<TreeViewItem>((DependencyObject)e.OriginalSource);
-
-                var dropTarget = treeViewItem.Header as ProjectFolderViewModel;
-
-                if (dropTarget == null || fileViewModel == null)
-                    return;
-                MessageBoxResult res = MessageBox.Show("Move " + fileViewModel.FileName + " to " + dropTarget.FolderName, "Move File", MessageBoxButton.YesNo);
-
-                if (res == MessageBoxResult.Yes)
+                if (treeViewItem != null)
                 {
-                    // move the file
-                    string src = fileViewModel.ProjectFile.FilePath;
+                    var dropTarget = treeViewItem.Header as ProjectFolderViewModel;
 
-                    src = Project.ProjectPathToAbsPath(src);
-                    string target = dropTarget.FolderPath;
-                    target = Project.ProjectPathToAbsPath(target);
-                    NotifySolutionChanged("DragFile", src, target);
-                    viewModel.Folders[0].IsExpanded = true;
+                    if (dropTarget == null || fileViewModel == null)
+                        return;
+                    MessageBoxResult res = MessageBox.Show("Move " + fileViewModel.FileName + " to " + dropTarget.FolderName, "Move File", MessageBoxButton.YesNo);
+
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        // move the file
+                        string src = fileViewModel.ProjectFile.FilePath;
+
+                        src = Project.ProjectPathToAbsPath(src);
+                        string target = dropTarget.FolderPath;
+                        target = Project.ProjectPathToAbsPath(target);
+                        NotifySolutionChanged("DragFile", src, target);
+                        viewModel.Folders[0].IsExpanded = true;
+                    }
                 }
             }
         }

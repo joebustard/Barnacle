@@ -21,6 +21,7 @@ namespace Make3D.Models
         private bool dirty;
 
         private List<String> referencedFiles;
+
         public Document()
         {
             ModelScales.Initialise();
@@ -166,6 +167,23 @@ namespace Make3D.Models
                     }
                 }
                 XmlNodeList nodes = docNode.ChildNodes;
+
+                // get the file refs first
+                foreach (XmlNode nd in nodes)
+                {
+                    string ndname = nd.Name.ToLower();
+                    if (ndname == "fileref")
+                    {
+                        string fn = (nd as XmlElement).GetAttribute("Name");
+                        fn = Project.ProjectPathToAbsPath(fn);
+                        referencedFiles.Add(fn);
+                    }
+                }
+                foreach (string fn in referencedFiles)
+                {
+                    LoadReferencedFile(fn);
+                }
+
                 foreach (XmlNode nd in nodes)
                 {
                     string ndname = nd.Name.ToLower();
@@ -194,20 +212,43 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
-                        if (obj.RefValid)
+                        // so we should have already read the referenced files by now
+                        // meaning there should already be a referenced object which matches.
+                        // if there is then update its position to whatever this object says
+                        bool found = false;
+                        foreach (Object3D old in Content)
                         {
-                            Content.Add(obj);
+                            if (old is ReferenceObject3D)
+                            {
+                                if (old.Name == obj.Name && (old as ReferenceObject3D).Reference.Path == obj.Reference.Path)
+                                {
+                                    found = true;
+                                    old.Position = obj.Position;
+                                    old.Rotation = obj.Rotation;
+                                    break;
+                                }
+                            }
                         }
-                        else
+                        if (!found)
+
                         {
                             // might have been converted into a group
                             ReferenceGroup3D grp = new ReferenceGroup3D();
                             grp.Read(nd);
 
                             grp.SetMesh();
-                            if (grp.RefValid)
+                            foreach (Object3D old in Content)
                             {
-                                Content.Add(grp);
+                                if (old is ReferenceGroup3D)
+                                {
+                                    if (old.Name == obj.Name && (old as ReferenceGroup3D).Reference.Path == obj.Reference.Path)
+                                    {
+                                        found = true;
+                                        old.Position = obj.Position;
+                                        old.Rotation = obj.Rotation;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -225,22 +266,21 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
-                        if (obj.RefValid)
+                        bool found = false;
+                        foreach (Object3D old in Content)
                         {
-                            Content.Add(obj);
+                            if (old is ReferenceGroup3D)
+                            {
+                                if (old.Name == obj.Name && (old as ReferenceGroup3D).Reference.Path == obj.Reference.Path)
+                                {
+                                    found = true;
+                                    old.Position = obj.Position;
+                                    old.Rotation = obj.Rotation;
+                                    break;
+                                }
+                            }
                         }
                     }
-
-                    if (ndname == "fileref")
-                    {
-                        string fn = (nd as XmlElement).GetAttribute("Name");
-                        fn = Project.ProjectPathToAbsPath(fn);
-                        referencedFiles.Add(fn);
-                    }
-                }
-                foreach( string fn in referencedFiles)
-                {
-                    LoadReferencedFile(fn);
                 }
             }
             catch (Exception ex)
@@ -267,7 +307,7 @@ namespace Make3D.Models
             foreach (String rf in referencedFiles)
             {
                 string fn = Project.AbsPathToProjectPath(rf);
-                XmlElement fileRef= doc.CreateElement("FileRef");
+                XmlElement fileRef = doc.CreateElement("FileRef");
                 fileRef.SetAttribute("Name", fn);
                 docNode.AppendChild(fileRef);
             }
@@ -703,54 +743,6 @@ namespace Make3D.Models
             }
         }
 
-        private void LoadReferencedFile(string fileName)
-        {
-            try
-            {
-                if (File.Exists(fileName))
-                {
-                    DateTime timeStamp = File.GetLastWriteTime(fileName);
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(fileName);
-                    XmlNode docNode = doc.SelectSingleNode("Document");
-                    XmlNodeList nodes = docNode.ChildNodes;
-                    foreach (XmlNode nd in nodes)
-                    {
-                        if (nd.Name == "obj")
-                        {
-                            ReferenceObject3D obj = new ReferenceObject3D();
-
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
-                            obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName))
-                            {
-                                Content.Add(obj);
-                            }
-                        }
-                        if (nd.Name == "groupobj")
-                        {
-                            ReferenceGroup3D obj = new ReferenceGroup3D();
-
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
-                            obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName))
-                            {
-                                Content.Add(obj);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         internal void RenameCurrent(string old, string renamed)
         {
             if (FilePath == old)
@@ -797,6 +789,54 @@ namespace Make3D.Models
                 {
                     res = Convert.ToInt32(s);
                 }
+            }
+        }
+
+        private void LoadReferencedFile(string fileName)
+        {
+            try
+            {
+                if (File.Exists(fileName))
+                {
+                    DateTime timeStamp = File.GetLastWriteTime(fileName);
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(fileName);
+                    XmlNode docNode = doc.SelectSingleNode("Document");
+                    XmlNodeList nodes = docNode.ChildNodes;
+                    foreach (XmlNode nd in nodes)
+                    {
+                        if (nd.Name == "obj")
+                        {
+                            ReferenceObject3D obj = new ReferenceObject3D();
+
+                            obj.Reference.Path = fileName;
+                            obj.Reference.TimeStamp = timeStamp;
+                            obj.BaseRead(nd);
+                            obj.SetMesh();
+                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            {
+                                Content.Add(obj);
+                            }
+                        }
+                        if (nd.Name == "groupobj")
+                        {
+                            ReferenceGroup3D obj = new ReferenceGroup3D();
+
+                            obj.Reference.Path = fileName;
+                            obj.Reference.TimeStamp = timeStamp;
+                            obj.BaseRead(nd);
+                            obj.SetMesh();
+                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            {
+                                Content.Add(obj);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 
