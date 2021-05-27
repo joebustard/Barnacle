@@ -10,18 +10,22 @@
   <FileRef Name="\FigureData\LowerChest1.txt" />
   <FileRef Name="\FigureData\LeftShoulder1.txt" />
   <FileRef Name="\FigureData\UpperLeftArm1.txt" />
+  <FileRef Name="\FigureData\Groin1.txt" />
+  <FileRef Name="\FigureData\LowerRightArm1.txt" />
+  <FileRef Name="\FigureData\RightHand1.txt" />
+  <FileRef Name="\FigureData\RightThigh1.txt" />
   <refgroupobj Name="Chest1">
-    <Position X="0" Y="40" Z="-3" />
+    <Position X="0" Y="69" Z="-3" />
     <Rotation X="0" Y="0" Z="4.71238898038469" />
     <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\Chest1.txt" Timestamp="26/05/2021 15:08:07" />
   </refgroupobj>
   <refgroupobj Name="Neck1">
-    <Position X="-2.66453525910038E-15" Y="51.2688999999999" Z="-1.942565" />
+    <Position X="-2.66453525910038E-15" Y="80.2688999999999" Z="-1.942565" />
     <Rotation X="0" Y="0" Z="-4.71238898038469" />
     <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\Neck1.txt" Timestamp="26/05/2021 13:47:06" />
   </refgroupobj>
   <refgroupobj Name="MaleHead1">
-    <Position X="0" Y="63" Z="0" />
+    <Position X="0" Y="92" Z="0" />
     <Rotation X="-1.5707963267949" Y="0" Z="-10.9955742875643" />
     <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\MaleHead1.txt" Timestamp="26/05/2021 13:37:46" />
   </refgroupobj>
@@ -31,28 +35,68 @@
     <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\MaleHead1.txt" Timestamp="26/05/2021 13:37:46" />
   </refobj>
   <refgroupobj Name="RightShoulder1">
-    <Position X="-7" Y="46.2" Z="-3.2" />
+    <Position X="-7" Y="75.2" Z="-3.2" />
     <Rotation X="0" Y="-3.14159265358979" Z="0" />
     <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\RightShoulder1.txt" Timestamp="25/05/2021 17:18:16" />
   </refgroupobj>
   <refgroupobj Name="UpperRightArm1">
-    <Position X="-19.2007425964358" Y="39.5380764069478" Z="-2" />
+    <Position X="-19.2007425964358" Y="68.5380764069478" Z="-2" />
     <Rotation X="-0.375153357287815" Y="3.24204342846032" Z="0.630987633694883" />
-    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\UpperRightArm1.txt" Timestamp="26/05/2021 15:22:52" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\UpperRightArm1.txt" Timestamp="27/05/2021 12:36:03" />
   </refgroupobj>
   <refgroupobj Name="LowerChest1">
-    <Position X="-4.44089209850063E-16" Y="24.46218" Z="-1.508505" />
-    <Rotation X="0" Y="0" Z="0" />
-    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\LowerChest1.txt" Timestamp="26/05/2021 16:57:00" />
+    <Position X="-4.44089209850063E-16" Y="53.46218" Z="-1.508505" />
+    <Rotation X="0" Y="0" Z="4.71238898038469" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\LowerChest1.txt" Timestamp="27/05/2021 15:48:24" />
   </refgroupobj>
+  <refobj Name="Object_1">
+    <Position X="-∞" Y="-∞" Z="-∞" />
+    <Rotation X="0" Y="0" Z="0" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\LowerChest1.txt" Timestamp="27/05/2021 15:48:24" />
+  </refobj>
   <refobj Name="LeftShoulder1">
-    <Position X="7.66125" Y="46.06711" Z="-2.8" />
+    <Position X="7.66125" Y="75.06711" Z="-2.8" />
     <Rotation X="0" Y="0" Z="0" />
     <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\LeftShoulder1.txt" Timestamp="26/05/2021 17:00:31" />
   </refobj>
   <refobj Name="UpperLeftArm1">
-    <Position X="19" Y="39.5" Z="-4" />
+    <Position X="19" Y="68.5" Z="-4" />
     <Rotation X="0" Y="-0.0209594593200399" Z="-0.621528582144259" />
-    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\UpperLeftArm1.txt" Timestamp="26/05/2021 18:01:23" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\UpperLeftArm1.txt" Timestamp="27/05/2021 12:37:17" />
+  </refobj>
+  <refgroupobj Name="Groin1">
+    <Position X="0" Y="39" Z="-3" />
+    <Rotation X="0" Y="0" Z="-1.5707963267949" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\Groin1.txt" Timestamp="27/05/2021 15:25:14" />
+  </refgroupobj>
+  <refobj Name="Object_1">
+    <Position X="-∞" Y="-∞" Z="-∞" />
+    <Rotation X="0" Y="0" Z="0" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\Groin1.txt" Timestamp="27/05/2021 15:25:14" />
+  </refobj>
+  <refgroupobj Name="LowerRightArm1">
+    <Position X="-33.5688492986621" Y="54.5881913714841" Z="-1.7714491334046" />
+    <Rotation X="0.453429909702934" Y="0.170762866634918" Z="-2.25770309206254" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\LowerRightArm1.txt" Timestamp="27/05/2021 12:45:21" />
+  </refgroupobj>
+  <refobj Name="Object_1">
+    <Position X="-∞" Y="-∞" Z="-∞" />
+    <Rotation X="0" Y="0" Z="0" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\LowerRightArm1.txt" Timestamp="27/05/2021 12:45:21" />
+  </refobj>
+  <refgroupobj Name="RightHand1">
+    <Position X="-43.1" Y="40.1377148010386" Z="-3.28987036410847" />
+    <Rotation X="-0.907586469902189" Y="0.0762983021134743" Z="-2.03462138969267" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\RightHand1.txt" Timestamp="27/05/2021 12:43:32" />
+  </refgroupobj>
+  <refobj Name="Object_1">
+    <Position X="-∞" Y="-∞" Z="-∞" />
+    <Rotation X="0" Y="0" Z="0" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\RightHand1.txt" Timestamp="27/05/2021 12:43:32" />
+  </refobj>
+  <refobj Name="RightThigh1">
+    <Position X="-12" Y="28" Z="-3" />
+    <Rotation X="0" Y="0.0156983951247774" Z="-1.8781543787116" />
+    <Reference Path="C:\Users\jbustard\source\repos\Barnacle\Barnacle\Make3D\Make3D\Dialogs\Figure\FigureData\RightThigh1.txt" Timestamp="27/05/2021 16:15:39" />
   </refobj>
 </Document>

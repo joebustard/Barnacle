@@ -22,34 +22,58 @@ namespace Make3D.Dialogs
     {
         private const string poseFilter = "Pose Files (*.pose)|*.pose";
         private Adorner adorner;
+        private List<String> allBoneNames;
 
         // Yes this tool does have its own doucment.
         // Its used to load the models that will be available
         private Document document;
 
         private bool editLimits;
+
         private List<Object3D> figureMeshs;
+
         private Point lastMousePos;
+
         private Visibility limitsVisible;
+
         private List<JointMarker> markers;
+
         private double maxiumXRot;
+
         private double maxiumYRot;
+
         private double maxiumZRot;
+
         private double minimumXRot;
+
         private double minimumYRot;
+
         private double minimumZRot;
+
         private string poseFolder;
+
         private Bone selectedBone;
+
         private String selectedBoneName;
+
         private double selectedHeight;
+
         private double selectedLength;
+
         private JointMarker selectedMarker;
+
         private int selectedTabItem;
+
         private double selectedWidth;
+
         private double selectedXRot;
+
         private double selectedYRot;
+
         private double selectedZRot;
+
         private Bone skeleton;
+
         private List<Object3D> skeletonMeshs;
 
         public FigureDlg()
@@ -66,6 +90,23 @@ namespace Make3D.Dialogs
             LimitsVisible = Visibility.Hidden;
             poseFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             poseFolder = System.IO.Path.Combine(poseFolder, "Barnacle\\Poses");
+        }
+
+        public List<String> AllBoneNames
+        {
+            get
+            {
+                return allBoneNames;
+            }
+
+            set
+            {
+                if (allBoneNames != value)
+                {
+                    allBoneNames = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public bool EditLimits
@@ -240,6 +281,12 @@ namespace Make3D.Dialogs
                 {
                     selectedBoneName = value;
                     NotifyPropertyChanged();
+                    if (selectedMarker == null || selectedBone.Name != SelectedBoneName)
+                    {
+                        selectedMarker = FindMarkerForBone(selectedBoneName);
+                        UpdateControlsForSelectedMarker();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -534,22 +581,23 @@ namespace Make3D.Dialogs
         {
             skeleton = new Bone();
             skeleton.Name = "Root";
-            Bone neck = skeleton.AddSub("Neck", 3.0875, 9.88, 11065, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
+            Bone neck = skeleton.AddSub("Neck", 3.0875, 9.88, 11.065, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
             Bone head = neck.AddSub("Head", 20.218, 19.4, 15.4, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
 
             // spine
             Bone vert1 = skeleton.AddSub("Vert1", 20.675, 26.954, 18.82, 0, 0, 270, -5, 5, 85, 95, 0, 0, "bone", "chest1");
 
-            Bone vert2 = vert1.AddSub("Vert2", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "lowerchest1");
-            /*
-            Bone vert3 = vert2.AddSub("Vert3", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
-            Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
+            Bone vert2 = vert1.AddSub("Vert2", 23.138, 9.465, 16.485, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "lowerchest1");
+
+            Bone vert3 = vert2.AddSub("Vert3", 24.011, 19.2, 19.11, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "groin1");
+
+            // Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
 
             // arms
             Bone rs = skeleton.AddSub("RightShoulder", 7, 5, 5, 0, 0, 180, -1, -1, -1, -1, -1, -1, "bone", "rightshoulder1");
-            Bone rua = rs.AddSub("RightUpperArm", 10, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1, "bone", "upperrightarm1");
-            Bone rla = rua.AddSub("RightLowerArm", 10, 5, 5, 0, 0, 10, -1, -1, -1, -1, -1, -1, "bone", "lowerrightarm1");
-            Bone rh = rla.AddSub("RightHand", 10, 4, 4, 0, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone", "righthand1");
+            Bone rua = rs.AddSub("RightUpperArm", 21.757, 8, 9.667, 0, 0, -5, -1, -1, -1, -1, -1, -1, "bone", "upperrightarm1");
+            Bone rla = rua.AddSub("RightLowerArm", 19.602, 6.55, 6.31, 0, 0, 10, -1, -1, -1, -1, -1, -1, "bone", "lowerrightarm1");
+            Bone rh = rla.AddSub("RightHand", 15, 10, 10, 0, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone", "righthand1");
 
             Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1, "bone", "leftshoulder1");
             Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1, "bone", "upperleftarm1");
@@ -557,9 +605,9 @@ namespace Make3D.Dialogs
             Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "lefthandbone", "lefthand1");
 
             // pelvis
-            Bone pr = vert4.AddSub("RightPelvis", 5, 5, 5, 0, 0, -90, -1, -1, -1, -1, -1, -1);
+            Bone pr = vert3.AddSub("RightPelvis", 5, 5, 5, 0, 0, -90, -1, -1, -1, -1, -1, -1);
 
-            Bone pl = vert4.AddSub("LeftPelvis", 5, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
+            Bone pl = vert3.AddSub("LeftPelvis", 5, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
 
             // legs
             Bone rul = pr.AddSub("RightUpperLeg", 17, 10, 8, 3, 270, 85, -1, -1, -1, -1, -1, -1, "bone", "rightthigh1");
@@ -573,16 +621,15 @@ namespace Make3D.Dialogs
             Bone lft = lll.AddSub("LeftFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone", "leftfoot1");
 
             // force recalculation of positions.
-            double y = vert1.Length + vert2.Length + vert3.Length + vert4.Length + rul.Length + rll.Length + rft.Height;
+            double y = vert1.Length + vert2.Length + vert3.Length + vert3.Length + rul.Length + rll.Length + rft.Height;
 
-            */
-
-            double y = 40; // remove me
+            //double y = 40; // remove me
             skeleton.StartPosition = new Point3D(0, y, 0);
             skeleton.EndPosition = new Point3D(0, y, 0);
 
             skeleton.Update();
             skeleton.Dump(0);
+            GetAllBoneNames(skeleton);
         }
 
         private void CreateMarker(Point3D position, double size, Color col, string name, Bone bn)
@@ -668,6 +715,16 @@ namespace Make3D.Dialogs
             }
         }
 
+        private void GetAllBoneNames(Bone skeleton)
+        {
+            allBoneNames = new List<string>();
+            allBoneNames.Add(skeleton.Name);
+
+            skeleton.AllChildNames(allBoneNames);
+            allBoneNames.Sort();
+            NotifyPropertyChanged("AllBoneNames");
+        }
+
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             bool leftButton = (e.LeftButton == MouseButtonState.Pressed);
@@ -709,19 +766,7 @@ namespace Make3D.Dialogs
                     {
                         CreateAdorner();
                         SelectedBoneName = selectedMarker.Name;
-                        selectedBone = selectedMarker.Bone;
-                        SelectedXRot = selectedMarker.Bone.XRot;
-                        SelectedYRot = selectedMarker.Bone.YRot;
-                        SelectedZRot = selectedMarker.Bone.ZRot;
-                        SelectedWidth = selectedBone.Width;
-                        SelectedHeight = selectedBone.Height;
-                        SelectedLength = selectedBone.Length;
-                        MinimumXRot = selectedBone.MinXRot;
-                        MinimumYRot = selectedBone.MinYRot;
-                        MinimumZRot = selectedBone.MinZRot;
-                        MaximumXRot = selectedBone.MaxXRot;
-                        MaximumYRot = selectedBone.MaxYRot;
-                        MaximumZRot = selectedBone.MaxZRot;
+                        UpdateControlsForSelectedMarker();
 
                         selectedMarker.OnBoneRotated += OnBoneRotated;
                     }
@@ -816,7 +861,7 @@ namespace Make3D.Dialogs
                 skeleton.StartPosition = new Point3D(X, Y, Z);
                 skeleton.EndPosition = new Point3D(X, Y, Z);
                 skeleton.Load(nd as XmlElement);
-
+                GetAllBoneNames(skeleton);
                 UpdateDisplay();
             }
         }
@@ -972,6 +1017,23 @@ namespace Make3D.Dialogs
                 skeleton.Save(doc, docNode);
                 doc.Save(dlg.FileName);
             }
+        }
+
+        private void UpdateControlsForSelectedMarker()
+        {
+            selectedBone = selectedMarker.Bone;
+            SelectedXRot = selectedMarker.Bone.XRot;
+            SelectedYRot = selectedMarker.Bone.YRot;
+            SelectedZRot = selectedMarker.Bone.ZRot;
+            SelectedWidth = selectedBone.Width;
+            SelectedHeight = selectedBone.Height;
+            SelectedLength = selectedBone.Length;
+            MinimumXRot = selectedBone.MinXRot;
+            MinimumYRot = selectedBone.MinYRot;
+            MinimumZRot = selectedBone.MinZRot;
+            MaximumXRot = selectedBone.MaxXRot;
+            MaximumYRot = selectedBone.MaxYRot;
+            MaximumZRot = selectedBone.MaxZRot;
         }
 
         private void UpdateDisplay()

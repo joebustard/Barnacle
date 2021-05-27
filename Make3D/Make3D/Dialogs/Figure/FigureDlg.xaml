@@ -61,7 +61,7 @@
                         <Label Grid.Row="0" Style="{StaticResource InverseLabel}">Skeleton</Label>
                         <StackPanel Grid.Row="2" Orientation="Horizontal">
                             <Label Width="40">Bone</Label>
-                            <Label Width="100" Content="{Binding SelectedBoneName}" />
+                            <ComboBox Width="200" SelectedItem="{Binding SelectedBoneName}" ItemsSource="{Binding AllBoneNames}" />
                         </StackPanel>
                         <StackPanel Grid.Row="3" Orientation="Horizontal">
                             <Label Width="40" HorizontalContentAlignment="Right">Xr</Label>

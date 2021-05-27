@@ -114,21 +114,33 @@
         <Label Grid.Row="19"   HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="12"  Foreground="Red"   Grid.RowSpan="2">X</Label>
         <TextBox Grid.Row="19" Grid.Column="1" FontSize="14" Text="{Binding RotationX}"  Grid.RowSpan="2" />
         <UniformGrid Grid.Row="19" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  Style="{StaticResource SmallButton}" Content="+" Command="{Binding RotateXCommand}" CommandParameter="+" />
-            <Button  Style="{StaticResource SmallButton}" Content="-" Command="{Binding RotateXCommand}" CommandParameter="-" />
+            <Button  Style="{StaticResource SmallButton}" Command="{Binding RotateXCommand}" CommandParameter="+">
+                <Image Source="/images/buttons/X1.png" />
+            </Button>
+            <Button  Style="{StaticResource SmallButton}"  Command="{Binding RotateXCommand}" CommandParameter="-">
+                <Image Source="/images/buttons/X2.png" />
+            </Button>
         </UniformGrid>
 
         <Label Grid.Row="21"   HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="12"  Foreground="Green"   Grid.RowSpan="2">Y</Label>
         <TextBox Grid.Row="21" Grid.Column="1" FontSize="14" Text="{Binding RotationY}"   Grid.RowSpan="2" />
         <UniformGrid Grid.Row="21" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button Style="{StaticResource SmallButton}" Content="+" Command="{Binding RotateYCommand}" CommandParameter="+" />
-            <Button Style="{StaticResource SmallButton}" Content="-" Command="{Binding RotateYCommand}" CommandParameter="-" />
+            <Button Style="{StaticResource SmallButton}" Command="{Binding RotateYCommand}" CommandParameter="+">
+                <Image Source="/images/buttons/Y1.png" />
+            </Button>
+            <Button Style="{StaticResource SmallButton}"  Command="{Binding RotateYCommand}" CommandParameter="-">
+                <Image Source="/images/buttons/Y2.png" />
+            </Button>
         </UniformGrid>
         <Label Grid.Row="23"   HorizontalContentAlignment="Center" VerticalAlignment="Center" FontSize="12"  Foreground="Blue"  Grid.RowSpan="2">Z</Label>
         <TextBox Grid.Row="23" Grid.Column="1" FontSize="14" Text="{Binding RotationZ}"  Grid.RowSpan="2" />
         <UniformGrid Grid.Row="23" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  Style="{StaticResource SmallButton}" Content="+" Command="{Binding RotateZCommand}" CommandParameter="+" />
-            <Button  Style="{StaticResource SmallButton}" Content="-" Command="{Binding RotateZCommand}" CommandParameter="-" />
+            <Button  Style="{StaticResource SmallButton}" Command="{Binding RotateZCommand}" CommandParameter="+">
+                <Image Source="/images/buttons/Z1.png" />
+            </Button>
+            <Button  Style="{StaticResource SmallButton}" Command="{Binding RotateZCommand}" CommandParameter="-">
+                <Image Source="/images/buttons/Z2.png" />
+            </Button>
         </UniformGrid>
     </Grid>
 </UserControl>

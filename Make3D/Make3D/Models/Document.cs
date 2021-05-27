@@ -204,7 +204,10 @@ namespace Make3D.Models
                         {
                             obj = obj.ConvertToMesh();
                         }
-                        Content.Add(obj);
+                        if (!(double.IsNegativeInfinity(obj.Position.X)))
+                        {
+                            Content.Add(obj);
+                        }
                     }
                     if (ndname == "refobj")
                     {
@@ -258,7 +261,10 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
-                        Content.Add(obj);
+                        if (!(double.IsNegativeInfinity(obj.Position.X)))
+                        {
+                            Content.Add(obj);
+                        }
                     }
                     if (ndname == "refgroupobj")
                     {
@@ -266,14 +272,13 @@ namespace Make3D.Models
                         obj.Read(nd);
 
                         obj.SetMesh();
-                        bool found = false;
+
                         foreach (Object3D old in Content)
                         {
                             if (old is ReferenceGroup3D)
                             {
                                 if (old.Name == obj.Name && (old as ReferenceGroup3D).Reference.Path == obj.Reference.Path)
                                 {
-                                    found = true;
                                     old.Position = obj.Position;
                                     old.Rotation = obj.Rotation;
                                     break;
@@ -813,7 +818,7 @@ namespace Make3D.Models
                             obj.Reference.TimeStamp = timeStamp;
                             obj.BaseRead(nd);
                             obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
                                 Content.Add(obj);
                             }
@@ -826,7 +831,7 @@ namespace Make3D.Models
                             obj.Reference.TimeStamp = timeStamp;
                             obj.BaseRead(nd);
                             obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName))
+                            if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
                                 Content.Add(obj);
                             }

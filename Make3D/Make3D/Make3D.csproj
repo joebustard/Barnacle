@@ -673,6 +673,12 @@
     </None>
     <Resource Include="Images\Buttons\pyramid2.png" />
     <Resource Include="Images\Buttons\Project.png" />
+    <Resource Include="Images\Buttons\Z1.png" />
+    <Resource Include="Images\Buttons\Z2.png" />
+    <Resource Include="Images\Buttons\X1.png" />
+    <Resource Include="Images\Buttons\X2.png" />
+    <Resource Include="Images\Buttons\Y1.png" />
+    <Resource Include="Images\Buttons\Y2.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
