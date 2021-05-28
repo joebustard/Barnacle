@@ -281,7 +281,7 @@ namespace Make3D.Dialogs
                 {
                     selectedBoneName = value;
                     NotifyPropertyChanged();
-                    if (selectedMarker == null || selectedBone.Name != SelectedBoneName)
+                    if (selectedMarker == null || selectedBone == null || selectedBone.Name != SelectedBoneName)
                     {
                         selectedMarker = FindMarkerForBone(selectedBoneName);
                         UpdateControlsForSelectedMarker();
@@ -477,6 +477,11 @@ namespace Make3D.Dialogs
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
+            ClearFigure();
+            ClearSkeleton();
+            GenerateFigure();
+            TransferFigureToVertices();
+            CentreVertices();
             DialogResult = true;
             Close();
         }
@@ -1016,6 +1021,23 @@ namespace Make3D.Dialogs
                 docNode.SetAttribute("Z", skeleton.StartPosition.Z.ToString());
                 skeleton.Save(doc, docNode);
                 doc.Save(dlg.FileName);
+            }
+        }
+
+        private void TransferFigureToVertices()
+        {
+            int faceOffset = 0;
+            foreach (Object3D ob in skeletonMeshs)
+            {
+                foreach (Point3D p in ob.AbsoluteObjectVertices)
+                {
+                    Vertices.Add(p);
+                }
+                foreach (int triV in ob.TriangleIndices)
+                {
+                    Faces.Add(triV + faceOffset);
+                }
+                faceOffset += ob.AbsoluteObjectVertices.Count;
             }
         }
 

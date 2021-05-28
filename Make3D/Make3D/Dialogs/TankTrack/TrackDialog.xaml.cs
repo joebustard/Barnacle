@@ -49,6 +49,7 @@ namespace Make3D.Dialogs
             DataContext = this;
             TrackTypes = new ObservableCollection<string>();
             TrackTypes.Add("Simple");
+            TrackTypes.Add("Simple 2");
             TrackTypes.Add("Centre Guide");
             SelectedTrackType = "Simple";
             NoOfLinks = 100;
@@ -784,7 +785,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void GenerateSimpleTrack()
+        private void GenerateSimpleTrack(int subType)
         {
             if (outerPolygon != null)
             {
@@ -800,7 +801,21 @@ namespace Make3D.Dialogs
                     }
                     System.Windows.Point p1 = trackPath[i];
                     System.Windows.Point p2 = trackPath[j];
-                    SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall);
+                    switch (subType)
+                    {
+                        case 0:
+                            {
+                                SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall, 1);
+                            }
+                            break;
+
+                        case 1:
+                            {
+                                SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall, -1);
+                            }
+                            break;
+                    }
+
                     firstCall = false;
                 }
             }
@@ -813,7 +828,11 @@ namespace Make3D.Dialogs
                 switch (SelectedTrackType)
                 {
                     case "Simple":
-                        GenerateSimpleTrack();
+                        GenerateSimpleTrack(0);
+                        break;
+
+                    case "Simple 2":
+                        GenerateSimpleTrack(1);
                         break;
 
                     case "Centre Guide":
@@ -1083,8 +1102,9 @@ namespace Make3D.Dialogs
             EditorParameters.Set("GuideSize", SpudSize.ToString());
         }
 
-        private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall)
+        private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall, int spudSign)
         {
+            double spudDim = spudSign * spudSize;
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
 
@@ -1098,7 +1118,7 @@ namespace Make3D.Dialogs
                         outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
                     }
                     outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness - spudSize, p1.Y + 0.87 * dy));
+                    outter.Add(new System.Windows.Point(p1.X + thickness - spudDim, p1.Y + 0.87 * dy));
                     outter.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
 
                     if (firstCall)
@@ -1117,7 +1137,7 @@ namespace Make3D.Dialogs
                         outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
                     }
                     outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness - spudSize, p1.Y + 0.87 * dy));
+                    outter.Add(new System.Windows.Point(p1.X - thickness - spudDim, p1.Y + 0.87 * dy));
                     outter.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
 
                     if (firstCall)
@@ -1140,7 +1160,7 @@ namespace Make3D.Dialogs
                         outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
                     }
                     outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spudSize));
+                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spudDim));
                     outter.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
 
                     if (firstCall)
@@ -1159,7 +1179,7 @@ namespace Make3D.Dialogs
                         outter.Add(new System.Windows.Point(p1.X, p1.Y - +thickness));
                     }
                     outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness + spudSize));
+                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness + spudDim));
                     outter.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
 
                     if (firstCall)
@@ -1195,7 +1215,7 @@ namespace Make3D.Dialogs
                 }
                 System.Windows.Point o1 = Perpendicular(p1, p2, 0.0, -sign * thickness);
                 System.Windows.Point o2 = Perpendicular(p1, p2, 0.75, -sign * thickness);
-                System.Windows.Point o3 = Perpendicular(p1, p2, 0.87, -sign * (thickness + spudSize));
+                System.Windows.Point o3 = Perpendicular(p1, p2, 0.87, -sign * (thickness + spudDim));
                 System.Windows.Point o4 = Perpendicular(p1, p2, 1.0, -sign * thickness);
                 if (firstCall)
                 {

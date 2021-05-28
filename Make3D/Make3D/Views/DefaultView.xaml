@@ -180,9 +180,11 @@
                         <Custom:RibbonButton x:Name="GroupIntersection" Label="Group Intersection" Command="{Binding GroupCommand}" CommandParameter="GroupIntersection" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
 
                         <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <!--
                         <Custom:RibbonSeparator />
 
                         <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        -->
                         <Custom:RibbonSeparator />
                         <Custom:RibbonButton x:Name="GroupToMesh" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
