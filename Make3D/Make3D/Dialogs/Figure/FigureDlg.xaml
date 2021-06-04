@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
         Title="Figure" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+
     <Grid VerticalAlignment="Stretch" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -23,17 +24,16 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
+                            <RowDefinition />
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
                             <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
-                        <StackPanel Grid.Row="1" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
+                        <Label Grid.Row="1" FontSize="16" HorizontalAlignment="Center">Models</Label>
+
+                        <ListView Grid.Row="2" ItemsSource="{Binding AllModelAssignments}">
+                        </ListView>
+
                         <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
                         <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
                         <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
@@ -66,10 +66,16 @@
                         <StackPanel Grid.Row="3" Orientation="Horizontal">
                             <Label Width="40" HorizontalContentAlignment="Right">Xr</Label>
                             <TextBox Width="60" Text="{Binding SelectedXRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
-                            <Label Width="40" HorizontalContentAlignment="Right">Yr</Label>
+                            <Button Width="20" Style="{StaticResource SmallButton}" Content="-" Click="XrMinus" />
+                            <Button Width="20" Style="{StaticResource SmallButton}" Content="+" Click="XrPlus" />
+                            <Label Margin="10,0" Width="40" HorizontalContentAlignment="Right">Yr</Label>
                             <TextBox Width="60" Text="{Binding SelectedYRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
+                            <Button Width="20" Style="{StaticResource SmallButton}" Content="-" Click="YrMinus" />
+                            <Button Width="20" Style="{StaticResource SmallButton}" Content="+" Click="YrPlus" />
                             <Label Width="40" HorizontalContentAlignment="Right">Zr</Label>
                             <TextBox Width="60" Text="{Binding SelectedZRot}" Margin="0,2,2,2" />
+                            <Button Width="20" Style="{StaticResource SmallButton}" Content="-" Click="ZrMinus" />
+                            <Button Width="20" Style="{StaticResource SmallButton}" Content="+" Click="ZrPlus" />
                         </StackPanel>
                         <StackPanel Grid.Row="4" Orientation="Horizontal">
                             <Label Width="40" HorizontalContentAlignment="Right">L</Label>

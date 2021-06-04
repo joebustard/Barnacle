@@ -47,7 +47,10 @@ namespace Make3D.Dialogs.Figure
             MinZRot = -359;
             MaxZRot = 359;
             SubBones = new List<Bone>();
+            DisplayRecord = null;
         }
+
+        public BoneDisplayRecord DisplayRecord { get; set; }
 
         public Point3D EndPosition
         {
@@ -235,6 +238,15 @@ namespace Make3D.Dialogs.Figure
             UpdateSubBones(EndPosition.X, EndPosition.Y, EndPosition.Z, xRotRadians, yRotRadians, zRotRadians);
         }
 
+        internal void AddFigureModels(List<FigureModel> figureModels)
+        {
+            foreach (Bone bn in SubBones)
+            {
+                figureModels.Add(new FigureModel(bn.Name, bn.FigureModelName));
+                bn.AddFigureModels(figureModels);
+            }
+        }
+
         internal void AllChildNames(List<string> res)
         {
             foreach (Bone bn in SubBones)
@@ -280,6 +292,7 @@ namespace Make3D.Dialogs.Figure
                 br.Scale = new Scale3D(bn.Length, bn.Height, bn.Width);
                 br.Bone = bn;
                 pnts.Add(br);
+                bn.DisplayRecord = br;
                 bn.GetSubPositions(pnts, figure);
             }
         }
@@ -309,7 +322,7 @@ namespace Make3D.Dialogs.Figure
         {
             XmlElement ele = doc.CreateElement("Bone");
             ele.SetAttribute("Name", Name);
-            
+
             ele.SetAttribute("L", Length.ToString());
             ele.SetAttribute("W", Width.ToString());
 
@@ -327,6 +340,27 @@ namespace Make3D.Dialogs.Figure
             {
                 bn.Save(doc, ele);
             }
+        }
+
+        internal bool SetModelForBone(string boneName, string figureName)
+        {
+            bool changed = false;
+            if (Name == boneName)
+            {
+                if (figureName.ToLower() != FigureModelName.ToLower())
+                {
+                    FigureModelName = figureName.ToLower();
+                    changed = true;
+                }
+            }
+            else
+            {
+                foreach (Bone bn in SubBones)
+                {
+                    changed = changed | bn.SetModelForBone(boneName, figureName);
+                }
+            }
+            return changed;
         }
 
         private Matrix3D CalculateRotationMatrix(double x, double y, double z)

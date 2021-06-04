@@ -114,7 +114,11 @@
     <Compile Include="Dialogs\Figure\FigureDlg.xaml.cs">
       <DependentUpon>FigureDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Figure\FigureModel.cs" />
     <Compile Include="Dialogs\Figure\JointMarker.cs" />
+    <Compile Include="Dialogs\Figure\ModelAssignmentControl.xaml.cs">
+      <DependentUpon>ModelAssignmentControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Filet\Filet.xaml.cs">
       <DependentUpon>Filet.xaml</DependentUpon>
     </Compile>
@@ -320,6 +324,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Figure\FigureDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Figure\ModelAssignmentControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

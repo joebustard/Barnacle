@@ -23,6 +23,7 @@ namespace Make3D.Dialogs
         private const string poseFilter = "Pose Files (*.pose)|*.pose";
         private Adorner adorner;
         private List<String> allBoneNames;
+        private List<string> availableFigureModels = new List<string>();
 
         // Yes this tool does have its own doucment.
         // Its used to load the models that will be available
@@ -32,6 +33,7 @@ namespace Make3D.Dialogs
 
         private List<Object3D> figureMeshs;
 
+        private List<FigureModel> figureModels;
         private Point lastMousePos;
 
         private Visibility limitsVisible;
@@ -50,6 +52,7 @@ namespace Make3D.Dialogs
 
         private double minimumZRot;
 
+        private List<ModelAssignmentControl> modelAssignments;
         private string poseFolder;
 
         private Bone selectedBone;
@@ -73,7 +76,6 @@ namespace Make3D.Dialogs
         private double selectedZRot;
 
         private Bone skeleton;
-
         private List<Object3D> skeletonMeshs;
 
         public FigureDlg()
@@ -90,6 +92,10 @@ namespace Make3D.Dialogs
             LimitsVisible = Visibility.Hidden;
             poseFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             poseFolder = System.IO.Path.Combine(poseFolder, "Barnacle\\Poses");
+            figureModels = new List<FigureModel>();
+            availableFigureModels = new List<string>();
+            modelAssignments = new List<ModelAssignmentControl>();
+            NotificationManager.Subscribe("SelectedFigure", SelectedFigureModelChanged);
         }
 
         public List<String> AllBoneNames
@@ -105,6 +111,38 @@ namespace Make3D.Dialogs
                 {
                     allBoneNames = value;
                     NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<ModelAssignmentControl> AllModelAssignments
+        {
+            get
+            {
+                return modelAssignments;
+            }
+            set
+            {
+                if (value != modelAssignments)
+                {
+                    modelAssignments = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<String> AvailableFigureModels
+        {
+            get
+            {
+                return availableFigureModels;
+            }
+            set
+            {
+                if (availableFigureModels != value)
+                {
+                    availableFigureModels = value;
+                    // NotifyPropertyChanged();
                 }
             }
         }
@@ -128,6 +166,22 @@ namespace Make3D.Dialogs
                     {
                         LimitsVisible = Visibility.Hidden;
                     }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public List<FigureModel> FigureModels
+        {
+            get
+            {
+                return figureModels;
+            }
+            set
+            {
+                if (figureModels != value)
+                {
+                    figureModels = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -482,6 +536,7 @@ namespace Make3D.Dialogs
             GenerateFigure();
             TransferFigureToVertices();
             CentreVertices();
+            FloorVertices();
             DialogResult = true;
             Close();
         }
@@ -563,7 +618,7 @@ namespace Make3D.Dialogs
             adorner.AdornObject(selectedMarker);
         }
 
-        private void CreateBoneModel(BoneDisplayRecord p)
+        private void CreateBoneModel(BoneDisplayRecord p, bool setJointPointsForHull = false)
         {
             foreach (Object3D ob in document.Content)
             {
@@ -578,6 +633,11 @@ namespace Make3D.Dialogs
                     cl.Remesh();
                     cl.SetMesh();
                     skeletonMeshs.Add(cl);
+                    if (setJointPointsForHull)
+                    {
+                        p.SetJointEndPoints(cl.AbsoluteObjectVertices);
+                    }
+                    p.DisplayObject = cl;
                 }
             }
         }
@@ -586,55 +646,92 @@ namespace Make3D.Dialogs
         {
             skeleton = new Bone();
             skeleton.Name = "Root";
-            Bone neck = skeleton.AddSub("Neck", 3.0875, 9.88, 11.065, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
-            Bone head = neck.AddSub("Head", 20.218, 19.4, 15.4, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
+            skeleton.Length = 0;
+            skeleton.Width = 5;
+            skeleton.Height = 5;
+
+            Bone neck = skeleton.AddSub("Neck", 3.0875, 8, 9, 0, 0, 90, -1, -1, -1, -1, -1, -1, "bone", "Neck1");
+
+            Bone head = neck.AddSub("Head", 17, 14, 15, 0, -90, 0, -5, 5, 85, 95, 0, 0, "headbone", "malehead1");
 
             // spine
-            Bone vert1 = skeleton.AddSub("Vert1", 20.675, 26.954, 18.82, 0, 0, 270, -5, 5, 85, 95, 0, 0, "bone", "chest1");
+            Bone vert1 = skeleton.AddSub("Vert1", 18, 20, 24, 0, 0, 270, -5, 5, 85, 95, 0, 0, "bone", "chest1");
 
-            Bone vert2 = vert1.AddSub("Vert2", 23.138, 9.465, 16.485, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "lowerchest1");
+            Bone vert2 = vert1.AddSub("Vert2", 12, 16, 21, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "lowerchest1");
 
-            Bone vert3 = vert2.AddSub("Vert3", 24.011, 19.2, 19.11, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "groin1");
+            Bone vert3 = vert2.AddSub("Vert3", 20, 19, 24, 0, 0, 0, -5, 5, 85, 95, 0, 0, "bone", "groin1");
 
             // Bone vert4 = vert3.AddSub("Vert4", 5, 5, 5, 0, 0, 0, -5, 5, 85, 95, 0, 0);
 
             // arms
-            Bone rs = skeleton.AddSub("RightShoulder", 7, 5, 5, 0, 0, 180, -1, -1, -1, -1, -1, -1, "bone", "rightshoulder1");
-            Bone rua = rs.AddSub("RightUpperArm", 21.757, 8, 9.667, 0, 0, -5, -1, -1, -1, -1, -1, -1, "bone", "upperrightarm1");
-            Bone rla = rua.AddSub("RightLowerArm", 19.602, 6.55, 6.31, 0, 0, 10, -1, -1, -1, -1, -1, -1, "bone", "lowerrightarm1");
-            Bone rh = rla.AddSub("RightHand", 15, 10, 10, 0, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone", "righthand1");
+            Bone rs = skeleton.AddSub("RightShoulder", 10, 5, 5, 0, 0, 202, -1, -1, -1, -1, -1, -1, "bone", "rightshoulder1");
+            Bone rua = rs.AddSub("RightUpperArm", 21.757, 8, 9.667, -20, 30, -5, -1, -1, -1, -1, -1, -1, "bone", "upperrightarm1");
+            Bone rla = rua.AddSub("RightLowerArm", 19.602, 6.55, 6.31, 0, 138.795784112359, -48.587292188853, -1, -1, -1, -1, -1, -1, "bone", "lowerrightarm1");
+            Bone rh = rla.AddSub("RightHand", 15, 9, 9, -20, 0, 10, -1, -1, -1, -1, -1, -1, "righthandbone", "righthand1");
 
-            Bone ls = skeleton.AddSub("LeftShoulder", 7, 5, 5, 0, 0, 0, -1, -1, -1, -1, -1, -1, "bone", "leftshoulder1");
-            Bone lua = ls.AddSub("LeftUpperArm", 10, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1, "bone", "upperleftarm1");
-            Bone lla = lua.AddSub("LeftLowerArm", 10, 5, 5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "bone", "lowerleftarm1");
-            Bone lh = lla.AddSub("LeftHand", 5, 2.50, 2.5, 0, 0, -10, -1, -1, -1, -1, -1, -1, "lefthandbone", "lefthand1");
+            Bone ls = skeleton.AddSub("LeftShoulder", 10, 5, 5, 0, 10, -22, -1, -1, -1, -1, -1, -1, "bone", "leftshoulder1");
+            Bone lua = ls.AddSub("LeftUpperArm", 21.7, 8, 9.2, -20, -30, 5, -1, -1, -1, -1, -1, -1, "bone", "upperleftarm1");
+            Bone lla = lua.AddSub("LeftLowerArm", 19, 6.5, 6.3, 0, -130, 40, -1, -1, -1, -1, -1, -1, "bone", "lowerleftarm1");
+            Bone lh = lla.AddSub("LeftHand", 15, 8, 6, 0, -1.931111, -0.50878, -1, -1, -1, -1, -1, -1, "lefthandbone", "lefthand1");
 
             // pelvis
-            Bone pr = vert3.AddSub("RightPelvis", 5, 5, 5, 0, 0, -90, -1, -1, -1, -1, -1, -1);
+            Bone pr = vert3.AddSub("RightPelvis", 14, 5, 5, 0, 0, -135, -1, -1, -1, -1, -1, -1, "bone", "invisible");
+            Bone rul = pr.AddSub("RightUpperLeg", 38, 15, 13, 2.68395891907361, -1.51219220499018, 131, -1, -1, -1, -1, -1, -1, "bone", "rightthigh1");
+            Bone rll = rul.AddSub("RightLowerLeg", 30, 11, 9, 0, 270, -5, -1, -1, -1, -1, -1, -1, "bone", "lowerrightleg1");
+            Bone rft = rll.AddSub("RightFoot", 19, 8, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1, "footbone", "rightfoot1");
 
-            Bone pl = vert3.AddSub("LeftPelvis", 5, 5, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1);
-
-            // legs
-            Bone rul = pr.AddSub("RightUpperLeg", 17, 10, 8, 3, 270, 85, -1, -1, -1, -1, -1, -1, "bone", "rightthigh1");
-            Bone rll = rul.AddSub("RightLowerLeg", 16, 5, 5, 0, 0, -5, -1, -1, -1, -1, -1, -1, "bone", "lowerrightleg1");
-
-            Bone lul = pl.AddSub("LeftUpperLeg", 17, 10, 8, 0, -84, -85, -1, -1, -1, -1, -1, -1, "bone", "leftthigh1");
-            Bone lll = lul.AddSub("LeftLowerLeg", 16, 5, 5, 0, 0, 5, -1, -1, -1, -1, -1, -1, "bone", "lowerleftleg1");
-
-            Bone rft = rll.AddSub("RightFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone", "rightfoot1");
-
-            Bone lft = lll.AddSub("LeftFoot", 10, 5, 2, 0, -90, 90, -1, -1, -1, -1, -1, -1, "footbone", "leftfoot1");
+            Bone pl = vert3.AddSub("LeftPelvis", 14, 5, 5, 0, 0, 135, -1, -1, -1, -1, -1, -1, "bone", "invisible");
+            Bone lul = pl.AddSub("LeftUpperLeg", 38, 15, 14, 2, 180, -130, -1, -1, -1, -1, -1, -1, "bone", "leftthigh1");
+            Bone lll = lul.AddSub("LeftLowerLeg", 30, 11, 9, 14.93, 90, 0.5777, -1, -1, -1, -1, -1, -1, "bone", "lowerleftleg1");
+            Bone lft = lll.AddSub("LeftFoot", 19, 8, 5, 0, 0, 90, -1, -1, -1, -1, -1, -1, "footbone", "leftfoot1");
 
             // force recalculation of positions.
-            double y = vert1.Length + vert2.Length + vert3.Length + vert3.Length + rul.Length + rll.Length + rft.Height;
+            double y = vert1.Length + vert2.Length + vert3.Height + rul.Length + rll.Length + rft.Height - 10;
 
-            //double y = 40; // remove me
+            // double y = 40; // remove me
             skeleton.StartPosition = new Point3D(0, y, 0);
             skeleton.EndPosition = new Point3D(0, y, 0);
 
             skeleton.Update();
-            skeleton.Dump(0);
             GetAllBoneNames(skeleton);
+        }
+
+        private void CreateJointModel(List<BoneDisplayRecord> brecs, Bone bn, Point3DCollection parentPnts)
+        {
+            //    Log($"CreateJoint Model {bn.FigureModelName}");
+            if (parentPnts != null)
+            {
+                //  Log($" link parentPoints {bn.FigureModelName}");
+                if (bn.DisplayRecord != null)
+                {
+                    GenerateJoint(parentPnts, bn.DisplayRecord);
+                }
+            }
+            foreach (Bone sb in bn.SubBones)
+            {
+                CreateJointModel(brecs, sb, bn.DisplayRecord.EndJointPoints);
+            }
+        }
+
+        private void CreateJointStartPoint(List<BoneDisplayRecord> brecs, Bone parent, Bone child)
+        {
+            if (parent != null)
+            {
+                BoneDisplayRecord parentBrec = FindBrec(brecs, parent.Name);
+                BoneDisplayRecord childBrec = FindBrec(brecs, child.Name);
+                if (parentBrec != null && childBrec != null)
+                {
+                    Object3D childOb = childBrec.DisplayObject;
+                    if (childOb != null)
+                    {
+                        childBrec.SetJointStartPoints(parent.EndPosition, childOb.AbsoluteObjectVertices);
+                    }
+                }
+            }
+            foreach (Bone sub in child.SubBones)
+            {
+                CreateJointStartPoint(brecs, child, sub);
+            }
         }
 
         private void CreateMarker(Point3D position, double size, Color col, string name, Bone bn)
@@ -661,6 +758,20 @@ namespace Make3D.Dialogs
             markers.Add(marker);
         }
 
+        private BoneDisplayRecord FindBrec(List<BoneDisplayRecord> brecs, string name)
+        {
+            BoneDisplayRecord result = null;
+            foreach (BoneDisplayRecord br in brecs)
+            {
+                if (br.Name == name)
+                {
+                    result = br;
+                    break;
+                }
+            }
+            return result;
+        }
+
         private JointMarker FindMarkerForBone(String name)
         {
             JointMarker res = null;
@@ -685,7 +796,45 @@ namespace Make3D.Dialogs
             skeleton.GetSubPositions(brecs, true);
             foreach (BoneDisplayRecord p in brecs)
             {
-                CreateBoneModel(p);
+                CreateBoneModel(p, true);
+            }
+            // can only do the joints AFTER we have done the bones
+            // also exclude the root.
+
+            foreach (Bone bn in skeleton.SubBones)
+            {
+                CreateJointStartPoint(brecs, null, bn);
+            }
+            foreach (Bone bn in skeleton.SubBones)
+            {
+                CreateJointModel(brecs, bn, null);
+            }
+        }
+
+        private void GenerateJoint(Point3DCollection sPnts, BoneDisplayRecord drec)
+        {
+            Object3D ob = new Object3D();
+            ob.Position = new Point3D(drec.Bone.StartPosition.X, drec.Bone.StartPosition.Y, drec.Bone.StartPosition.Z);
+            // ob.Color = Colors.DarkSalmon;
+            ob.Color = Colors.DarkBlue;
+            foreach (Point3D p in sPnts)
+            {
+                ob.RelativeObjectVertices.Add(new Point3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
+            }
+            foreach (Point3D p in drec.StartJointPoints)
+            {
+                ob.RelativeObjectVertices.Add(new Point3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
+            }
+
+            // must have at least 4 points to do a hull
+            if (ob.RelativeObjectVertices.Count > 4)
+            {
+                try
+                {
+                    ob.ConvertToHull();
+                    skeletonMeshs.Add(ob);
+                }
+                catch { }
             }
         }
 
@@ -728,6 +877,20 @@ namespace Make3D.Dialogs
             skeleton.AllChildNames(allBoneNames);
             allBoneNames.Sort();
             NotifyPropertyChanged("AllBoneNames");
+
+            figureModels.Clear();
+            //FigureModels.Add(new FigureModel(skeleton.Name, skeleton.FigureModelName));
+            skeleton.AddFigureModels(figureModels);
+            modelAssignments.Clear();
+            foreach (FigureModel fm in figureModels)
+            {
+                ModelAssignmentControl mac = new ModelAssignmentControl();
+                mac.BoneName = fm.BoneName;
+                mac.FigureName = fm.FigureModelName;
+                mac.AvailableFigureNames = availableFigureModels;
+                modelAssignments.Add(mac);
+            }
+            NotifyPropertyChanged("AllModelAssignments");
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -831,12 +994,15 @@ namespace Make3D.Dialogs
                 foreach (Object3D ob in document.Content)
                 {
                     ob.CalcScale(false);
+                    availableFigureModels.Add(ob.Name);
                     Scale3D p = ob.Scale;
                     if (p.X > 0 && p.Y > 0 && p.Z > 0)
                     {
                         ob.ScaleMesh(1.0 / p.X, 1.0 / p.Y, 1.0 / p.Z);
                     }
                 }
+
+                NotifyPropertyChanged("AvailableFigureModels");
             }
         }
 
@@ -988,6 +1154,8 @@ namespace Make3D.Dialogs
 
         private void ResetPoseClicked(object sender, RoutedEventArgs e)
         {
+            CreateDefaultSkeleton();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -1021,6 +1189,18 @@ namespace Make3D.Dialogs
                 docNode.SetAttribute("Z", skeleton.StartPosition.Z.ToString());
                 skeleton.Save(doc, docNode);
                 doc.Save(dlg.FileName);
+            }
+        }
+
+        private void SelectedFigureModelChanged(object param)
+        {
+            ModelAssignmentControl mac = param as ModelAssignmentControl;
+            if (mac != null)
+            {
+                if (skeleton.SetModelForBone(mac.BoneName, mac.FigureName))
+                {
+                    UpdateDisplay();
+                }
             }
         }
 
@@ -1076,6 +1256,38 @@ namespace Make3D.Dialogs
             MyModelGroup.Children.Clear();
 
             Redisplay();
+
+            NotifyPropertyChanged("FigureModels");
+        }
+
+        private void XrMinus(object sender, RoutedEventArgs e)
+        {
+            SelectedXRot = SelectedXRot - 5;
+        }
+
+        private void XrPlus(object sender, RoutedEventArgs e)
+        {
+            SelectedXRot = SelectedXRot + 5;
+        }
+
+        private void YrMinus(object sender, RoutedEventArgs e)
+        {
+            SelectedYRot = SelectedYRot - 5;
+        }
+
+        private void YrPlus(object sender, RoutedEventArgs e)
+        {
+            SelectedYRot = SelectedYRot + 5;
+        }
+
+        private void ZrMinus(object sender, RoutedEventArgs e)
+        {
+            SelectedZRot = SelectedZRot - 5;
+        }
+
+        private void ZrPlus(object sender, RoutedEventArgs e)
+        {
+            SelectedZRot = SelectedZRot + 5;
         }
     }
 }

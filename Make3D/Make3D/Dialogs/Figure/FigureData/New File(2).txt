@@ -1,5 +1,0 @@
-<Document NextId="0">
-  <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1" SwapAxis="True" FloorAll="True">
-    <Rotation X="0" Y="0" Z="0" />
-  </Settings>
-</Document>

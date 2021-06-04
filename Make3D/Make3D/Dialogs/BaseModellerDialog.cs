@@ -24,10 +24,15 @@ namespace Make3D.Dialogs
         private Bounds3D bounds;
         private Point3D cameraPosition;
         private EditorParameters editorParameters;
+
         private double fieldOfView;
+
         private Vector3D lookDirection;
+
         private PolarCamera polarCamera;
+
         private Int32Collection tris;
+
         private Point3DCollection vertices;
 
         public BaseModellerDialog()
@@ -278,6 +283,14 @@ namespace Make3D.Dialogs
             LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
             NotifyPropertyChanged("LookDirection");
             NotifyPropertyChanged("CameraPosition");
+        }
+
+        internal static double Distance3D(Point3D p1, Point3D p2)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            double dz = p2.Z - p1.Z;
+            return Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz));
         }
 
         internal void SweepPolarProfilePhi(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true)
