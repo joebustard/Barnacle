@@ -29,7 +29,8 @@ namespace Make3D.Dialogs.Figure
         public ModelAssignmentControl()
         {
             InitializeComponent();
-            DataContext = this;
+            availableFigureNames = new List<string>();
+                DataContext = this;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
