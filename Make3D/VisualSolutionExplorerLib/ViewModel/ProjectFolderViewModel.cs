@@ -117,7 +117,7 @@ namespace VisualSolutionExplorer
                 {
                     string ren = System.IO.Path.GetFileName(fName);
                     string ext = System.IO.Path.GetExtension(fName);
-                    if (ext == ".txt")
+                //    if (ext == ".txt")
                     {
                         string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
