@@ -30,6 +30,7 @@ namespace Make3D.Dialogs
             LowerBevel = 0;
             SweepDegrees = 360;
             DataContext = this;
+            ModelGroup = MyModelGroup;
         }
 
         public double InnerRadius
@@ -206,33 +207,6 @@ namespace Make3D.Dialogs
             polarProfile.Add(pcol);
 
             SweepPolarProfileTheta(polarProfile, cx, 0, sweepDegrees, rotDivisions);
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
         }
 
         private void SaveEditorParameters()

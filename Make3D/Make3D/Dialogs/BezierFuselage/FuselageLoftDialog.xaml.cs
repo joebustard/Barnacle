@@ -33,6 +33,7 @@ namespace Make3D.Dialogs
             DataContext = this;
             selectedBulkhead = -1;
             EditorParameters.ToolName = "BezierFuselage";
+            ModelGroup = MyModelGroup;
         }
 
         public ObservableCollection<BulkheadControl> BulkHeads
@@ -356,7 +357,7 @@ namespace Make3D.Dialogs
                 }
 
                 CentreVertices();
-                SetMesh();
+                Redisplay();
             }
         }
 
@@ -369,21 +370,6 @@ namespace Make3D.Dialogs
                 string f = dlg.FileName;
                 Write(f);
             }
-        }
-
-        private void SetMesh()
-        {
-            GeometryModel3D gm = GetModel();
-            MyModelGroup.Children.Clear();
-            if (floor != null)
-            {
-                MyModelGroup.Children.Add(floor.FloorMesh);
-                foreach (GeometryModel3D m in grid.Group.Children)
-                {
-                    MyModelGroup.Children.Add(m);
-                }
-            }
-            MyModelGroup.Children.Add(gm);
         }
 
         private void TopBulkhead_Click(object sender, RoutedEventArgs e)

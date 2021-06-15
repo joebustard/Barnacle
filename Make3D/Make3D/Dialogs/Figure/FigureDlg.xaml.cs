@@ -96,6 +96,7 @@ namespace Make3D.Dialogs
             availableFigureModels = new List<string>();
             modelAssignments = new List<ModelAssignmentControl>();
             NotificationManager.Subscribe("SelectedFigure", SelectedFigureModelChanged);
+            ModelGroup = MyModelGroup;
         }
 
         public List<String> AllBoneNames
@@ -541,6 +542,56 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        protected override void Redisplay()
+        {
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                GeometryModel3D gm = GetModel();
+                MyModelGroup.Children.Add(gm);
+
+                foreach (Object3D ob in markers)
+                {
+                    ob.Remesh();
+                    GeometryModel3D gm2 = GetMesh(ob);
+
+                    MyModelGroup.Children.Add(gm2);
+                }
+
+                foreach (Object3D ob in skeletonMeshs)
+                {
+                    ob.Remesh();
+                    GeometryModel3D gm2 = GetMesh(ob);
+
+                    MyModelGroup.Children.Add(gm2);
+                }
+                if (adorner != null)
+                {
+                    foreach (Model3D md in adorner.Adornments)
+                    {
+                        MyModelGroup.Children.Add(md);
+                    }
+                }
+            }
+        }
+
         protected override void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Point newPos = e.GetPosition(viewport3D1);
@@ -815,8 +866,14 @@ namespace Make3D.Dialogs
         {
             Object3D ob = new Object3D();
             ob.Position = new Point3D(drec.Bone.StartPosition.X, drec.Bone.StartPosition.Y, drec.Bone.StartPosition.Z);
-            // ob.Color = Colors.DarkSalmon;
-            ob.Color = Colors.DarkBlue;
+            if (drec.Bone.DisplayRecord.DisplayObject != null)
+            {
+                ob.Color = drec.Bone.DisplayRecord.DisplayObject.Color;
+            }
+            else
+            {
+                ob.Color = Colors.Red;
+            }
             foreach (Point3D p in sPnts)
             {
                 ob.RelativeObjectVertices.Add(new Point3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
@@ -1044,56 +1101,6 @@ namespace Make3D.Dialogs
             SelectedZRot = bn.ZRot;
         }
 
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-
-                foreach (Object3D ob in markers)
-                {
-                    ob.Remesh();
-                    GeometryModel3D gm2 = GetMesh(ob);
-
-                    MyModelGroup.Children.Add(gm2);
-                }
-
-                foreach (Object3D ob in skeletonMeshs)
-                {
-                    ob.Remesh();
-                    GeometryModel3D gm2 = GetMesh(ob);
-
-                    MyModelGroup.Children.Add(gm2);
-                }
-                if (adorner != null)
-                {
-                    foreach (Model3D md in adorner.Adornments)
-                    {
-                        MyModelGroup.Children.Add(md);
-                    }
-                }
-            }
-        }
-
         private void RefreshSkeleton(Bone joint)
         {
             List<String> names = new List<string>();
@@ -1171,7 +1178,7 @@ namespace Make3D.Dialogs
                 {
                     Directory.CreateDirectory(poseFolder);
                 }
-                catch (Exception ex)
+                catch
                 {
                     MessageBox.Show("Couldn't create Pose folder:" + poseFolder);
                 }

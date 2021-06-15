@@ -43,13 +43,9 @@ namespace VisualSolutionExplorer
             TextIcon,
             ImageIcon,
             StlIcon,
-            GCodeIcon
+            PrinterIcon
         }
 
-        public ProjectFile ProjectFile
-        {
-            get { return _projectFile; }
-        }
         public FileContextMenuViewModel ContextMenu
         {
             get
@@ -135,6 +131,11 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public ProjectFile ProjectFile
+        {
+            get { return _projectFile; }
+        }
+
         public SolutionChangedDelegate SolutionChanged { get; set; }
 
         public ICommand StopEditing { get; set; }
@@ -218,7 +219,7 @@ namespace VisualSolutionExplorer
                     }
                     break;
 
-                case IconType.GCodeIcon:
+                case IconType.PrinterIcon:
                     {
                         if (_projectFile.OutOfDate)
                         {
@@ -264,8 +265,9 @@ namespace VisualSolutionExplorer
                     case ".gco":
                     case ".g":
                     case ".photon":
+                    case ".ctb":
                         {
-                            IconToShow = IconType.GCodeIcon;
+                            IconToShow = IconType.PrinterIcon;
                         }
                         break;
 

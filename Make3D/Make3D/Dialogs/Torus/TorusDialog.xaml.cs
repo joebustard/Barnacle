@@ -41,6 +41,7 @@ namespace Make3D.Dialogs
             dPhi = 0.2;
             stretch = 4;
             ToolName = "Torus";
+            ModelGroup = MyModelGroup;
         }
 
         public override bool ShowAxies
@@ -55,7 +56,7 @@ namespace Make3D.Dialogs
                 {
                     showAxies = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -72,7 +73,7 @@ namespace Make3D.Dialogs
                 {
                     showFloor = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -154,7 +155,7 @@ namespace Make3D.Dialogs
         private void HorizontalRadiusBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextValue(sender, ref horizontalRadius, 1, 100);
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void HorizontalRadiusMinus_Click(object sender, RoutedEventArgs e)
@@ -162,7 +163,7 @@ namespace Make3D.Dialogs
             if (horizontalRadius > 0)
             {
                 horizontalRadius -= 1;
-                Redisplay();
+                UpdateDisplay();
                 HorizontalRadiusBox.Text = horizontalRadius.ToString();
             }
         }
@@ -172,7 +173,7 @@ namespace Make3D.Dialogs
             if (horizontalRadius < 100)
             {
                 horizontalRadius += 1;
-                Redisplay();
+                UpdateDisplay();
                 HorizontalRadiusBox.Text = horizontalRadius.ToString();
             }
         }
@@ -180,13 +181,13 @@ namespace Make3D.Dialogs
         private void LumpSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             knobFactor = (int)LumpSlider.Value;
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void MainRadiusBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextValue(sender, ref mainRadius, 1, 100);
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void MainRadiusMinus_Click(object sender, RoutedEventArgs e)
@@ -194,7 +195,7 @@ namespace Make3D.Dialogs
             if (mainRadius > 1)
             {
                 mainRadius -= 1;
-                Redisplay();
+                UpdateDisplay();
                 MainRadiusBox.Text = mainRadius.ToString();
             }
         }
@@ -204,36 +205,15 @@ namespace Make3D.Dialogs
             if (mainRadius < 100)
             {
                 mainRadius += 1;
-                Redisplay();
+                UpdateDisplay();
                 MainRadiusBox.Text = mainRadius.ToString();
-            }
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeneratePoints();
-                CentreVertices();
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
             }
         }
 
         private void StretchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextValue(sender, ref stretch, 1.0, 100);
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void StretchMinus_Click(object sender, RoutedEventArgs e)
@@ -241,7 +221,7 @@ namespace Make3D.Dialogs
             if (stretch > 1)
             {
                 stretch -= 1;
-                Redisplay();
+                UpdateDisplay();
                 StretchBox.Text = stretch.ToString();
             }
         }
@@ -251,7 +231,7 @@ namespace Make3D.Dialogs
             if (stretch < 100)
             {
                 stretch += 1;
-                Redisplay();
+                UpdateDisplay();
                 StretchBox.Text = stretch.ToString();
             }
         }
@@ -315,7 +295,7 @@ namespace Make3D.Dialogs
                 LumpsLabel.Visibility = Visibility.Hidden;
                 LumpSlider.Visibility = Visibility.Hidden;
                 curveType = 1;
-                Redisplay();
+                UpdateDisplay();
             }
         }
 
@@ -324,7 +304,7 @@ namespace Make3D.Dialogs
             LumpsLabel.Visibility = Visibility.Hidden;
             LumpSlider.Visibility = Visibility.Hidden;
             curveType = 2;
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void TypeCButton_Checked(object sender, RoutedEventArgs e)
@@ -332,21 +312,28 @@ namespace Make3D.Dialogs
             LumpsLabel.Visibility = Visibility.Hidden;
             LumpSlider.Visibility = Visibility.Hidden;
             curveType = 3;
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void TypeDButton_Checked(object sender, RoutedEventArgs e)
         {
             curveType = 4;
-            Redisplay();
+            UpdateDisplay();
             LumpsLabel.Visibility = Visibility.Visible;
             LumpSlider.Visibility = Visibility.Visible;
+        }
+
+        private void UpdateDisplay()
+        {
+            GeneratePoints();
+            CentreVertices();
+            Redisplay();
         }
 
         private void VerticalRadiusBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextValue(sender, ref verticalRadius, 1, 100);
-            Redisplay();
+            UpdateDisplay();
         }
 
         private void VerticalRadiusMinus_Click(object sender, RoutedEventArgs e)
@@ -354,7 +341,7 @@ namespace Make3D.Dialogs
             if (verticalRadius > 0)
             {
                 verticalRadius -= 1;
-                Redisplay();
+                UpdateDisplay();
                 VerticalRadiusBox.Text = verticalRadius.ToString();
             }
         }
@@ -364,7 +351,7 @@ namespace Make3D.Dialogs
             if (verticalRadius < 100)
             {
                 verticalRadius += 1;
-                Redisplay();
+                UpdateDisplay();
                 VerticalRadiusBox.Text = verticalRadius.ToString();
             }
         }
@@ -410,7 +397,7 @@ namespace Make3D.Dialogs
             VerticalRadiusBox.Text = verticalRadius.ToString();
             StretchBox.Text = stretch.ToString();
             LumpSlider.Value = knobFactor;
-            Redisplay();
+            UpdateDisplay();
             switch (curveType)
             {
                 case 1:

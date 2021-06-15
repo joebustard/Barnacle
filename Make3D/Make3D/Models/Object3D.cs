@@ -934,9 +934,13 @@ namespace Make3D.Models
             for (int i = 0; i < triangleIndices.Count; i += 3)
             {
                 XmlElement faceEle = doc.CreateElement("f");
-                faceEle.SetAttribute("v", triangleIndices[i].ToString() + "," +
-                                          triangleIndices[i + 1].ToString() + "," +
-                                          triangleIndices[i + 2].ToString());
+                /*
+                 *faceEle.SetAttribute("v", triangleIndices[i].ToString() + "," +
+                                            triangleIndices[i + 1].ToString() + "," +
+                                            triangleIndices[i + 2].ToString());
+                                            */
+
+                faceEle.SetAttribute("v", $"{triangleIndices[i]},{triangleIndices[i + 1]},{triangleIndices[i + 2]}");
                 ele.AppendChild(faceEle);
             }
 

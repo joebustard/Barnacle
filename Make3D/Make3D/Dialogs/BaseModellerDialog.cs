@@ -144,6 +144,8 @@ namespace Make3D.Dialogs
             }
         }
 
+        public Model3DGroup ModelGroup { get; set; }
+
         public virtual bool ShowAxies
         {
             get
@@ -679,10 +681,44 @@ namespace Make3D.Dialogs
             return gm;
         }
 
+        protected virtual void Home_Click(object sender, RoutedEventArgs e)
+        {
+            Camera.HomeFront();
+            SetCameraDistance();
+            UpdateCameraPos();
+        }
+
         protected virtual void Ok_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
             Close();
+        }
+
+        protected virtual void Redisplay()
+        {
+            if (ModelGroup != null)
+            {
+                ModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    ModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        ModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        ModelGroup.Children.Add(m);
+                    }
+                }
+                GeometryModel3D gm = GetModel();
+                ModelGroup.Children.Add(gm);
+            }
         }
 
         protected virtual void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
@@ -723,6 +759,24 @@ namespace Make3D.Dialogs
                 double diff = Math.Sign(e.Delta) * 1;
                 polarCamera.Zoom(diff);
                 UpdateCameraPos();
+            }
+        }
+
+        private void SetCameraDistance(bool sideView = false)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(Vertices, ref min, ref max);
+            double w = max.X - min.X;
+            double h = max.Y - min.Y;
+            double d = max.Z - min.Z;
+            if (sideView)
+            {
+                Camera.DistanceToFit(d, h, w * 1.5);
+            }
+            else
+            {
+                Camera.DistanceToFit(w, h, d * 1.5);
             }
         }
     }

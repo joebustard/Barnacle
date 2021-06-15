@@ -1,4 +1,4 @@
-<Project ProjectName="FigureData" Open="\FigureData\LowerRightWWIIBrCombat.txt" Created="17/05/2021 16:27:20">
+<Project ProjectName="FigureData" Open="\FigureData\WWIIBrCombat.txt" Created="17/05/2021 16:27:20">
   <File Name="Bone.txt" Backup="False" Export="True" />
   <File Name="Chest1.txt" Backup="False" Export="True" />
   <File Name="FootBone.txt" Backup="False" Export="True" />
@@ -14,10 +14,8 @@
   <File Name="LowerChest1.txt" Backup="False" Export="True" />
   <File Name="LowerLeftArm1.txt" Backup="False" Export="True" />
   <File Name="LowerLeftLeg1.txt" Backup="False" Export="True" />
-  <File Name="LowerLeftWWIIBrCombat.txt" Backup="False" Export="True" />
   <File Name="LowerRightArm1.txt" Backup="False" Export="True" />
   <File Name="LowerRightLeg1.txt" Backup="False" Export="True" />
-  <File Name="LowerRightWWIIBrCombat.txt" Backup="False" Export="True" />
   <File Name="MaleHeads.txt" Backup="False" Export="True" />
   <File Name="Neck1.txt" Backup="False" Export="True" />
   <File Name="RightFoot1.txt" Backup="False" Export="True" />
@@ -30,7 +28,10 @@
   <File Name="SourceFigure.txt" Backup="False" Export="True" />
   <File Name="UpperLeftArm1.txt" Backup="False" Export="True" />
   <File Name="UpperRightArm1.txt" Backup="False" Export="True" />
-  <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" />
+  <File Name="WWIIBrCombat.txt" Backup="False" Export="True" />
+  <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False">
+    <File Name="LeftWWIIBrCombat.txt" Backup="False" Export="False" />
+  </Folder>
   <Folder Name="Assemblies" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="True">
     <File Name="Figure.txt" Backup="False" Export="False" />
   </Folder>

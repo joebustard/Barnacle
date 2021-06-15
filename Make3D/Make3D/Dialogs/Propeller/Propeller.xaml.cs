@@ -66,6 +66,7 @@ namespace Make3D.Dialogs
             airfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             loaded = false;
+            ModelGroup = MyModelGroup;
         }
 
         public List<string> AirfoilGroups
@@ -831,33 +832,6 @@ namespace Make3D.Dialogs
                 RootGroup = EditorParameters.Get("RootGroup");
                 RootOffset = Convert.ToDouble(EditorParameters.Get("RootOffset"));
                 SelectedAirfoil = EditorParameters.Get("SelectedAirfoil");
-            }
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
             }
         }
 

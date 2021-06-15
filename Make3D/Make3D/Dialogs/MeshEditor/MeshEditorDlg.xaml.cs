@@ -30,9 +30,6 @@ namespace Make3D.Dialogs
         private Point3D offsetOrigin;
         private Int32Collection selectedPointIndices;
         private bool showWireFrame;
-        private MeshGeometry3D unselectedFaces;
-
-        private MeshGeometry3D wireFrameFaces;
 
         public MeshEditorDlg()
         {
@@ -46,6 +43,7 @@ namespace Make3D.Dialogs
 
             lastSelectedPoint = -1;
             lastSelectedTriangle = null;
+            ModelGroup = MyModelGroup;
         }
 
         public override bool ShowAxies

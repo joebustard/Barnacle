@@ -32,6 +32,7 @@ namespace Make3D.Dialogs
             // stops us trying to make a 3d model whie we are still just initialising
             updateDisplayWhenChanged = false;
             points = new List<System.Windows.Point>();
+            ModelGroup = MyModelGroup;
         }
 
         public int NumberOfTeeth
@@ -43,7 +44,7 @@ namespace Make3D.Dialogs
                 {
                     numberOfTeeth = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -57,7 +58,7 @@ namespace Make3D.Dialogs
                 {
                     outterRadius = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -74,7 +75,7 @@ namespace Make3D.Dialogs
                 {
                     showAxies = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -91,7 +92,7 @@ namespace Make3D.Dialogs
                 {
                     showFloor = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -105,7 +106,7 @@ namespace Make3D.Dialogs
                 {
                     teethBaseHeight = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -119,7 +120,7 @@ namespace Make3D.Dialogs
                 {
                     teethBaseWidth = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -133,7 +134,7 @@ namespace Make3D.Dialogs
                 {
                     teethTopHeight = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -147,7 +148,7 @@ namespace Make3D.Dialogs
                 {
                     teethTopWidth = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -161,7 +162,7 @@ namespace Make3D.Dialogs
                 {
                     thickness = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -375,27 +376,17 @@ namespace Make3D.Dialogs
                     }
 
                     CentreVertices();
-                    GeometryModel3D gm = GetModel();
-                    MyModelGroup.Children.Clear();
-                    if (floor != null)
-                    {
-                        MyModelGroup.Children.Add(floor.FloorMesh);
-                        foreach (GeometryModel3D m in grid.Group.Children)
-                        {
-                            MyModelGroup.Children.Add(m);
-                        }
-                    }
-                    MyModelGroup.Children.Add(gm);
                 }
             }
         }
 
-        private void Redisplay()
+        private void UpdateDisplay()
         {
             if (updateDisplayWhenChanged)
             {
                 GenerateShape();
             }
+            Redisplay();
         }
     }
 }

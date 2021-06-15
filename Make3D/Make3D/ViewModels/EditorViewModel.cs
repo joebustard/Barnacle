@@ -1151,6 +1151,7 @@ namespace Make3D.ViewModels
                     }
                 }
                 Document.Content.Add(ob);
+                Document.Dirty = true;
             }
         }
 
@@ -2315,6 +2316,7 @@ namespace Make3D.ViewModels
                 {
                     RemoveDuplicateVertices(ob);
                 }
+                Document.Dirty = true;
             }
         }
 
@@ -2330,6 +2332,7 @@ namespace Make3D.ViewModels
                 {
                     RemoveUnrefVertices(ob);
                 }
+                Document.Dirty = true;
             }
         }
 
@@ -2449,6 +2452,7 @@ namespace Make3D.ViewModels
                 o.Position = new Point3D(o.Position.X + dx - arr.Width / 2, o.Position.Y, o.Position.Z + dy - arr.Height / 2);
             }
             RegenerateDisplayList();
+            Document.Dirty = true;
         }
 
         private void RecalculateAllBounds()
@@ -2486,6 +2490,7 @@ namespace Make3D.ViewModels
             {
                 ob.Remesh();
                 RegenerateDisplayList();
+                document.Dirty = true;
             }
         }
 
@@ -2493,7 +2498,7 @@ namespace Make3D.ViewModels
         {
             String s = $"Camera ({camera.CameraPos.X:F2},{camera.CameraPos.Y:F2},{camera.CameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
             NotificationManager.Notify("SetStatusText1", s);
-            s = $"Total Faces {totalFaces}";
+            s = $"Faces {totalFaces} Vertices {totalFaces * 3}";
             NotificationManager.Notify("SetStatusText3", s);
         }
 
@@ -2579,6 +2584,7 @@ namespace Make3D.ViewModels
                     selectedObjectAdorner.SelectedObjects[i].ScaleMesh(sx, sy, sz);
                     selectedObjectAdorner.SelectedObjects[i].Scale = new Scale3D(x, y, z);
                     selectedObjectAdorner.SelectedObjects[i].Remesh();
+                    document.Dirty = true;
                 }
                 // move the selectors
                 selectedObjectAdorner.GenerateAdornments();

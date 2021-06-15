@@ -32,6 +32,7 @@ namespace Make3D.Dialogs
             selectedPoint = -1;
             DataContext = this;
             Camera.Distance = 2.0 * Camera.Distance;
+            ModelGroup = MyModelGroup;
         }
 
         public override bool ShowAxies

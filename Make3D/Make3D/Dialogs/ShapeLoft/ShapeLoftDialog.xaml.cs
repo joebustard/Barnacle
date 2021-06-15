@@ -32,6 +32,7 @@ namespace Make3D.Dialogs
             sizeZ = 20;
             DataContext = this;
             EditorParameters.ToolName = "TwoShape";
+            ModelGroup = MyModelGroup;
         }
 
         public override bool ShowAxies

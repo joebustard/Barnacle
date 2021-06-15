@@ -56,6 +56,7 @@ namespace Make3D.Dialogs
             hubStyles = new List<string>();
             rimStyles = new List<string>();
             tyreStyles = new List<string>();
+            ModelGroup = MyModelGroup;
         }
 
         public double AxelBore
@@ -500,7 +501,6 @@ namespace Make3D.Dialogs
             }
 
             // generate side triangles so original points are already in list
-
             CreateSideFaces(spokeOutterPnts, hubThickness, true);
         }
 
@@ -510,7 +510,6 @@ namespace Make3D.Dialogs
             double numSpoke = 0;
             double gapRatio = 0;
 
-            double numSubs = 10;
             double twopi = Math.PI * 2;
             double theta = 0;
             double hubRingInner = -1;
@@ -528,48 +527,6 @@ namespace Make3D.Dialogs
             }
             if (numSpoke > 1)
             {
-                /*
-                    bool inSpoke = true;
-                    while (theta <= twopi)
-                    {
-                        if (inSpoke)
-                        {
-                            // create spoke points
-                            theta += spokeTipDTheta;
-                            // creat gap points
-                            // Add a gap
-                            double dt = spokeDTheta / numSubs;
-                            for (int i = 0; i < numSubs; i++)
-                            {
-                                theta += dt;
-                                if (theta <= twopi)
-                                {
-                                    double x = actualOutter * Math.Cos(theta);
-                                    double y = actualOutter * Math.Sin(theta);
-                                    hubExternalPoints.Add(new System.Windows.Point(x, y));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            theta += spokeTipDTheta;
-                            // creat gap points
-                            // Add a gap
-                            double dt = gapDTheta / numSubs;
-                            for (int i = 0; i < numSubs; i++)
-                            {
-                                theta += dt;
-                                if (theta < twopi)
-                                {
-                                    double x = actualInner * Math.Cos(theta);
-                                    double y = actualInner * Math.Sin(theta);
-                                    hubExternalPoints.Add(new System.Windows.Point(x, y));
-                                }
-                            }
-                        }
-                        inSpoke = !inSpoke;
-                    }
-                    */
                 hubExternalPoints = GenerateSpokePoints(numSpoke, gapRatio, actualInner, actualOutter);
             }
             else
@@ -679,6 +636,48 @@ namespace Make3D.Dialogs
             GenerateHub();
             GenerateRim();
             GenerateTyre();
+        }
+
+        private List<Point> GenerateSpokePoints(double numSpokes, double gapToSpkeRatio, double inR, double outR)
+        {
+            List<Point> pnts = new List<Point>();
+            double ds = (Math.PI * 2.0) / numSpokes;
+            double a = ds / 2.0;
+            //     Log($" ds ={ds},a={a}");
+
+            double theta;
+            double dTheta = a / 20;
+            int sp = 1;
+            theta = 0;
+            double sweep;
+            double r;
+            bool inside = false;
+            while (theta < Math.PI * 2.0)
+            {
+                inside = !inside;
+                sweep = 0;
+                if (inside)
+                {
+                    r = inR;
+                }
+                else
+                {
+                    r = outR;
+                }
+
+                while (sweep < a && theta < Math.PI * 2.0)
+                {
+                    //    Log($"spoke {sp} sweep ={sweep}, theta ={theta}");
+                    double x = r * Math.Cos(theta);
+                    double y = r * Math.Sin(theta);
+                    pnts.Add(new Point(x, y));
+
+                    sweep += dTheta;
+                    theta += dTheta;
+                }
+                sp++;
+            }
+            return pnts;
         }
 
         private void GenerateTyre()
@@ -857,54 +856,9 @@ namespace Make3D.Dialogs
                         gapToSpkeRatio = 0.25;
                     }
                     break;
-
- 
             }
             hri = axelBore;
             hro = hri + ringRadius;
-        }
-
-        private List<Point> GenerateSpokePoints(double numSpokes, double gapToSpkeRatio, double inR, double outR)
-        {
-            List<Point> pnts = new List<Point>();
-            double ds = (Math.PI * 2.0) / numSpokes;
-            double a = ds / 2.0;
-       //     Log($" ds ={ds},a={a}");
-
-            double theta;
-            double dTheta = a / 20;
-            int sp = 1;
-            theta = 0;
-            double sweep;
-            double r;
-            bool inside = false;
-            while (theta < Math.PI * 2.0)
-            {
-
-                inside = !inside;
-                sweep = 0;
-                if (inside)
-                {
-                    r = inR;
-                }
-                else
-                {
-                    r = outR;
-                }
-
-                while (sweep < a && theta < Math.PI * 2.0)
-                {
-                //    Log($"spoke {sp} sweep ={sweep}, theta ={theta}");
-                    double x = r * Math.Cos(theta);
-                    double y = r * Math.Sin(theta);
-                    pnts.Add(new Point(x, y));
-
-                    sweep += dTheta;
-                    theta += dTheta;
-                }
-                sp++;
-            }
-            return pnts;
         }
 
         private void GetRimParams(List<double> ringRadius, List<double> ringThickness)
@@ -1157,33 +1111,6 @@ namespace Make3D.Dialogs
             PolarCoordinate pcol = new PolarCoordinate(0, 0, 0);
             pcol.SetPoint3D(p3d);
             return pcol;
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
         }
 
         private void SaveEditorParmeters()

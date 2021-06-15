@@ -29,6 +29,7 @@ namespace Make3D.Dialogs
             InitializeComponent();
             ToolName = "Reorigin";
             DataContext = this;
+            ModelGroup = MyModelGroup;
         }
 
         private enum NudgeDirection
@@ -118,6 +119,38 @@ namespace Make3D.Dialogs
             original.RelativeObjectVertices = pn;
             DialogResult = true;
             Close();
+        }
+
+        protected override void Redisplay()
+        {
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (localOb != null)
+                {
+                    localOb.Remesh();
+                    GeometryModel3D gm = GetModel(localOb);
+                    MyModelGroup.Children.Add(gm);
+                }
+            }
         }
 
         private void GenerateShape()
@@ -255,38 +288,6 @@ namespace Make3D.Dialogs
             {
                 localOb.Position = new Point3D(localOb.Position.X + positionChange.X, localOb.Position.Y + positionChange.Y, localOb.Position.Z + positionChange.Z);
                 Redisplay();
-            }
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (localOb != null)
-                {
-                    localOb.Remesh();
-                    GeometryModel3D gm = GetModel(localOb);
-                    MyModelGroup.Children.Add(gm);
-                }
             }
         }
 

@@ -30,7 +30,7 @@ namespace Make3D.Dialogs.Figure
         {
             InitializeComponent();
             availableFigureNames = new List<string>();
-                DataContext = this;
+            DataContext = this;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -71,7 +71,6 @@ namespace Make3D.Dialogs.Figure
         {
             get
             {
-                bool found = false;
                 foreach (String s in availableFigureNames)
                 {
                     if (String.Compare(s.ToLower(), figureName) == 0)

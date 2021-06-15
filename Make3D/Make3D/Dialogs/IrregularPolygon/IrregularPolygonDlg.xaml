@@ -78,20 +78,31 @@
                 </Canvas>
             </ScrollViewer>
         </Border>
-        <Grid Grid.Row="2" Grid.ColumnSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="10" />
-            </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor" Grid.Column="0" Margin="4,0,0,0" IsChecked="{Binding ShowFloor}" VerticalContentAlignment="Center" />
-            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" VerticalContentAlignment="Center" />
-            <Label x:Name="PositionLabel" Grid.Column="2" />
-            <Button Grid.Column="3" x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="4" x:Name="OkButton" Content="Ok" Click="Ok_Click" Margin="2,2,2,2" />
+        <Grid Grid.Row="2" Grid.ColumnSpan="3">
+
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="10" />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <CheckBox Content="Floor" Grid.Column="1" IsChecked="{Binding ShowFloor}" />
+                <CheckBox Content="Axies" Grid.Column="2" IsChecked="{Binding ShowAxies}" />
+                <Button Content="Home" Grid.Column="3" Click="Home_Click" />
+                <Label x:Name="PositionLabel" Grid.Column="4" />
+            </Grid>
+
+            <Grid Grid.Column="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
+                <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
+            </Grid>
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

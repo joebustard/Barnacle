@@ -48,7 +48,7 @@
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" Margin="66,193,-66,-193">
+              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
@@ -87,6 +87,7 @@
             </Grid.ColumnDefinitions>
             <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
             <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
+            <Button Content="Home" Grid.Column="2" Click="Home_Click" />
         </Grid>
 
         <Grid Grid.Column="2" Grid.Row="1">

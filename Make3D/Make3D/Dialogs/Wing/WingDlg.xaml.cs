@@ -59,6 +59,7 @@ namespace Make3D.Dialogs
             span = 70;
             sweepAngle = 0;
             dihedralAngle = 0;
+            ModelGroup = MyModelGroup;
         }
 
         public List<string> AirfoilGroups
@@ -881,33 +882,6 @@ namespace Make3D.Dialogs
                 TipGroup = EditorParameters.Get("TipGroup");
                 SelectedTipAirfoil = EditorParameters.Get("TipAirfoil");
                 SelectedTipShape = EditorParameters.Get("TipShape");
-            }
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
             }
         }
 

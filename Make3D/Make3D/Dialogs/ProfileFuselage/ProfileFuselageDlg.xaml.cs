@@ -53,6 +53,7 @@ namespace Make3D.Dialogs
             filePath = "";
             noteWindow = new NoteWindow();
             numberOfDivisions = 80;
+            ModelGroup = MyModelGroup;
         }
 
         public bool BackBody
@@ -704,33 +705,6 @@ namespace Make3D.Dialogs
             this.Cursor = Cursors.Arrow;
         }
 
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
-        }
-
         private void Right_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeRight();
@@ -741,7 +715,7 @@ namespace Make3D.Dialogs
         private void SaveAs()
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "Fusalage spar files (*.spr) | *.spr";
+            saveFileDialog.Filter = "Fuselage spar files (*.spr) | *.spr";
             if (saveFileDialog.ShowDialog() == true)
             {
                 Write(saveFileDialog.FileName);
@@ -895,13 +869,13 @@ namespace Make3D.Dialogs
         {
             markers = new List<LetterMarker>();
             TopView.SetHeader("Top View");
-            // TopView.ImageFilePath = "C:\\tmp\\109top.png";
+
             TopView.OnPinMoved = PinMoved;
             TopView.OnMarkerMoved = MarkerMoved;
             TopView.OnCopyLetter = CopyLetter;
             TopView.Markers = markers;
             SideView.SetHeader("Side View");
-            // SideView.ImageFilePath = "C:\\tmp\\109side.png";
+
             SideView.OnPinMoved = PinMoved;
             SideView.OnMarkerMoved = MarkerMoved;
             SideView.Markers = markers;

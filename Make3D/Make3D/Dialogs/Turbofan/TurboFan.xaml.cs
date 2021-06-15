@@ -39,6 +39,7 @@ namespace Make3D.Dialogs
             diskOffset = 0.5;
             clockwise = true;
             anticlockwise = false;
+            ModelGroup = MyModelGroup;
         }
 
         public bool Anticlockwise
@@ -558,33 +559,6 @@ namespace Make3D.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-        }
-
-        private void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
         }
 
         private void Regenerate()

@@ -26,24 +26,11 @@ namespace Make3D.Dialogs
         private List<System.Windows.Point> points;
         private double scale;
         private int selectedPoint;
+        private bool showOrtho;
         private Visibility showWidth;
         private bool solidShape;
         private int wallWidth;
-        private bool showOrtho;
-        public bool ShowOrtho
-        {
-            get { return showOrtho; }
-            set
-            {
-                if (value != showOrtho)
-                {
-                    showOrtho = value;
 
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
         public PlateletDlg()
         {
             InitializeComponent();
@@ -62,6 +49,7 @@ namespace Make3D.Dialogs
             DataContext = this;
             SolidShape = true;
             Camera.Distance = Camera.Distance * 3.0;
+            ModelGroup = MyModelGroup;
         }
 
         public bool HollowShape
@@ -85,7 +73,7 @@ namespace Make3D.Dialogs
                     }
 
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -124,6 +112,24 @@ namespace Make3D.Dialogs
             }
         }
 
+        public bool ShowOrtho
+        {
+            get
+            {
+                return showOrtho;
+            }
+            set
+            {
+                if (value != showOrtho)
+                {
+                    showOrtho = value;
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public Visibility ShowWidth
         {
             get
@@ -152,7 +158,7 @@ namespace Make3D.Dialogs
                 {
                     solidShape = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -169,7 +175,7 @@ namespace Make3D.Dialogs
                 {
                     wallWidth = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -201,26 +207,6 @@ namespace Make3D.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
-        private void DashLine(double x1, double y1, double x2, double y2)
-        {
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
-            Line ln = new Line();
-            ln.Stroke = br;
-            ln.StrokeThickness = 2;
-            ln.StrokeDashArray = new DoubleCollection();
-            ln.StrokeDashArray.Add(0.5);
-            ln.StrokeDashArray.Add(0.5);
-            ln.StrokeDashArray.Add(0.2);
-            ln.StrokeDashArray.Add(0.2);
-
-            ln.Fill = br;
-            ln.X1 = x1;
-            ln.Y1 = y1;
-            ln.X2 = x2;
-            ln.Y2 = y2;
-            
-            MainCanvas.Children.Add(ln);
-        }
         private void AddPointClicked(object sender, RoutedEventArgs e)
         {
         }
@@ -244,6 +230,27 @@ namespace Make3D.Dialogs
             Faces.Add(c0);
             Faces.Add(c3);
             Faces.Add(c2);
+        }
+
+        private void DashLine(double x1, double y1, double x2, double y2)
+        {
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 2;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.2);
+            ln.StrokeDashArray.Add(0.2);
+
+            ln.Fill = br;
+            ln.X1 = x1;
+            ln.Y1 = y1;
+            ln.X2 = x2;
+            ln.Y2 = y2;
+
+            MainCanvas.Children.Add(ln);
         }
 
         private void DisplayLines()
@@ -286,11 +293,9 @@ namespace Make3D.Dialogs
 
                     if (selectedPoint == i && showOrtho)
                     {
-                        DashLine(p.X, 0, p.X, MainCanvas.ActualHeight-1);
-                        DashLine(0,p.Y, MainCanvas.ActualWidth-1, p.Y);
-
+                        DashLine(p.X, 0, p.X, MainCanvas.ActualHeight - 1);
+                        DashLine(0, p.Y, MainCanvas.ActualWidth - 1, p.Y);
                     }
-
                 }
             }
         }
@@ -615,12 +620,6 @@ namespace Make3D.Dialogs
             MainScale.ScaleY = scale;
         }
 
-        private void Redisplay()
-        {
-            GenerateFaces();
-            UpdateDisplay();
-        }
-
         private void ResetButton_Click(object sender, RoutedEventArgs e)
         {
             InitialisePoints();
@@ -654,29 +653,8 @@ namespace Make3D.Dialogs
             }
             DisplayLines();
             DisplayPoints();
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Add(gm);
-            }
+            GenerateFaces();
+            Redisplay();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

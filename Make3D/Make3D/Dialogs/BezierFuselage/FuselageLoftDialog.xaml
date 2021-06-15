@@ -84,9 +84,11 @@
                     <ColumnDefinition Width="10" />
                     <ColumnDefinition />
                     <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor" Grid.Column="1" IsChecked="{Binding ShowFloor}" />
                 <CheckBox Content="Axies" Grid.Column="2" IsChecked="{Binding ShowAxies}" />
+                <Button Content="Home" Grid.Column="3" Click="Home_Click" />
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>

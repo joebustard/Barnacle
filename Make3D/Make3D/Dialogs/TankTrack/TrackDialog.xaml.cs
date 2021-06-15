@@ -59,6 +59,7 @@ namespace Make3D.Dialogs
             Thickness = 6;
             SpudSize = 1;
             GuideSize = 1;
+            ModelGroup = MyModelGroup;
         }
 
         public double GuideSize
