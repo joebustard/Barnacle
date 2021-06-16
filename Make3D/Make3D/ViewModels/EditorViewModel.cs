@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -1965,6 +1966,43 @@ namespace Make3D.ViewModels
                         }
                     }
                     break;
+
+                case "multistl":
+                    {
+                        var dialog = new System.Windows.Forms.FolderBrowserDialog();
+                        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                        if (result == System.Windows.Forms.DialogResult.OK)
+                        {
+                            string pth = dialog.SelectedPath;
+                            string[] files = System.IO.Directory.GetFiles(pth, "*.stl");
+                            foreach (string fpath in files)
+                            {
+                                string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
+                                string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
+                                if (!File.Exists(targetPath))
+                                {
+                                    Document localDoc = new Document();
+                                    localDoc.ImportStl(fpath);
+                                    foreach (Object3D ob in localDoc.Content)
+                                    {
+                                        ob.FlipInside();
+                                        ob.MoveToFloor();
+                                        ob.MoveToCentre();
+                                    }
+                                    localDoc.Save(targetPath);
+                                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
+                                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+                                }
+                                else
+                                {
+                                    System.Windows.MessageBox.Show("File already exists:" + targetPath, "Error");
+                                }
+                            }
+                        }
+                        BaseViewModel.Project.Save();
+                        NotificationManager.Notify("ImportRefresh", null);
+                    }
+                    break;
             }
         }
 
@@ -1972,7 +2010,7 @@ namespace Make3D.ViewModels
         {
             if (selectedObjectAdorner == null || selectedObjectAdorner.SelectedObjects.Count == 0)
             {
-                MessageBox.Show("Nothing selected to process");
+                System.Windows.MessageBox.Show("Nothing selected to process");
             }
             else
             {

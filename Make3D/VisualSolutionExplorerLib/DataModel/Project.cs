@@ -60,7 +60,7 @@ namespace VisualSolutionExplorer
 
         public static string ProjectPathToAbsPath(string rf)
         {
-            string t = "\\"+System.IO.Path.GetFileName(BaseFolder);
+            string t = "\\" + System.IO.Path.GetFileName(BaseFolder);
             if (rf.StartsWith(t))
             {
                 rf = rf.Substring(t.Length);
@@ -93,6 +93,7 @@ namespace VisualSolutionExplorer
             pfo.SupportsSubFolders = true;
             pfo.SupportsFiles = true;
             pfo.Export = true;
+            pfo.CanBeRenamed = false;
             ProjectFolders.Add(pfo);
             ProjectFile pfi = new ProjectFile();
             pfi.FileName = "Untitled.txt";
@@ -161,6 +162,7 @@ namespace VisualSolutionExplorer
             pfo.FolderName = ProjectName;
             pfo.SupportsFiles = true;
             pfo.Clean = false;
+            pfo.CanBeRenamed = false;
             pfo.SupportsSubFolders = true;
             pfo.Export = true;
 

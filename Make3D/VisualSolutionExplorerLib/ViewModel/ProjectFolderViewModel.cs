@@ -63,6 +63,21 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public string FolderPath
+        {
+            get
+            {
+                if (_folder == null)
+                {
+                    return "";
+                }
+                else
+                {
+                    return _folder.FolderPath;
+                }
+            }
+        }
+
         public string FolderToolTip
         {
             get
@@ -91,21 +106,6 @@ namespace VisualSolutionExplorer
 
         public SolutionChangedDelegate SolutionChanged { get; set; }
         public ICommand StopEditing { get; set; }
-        public string FolderPath
-        {
-            get
-            {
-                if (_folder == null)
-                {
-                    return "";
-                }
-                else
-                {
-                    return _folder.FolderPath;
-                }
-            }
-
-        }
 
         public void AddExistingFile()
         {
@@ -117,20 +117,18 @@ namespace VisualSolutionExplorer
                 {
                     string ren = System.IO.Path.GetFileName(fName);
                     string ext = System.IO.Path.GetExtension(fName);
-                //    if (ext == ".txt")
-                    {
-                        string p = Project.BaseFolder;
-                        p = System.IO.Path.GetDirectoryName(p);
 
-                        string target = p + _folder.FolderPath + "\\" + ren;
-                        if (fName.ToLower() != target.ToLower())
-                        {
-                            System.IO.File.Copy(fName, target);
-                        }
-                        _folder.AddExistingFile(ren);
-                        Sort();
-                        NotifySolutionChanged("AddExistingFile", target, "");
+                    string p = Project.BaseFolder;
+                    p = System.IO.Path.GetDirectoryName(p);
+
+                    string target = p + _folder.FolderPath + "\\" + ren;
+                    if (fName.ToLower() != target.ToLower())
+                    {
+                        System.IO.File.Copy(fName, target);
                     }
+                    _folder.AddExistingFile(ren);
+                    Sort();
+                    NotifySolutionChanged("AddExistingFile", target, "");
                 }
             }
         }
@@ -149,11 +147,6 @@ namespace VisualSolutionExplorer
             NotifySolutionChanged("NewFolder", f, "");
             IsExpanded = true;
             LoadChildren();
-        }
-
-        internal void RemoveFileFromFolder(ProjectFile file)
-        {
-            _folder.ProjectFiles.Remove(file);
         }
 
         public void ExploreFolder()
@@ -201,7 +194,6 @@ namespace VisualSolutionExplorer
             {
                 SolutionChanged(e, p1, p2);
             }
-
         }
 
         internal void AddFileReference(ProjectFileViewModel fileViewModel)
@@ -229,6 +221,11 @@ namespace VisualSolutionExplorer
             {
                 ti.IsExpanded = true;
             }
+        }
+
+        internal void RemoveFileFromFolder(ProjectFile file)
+        {
+            _folder.ProjectFiles.Remove(file);
         }
 
         internal void Sort()
@@ -273,8 +270,11 @@ namespace VisualSolutionExplorer
 
         private void RenameFolder()
         {
-            _folder.RecordOldName();
-            IsEditing = true;
+            if (_folder.CanBeRenamed)
+            {
+                _folder.RecordOldName();
+                IsEditing = true;
+            }
         }
     }
 }

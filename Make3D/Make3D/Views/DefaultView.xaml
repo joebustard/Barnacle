@@ -112,7 +112,8 @@
                     <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                     <Custom:RibbonMenuButton x:Name="Import" Label="Import">
                         <Custom:RibbonButton x:Name="ImportOBJ" Label="OBJ" Command="{Binding ImportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
-                        <Custom:RibbonButton x:Name="ImportSTL" Label="STL" Command="{Binding ImportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="ImportSTL" Label="STL" Command="{Binding ImportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Import the object in a single STL into the current file." />
+                        <Custom:RibbonButton x:Name="ImportMultiSTL" Label="Multiple STLs" Command="{Binding ImportCommand}" CommandParameter="MultiSTL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Import all the STLs from a folder into their own project files." />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Export" Label="Export">
                         <Custom:RibbonButton x:Name="AllModels" Label="Project" Command="{Binding ExportCommand}" CommandParameter="AllModels" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export all models in project" />

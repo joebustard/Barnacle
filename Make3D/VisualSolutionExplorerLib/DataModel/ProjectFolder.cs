@@ -28,6 +28,8 @@ namespace VisualSolutionExplorer
 
         public Boolean AutoLoad { get; set; }
 
+        public bool CanBeRenamed { get; set; }
+
         // should this folder be cleared when a clean command is issued
         public bool Clean { get; set; }
 
@@ -91,6 +93,7 @@ namespace VisualSolutionExplorer
             fo.SupportsFiles = SupportsFiles;
             fo.SupportedFileExtension = SupportedFileExtension;
             fo.Export = Export;
+            fo.CanBeRenamed = true;
             _projectFolders.Add(fo);
             _projectFolders.Sort();
             fo.FolderPath = FolderPath + "\\" + folderName;
@@ -212,8 +215,6 @@ namespace VisualSolutionExplorer
 
         internal void CheckTimeDependency(String baseFolder)
         {
-            // in practice refresh just means update any autoloading folders
-            // with the actual files on disk.
             if (TimeDependency != "")
             {
                 string srcFolder = baseFolder + "\\" + TimeDependency;
@@ -488,6 +489,7 @@ namespace VisualSolutionExplorer
             Clean = false;
             Explorer = false;
             AutoLoad = false;
+            CanBeRenamed = true;
             TimeDependency = "";
         }
 

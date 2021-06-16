@@ -30,6 +30,7 @@ namespace Make3D.Views
             NotificationManager.Subscribe("OpenProject", OpenProject);
             NotificationManager.Subscribe("ReloadProject", ReloadProject);
             NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
+            NotificationManager.Subscribe("ImportRefresh", RefreshAfterImport);
         }
 
         public void CheckPoint()
@@ -39,6 +40,30 @@ namespace Make3D.Views
                 string s = undoer.GetNextCheckPointName();
                 BaseViewModel.Document.Write(s);
             }
+        }
+
+        private static void LaunchCmdOrBat(string p)
+        {
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = p,
+                UseShellExecute = false,
+                Verb = "open"
+            };
+            startInfo.EnvironmentVariables.Add("BarnacleProject", BaseViewModel.Project.ProjectName);
+            startInfo.EnvironmentVariables.Add("BarnacleFolder", Project.BaseFolder);
+            System.Diagnostics.Process.Start(startInfo);
+        }
+
+        private static void OpenFileUsingOS(string p)
+        {
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo()
+            {
+                FileName = p,
+                UseShellExecute = true,
+                Verb = "open"
+            };
+            System.Diagnostics.Process.Start(startInfo);
         }
 
         private void CheckExit(object sender)
@@ -220,6 +245,11 @@ namespace Make3D.Views
             SolutionExplorer.Refresh();
         }
 
+        private void RefreshAfterImport(object param)
+        {
+            SolutionExplorer.Refresh();
+        }
+
         private void ReloadProject(object param)
         {
             string projName = param.ToString();
@@ -260,7 +290,9 @@ namespace Make3D.Views
                         p = p + fName;
 
                         // is it a model file.
-                        if (System.IO.Path.GetExtension(p) == ".txt")
+                        string ext = System.IO.Path.GetExtension(p);
+                        ext = ext.ToLower();
+                        if (ext == ".txt")
                         {
                             if (p != BaseViewModel.Document.FilePath)
                             {
@@ -279,13 +311,15 @@ namespace Make3D.Views
                         else
                         {
                             // throw the file at the operating system
-
-                            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                            // if its a batch or command file, use environment variables
+                            if (ext == ".cmd" || ext == ".bat")
                             {
-                                FileName = p,
-                                UseShellExecute = true,
-                                Verb = "open"
-                            });
+                                LaunchCmdOrBat(p);
+                            }
+                            else
+                            {
+                                OpenFileUsingOS(p);
+                            }
                         }
                     }
                     break;
