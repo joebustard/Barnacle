@@ -16,7 +16,10 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0" Grid.Row="0">
-
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="50" />
@@ -25,13 +28,15 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1">
+            <StackPanel Grid.Column="1" Grid.Row="1">
                 <Label Margin ="4,0,0,0" FontSize="16">Use the curosr keys to move the object so that the axies mark the origin point.</Label>
             </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Horizontal">
                 <Label Margin ="4,0,0,0" FontSize="16">Then select Ok</Label>
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Horizontal">
+                <Button Click="Button_Click" ToolTip="Set the origin as the Centroid of the vertices">Centroid</Button>
+            </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>

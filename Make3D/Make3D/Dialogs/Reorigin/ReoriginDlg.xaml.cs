@@ -110,13 +110,15 @@ namespace Make3D.Dialogs
             double dy = localOb.Position.Y;
             double dz = localOb.Position.Z;
             Point3DCollection pn = new Point3DCollection();
-            for (int i = 0; i < original.RelativeObjectVertices.Count; i++)
+            for (int i = 0; i < localOb.RelativeObjectVertices.Count; i++)
             {
-                pn.Add(new Point3D(original.RelativeObjectVertices[i].X + dx,
-                    original.RelativeObjectVertices[i].Y + dy,
-                    original.RelativeObjectVertices[i].Z + dz));
+                pn.Add(new Point3D(localOb.RelativeObjectVertices[i].X + dx,
+                    localOb.RelativeObjectVertices[i].Y + dy,
+                    localOb.RelativeObjectVertices[i].Z + dz));
             }
-            original.RelativeObjectVertices = pn;
+            localOb.RelativeObjectVertices = pn;
+            original.Position = localOb.Position;
+            original.RelativeObjectVertices = localOb.RelativeObjectVertices;
             DialogResult = true;
             Close();
         }
@@ -303,6 +305,29 @@ namespace Make3D.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
 
+            Redisplay();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(localOb.RelativeObjectVertices, ref min, ref max);
+            double dx = -(min.X + (max.X - min.X) / 2.0);
+            double dy = -(min.Y + (max.Y - min.Y) / 2.0);
+            double dz = -(min.Z + (max.Z - min.Z) / 2.0);
+
+          
+            Point3DCollection pn = new Point3DCollection();
+            for (int i = 0; i < localOb.RelativeObjectVertices.Count; i++)
+            {
+                pn.Add(new Point3D(localOb.RelativeObjectVertices[i].X + dx,
+                    localOb.RelativeObjectVertices[i].Y + dy,
+                    localOb.RelativeObjectVertices[i].Z + dz));
+            }
+            localOb.RelativeObjectVertices = pn;
+            localOb.Position = new Point3D(0, 0, 0);
+            localOb.Remesh();
             Redisplay();
         }
     }
