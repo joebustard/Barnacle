@@ -1983,11 +1983,19 @@ namespace Make3D.ViewModels
                                 {
                                     Document localDoc = new Document();
                                     localDoc.ImportStl(fpath);
+                                    int numObs = 0;
                                     foreach (Object3D ob in localDoc.Content)
                                     {
+                                        ob.Name = rootName;
+                                        if (numObs > 0)
+                                        {
+                                            ob.Name += "_" + numObs.ToString();
+                                        }
                                         ob.FlipInside();
+                                        ob.MoveOriginToCentroid();
                                         ob.MoveToFloor();
                                         ob.MoveToCentre();
+                                        numObs++;
                                     }
                                     localDoc.Save(targetPath);
                                     string fldr = System.IO.Path.GetDirectoryName(targetPath);

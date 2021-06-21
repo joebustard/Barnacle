@@ -948,6 +948,10 @@ namespace Make3D.Dialogs
                 modelAssignments.Add(mac);
             }
             NotifyPropertyChanged("AllModelAssignments");
+            foreach (ModelAssignmentControl mac in modelAssignments)
+            {
+                mac.NotifyPropertyChanged("FigureName");
+            }
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)

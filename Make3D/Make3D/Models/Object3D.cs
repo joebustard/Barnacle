@@ -748,6 +748,27 @@ namespace Make3D.Models
             return faces;
         }
 
+        internal void MoveOriginToCentroid()
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(RelativeObjectVertices, ref min, ref max);
+            double dx = -(min.X + (max.X - min.X) / 2.0);
+            double dy = -(min.Y + (max.Y - min.Y) / 2.0);
+            double dz = -(min.Z + (max.Z - min.Z) / 2.0);
+
+            Point3DCollection pn = new Point3DCollection();
+            for (int i = 0; i < RelativeObjectVertices.Count; i++)
+            {
+                pn.Add(new Point3D(RelativeObjectVertices[i].X + dx,
+                    RelativeObjectVertices[i].Y + dy,
+                    RelativeObjectVertices[i].Z + dz));
+            }
+            RelativeObjectVertices = pn;
+            Position = new Point3D(0, 0, 0);
+            Remesh();
+        }
+
         internal virtual void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;

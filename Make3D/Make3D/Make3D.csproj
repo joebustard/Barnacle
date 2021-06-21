@@ -703,6 +703,7 @@ mkdir $(TargetDir)data
 mkdir $(TargetDir)data\figure
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
 copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
+del   /q $(TargetDir)data\figure\*.txt
 copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
 
 Exit 0
