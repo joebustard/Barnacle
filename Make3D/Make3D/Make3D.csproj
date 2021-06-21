@@ -190,6 +190,9 @@
     <Compile Include="Dialogs\Wheel\Wheel.xaml.cs">
       <DependentUpon>Wheel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Wing\CanvasWingDlg.xaml.cs">
+      <DependentUpon>CanvasWingDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Wing\WingDlg.xaml.cs">
       <DependentUpon>WingDlg.xaml</DependentUpon>
     </Compile>
@@ -433,6 +436,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Wheel\Wheel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Wing\CanvasWingDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
