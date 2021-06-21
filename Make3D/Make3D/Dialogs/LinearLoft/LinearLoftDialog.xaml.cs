@@ -326,17 +326,13 @@ namespace Make3D.Dialogs
             }
             else
             {
-                line.Add(new Point(0.5, 0));
-                line.Add(new Point(0.5, 0.1));
-                line.Add(new Point(0.5, 0.2));
-                line.Add(new Point(0.5, 0.3));
-                line.Add(new Point(0.5, 0.4));
-                line.Add(new Point(0.5, 0.5));
-                line.Add(new Point(0.5, 0.6));
-                line.Add(new Point(0.5, 0.7));
-                line.Add(new Point(0.5, 0.8));
-                line.Add(new Point(0.5, 0.9));
-                line.Add(new Point(0.5, 1));
+                double divs = 20;
+                double ds = 1 / divs;
+                for(double d = 0; d <= 1.0;  d+= ds)
+                {
+                    line.Add(new Point(0.5, d));
+                }
+
             }
             UpdateCameraPos();
             UpdateDisplay();
