@@ -14,6 +14,7 @@ namespace Make3D.Models
             Standard["1/4"] = 1.0 / 4.0;
             Standard["1/5"] = 1.0 / 5.0;
             Standard["1/6"] = 1.0 / 6.0;
+            Standard["1/10"] = 1.0 / 10.0;
             Standard["1/12"] = 1.0 / 12.0;
             Standard["1/16"] = 1.0 / 16.0;
             Standard["1/24"] = 1.0 / 24;
@@ -32,16 +33,6 @@ namespace Make3D.Models
             Standard["N"] = 1.0 / 148;
         }
 
-        internal static List<string> ScaleNames()
-        {
-            List<string> names = new List<string>();
-            foreach (string a in Standard.Keys)
-            {
-                names.Add(a);
-            }
-            return names;
-        }
-
         internal static double ConversionFactor(string baseScale, string exportScale)
         {
             double res = 1.0;
@@ -53,6 +44,16 @@ namespace Make3D.Models
                 res = res * endScale;
             }
             return res;
+        }
+
+        internal static List<string> ScaleNames()
+        {
+            List<string> names = new List<string>();
+            foreach (string a in Standard.Keys)
+            {
+                names.Add(a);
+            }
+            return names;
         }
     }
 }

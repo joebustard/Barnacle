@@ -20,6 +20,8 @@ namespace Make3D.Dialogs
         private bool bottomModelChecked;
         private double dihedralAngle;
         private double dihedralLimit = 20;
+        private double dipPercent;
+        private int numStruts;
         private List<String> rootairfoilNames;
         private string rootGroup;
         private double rootLength;
@@ -60,6 +62,8 @@ namespace Make3D.Dialogs
             sweepAngle = 0;
             dihedralAngle = 0;
             ModelGroup = MyModelGroup;
+            numStruts = 8;
+            dipPercent = 25;
         }
 
         public List<string> AirfoilGroups
@@ -116,6 +120,43 @@ namespace Make3D.Dialogs
                         dihedralAngle = sweepLimit;
                     }
 
+                    NotifyPropertyChanged();
+                    Update();
+                }
+            }
+        }
+
+        public double DipPercent
+        {
+            get
+            {
+                return dipPercent;
+            }
+            set
+            {
+                if (dipPercent != value)
+                {
+                    if (value >= 0 && value < 100)
+                    {
+                        dipPercent = value;
+                        NotifyPropertyChanged();
+                        Update();
+                    }
+                }
+            }
+        }
+
+        public int NumStruts
+        {
+            get
+            {
+                return numStruts;
+            }
+            set
+            {
+                if (numStruts != value)
+                {
+                    numStruts = value;
                     NotifyPropertyChanged();
                     Update();
                 }
@@ -552,7 +593,7 @@ namespace Make3D.Dialogs
 
                 case "Straight Edge":
                     {
-                        TipControlsVisible = Visibility.Hidden;
+                        TipControlsVisible = Visibility.Visible;
                         SweepControlsVisible = Visibility.Hidden;
                         double theta = (Math.PI * dihedralAngle) / 180;
                         tipOffsetY = span * Math.Sin(theta);
@@ -599,135 +640,232 @@ namespace Make3D.Dialogs
 
         private void GenerateWing()
         {
-            if (RootGroup != "" && SelectedRootAirfoil != "")
+            if (RootGroup != null && RootGroup != "" && SelectedRootAirfoil != "")
             {
-                double rootEdgeLength = 0;
-                List<Point> rootProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, rootLength, ref rootEdgeLength);
-
-                if (rootProfile.Count > 0)
+                double innerStrutLength = 1;
+                double outerStrutLength = 1;
+                List<Point> rootPnts = new List<Point>();
+                List<Point> tipPnts = new List<Point>();
+                int numSubStrats = (4 * numStruts) - 1;
+                double innerEdgeLength = 0;
+                double strutGap = span / numSubStrats;
+                double taperSize = rootLength - tipLength;
+                if (SelectedShape == "Straight")
                 {
-                    if (TipGroup != "" && SelectedTipAirfoil != "")
+                    taperSize = 0;
+                }
+                double strutTaperDiff = taperSize / numSubStrats;
+                double strutDx = tipOffsetX / numSubStrats;
+                double innerXo;
+                double outerXo;
+                double innerZ;
+                double outerZ;
+                double innerDip = 100;
+                double outerDip = 100;
+
+                int shrinkle = 0;
+                Vertices.Clear();
+                Faces.Clear();
+                for (int strut = 0; strut < numSubStrats; strut++)
+                {
+                    switch (shrinkle)
                     {
-                        double tipEdgeLength = 0;
-                        double tl = tipLength;
-                        if (SelectedShape == "Straight")
+                        case 0:
+                            {
+                                innerDip = 100.0;
+                                outerDip = 100 - (2.0 * dipPercent / 3.0);
+                            }
+                            break;
+
+                        case 1:
+                            {
+                                innerDip = 100 - (2.0 * dipPercent / 3.0); ;
+                                outerDip = 100 - dipPercent;
+                            }
+                            break;
+
+                        case 2:
+                            {
+                                innerDip = 100 - dipPercent;
+                                outerDip = 100 - (2.0 * dipPercent / 3.0);
+                            }
+                            break;
+
+                        case 3:
+                            {
+                                innerDip = 100 - (2.0 * dipPercent / 3.0);
+                                outerDip = 100;
+                            }
+                            break;
+                    }
+                    shrinkle = (shrinkle + 1) % 4;
+                    innerStrutLength = rootLength - (strut * strutTaperDiff);
+                    outerStrutLength = innerStrutLength - strutTaperDiff;
+                    innerXo = strut * strutDx;
+                    outerXo = innerXo + strutDx;
+                    innerZ = strut * strutGap;
+                    outerZ = innerZ + strutGap;
+                    List<Point> innerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, innerStrutLength, ref innerEdgeLength);
+
+                    if (innerProfile.Count > 0)
+                    {
+                        if (TipGroup != null && TipGroup != "" && SelectedTipAirfoil != null && SelectedTipAirfoil != "")
                         {
-                            tl = rootLength;
-                        }
-                        List<Point> tipProfile = GetProfilePoints(TipGroup, SelectedTipAirfoil, tl, ref tipEdgeLength);
+                            double outerEdgeLength = 0;
 
-                        if (tipProfile.Count > 0)
-                        {
-                            Vertices.Clear();
-                            Faces.Clear();
+                            List<Point> outerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, outerStrutLength, ref outerEdgeLength);
 
-                            double dt = 0.01;
-                            double startT = 0;
-                            double endT = 1;
-                            bool close = false;
-                            if (TopModelChecked)
+                            if (outerProfile.Count > 0)
                             {
-                                startT = 0;
-                                endT = 0.5;
-                                close = true;
+                                double dt = 0.01;
+                                double startT = 0;
+                                double endT = 1;
+                                bool close = false;
+                                if (TopModelChecked)
+                                {
+                                    startT = 0;
+                                    endT = 0.5;
+                                    close = true;
+                                }
+                                if (BottomModelChecked)
+                                {
+                                    startT = 0.5;
+                                    endT = 1.0;
+                                    close = true;
+                                }
+
+                                rootPnts.Clear();
+                                tipPnts.Clear();
+                                for (double t = startT; t < endT; t += dt)
+                                {
+                                    Point p1 = GetProfileAt(innerProfile, innerEdgeLength, t);
+                                    if (strut == 0)
+                                    {
+                                        rootPnts.Add(p1);
+                                    }
+                                    Point p2 = GetProfileAt(innerProfile, innerEdgeLength, t + dt);
+                                    Point p3 = GetProfileAt(outerProfile, outerEdgeLength, t + dt);
+                                    Point p4 = GetProfileAt(outerProfile, outerEdgeLength, t);
+                                    if (strut == numSubStrats - 1)
+                                    {
+                                        tipPnts.Add(p4);
+                                    }
+
+                                    Point3D pd1;
+                                    Point3D pd2;
+                                    Point3D pd3;
+                                    Point3D pd4;
+
+                                    // shrink the upper ys of the inner edge
+                                    double y = p1.Y;
+                                    if (y > 0)
+                                    {
+                                        y = (y * innerDip) / 100.0;
+                                    }
+                                    pd1 = new Point3D(p1.X * innerStrutLength + innerXo, y * innerStrutLength, innerZ);
+
+                                    y = p2.Y;
+                                    if (y > 0)
+                                    {
+                                        y = (y * innerDip) / 100.0;
+                                    }
+                                    pd2 = new Point3D(p2.X * innerStrutLength + innerXo, y * innerStrutLength, innerZ);
+
+                                    y = p3.Y;
+                                    if (y > 0)
+                                    {
+                                        y = (y * outerDip) / 100.0;
+                                    }
+                                    pd3 = new Point3D(p3.X * outerStrutLength + outerXo, y * outerStrutLength, outerZ);
+
+                                    y = p4.Y;
+                                    if (y > 0)
+                                    {
+                                        y = (y * outerDip) / 100.0;
+                                    }
+                                    pd4 = new Point3D(p4.X * outerStrutLength + outerXo, y * outerStrutLength, outerZ);
+
+                                    int v1 = AddVertice(pd1);
+                                    int v2 = AddVertice(pd2);
+                                    int v3 = AddVertice(pd3);
+                                    int v4 = AddVertice(pd4);
+
+                                    Faces.Add(v1);
+                                    Faces.Add(v3);
+                                    Faces.Add(v2);
+
+                                    Faces.Add(v1);
+                                    Faces.Add(v4);
+                                    Faces.Add(v3);
+                                }
+
+                                /*
+                                if (close)
+                                {
+                                    Point p1 = GetProfileAt(innerProfile, innerEdgeLength, startT);
+
+                                    Point p2 = GetProfileAt(innerProfile, innerEdgeLength, endT);
+                                    Point p3 = GetProfileAt(outerProfile, outerEdgeLength, endT);
+                                    Point p4 = GetProfileAt(outerProfile, outerEdgeLength, startT);
+
+                                    Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
+                                    Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
+                                    Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
+                                    Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
+
+                                    int v1 = AddVertice(pd1);
+                                    int v2 = AddVertice(pd2);
+                                    int v3 = AddVertice(pd3);
+                                    int v4 = AddVertice(pd4);
+
+                                    Faces.Add(v1);
+                                    Faces.Add(v2);
+                                    Faces.Add(v3);
+
+                                    Faces.Add(v1);
+                                    Faces.Add(v3);
+                                    Faces.Add(v4);
+                                }
+                                */
                             }
-                            if (BottomModelChecked)
-                            {
-                                startT = 0.5;
-                                endT = 1.0;
-                                close = true;
-                            }
-                            List<Point> rootPnts = new List<Point>();
-                            List<Point> tipPnts = new List<Point>();
-                            for (double t = startT; t < endT; t += dt)
-                            {
-                                Point p1 = GetProfileAt(rootProfile, rootEdgeLength, t);
-                                rootPnts.Add(p1);
-                                Point p2 = GetProfileAt(rootProfile, rootEdgeLength, t + dt);
-                                Point p3 = GetProfileAt(tipProfile, tipEdgeLength, t + dt);
-                                Point p4 = GetProfileAt(tipProfile, tipEdgeLength, t);
-                                tipPnts.Add(p4);
-
-                                Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
-                                Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
-                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
-                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
-
-                                int v1 = AddVertice(pd1);
-                                int v2 = AddVertice(pd2);
-                                int v3 = AddVertice(pd3);
-                                int v4 = AddVertice(pd4);
-
-                                Faces.Add(v1);
-                                Faces.Add(v3);
-                                Faces.Add(v2);
-
-                                Faces.Add(v1);
-                                Faces.Add(v4);
-                                Faces.Add(v3);
-                            }
-                            if (close)
-                            {
-                                Point p1 = GetProfileAt(rootProfile, rootEdgeLength, startT);
-
-                                Point p2 = GetProfileAt(rootProfile, rootEdgeLength, endT);
-                                Point p3 = GetProfileAt(tipProfile, tipEdgeLength, endT);
-                                Point p4 = GetProfileAt(tipProfile, tipEdgeLength, startT);
-
-                                Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
-                                Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
-                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
-                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
-
-                                int v1 = AddVertice(pd1);
-                                int v2 = AddVertice(pd2);
-                                int v3 = AddVertice(pd3);
-                                int v4 = AddVertice(pd4);
-
-                                Faces.Add(v1);
-                                Faces.Add(v2);
-                                Faces.Add(v3);
-
-                                Faces.Add(v1);
-                                Faces.Add(v3);
-                                Faces.Add(v4);
-                            }
-
-                            TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
-                            if (selectedTipShape == "Cut Off")
-                            {
-                                TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
-                            }
-                            else
-                            if (selectedTipShape == "Ellipse 1")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr / 10;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            else
-                            if (selectedTipShape == "Ellipse 2")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr / 5;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            if (selectedTipShape == "Ellipse 3")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr / 2;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            if (selectedTipShape == "Ellipse 4")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            CentreVertices();
                         }
                     }
                 }
+                // close the root
+                TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
+
+                // add the tip
+                if (selectedTipShape == "Cut Off")
+                {
+                    TriangulatePerimiter(tipPnts, outerStrutLength, tipOffsetX, tipOffsetY, tipOffsetZ, false);
+                }
+                else
+                if (selectedTipShape == "Ellipse 1")
+                {
+                    double mr = outerStrutLength / 2;
+                    double sr = mr / 10;
+                    EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                }
+                else
+                if (selectedTipShape == "Ellipse 2")
+                {
+                    double mr = outerStrutLength / 2;
+                    double sr = mr / 5;
+                    EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                }
+                if (selectedTipShape == "Ellipse 3")
+                {
+                    double mr = outerStrutLength / 2;
+                    double sr = mr / 2;
+                    EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                }
+                if (selectedTipShape == "Ellipse 4")
+                {
+                    double mr = outerStrutLength / 2;
+                    double sr = mr;
+                    EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+                }
+                CentreVertices();
             }
         }
 
@@ -928,7 +1066,6 @@ namespace Make3D.Dialogs
             shapeNames.Add("Straight");
             shapeNames.Add("Straight Edge");
             shapeNames.Add("Tapered");
-            shapeNames.Add("Delta");
             shapeNames.Add("Swept");
             NotifyPropertyChanged("ShapeNames");
 

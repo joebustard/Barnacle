@@ -26,44 +26,53 @@
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Label Width="80">Model</Label>
+                <Label Width="80" VerticalAlignment="Center">Model</Label>
                 <RadioButton Content="Whole" VerticalAlignment="Center" GroupName="ModelButGroup" IsChecked="{Binding WholeModelChecked}" />
                 <RadioButton Content="Top" VerticalAlignment="Center" Margin="10,0" GroupName="ModelButGroup" IsChecked="{Binding TopModelChecked}" />
                 <RadioButton Content="Bottom" VerticalAlignment="Center" Margin="10,0" GroupName="ModelButGroup" IsChecked="{Binding BottomModelChecked}" />
             </StackPanel>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label Width="80">Wing Shape</Label>
+                <Label Width="80" VerticalAlignment="Center">Wing Shape</Label>
                 <ComboBox Width="100" Margin="0,0,10,0" ItemsSource="{Binding ShapeNames}" SelectedItem="{Binding SelectedShape}" />
-                <Label Width="80">Tip Shape</Label>
+                <Label Width="80" VerticalAlignment="Center">Tip Shape</Label>
                 <ComboBox Width="100" Margin="0,0,10,0" ItemsSource="{Binding TipShapeNames}" SelectedItem="{Binding SelectedTipShape}" />
             </StackPanel>
+
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label Width="80">Span</Label>
+                <Label Width="80" VerticalAlignment="Center">Span</Label>
                 <TextBox Width="30" Text="{Binding Span}" VerticalAlignment="Center" />
+                <Label Margin="8,0,0,0" Width="80" VerticalAlignment="Center">Root Length</Label>
+                <TextBox Width="30" Margin="0,0,8,0" Text="{Binding RootLength}" VerticalAlignment="Center" />
+                <Label Width="80" VerticalAlignment="Center" Visibility="{Binding TipControlsVisible}">Tip Length</Label>
+                <TextBox Width="30" Visibility="{Binding TipControlsVisible}" Text="{Binding TipLength}" VerticalAlignment="Center" />
             </StackPanel>
+
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label Width="80">Root Length</Label>
-                <TextBox Width="30" Text="{Binding RootLength}" VerticalAlignment="Center" />
-                <Label Width="80">Root Profile</Label>
+                <Label Width="80" VerticalAlignment="Center">Profile</Label>
                 <ComboBox Width="100"  Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding AirfoilGroups}" SelectedItem="{Binding RootGroup}" />
                 <ComboBox Width="100"  Margin="0,0,10,0" ItemsSource="{Binding RootAirfoilNames}" VerticalAlignment="Center" SelectedItem="{Binding SelectedRootAirfoil}" />
-            </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <Label Width="80" Visibility="{Binding TipControlsVisible}">Tip Length</Label>
-                <TextBox Width="30" Visibility="{Binding TipControlsVisible}" Text="{Binding TipLength}" VerticalAlignment="Center" />
+                <!--
                 <Label Width="80">Tip Profile</Label>
                 <ComboBox Width="100" Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding AirfoilGroups}" SelectedItem="{Binding TipGroup}" />
                 <ComboBox Width="100" Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding TipAirfoilNames}" SelectedItem="{Binding SelectedTipAirfoil}" />
+                -->
+            </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <Label Width="80" VerticalAlignment="Center">No. Of Struts</Label>
+                <TextBox Width="30" Margin="0,0,8,0"  Text="{Binding NumStruts}" VerticalAlignment="Center" />
+                <Label Width="80" VerticalAlignment="Center">Dip (%)</Label>
+                <TextBox Width="30" Text="{Binding DipPercent}" VerticalAlignment="Center" />
             </StackPanel>
 
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label Width="80" Visibility="{Binding SweepControlsVisible}">Sweep Angle</Label>
+                <Label Width="80" VerticalAlignment="Center" Visibility="{Binding SweepControlsVisible}">Sweep Angle</Label>
                 <TextBox Width="30" Text="{Binding SweepAngle}" VerticalAlignment="Center" Visibility="{Binding SweepControlsVisible}" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <Label Width="80">Dihedral</Label>
+                <Label Width="80" VerticalAlignment="Center" >Dihedral</Label>
                 <TextBox Width="30" Text="{Binding DihedralAngle}" VerticalAlignment="Center" />
             </StackPanel>
         </Grid>

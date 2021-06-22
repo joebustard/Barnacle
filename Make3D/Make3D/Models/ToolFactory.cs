@@ -73,6 +73,10 @@ namespace Make3D.Models
                     res = new WingDlg();
                     break;
 
+                case "CanvasWing":
+                    res = new CanvasWingDlg();
+                    break;
+
                 case "Propeller":
                     res = new Propeller();
                     break;

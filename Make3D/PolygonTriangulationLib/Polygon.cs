@@ -7,6 +7,33 @@ namespace PolygonTriangulationLib
 {
     public class TriangulationPolygon
     {
+        public PointF[] Points;
+
+        private float BestArea = float.MaxValue;
+
+        private PointF[] BestRectangle = null;
+
+        // The four caliper control points. They start:
+        //       m_ControlPoints(0)      Left edge       xmin
+        //       m_ControlPoints(1)      Bottom edge     ymax
+        //       m_ControlPoints(2)      Right edge      xmax
+        //       m_ControlPoints(3)      Top edge        ymin
+        private int[] ControlPoints = new int[4];
+
+        // The area of the current and best bounding rectangles.
+        private float CurrentArea = float.MaxValue;
+
+        private PointF[] CurrentRectangle = null;
+
+        // The line from this point to the next one forms
+        // one side of the next bounding rectangle.
+        private int m_CurrentControlPoint = -1;
+
+        // The points that have been used in test edges.
+        private bool[] m_EdgeChecked;
+
+        private int NumPoints = 0;
+
         public TriangulationPolygon()
         {
         }
@@ -16,7 +43,41 @@ namespace PolygonTriangulationLib
             Points = points;
         }
 
-        public PointF[] Points;
+        // Return the cross product AB x BC.
+        // The cross product is a vector perpendicular to AB
+        // and BC having length |AB| * |BC| * Sin(theta) and
+        // with direction given by the right-hand rule.
+        // For two vectors in the X-Y plane, the result is a
+        // vector with X and Y components 0 so the Z component
+        // gives the vector's length and direction.
+        public static float CrossProductLength(float Ax, float Ay,
+            float Bx, float By, float Cx, float Cy)
+        {
+            // Get the vectors' coordinates.
+            float BAx = Ax - Bx;
+            float BAy = Ay - By;
+            float BCx = Cx - Bx;
+            float BCy = Cy - By;
+
+            // Calculate the Z coordinate of the cross product.
+            return (BAx * BCy - BAy * BCx);
+        }
+
+        // Return the angle ABC.
+        // Return a value between PI and -PI.
+        // Note that the value is the opposite of what you might
+        // expect because Y coordinates increase downward.
+        public static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
+        {
+            // Get the dot product.
+            float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
+
+            // Get the cross product.
+            float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
+
+            // Calculate the angle.
+            return (float)Math.Atan2(cross_product, dot_product);
+        }
 
         // Find the polygon's centroid.
         public PointF FindCentroid()
@@ -56,6 +117,26 @@ namespace PolygonTriangulationLib
             return new PointF(X, Y);
         }
 
+        // Find a smallest bounding rectangle.
+        public PointF[] FindSmallestBoundingRectangle()
+        {
+            // This algorithm assumes the polygon
+            // is oriented counter-clockwise.
+            Debug.Assert(!this.PolygonIsOrientedClockwise());
+
+            // Get ready;
+            ResetBoundingRect();
+
+            // Check all possible bounding rectangles.
+            for (int i = 0; i < Points.Length; i++)
+            {
+                CheckNextRectangle();
+            }
+
+            // Return the best result.
+            return BestRectangle;
+        }
+
         // Return true if the point is in the polygon.
         public bool PointInPolygon(float X, float Y)
         {
@@ -83,26 +164,6 @@ namespace PolygonTriangulationLib
             return (Math.Abs(total_angle) > 1);
         }
 
-        #region "Orientation Routines"
-
-        // Return true if the polygon is oriented clockwise.
-        public bool PolygonIsOrientedClockwise()
-        {
-            return (SignedPolygonArea() < 0);
-        }
-
-        // If the polygon is oriented counterclockwise,
-        // reverse the order of its points.
-        private void OrientPolygonClockwise()
-        {
-            if (!PolygonIsOrientedClockwise())
-                Array.Reverse(Points);
-        }
-
-        #endregion "Orientation Routines"
-
-        #region "Area Routines"
-
         // Return the polygon's area in "square units."
         // Add the areas of the trapezoids defined by the
         // polygon's edges dropped to the X-axis. When the
@@ -118,40 +179,6 @@ namespace PolygonTriangulationLib
             // oriented clockwise.
             return Math.Abs(SignedPolygonArea());
         }
-
-        // Return the polygon's area in "square units."
-        // Add the areas of the trapezoids defined by the
-        // polygon's edges dropped to the X-axis. When the
-        // program considers a bottom edge of a polygon, the
-        // calculation gives a negative area so the space
-        // between the polygon and the axis is subtracted,
-        // leaving the polygon's area. This method gives odd
-        // results for non-simple polygons.
-        //
-        // The value will be negative if the polygon is
-        // oriented clockwise.
-        private float SignedPolygonArea()
-        {
-            // Add the first point to the end.
-            int num_points = Points.Length;
-            PointF[] pts = new PointF[num_points + 1];
-            Points.CopyTo(pts, 0);
-            pts[num_points] = Points[0];
-
-            // Get the areas.
-            float area = 0;
-            for (int i = 0; i < num_points; i++)
-            {
-                area +=
-                    (pts[i + 1].X - pts[i].X) *
-                    (pts[i + 1].Y + pts[i].Y) / 2;
-            }
-
-            // Return the result.
-            return area;
-        }
-
-        #endregion "Area Routines"
 
         // Return true if the polygon is convex.
         public bool PolygonIsConvex()
@@ -191,26 +218,46 @@ namespace PolygonTriangulationLib
             return true;
         }
 
-        #region "Cross and Dot Products"
-
-        // Return the cross product AB x BC.
-        // The cross product is a vector perpendicular to AB
-        // and BC having length |AB| * |BC| * Sin(theta) and
-        // with direction given by the right-hand rule.
-        // For two vectors in the X-Y plane, the result is a
-        // vector with X and Y components 0 so the Z component
-        // gives the vector's length and direction.
-        public static float CrossProductLength(float Ax, float Ay,
-            float Bx, float By, float Cx, float Cy)
+        // Return true if the polygon is oriented clockwise.
+        public bool PolygonIsOrientedClockwise()
         {
-            // Get the vectors' coordinates.
-            float BAx = Ax - Bx;
-            float BAy = Ay - By;
-            float BCx = Cx - Bx;
-            float BCy = Cy - By;
+            return (SignedPolygonArea() < 0);
+        }
 
-            // Calculate the Z coordinate of the cross product.
-            return (BAx * BCy - BAy * BCx);
+        // Triangulate the polygon.
+        //
+        // For a nice, detailed explanation of this method,
+        // see Ian Garton's Web page:
+        // http://www-cgrl.cs.mcgill.ca/~godfried/teaching/cg-projects/97/Ian/cutting_ears.html
+        public List<Triangle> Triangulate()
+        {
+            // Copy the points into a scratch array.
+            PointF[] pts = new PointF[Points.Length];
+            Array.Copy(Points, pts, Points.Length);
+
+            // Make a scratch polygon.
+            TriangulationPolygon pgon = new TriangulationPolygon(pts);
+
+            // Orient the polygon clockwise.
+            pgon.OrientPolygonClockwise();
+
+            // Make room for the triangles.
+            List<Triangle> triangles = new List<Triangle>();
+
+            // While the copy of the polygon has more than
+            // three points, remove an ear.
+            bool more = true;
+            while (pgon.Points.Length > 3 && more)
+            {
+                // Remove an ear from the polygon.
+                more = pgon.RemoveEar(triangles);
+            }
+            if (pgon.Points.Length > 0)
+            {
+                // Copy the last three points into their own triangle.
+                triangles.Add(new Triangle(pgon.Points[0], pgon.Points[1], pgon.Points[2]));
+            }
+            return triangles;
         }
 
         // Return the dot product AB · BC.
@@ -226,43 +273,6 @@ namespace PolygonTriangulationLib
 
             // Calculate the dot product.
             return (BAx * BCx + BAy * BCy);
-        }
-
-        #endregion "Cross and Dot Products"
-
-        // Return the angle ABC.
-        // Return a value between PI and -PI.
-        // Note that the value is the opposite of what you might
-        // expect because Y coordinates increase downward.
-        public static float GetAngle(float Ax, float Ay, float Bx, float By, float Cx, float Cy)
-        {
-            // Get the dot product.
-            float dot_product = DotProduct(Ax, Ay, Bx, By, Cx, Cy);
-
-            // Get the cross product.
-            float cross_product = CrossProductLength(Ax, Ay, Bx, By, Cx, Cy);
-
-            // Calculate the angle.
-            return (float)Math.Atan2(cross_product, dot_product);
-        }
-
-        #region "Triangulation"
-
-        // Find the indexes of three points that form an "ear."
-        private void FindEar(ref int A, ref int B, ref int C)
-        {
-            int num_points = Points.Length;
-
-            for (A = 0; A < num_points; A++)
-            {
-                B = (A + 1) % num_points;
-                C = (B + 1) % num_points;
-
-                if (FormsEar(Points, A, B, C)) return;
-            }
-
-            // We should never get here because there should
-            // always be at least two ears.
         }
 
         // Return true if the three points form an ear.
@@ -300,131 +310,6 @@ namespace PolygonTriangulationLib
 
             // This is an ear.
             return true;
-        }
-
-        // Remove an ear from the polygon and
-        // add it to the triangles array.
-        private bool RemoveEar(List<Triangle> triangles)
-        {
-            bool removed = false;
-            // Find an ear.
-            int A = 0, B = 0, C = 0;
-            FindEar(ref A, ref B, ref C);
-            if ((A >= 0 && A < Points.Length) &&
-                 (B >= 0 && B < Points.Length) &&
-                 (C >= 0 && C < Points.Length))
-            {
-                // Create a new triangle for the ear.
-                triangles.Add(new Triangle(Points[A], Points[B], Points[C]));
-
-                // Remove the ear from the polygon.
-                RemovePointFromArray(B);
-                removed = true;
-            }
-            return removed;
-        }
-
-        // Remove point target from the array.
-        private void RemovePointFromArray(int target)
-        {
-            PointF[] pts = new PointF[Points.Length - 1];
-            Array.Copy(Points, 0, pts, 0, target);
-            Array.Copy(Points, target + 1, pts, target, Points.Length - target - 1);
-            Points = pts;
-        }
-
-        // Triangulate the polygon.
-        //
-        // For a nice, detailed explanation of this method,
-        // see Ian Garton's Web page:
-        // http://www-cgrl.cs.mcgill.ca/~godfried/teaching/cg-projects/97/Ian/cutting_ears.html
-        public List<Triangle> Triangulate()
-        {
-            // Copy the points into a scratch array.
-            PointF[] pts = new PointF[Points.Length];
-            Array.Copy(Points, pts, Points.Length);
-
-            // Make a scratch polygon.
-            TriangulationPolygon pgon = new TriangulationPolygon(pts);
-
-            // Orient the polygon clockwise.
-            pgon.OrientPolygonClockwise();
-
-            // Make room for the triangles.
-            List<Triangle> triangles = new List<Triangle>();
-
-            // While the copy of the polygon has more than
-            // three points, remove an ear.
-            bool more = true;
-            while (pgon.Points.Length > 3 && more)
-            {
-                // Remove an ear from the polygon.
-                more = pgon.RemoveEar(triangles);
-            }
-
-            // Copy the last three points into their own triangle.
-            triangles.Add(new Triangle(pgon.Points[0], pgon.Points[1], pgon.Points[2]));
-
-            return triangles;
-        }
-
-        #endregion "Triangulation"
-
-        #region "Bounding Rectangle"
-
-        private int NumPoints = 0;
-
-        // The points that have been used in test edges.
-        private bool[] m_EdgeChecked;
-
-        // The four caliper control points. They start:
-        //       m_ControlPoints(0)      Left edge       xmin
-        //       m_ControlPoints(1)      Bottom edge     ymax
-        //       m_ControlPoints(2)      Right edge      xmax
-        //       m_ControlPoints(3)      Top edge        ymin
-        private int[] ControlPoints = new int[4];
-
-        // The line from this point to the next one forms
-        // one side of the next bounding rectangle.
-        private int m_CurrentControlPoint = -1;
-
-        // The area of the current and best bounding rectangles.
-        private float CurrentArea = float.MaxValue;
-
-        private PointF[] CurrentRectangle = null;
-        private float BestArea = float.MaxValue;
-        private PointF[] BestRectangle = null;
-
-        // Get ready to start.
-        private void ResetBoundingRect()
-        {
-            NumPoints = Points.Length;
-
-            // Find the initial control points.
-            FindInitialControlPoints();
-
-            // So far we have not checked any edges.
-            m_EdgeChecked = new bool[NumPoints];
-
-            // Start with this bounding rectangle.
-            m_CurrentControlPoint = 1;
-            BestArea = float.MaxValue;
-
-            // Find the initial bounding rectangle.
-            FindBoundingRectangle();
-
-            // Remember that we have checked this edge.
-            m_EdgeChecked[ControlPoints[m_CurrentControlPoint]] = true;
-        }
-
-        // Find the initial control points.
-        private void FindInitialControlPoints()
-        {
-            for (int i = 0; i < NumPoints; i++)
-            {
-                if (CheckInitialControlPoints(i)) return;
-            }
-            Debug.Assert(false, "Could not find initial control points.");
         }
 
         // See if we can use segment i --> i + 1 as the base for the initial control points.
@@ -676,6 +561,33 @@ namespace PolygonTriangulationLib
             dy = Points[i2].Y - Points[i].Y;
         }
 
+        // Find the indexes of three points that form an "ear."
+        private void FindEar(ref int A, ref int B, ref int C)
+        {
+            int num_points = Points.Length;
+
+            for (A = 0; A < num_points; A++)
+            {
+                B = (A + 1) % num_points;
+                C = (B + 1) % num_points;
+
+                if (FormsEar(Points, A, B, C)) return;
+            }
+
+            // We should never get here because there should
+            // always be at least two ears.
+        }
+
+        // Find the initial control points.
+        private void FindInitialControlPoints()
+        {
+            for (int i = 0; i < NumPoints; i++)
+            {
+                if (CheckInitialControlPoints(i)) return;
+            }
+            Debug.Assert(false, "Could not find initial control points.");
+        }
+
         // Find the point of intersection between two lines.
         private bool FindIntersection(float X1, float Y1, float X2, float Y2, float A1, float B1, float A2, float B2, ref PointF intersect)
         {
@@ -695,26 +607,99 @@ namespace PolygonTriangulationLib
             return true;
         }
 
-        // Find a smallest bounding rectangle.
-        public PointF[] FindSmallestBoundingRectangle()
+        // If the polygon is oriented counterclockwise,
+        // reverse the order of its points.
+        private void OrientPolygonClockwise()
         {
-            // This algorithm assumes the polygon
-            // is oriented counter-clockwise.
-            Debug.Assert(!this.PolygonIsOrientedClockwise());
-
-            // Get ready;
-            ResetBoundingRect();
-
-            // Check all possible bounding rectangles.
-            for (int i = 0; i < Points.Length; i++)
-            {
-                CheckNextRectangle();
-            }
-
-            // Return the best result.
-            return BestRectangle;
+            if (!PolygonIsOrientedClockwise())
+                Array.Reverse(Points);
         }
 
-        #endregion "Bounding Rectangle"
+        // Remove an ear from the polygon and
+        // add it to the triangles array.
+        private bool RemoveEar(List<Triangle> triangles)
+        {
+            bool removed = false;
+            // Find an ear.
+            int A = 0, B = 0, C = 0;
+            FindEar(ref A, ref B, ref C);
+            if ((A >= 0 && A < Points.Length) &&
+                 (B >= 0 && B < Points.Length) &&
+                 (C >= 0 && C < Points.Length))
+            {
+                // Create a new triangle for the ear.
+                triangles.Add(new Triangle(Points[A], Points[B], Points[C]));
+
+                // Remove the ear from the polygon.
+                RemovePointFromArray(B);
+                removed = true;
+            }
+            return removed;
+        }
+
+        // Remove point target from the array.
+        private void RemovePointFromArray(int target)
+        {
+            PointF[] pts = new PointF[Points.Length - 1];
+            Array.Copy(Points, 0, pts, 0, target);
+            Array.Copy(Points, target + 1, pts, target, Points.Length - target - 1);
+            Points = pts;
+        }
+
+        // Get ready to start.
+        private void ResetBoundingRect()
+        {
+            NumPoints = Points.Length;
+
+            // Find the initial control points.
+            FindInitialControlPoints();
+
+            // So far we have not checked any edges.
+            m_EdgeChecked = new bool[NumPoints];
+
+            // Start with this bounding rectangle.
+            m_CurrentControlPoint = 1;
+            BestArea = float.MaxValue;
+
+            // Find the initial bounding rectangle.
+            FindBoundingRectangle();
+
+            // Remember that we have checked this edge.
+            m_EdgeChecked[ControlPoints[m_CurrentControlPoint]] = true;
+        }
+
+        // Return the polygon's area in "square units."
+        // Add the areas of the trapezoids defined by the
+        // polygon's edges dropped to the X-axis. When the
+        // program considers a bottom edge of a polygon, the
+        // calculation gives a negative area so the space
+        // between the polygon and the axis is subtracted,
+        // leaving the polygon's area. This method gives odd
+        // results for non-simple polygons.
+        //
+        // The value will be negative if the polygon is
+        // oriented clockwise.
+        private float SignedPolygonArea()
+        {
+            // Get the areas.
+            float area = 0;
+            // Add the first point to the end.
+            int num_points = Points.Length;
+            if (num_points != 0)
+            {
+                PointF[] pts = new PointF[num_points + 1];
+                Points.CopyTo(pts, 0);
+                pts[num_points] = Points[0];
+
+                for (int i = 0; i < num_points; i++)
+                {
+                    area +=
+                        (pts[i + 1].X - pts[i].X) *
+                        (pts[i + 1].Y + pts[i].Y) / 2;
+                }
+            }
+            // Return the result.
+            return area;
+        }
     }
 }

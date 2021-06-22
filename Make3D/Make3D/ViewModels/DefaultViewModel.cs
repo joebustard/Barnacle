@@ -895,6 +895,7 @@ namespace Make3D.ViewModels
             aircraftToolsToShow.Add(new ToolDef("Bezier Fuselage", true, "BezierFuselage", "Create a fuselage from bezier profiles."));
             aircraftToolsToShow.Add(new ToolDef("Profile Fuselage", true, "ProfileFuselage", "Create a fuselage from  externally prepared top, bottom and spar images."));
             aircraftToolsToShow.Add(new ToolDef("Wing", true, "Wing", "Create a wing from a database of airfoil profiles."));
+            aircraftToolsToShow.Add(new ToolDef("Canvas Wing", true, "CanvasWing", "Create a wing that looks like canvas streteched over struts from a database of airfoil profiles."));
             aircraftToolsToShow.Add(new ToolDef("Propeller", true, "Propeller", "Create a propeller."));
             aircraftToolsToShow.Add(new ToolDef("Turbo Fan", true, "TurboFan", "Create a turbofan."));
 
