@@ -2,6 +2,7 @@
 using Make3D.Models;
 using Make3D.Models.Adorners;
 using Make3D.Models.LoopSmoothing;
+using Make3D.ViewModel.BuildPlates;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
@@ -48,10 +49,12 @@ namespace Make3D.ViewModels
         private Vector3D lookDirection;
         private Model3DCollection modelItems;
         private double onePercentZoom;
+        private PrinterPlate printerPlate;
         private List<Object3D> selectedItems;
         private Adorner selectedObjectAdorner;
         private bool showAdorners;
         private bool showAxies;
+        private bool showBuildPlate;
         private bool showFloor;
         private bool showFloorMarker;
         private int totalFaces;
@@ -61,6 +64,7 @@ namespace Make3D.ViewModels
         {
             floor = new Floor();
             axies = new Axies();
+            printerPlate = new PrinterPlate();
             floorMarker = null;
             grid = new Grid3D();
             //FloorObjectVertices = flr.FloorPoints3D;
@@ -116,6 +120,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("MeshHull", OnMeshHull);
 
             NotificationManager.Subscribe("ShowFloor", OnShowFloor);
+            NotificationManager.Subscribe("ShowBuildPlate", OnShowBuildPlate);
             NotificationManager.Subscribe("ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("SelectObjectName", SelectObjectByName);
@@ -126,6 +131,8 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("RemoveDupVertices", OnRemoveDupVertices);
             NotificationManager.Subscribe("UnrefVertices", OnRemoveUnrefVertices);
             NotificationManager.Subscribe("Loading", LoadingNewFile);
+
+            NotificationManager.Subscribe("BuildPlate", BuildPlateChanged);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -135,6 +142,7 @@ namespace Make3D.ViewModels
             showFloor = true;
             showAdorners = true;
             showFloorMarker = true;
+            showBuildPlate = true;
             RegenerateDisplayList();
         }
 
@@ -251,6 +259,13 @@ namespace Make3D.ViewModels
                     {
                         modelItems.Add(m);
                     }
+                }
+            }
+            if (showBuildPlate)
+            {
+                foreach (GeometryModel3D m in printerPlate.Group.Children)
+                {
+                    modelItems.Add(m);
                 }
             }
             if (showAxies)
@@ -844,6 +859,16 @@ namespace Make3D.ViewModels
                 }
             }
             return res;
+        }
+
+        private void BuildPlateChanged(object param)
+        {
+            BuildPlate bp = param as BuildPlate;
+            printerPlate.BorderColour = bp.BorderColour;
+            printerPlate.Width = bp.Width;
+            printerPlate.Height = bp.Height;
+            printerPlate.BorderThickness = bp.BorderThickness;
+            RegenerateDisplayList();
         }
 
         private bool CheckIfContentSelected(GeometryModel3D geo, bool append, bool sizer, bool control)
@@ -2398,6 +2423,12 @@ namespace Make3D.ViewModels
         private void OnShowAxies(object param)
         {
             showAxies = (param as bool?) == true;
+            RegenerateDisplayList();
+        }
+
+        private void OnShowBuildPlate(object param)
+        {
+            showBuildPlate = (param as bool?) == true;
             RegenerateDisplayList();
         }
 

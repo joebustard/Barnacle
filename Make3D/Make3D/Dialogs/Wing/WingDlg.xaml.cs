@@ -490,7 +490,7 @@ namespace Make3D.Dialogs
             double stepSize = 1.0 / (tipPnts.Count - 1);
             if (!WholeModelChecked)
             {
-                stepSize = stepSize * 2;
+                stepSize = 1.0 / (2 * tipPnts.Count - 1);
             }
             if (wholeModelChecked || topModelChecked)
             {

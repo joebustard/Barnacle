@@ -237,6 +237,8 @@
                     <Custom:RibbonCheckBox x:Name="ShowFloor" Label="Floor" IsChecked="{Binding ShowFloorChecked}" />
                     <Custom:RibbonCheckBox x:Name="ShowAxis" Label="Axis" IsChecked="{Binding ShowAxiesChecked}" />
                     <Custom:RibbonCheckBox x:Name="ShowMarker" Label="Floor Marker" IsChecked="{Binding ShowFloorMarkerChecked}" />
+                    <Custom:RibbonCheckBox x:Name="ShowBuildPlate" Label="Build Plate" IsChecked="{Binding ShowBuildPlateChecked}" />
+                    <ComboBox x:Name="SelectBuildPlateNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select build plate" ItemsSource="{Binding BuildPlateNames}" SelectedItem="{Binding SelectedBuildPlate}" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="OptionGroup" Header="Options">
                 </Custom:RibbonGroup>

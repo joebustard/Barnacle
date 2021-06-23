@@ -1,4 +1,5 @@
 ﻿using Make3D.Models.Mru;
+using Make3D.ViewModel.BuildPlates;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,6 +30,8 @@ namespace Make3D.ViewModels
         private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
         private bool bezierRingEnabled;
         private bool boldChecked;
+        private BuildPlateManager buildPlateManager;
+        private List<String> buildPlateNames;
         private string caption;
         private bool centerTextAlignment;
         private bool doughnutEnabled;
@@ -41,8 +44,11 @@ namespace Make3D.ViewModels
         private Ribbon MainRibbon;
         private bool profileFuselageEnabled;
         private bool rightTextAlignment;
+        private String selectedBuildPlate;
         private string selectedObjectName;
+        private bool settingsLoaded;
         private bool showAxiesChecked;
+        private bool showBuildPlate;
         private bool showFloorChecked;
         private bool showFloorMarkerChecked;
         private bool snapMarginChecked;
@@ -58,6 +64,7 @@ namespace Make3D.ViewModels
 
         public DefaultViewModel()
         {
+            settingsLoaded = false;
             subViewMan = new SubViewManager();
             NewCommand = new RelayCommand(OnNew);
             NewProjectCommand = new RelayCommand(OnNewProject);
@@ -123,9 +130,18 @@ namespace Make3D.ViewModels
             StatusBlockText1 = "Status Text 1";
             StatusBlockText2 = "V" + SoftwareVersion;
 
-            ShowFloorChecked = true;
-            ShowFloorMarkerChecked = true;
-            ShowAxiesChecked = true;
+            buildPlateNames = new List<string>();
+            buildPlateManager = new BuildPlateManager();
+            buildPlateManager.Initialise();
+
+            if (buildPlateManager.BuildPlates.Count > 0)
+            {
+                SelectedBuildPlate = buildPlateManager.BuildPlates[0].PrinterName;
+            }
+            foreach (BuildPlate bp in buildPlateManager.BuildPlates)
+            {
+                buildPlateNames.Add(bp.PrinterName);
+            }
 
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
             NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
@@ -147,6 +163,11 @@ namespace Make3D.ViewModels
             CreateToolMenus();
             EnableAllTools(true);
             NotificationManager.Notify("ProjectChanged", Project);
+            if (buildPlateManager.BuildPlates.Count > 0)
+            {
+                NotificationManager.Notify("BuildPlate", buildPlateManager.BuildPlates[0]);
+            }
+            LoadShowSettings();
         }
 
         public ICommand AddCommand { get; set; }
@@ -200,6 +221,22 @@ namespace Make3D.ViewModels
                     boldChecked = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("Bold", boldChecked);
+                }
+            }
+        }
+
+        public List<String> BuildPlateNames
+        {
+            get
+            {
+                return buildPlateNames;
+            }
+            set
+            {
+                if (buildPlateNames != value)
+                {
+                    buildPlateNames = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -528,6 +565,27 @@ namespace Make3D.ViewModels
 
         public ICommand SelectCommand { get; set; }
 
+        public String SelectedBuildPlate
+        {
+            get
+            {
+                return selectedBuildPlate;
+            }
+            set
+            {
+                if (selectedBuildPlate != value)
+                {
+                    selectedBuildPlate = value;
+                    NotifyPropertyChanged();
+                    SelectedBuildPlateUpdated();
+                    if (settingsLoaded)
+                    {
+                        SaveShowSettings();
+                    }
+                }
+            }
+        }
+
         public string SelectedObjectName
         {
             get
@@ -569,6 +627,28 @@ namespace Make3D.ViewModels
             }
         }
 
+        public bool ShowBuildPlateChecked
+        {
+            get
+            {
+                return showBuildPlate;
+            }
+            set
+            {
+                if (showBuildPlate != value)
+                {
+                    showBuildPlate = value;
+                    NotifyPropertyChanged();
+
+                    NotificationManager.Notify("ShowBuildPlate", showBuildPlate);
+                    if (settingsLoaded)
+                    {
+                        SaveShowSettings();
+                    }
+                }
+            }
+        }
+
         public bool ShowFloorChecked
         {
             get
@@ -582,6 +662,10 @@ namespace Make3D.ViewModels
                     showFloorChecked = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("ShowFloor", showFloorChecked);
+                    if (settingsLoaded)
+                    {
+                        SaveShowSettings();
+                    }
                 }
             }
         }
@@ -599,6 +683,10 @@ namespace Make3D.ViewModels
                     showFloorMarkerChecked = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("ShowFloorMarker", showFloorMarkerChecked);
+                    if (settingsLoaded)
+                    {
+                        SaveShowSettings();
+                    }
                 }
             }
         }
@@ -989,6 +1077,22 @@ namespace Make3D.ViewModels
         {
         }
 
+        private void LoadShowSettings()
+        {
+            Properties.Settings.Default.Reload();
+            ShowBuildPlateChecked = Properties.Settings.Default.ShowBuildPlate;
+            ShowFloorChecked = Properties.Settings.Default.ShowFloor;
+            ShowFloorMarkerChecked = Properties.Settings.Default.ShowMarker;
+            ShowAxiesChecked = Properties.Settings.Default.ShowAxis;
+            SelectedBuildPlate = Properties.Settings.Default.SelectedBuildPlate;
+            settingsLoaded = true;
+            NotificationManager.Notify("ShowBuildPlate", showBuildPlate);
+            NotificationManager.Notify("ShowFloor", showFloorChecked);
+            NotificationManager.Notify("ShowFloorMarker", showFloorMarkerChecked);
+            NotificationManager.Notify("ShowAxies", showAxiesChecked);
+            SelectedBuildPlateUpdated();
+        }
+
         private void ObjectNamesChanged(object param)
         {
             NotifyPropertyChanged("ObjectNames");
@@ -1284,6 +1388,25 @@ namespace Make3D.ViewModels
         private void ReturnToDefaultView(object param)
         {
             OnView("PageEdit");
+        }
+
+        private void SaveShowSettings()
+        {
+            Properties.Settings.Default.ShowBuildPlate = ShowBuildPlateChecked;
+            Properties.Settings.Default.ShowFloor = ShowFloorChecked;
+            Properties.Settings.Default.ShowMarker = ShowFloorMarkerChecked;
+            Properties.Settings.Default.ShowAxis = ShowAxiesChecked;
+            Properties.Settings.Default.SelectedBuildPlate = SelectedBuildPlate;
+            Properties.Settings.Default.Save();
+        }
+
+        private void SelectedBuildPlateUpdated()
+        {
+            BuildPlate bp = buildPlateManager.FindBuildPlate(selectedBuildPlate);
+            if (bp != null)
+            {
+                NotificationManager.Notify("BuildPlate", bp);
+            }
         }
 
         private void SetActive(string s, List<ToolDef> defs)
