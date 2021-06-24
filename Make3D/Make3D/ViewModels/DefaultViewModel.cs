@@ -1017,6 +1017,7 @@ namespace Make3D.ViewModels
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
             parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
+            parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
             NotifyPropertyChanged("ParametricToolsToShow");
         }
 

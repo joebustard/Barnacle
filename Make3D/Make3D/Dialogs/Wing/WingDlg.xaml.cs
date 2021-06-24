@@ -483,9 +483,37 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void CloseMissingHalfOfWing(double rootEdgeLength, List<Point> rootProfile, double tipEdgeLength, double tl, List<Point> tipProfile, double startT, double endT)
+        {
+            Point p1 = GetProfileAt(rootProfile, rootEdgeLength, startT);
+
+            Point p2 = GetProfileAt(rootProfile, rootEdgeLength, endT);
+            Point p3 = GetProfileAt(tipProfile, tipEdgeLength, endT);
+            Point p4 = GetProfileAt(tipProfile, tipEdgeLength, startT);
+
+            Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
+            Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
+            Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
+            Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
+
+            int v1 = AddVertice(pd1);
+            int v2 = AddVertice(pd2);
+            int v3 = AddVertice(pd3);
+            int v4 = AddVertice(pd4);
+
+            Faces.Add(v1);
+            Faces.Add(v2);
+            Faces.Add(v3);
+
+            Faces.Add(v1);
+            Faces.Add(v3);
+            Faces.Add(v4);
+        }
+
         private void EllipseTip(List<Point> tipPnts, double mainRad, double sideRad, double tX, double tY, double tZ)
         {
             List<Point3D> tipEdge = new List<Point3D>();
+            List<Point> triEdge = new List<Point>();
             double md = mainRad * 2;
             double stepSize = 1.0 / (tipPnts.Count - 1);
             if (!WholeModelChecked)
@@ -494,9 +522,14 @@ namespace Make3D.Dialogs
             }
             if (wholeModelChecked || topModelChecked)
             {
-                for (double t = 0; t < 0.5; t += stepSize)
+                for (double t = 0; t <= 0.5; t += stepSize)
                 {
+                    if (t > 0.5)
+                    {
+                        t = 0.5;
+                    }
                     Point elp = GetEllipsePoint(mainRad, sideRad, t);
+                    triEdge.Add(elp);
                     //  Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
                     Point3D p = new Point3D(elp.X, tY, elp.Y);
                     tipEdge.Add(p);
@@ -507,13 +540,14 @@ namespace Make3D.Dialogs
                 for (double t = 0.5; t >= 0; t -= stepSize)
                 {
                     Point elp = GetEllipsePoint(mainRad, sideRad, t);
+                    triEdge.Add(elp);
                     // Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
                     Point3D p = new Point3D(elp.X, tY, elp.Y);
                     tipEdge.Add(p);
                 }
             }
 
-            for (int i = 0; i < tipPnts.Count - 1; i++)
+            for (int i = 0; i < tipPnts.Count - 1 && i < tipEdge.Count - 1; i++)
             {
                 Point3D pd1 = new Point3D(tX + (tipPnts[i].X * md), tY + (tipPnts[i].Y * md), tZ);
                 Point3D pd2 = new Point3D(tX + mainRad - tipEdge[i].X, tipEdge[i].Y, tZ + tipEdge[i].Z);
@@ -532,6 +566,10 @@ namespace Make3D.Dialogs
                 Faces.Add(v1);
                 Faces.Add(v3);
                 Faces.Add(v4);
+            }
+            if (!WholeModelChecked)
+            {
+                TriangulateWingTip(triEdge, 1, tX + mainRad, tY, tipOffsetZ, bottomModelChecked);
             }
         }
 
@@ -668,66 +706,49 @@ namespace Make3D.Dialogs
                             }
                             if (close)
                             {
-                                Point p1 = GetProfileAt(rootProfile, rootEdgeLength, startT);
-
-                                Point p2 = GetProfileAt(rootProfile, rootEdgeLength, endT);
-                                Point p3 = GetProfileAt(tipProfile, tipEdgeLength, endT);
-                                Point p4 = GetProfileAt(tipProfile, tipEdgeLength, startT);
-
-                                Point3D pd1 = new Point3D(p1.X * rootLength, p1.Y * rootLength, 0);
-                                Point3D pd2 = new Point3D(p2.X * rootLength, p2.Y * rootLength, 0);
-                                Point3D pd3 = new Point3D((p3.X * tl) + tipOffsetX, (p3.Y * tl) + tipOffsetY, tipOffsetZ);
-                                Point3D pd4 = new Point3D((p4.X * tl) + tipOffsetX, (p4.Y * tl) + tipOffsetY, tipOffsetZ);
-
-                                int v1 = AddVertice(pd1);
-                                int v2 = AddVertice(pd2);
-                                int v3 = AddVertice(pd3);
-                                int v4 = AddVertice(pd4);
-
-                                Faces.Add(v1);
-                                Faces.Add(v2);
-                                Faces.Add(v3);
-
-                                Faces.Add(v1);
-                                Faces.Add(v3);
-                                Faces.Add(v4);
+                                CloseMissingHalfOfWing(rootEdgeLength, rootProfile, tipEdgeLength, tl, tipProfile, startT, endT);
                             }
 
                             TriangulatePerimiter(rootPnts, rootLength, 0, 0, 0, true);
-                            if (selectedTipShape == "Cut Off")
-                            {
-                                TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
-                            }
-                            else
-                            if (selectedTipShape == "Ellipse 1")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr / 10;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            else
-                            if (selectedTipShape == "Ellipse 2")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr / 5;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            if (selectedTipShape == "Ellipse 3")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr / 2;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
-                            if (selectedTipShape == "Ellipse 4")
-                            {
-                                double mr = tl / 2;
-                                double sr = mr;
-                                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
-                            }
+                            GenerateWingTip(tl, tipPnts);
                             CentreVertices();
                         }
                     }
                 }
+            }
+        }
+
+        private void GenerateWingTip(double tl, List<Point> tipPnts)
+        {
+            if (selectedTipShape == "Cut Off")
+            {
+                TriangulatePerimiter(tipPnts, tl, tipOffsetX, tipOffsetY, tipOffsetZ, false);
+            }
+            else
+                                        if (selectedTipShape == "Ellipse 1")
+            {
+                double mr = tl / 2;
+                double sr = mr / 10;
+                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+            }
+            else
+                                        if (selectedTipShape == "Ellipse 2")
+            {
+                double mr = tl / 2;
+                double sr = mr / 5;
+                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+            }
+            if (selectedTipShape == "Ellipse 3")
+            {
+                double mr = tl / 2;
+                double sr = mr / 2;
+                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
+            }
+            if (selectedTipShape == "Ellipse 4")
+            {
+                double mr = tl / 2;
+                double sr = mr;
+                EllipseTip(tipPnts, mr, sr, tipOffsetX, tipOffsetY, tipOffsetZ);
             }
         }
 
@@ -956,6 +977,36 @@ namespace Make3D.Dialogs
                 int c0 = AddVertice(xo + t.Points[0].X * l, yo + t.Points[0].Y * l, z);
                 int c1 = AddVertice(xo + t.Points[1].X * l, yo + t.Points[1].Y * l, z);
                 int c2 = AddVertice(xo + t.Points[2].X * l, yo + t.Points[2].Y * l, z);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
+
+        private void TriangulateWingTip(List<Point> points, double l, double xo, double yo, double z, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (Point p in points)
+            {
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(xo + t.Points[0].X * l, yo, z + t.Points[0].Y * l);
+                int c1 = AddVertice(xo + t.Points[1].X * l, yo, z + t.Points[1].Y * l);
+                int c2 = AddVertice(xo + t.Points[2].X * l, yo, z + t.Points[2].Y * l);
                 if (invert)
                 {
                     Faces.Add(c0);

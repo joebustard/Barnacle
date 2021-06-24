@@ -88,6 +88,10 @@ namespace Make3D.Models
                 case "Figure":
                     res = new FigureDlg();
                     break;
+
+                case "BezierSurface":
+                    res = new BezierSurfaceDlg();
+                    break;
             }
             return res;
         }

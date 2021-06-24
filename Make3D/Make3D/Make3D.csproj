@@ -97,6 +97,9 @@
       <DependentUpon>BulkheadControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\BezierRing\BezierRingDlg.cs" />
+    <Compile Include="Dialogs\BezierSurface\BezierSurfaceDlg.xaml.cs">
+      <DependentUpon>BezierSurfaceDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
@@ -313,6 +316,10 @@
     <Page Include="Dialogs\BezierRing\BezierRingDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\BezierSurface\BezierSurfaceDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Blank\Blank.xaml">
       <SubType>Designer</SubType>
