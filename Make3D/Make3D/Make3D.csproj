@@ -100,6 +100,9 @@
     <Compile Include="Dialogs\BezierSurface\BezierSurfaceDlg.xaml.cs">
       <DependentUpon>BezierSurfaceDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\BezierSurface\ControlPoint.cs" />
+    <Compile Include="Dialogs\BezierSurface\ControlPointManager.cs" />
+    <Compile Include="Dialogs\BezierSurface\Patch.cs" />
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
