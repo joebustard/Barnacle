@@ -103,6 +103,7 @@
     <Compile Include="Dialogs\BezierSurface\ControlPoint.cs" />
     <Compile Include="Dialogs\BezierSurface\ControlPointManager.cs" />
     <Compile Include="Dialogs\BezierSurface\Patch.cs" />
+    <Compile Include="Dialogs\BezierSurface\Surface.cs" />
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
@@ -203,8 +204,10 @@
       <DependentUpon>WingDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Adorners\Adorner.cs" />
+    <Compile Include="Dialogs\WireFrame\WireFrameSegment.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
+    <Compile Include="Models\VectorUtils.cs" />
     <Compile Include="ViewModels\BuildPlate\BuildPlate.cs" />
     <Compile Include="ViewModels\BuildPlate\BuildPlateManager.cs" />
     <Compile Include="Models\CameraUtils.cs" />
