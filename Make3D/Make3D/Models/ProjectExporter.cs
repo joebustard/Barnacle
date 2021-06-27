@@ -4,7 +4,7 @@ namespace Make3D.Models
 {
     public class ProjectExporter
     {
-        public void Export(String[] filePaths, String exportPath)
+        public void Export(String[] filePaths, String exportPath, bool versionExport)
         {
             Document doc;
             foreach (String f in filePaths)
@@ -20,6 +20,10 @@ namespace Make3D.Models
                         allBounds += ob.AbsoluteBounds;
                     }
                     string name = System.IO.Path.GetFileNameWithoutExtension(f);
+                    if ( versionExport)
+                    {
+                        name += "_V_" + doc.Revision.ToString();
+                    }
                     name += ".stl";
                     name = exportPath + "\\" + name;
                     doc.AutoExport(name, allBounds);

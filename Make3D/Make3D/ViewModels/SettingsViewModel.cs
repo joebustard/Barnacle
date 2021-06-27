@@ -154,17 +154,33 @@ namespace Make3D.ViewModels
             }
         }
 
+        private bool versionExport;
+
+        public bool VersionExport
+        {
+            get { return versionExport; }
+            set
+            {
+                if (versionExport != value)
+                {
+                    versionExport = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public SettingsViewModel()
         {
-            Description = document.ProjectSettings.Description;
+            Description = Project.SharedProjectSettings.Description;
             Scales = ModelScales.ScaleNames();
-            SelectedScale = document.ProjectSettings.BaseScale;
-            ExportScale = document.ProjectSettings.ExportScale;
-            RotX = document.ProjectSettings.ExportRotation.X.ToString("F3");
-            RotY = document.ProjectSettings.ExportRotation.Y.ToString("F3");
-            RotZ = document.ProjectSettings.ExportRotation.Z.ToString("F3");
-            SwapAxis = document.ProjectSettings.ExportAxisSwap;
-            FloorAll = document.ProjectSettings.FloorAll;
+            SelectedScale = Project.SharedProjectSettings.BaseScale;
+            ExportScale = Project.SharedProjectSettings.ExportScale;
+            RotX = Project.SharedProjectSettings.ExportRotation.X.ToString("F3");
+            RotY = Project.SharedProjectSettings.ExportRotation.Y.ToString("F3");
+            RotZ = Project.SharedProjectSettings.ExportRotation.Z.ToString("F3");
+            SwapAxis = Project.SharedProjectSettings.ExportAxisSwap;
+            FloorAll = Project.SharedProjectSettings.FloorAll;
+            VersionExport = Project.SharedProjectSettings.VersionExport;
         }
     }
 }

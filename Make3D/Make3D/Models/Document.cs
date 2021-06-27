@@ -85,7 +85,17 @@ namespace Make3D.Models
 
         public string FilePath { get; set; }
 
-        public ProjectSettings ProjectSettings { get; set; }
+        private int revision;
+        public int Revision
+        {
+            get { return revision; }
+            set
+            {
+                revision = value;
+            }
+        }
+
+        
 
         public static XmlElement FindExternalModel(string name, string path)
         {
@@ -164,6 +174,7 @@ namespace Make3D.Models
                     if (docele != null)
                     {
                         GetInt(docele, "NextId", ref nextId, 0);
+                        GetInt(docele, "Revision", ref revision, 1);
                     }
                 }
                 XmlNodeList nodes = docNode.ChildNodes;
@@ -187,13 +198,7 @@ namespace Make3D.Models
                 foreach (XmlNode nd in nodes)
                 {
                     string ndname = nd.Name.ToLower();
-                    if (ndname == "settings")
-                    {
-                        ProjectSettings prj = new ProjectSettings();
-                        prj.Read(nd);
-
-                        ProjectSettings = prj;
-                    }
+                   
                     if (ndname == "obj")
                     {
                         Object3D obj = new Object3D();
@@ -308,7 +313,9 @@ namespace Make3D.Models
             XmlDocument doc = new XmlDocument();
             XmlElement docNode = doc.CreateElement("Document");
             docNode.SetAttribute("NextId", nextId.ToString());
-            ProjectSettings.Write(doc, docNode);
+            revision++;
+            docNode.SetAttribute("Revision", revision.ToString());
+            
             foreach (String rf in referencedFiles)
             {
                 string fn = Project.AbsPathToProjectPath(rf);
@@ -327,7 +334,7 @@ namespace Make3D.Models
         internal void Add(Object3D leftObject)
         {
         }
-
+        public ProjectSettings ProjectSettings { get; set; }
         internal void AutoExport(string name, Bounds3D bnds)
         {
             double scalefactor = 1.0;
@@ -373,6 +380,7 @@ namespace Make3D.Models
             Content = new List<Object3D>();
             ProjectSettings = new ProjectSettings();
             nextId = 0;
+            revision = 0;
             Dirty = false;
             referencedFiles = new List<string>();
         }
@@ -437,8 +445,12 @@ namespace Make3D.Models
                     {
                         Directory.CreateDirectory(pth);
                     }
-                    string expName = System.IO.Path.GetFileName(FilePath);
-                    expName = System.IO.Path.ChangeExtension(expName, "stl");
+                    string expName = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+                    if (ProjectSettings.VersionExport)
+                    {
+                        expName += "_V_" + revision.ToString();
+                    }
+                    expName = expName+ ".stl";
                     expName = System.IO.Path.Combine(pth, expName);
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     res = expName;

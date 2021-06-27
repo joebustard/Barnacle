@@ -26,7 +26,9 @@
 
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+           <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+    </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
     </Folder>
@@ -82,7 +84,10 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+           <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+    </Folder>
+
   </ProjectDefinition>
 
    <!--  Armoured Car Model Template -->
@@ -133,7 +138,10 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+        <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+           <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+    </Folder>
+
   </ProjectDefinition>
 
   <!--  Aircraft Model Template -->
@@ -184,7 +192,10 @@
     <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"/>
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" />
+      <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+           <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+    </Folder>
+
   </ProjectDefinition>
   <ProjectDefinition Name="Blank">
     <Description>
@@ -212,7 +223,10 @@
 
     <Folder Name="Export" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True"/>
+       <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+           <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+    </Folder>
+
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True"  AddFiles="True" AutoLoad="True">
     </Folder>
   </ProjectDefinition>

@@ -85,7 +85,7 @@ namespace Make3D.Dialogs.BezierSurface
 
         internal void CreateModel()
         {
-            double si = 0.5;
+            double si = 0.75;
             model = new GeometryModel3D();
 
             Point3D p = Position;
@@ -178,7 +178,7 @@ namespace Make3D.Dialogs.BezierSurface
                 Position.Z + positionChange.Z);
 
             Point3D p = Position;
-            double si = 0.5;
+            double si = 0.75;
             MeshGeometry3D faces = model.Geometry as MeshGeometry3D;
             faces.Positions.Clear();
             int v0 = AddPoint(faces.Positions, new Point3D(p.X, p.Y + si, p.Z));

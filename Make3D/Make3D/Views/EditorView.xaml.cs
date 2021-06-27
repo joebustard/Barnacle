@@ -166,6 +166,7 @@ namespace Make3D.Views
             Settings dlg = new Settings();
             if (dlg.ShowDialog() == true)
             {
+                BaseViewModel.Project.Save();
             }
         }
 

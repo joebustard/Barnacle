@@ -30,14 +30,16 @@ namespace Make3D.ViewModels
 
         public BaseViewModel()
         {
-            if (document == null)
-            {
-                document = new Document();
-            }
+
             if (project == null)
             {
                 project = new Project();
                 project.CreateDefault();
+            }
+            if (document == null)
+            {
+                document = new Document();
+                document.ProjectSettings = project.SharedProjectSettings;
             }
             if (recentlyUsedManager == null)
             {

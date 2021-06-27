@@ -62,6 +62,7 @@
     <Compile Include="DataModel\Project.cs" />
     <Compile Include="DataModel\ProjectFile.cs" />
     <Compile Include="DataModel\ProjectFolder.cs" />
+    <Compile Include="DataModel\ProjectSettings.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="SolutionExplorerControl.xaml.cs">
       <DependentUpon>SolutionExplorerControl.xaml</DependentUpon>

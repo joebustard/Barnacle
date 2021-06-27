@@ -10,7 +10,7 @@ namespace VisualSolutionExplorer
         public static string ProjectFilePath;
         public List<ProjectFolder> folders;
         private DateTime creationDate;
-
+        public ProjectSettings SharedProjectSettings { get; set; }
         public Project()
         {
             ProjectName = String.Empty;
@@ -20,6 +20,7 @@ namespace VisualSolutionExplorer
             ProjectFolders = new List<ProjectFolder>();
             FirstFile = "";
             creationDate = DateTime.Now;
+            SharedProjectSettings = new ProjectSettings();
         }
 
         public static String BaseFolder { get; set; }
@@ -174,7 +175,13 @@ namespace VisualSolutionExplorer
             {
                 Description = des.InnerText.Trim();
             }
-
+            XmlNode setNode = nd.SelectSingleNode("Settings");
+            if ( setNode != null)
+            { 
+                ProjectSettings prj = new ProjectSettings();
+                prj.Read(setNode);
+                SharedProjectSettings = prj;
+            }
             XmlNodeList fileNodes = ele.SelectNodes("File");
             foreach (XmlNode filn in fileNodes)
             {
@@ -264,7 +271,7 @@ namespace VisualSolutionExplorer
             {
                 root.SetAttribute("Open", FirstFile);
             }
-
+            SharedProjectSettings.Write(solutionDoc, root);
             root.SetAttribute("Created", creationDate.ToString());
             solutionDoc.AppendChild(root);
             // The first project folder is a dummy one

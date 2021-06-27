@@ -235,7 +235,6 @@
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectExporter.cs" />
-    <Compile Include="Models\ProjectSettings.cs" />
     <Compile Include="Models\ModelScales.cs" />
     <Compile Include="Models\ReferenceGrpoup3D.cs" />
     <Compile Include="Models\ReferenceObject3D.cs" />

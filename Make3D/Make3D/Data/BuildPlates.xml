@@ -1,4 +1,4 @@
 ﻿<PlateDefinitions>
   <BuildPlate PrinterName="Ender 3" Width="210" Height="210" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="Elegoo Mars 2 Pro" Width="130" Height="82" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="Elegoo Mars 2 Pro" Width="82" Height="130" Colour="#FF5F9EA0" BorderThickness="5" />
 </PlateDefinitions>

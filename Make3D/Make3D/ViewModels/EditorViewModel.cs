@@ -220,6 +220,13 @@ namespace Make3D.ViewModels
                     }
                 }
             }
+            if (showBuildPlate)
+            {
+                foreach (GeometryModel3D m in printerPlate.Group.Children)
+                {
+                    modelItems.Add(m);
+                }
+            }
             if (showAxies)
             {
                 foreach (GeometryModel3D m in axies.Group.Children)
@@ -1101,7 +1108,7 @@ namespace Make3D.ViewModels
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
-                pe.Export(filenames, pth + "\\export");
+                pe.Export(filenames, pth + "\\export",Project.SharedProjectSettings.VersionExport);
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }

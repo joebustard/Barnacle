@@ -21,18 +21,19 @@ namespace Make3D.Views
             SettingsViewModel vm = DataContext as SettingsViewModel;
             if (vm != null)
             {
-                BaseViewModel.Document.ProjectSettings.Description = vm.Description;
-                BaseViewModel.Document.ProjectSettings.BaseScale = vm.SelectedScale;
-                BaseViewModel.Document.ProjectSettings.ExportScale = vm.ExportScale;
+                BaseViewModel.Project.SharedProjectSettings.Description = vm.Description;
+                BaseViewModel.Project.SharedProjectSettings.BaseScale = vm.SelectedScale;
+                BaseViewModel.Project.SharedProjectSettings.ExportScale = vm.ExportScale;
                 try
                 {
                     double x = Convert.ToDouble(vm.RotX);
                     double y = Convert.ToDouble(vm.RotY);
                     double z = Convert.ToDouble(vm.RotZ);
-                    BaseViewModel.Document.ProjectSettings.ExportRotation = new Point3D(x, y, z);
-                    BaseViewModel.Document.ProjectSettings.ExportAxisSwap = vm.SwapAxis;
-                    BaseViewModel.Document.ProjectSettings.FloorAll = vm.FloorAll;
-                    BaseViewModel.Document.Dirty = true;
+                    BaseViewModel.Project.SharedProjectSettings.ExportRotation = new Point3D(x, y, z);
+                    BaseViewModel.Project.SharedProjectSettings.ExportAxisSwap = vm.SwapAxis;
+                    BaseViewModel.Project.SharedProjectSettings.FloorAll = vm.FloorAll;
+                    BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
+                //    BaseViewModel.Document.Dirty = true;
                 }
                 catch (Exception)
                 {
