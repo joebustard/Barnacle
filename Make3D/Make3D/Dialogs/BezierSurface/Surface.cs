@@ -18,64 +18,179 @@ namespace Make3D.Dialogs.BezierSurface
 
         public ControlPointManager controlPointManager { get; set; }
 
-        public void GenerateSurface(Point3DCollection vertices, Int32Collection tris)
+        public void GenerateSurface(Point3DCollection vertices, Int32Collection tris, double numDivs = 5)
         {
-            double numDivs = 10;
+
+            double delta = 1.0 / numDivs;
             vertices.Clear();
             tris.Clear();
+            Vector3D off = new Vector3D(0, 1, 0);
             if (controlPointManager != null)
             {
                 int patchStartRow = 0;
                 int patchStartColumn = 0;
+                patchStartRow = TopAndBottom(vertices, tris, delta, off, ref patchStartColumn);
 
-                for (patchStartRow = 0; patchStartRow < controlPointManager.PatchRows - 3; patchStartRow += 3)
+                patchStartRow = CloseLeftAndRight(vertices, tris, delta, off, ref patchStartColumn);
+
+            }
+        }
+
+        private int TopAndBottom(Point3DCollection vertices, Int32Collection tris, double delta, Vector3D off, ref int patchStartColumn)
+        {
+            int patchStartRow;
+            for (patchStartRow = 0; patchStartRow < controlPointManager.PatchRows - 3; patchStartRow += 3)
+            {
+                for (patchStartColumn = 0; patchStartColumn < controlPointManager.PatchColumns - 3; patchStartColumn += 3)
                 {
-                    for (patchStartColumn = 0; patchStartColumn < controlPointManager.PatchColumns - 3; patchStartColumn += 3)
+
+                    double u;
+                    double v;
+                    for (u = 0; u < 1; u += delta)
                     {
-                        double delta = 1.0 / numDivs;
-                        double u;
-                        double v;
-                        for (u = 0; u < 1; u += delta)
+                        double u1 = u + delta;
+                        double um = u + (delta / 2);
+                        for (v = 0; v < 1; v += delta)
                         {
-                            double u1 = u + delta;
-                            double um = u + (delta / 2);
-                            for (v = 0; v < 1; v += delta)
-                            {
-                                double v1 = v + delta;
-                                double vm = v + (delta / 2.0);
+                            double v1 = v + delta;
+                            double vm = v + (delta / 2.0);
 
-                                Point3D p1 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v);
-                                Point3D p2 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v);
-                                Point3D p3 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v1);
-                                Point3D p4 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v1);
-                                Point3D p5 = GetSurfacePoint(patchStartRow, patchStartColumn, um, vm);
+                            // top
+                            Point3D p1 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v);
+                            Point3D p2 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v);
+                            Point3D p3 = GetSurfacePoint(patchStartRow, patchStartColumn, u1, v1);
+                            Point3D p4 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v1);
+                            Point3D p5 = GetSurfacePoint(patchStartRow, patchStartColumn, um, vm);
 
-                                int ve1 = AddVertice(p1, vertices);
-                                int ve2 = AddVertice(p2, vertices);
-                                int ve3 = AddVertice(p3, vertices);
-                                int ve4 = AddVertice(p4, vertices);
-                                int ve5 = AddVertice(p5, vertices);
+                            int ve1 = AddVertice(p1, vertices);
+                            int ve2 = AddVertice(p2, vertices);
+                            int ve3 = AddVertice(p3, vertices);
+                            int ve4 = AddVertice(p4, vertices);
+                            int ve5 = AddVertice(p5, vertices);
 
-                                tris.Add(ve1);
-                                tris.Add(ve2);
-                                tris.Add(ve5);
+                            tris.Add(ve1);
+                            tris.Add(ve5);
+                            tris.Add(ve2);
 
-                                tris.Add(ve2);
-                                tris.Add(ve3);
-                                tris.Add(ve5);
+                            tris.Add(ve2);
+                            tris.Add(ve5);
+                            tris.Add(ve3);
 
-                                tris.Add(ve3);
-                                tris.Add(ve4);
-                                tris.Add(ve5);
+                            tris.Add(ve3);
+                            tris.Add(ve5);
+                            tris.Add(ve4);
 
-                                tris.Add(ve4);
-                                tris.Add(ve1);
-                                tris.Add(ve5);
-                            }
+                            tris.Add(ve4);
+                            tris.Add(ve5);
+                            tris.Add(ve1);
+
+                            // bottom
+
+                            p1 = p1 - off;
+                            p2 = p2 - off;
+                            p3 = p3 - off;
+                            p4 = p4 - off;
+                            p5 = p5 - off;
+
+                            ve1 = AddVertice(p1, vertices);
+                            ve2 = AddVertice(p2, vertices);
+                            ve3 = AddVertice(p3, vertices);
+                            ve4 = AddVertice(p4, vertices);
+                            ve5 = AddVertice(p5, vertices);
+
+                            tris.Add(ve1);
+                            tris.Add(ve2);
+                            tris.Add(ve5);
+
+                            tris.Add(ve2);
+                            tris.Add(ve3);
+                            tris.Add(ve5);
+
+                            tris.Add(ve3);
+                            tris.Add(ve4);
+                            tris.Add(ve5);
+
+                            tris.Add(ve4);
+                            tris.Add(ve1);
+                            tris.Add(ve5);
                         }
                     }
                 }
             }
+
+            return patchStartRow;
+        }
+
+        private int CloseLeftAndRight(Point3DCollection vertices, Int32Collection tris, double delta, Vector3D off, ref int patchStartColumn)
+        {
+            int patchStartRow;
+            for (patchStartRow = 0; patchStartRow < controlPointManager.PatchRows - 3; patchStartRow += 3)
+            {
+                // left
+                patchStartColumn = 0;
+
+                double u;
+                double v;
+                u = 0;
+                for (v = 0; v < 1; v += delta)
+                {
+                    double v1 = v + delta;
+
+                    // top
+                    Point3D p1 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v);
+                    Point3D p2 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v1);
+                    Point3D p3 = p2 - off;
+                    Point3D p4 = p1 - off;
+
+                    int ve1 = AddVertice(p1, vertices);
+                    int ve2 = AddVertice(p2, vertices);
+                    int ve3 = AddVertice(p3, vertices);
+                    int ve4 = AddVertice(p4, vertices);
+
+
+                    tris.Add(ve1);
+                    tris.Add(ve3);
+                    tris.Add(ve2);
+
+                    tris.Add(ve1);
+                    tris.Add(ve4);
+                    tris.Add(ve3);
+
+                }
+
+
+                // right
+
+                patchStartColumn = controlPointManager.PatchColumns - 4;
+                u = 1;
+                for (v = 0; v < 1; v += delta)
+                {
+                    double v1 = v + delta;
+
+                    // top
+                    Point3D p1 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v);
+                    Point3D p2 = GetSurfacePoint(patchStartRow, patchStartColumn, u, v1);
+                    Point3D p3 = p2 - off;
+                    Point3D p4 = p1 - off;
+
+                    int ve1 = AddVertice(p1, vertices);
+                    int ve2 = AddVertice(p2, vertices);
+                    int ve3 = AddVertice(p3, vertices);
+                    int ve4 = AddVertice(p4, vertices);
+
+
+                    tris.Add(ve1);
+                    tris.Add(ve2);
+                    tris.Add(ve3);
+
+                    tris.Add(ve1);
+                    tris.Add(ve3);
+                    tris.Add(ve4);
+
+                }
+            }
+
+            return patchStartRow;
         }
 
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)
