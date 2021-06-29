@@ -972,6 +972,7 @@ namespace Make3D.ViewModels
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
                 CheckPoint();
+                GC.Collect();
                 Object3D ob = selectedObjectAdorner.SelectedObjects[0];
                 MeshDecimator.Mesh mesh = ObjectMeshToDecimatorMesh(ob);
                 DecimatorSettings dlg = new DecimatorSettings();
@@ -998,12 +999,13 @@ namespace Make3D.ViewModels
                         }
                         ob.Remesh();
                         RegenerateDisplayList();
+                        GC.Collect();
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Decimate requires a single objec to be selected");
+                MessageBox.Show("Decimate requires a single object to be selected");
             }
         }
 
@@ -1108,7 +1110,7 @@ namespace Make3D.ViewModels
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
-                pe.Export(filenames, pth + "\\export",Project.SharedProjectSettings.VersionExport);
+                pe.Export(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport);
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }
