@@ -12,22 +12,37 @@ namespace Make3D.Dialogs.BezierSurface
 {
     internal class Surface
     {
+        private double thickness = 1.0;
+
         public Surface()
         {
         }
 
         public ControlPointManager controlPointManager { get; set; }
 
+        public double Thickness
+        {
+            get
+            {
+                return thickness;
+            }
+            set
+            {
+                if (value > 0)
+                {
+                    thickness = value;
+                }
+            }
+        }
+
         public void GenerateSurface(Point3DCollection vertices, Int32Collection tris, double numDivs = 5)
         {
             double delta = 1.0 / numDivs;
             vertices.Clear();
             tris.Clear();
-            Vector3D off = new Vector3D(0, 1, 0);
+            Vector3D off = new Vector3D(0, Thickness, 0);
             if (controlPointManager != null)
             {
-                int patchStartRow = 0;
-                int patchStartColumn = 0;
                 TopAndBottom(vertices, tris, delta, off);
                 CloseLeftAndRight(vertices, tris, delta, off);
                 CloseFrontAndBack(vertices, tris, delta, off);

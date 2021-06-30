@@ -80,6 +80,25 @@ namespace Make3D.Dialogs.BezierSurface
             }
         }
 
+        public void ResetControlPoints()
+        {
+            allcontrolPoints = new ControlPoint[patchRows, patchColumns];
+
+            double xo = (patchColumns / 2) * XGap;
+            double zo = (patchRows / 2) * ZGap;
+            for (int r = 0; r < patchRows; r++)
+            {
+                for (int c = 0; c < patchColumns; c++)
+                {
+                    double x = c * XGap - xo;
+                    double z = r * ZGap - zo;
+                    allcontrolPoints[r, c] = new ControlPoint(x, 20, z);
+                }
+            }
+
+            GenerateWireFrames();
+        }
+
         internal bool CheckHit(GeometryModel3D hitModel, bool shift, ref int selRow, ref int selColumn)
         {
             bool hit = false;
@@ -90,6 +109,13 @@ namespace Make3D.Dialogs.BezierSurface
                 for (int c = 0; c < allcontrolPoints.GetLength(0); c++)
                 {
                     allcontrolPoints[r, c].Selected = false;
+                }
+            }
+
+            for (int r = 0; r < allcontrolPoints.GetLength(0) && hit == false; r++)
+            {
+                for (int c = 0; c < allcontrolPoints.GetLength(0) && hit == false; c++)
+                {
                     hit = allcontrolPoints[r, c].CheckHit(hitModel, false);
                     if (hit)
                     {
@@ -133,25 +159,6 @@ namespace Make3D.Dialogs.BezierSurface
                 WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[patchRows - 1, c].Position, allcontrolPoints[patchRows - 1, c + 1].Position, 0.1);
                 wireFrames.Add(seg2);
             }
-        }
-
-        private void ResetControlPoints()
-        {
-            allcontrolPoints = new ControlPoint[patchRows, patchColumns];
-
-            double xo = (patchColumns / 2) * XGap;
-            double zo = (patchRows / 2) * ZGap;
-            for (int r = 0; r < patchRows; r++)
-            {
-                for (int c = 0; c < patchColumns; c++)
-                {
-                    double x = c * XGap - xo;
-                    double z = r * ZGap - zo;
-                    allcontrolPoints[r, c] = new ControlPoint(x, 20, z);
-                }
-            }
-
-            GenerateWireFrames();
         }
     }
 }

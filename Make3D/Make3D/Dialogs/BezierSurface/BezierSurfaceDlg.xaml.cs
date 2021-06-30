@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
@@ -20,6 +21,7 @@ namespace Make3D.Dialogs
         private int lastSelectedPointColumn;
         private int lastSelectedPointRow;
         private Surface surface;
+        private double surfaceThickness;
 
         public BezierSurfaceDlg()
         {
@@ -28,8 +30,10 @@ namespace Make3D.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             controlPoints = new ControlPointManager();
+            surfaceThickness = 1;
             surface = new Surface();
             surface.controlPointManager = controlPoints;
+            surface.Thickness = surfaceThickness;
         }
 
         public override bool ShowAxies
@@ -62,6 +66,27 @@ namespace Make3D.Dialogs
                     showFloor = value;
                     NotifyPropertyChanged();
                     Redisplay();
+                }
+            }
+        }
+
+        public double SurfaceThickness
+        {
+            get
+            {
+                return surfaceThickness;
+            }
+            set
+            {
+                if (surfaceThickness != value)
+                {
+                    surfaceThickness = value;
+                    if (surface != null)
+                    {
+                        surface.Thickness = surfaceThickness;
+                    }
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -218,10 +243,20 @@ namespace Make3D.Dialogs
                 if (controlPoints.CheckHit(lastHitModel, shift, ref lastSelectedPointRow, ref lastSelectedPointColumn))
                 {
                     Redisplay();
+                    viewport3D1.Focus();
+                    /*
+                                        TextBox textBox = Keyboard.FocusedElement as TextBox;
+                                        Slider sld = Keyboard.FocusedElement as Slider;
+                                        if (textBox != null || sld != null)
+                                        {
+                                            TraversalRequest tRequest = new TraversalRequest(FocusNavigationDirection.Next);
+                                            textBox.MoveFocus(tRequest);
+                                        }
+                                        */
                 }
-
-                base.Viewport_MouseDown(viewport3D1, e);
             }
+
+            base.Viewport_MouseDown(viewport3D1, e);
         }
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
@@ -318,9 +353,25 @@ namespace Make3D.Dialogs
             }
         }
 
+        private void ResetControlPoints_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.ResetControlPoints();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+        }
+
+        private void UpdateDisplay()
+        {
+            GenerateShape();
+            Redisplay();
+        }
+
+        private void Viewport_MouseDown(object sender, MouseButtonEventArgs e)
+        {
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)

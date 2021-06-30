@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
         Title="Bezier Surface" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }" MouseDown="Grid_MouseDown"  KeyDown="Grid_KeyDown">
-    <Grid VerticalAlignment="Stretch">
+    <Grid x:Name="MainGrid" VerticalAlignment="Stretch" Focusable="True" KeyDown="Grid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
             <RowDefinition Height="25" />
@@ -29,15 +29,22 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="100">Thickness</Label>
+                <Slider VerticalAlignment="Center" Value="{Binding SurfaceThickness}" Minimum="1" Maximum="100" Width="200" />
+                <TextBox x:Name="ThickBox" Text="{Binding SurfaceThickness}" Width="50" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="100">Control Points</Label>
+                <Button Click="ResetControlPoints_Click">Reset</Button>
+            </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border x:Name="viewBorder" Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}" KeyDown="Grid_KeyDown" Focusable="True">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
+              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" KeyDown="Grid_KeyDown" Focusable="True">
 
                 <Viewport3D.Camera>
                     <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
