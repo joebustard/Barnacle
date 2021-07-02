@@ -216,6 +216,44 @@ namespace Make3D.Dialogs
             }
         }
 
+        private void DwnDiag1_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpDiagPoints(0, 0, controlPoints.PatchRows, controlPoints.PatchColumns, -1);
+
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void DwnDiag2_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpDiagPoints(controlPoints.PatchRows, 0, 0, controlPoints.PatchColumns, -1);
+
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void DwnX_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpXPoints(-1);
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void DwnXZ_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpXPoints(-1);
+            controlPoints.UpZPoints(1);
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void DwnZ_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpZPoints(-1);
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
         private void GenerateShape()
         {
             ClearShape();
@@ -368,6 +406,44 @@ namespace Make3D.Dialogs
         {
             GenerateShape();
             Redisplay();
+        }
+
+        private void UpDiag1_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpDiagPoints(0, 0, controlPoints.PatchRows, controlPoints.PatchColumns, 1);
+
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void UpDiag2_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpDiagPoints(controlPoints.PatchRows, 0, 0, controlPoints.PatchColumns, 1);
+
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void UpX_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpXPoints(1);
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void UpXZ_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpXPoints(1);
+            controlPoints.UpZPoints(1);
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
+        }
+
+        private void UpZ_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.UpZPoints(1);
+            controlPoints.GenerateWireFrames();
+            UpdateDisplay();
         }
 
         private void Viewport_MouseDown(object sender, MouseButtonEventArgs e)

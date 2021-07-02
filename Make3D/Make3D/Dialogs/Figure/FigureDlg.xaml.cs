@@ -96,6 +96,7 @@ namespace Make3D.Dialogs
             availableFigureModels = new List<string>();
             modelAssignments = new List<ModelAssignmentControl>();
             NotificationManager.Subscribe("SelectedFigure", SelectedFigureModelChanged);
+            NotificationManager.Subscribe("FigureScale", SelectedFigureScaleChanged);
             ModelGroup = MyModelGroup;
         }
 
@@ -938,15 +939,19 @@ namespace Make3D.Dialogs
             figureModels.Clear();
             //FigureModels.Add(new FigureModel(skeleton.Name, skeleton.FigureModelName));
             skeleton.AddFigureModels(figureModels);
-            modelAssignments.Clear();
+            List<ModelAssignmentControl> fc = new List<ModelAssignmentControl>();
             foreach (FigureModel fm in figureModels)
             {
                 ModelAssignmentControl mac = new ModelAssignmentControl();
                 mac.BoneName = fm.BoneName;
                 mac.FigureName = fm.FigureModelName;
                 mac.AvailableFigureNames = availableFigureModels;
-                modelAssignments.Add(mac);
+                mac.LScale = fm.LScale;
+                mac.HScale = fm.HScale;
+                mac.WScale = fm.WScale;
+                fc.Add(mac);
             }
+            AllModelAssignments = fc;
             NotifyPropertyChanged("AllModelAssignments");
             foreach (ModelAssignmentControl mac in modelAssignments)
             {
@@ -1209,6 +1214,18 @@ namespace Make3D.Dialogs
             if (mac != null)
             {
                 if (skeleton.SetModelForBone(mac.BoneName, mac.FigureName))
+                {
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private void SelectedFigureScaleChanged(object param)
+        {
+            ModelAssignmentControl mac = param as ModelAssignmentControl;
+            if (mac != null)
+            {
+                if (skeleton.SetScaleForBone(mac.BoneName, mac.LScale, mac.WScale, mac.HScale))
                 {
                     UpdateDisplay();
                 }

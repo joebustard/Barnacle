@@ -35,10 +35,25 @@
                 <TextBox x:Name="ThickBox" Text="{Binding SurfaceThickness}" Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Control Points</Label>
-                <Button Click="ResetControlPoints_Click">Reset</Button>
+                <Label VerticalAlignment="Center" >Reset Control Points</Label>
+                <Button Margin="4,0,0,0" Click="ResetControlPoints_Click">Flat</Button>
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label Width="80" VerticalAlignment="Center" >Bend Up</Label>
+                <Button Margin="4,0,0,0" Click="UpX_Click">X</Button>
+                <Button Margin="4,0,0,0" Click="UpZ_Click">Z</Button>
+                <Button Margin="4,0,0,0" Click="UpXZ_Click">X+Z</Button>
+                <Button Margin="4,0,0,0" Click="UpDiag1_Click">Diag 1</Button>
+                <Button Margin="4,0,0,0" Click="UpDiag2_Click">Diag 2</Button>
+            </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <Label Width="80" VerticalAlignment="Center" >Bend Down</Label>
+                <Button Margin="4,0,0,0" Click="DwnX_Click">X</Button>
+                <Button Margin="4,0,0,0" Click="DwnZ_Click">Z</Button>
+                <Button Margin="4,0,0,0" Click="DwnXZ_Click">X+Z</Button>
+                <Button Margin="4,0,0,0" Click="DwnDiag1_Click">Diag 1</Button>
+                <Button Margin="4,0,0,0" Click="DwnDiag2_Click">Diag 2</Button>
+            </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>

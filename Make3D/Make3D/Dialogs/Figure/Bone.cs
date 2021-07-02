@@ -46,6 +46,9 @@ namespace Make3D.Dialogs.Figure
             MaxYRot = 359;
             MinZRot = -359;
             MaxZRot = 359;
+            FigureLScale = 1.0;
+            FigureWScale = 1.0;
+            FigureHScale = 1.0;
             SubBones = new List<Bone>();
             DisplayRecord = null;
         }
@@ -64,7 +67,11 @@ namespace Make3D.Dialogs.Figure
             }
         }
 
+        public double FigureHScale { get; set; }
+        public double FigureLScale { get; set; }
         public string FigureModelName { get; set; }
+
+        public double FigureWScale { get; set; }
 
         public double Height
         {
@@ -219,6 +226,16 @@ namespace Make3D.Dialogs.Figure
             return res;
         }
 
+        public double GetDouble(string n, XmlElement e, double def)
+        {
+            double res = def;
+            if (e.HasAttribute(n))
+            {
+                res = Convert.ToDouble(e.GetAttribute(n));
+            }
+            return res;
+        }
+
         public Point3DCollection RotatedPointCollection(Point3DCollection src, double nxr, double nyr, double nzr)
         {
             Point3DCollection res = new Point3DCollection();
@@ -242,7 +259,7 @@ namespace Make3D.Dialogs.Figure
         {
             foreach (Bone bn in SubBones)
             {
-                figureModels.Add(new FigureModel(bn.Name, bn.FigureModelName));
+                figureModels.Add(new FigureModel(bn.Name, bn.FigureModelName, bn.FigureLScale, bn.FigureWScale, bn.FigureHScale));
                 bn.AddFigureModels(figureModels);
             }
         }
@@ -289,7 +306,16 @@ namespace Make3D.Dialogs.Figure
                 br.MarkerPosition = new Point3D(bn.StartPosition.X, bn.StartPosition.Y, bn.StartPosition.Z);
 
                 br.Rotation = new Point3D(bn.Nxr, bn.Nyr, bn.Nzr);
-                br.Scale = new Scale3D(bn.Length, bn.Height, bn.Width);
+                double l = bn.Length;
+                double h = bn.Height;
+                double w = bn.Width;
+                if (figure)
+                {
+                    l = l * bn.FigureLScale;
+                    h = h * bn.FigureHScale;
+                    w = w * bn.FigureWScale;
+                }
+                br.Scale = new Scale3D(l, h, w);
                 br.Bone = bn;
                 pnts.Add(br);
                 bn.DisplayRecord = br;
@@ -307,6 +333,10 @@ namespace Make3D.Dialogs.Figure
             Width = Convert.ToDouble(e.GetAttribute("W"));
             Height = Convert.ToDouble(e.GetAttribute("H"));
             Length = Convert.ToDouble(e.GetAttribute("L"));
+            FigureLScale = GetDouble("FL", e, 1);
+            FigureWScale = GetDouble("FW", e, 1);
+            FigureHScale = GetDouble("FH", e, 1);
+
             ModelName = e.GetAttribute("M");
             FigureModelName = e.GetAttribute("FM");
             XmlNodeList nl = e.SelectNodes("Bone");
@@ -334,6 +364,9 @@ namespace Make3D.Dialogs.Figure
 
             ele.SetAttribute("M", ModelName);
             ele.SetAttribute("FM", FigureModelName);
+            ele.SetAttribute("FL", FigureLScale.ToString());
+            ele.SetAttribute("FW", FigureWScale.ToString());
+            ele.SetAttribute("FH", FigureHScale.ToString());
             parent.AppendChild(ele);
 
             foreach (Bone bn in SubBones)
@@ -358,6 +391,31 @@ namespace Make3D.Dialogs.Figure
                 foreach (Bone bn in SubBones)
                 {
                     changed = changed | bn.SetModelForBone(boneName, figureName);
+                }
+            }
+            return changed;
+        }
+
+        internal bool SetScaleForBone(string boneName, double lScale, double wScale, double hScale)
+        {
+            bool changed = false;
+            if (Name == boneName)
+            {
+                // only change if values differ as we don't want to keep
+                // redrawing during set up
+                if (FigureLScale != lScale || FigureWScale != wScale || FigureHScale != hScale)
+                {
+                    FigureLScale = lScale;
+                    FigureWScale = wScale;
+                    FigureHScale = hScale;
+                    changed = true;
+                }
+            }
+            else
+            {
+                foreach (Bone bn in SubBones)
+                {
+                    changed = changed | bn.SetScaleForBone(boneName, lScale, wScale, hScale);
                 }
             }
             return changed;

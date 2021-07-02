@@ -26,11 +26,20 @@ namespace Make3D.Dialogs.Figure
         private String boneName;
         private String figureName;
 
+        private double hScale;
+
+        private double lScale;
+
+        private double wScale;
+
         public ModelAssignmentControl()
         {
             InitializeComponent();
             availableFigureNames = new List<string>();
             DataContext = this;
+            hScale = 1.0;
+            wScale = 1.0;
+            lScale = 1.0;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -87,6 +96,66 @@ namespace Make3D.Dialogs.Figure
                     figureName = value;
                     NotifyPropertyChanged();
                     NotificationManager.Notify("SelectedFigure", this);
+                }
+            }
+        }
+
+        public double HScale
+        {
+            get
+            {
+                return hScale;
+            }
+            set
+            {
+                if (hScale != value)
+                {
+                    if (value > 0)
+                    {
+                        hScale = value;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("FigureScale", this);
+                    }
+                }
+            }
+        }
+
+        public double LScale
+        {
+            get
+            {
+                return lScale;
+            }
+            set
+            {
+                if (lScale != value)
+                {
+                    if (value > 0)
+                    {
+                        lScale = value;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("FigureScale", this);
+                    }
+                }
+            }
+        }
+
+        public double WScale
+        {
+            get
+            {
+                return wScale;
+            }
+            set
+            {
+                if (wScale != value)
+                {
+                    if (value > 0)
+                    {
+                        wScale = value;
+                        NotifyPropertyChanged();
+                        NotificationManager.Notify("FigureScale", this);
+                    }
                 }
             }
         }

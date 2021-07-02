@@ -80,6 +80,28 @@ namespace Make3D.Dialogs.BezierSurface
             }
         }
 
+        public void GenerateWireFrames()
+        {
+            wireFrames = new List<WireFrameSegment>();
+            for (int r = 0; r < patchRows - 1; r++)
+            {
+                for (int c = 0; c < patchColumns - 1; c++)
+                {
+                    WireFrameSegment seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r, c + 1].Position, 0.1);
+                    wireFrames.Add(seg);
+                    seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r + 1, c].Position, 0.1);
+                    wireFrames.Add(seg);
+                }
+                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[r, patchColumns - 1].Position, allcontrolPoints[r + 1, patchColumns - 1].Position, 0.1);
+                wireFrames.Add(seg2);
+            }
+            for (int c = 0; c < patchColumns - 1; c++)
+            {
+                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[patchRows - 1, c].Position, allcontrolPoints[patchRows - 1, c + 1].Position, 0.1);
+                wireFrames.Add(seg2);
+            }
+        }
+
         public void ResetControlPoints()
         {
             allcontrolPoints = new ControlPoint[patchRows, patchColumns];
@@ -139,25 +161,71 @@ namespace Make3D.Dialogs.BezierSurface
             }
         }
 
-        private void GenerateWireFrames()
+        internal void UpDiagPoints(int sr, int sc, int er, int ec, int delta)
         {
-            wireFrames = new List<WireFrameSegment>();
-            for (int r = 0; r < patchRows - 1; r++)
+            if (sr < er)
             {
-                for (int c = 0; c < patchColumns - 1; c++)
+                for (int r = sr; r < er; r++)
                 {
-                    WireFrameSegment seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r, c + 1].Position, 0.1);
-                    wireFrames.Add(seg);
-                    seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r + 1, c].Position, 0.1);
-                    wireFrames.Add(seg);
+                    for (int c = sc; c < ec; c++)
+                    {
+                        double diff = c - r;
+                        double v1 = Math.Abs(diff) * delta;
+                        Point3D mv = new Point3D(0, v1, 0);
+                        if (r >= 0 && r < PatchRows && c >= 0 && c < PatchColumns)
+                        {
+                            allcontrolPoints[r, c].MovePosition(mv);
+                        }
+                    }
                 }
-                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[r, patchColumns - 1].Position, allcontrolPoints[r + 1, patchColumns - 1].Position, 0.1);
-                wireFrames.Add(seg2);
             }
-            for (int c = 0; c < patchColumns - 1; c++)
+            else
             {
-                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[patchRows - 1, c].Position, allcontrolPoints[patchRows - 1, c + 1].Position, 0.1);
-                wireFrames.Add(seg2);
+                for (int r = sr; r >= er; r--)
+                {
+                    for (int c = sc; c < ec; c++)
+                    {
+                        double diff = (patchColumns - c) - r;
+                        double v1 = Math.Abs(diff) * delta;
+                        Point3D mv = new Point3D(0, v1, 0);
+                        if (r >= 0 && r < PatchRows && c >= 0 && c < PatchColumns)
+                        {
+                            allcontrolPoints[r, c].MovePosition(mv);
+                        }
+                    }
+                }
+            }
+        }
+
+        internal void UpXPoints(int v)
+        {
+            int mid = patchRows / 2;
+
+            for (int r = 0; r < patchRows; r++)
+            {
+                int diff = r - mid;
+                double v1 = Math.Abs(diff) * v;
+                Point3D mv = new Point3D(0, v1, 0);
+                for (int c = 0; c < patchColumns; c++)
+                {
+                    allcontrolPoints[r, c].MovePosition(mv);
+                }
+            }
+        }
+
+        internal void UpZPoints(double v)
+        {
+            int mid = patchColumns / 2;
+
+            for (int c = 0; c < patchColumns; c++)
+            {
+                int diff = c - mid;
+                double v1 = Math.Abs(diff) * v;
+                Point3D mv = new Point3D(0, v1, 0);
+                for (int r = 0; r < patchRows; r++)
+                {
+                    allcontrolPoints[r, c].MovePosition(mv);
+                }
             }
         }
     }
