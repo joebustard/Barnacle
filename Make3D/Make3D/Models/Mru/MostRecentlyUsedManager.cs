@@ -16,7 +16,7 @@ namespace Make3D.Models.Mru
         {
             recentFilesList = new List<MruEntry>();
             Name = "Mru";
-            NumberToRemember = 10;
+            NumberToRemember = 20;
             LoadMru();
         }
 

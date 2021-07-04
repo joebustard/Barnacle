@@ -32,6 +32,7 @@ namespace Make3D.Dialogs.BezierSurface
                 {
                     thickness = value;
                 }
+
             }
         }
 
