@@ -2765,8 +2765,12 @@ namespace Make3D.ViewModels
 
         private void SelectFirst()
         {
-            ResetSelection();
 
+            if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
+                (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+            {
+                ResetSelection();
+            }
             if (Document.Content.Count > 0)
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
@@ -2781,7 +2785,11 @@ namespace Make3D.ViewModels
 
         private void SelectLast()
         {
-            ResetSelection();
+            if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
+                (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+            {
+                ResetSelection();
+            }
             if (Document.Content.Count > 0)
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
@@ -2798,7 +2806,7 @@ namespace Make3D.ViewModels
         {
             if (selectedItems.Count == 1)
             {
-                ResetSelectionColours();
+                //ResetSelectionColours();
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D sel = selectedItems[0];
 
@@ -2817,7 +2825,11 @@ namespace Make3D.ViewModels
                         nxt = Document.Content[0];
                     }
                 }
-                ResetSelection();
+                if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
+                    (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+                {
+                    ResetSelection();
+                }
 
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
@@ -2833,7 +2845,11 @@ namespace Make3D.ViewModels
             {
                 string nm = param.ToString();
 
-                ResetSelection();
+                if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
+                    (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+                {
+                    ResetSelection();
+                }
 
                 if (Document.Content.Count > 0)
                 {
@@ -2858,7 +2874,11 @@ namespace Make3D.ViewModels
             if (selectedItems.Count == 1)
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
-                ResetSelectionColours();
+                if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
+                    (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+                {
+                    ResetSelection();
+                }
                 Object3D sel = selectedItems[0];
 
                 Object3D nxt = null;
@@ -2879,7 +2899,7 @@ namespace Make3D.ViewModels
                         nxt = Document.Content[Document.Content.Count - 1];
                     }
                 }
-                ResetSelection();
+                
 
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
