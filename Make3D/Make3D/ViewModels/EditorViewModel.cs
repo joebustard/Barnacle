@@ -1438,24 +1438,27 @@ namespace Make3D.ViewModels
         private void MoveToPoint(Point3D target)
         {
             Bounds3D tmpBounds = new Bounds3D();
-            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+            if (selectedObjectAdorner != null)
             {
-                tmpBounds.Add(ob.AbsoluteBounds);
-            }
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    tmpBounds.Add(ob.AbsoluteBounds);
+                }
 
-            foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
-            {
-                double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
-                double dAbsY = ob.Position.Y;
-                double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
-                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                ob.RelativeToAbsolute();
+                foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
+                {
+                    double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
+                    double dAbsY = ob.Position.Y;
+                    double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
+                    ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                    ob.RelativeToAbsolute();
+                }
+                Document.Dirty = true;
+                // move the selectors
+                selectedObjectAdorner.GenerateAdornments();
+                // redraw
+                RegenerateDisplayList();
             }
-            Document.Dirty = true;
-            // move the selectors
-            selectedObjectAdorner.GenerateAdornments();
-            // redraw
-            RegenerateDisplayList();
         }
 
         private void OnAddObject(object param)
