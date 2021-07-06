@@ -211,7 +211,10 @@ namespace Make3D.Dialogs
                 List<GeometryModel3D> ml = controlPoints.Models;
                 foreach (GeometryModel3D m in ml)
                 {
-                    MyModelGroup.Children.Add(m);
+                    if (m != null)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
                 }
             }
         }
@@ -282,15 +285,6 @@ namespace Make3D.Dialogs
                 {
                     Redisplay();
                     viewport3D1.Focus();
-                    /*
-                                        TextBox textBox = Keyboard.FocusedElement as TextBox;
-                                        Slider sld = Keyboard.FocusedElement as Slider;
-                                        if (textBox != null || sld != null)
-                                        {
-                                            TraversalRequest tRequest = new TraversalRequest(FocusNavigationDirection.Next);
-                                            textBox.MoveFocus(tRequest);
-                                        }
-                                        */
                 }
             }
 
@@ -397,9 +391,23 @@ namespace Make3D.Dialogs
             UpdateDisplay();
         }
 
+        private void ResetControlPointsBow_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.ResetControlPointsBow();
+            UpdateDisplay();
+        }
+
+        private void ResetControlPointsDisk_Click(object sender, RoutedEventArgs e)
+        {
+            controlPoints.ResetControlPointsCircle();
+            UpdateDisplay();
+        }
+
         private void SaveEditorParmeters()
         {
-            // save the parameters for the tool
+            EditorParameters.Set("Rows", controlPoints.PatchRows.ToString());
+            EditorParameters.Set("Columns", controlPoints.PatchColumns.ToString());
+            EditorParameters.Set("Points", controlPoints.ToString());
         }
 
         private void UpdateDisplay()

@@ -117,8 +117,72 @@ namespace Make3D.Dialogs.BezierSurface
                     allcontrolPoints[r, c] = new ControlPoint(x, 20, z);
                 }
             }
-
             GenerateWireFrames();
+        }
+
+        public void ResetControlPointsBow()
+        {
+            allcontrolPoints = new ControlPoint[patchRows, patchColumns];
+
+            double centerX = ((double)patchColumns / 2.0);
+            double centerZ = ((double)patchRows / 2.0);
+            int offset = 0;
+            while (offset < centerX)
+            {
+                for (int r = offset; r < patchRows - offset; r++)
+                {
+                    double dist = Math.Abs(centerZ - r) * ZGap;
+                    for (int c = offset; c < patchColumns - offset; c++)
+                    {
+                        double angle = Math.Atan2((centerZ - r), (centerX - c));
+                        double x = (dist * Math.Cos(angle)) + centerX;
+                        double z = (dist * Math.Sin(angle)) + centerZ;
+                        allcontrolPoints[r, c] = new ControlPoint(x, 20, z);
+                    }
+                }
+                offset++;
+            }
+            GenerateWireFrames();
+        }
+
+        public void ResetControlPointsCircle()
+        {
+            allcontrolPoints = new ControlPoint[patchRows, patchColumns];
+
+            double centerX = ((double)patchColumns / 2.0);
+            double centerZ = ((double)patchRows / 2.0);
+            int offset = 0;
+            while (offset <= centerX)
+            {
+                double dist = Math.Abs(centerX - offset) * XGap;
+                for (int r = offset; r < patchRows - offset; r++)
+                {
+                    for (int c = offset; c < patchColumns - offset; c++)
+                    {
+                        double angle = Math.Atan2((centerZ - r), (centerX - c));
+                        double x = (dist * Math.Cos(angle)) + centerX;
+                        double z = (dist * Math.Sin(angle)) + centerZ;
+                        allcontrolPoints[r, c] = new ControlPoint(x, 20, z);
+                    }
+                }
+                offset++;
+            }
+            GenerateWireFrames();
+        }
+
+        public override string ToString()
+        {
+            string res = "";
+            for (int r = 0; r < patchRows; r++)
+            {
+                for (int c = 0; c < patchColumns; c++)
+                {
+                    res += allcontrolPoints[r, c].Position.X + " ";
+                    res += allcontrolPoints[r, c].Position.Y + " ";
+                    res += allcontrolPoints[r, c].Position.Z + " ";
+                }
+            }
+            return res;
         }
 
         internal bool CheckHit(GeometryModel3D hitModel, bool shift, ref int selRow, ref int selColumn)

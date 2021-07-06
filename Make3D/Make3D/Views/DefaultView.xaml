@@ -87,10 +87,10 @@
                     <Custom:RibbonButton x:Name="CutButton" Label="Copy" Command="{Binding CopyCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" ToolTip="Paste at the right of the existing bounds" />
 
-                    <Custom:RibbonButton x:Name="PasteAtButton" Label="Paste At" Command="{Binding PasteAtCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" ToolTip="Paste at the floor marker if its present" />
-                    <Custom:RibbonButton x:Name="PasteMultiButton" Label="Multi Paste" Command="{Binding MultiPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
+                    <Custom:RibbonButton x:Name="PasteAtButton" Label="Paste At" Command="{Binding PasteAtCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/pasteat.png" ToolTip="Paste at the floor marker if its present" />
+                    <Custom:RibbonButton x:Name="PasteMultiButton" Label="Multi Paste" Command="{Binding MultiPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/pastemulti.png" />
 
-                    <Custom:RibbonButton x:Name="PasteCircularButton" Label="Circular Paste" Command="{Binding CircularPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" />
+                    <Custom:RibbonButton x:Name="PasteCircularButton" Label="Circular Paste" Command="{Binding CircularPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/pastecircle.png" />
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="SelectionGroup" Header="Selection" LargeImageSource="/Make3D;component/Images/Buttons/SelectAll.png">
@@ -109,7 +109,7 @@
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/Project.png">
-                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
+                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/settings.png" />
                     <Custom:RibbonMenuButton x:Name="Import" Label="Import">
                         <Custom:RibbonButton x:Name="ImportOBJ" Label="OBJ" Command="{Binding ImportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
                         <Custom:RibbonButton x:Name="ImportSTL" Label="STL" Command="{Binding ImportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Import the object in a single STL into the current file." />

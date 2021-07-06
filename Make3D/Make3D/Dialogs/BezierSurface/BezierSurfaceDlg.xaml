@@ -37,6 +37,8 @@
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" >Reset Control Points</Label>
                 <Button Margin="4,0,0,0" Click="ResetControlPoints_Click">Flat</Button>
+                <Button Margin="4,0,0,0" Click="ResetControlPointsDisk_Click">Disk</Button>
+                <Button Margin="4,0,0,0" Click="ResetControlPointsBow_Click">Bow</Button>
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label Width="80" VerticalAlignment="Center" >Bend Up</Label>

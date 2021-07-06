@@ -711,6 +711,10 @@
     <Resource Include="Images\Buttons\Y1.png" />
     <Resource Include="Images\Buttons\Y2.png" />
     <Resource Include="Data\BuildPlates.xml" />
+    <Resource Include="Images\Buttons\pasteat.png" />
+    <Resource Include="Images\Buttons\pastecircle.png" />
+    <Resource Include="Images\Buttons\pastemulti.png" />
+    <Resource Include="Images\Buttons\settings.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
