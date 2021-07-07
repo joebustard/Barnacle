@@ -102,6 +102,7 @@ namespace Make3D.ViewModels
             ExportCommand = new RelayCommand(OnExport);
             ExportPartsCommand = new RelayCommand(OnExportParts);
             SliceCommand = new RelayCommand(OnSlice);
+            SplitCommand = new RelayCommand(OnSplit);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
             ToolCommand = new RelayCommand(OnTool);
@@ -720,6 +721,8 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand SplitCommand { get; set; }
+
         public ICommand SpurGearCommand { get; set; }
 
         public bool SpurGearEnabled
@@ -1316,6 +1319,11 @@ namespace Make3D.ViewModels
         private void OnSlice(object obj)
         {
             NotificationManager.Notify("Slice", obj);
+        }
+
+        private void OnSplit(object obj)
+        {
+            NotificationManager.Notify("Split", obj);
         }
 
         private void OnSpurGear(object obj)

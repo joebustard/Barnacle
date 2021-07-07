@@ -101,6 +101,7 @@ namespace Make3D.ViewModels
             NotificationManager.Subscribe("Export", OnExport);
             NotificationManager.Subscribe("ExportParts", OnExportParts);
             NotificationManager.Subscribe("Slice", OnSlice);
+            NotificationManager.Subscribe("Split", OnSplit);
             NotificationManager.Subscribe("Import", OnImport);
             NotificationManager.Subscribe("MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("MoveObjectToCentre", OnMoveObjectToCentre);
@@ -2499,6 +2500,46 @@ namespace Make3D.ViewModels
             }
         }
 
+        private void OnSplit(object param)
+        {
+            bool warning = true;
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+                {
+                    bool confirmed = true;
+                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                    if (ob is Group3D)
+                    {
+                        MessageBoxResult res = MessageBox.Show("Some objects will have to be converted to meshes first. Convert now.", "Warning", MessageBoxButton.OKCancel);
+                        confirmed = res == MessageBoxResult.OK;
+                        if (confirmed)
+                        {
+                            Document.Content.Remove(ob);
+
+                            Object3D it = ob.ConvertToMesh();
+                            it.Remesh();
+                            Document.Content.Add(it);
+                            Document.Dirty = true;
+                            ob = it;
+                        }
+                    }
+                    if (confirmed)
+                    {
+                        CheckPoint();
+                        string ori = param.ToString();
+                        SplitObjectInHalf(ob, ori);
+                    }
+                    warning = false;
+                }
+            }
+
+            if (warning)
+            {
+                MessageBox.Show("Split requires a single object to be selected", "Warning");
+            }
+        }
+
         private void OnTool(object param)
         {
             String toolName = param.ToString();
@@ -2768,7 +2809,6 @@ namespace Make3D.ViewModels
 
         private void SelectFirst()
         {
-
             if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
                 (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
             {
@@ -2902,7 +2942,6 @@ namespace Make3D.ViewModels
                         nxt = Document.Content[Document.Content.Count - 1];
                     }
                 }
-                
 
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
@@ -2976,6 +3015,160 @@ namespace Make3D.ViewModels
                 if (s != "")
                 {
                     NotificationManager.Notify("SetSingleToolsVisible", s);
+                }
+            }
+        }
+
+        private void SplitObjectInHalf(Object3D ob, string ori)
+        {
+            if (ob != null)
+            {
+                // we will need a copy
+                Object3D clone = ob.Clone();
+
+                // and a box
+                Object3D clipBox = new Object3D();
+                clipBox.BuildPrimitive("box");
+                clipBox.Position = new Point3D(ob.Position.X, ob.Position.Y, ob.Position.Z);
+                // make the clipbox 0.01 mm bigger than the original object in all dimensions
+                clipBox.ScaleMesh(ob.Scale.X + 0.01, ob.Scale.Y + 0.01, ob.Scale.Z + 0.01);
+                clipBox.CalcScale();
+                clipBox.Remesh(); ;
+
+                // where should the clipbox be positioned
+                switch (ori)
+                {
+                    case "X":
+                        {
+                            // move the clipbox so its front is positioned exactly on the middle x line of the ob.
+                            // Note you can't rely on the origin position being in the middle so you have to find it
+                            double x = ob.Position.X;
+                            double y = ob.Position.Y;
+                            double z = ob.AbsoluteBounds.MidPoint().Z - (clipBox.Scale.Z / 2);
+                            clipBox.Position = new Point3D(x, y, z);
+                            clipBox.Remesh();
+                            // now clipbox should sitting over all the points we want to remove.
+                            // so do a group difference
+                            Group3D grp = new Group3D();
+
+                            grp.LeftObject = ob;
+                            grp.RightObject = clipBox;
+                            grp.PrimType = "groupdifference";
+                            grp.Init();
+                            Object3D front = grp.ConvertToMesh();
+                            front.Name = ob.Name + "_Front";
+                            front.Remesh();
+                            document.Content.Add(front);
+
+                            z = ob.AbsoluteBounds.MidPoint().Z + (clipBox.Scale.Z / 2);
+                            clipBox.Position = new Point3D(x, y, z);
+                            clipBox.Remesh();
+                            // now clipbox should sitting over all the points we want to remove.
+                            // so do a group difference
+                            grp = new Group3D();
+
+                            grp.LeftObject = ob;
+                            grp.RightObject = clipBox;
+                            grp.PrimType = "groupdifference";
+                            grp.Init();
+                            Object3D back = grp.ConvertToMesh();
+                            back.Name = ob.Name + "_Back";
+                            back.Remesh();
+                            document.Content.Add(back);
+                            document.Content.Remove(ob);
+                            document.Dirty = true;
+                            NotificationManager.Notify("ObjectNamesChanged", null);
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case "Y":
+                        {
+                            double x = ob.Position.X;
+                            double y = ob.AbsoluteBounds.MidPoint().Y - (clipBox.Scale.Y / 2);
+                            double z = ob.Position.Z;
+                            clipBox.Position = new Point3D(x, y, z);
+                            clipBox.Remesh();
+                            // now clipbox should sitting over all the points we want to remove.
+                            // so do a group difference
+                            Group3D grp = new Group3D();
+
+                            grp.LeftObject = ob;
+                            grp.RightObject = clipBox;
+                            grp.PrimType = "groupdifference";
+                            grp.Init();
+                            Object3D front = grp.ConvertToMesh();
+                            front.Name = ob.Name + "_Top";
+                            front.Remesh();
+                            document.Content.Add(front);
+
+                            y = ob.AbsoluteBounds.MidPoint().Y + (clipBox.Scale.Y / 2);
+                            clipBox.Position = new Point3D(x, y, z);
+                            clipBox.Remesh();
+                            // now clipbox should sitting over all the points we want to remove.
+                            // so do a group difference
+                            grp = new Group3D();
+
+                            grp.LeftObject = ob;
+                            grp.RightObject = clipBox;
+                            grp.PrimType = "groupdifference";
+                            grp.Init();
+                            Object3D back = grp.ConvertToMesh();
+                            back.Name = ob.Name + "_Bottom";
+                            back.Remesh();
+                            document.Content.Add(back);
+                            document.Content.Remove(ob);
+                            document.Dirty = true;
+                            NotificationManager.Notify("ObjectNamesChanged", null);
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case "Z":
+                        {
+                            double x = ob.AbsoluteBounds.MidPoint().X - (clipBox.Scale.X / 2);
+                            double y = ob.Position.Y;
+
+                            double z = ob.Position.Z;
+                            clipBox.Position = new Point3D(x, y, z);
+                            clipBox.Remesh();
+                            // now clipbox should sitting over all the points we want to remove.
+                            // so do a group difference
+                            Group3D grp = new Group3D();
+
+                            grp.LeftObject = ob;
+                            grp.RightObject = clipBox;
+                            grp.PrimType = "groupdifference";
+                            grp.Init();
+                            Object3D front = grp.ConvertToMesh();
+                            front.Name = ob.Name + "_Right";
+                            front.Remesh();
+                            document.Content.Add(front);
+
+                            x = ob.AbsoluteBounds.MidPoint().X + (clipBox.Scale.X / 2);
+                            clipBox.Position = new Point3D(x, y, z);
+                            clipBox.Remesh();
+                            // now clipbox should sitting over all the points we want to remove.
+                            // so do a group difference
+                            grp = new Group3D();
+
+                            grp.LeftObject = ob;
+                            grp.RightObject = clipBox;
+                            grp.PrimType = "groupdifference";
+                            grp.Init();
+                            Object3D back = grp.ConvertToMesh();
+                            back.Name = ob.Name + "_Left";
+                            back.Remesh();
+                            document.Content.Add(back);
+                            document.Content.Remove(ob);
+                            document.Dirty = true;
+                            NotificationManager.Notify("ObjectNamesChanged", null);
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    default:
+                        break;
                 }
             }
         }

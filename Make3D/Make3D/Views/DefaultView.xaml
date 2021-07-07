@@ -189,6 +189,12 @@
                         <Custom:RibbonSeparator />
                         <Custom:RibbonButton x:Name="GroupToMesh" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
+
+                    <Custom:RibbonMenuButton x:Name="Split" Label="Split">
+                        <Custom:RibbonButton x:Name="SplitX" Label="X" Command="{Binding SplitCommand}" CommandParameter="X" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Split selected object in half along X axis" />
+                        <Custom:RibbonButton x:Name="SplitY" Label="Y" Command="{Binding SplitCommand}" CommandParameter="Y" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Split selected object in half along Y axis" />
+                        <Custom:RibbonButton x:Name="SplitZ" Label="Z" Command="{Binding SplitCommand}" CommandParameter="Z" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Split selected object in half along Z axis" />
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup" Header="Shapes" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
                     <Custom:RibbonMenuButton x:Name="ParametricTools" Label="Parametric" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding ParametricToolsToShow}">
