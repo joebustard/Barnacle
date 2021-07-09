@@ -3042,9 +3042,10 @@ namespace Make3D.ViewModels
                         {
                             // move the clipbox so its front is positioned exactly on the middle x line of the ob.
                             // Note you can't rely on the origin position being in the middle so you have to find it
-                            double x = ob.Position.X;
-                            double y = ob.Position.Y;
-                            double z = ob.AbsoluteBounds.MidPoint().Z - (clipBox.Scale.Z / 2);
+                            Point3D obMid = ob.AbsoluteBounds.MidPoint();
+                            double x = obMid.X;
+                            double y = obMid.Y;
+                            double z = obMid.Z - (clipBox.Scale.Z / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
                             // now clipbox should sitting over all the points we want to remove.
@@ -3060,7 +3061,7 @@ namespace Make3D.ViewModels
                             front.Remesh();
                             document.Content.Add(front);
 
-                            z = ob.AbsoluteBounds.MidPoint().Z + (clipBox.Scale.Z / 2);
+                            z = obMid.Z + (clipBox.Scale.Z / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
                             // now clipbox should sitting over all the points we want to remove.
@@ -3084,9 +3085,10 @@ namespace Make3D.ViewModels
 
                     case "Y":
                         {
-                            double x = ob.Position.X;
-                            double y = ob.AbsoluteBounds.MidPoint().Y - (clipBox.Scale.Y / 2);
-                            double z = ob.Position.Z;
+                            Point3D obMid = ob.AbsoluteBounds.MidPoint();
+                            double x = obMid.X;
+                            double y = obMid.Y - (clipBox.Scale.Y / 2);
+                            double z = obMid.Z;
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
                             // now clipbox should sitting over all the points we want to remove.
@@ -3102,7 +3104,7 @@ namespace Make3D.ViewModels
                             front.Remesh();
                             document.Content.Add(front);
 
-                            y = ob.AbsoluteBounds.MidPoint().Y + (clipBox.Scale.Y / 2);
+                            y = obMid.Y + (clipBox.Scale.Y / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
                             // now clipbox should sitting over all the points we want to remove.
@@ -3126,10 +3128,11 @@ namespace Make3D.ViewModels
 
                     case "Z":
                         {
-                            double x = ob.AbsoluteBounds.MidPoint().X - (clipBox.Scale.X / 2);
-                            double y = ob.Position.Y;
+                            Point3D obMid = ob.AbsoluteBounds.MidPoint();
+                            double x = obMid.X - (clipBox.Scale.X / 2);
+                            double y = obMid.Y;
 
-                            double z = ob.Position.Z;
+                            double z = obMid.Z;
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
                             // now clipbox should sitting over all the points we want to remove.
@@ -3145,7 +3148,7 @@ namespace Make3D.ViewModels
                             front.Remesh();
                             document.Content.Add(front);
 
-                            x = ob.AbsoluteBounds.MidPoint().X + (clipBox.Scale.X / 2);
+                            x = obMid.X + (clipBox.Scale.X / 2);
                             clipBox.Position = new Point3D(x, y, z);
                             clipBox.Remesh();
                             // now clipbox should sitting over all the points we want to remove.
