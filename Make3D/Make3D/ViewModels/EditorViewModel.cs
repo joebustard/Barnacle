@@ -476,6 +476,11 @@ namespace Make3D.ViewModels
                         {
                             Undo();
                         }
+                        else
+                        {
+                            CheckPoint();
+                            MoveSelectionToZero();
+                        }
                     }
                     break;
 
@@ -592,6 +597,25 @@ namespace Make3D.ViewModels
             }
 
             ShowToolForCurrentSelection();
+        }
+
+        private static void CleanFolder(string pth, string subName, string search)
+        {
+            string targetFolder = pth + "\\" + subName;
+            if (Directory.Exists(targetFolder))
+            {
+                string[] filepaths = Directory.GetFiles(pth + "\\" + subName, search);
+                foreach (string f in filepaths)
+                {
+                    try
+                    {
+                        File.Delete(f);
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
         }
 
         private static GeometryModel3D GetMesh(Object3D obj)
@@ -953,17 +977,11 @@ namespace Make3D.ViewModels
                     {
                     }
                 }
-                files = Directory.GetFiles(pth + "\\gcode", "*.gcode");
-                foreach (string f in files)
-                {
-                    try
-                    {
-                        File.Delete(f);
-                    }
-                    catch
-                    {
-                    }
-                }
+
+                CleanFolder(pth, "gcode", "*.gcode");
+                CleanFolder(pth, "printer", "*.gcode");
+                CleanFolder(pth, "gcode", "*.ctb");
+                CleanFolder(pth, "printer", "*.ctb");
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }
@@ -1111,7 +1129,7 @@ namespace Make3D.ViewModels
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
-                pe.Export(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport);
+                pe.Export(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles);
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }
@@ -1425,6 +1443,12 @@ namespace Make3D.ViewModels
             MoveToPoint(centre);
         }
 
+        private void MoveSelectionToZero()
+        {
+            Point3D centre = new Point3D(0, 0, 0);
+            MoveToPoint(centre, false);
+        }
+
         private void MoveToMarker(object param)
         {
             if (showFloorMarker == true && floorMarker != null)
@@ -1436,7 +1460,7 @@ namespace Make3D.ViewModels
             }
         }
 
-        private void MoveToPoint(Point3D target)
+        private void MoveToPoint(Point3D target, bool keepY = true)
         {
             Bounds3D tmpBounds = new Bounds3D();
             if (selectedObjectAdorner != null)
@@ -1449,7 +1473,12 @@ namespace Make3D.ViewModels
                 foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                 {
                     double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
+
                     double dAbsY = ob.Position.Y;
+                    if (!keepY)
+                    {
+                        dAbsY = target.Y;
+                    }
                     double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
                     ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                     ob.RelativeToAbsolute();

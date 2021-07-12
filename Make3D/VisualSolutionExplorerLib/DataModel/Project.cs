@@ -10,7 +10,7 @@ namespace VisualSolutionExplorer
         public static string ProjectFilePath;
         public List<ProjectFolder> folders;
         private DateTime creationDate;
-        public ProjectSettings SharedProjectSettings { get; set; }
+
         public Project()
         {
             ProjectName = String.Empty;
@@ -48,6 +48,7 @@ namespace VisualSolutionExplorer
         }
 
         public String ProjectName { get; set; }
+        public ProjectSettings SharedProjectSettings { get; set; }
 
         public static string AbsPathToProjectPath(string rf)
         {
@@ -176,8 +177,8 @@ namespace VisualSolutionExplorer
                 Description = des.InnerText.Trim();
             }
             XmlNode setNode = nd.SelectSingleNode("Settings");
-            if ( setNode != null)
-            { 
+            if (setNode != null)
+            {
                 ProjectSettings prj = new ProjectSettings();
                 prj.Read(setNode);
                 SharedProjectSettings = prj;

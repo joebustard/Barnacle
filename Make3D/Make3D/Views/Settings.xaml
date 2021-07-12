@@ -23,8 +23,7 @@
 
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="4*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="5*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
@@ -54,10 +53,11 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="5*" />
-                    <ColumnDefinition Width="72*"/>
+                    <ColumnDefinition Width="72*" />
                     <ColumnDefinition Width="77*" />
                     <ColumnDefinition Width="76*" />
                     <ColumnDefinition Width="76*" />
@@ -65,18 +65,20 @@
                 </Grid.ColumnDefinitions>
 
                 <CheckBox Grid.Row="0" Content="Swap Y-Z" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding SwapAxis}" Grid.ColumnSpan="2" Margin="0,12" />
+VerticalContentAlignment="Center" IsChecked="{Binding SwapAxis}" Grid.ColumnSpan="2" />
 
                 <CheckBox  Grid.Row="0" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding FloorAll}" Content="Floor All" Margin="0,12" />
+VerticalContentAlignment="Center" IsChecked="{Binding FloorAll}" Content="Floor All" />
 
-                <CheckBox  Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding VersionExport}" Content="Add version to name" Margin="0,12" />
+                <CheckBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+VerticalContentAlignment="Center" IsChecked="{Binding VersionExport}" Content="Add version to name" />
+                <CheckBox  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
+VerticalContentAlignment="Center" IsChecked="{Binding IgnoreEmpty}" Content="Don't export file if empty" />
 
-                <Label Grid.Row="1" Grid.Column="0" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Export Rotation</Label>
-                <TextBox  Grid.Row="1" Grid.Column="2" Text="{Binding RotX}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
-                <TextBox  Grid.Row="1" Grid.Column="3" Text="{Binding RotY}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
-                <TextBox  Grid.Row="1" Grid.Column="4" Text="{Binding RotZ}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                <Label Grid.Row="2" Grid.Column="0" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Export Rotation</Label>
+                <TextBox  Grid.Row="2" Grid.Column="2" Text="{Binding RotX}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                <TextBox  Grid.Row="2" Grid.Column="3" Text="{Binding RotY}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                <TextBox  Grid.Row="2" Grid.Column="4" Text="{Binding RotZ}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
             </Grid>
         </GroupBox>
 

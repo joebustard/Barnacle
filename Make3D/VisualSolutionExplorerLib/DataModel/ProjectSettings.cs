@@ -6,14 +6,6 @@ namespace VisualSolutionExplorer
 {
     public class ProjectSettings
     {
-        public string Description { get; set; }
-        public string ExportRootName { get; set; }
-        public string BaseScale { get; set; }
-        public Point3D ExportRotation { get; set; }
-        public bool ExportAxisSwap { get; set; }
-        public bool FloorAll { get;  set; }
-        public string ExportScale { get; set; }
-        public bool VersionExport { get; set; }
         public ProjectSettings()
         {
             BaseScale = "1";
@@ -24,26 +16,18 @@ namespace VisualSolutionExplorer
             ExportAxisSwap = true;
             FloorAll = true;
             VersionExport = true;
+            ExportEmptyFiles = false;
         }
 
-        internal void Write(XmlDocument doc, XmlElement docNode)
-        {
-            XmlElement ele = doc.CreateElement("Settings");
-            docNode.AppendChild(ele);
-            ele.SetAttribute("ExportRootName", ExportRootName);
-            ele.SetAttribute("BaseScale", BaseScale);
-            ele.SetAttribute("ExportScale", ExportScale);
-            ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
-            ele.SetAttribute("FloorAll", FloorAll.ToString());
-            ele.SetAttribute("VersionExport", VersionExport.ToString());
-            XmlElement rot = doc.CreateElement("Rotation");
-            rot.SetAttribute("X", ExportRotation.X.ToString());
-            rot.SetAttribute("Y", ExportRotation.Y.ToString());
-            rot.SetAttribute("Z", ExportRotation.Z.ToString());
-            ele.AppendChild(rot);
-            XmlElement des = doc.CreateElement("Description");
-            des.InnerText = Description;
-        }
+        public string BaseScale { get; set; }
+        public string Description { get; set; }
+        public bool ExportAxisSwap { get; set; }
+        public bool ExportEmptyFiles { get; set; }
+        public string ExportRootName { get; set; }
+        public Point3D ExportRotation { get; set; }
+        public string ExportScale { get; set; }
+        public bool FloorAll { get; set; }
+        public bool VersionExport { get; set; }
 
         internal void Read(XmlNode nd)
         {
@@ -76,7 +60,7 @@ namespace VisualSolutionExplorer
                 string s = ele.GetAttribute("VersionExport");
                 VersionExport = Convert.ToBoolean(s);
             }
-            
+
             XmlNode rt = nd.SelectSingleNode("Rotation");
             if (rt != null)
             {
@@ -91,6 +75,25 @@ namespace VisualSolutionExplorer
             {
                 Description = des.InnerText;
             }
+        }
+
+        internal void Write(XmlDocument doc, XmlElement docNode)
+        {
+            XmlElement ele = doc.CreateElement("Settings");
+            docNode.AppendChild(ele);
+            ele.SetAttribute("ExportRootName", ExportRootName);
+            ele.SetAttribute("BaseScale", BaseScale);
+            ele.SetAttribute("ExportScale", ExportScale);
+            ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
+            ele.SetAttribute("FloorAll", FloorAll.ToString());
+            ele.SetAttribute("VersionExport", VersionExport.ToString());
+            XmlElement rot = doc.CreateElement("Rotation");
+            rot.SetAttribute("X", ExportRotation.X.ToString());
+            rot.SetAttribute("Y", ExportRotation.Y.ToString());
+            rot.SetAttribute("Z", ExportRotation.Z.ToString());
+            ele.AppendChild(rot);
+            XmlElement des = doc.CreateElement("Description");
+            des.InnerText = Description;
         }
 
         protected double GetDouble(XmlNode pn, string v)

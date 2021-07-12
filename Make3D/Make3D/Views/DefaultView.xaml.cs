@@ -304,6 +304,7 @@ namespace Make3D.Views
                                     BaseViewModel.Document.Load(p);
                                     NotificationManager.Notify("Refresh", null);
                                     BaseViewModel.Project.FirstFile = fName;
+                                    NotificationManager.Notify("ObjectSelected", null);
                                     //  UndoManager.Clear();
                                 }
                             }
@@ -380,6 +381,7 @@ namespace Make3D.Views
                                 {
                                     BaseViewModel.Document.Load(p);
                                     NotificationManager.Notify("Refresh", null);
+                                    NotificationManager.Notify("ObjectSelected", null);
                                     //  UndoManager.Clear();
                                 }
                             }
@@ -458,6 +460,7 @@ namespace Make3D.Views
                                         BaseViewModel.Document.Clear();
                                         BaseViewModel.Document.Load(open);
                                         NotificationManager.Notify("Refresh", null);
+                                        NotificationManager.Notify("ObjectSelected", null);
                                         //  UndoManager.Clear();
                                     }
                                 }

@@ -15,6 +15,12 @@ namespace Make3D.Views
             InitializeComponent();
         }
 
+        private void CancelButtonClicked(object sender, RoutedEventArgs e)
+        {
+            DialogResult = false;
+            Close();
+        }
+
         private void OkButtonClicked(object sender, RoutedEventArgs e)
         {
             DialogResult = true;
@@ -33,18 +39,13 @@ namespace Make3D.Views
                     BaseViewModel.Project.SharedProjectSettings.ExportAxisSwap = vm.SwapAxis;
                     BaseViewModel.Project.SharedProjectSettings.FloorAll = vm.FloorAll;
                     BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
-                //    BaseViewModel.Document.Dirty = true;
+                    BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;
+                    //    BaseViewModel.Document.Dirty = true;
                 }
                 catch (Exception)
                 {
                 }
             }
-            Close();
-        }
-
-        private void CancelButtonClicked(object sender, RoutedEventArgs e)
-        {
-            DialogResult = false;
             Close();
         }
     }

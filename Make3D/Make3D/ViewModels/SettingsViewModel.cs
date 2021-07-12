@@ -7,7 +7,102 @@ namespace Make3D.ViewModels
 {
     internal class SettingsViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private string description;
+        private bool exportEmptyDocs;
+        private string exportScale;
+        private bool floorAll;
         private string rotX;
+
+        private string rotY;
+
+        private string rotZ;
+
+        private List<String> scales;
+
+        private string selectedScale;
+
+        private bool swapAxis;
+
+        private bool versionExport;
+
+        public SettingsViewModel()
+        {
+            Description = Project.SharedProjectSettings.Description;
+            Scales = ModelScales.ScaleNames();
+            SelectedScale = Project.SharedProjectSettings.BaseScale;
+            ExportScale = Project.SharedProjectSettings.ExportScale;
+            RotX = Project.SharedProjectSettings.ExportRotation.X.ToString("F3");
+            RotY = Project.SharedProjectSettings.ExportRotation.Y.ToString("F3");
+            RotZ = Project.SharedProjectSettings.ExportRotation.Z.ToString("F3");
+            SwapAxis = Project.SharedProjectSettings.ExportAxisSwap;
+            FloorAll = Project.SharedProjectSettings.FloorAll;
+            VersionExport = Project.SharedProjectSettings.VersionExport;
+            IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
+        }
+
+        public String Description
+        {
+            get
+            {
+                return description;
+            }
+            set
+            {
+                if (description != value)
+                {
+                    description = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string ExportScale
+        {
+            get
+            {
+                return exportScale;
+            }
+            set
+            {
+                if (exportScale != value)
+                {
+                    exportScale = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool FloorAll
+        {
+            get
+            {
+                return floorAll;
+            }
+            set
+            {
+                if (floorAll != value)
+                {
+                    floorAll = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IgnoreEmpty
+        {
+            get
+            {
+                return exportEmptyDocs;
+            }
+            set
+            {
+                if (exportEmptyDocs != value)
+                {
+                    exportEmptyDocs = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public string RotX
         {
@@ -25,8 +120,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private string rotY;
-
         public string RotY
         {
             get
@@ -43,8 +136,6 @@ namespace Make3D.ViewModels
             }
         }
 
-        private string rotZ;
-
         public string RotZ
         {
             get
@@ -60,23 +151,6 @@ namespace Make3D.ViewModels
                 }
             }
         }
-
-        private string description;
-
-        public String Description
-        {
-            get { return description; }
-            set
-            {
-                if (description != value)
-                {
-                    description = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private List<String> scales;
 
         public List<string> Scales
         {
@@ -95,11 +169,12 @@ namespace Make3D.ViewModels
             }
         }
 
-        private string selectedScale;
-
         public string SelectedScale
         {
-            get { return selectedScale; }
+            get
+            {
+                return selectedScale;
+            }
             set
             {
                 if (selectedScale != value)
@@ -110,25 +185,12 @@ namespace Make3D.ViewModels
             }
         }
 
-        private string exportScale;
-
-        public string ExportScale
-        {
-            get { return exportScale; }
-            set
-            {
-                if (exportScale != value)
-                {
-                    exportScale = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        private bool swapAxis;
-
         public bool SwapAxis
         {
-            get { return swapAxis; }
+            get
+            {
+                return swapAxis;
+            }
             set
             {
                 if (swapAxis != value)
@@ -139,26 +201,12 @@ namespace Make3D.ViewModels
             }
         }
 
-        private bool floorAll;
-
-        public bool FloorAll
-        {
-            get { return floorAll; }
-            set
-            {
-                if (floorAll != value)
-                {
-                    floorAll = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private bool versionExport;
-
         public bool VersionExport
         {
-            get { return versionExport; }
+            get
+            {
+                return versionExport;
+            }
             set
             {
                 if (versionExport != value)
@@ -167,20 +215,6 @@ namespace Make3D.ViewModels
                     NotifyPropertyChanged();
                 }
             }
-        }
-
-        public SettingsViewModel()
-        {
-            Description = Project.SharedProjectSettings.Description;
-            Scales = ModelScales.ScaleNames();
-            SelectedScale = Project.SharedProjectSettings.BaseScale;
-            ExportScale = Project.SharedProjectSettings.ExportScale;
-            RotX = Project.SharedProjectSettings.ExportRotation.X.ToString("F3");
-            RotY = Project.SharedProjectSettings.ExportRotation.Y.ToString("F3");
-            RotZ = Project.SharedProjectSettings.ExportRotation.Z.ToString("F3");
-            SwapAxis = Project.SharedProjectSettings.ExportAxisSwap;
-            FloorAll = Project.SharedProjectSettings.FloorAll;
-            VersionExport = Project.SharedProjectSettings.VersionExport;
         }
     }
 }

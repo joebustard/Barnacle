@@ -715,6 +715,19 @@
     <Resource Include="Images\Buttons\pastecircle.png" />
     <Resource Include="Images\Buttons\pastemulti.png" />
     <Resource Include="Images\Buttons\settings.png" />
+    <Resource Include="Images\Buttons\Clean.png" />
+    <Resource Include="Images\Buttons\Export.png" />
+    <Resource Include="Images\Buttons\Import.png" />
+    <Resource Include="Images\Buttons\Align.png" />
+    <Resource Include="Images\Buttons\Flip.png" />
+    <Resource Include="Images\Buttons\Split.png" />
+    <Resource Include="Images\Buttons\Stack.png" />
+    <Resource Include="Images\Buttons\Distribution.png" />
+    <Resource Include="Images\Buttons\Size.png" />
+    <Resource Include="Images\Buttons\SelectFirst.png" />
+    <Resource Include="Images\Buttons\SelectLast.png" />
+    <Resource Include="Images\Buttons\SelectNext.png" />
+    <Resource Include="Images\Buttons\SelectPrevious.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

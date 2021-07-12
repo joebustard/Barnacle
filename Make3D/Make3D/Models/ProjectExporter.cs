@@ -4,7 +4,7 @@ namespace Make3D.Models
 {
     public class ProjectExporter
     {
-        public void Export(String[] filePaths, String exportPath, bool versionExport)
+        public void Export(String[] filePaths, String exportPath, bool versionExport, bool exportEmptyFiles = true)
         {
             Document doc;
             foreach (String f in filePaths)
@@ -15,18 +15,21 @@ namespace Make3D.Models
                     doc.Load(f);
                     Bounds3D allBounds = new Bounds3D();
                     allBounds.Zero();
-                    foreach (Object3D ob in doc.Content)
+                    if (exportEmptyFiles || doc.Content.Count > 0)
                     {
-                        allBounds += ob.AbsoluteBounds;
+                        foreach (Object3D ob in doc.Content)
+                        {
+                            allBounds += ob.AbsoluteBounds;
+                        }
+                        string name = System.IO.Path.GetFileNameWithoutExtension(f);
+                        if (versionExport)
+                        {
+                            name += "_V_" + doc.Revision.ToString();
+                        }
+                        name += ".stl";
+                        name = exportPath + "\\" + name;
+                        doc.AutoExport(name, allBounds);
                     }
-                    string name = System.IO.Path.GetFileNameWithoutExtension(f);
-                    if ( versionExport)
-                    {
-                        name += "_V_" + doc.Revision.ToString();
-                    }
-                    name += ".stl";
-                    name = exportPath + "\\" + name;
-                    doc.AutoExport(name, allBounds);
                 }
                 catch
                 {
