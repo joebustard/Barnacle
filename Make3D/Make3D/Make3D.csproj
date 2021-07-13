@@ -728,6 +728,9 @@
     <Resource Include="Images\Buttons\SelectLast.png" />
     <Resource Include="Images\Buttons\SelectNext.png" />
     <Resource Include="Images\Buttons\SelectPrevious.png" />
+    <Resource Include="Images\Buttons\Group.png" />
+    <Resource Include="Images\Barnicle.png" />
+    <Resource Include="Images\Barnicle2.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

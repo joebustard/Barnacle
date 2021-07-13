@@ -7,11 +7,14 @@
                           xmlns:Views="clr-namespace:Make3D.Views"
           xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
              mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800" Background="{StaticResource WindowBackBrush }">
+             d:DesignHeight="450" d:DesignWidth="800">
     <UserControl.DataContext>
         <ViewModels:StartupViewModel />
     </UserControl.DataContext>
     <Grid>
+        <Grid.Background>
+            <ImageBrush ImageSource="/Make3D;component/Images/Barnicle.png" />
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="24*" />
             <ColumnDefinition Width="565*" />
@@ -27,7 +30,7 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="3" Content="{Binding AppIdentity}" FontSize="20"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="3" Content="{Binding AppIdentity}" FontSize="25"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
         <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource LargeButton}" Command="{Binding NewProjectCommand}">New Project</Button>
         <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource LargeButton}"  Command="{Binding BrowseProjectCommand}"  >Browse</Button>
         <Button Grid.Row="6" Grid.Column="1" Style="{StaticResource LargeButton}"  Command="{Binding OpenProjectCommand}"   Visibility="{Binding OpenVisible}">Open Project</Button>

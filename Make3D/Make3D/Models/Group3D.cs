@@ -1,6 +1,7 @@
 ﻿using CSGLib;
 using HullLibrary;
 using System;
+using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -283,6 +284,54 @@ namespace Make3D.Models
             SetMesh();
         }
 
+        internal override void ReadBinary(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+            Description = reader.ReadString();
+
+            byte A, R, G, B;
+            A = reader.ReadByte();
+            R = reader.ReadByte();
+            G = reader.ReadByte();
+            B = reader.ReadByte();
+            Color = Color.FromArgb(A, R, G, B);
+            PrimType = reader.ReadString();
+            double x, y, z;
+            x = reader.ReadDouble();
+            y = reader.ReadDouble();
+            z = reader.ReadDouble();
+            Position = new Point3D(x, y, z);
+            x = reader.ReadDouble();
+            y = reader.ReadDouble();
+            z = reader.ReadDouble();
+            Scale = new Scale3D(x, y, z);
+            RelativeObjectVertices = new Point3DCollection();
+            int count = reader.ReadInt32();
+
+            for (int i = 0; i < count; i++)
+            {
+                x = reader.ReadDouble();
+                y = reader.ReadDouble();
+                z = reader.ReadDouble();
+                RelativeObjectVertices.Add(new Point3D(x, y, z));
+            }
+
+            count = reader.ReadInt32();
+            TriangleIndices = new Int32Collection();
+            for (int i = 0; i < count; i++)
+            {
+                int index = reader.ReadInt32();
+                TriangleIndices.Add(index);
+            }
+            leftObject = new Object3D();
+            leftObject.ReadBinary(reader);
+            rightObject = new Object3D();
+            rightObject.ReadBinary(reader);
+
+            RelativeToAbsolute();
+            SetMesh();
+        }
+
         internal override void Remesh()
         {
             if (RelativeObjectVertices != null && RelativeObjectVertices.Count > 0)
@@ -335,6 +384,40 @@ namespace Make3D.Models
                 rightObject.Write(doc, ele);
             }
             return ele;
+        }
+
+        internal override void WriteBinary(BinaryWriter writer)
+        {
+            writer.Write((byte)1); // need a tag of some sort for deserialisation
+            writer.Write(Name);
+            writer.Write(Description);
+            writer.Write(Color.A);
+            writer.Write(Color.R);
+            writer.Write(Color.G);
+            writer.Write(Color.B);
+            writer.Write(PrimType);
+            writer.Write(Position.X);
+            writer.Write(Position.Y);
+            writer.Write(Position.Z);
+            writer.Write(Scale.X);
+            writer.Write(Scale.Y);
+            writer.Write(Scale.Z);
+            EditorParameters.WriteBinary(writer);
+            writer.Write(RelativeObjectVertices.Count);
+            foreach (Point3D v in RelativeObjectVertices)
+            {
+                writer.Write(v.X);
+                writer.Write(v.Y);
+                writer.Write(v.Z);
+            }
+
+            writer.Write(TriangleIndices.Count);
+            for (int i = 0; i < TriangleIndices.Count; i++)
+            {
+                writer.Write(TriangleIndices[i]);
+            }
+            leftObject.WriteBinary(writer);
+            rightObject.WriteBinary(writer);
         }
 
         private void AbsoluteToRelative()

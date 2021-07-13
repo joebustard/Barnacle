@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Xml;
 
 namespace Make3D.Models
@@ -108,6 +109,19 @@ namespace Make3D.Models
             }
         }
 
+        internal void ReadBinary(BinaryReader reader)
+        {
+            ToolName = reader.ReadString();
+            Parameters = new List<EditorParameter>();
+            int count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                EditorParameter p = new EditorParameter("", "");
+                p.ReadBinary(reader);
+                Parameters.Add(p);
+            }
+        }
+
         internal void Set(string key, string val)
         {
             bool found = false;
@@ -135,6 +149,16 @@ namespace Make3D.Models
                 p.Write(doc, prms);
             }
             ele.AppendChild(prms);
+        }
+
+        internal void WriteBinary(BinaryWriter writer)
+        {
+            writer.Write(ToolName);
+            writer.Write(Parameters.Count);
+            foreach (EditorParameter p in Parameters)
+            {
+                p.WriteBinary(writer);
+            }
         }
     }
 }

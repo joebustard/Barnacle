@@ -1019,6 +1019,7 @@ namespace Make3D.ViewModels
                         ob.Remesh();
                         RegenerateDisplayList();
                         GC.Collect();
+                        Document.Dirty = true;
                     }
                 }
             }

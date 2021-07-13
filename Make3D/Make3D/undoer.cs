@@ -4,14 +4,13 @@ namespace Make3D
 {
     public static class undoer
     {
-        private static string undoFolderName = "";
         private static int checkId = -1;
         private static int maxCheckId = -1;
+        private static string undoFolderName = "";
 
-        public static void Initialise(string ufn)
+        public static bool CanUndo()
         {
-            undoFolderName = ufn;
-            ClearUndoFiles();
+            return checkId > -1;
         }
 
         public static void ClearUndoFiles()
@@ -34,9 +33,11 @@ namespace Make3D
             maxCheckId = -1;
         }
 
-        public static bool CanUndo()
+        public static string GetLastCheckPointName()
         {
-            return checkId > -1;
+            string s = undoFolderName + "\\tmpfile" + checkId.ToString() + ".bob";
+            checkId--;
+            return s;
         }
 
         public static string GetNextCheckPointName()
@@ -46,14 +47,13 @@ namespace Make3D
             {
                 maxCheckId = checkId;
             }
-            return undoFolderName + "\\tmpfile" + checkId.ToString() + ".xml";
+            return undoFolderName + "\\tmpfile" + checkId.ToString() + ".bob";
         }
 
-        public static string GetLastCheckPointName()
+        public static void Initialise(string ufn)
         {
-            string s = undoFolderName + "\\tmpfile" + checkId.ToString() + ".xml";
-            checkId--;
-            return s;
+            undoFolderName = ufn;
+            ClearUndoFiles();
         }
     }
 }

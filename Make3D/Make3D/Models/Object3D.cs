@@ -830,6 +830,51 @@ namespace Make3D.Models
             }
         }
 
+        internal virtual void ReadBinary(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+            Description = reader.ReadString();
+
+            byte A, R, G, B;
+            A = reader.ReadByte();
+            R = reader.ReadByte();
+            G = reader.ReadByte();
+            B = reader.ReadByte();
+            Color = Color.FromArgb(A, R, G, B);
+            PrimType = reader.ReadString();
+            double x, y, z;
+            x = reader.ReadDouble();
+            y = reader.ReadDouble();
+            z = reader.ReadDouble();
+            Position = new Point3D(x, y, z);
+            x = reader.ReadDouble();
+            y = reader.ReadDouble();
+            z = reader.ReadDouble();
+            Scale = new Scale3D(x, y, z);
+
+            editorParameters.ReadBinary(reader);
+            relativeObjectVertices = new Point3DCollection();
+            int count = reader.ReadInt32();
+
+            for (int i = 0; i < count; i++)
+            {
+                x = reader.ReadDouble();
+                y = reader.ReadDouble();
+                z = reader.ReadDouble();
+                relativeObjectVertices.Add(new Point3D(x, y, z));
+            }
+
+            count = reader.ReadInt32();
+            triangleIndices = new Int32Collection();
+            for (int i = 0; i < count; i++)
+            {
+                int index = reader.ReadInt32();
+                triangleIndices.Add(index);
+            }
+            RelativeToAbsolute();
+            SetMesh();
+        }
+
         internal virtual void Remesh()
         {
             if (relativeObjectVertices != null && relativeObjectVertices.Count > 0)
@@ -966,6 +1011,38 @@ namespace Make3D.Models
             }
 
             return ele;
+        }
+
+        internal virtual void WriteBinary(BinaryWriter writer)
+        {
+            writer.Write((byte)0); // need a tag of some sort for deserialisation
+            writer.Write(Name);
+            writer.Write(Description);
+            writer.Write(Color.A);
+            writer.Write(Color.R);
+            writer.Write(Color.G);
+            writer.Write(Color.B);
+            writer.Write(PrimType);
+            writer.Write(Position.X);
+            writer.Write(Position.Y);
+            writer.Write(Position.Z);
+            writer.Write(Scale.X);
+            writer.Write(Scale.Y);
+            writer.Write(Scale.Z);
+            editorParameters.WriteBinary(writer);
+            writer.Write(relativeObjectVertices.Count);
+            foreach (Point3D v in relativeObjectVertices)
+            {
+                writer.Write(v.X);
+                writer.Write(v.Y);
+                writer.Write(v.Z);
+            }
+
+            writer.Write(triangleIndices.Count);
+            for (int i = 0; i < triangleIndices.Count; i++)
+            {
+                writer.Write(triangleIndices[i]);
+            }
         }
 
         protected double DegreesToRad(double x)

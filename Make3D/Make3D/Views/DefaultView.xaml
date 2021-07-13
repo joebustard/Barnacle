@@ -171,7 +171,7 @@
                         <Custom:RibbonButton x:Name="SameWidth" Label="Same Width (Z)" Command="{Binding SizeCommand}" CommandParameter="SameWidth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same width as the first selected one" />
                         <Custom:RibbonButton x:Name="SameBoth" Label="All Same" Command="{Binding SizeCommand}" CommandParameter="SameAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same size as the first selected one" />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="Group" Label="Group">
+                    <Custom:RibbonMenuButton x:Name="Group" Label="Group" SmallImageSource="/Make3D;component/Images/Buttons/group.png">
                         <Custom:RibbonButton x:Name="GroupUnion" Label="Group Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
 
                         <Custom:RibbonButton x:Name="GroupDifference" Label="Group Difference" Command="{Binding GroupCommand}" CommandParameter="GroupDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />

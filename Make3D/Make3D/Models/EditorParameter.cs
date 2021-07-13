@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,12 +10,19 @@ namespace Make3D.Models
 {
     public class EditorParameter
     {
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public EditorParameter( String n, string v)
+        public EditorParameter(String n, string v)
         {
             Name = n;
             Value = v;
+        }
+
+        public string Name { get; set; }
+        public string Value { get; set; }
+
+        internal void ReadBinary(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+            Value = reader.ReadString();
         }
 
         internal void Write(XmlDocument doc, XmlElement prms)
@@ -23,6 +31,12 @@ namespace Make3D.Models
             p.SetAttribute("Name", Name);
             p.SetAttribute("Val", Value);
             prms.AppendChild(p);
+        }
+
+        internal void WriteBinary(BinaryWriter writer)
+        {
+            writer.Write(Name);
+            writer.Write(Value);
         }
     }
 }

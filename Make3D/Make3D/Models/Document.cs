@@ -22,6 +22,8 @@ namespace Make3D.Models
 
         private List<String> referencedFiles;
 
+        private int revision;
+
         public Document()
         {
             ModelScales.Initialise();
@@ -84,18 +86,13 @@ namespace Make3D.Models
         public string FileName { get; set; }
 
         public string FilePath { get; set; }
+        public ProjectSettings ProjectSettings { get; set; }
 
-        private int revision;
         public int Revision
         {
             get { return revision; }
-            set
-            {
-                revision = value;
-            }
+            set { revision = value; }
         }
-
-        
 
         public static XmlElement FindExternalModel(string name, string path)
         {
@@ -148,12 +145,24 @@ namespace Make3D.Models
 
         public void Load(string fileName)
         {
-            Read(fileName, true);
-            FilePath = fileName;
-            FileName = System.IO.Path.GetFileName(fileName);
+            string ext = System.IO.Path.GetExtension(fileName).ToLower();
+            if (ext == ".txt")
+            {
+                Read(fileName, true);
 
-            Dirty = false;
-            Caption = FileName;
+                FilePath = fileName;
+                FileName = System.IO.Path.GetFileName(fileName);
+
+                Dirty = false;
+                Caption = FileName;
+            }
+            else
+            {
+                if (ext == ".bob")
+                {
+                    ReadBinary(fileName, true);
+                }
+            }
         }
 
         public virtual void Read(string file, bool clearFirst)
@@ -198,7 +207,7 @@ namespace Make3D.Models
                 foreach (XmlNode nd in nodes)
                 {
                     string ndname = nd.Name.ToLower();
-                   
+
                     if (ndname == "obj")
                     {
                         Object3D obj = new Object3D();
@@ -301,11 +310,30 @@ namespace Make3D.Models
 
         public void Save(string fileName)
         {
-            Write(fileName);
-            FilePath = fileName;
-            FileName = System.IO.Path.GetFileName(fileName);
-            Caption = FileName;
-            Dirty = false;
+            string ext = System.IO.Path.GetExtension(fileName).ToLower();
+            if (ext == ".txt")
+            {
+                DateTime st = DateTime.Now;
+                Write(fileName);
+                DateTime end = DateTime.Now;
+                TimeSpan ts = end - st;
+                System.Diagnostics.Debug.WriteLine("txt = " + ts.TotalMilliseconds);
+                FilePath = fileName;
+                FileName = System.IO.Path.GetFileName(fileName);
+                Caption = FileName;
+                Dirty = false;
+            }
+            else
+            {
+                if (ext == ".bob")
+                {
+                    DateTime st = DateTime.Now;
+                    WriteBinary(fileName);
+                    DateTime end = DateTime.Now;
+                    TimeSpan ts = end - st;
+                    System.Diagnostics.Debug.WriteLine("bob = " + ts.TotalMilliseconds);
+                }
+            }
         }
 
         public virtual void Write(string file)
@@ -315,7 +343,7 @@ namespace Make3D.Models
             docNode.SetAttribute("NextId", nextId.ToString());
             revision++;
             docNode.SetAttribute("Revision", revision.ToString());
-            
+
             foreach (String rf in referencedFiles)
             {
                 string fn = Project.AbsPathToProjectPath(rf);
@@ -331,10 +359,30 @@ namespace Make3D.Models
             doc.Save(file);
         }
 
+        public virtual void WriteBinary(string file)
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open(file, FileMode.Create)))
+            {
+                writer.Write(nextId);
+                writer.Write(revision);
+                writer.Write(referencedFiles.Count);
+                foreach (String rf in referencedFiles)
+                {
+                    string fn = Project.AbsPathToProjectPath(rf);
+                    writer.Write(fn);
+                }
+                writer.Write(Content.Count);
+                foreach (Object3D ob in Content)
+                {
+                    ob.WriteBinary(writer);
+                }
+            }
+        }
+
         internal void Add(Object3D leftObject)
         {
         }
-        public ProjectSettings ProjectSettings { get; set; }
+
         internal void AutoExport(string name, Bounds3D bnds)
         {
             double scalefactor = 1.0;
@@ -372,7 +420,7 @@ namespace Make3D.Models
         internal void Clear()
         {
             FilePath = "";
-            FileFilter = "Text Files (*.txt)|*.txt";
+            FileFilter = "Object Files (*.txt;*.bob)|*.txt;*.bob";
             ProjectFilter = "Project Files (*.bmf)|*.bmf";
             FileName = "Untitled";
             Extension = ".txt";
@@ -450,7 +498,7 @@ namespace Make3D.Models
                     {
                         expName += "_V_" + revision.ToString();
                     }
-                    expName = expName+ ".stl";
+                    expName = expName + ".stl";
                     expName = System.IO.Path.Combine(pth, expName);
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     res = expName;
@@ -868,6 +916,115 @@ namespace Make3D.Models
         private void OnDocDirty(object param)
         {
             Dirty = true;
+        }
+
+        private void ReadBinary(string fileName, bool clearFirst)
+        {
+            if (clearFirst)
+            {
+                Content.Clear();
+                referencedFiles.Clear();
+            }
+            using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+            {
+                nextId = reader.ReadInt32();
+                revision = reader.ReadInt32();
+                int count = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    string fn = reader.ReadString();
+                    fn = Project.ProjectPathToAbsPath(fn);
+                    referencedFiles.Add(fn);
+                }
+
+                foreach (string fn in referencedFiles)
+                {
+                    LoadReferencedFile(fn);
+                }
+                count = reader.ReadInt32();
+                for (int i = 0; i < count; i++)
+                {
+                    byte type = reader.ReadByte();
+                    switch (type)
+                    {
+                        case 0:
+                            {
+                                Object3D ob = new Object3D();
+                                ob.ReadBinary(reader);
+                                ob.SetMesh();
+                                if (ob.PrimType != "Mesh")
+                                {
+                                    ob = ob.ConvertToMesh();
+                                }
+                                if (!(double.IsNegativeInfinity(ob.Position.X)))
+                                {
+                                    Content.Add(ob);
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            {
+                                Group3D ob = new Group3D();
+                                ob.ReadBinary(reader);
+
+                                ob.SetMesh();
+
+                                if (!(double.IsNegativeInfinity(ob.Position.X)))
+                                {
+                                    Content.Add(ob);
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            {
+                                ReferenceObject3D ob = new ReferenceObject3D();
+                                ob.ReadBinary(reader);
+
+                                // so we should have already read the referenced files by now
+                                // meaning there should already be a referenced object which matches.
+                                // if there is then update its position to whatever this object says
+                                bool found = false;
+                                foreach (Object3D old in Content)
+                                {
+                                    if (old is ReferenceObject3D)
+                                    {
+                                        if (old.Name == ob.Name && (old as ReferenceObject3D).Reference.Path == ob.Reference.Path)
+                                        {
+                                            found = true;
+                                            old.Position = ob.Position;
+                                            old.Rotation = ob.Rotation;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+
+                        case 3:
+                            {
+                                ReferenceGroup3D ob = new ReferenceGroup3D();
+                                ob.ReadBinary(reader);
+                                ob.SetMesh();
+
+                                foreach (Object3D old in Content)
+                                {
+                                    if (old is ReferenceGroup3D)
+                                    {
+                                        if (old.Name == ob.Name && (old as ReferenceGroup3D).Reference.Path == ob.Reference.Path)
+                                        {
+                                            old.Position = ob.Position;
+                                            old.Rotation = ob.Rotation;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
         private bool ReferencedObjectInContent(string name, string pth)

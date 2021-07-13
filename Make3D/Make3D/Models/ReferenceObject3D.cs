@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Media.Media3D;
 using System.Xml;
@@ -7,6 +8,13 @@ namespace Make3D.Models
 {
     public class ReferenceObject3D : Object3D
     {
+        public ReferenceObject3D()
+        {
+            Reference = new ExternalReference();
+            XmlType = "refobj";
+            RefValid = false;
+        }
+
         public ExternalReference Reference
         {
             get;
@@ -15,23 +23,16 @@ namespace Make3D.Models
 
         public bool RefValid { get; set; }
 
-        public override bool IsSizable()
-        {
-            return false;
-        }
-
-        public ReferenceObject3D()
-        {
-            Reference = new ExternalReference();
-            XmlType = "refobj";
-            RefValid = false;
-        }
-
         public override Object3D ConvertToMesh()
         {
             PrimType = "Mesh";
 
             return this;
+        }
+
+        public override bool IsSizable()
+        {
+            return false;
         }
 
         internal void BaseRead(XmlNode nd)
@@ -109,6 +110,27 @@ namespace Make3D.Models
             refele.SetAttribute("Timestamp", Reference.TimeStamp.ToString());
             ele.AppendChild(refele);
             return ele;
+        }
+
+        internal override void WriteBinary(BinaryWriter writer)
+        {
+            writer.Write((byte)2); // need a tag of some sort for deserialisation
+            writer.Write(Name);
+
+            writer.Write(Position.X);
+            writer.Write(Position.Y);
+            writer.Write(Position.Z);
+
+            writer.Write(rotation.X);
+            writer.Write(rotation.Y);
+            writer.Write(rotation.Z);
+
+            writer.Write(Reference.Path);
+            writer.Write(Reference.TimeStamp.Year);
+            writer.Write(Reference.TimeStamp.Month);
+            writer.Write(Reference.TimeStamp.Day);
+            writer.Write(Reference.TimeStamp.Minute);
+            writer.Write(Reference.TimeStamp.Second);
         }
     }
 }
