@@ -8,6 +8,7 @@
 
         <SolidColorBrush x:Key="ControlBackBrush" Color="AliceBlue" />
         <SolidColorBrush x:Key="WindowBackBrush" Color="AliceBlue" />
+        <SolidColorBrush x:Key="WarningColour" Color="OrangeRed" />
 
         <Style x:Key="RoundedButton" TargetType="Button">
             <Setter Property="Background" Value="White" />
@@ -17,7 +18,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border CornerRadius="{TemplateBinding Border.CornerRadius}"
                         Background="White" BorderBrush="#ccc"
-                        BorderThickness="0,1,1,0">
+                        BorderThickness="0,2,2,0">
                             <ContentPresenter x:Name="contentPresenter"
                                       ContentTemplate="{TemplateBinding ContentTemplate}"
                                       Content="{TemplateBinding Content}"

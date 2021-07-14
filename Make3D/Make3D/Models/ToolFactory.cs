@@ -49,6 +49,10 @@ namespace Make3D.Models
                     res = new StadiumDialog();
                     break;
 
+                case "Thread":
+                    res = new ThreadDlg();
+                    break;
+
                 case "Tube":
                     res = new TubeDlg();
                     break;

@@ -10,6 +10,8 @@ namespace Make3D.Dialogs
     /// </summary>
     public partial class Blank : BaseModellerDialog, INotifyPropertyChanged
     {
+        private string warningText;
+
         public Blank()
         {
             InitializeComponent();
@@ -52,6 +54,22 @@ namespace Make3D.Dialogs
             }
         }
 
+        public string WarningText
+        {
+            get
+            {
+                return warningText;
+            }
+            set
+            {
+                if (warningText != value)
+                {
+                    warningText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -74,13 +92,19 @@ namespace Make3D.Dialogs
             // save the parameters for the tool
         }
 
+        private void UpdateDisplay()
+        {
+            GenerateShape();
+            Redisplay();
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
-
+            warningText = "";
             Redisplay();
         }
     }
