@@ -60,7 +60,11 @@
                 <Slider Value="{Binding Angle}" Minimum="5" Maximum="25" Width="200" />
                 <TextBox Text="{Binding Angle}" Width="50" />
             </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="7" Orientation="Horizontal">
+                <Label Width="100">Length</Label>
+                <Slider Value="{Binding Length}" Minimum="5" Maximum="200" Width="200" />
+                <TextBox Text="{Binding Length}" Width="50" />
+            </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>

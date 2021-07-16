@@ -580,6 +580,10 @@ namespace Make3D.ViewModels
             if (!handled)
             {
                 handled = CheckIfContentSelected(geo, append, size, control);
+                if (handled)
+                {
+                    SetSelectionColours();
+                }
             }
             if (!handled)
             {
@@ -2850,6 +2854,7 @@ namespace Make3D.ViewModels
                 Object3D ob = Document.Content[0];
                 selectedItems.Add(ob);
                 selectedObjectAdorner.AdornObject(ob);
+                SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", ob);
                 EnableTool(ob);
             }
@@ -2869,6 +2874,7 @@ namespace Make3D.ViewModels
                 Object3D ob = Document.Content[Document.Content.Count - 1];
                 selectedItems.Add(ob);
                 selectedObjectAdorner.AdornObject(ob);
+                SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", ob);
                 EnableTool(ob);
             }
@@ -2906,6 +2912,7 @@ namespace Make3D.ViewModels
 
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
+                SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", nxt);
                 EnableTool(nxt);
                 UpdateSelectionDisplay();
@@ -2933,6 +2940,7 @@ namespace Make3D.ViewModels
                         {
                             selectedItems.Add(ob);
                             selectedObjectAdorner.AdornObject(ob);
+                            SetSelectionColours();
                             NotificationManager.Notify("ObjectSelected", ob);
                             EnableTool(ob);
                         }
@@ -2975,6 +2983,7 @@ namespace Make3D.ViewModels
 
                 selectedItems.Add(nxt);
                 selectedObjectAdorner.AdornObject(nxt);
+                SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", nxt);
                 EnableTool(nxt);
                 UpdateSelectionDisplay();
@@ -3013,6 +3022,7 @@ namespace Make3D.ViewModels
 
         private void SetSelectionColours()
         {
+            bool first = true;
             List<GeometryModel3D> tmp = modelItems.OfType<GeometryModel3D>().ToList();
             foreach (Object3D ob in selectedItems)
             {
@@ -3020,7 +3030,15 @@ namespace Make3D.ViewModels
                 {
                     if (ob.Mesh == md.Geometry)
                     {
-                        md.Material = new DiffuseMaterial(new SolidColorBrush(Colors.Red));
+                        if (first)
+                        {
+                            md.Material = new DiffuseMaterial(new SolidColorBrush(Colors.OrangeRed));
+                            first = false;
+                        }
+                        else
+                        {
+                            md.Material = new DiffuseMaterial(new SolidColorBrush(Colors.LightGreen));
+                        }
                     }
                 }
             }
