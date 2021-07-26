@@ -64,10 +64,13 @@ namespace Make3D.Models
         public static Bounds3D operator +(Bounds3D a, Bounds3D b)
         {
             Bounds3D res = a;
-            if (b.lower.X != double.MaxValue)
+            if (b != null)
             {
-                res.Adjust(b.Lower);
-                res.Adjust(b.Upper);
+                if (b.lower.X != double.MaxValue)
+                {
+                    res.Adjust(b.Lower);
+                    res.Adjust(b.Upper);
+                }
             }
             return res;
         }

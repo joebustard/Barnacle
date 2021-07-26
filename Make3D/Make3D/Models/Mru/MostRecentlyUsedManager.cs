@@ -62,16 +62,17 @@ namespace Make3D.Models.Mru
 
         public void UpdateRecentFiles(string fileName)
         {
-            bool found = false;
+            
+            MruEntry existing = null;
             foreach (MruEntry mru in recentFilesList)
             {
                 if (mru.Path == fileName)
                 {
-                    found = true;
+                    existing = mru;
                     break;
                 }
             }
-            if (!found)
+            if (existing == null)
             {
                 string shortName = AbbreviatePath(fileName, 30);
                 MruEntry m = new MruEntry(shortName, fileName);
@@ -82,6 +83,13 @@ namespace Make3D.Models.Mru
                 }
                 SaveMru();
                 // CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+            }
+            else
+            {
+            // bump existing to front of list
+                recentFilesList.Remove(existing);
+                recentFilesList.Insert(0, existing);
+                SaveMru();
             }
         }
 

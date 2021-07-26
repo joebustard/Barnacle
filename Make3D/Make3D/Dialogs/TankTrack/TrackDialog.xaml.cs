@@ -1,8 +1,10 @@
 ﻿using Make3D.Models;
 using Microsoft.Win32;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,7 +24,7 @@ namespace Make3D.Dialogs
         private bool cf;
         private List<System.Windows.Point> editingPolygon;
         private double guideSize;
-        private double height = 10;
+        private double trackWidth = 10;
         private List<System.Windows.Point> innerPolygon;
         private BitmapImage localImage;
         private int noOfLinks;
@@ -51,12 +53,15 @@ namespace Make3D.Dialogs
             TrackTypes.Add("Simple");
             TrackTypes.Add("Simple 2");
             TrackTypes.Add("Centre Guide");
+            TrackTypes.Add("M1");
+
             SelectedTrackType = "Simple";
             NoOfLinks = 100;
             trackPath = new List<System.Windows.Point>();
             outerPolygon = new List<System.Windows.Point>();
             innerPolygon = new List<System.Windows.Point>();
             Thickness = 6;
+            TrackWidth = 10;
             SpudSize = 1;
             GuideSize = 1;
             ModelGroup = MyModelGroup;
@@ -237,6 +242,25 @@ namespace Make3D.Dialogs
                 if (thickness != value)
                 {
                     thickness = value;
+                    NotifyPropertyChanged();
+                    UpdateTrack();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+
+        public double TrackWidth
+        {
+            get
+            {
+                return trackWidth;
+            }
+            set
+            {
+                if (trackWidth != value)
+                {
+                    trackWidth = value;
                     NotifyPropertyChanged();
                     UpdateTrack();
                     UpdateDisplay();
@@ -526,8 +550,8 @@ namespace Make3D.Dialogs
             }
 
             int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
-            int c1 = AddVertice(ply[i].X, ply[i].Y, height);
-            int c2 = AddVertice(ply[v].X, ply[v].Y, height);
+            int c1 = AddVertice(ply[i].X, ply[i].Y, trackWidth);
+            int c2 = AddVertice(ply[v].X, ply[v].Y, trackWidth);
             int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
             Faces.Add(c0);
             Faces.Add(c1);
@@ -547,8 +571,8 @@ namespace Make3D.Dialogs
             }
 
             int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
-            int c1 = AddVertice(ply[i].X, ply[i].Y, height);
-            int c2 = AddVertice(ply[v].X, ply[v].Y, height);
+            int c1 = AddVertice(ply[i].X, ply[i].Y, trackWidth);
+            int c2 = AddVertice(ply[v].X, ply[v].Y, trackWidth);
             int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
             Faces.Add(c0);
             Faces.Add(c2);
@@ -688,6 +712,11 @@ namespace Make3D.Dialogs
         {
             Faces.Clear();
             Vertices.Clear();
+            MakeFacesFrommOuterAndInner();
+        }
+
+        private void MakeFacesFrommOuterAndInner()
+        {
             List<System.Windows.Point> otmp = new List<System.Windows.Point>();
             List<System.Windows.Point> itmp = new List<System.Windows.Point>();
             if (outerPolygon != null)
@@ -770,10 +799,10 @@ namespace Make3D.Dialogs
                         v = 0;
                     }
 
-                    int c0 = AddVertice(itmp[i].X, itmp[i].Y, height);
-                    int c1 = AddVertice(otmp[i].X, otmp[i].Y, height);
-                    int c2 = AddVertice(otmp[v].X, otmp[v].Y, height);
-                    int c3 = AddVertice(itmp[v].X, itmp[v].Y, height);
+                    int c0 = AddVertice(itmp[i].X, itmp[i].Y, trackWidth);
+                    int c1 = AddVertice(otmp[i].X, otmp[i].Y, trackWidth);
+                    int c2 = AddVertice(otmp[v].X, otmp[v].Y, trackWidth);
+                    int c3 = AddVertice(itmp[v].X, itmp[v].Y, trackWidth);
                     Faces.Add(c0);
                     Faces.Add(c1);
                     Faces.Add(c2);
@@ -821,6 +850,70 @@ namespace Make3D.Dialogs
                 }
             }
         }
+        private void GenerateM1Track()
+        {
+            Faces.Clear();
+            Vertices.Clear();
+            GenerateM1Main();
+            GenerateM1LinkConnectors();
+
+        }
+
+        private void GenerateM1LinkConnectors()
+        {
+
+        }
+
+        private void GenerateM1Main()
+        {
+            if (outerPolygon != null)
+            {
+
+
+                for (int i = 0; i < trackPath.Count; i++)
+                {
+                    int j = i + 1;
+                    if (j >= trackPath.Count)
+                    {
+                        j = 0;
+                    }
+                    List<System.Windows.Point> linkProfile = new List<System.Windows.Point>();
+
+
+                    System.Windows.Point p1 = trackPath[i];
+                    System.Windows.Point p2 = trackPath[j];
+
+                    M1MainPolygon(p1, p2, ref linkProfile);
+
+                    // make faces for this single link part
+                    List<PointF> pf = new List<PointF>();
+                    foreach (System.Windows.Point p in linkProfile)
+                    {
+                        pf.Add(new PointF((float)p.X, (float)p.Y));
+                    }
+                    TriangulationPolygon ply = new TriangulationPolygon();
+                    ply.Points = pf.ToArray();
+                    List<Triangle> tris = ply.Triangulate();
+                    foreach (Triangle t in tris)
+                    {
+                        int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0.0);
+                        int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0.0);
+                        int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0.0);
+                        Faces.Add(c0);
+                        Faces.Add(c2);
+                        Faces.Add(c1);
+
+                        c0 = AddVertice(t.Points[0].X, t.Points[0].Y, trackWidth);
+                        c1 = AddVertice(t.Points[1].X, t.Points[1].Y, trackWidth);
+                        c2 = AddVertice(t.Points[2].X, t.Points[2].Y, trackWidth);
+                        Faces.Add(c0);
+                        Faces.Add(c1);
+                        Faces.Add(c2);
+                    }
+                }
+
+            }
+        }
 
         private void GenerateTrack()
         {
@@ -830,14 +923,21 @@ namespace Make3D.Dialogs
                 {
                     case "Simple":
                         GenerateSimpleTrack(0);
+                        GenerateFaces();
                         break;
 
                     case "Simple 2":
                         GenerateSimpleTrack(1);
+                        GenerateFaces();
                         break;
 
                     case "Centre Guide":
                         GenerateCentreGuideTrack();
+                        GenerateFaces();
+                        break;
+                    case "M1":
+                        GenerateM1Track();
+                        CentreVertices();
                         break;
                 }
             }
@@ -1021,6 +1121,7 @@ namespace Make3D.Dialogs
                 editingPolygon[selectedPoint] = position;
                 GenerateTrackPath();
                 GenerateTrack();
+
             }
             else
             {
@@ -1033,7 +1134,7 @@ namespace Make3D.Dialogs
         {
             GenerateTrackPath();
             GenerateTrack();
-            GenerateFaces();
+
         }
 
         private void OutButton_Click(object sender, RoutedEventArgs e)
@@ -1043,21 +1144,35 @@ namespace Make3D.Dialogs
             MainScale.ScaleY = scale;
         }
 
-        private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double d)
+        private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
         {
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
             double grad = dy / dx;
             double perp = -1.0 / grad;
-            double sgn = Math.Sign(d);
-            d = Math.Abs(d);
+            double sgn = Math.Sign(distanceFromLine);
+            distanceFromLine = Math.Abs(distanceFromLine);
             System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
-            double x = tp.X + sgn * Math.Sqrt((d * d) / (1.0 + (1.0 / (grad * grad))));
+            double x = tp.X + sgn * Math.Sqrt((distanceFromLine * distanceFromLine) / (1.0 + (1.0 / (grad * grad))));
             double y = tp.Y + perp * (x - tp.X);
             System.Windows.Point res = new System.Windows.Point(x, y);
             return res;
         }
 
+        private System.Windows.Point Perpendicular2(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            Vector v1 = new Vector(dx, dy);
+            v1.Normalize();
+            Vector v2 = new Vector(-v1.Y, v1.X);
+            v2.Normalize();
+            System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
+            double x = tp.X + distanceFromLine * v2.X;
+            double y = tp.Y + distanceFromLine * v2.Y;
+            System.Windows.Point res = new System.Windows.Point(x, y);
+            return res;
+        }
         private double PolygonLength(List<System.Windows.Point> points)
         {
             double res = 0;
@@ -1100,7 +1215,8 @@ namespace Make3D.Dialogs
             EditorParameters.Set("TrackType", SelectedTrackType);
             EditorParameters.Set("Thickness", Thickness.ToString());
             EditorParameters.Set("SpudSize", SpudSize.ToString());
-            EditorParameters.Set("GuideSize", SpudSize.ToString());
+            EditorParameters.Set("GuideSize", GuideSize.ToString());
+            EditorParameters.Set("TrackWidth", TrackWidth.ToString());
         }
 
         private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall, int spudSign)
@@ -1240,6 +1356,45 @@ namespace Make3D.Dialogs
             }
         }
 
+        System.Windows.Point[] m1PolyOut =
+    {
+         new System.Windows.Point(0.0,0.05),
+         new System.Windows.Point(0.05,0.25),
+         new System.Windows.Point(0.1,1.0),
+         new System.Windows.Point(0.8,1.0),
+         new System.Windows.Point(0.9,0.1),
+
+          new System.Windows.Point(0.9,-0.1),
+         new System.Windows.Point(0.8,-1.0),
+         new System.Windows.Point(0.1,-1.0),
+         new System.Windows.Point(0.05,-0.25),
+         new System.Windows.Point(0.0,-0.05),
+        };
+        private void M1MainPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> poly)
+        {
+            for (int i = 0; i < m1PolyOut.GetLength(0); i++)
+            {
+                System.Windows.Point po = m1PolyOut[i];
+
+                System.Windows.Point o1 = Perpendicular2(p1, p2, po.X, po.Y * thickness);
+                if (localImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    o1.Y = -o1.Y;
+                }
+                else
+                {
+                    o1.X = ToMM(o1.X);
+                    o1.Y = ToMM(-o1.Y);
+
+                }
+
+                poly.Add(o1);
+            }
+
+
+        }
+
         private double ToMM(double x)
         {
             double res = x;
@@ -1280,7 +1435,7 @@ namespace Make3D.Dialogs
         {
             GenerateTrackPath();
             GenerateTrack();
-            GenerateFaces();
+
         }
 
         /*
@@ -1294,6 +1449,17 @@ namespace Make3D.Dialogs
         */
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GetEditorParameters();
+            Camera.Distance = 200;
+            GenerateTrackPath();
+            GenerateTrack();
+
+            UpdateCameraPos();
+            UpdateDisplay();
+        }
+
+        private void GetEditorParameters()
         {
             string imageName = EditorParameters.Get("ImagePath");
             if (imageName != "")
@@ -1338,12 +1504,11 @@ namespace Make3D.Dialogs
             {
                 GuideSize = Convert.ToDouble(s); ;
             }
-            Camera.Distance = 200;
-            GenerateTrackPath();
-            GenerateTrack();
-            GenerateFaces();
-            UpdateCameraPos();
-            UpdateDisplay();
+            s = EditorParameters.Get("TrackWidth");
+            if (s != "")
+            {
+                TrackWidth = Convert.ToDouble(s); ;
+            }
         }
     }
 }

@@ -24,6 +24,8 @@
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
                 <RowDefinition />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
@@ -45,15 +47,21 @@
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowLinkMarkers}">Link Markers</CheckBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="10,0,0,0">
-                <Label Width="80" VerticalAlignment="Center">Thickness</Label>
-                <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Thickness}" MinWidth="50"></TextBox>
+                <Label Width="80" VerticalAlignment="Center">Width</Label>
+                <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding TrackWidth}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowOutline}">Outline</CheckBox>
             </StackPanel>
+
             <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="10,0,0,0">
+                <Label Width="80" VerticalAlignment="Center">Thickness</Label>
+                <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Thickness}" MinWidth="50"></TextBox>
+
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Spud Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding SpudSize}" MinWidth="50"></TextBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="6"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center" Visibility="{Binding ShowGuideSize}">Guide Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding GuideSize}" MinWidth="50" Visibility="{Binding ShowGuideSize}"></TextBox>
             </StackPanel>

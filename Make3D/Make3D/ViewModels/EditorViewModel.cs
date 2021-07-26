@@ -321,31 +321,35 @@ namespace Make3D.ViewModels
 
         internal void KeyDown(Key key, bool shift, bool ctrl)
         {
+
             switch (key)
             {
                 case Key.Up:
                     {
-                        CheckPointForNudge();
-                        if (ctrl)
+                        if (selectedObjectAdorner != null)
                         {
-                            if (shift)
+                            CheckPointForNudge();
+                            if (ctrl)
                             {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                }
+                                else
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                                }
                             }
                             else
                             {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
-                            }
-                        }
-                        else
-                        {
-                            if (shift)
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
-                            }
-                            else
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                                }
+                                else
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                }
                             }
                         }
                     }
@@ -353,27 +357,30 @@ namespace Make3D.ViewModels
 
                 case Key.Down:
                     {
-                        CheckPointForNudge();
-                        if (ctrl)
+                        if (selectedObjectAdorner != null)
                         {
-                            if (shift)
+                            CheckPointForNudge();
+                            if (ctrl)
                             {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                }
+                                else
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                                }
                             }
                             else
                             {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
-                            }
-                        }
-                        else
-                        {
-                            if (shift)
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
-                            }
-                            else
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                                }
+                                else
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                }
                             }
                         }
                     }
@@ -381,28 +388,34 @@ namespace Make3D.ViewModels
 
                 case Key.Left:
                     {
-                        CheckPointForNudge();
-                        if (shift)
+                        if (selectedObjectAdorner != null)
                         {
-                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
-                        }
-                        else
-                        {
-                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                            CheckPointForNudge();
+                            if (shift)
+                            {
+                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                            }
+                            else
+                            {
+                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                            }
                         }
                     }
                     break;
 
                 case Key.Right:
                     {
-                        CheckPointForNudge();
-                        if (shift)
+                        if (selectedObjectAdorner != null)
                         {
-                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
-                        }
-                        else
-                        {
-                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                            CheckPointForNudge();
+                            if (shift)
+                            {
+                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                            }
+                            else
+                            {
+                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                            }
                         }
                     }
                     break;
@@ -2053,30 +2066,38 @@ namespace Make3D.ViewModels
                                 string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
                                 if (!File.Exists(targetPath))
                                 {
-                                    Document localDoc = new Document();
-                                    localDoc.ImportStl(fpath);
-                                    int numObs = 0;
-                                    foreach (Object3D ob in localDoc.Content)
+                                    try
                                     {
-                                        ob.Name = rootName;
-                                        if (numObs > 0)
+                                        Document localDoc = new Document();
+                                        localDoc.ImportStl(fpath);
+                                        int numObs = 0;
+                                        foreach (Object3D ob in localDoc.Content)
                                         {
-                                            ob.Name += "_" + numObs.ToString();
+                                            ob.Name = rootName;
+                                            if (numObs > 0)
+                                            {
+                                                ob.Name += "_" + numObs.ToString();
+                                            }
+                                            ob.FlipInside();
+                                            ob.MoveOriginToCentroid();
+                                            ob.MoveToFloor();
+                                            ob.MoveToCentre();
+                                            numObs++;
                                         }
-                                        ob.FlipInside();
-                                        ob.MoveOriginToCentroid();
-                                        ob.MoveToFloor();
-                                        ob.MoveToCentre();
-                                        numObs++;
+                                        localDoc.Save(targetPath);
+                                        string fldr = System.IO.Path.GetDirectoryName(targetPath);
+                                        BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
                                     }
-                                    localDoc.Save(targetPath);
-                                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
-                                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show(ex.Message);
+                                    }
                                 }
                                 else
                                 {
                                     System.Windows.MessageBox.Show("File already exists:" + targetPath, "Error");
                                 }
+
                             }
                         }
                         BaseViewModel.Project.Save();
