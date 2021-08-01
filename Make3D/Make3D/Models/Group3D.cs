@@ -64,6 +64,7 @@ namespace Make3D.Models
             res.Name = this.Name;
             res.Description = this.Description;
             res.primType = this.primType;
+            res.Exportable = this.Exportable;
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
 
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
@@ -221,6 +222,14 @@ namespace Make3D.Models
             string cl = ele.GetAttribute("Colour");
             this.Color = (Color)ColorConverter.ConvertFromString(cl);
             PrimType = ele.GetAttribute("Primitive");
+            if (ele.HasAttribute("Exportable"))
+            {
+                Exportable = Convert.ToBoolean(ele.GetAttribute("Exportable"));
+            }
+            else
+            {
+                Exportable = true;
+            }
             XmlNode pn = nd.SelectSingleNode("Position");
             Point3D p = new Point3D();
             p.X = GetDouble(pn, "X");
@@ -296,6 +305,8 @@ namespace Make3D.Models
             B = reader.ReadByte();
             Color = Color.FromArgb(A, R, G, B);
             PrimType = reader.ReadString();
+            Exportable = reader.ReadBoolean();
+
             double x, y, z;
             x = reader.ReadDouble();
             y = reader.ReadDouble();
@@ -353,6 +364,7 @@ namespace Make3D.Models
                 ele.SetAttribute("Description", Description);
                 ele.SetAttribute("Colour", Color.ToString());
                 ele.SetAttribute("Primitive", PrimType);
+                ele.SetAttribute("Exportable", Exportable.ToString());
                 XmlElement pos = doc.CreateElement("Position");
                 pos.SetAttribute("X", Position.X.ToString());
                 pos.SetAttribute("Y", Position.Y.ToString());
@@ -396,6 +408,7 @@ namespace Make3D.Models
             writer.Write(Color.G);
             writer.Write(Color.B);
             writer.Write(PrimType);
+            writer.Write(Exportable);
             writer.Write(Position.X);
             writer.Write(Position.Y);
             writer.Write(Position.Z);

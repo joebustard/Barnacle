@@ -43,6 +43,7 @@ namespace Make3D.Models
                 Position = new Point3D();
                 Rotation = new Point3D();
                 absoluteBounds = new Bounds3D();
+                Exportable = true;
                 PrimType = "";
                 editorParameters = new EditorParameters();
                 XmlType = "obj";
@@ -180,6 +181,7 @@ namespace Make3D.Models
         }
 
         protected String XmlType { get; set; }
+        public bool Exportable { get; internal set; }
 
         public virtual Object3D Clone()
         {
@@ -191,6 +193,7 @@ namespace Make3D.Models
             res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.Color = this.Color;
+            res.Exportable = this.Exportable;
             if (res.PrimType != "Mesh")
             {
                 res.BuildPrimitive(res.primType);
@@ -777,6 +780,14 @@ namespace Make3D.Models
             string cl = ele.GetAttribute("Colour");
             this.Color = (Color)ColorConverter.ConvertFromString(cl);
             PrimType = ele.GetAttribute("Primitive");
+            if ( ele.HasAttribute("Exportable"))
+            {
+                Exportable = Convert.ToBoolean(ele.GetAttribute("Exportable"));
+            }
+            else
+            {
+                Exportable = true;
+            }
             XmlNode pn = nd.SelectSingleNode("Position");
             Point3D p = new Point3D();
             p.X = GetDouble(pn, "X");
@@ -842,6 +853,7 @@ namespace Make3D.Models
             B = reader.ReadByte();
             Color = Color.FromArgb(A, R, G, B);
             PrimType = reader.ReadString();
+            Exportable = reader.ReadBoolean();
             double x, y, z;
             x = reader.ReadDouble();
             y = reader.ReadDouble();
@@ -973,6 +985,7 @@ namespace Make3D.Models
             ele.SetAttribute("Description", Description);
             ele.SetAttribute("Colour", Color.ToString());
             ele.SetAttribute("Primitive", PrimType);
+            ele.SetAttribute("Exportable", Exportable.ToString());
             XmlElement pos = doc.CreateElement("Position");
             pos.SetAttribute("X", Position.X.ToString());
             pos.SetAttribute("Y", Position.Y.ToString());
@@ -1023,6 +1036,7 @@ namespace Make3D.Models
             writer.Write(Color.G);
             writer.Write(Color.B);
             writer.Write(PrimType);
+            writer.Write(Exportable);
             writer.Write(Position.X);
             writer.Write(Position.Y);
             writer.Write(Position.Z);

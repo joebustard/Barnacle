@@ -25,13 +25,14 @@ namespace Make3D.ViewModels
         private double rotationZ;
 
         private Object3D selectedObject;
-
+       public ICommand SetRotationCommand { get; set; }
         public ObjectPropertiesViewModel()
         {
             selectedObject = null;
             RotateXCommand = new RelayCommand(OnRotateX);
             RotateYCommand = new RelayCommand(OnRotateY);
             RotateZCommand = new RelayCommand(OnRotateZ);
+            SetRotationCommand = new RelayCommand(OnSetRotation);
             ScaleByPercentCommand = new RelayCommand(OnScaleByPercent);
             MoveToFloorCommand = new RelayCommand(OnMoveToFloor);
             MoveToCentreCommand = new RelayCommand(OnMoveToCentre);
@@ -47,6 +48,18 @@ namespace Make3D.ViewModels
             CanScale = false;
         }
 
+        private void OnSetRotation(object obj)
+        {
+            string v = obj.ToString();
+            double d = Convert.ToDouble(v);
+            rotationX = d;
+            rotationY = d;
+            rotationZ = d;
+            NotifyPropertyChanged("RotationX");
+            NotifyPropertyChanged("RotationY");
+            NotifyPropertyChanged("RotationZ");
+        }
+
         public bool CanScale
         {
             get
@@ -58,6 +71,29 @@ namespace Make3D.ViewModels
                 if (value != canScale)
                 {
                     canScale = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private bool exportable;
+
+        public bool Exportable
+        {
+            get 
+            { 
+            return exportable; 
+            }
+            set 
+            {
+                if (exportable != value)
+                {
+                    exportable = value;
+                    if (selectedObject != null)
+                    {
+                        CheckPoint();
+                        selectedObject.Exportable = exportable;
+                        Document.Dirty = true;
+                    }
                     NotifyPropertyChanged();
                 }
             }
@@ -526,12 +562,14 @@ namespace Make3D.ViewModels
                 //objectColour = new SolidColorBrush(Colors.Transparent);
                 objectColour = Colors.White;
                 objectName = "";
+                exportable = false;
             }
             else
             {
                 objectColour = selectedObject.Color;
                 objectName = selectedObject.Name;
                 CanScale = selectedObject.IsSizable();
+                exportable = selectedObject.Exportable;
             }
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");
@@ -546,6 +584,7 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("RotationZ");
             NotifyPropertyChanged("ObjectColour");
             NotifyPropertyChanged("ObjectName");
+            NotifyPropertyChanged("Exportable");
         }
 
         private void OnPositionUpdated(object param)

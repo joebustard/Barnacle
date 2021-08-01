@@ -295,6 +295,7 @@ namespace Make3D.Models
                                 {
                                     old.Position = obj.Position;
                                     old.Rotation = obj.Rotation;
+                                    old.Remesh();
                                     break;
                                 }
                             }
@@ -465,17 +466,20 @@ namespace Make3D.Models
             List<Object3D> exportList = new List<Object3D>();
             foreach (Object3D ob in Content)
             {
-                Object3D clone = ob.Clone();
-                if (scalefactor != 1.0)
+                if (ob.Exportable)
                 {
-                    clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
-                    clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                    Object3D clone = ob.Clone();
+                    if (scalefactor != 1.0)
+                    {
+                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                    }
+                    if (ProjectSettings.FloorAll)
+                    {
+                        clone.MoveToFloor();
+                    }
+                    exportList.Add(clone);
                 }
-                if (ProjectSettings.FloorAll)
-                {
-                    clone.MoveToFloor();
-                }
-                exportList.Add(clone);
             }
             if (v == "STL")
             {
@@ -559,20 +563,23 @@ namespace Make3D.Models
                 List<Object3D> exportList = new List<Object3D>();
                 foreach (Object3D ob in Content)
                 {
-                    Object3D clone = ob.Clone();
-                    if (scalefactor != 1.0)
+                    if (ob.Exportable)
                     {
-                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
-                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                        Object3D clone = ob.Clone();
+                        if (scalefactor != 1.0)
+                        {
+                            clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                            clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                        }
+                        if (ProjectSettings.FloorAll)
+                        {
+                            clone.MoveToFloor();
+                        }
+                        exportList.Add(clone);
+                        string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
+                        exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                        exportList.Clear();
                     }
-                    if (ProjectSettings.FloorAll)
-                    {
-                        clone.MoveToFloor();
-                    }
-                    exportList.Add(clone);
-                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
-                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                    exportList.Clear();
                 }
                 res = pth;
             }
@@ -594,17 +601,20 @@ namespace Make3D.Models
                 List<Object3D> exportList = new List<Object3D>();
                 foreach (Object3D ob in parts)
                 {
-                    Object3D clone = ob.Clone();
-                    if (scalefactor != 1.0)
+                    if (ob.Exportable)
                     {
-                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
-                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                        Object3D clone = ob.Clone();
+                        if (scalefactor != 1.0)
+                        {
+                            clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                            clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                        }
+                        if (ProjectSettings.FloorAll)
+                        {
+                            clone.MoveToFloor();
+                        }
+                        exportList.Add(clone);
                     }
-                    if (ProjectSettings.FloorAll)
-                    {
-                        clone.MoveToFloor();
-                    }
-                    exportList.Add(clone);
                 }
 
                 String pth = System.IO.Path.GetDirectoryName(FilePath);
@@ -617,16 +627,19 @@ namespace Make3D.Models
                 List<Object3D> oneOb = new List<Object3D>();
                 foreach (Object3D ob in parts)
                 {
-                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
-                    oneOb.Clear();
-                    oneOb.Add(ob);
-
-                    exp.Export(expName, oneOb, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                    if (res != "")
+                    if (ob.Exportable)
                     {
-                        res += ", ";
+                        string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
+                        oneOb.Clear();
+                        oneOb.Add(ob);
+
+                        exp.Export(expName, oneOb, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                        if (res != "")
+                        {
+                            res += ", ";
+                        }
+                        res += expName;
                     }
-                    res += expName;
                 }
             }
             return res;
@@ -880,7 +893,11 @@ namespace Make3D.Models
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
-                                Content.Add(obj);
+                            // only reference an object if its exportable/referenceable
+                                if (obj.Exportable)
+                                {
+                                    Content.Add(obj);
+                                }
                             }
                         }
                         if (nd.Name == "groupobj")
@@ -893,7 +910,10 @@ namespace Make3D.Models
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
-                                Content.Add(obj);
+                                if (obj.Exportable)
+                                {
+                                    Content.Add(obj);
+                                }
                             }
                         }
                     }

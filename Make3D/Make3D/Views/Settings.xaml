@@ -4,10 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Views"
-
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
           xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
         mc:Ignorable="d"
-         Title="Project Settings" Height="400" Width="500" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="ToolWindow" Background="{StaticResource WindowBackBrush }">
+         Title="Project Settings" Height="500" Width="500" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="ToolWindow" Background="{StaticResource WindowBackBrush }">
     <Window.DataContext>
         <ViewModels:SettingsViewModel />
     </Window.DataContext>
@@ -23,6 +23,7 @@
 
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
             <RowDefinition Height="5*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
@@ -35,7 +36,19 @@
             <Label Grid.Column="0">Description</Label>
         </Grid>
         <TextBox x:Name="DescriptionBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Text="{Binding Description}" AcceptsReturn="True" />
+
         <Grid Grid.Row="3" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" VerticalAlignment="Center">Tool Model Colour</Label>
+            <xctk:ColorPicker x:Name="_colorPicker"
+                                   VerticalAlignment="Bottom" Grid.Column="1"  IsOpen="False" SelectedColor="{Binding DefaultObjectColour}" Height="39" Margin="2,2,2,2"/>
+        </Grid>
+        <Grid Grid.Row="4" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
@@ -47,7 +60,7 @@
             <Label Grid.Column="2" VerticalAlignment="Center">Export Scale</Label>
             <ComboBox x:Name="ExportScaleBox" Grid.Column="3" Width="55" HorizontalAlignment="Left" VerticalAlignment="Center" SelectedItem="{Binding ExportScale}" ItemsSource="{Binding Scales}" />
         </Grid>
-        <GroupBox Grid.Row="4" Grid.Column="1" Header="On Export" BorderThickness="3">
+        <GroupBox Grid.Row="5" Grid.Column="1" Header="On Export" BorderThickness="3">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
@@ -82,7 +95,7 @@ VerticalContentAlignment="Center" IsChecked="{Binding IgnoreEmpty}" Content="Don
             </Grid>
         </GroupBox>
 
-        <Grid Grid.Row="5" Grid.Column="1">
+        <Grid Grid.Row="6" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />

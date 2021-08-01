@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Media;
 
 namespace Make3D.ViewModels
 {
@@ -38,6 +39,7 @@ namespace Make3D.ViewModels
             FloorAll = Project.SharedProjectSettings.FloorAll;
             VersionExport = Project.SharedProjectSettings.VersionExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
+            DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
         }
 
         public String Description
@@ -164,6 +166,20 @@ namespace Make3D.ViewModels
                 if (scales != value)
                 {
                     scales = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private Color defaultObjectColour;
+
+        public Color DefaultObjectColour
+        {
+            get { return defaultObjectColour; }
+            set
+            {
+                if (defaultObjectColour != value)
+                {
+                    defaultObjectColour = value;
                     NotifyPropertyChanged();
                 }
             }

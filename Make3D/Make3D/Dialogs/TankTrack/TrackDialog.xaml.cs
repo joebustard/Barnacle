@@ -305,7 +305,7 @@ namespace Make3D.Dialogs
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParameters();
-            GenerateFaces();
+            GenerateTrack();
             DialogResult = true;
             Close();
         }
@@ -629,10 +629,17 @@ namespace Make3D.Dialogs
             if (MyModelGroup != null)
             {
                 MyModelGroup.Children.Clear();
-                if (floor != null)
+                if (floor != null && showFloor)
                 {
                     MyModelGroup.Children.Add(floor.FloorMesh);
                     foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
                     {
                         MyModelGroup.Children.Add(m);
                     }
@@ -869,7 +876,6 @@ namespace Make3D.Dialogs
             if (outerPolygon != null)
             {
 
-
                 for (int i = 0; i < trackPath.Count; i++)
                 {
                     int j = i + 1;
@@ -883,35 +889,72 @@ namespace Make3D.Dialogs
                     System.Windows.Point p1 = trackPath[i];
                     System.Windows.Point p2 = trackPath[j];
 
-                    M1MainPolygon(p1, p2, ref linkProfile);
+                    GetLinkPartProfile(p1, p2, ref linkProfile, m1MainPolyCoords, thickness);
+                    double partBackZ = 0;
+                    double partFrontZ = trackWidth;
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
+                    
+                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness);
+                    partBackZ = trackWidth;
+                    partFrontZ = trackWidth+1;
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
 
-                    // make faces for this single link part
-                    List<PointF> pf = new List<PointF>();
-                    foreach (System.Windows.Point p in linkProfile)
-                    {
-                        pf.Add(new PointF((float)p.X, (float)p.Y));
-                    }
-                    TriangulationPolygon ply = new TriangulationPolygon();
-                    ply.Points = pf.ToArray();
-                    List<Triangle> tris = ply.Triangulate();
-                    foreach (Triangle t in tris)
-                    {
-                        int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0.0);
-                        int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0.0);
-                        int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0.0);
-                        Faces.Add(c0);
-                        Faces.Add(c2);
-                        Faces.Add(c1);
-
-                        c0 = AddVertice(t.Points[0].X, t.Points[0].Y, trackWidth);
-                        c1 = AddVertice(t.Points[1].X, t.Points[1].Y, trackWidth);
-                        c2 = AddVertice(t.Points[2].X, t.Points[2].Y, trackWidth);
-                        Faces.Add(c0);
-                        Faces.Add(c1);
-                        Faces.Add(c2);
-                    }
+                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness);
+                    partBackZ = -1;
+                    partFrontZ = 0;
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
                 }
 
+            }
+        }
+
+        private void MakeFacesForLinkPart(List<System.Windows.Point> linkProfile, double partBackZ, double partFrontZ)
+        {
+            // make faces for this single link part
+            List<PointF> pf = new List<PointF>();
+            foreach (System.Windows.Point p in linkProfile)
+            {
+                pf.Add(new PointF((float)p.X, (float)p.Y));
+            }
+            TriangulationPolygon ply = new TriangulationPolygon();
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, partBackZ);
+                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, partBackZ);
+                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, partBackZ);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                c0 = AddVertice(t.Points[0].X, t.Points[0].Y, partFrontZ);
+                c1 = AddVertice(t.Points[1].X, t.Points[1].Y, partFrontZ);
+                c2 = AddVertice(t.Points[2].X, t.Points[2].Y, partFrontZ);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+            }
+
+            for (int k = 0; k < linkProfile.Count; k++)
+            {
+                int l = k + 1;
+                if (l >= linkProfile.Count)
+                {
+                    l = 0;
+                }
+                int c0 = AddVertice(linkProfile[k].X, linkProfile[k].Y, partBackZ);
+                int c1 = AddVertice(linkProfile[l].X, linkProfile[l].Y, partBackZ);
+                int c2 = AddVertice(linkProfile[l].X, linkProfile[l].Y, partFrontZ);
+                int c3 = AddVertice(linkProfile[k].X, linkProfile[k].Y, partFrontZ);
+
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
             }
         }
 
@@ -1356,7 +1399,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        System.Windows.Point[] m1PolyOut =
+        System.Windows.Point[] m1MainPolyCoords =
     {
          new System.Windows.Point(0.0,0.05),
          new System.Windows.Point(0.05,0.25),
@@ -1370,13 +1413,33 @@ namespace Make3D.Dialogs
          new System.Windows.Point(0.05,-0.25),
          new System.Windows.Point(0.0,-0.05),
         };
-        private void M1MainPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> poly)
-        {
-            for (int i = 0; i < m1PolyOut.GetLength(0); i++)
-            {
-                System.Windows.Point po = m1PolyOut[i];
+        System.Windows.Point[] m1LinkConnectorCoords =
+    {
+         new System.Windows.Point(0.6,0.05),
+         new System.Windows.Point(0.65,0.9),
+         new System.Windows.Point(0.8,0.9),
+         new System.Windows.Point(0.86,3),
+         new System.Windows.Point(0.93,3),
+         new System.Windows.Point(1,0.9),
+         new System.Windows.Point(1.15,0.9),
+         new System.Windows.Point(1.2,0.05),
 
-                System.Windows.Point o1 = Perpendicular2(p1, p2, po.X, po.Y * thickness);
+
+         new System.Windows.Point(1.2,-0.05),
+
+
+         new System.Windows.Point(1.15,-0.9),
+         new System.Windows.Point(0.65,-0.9),
+         new System.Windows.Point(0.6,-0.05),
+     };
+        private void GetLinkPartProfile(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> poly, System.Windows.Point[] shape, double size)
+        {
+            poly.Clear();
+            for (int i = 0; i < shape.GetLength(0); i++)
+            {
+                System.Windows.Point po = shape[i];
+
+                System.Windows.Point o1 = Perpendicular2(p1, p2, po.X, po.Y * size);
                 if (localImage == null)
                 {
                     // flipping coordinates so have to reverse polygon too

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
@@ -17,6 +18,7 @@ namespace VisualSolutionExplorer
             FloorAll = true;
             VersionExport = true;
             ExportEmptyFiles = false;
+            DefaultObjectColour = Colors.CadetBlue;
         }
 
         public string BaseScale { get; set; }
@@ -28,7 +30,7 @@ namespace VisualSolutionExplorer
         public string ExportScale { get; set; }
         public bool FloorAll { get; set; }
         public bool VersionExport { get; set; }
-
+        public Color  DefaultObjectColour { get; set; }
         internal void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -61,6 +63,11 @@ namespace VisualSolutionExplorer
                 VersionExport = Convert.ToBoolean(s);
             }
 
+            if (ele.HasAttribute("DefaultObjectColour"))
+            {
+                string s = ele.GetAttribute("DefaultObjectColour");
+                DefaultObjectColour = (Color)ColorConverter.ConvertFromString(s); 
+            }
             XmlNode rt = nd.SelectSingleNode("Rotation");
             if (rt != null)
             {
@@ -87,6 +94,7 @@ namespace VisualSolutionExplorer
             ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
             ele.SetAttribute("FloorAll", FloorAll.ToString());
             ele.SetAttribute("VersionExport", VersionExport.ToString());
+            ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());
             XmlElement rot = doc.CreateElement("Rotation");
             rot.SetAttribute("X", ExportRotation.X.ToString());
             rot.SetAttribute("Y", ExportRotation.Y.ToString());

@@ -1049,6 +1049,7 @@ namespace Make3D.ViewModels
         private void DisplayModeller(BaseModellerDialog dlg)
         {
             CheckPoint();
+            dlg.MeshColour = Project.SharedProjectSettings.DefaultObjectColour;
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;
             Point3D placement = new Point3D(0, 0, 0);
@@ -1260,9 +1261,7 @@ namespace Make3D.ViewModels
                 }
                 else
                 {
-                    selectedObjectAdorner = new SizeAdorner(camera);
-                    selectedObjectAdorner.ViewPort = ViewPort;
-                    selectedObjectAdorner.Overlay = Overlay;
+                    MakeSizeAdorner();
                 }
             }
             else
@@ -2698,10 +2697,15 @@ namespace Make3D.ViewModels
                 // selectedObjectAdorner.Clear();
             }
 
+            MakeSizeAdorner();
+            selectedItems.Clear();
+        }
+
+        private void MakeSizeAdorner()
+        {
             selectedObjectAdorner = new SizeAdorner(camera);
             selectedObjectAdorner.Overlay = Overlay;
             selectedObjectAdorner.ViewPort = ViewPort;
-            selectedItems.Clear();
         }
 
         private void ResetSelectionColours()
@@ -2874,6 +2878,10 @@ namespace Make3D.ViewModels
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[0];
                 selectedItems.Add(ob);
+                if ( selectedObjectAdorner == null )
+                {
+                    MakeSizeAdorner();
+                }
                 selectedObjectAdorner.AdornObject(ob);
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", ob);
@@ -2894,6 +2902,10 @@ namespace Make3D.ViewModels
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[Document.Content.Count - 1];
                 selectedItems.Add(ob);
+                if (selectedObjectAdorner == null)
+                {
+                    MakeSizeAdorner();
+                }
                 selectedObjectAdorner.AdornObject(ob);
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", ob);
@@ -2918,6 +2930,7 @@ namespace Make3D.ViewModels
                         if (Document.Content[i] == sel)
                         {
                             nxt = Document.Content[i + 1];
+                            break;
                         }
                     }
                     if (nxt == null)
@@ -2925,13 +2938,19 @@ namespace Make3D.ViewModels
                         nxt = Document.Content[0];
                     }
                 }
-                if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
-                    (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+                var v1 = Keyboard.GetKeyStates(Key.LeftShift);
+                var v2 = Keyboard.GetKeyStates(Key.RightShift);
+                if ((v1 == KeyStates.None) &&
+                    (v2 == KeyStates.None))
                 {
                     ResetSelection();
                 }
 
                 selectedItems.Add(nxt);
+                if (selectedObjectAdorner == null)
+                {
+                    MakeSizeAdorner();
+                }
                 selectedObjectAdorner.AdornObject(nxt);
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", nxt);
@@ -2960,6 +2979,10 @@ namespace Make3D.ViewModels
                         if (ob.Name == nm)
                         {
                             selectedItems.Add(ob);
+                            if (selectedObjectAdorner == null)
+                            {
+                                MakeSizeAdorner();
+                            }
                             selectedObjectAdorner.AdornObject(ob);
                             SetSelectionColours();
                             NotificationManager.Notify("ObjectSelected", ob);
@@ -3003,6 +3026,10 @@ namespace Make3D.ViewModels
                 }
 
                 selectedItems.Add(nxt);
+                if (selectedObjectAdorner == null)
+                {
+                    MakeSizeAdorner();
+                }
                 selectedObjectAdorner.AdornObject(nxt);
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectSelected", nxt);
