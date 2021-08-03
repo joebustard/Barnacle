@@ -11,7 +11,9 @@ namespace Make3D.Dialogs
     public partial class ThreadDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private double angle;
+        private double ao;
         private double crest;
+        private Point3DCollection endDisk;
         private Point3DCollection helix1;
         private Point3DCollection helix2;
         private Point3DCollection helix3;
@@ -19,11 +21,11 @@ namespace Make3D.Dialogs
         private Point3DCollection helix5;
         private double length;
         private double majorRadius;
-
         private double minorRadius;
-
         private double pitch;
+        private int pointsInFirstRotation = 0;
         private double root;
+        private Point3DCollection startDisk;
         private string warningText;
 
         public ThreadDlg()
@@ -44,6 +46,8 @@ namespace Make3D.Dialogs
             helix3 = new Point3DCollection();
             helix4 = new Point3DCollection();
             helix5 = new Point3DCollection();
+            startDisk = new Point3DCollection();
+            endDisk = new Point3DCollection();
         }
 
         public double Angle
@@ -223,13 +227,32 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void CreateDisk(Point3DCollection disk, double radius, double zOff)
+        {
+            if (pointsInFirstRotation == 0)
+            {
+                pointsInFirstRotation = 10;
+            }
+            disk.Clear();
+            double theta = 0;
+            double dt = (Math.PI * 2.0) / pointsInFirstRotation;
+            while (theta < Math.PI * 2.0)
+            {
+                double x = radius * Math.Cos(theta);
+                double y = radius * Math.Sin(theta);
+                double z = zOff;
+                disk.Add(new Point3D(x, y, z));
+                theta += dt;
+            }
+        }
+
         private int CreateHelix(Point3DCollection helix, double radius, double angle, double length, double zOff = 0)
         {
             helix.Clear();
-            int pointsInFirstRotation = 0;
+            pointsInFirstRotation = 0;
             double t = 0;
             double dt = 0.01;
-            double ao = (Math.PI * 2.0) / pitch;
+            ao = (Math.PI * 2.0) / pitch;
             while (t < length)
             {
                 if (t < Math.PI * 2.0)
@@ -285,12 +308,25 @@ namespace Make3D.Dialogs
                         helix4.Add(new Point3D(p.X, p.Y, p.Z + root));
                     }
 
-                    // add the crest
+                    // add the root
                     TriangulateHelixPair(helix3, helix4);
 
                     TriangulateHelixPair(helix2, helix3);
                     CreateHelix(helix5, minorRadius, angle, length, (-pitch / 2.0) + root);
                     TriangulateHelixPair(helix5, helix1);
+
+                    // create start disk
+                    Point3D pnt1 = helix3[0];
+                    CreateDisk(startDisk, minorRadius, pnt1.Z - pitch);
+                    TriangulateDisk(startDisk, new Point3D(0, 0, pnt1.Z - pitch), true);
+
+                    // attach to helix
+
+                    // create end disk
+                    Point3D helix4Pnt = helix4[helix4.Count - 1];
+                    CreateDisk(endDisk, minorRadius, helix4Pnt.Z);
+                    TriangulateDisk(endDisk, new Point3D(0, 0, helix4Pnt.Z));
+                    // attach to helix
                 }
             }
         }
@@ -303,6 +339,34 @@ namespace Make3D.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+        }
+
+        private void TriangulateDisk(Point3DCollection disk, Point3D centre, bool invert = false)
+        {
+            int v1 = AddVertice(centre);
+            for (int i = 0; i < disk.Count; i++)
+            {
+                int j = i + 1;
+                if (j == disk.Count)
+                {
+                    j = 0;
+                }
+                int v2 = AddVertice(disk[i]);
+                int v3 = AddVertice(disk[j]);
+
+                if (invert)
+                {
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+                }
+                else
+                {
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+                }
+            }
         }
 
         private void TriangulateHelixPair(Point3DCollection hx1, Point3DCollection hx2)
