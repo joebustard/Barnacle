@@ -91,7 +91,7 @@ namespace Make3D.Dialogs
                     imagePath = value;
                     if (imagePath != "")
                     {
-                        FName = System.IO.Path.GetFileNameWithoutExtension(imagePath);
+                        FName = System.IO.Path.GetFileName(imagePath);
                     }
                 }
             }

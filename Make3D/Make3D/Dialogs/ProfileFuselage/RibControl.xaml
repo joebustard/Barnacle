@@ -26,7 +26,7 @@
         <Grid Grid.Row="0" Background="Blue">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="100" />
                 <ColumnDefinition Width="60" />
                 <ColumnDefinition Width="40" />
                 <ColumnDefinition Width="40" />
@@ -34,8 +34,8 @@
                 <ColumnDefinition Width="60" />
             </Grid.ColumnDefinitions>
 
-            <Label x:Name="HeaderLabel" Grid.Column="0" Background="Blue" Foreground="Yellow" />
-            <Label x:Name="FNameLabel" Grid.Column="1" Background="Blue" Foreground="Yellow" />
+            <Label x:Name="HeaderLabel" Grid.Column="0" Background="Blue" Foreground="Yellow" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <Label x:Name="FNameLabel" Grid.Column="1" Background="Blue" Foreground="Yellow" FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center"/>
             <ToggleButton x:Name="ShowCentersBut" Margin="2,1,0,1" Grid.Column="2" Click="ShowCenters_Click">
                 <ToggleButton.Style>
                     <Style TargetType="{x:Type ToggleButton}">
