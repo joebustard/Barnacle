@@ -247,7 +247,6 @@ namespace Make3D.Models
                             }
                         }
                         if (!found)
-
                         {
                             // might have been converted into a group
                             ReferenceGroup3D grp = new ReferenceGroup3D();
