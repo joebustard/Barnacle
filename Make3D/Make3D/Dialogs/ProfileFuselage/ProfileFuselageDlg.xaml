@@ -51,7 +51,7 @@
                         <RadioButton GroupName="BodyMode" Content="Front" IsChecked="{Binding FrontBody}" />
                         <RadioButton GroupName="BodyMode" Content="Back" IsChecked="{Binding BackBody}" />
                         <StackPanel Orientation="Horizontal">
-                            <Label VerticalContentAlignment="Center">Divisions</Label>
+                            <Label VerticalAlignment="Center">Divisions</Label>
                             <TextBox  VerticalContentAlignment="Center" Text="{Binding NumberOfDivisions}" Width="80" />
                         </StackPanel>
                     </UniformGrid>
@@ -93,8 +93,14 @@
                         <Button x:Name="ZoomOut" Content="Zoom Out" Click="ZoomOut_Click" Grid.Row="1" />
                         <Button x:Name="ZoomReset" Content="Zoom Reset" Click="ZoomReset_Click" Grid.Row="2" />
                     </Grid>
-                    <local:ImageMarker x:Name="TopView" Grid.Row="2" Grid.Column="1" />
-                    <local:ImageMarker x:Name="SideView" Grid.Row="3" Grid.Column="1" />
+                    <TabControl Grid.Row="2" Grid.Column="1" Grid.RowSpan="2">
+                        <TabItem Header="Top View">
+                            <local:ImageMarker x:Name="TopView" />
+                        </TabItem>
+                        <TabItem Header="Side View">
+                            <local:ImageMarker x:Name="SideView" />
+                        </TabItem>
+                    </TabControl>
                 </Grid>
             </TabItem>
         </TabControl>

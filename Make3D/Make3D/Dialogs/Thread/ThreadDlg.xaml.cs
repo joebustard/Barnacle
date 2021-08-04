@@ -227,6 +227,43 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void AttachDiskToHelix(Point3DCollection disk, Point3DCollection helix, double zOff, bool invert)
+        {
+            for (int i = 0; i < disk.Count; i++)
+            {
+                int j = i + 1;
+                if (j == disk.Count)
+                {
+                    j = 0;
+                }
+                int v1 = AddVertice(disk[i]);
+                int v2 = AddVertice(disk[j]);
+                int v3 = AddVertice(new Point3D(helix[j].X, helix[j].Y, helix[j].Z + zOff));
+                int v4 = AddVertice(new Point3D(helix[i].X, helix[i].Y, helix[i].Z + zOff));
+
+                if (invert)
+                {
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+
+                    Faces.Add(v1);
+                    Faces.Add(v4);
+                    Faces.Add(v3);
+                }
+                else
+                {
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v4);
+                }
+            }
+        }
+
         private void CreateDisk(Point3DCollection disk, double radius, double zOff)
         {
             if (pointsInFirstRotation == 0)
@@ -267,6 +304,43 @@ namespace Make3D.Dialogs
                 t += dt;
             }
             return pointsInFirstRotation;
+        }
+
+        private void ExpandDisk(Point3DCollection disk, double zOff, bool invert)
+        {
+            for (int i = 0; i < disk.Count; i++)
+            {
+                int j = i + 1;
+                if (j == disk.Count)
+                {
+                    j = 0;
+                }
+                int v1 = AddVertice(disk[i]);
+                int v2 = AddVertice(disk[j]);
+                int v3 = AddVertice(new Point3D(disk[j].X, disk[j].Y, disk[j].Z + zOff));
+                int v4 = AddVertice(new Point3D(disk[i].X, disk[i].Y, disk[i].Z + zOff));
+
+                if (invert)
+                {
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+
+                    Faces.Add(v1);
+                    Faces.Add(v4);
+                    Faces.Add(v3);
+                }
+                else
+                {
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v4);
+                }
+            }
         }
 
         private void GenerateShape()
@@ -321,12 +395,15 @@ namespace Make3D.Dialogs
                     TriangulateDisk(startDisk, new Point3D(0, 0, pnt1.Z - pitch), true);
 
                     // attach to helix
+                    ExpandDisk(startDisk, pitch, false);
 
                     // create end disk
-                    Point3D helix4Pnt = helix4[helix4.Count - 1];
-                    CreateDisk(endDisk, minorRadius, helix4Pnt.Z);
-                    TriangulateDisk(endDisk, new Point3D(0, 0, helix4Pnt.Z));
+                    Point3D helix4Pnt = helix2[helix4.Count - 1];
+                    CreateDisk(endDisk, minorRadius, helix4Pnt.Z + pitch / 2);
+                    TriangulateDisk(endDisk, new Point3D(0, 0, helix4Pnt.Z + pitch / 2));
                     // attach to helix
+                    // AttachDiskToHelix(endDisk, helix2, pitch, false);
+                    ExpandDisk(endDisk, -pitch, true);
                 }
             }
         }
