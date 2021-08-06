@@ -34,6 +34,7 @@ namespace Make3D.ViewModels
         private List<String> buildPlateNames;
         private string caption;
         private bool centerTextAlignment;
+        private string currentViewName;
         private bool doughnutEnabled;
         private string fontSize;
         private bool fuselageEnabled;
@@ -116,6 +117,7 @@ namespace Make3D.ViewModels
             UnrefVertexCommand = new RelayCommand(OnUnrefVertex);
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             ResetOriginCommand = new RelayCommand(OnReorigin);
+            ViewCommand = new RelayCommand(OnView);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -943,6 +945,8 @@ namespace Make3D.ViewModels
             }
         }
 
+        public ICommand ViewCommand { get; set; }
+
         public bool WingEnabled
         {
             get
@@ -978,6 +982,19 @@ namespace Make3D.ViewModels
         internal void SetRibbonMenu(Ribbon mainRibbon)
         {
             MainRibbon = mainRibbon;
+        }
+
+        internal void SwitchToView(string v)
+        {
+            if (currentViewName == "Script")
+            {
+                NotificationManager.Notify("LimpetClosing", "");
+            }
+            if (v != currentViewName)
+            {
+                currentViewName = v;
+                OnView(v);
+            }
         }
 
         private void CreateAircraftToolMenu()
@@ -1369,13 +1386,15 @@ namespace Make3D.ViewModels
         {
             String vwName = obj.ToString();
             vwName = vwName.ToLower();
-            if (vwName == "pageedit")
+            if (vwName == "editor")
             {
                 ToolPaletteVisible = Visibility.Visible;
+                NotificationManager.Notify("SolutionPanel", true);
             }
             else
             {
                 ToolPaletteVisible = Visibility.Collapsed;
+                NotificationManager.Notify("SolutionPanel", false);
             }
             subViewMan.CloseCurrent();
             SubView = subViewMan.GetView(vwName);

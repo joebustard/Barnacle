@@ -1,0 +1,3347 @@
+using System;
+
+namespace ScriptLanguage
+{
+    public class Interpreter
+    {
+        private String[] functionNames;
+        private String[] keywords;
+        private Tokeniser tokeniser;
+
+        // Instance constructor
+        public Interpreter()
+        {
+            tokeniser = new Tokeniser();
+            keywords = new String[]
+            {
+                "bool",
+                "chainscript",
+                "do",
+                "double",
+                "else",
+                "exit",
+                "function",
+                "for",
+                "if",
+                "include",
+                "int",
+                "procedure",
+                "print",
+                "return",
+                "run",
+                "solid",
+                "string",
+                "struct",
+                "while",
+                "writeline",
+            };
+
+            functionNames = new String[]
+            {
+                "abs",
+                "atan",
+                "cos",
+                "degrees",
+                "inputstring",
+                "len",
+                "make",
+                "now",
+                "pcname",
+                "rad",
+                "replaceall",
+                "sin",
+                "sqrt",
+                "str",
+                "substring",
+                "tan",
+                "trim",
+                "trimleft",
+                "trimright",
+                "val"
+            };
+        }
+
+        public bool Load(Script script, string FilePath)
+        {
+            bool result = false;
+
+            if (script != null)
+            {
+                if (FilePath != "")
+                {
+                    tokeniser.Initialise();
+                    if (tokeniser.SetSource(FilePath))
+                    {
+                        result = ParseSource(script);
+                    }
+                }
+            }
+            return result;
+        }
+
+        public bool LoadFromText(Script script, string text)
+        {
+            bool result = false;
+            SymbolTable.Instance().Clear();
+            ExecutionStack.Instance().Clear();
+            CProcedureCache.Instance().Clear();
+            FunctionCache.Instance().Clear();
+            StructDefinitiontTable.Instance().Clear();
+            if (script != null)
+            {
+                if (text != "")
+                {
+                    tokeniser.Initialise();
+                    tokeniser.SetText(text);
+                    result = ParseSource(script);
+                }
+            }
+            return result;
+        }
+
+        private bool CheckForComma()
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Comma)
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        private bool CheckForInitialiser(CCompoundNode parentNode, String parentName, string Identifier, String strExternalName)
+        {
+            //
+            // This function checks if there is an optional initialiser
+            // It is OK for there not to be one
+            //
+            bool Result = true;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Assignment)
+                {
+                    ExpressionNode exp = ParseExpressionNode(parentName);
+                    if (exp != null)
+                    {
+                        AssignmentNode ass = new AssignmentNode();
+                        ass.ExpressionNode = exp;
+                        ass.VariableName = Identifier;
+                        parentNode.AddStatement(ass);
+                        ass.ExternalName = strExternalName;
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Illegal initialiser");
+                        Result = false;
+                    }
+                }
+                else
+                {
+                    tokeniser.PutTokenBack();
+                }
+            }
+            return Result;
+        }
+
+        private bool CheckForSemiColon()
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.SemiColon)
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+
+        private bool FetchToken(out string token, out Tokeniser.TokenType tokenType)
+        {
+            bool result = false;
+            token = "";
+            tokenType = Tokeniser.TokenType.None;
+            //
+            // This will get  tokens from the input stream until one that doesnt look like a comment is found
+            //
+            bool bDone = false;
+            while (bDone == false)
+            {
+                //
+                // try to get next token. If there are none then we are done
+                //
+                if (tokeniser.GetToken(out token, out tokenType) == false)
+                {
+                    bDone = true;
+                }
+                else
+                {
+                    //
+                    // We got a token
+                    // if its a comment then skip to end of line
+                    if (tokenType == Tokeniser.TokenType.Comment)
+                    {
+                        tokeniser.SkipToEndOfLine();
+                    }
+                    else
+                    {
+                        if ((tokenType == Tokeniser.TokenType.OpenBlockComment))
+                        {
+                            while ((tokeniser.GetToken(out token, out tokenType) == true) &&
+                                    (tokenType != Tokeniser.TokenType.CloseBlockComment))
+                            {
+                            }
+                        }
+                        else
+                        {
+                            result = true;
+                            bDone = true;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        private SingleParameterFunction GetFunctionNode<T>(String parentName) where T : new()
+        {
+            var myObj = new T();
+            ExpressionNode argumentExpression = ParseExpressionNode(parentName);
+            if (argumentExpression != null)
+            {
+                (myObj as SingleParameterFunction).Expression = argumentExpression;
+            }
+            return myObj as SingleParameterFunction;
+        }
+
+        private bool HexToInt(string Source, out int Result)
+        {
+            bool bOK = true;
+            Result = 0;
+            Source = Source.ToLower();
+            char[] Digits = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+            for (int i = 0; i < Source.Length; i++)
+            {
+                char c = Source[i];
+                bool bFound = false;
+                for (int j = 0; j < Digits.GetLength(0); j++)
+                {
+                    if (c == Digits[j])
+                    {
+                        Result = Result * 16 + j;
+                        bFound = true;
+                        break;
+                    }
+                }
+                if (bFound == false)
+                {
+                    ReportSyntaxError("Bad hex digit " + c);
+                    bOK = false;
+                    break;
+                }
+            }
+            return bOK;
+        }
+
+        private bool IsIntrinsicFunction(string Identifier)
+        {
+            bool result = false;
+            Identifier = Identifier.ToLower();
+            for (int i = 0; i < functionNames.GetLength(0); i++)
+            {
+                if (functionNames[i] == Identifier)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        private bool IsKeyword(string Identifier)
+        {
+            bool result = false;
+            for (int i = 0; i < keywords.GetLength(0); i++)
+            {
+                if (keywords[i] == Identifier)
+                {
+                    result = true;
+                    break;
+                }
+            }
+            return result;
+        }
+
+        private bool IsUserFunction(string token)
+        {
+            bool IsKnownFunction = false;
+            if (FunctionCache.Instance().FindFunction(token) != null)
+            {
+                IsKnownFunction = true;
+            }
+            return IsKnownFunction;
+        }
+
+        private ExpressionNode ParseArithmeticExpression(String parentName)
+        {
+            ExpressionNode exp = null;
+            exp = ParseMultiplicativeExpression(parentName);
+            if (exp != null)
+            {
+                bool bDone = false;
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                while (!bDone)
+                {
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.Addition)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                AdditionNode Addexp = new AdditionNode();
+                                Addexp.LeftNode = LeftNode;
+                                Addexp.RightNode = RightNode;
+                                exp = Addexp;
+                            }
+                        }
+                        else
+                            if (tokenType == Tokeniser.TokenType.Subtraction)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                CSubtractionNode Subexp = new CSubtractionNode();
+                                Subexp.LeftNode = LeftNode;
+                                Subexp.RightNode = RightNode;
+                                exp = Subexp;
+                            }
+                        }
+                        else
+                        {
+                            tokeniser.PutTokenBack();
+                            bDone = true;
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private bool ParseAssignment(String Identifier, CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            String ExternalVarName = Identifier;
+            Identifier = parentName + Identifier;                   //
+
+            if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+            {
+                ReportSyntaxError("Undefined variable " + Identifier);
+            }
+            else
+            {
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (tokenType != Tokeniser.TokenType.Assignment)
+                    {
+                        ReportSyntaxError("Expected =");
+                    }
+                    else
+                    {
+                        ExpressionNode exp = ParseExpressionNode(parentName);
+                        if (exp != null)
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Expected ;");
+                            }
+                            else
+                            {
+                                AssignmentNode asn = new AssignmentNode();
+                                asn.VariableName = Identifier;
+                                asn.ExternalName = ExternalVarName;
+                                asn.ExpressionNode = exp;
+                                parentNode.AddStatement(asn);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseAssignmentToStruct(String identifier, CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            String externalVarName = identifier;
+            identifier = parentName + identifier;                   //
+
+            if (parentNode.FindSymbol(identifier) == SymbolTable.SymbolType.unknown)
+            {
+                ReportSyntaxError("Undefined variable " + externalVarName);
+            }
+            else
+            {
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    //there are two differnt ways of assigning to a struct
+                    //one is whole struct to whole struct
+                    // the other is field to field
+                    // if have "name=" assume its struct to struct
+                    // if its "name.name=" assume its a field
+                    if (tokenType == Tokeniser.TokenType.Assignment)
+                    {
+                        // whole struct
+                        result = ParseWholeStructAssignment(externalVarName, parentNode, parentName);
+                    }
+                    else
+                    if (tokenType == Tokeniser.TokenType.Dot)
+                    {
+                        // field
+                        result = ParseStructFieldAssignment(externalVarName, parentNode, parentName);
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Syntax Error");
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseBody(CProgramNode tn)
+        {
+            bool result = false;
+
+            //
+            // Fetch the first non comment token
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+
+            //
+            // Look for the opening bracket of the body
+            //
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.OpenCurly)
+                {
+                    CCompoundNode CompNode = new CCompoundNode();
+                    CompNode.IsTestBody = true;
+                    //
+                    // We have to pass in a procedure name to help separate local variables
+                    // FOr the top level compound node we just pass in ""
+                    //
+                    if (ParseCompoundNode(CompNode, "", true))
+                    {
+                        tn.SetChild(CompNode);
+                        result = true;
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected {  found " + token);
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseBoolStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            //
+            // See if there is an identifier following the int
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        CBoolDeclarationNode node = new CBoolDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        parentNode.AddStatement(node);
+
+                        parentNode.AddSymbol(token, SymbolTable.SymbolType.boolvariable);
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Bool expected ;");
+                            }
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+
+            return result;
+        }
+
+        private bool ParseChainScriptStatement(CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+            ExpressionNode exp = ParseExpressionNode(parentName);
+            if (exp != null)
+            {
+                result = CheckForSemiColon();
+                if (!result)
+                {
+                    ReportSyntaxError("ChainScript expected ;");
+                }
+                else
+                {
+                    CChainScriptNode chain = new CChainScriptNode();
+                    chain.Expression = exp;
+                    parentNode.AddStatement(chain);
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseCloseFileStatement(CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+            ExpressionNode exp = ParseExpressionNode(parentName);
+            if (exp != null)
+            {
+                result = CheckForSemiColon();
+                if (!result)
+                {
+                    ReportSyntaxError("CloseFile expected ;");
+                }
+                else
+                {
+                    CCloseFileNode crfile = new CCloseFileNode();
+                    crfile.Expression = exp;
+                    parentNode.AddStatement(crfile);
+                }
+            }
+
+            return result;
+        }
+
+        private ExpressionNode ParseComparativeExpression(String parentName)
+        {
+            ExpressionNode exp = null;
+            exp = ParseArithmeticExpression(parentName);
+            if (exp != null)
+            {
+                bool bDone = false;
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                while (!bDone)
+                {
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.Assignment)
+                        {
+                            ReportSyntaxError("= found in logical expression, do you mean '==' ?");
+                            bDone = true;
+                        }
+                        else
+                            if (tokenType == Tokeniser.TokenType.Equality)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                EqualityNode Andexp = new EqualityNode();
+                                Andexp.LeftNode = LeftNode;
+                                Andexp.RightNode = RightNode;
+                                exp = Andexp;
+                            }
+                        }
+                        else
+                                if (tokenType == Tokeniser.TokenType.InEquality)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                CInEqualityNode Orexp = new CInEqualityNode();
+                                Orexp.LeftNode = LeftNode;
+                                Orexp.RightNode = RightNode;
+                                exp = Orexp;
+                            }
+                        }
+                        else
+                                    if (tokenType == Tokeniser.TokenType.LessThan)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                LessThanNode Orexp = new LessThanNode();
+                                Orexp.LeftNode = LeftNode;
+                                Orexp.RightNode = RightNode;
+                                exp = Orexp;
+                            }
+                        }
+                        else
+                                        if (tokenType == Tokeniser.TokenType.LessThanOrEqual)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                LessThanOrEqualToNode Orexp = new LessThanOrEqualToNode();
+                                Orexp.LeftNode = LeftNode;
+                                Orexp.RightNode = RightNode;
+                                exp = Orexp;
+                            }
+                        }
+                        else
+                                            if (tokenType == Tokeniser.TokenType.GreaterThan)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                CGreaterThanNode Orexp = new CGreaterThanNode();
+                                Orexp.LeftNode = LeftNode;
+                                Orexp.RightNode = RightNode;
+                                exp = Orexp;
+                            }
+                        }
+                        else
+                                                if (tokenType == Tokeniser.TokenType.GreaterThanOrEqual)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseArithmeticExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                CGreaterThanOrEqualToNode Orexp = new CGreaterThanOrEqualToNode();
+                                Orexp.LeftNode = LeftNode;
+                                Orexp.RightNode = RightNode;
+                                exp = Orexp;
+                            }
+                        }
+                        else
+                        {
+                            tokeniser.PutTokenBack();
+                            bDone = true;
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private bool ParseCompoundNode(CCompoundNode CompNode, String parentName, bool IsTestBody)
+        {
+            //
+            // The opening curly should have processed already
+            // Just parse any statements until we see a close bracket.
+            bool result = true;
+
+            //
+            // Fetch the first non comment token
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+
+            bool bDone = false;
+
+            do
+            {
+                //
+                // Look for the closing bracket of the body
+                //
+                if (tokeniser.GetToken(out token, out tokenType) == true)
+                {
+                    // System.Diagnostics.Debug.WriteLine(token);
+                    if (tokenType == Tokeniser.TokenType.CloseCurly)
+                    {
+                        bDone = true;
+                    }
+                    else
+                    {
+                        //
+                        // Put the token back so someone else can deal with it.
+                        //
+                        tokeniser.PutTokenBack();
+
+                        //
+                        // Try parsing a statement
+                        //
+                        result = ParseStatement(CompNode, parentName, IsTestBody);
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Unexpected end of file processing compound statement " + parentName);
+                    result = false;
+                }
+            } while ((!bDone) && (tokenType != Tokeniser.TokenType.None) && (result == true));
+            return result;
+        }
+
+        private bool ParseDoubleStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            //
+            // See if there is an identifier following the double
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        DoubleDeclarationNode node = new DoubleDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        parentNode.AddStatement(node);
+
+                        parentNode.AddSymbol(token, SymbolTable.SymbolType.doublevariable);
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Double expected ;");
+                            }
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+
+            return result;
+        }
+
+        private bool ParseExitStatement(CCompoundNode parentNode)
+        {
+            bool result = CheckForSemiColon();
+            if (result)
+            {
+                CExitNode en = new CExitNode();
+                parentNode.AddStatement(en);
+            }
+            else
+            {
+                ReportSyntaxError("Exit expected ;");
+            }
+
+            return result;
+        }
+
+        private ExpressionNode ParseExpressionForCallNode(string parentName)
+        {
+            ExpressionNode exp = null;
+            // get token
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+
+            {
+                string identifier = parentName + token;
+                Symbol sym = SymbolTable.Instance().FindSymbol(identifier, SymbolTable.SymbolType.structname);
+                if (sym != null)
+                {
+                    exp = ParseStructSymbolForCall(token, parentName, sym as StructSymbol);
+                }
+                else
+                {
+                    tokeniser.PutTokenBack();
+                    exp = ParseExpressionNode(parentName);
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseExpressionNode(String parentName)
+        {
+            ExpressionNode exp = null;
+            exp = ParseLogicalExpression(parentName);
+            return exp;
+        }
+
+        private ExpressionNode ParseFactor(String parentName)
+        {
+            ExpressionNode exp = null;
+
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // We have a name, is it a built in function or a variable
+                    //
+                    if (IsIntrinsicFunction(token) == true)
+                    {
+                        exp = ParseIntrinsicFunction(token, parentName);
+                    }
+                    else
+                    if (IsUserFunction(token) == true)
+                    {
+                        exp = ParseUserFunctionCall(token, parentName);
+                    }
+                    else
+                    {
+                        string vname = token;
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            // if its a variable name followed by a dot its probably a field
+                            if (tokenType == Tokeniser.TokenType.Dot)
+                            {
+                                exp = ParseFieldNode(vname, parentName);
+                            }
+                            else
+                            {
+                                // not a field
+                                tokeniser.PutTokenBack();
+                                exp = ParseVariableNode(vname, parentName);
+                            }
+                        }
+                    }
+                }
+                else if (tokenType == Tokeniser.TokenType.Number)
+                {
+                    exp = ParseNumericConstant(token);
+                }
+                else if (tokenType == Tokeniser.TokenType.HexNumber)
+                {
+                    exp = ParseHexNumericConstant(token);
+                }
+                else if (tokenType == Tokeniser.TokenType.QuotedString)
+                {
+                    exp = ParseStringConstant(token);
+                }
+                else if (tokenType == Tokeniser.TokenType.Subtraction)
+                {
+                    exp = ParseUnaryMinus(parentName);
+                }
+                else if (tokenType == Tokeniser.TokenType.OpenBracket)
+                {
+                    exp = ParseParenthesis(parentName);
+                }
+                else if (tokenType == Tokeniser.TokenType.False)
+                {
+                    exp = ParseFalse();
+                }
+                else if (tokenType == Tokeniser.TokenType.True)
+                {
+                    exp = ParseTrue();
+                }
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseFalse()
+        {
+            ExpressionNode exp = new FalseConstantNode();
+
+            return exp;
+        }
+
+        private ExpressionNode ParseFieldNode(string vname, string parentName)
+        {
+            ExpressionNode exp = null;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // Check for local variable
+                    //
+                    String ExternalName = vname;
+                    String strTarget = parentName + vname;
+                    SymbolTable.SymbolType typ = SymbolTable.Instance().FindSymbol(strTarget);
+                    if (typ != SymbolTable.SymbolType.unknown)
+                    {
+                        FieldNode vn = new FieldNode();
+                        vn.ObjectSymbolName = strTarget;
+                        vn.ExternalObjectName = ExternalName;
+                        vn.FieldName = token;
+                        vn.Symbol = SymbolTable.Instance().FindSymbol(strTarget, typ);
+                        exp = vn;
+                    }
+                    else
+                    {
+                        //
+                        // Try to match up with a global
+                        //
+                        typ = SymbolTable.Instance().FindSymbol(vname);
+                        if (typ != SymbolTable.SymbolType.unknown)
+                        {
+                            FieldNode vn = new FieldNode();
+                            vn.ObjectSymbolName = strTarget;
+                            vn.Symbol = SymbolTable.Instance().FindSymbol(vname, typ);
+                            vn.ExternalObjectName = ExternalName;
+                            vn.FieldName = token;
+                            exp = vn;
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Unidentified variable " + vname);
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseFileExistsFunction(string parentName)
+        {
+            return GetFunctionNode<FileExistsNode>(parentName);
+        }
+
+        private ExpressionNode ParseFilesDifferFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode pathexp1 = ParseExpressionNode(parentName);
+            if (pathexp1 != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("FilesDiffer expected ,");
+                }
+                else
+                {
+                    ExpressionNode pathexp2 = ParseExpressionNode(parentName);
+                    if (pathexp2 != null)
+                    {
+                        CFilesDifferNode fex = new CFilesDifferNode();
+                        fex.LeftExpression = pathexp1;
+                        fex.RightExpression = pathexp2;
+                        exp = fex;
+                    }
+                }
+            }
+
+            return exp;
+        }
+
+        private bool ParseForStatement(CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            //
+            // Fetch token which should be a name
+            //
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String strVariableName = parentName + token;                   //
+                    //
+                    // Make sure it has already been declared
+                    //
+                    if (SymbolTable.Instance().FindSymbol(strVariableName) != SymbolTable.SymbolType.unknown)
+                    {
+                        //
+                        // next thing should be =
+                        //
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.Assignment)
+                            {
+                                ExpressionNode StartExpression = ParseExpressionNode(parentName);
+                                if (StartExpression != null)
+                                {
+                                    //
+                                    // Next thing should be "TO"
+                                    //
+                                    if (FetchToken(out token, out tokenType) == true)
+                                    {
+                                        if (token == "to")
+                                        {
+                                            ExpressionNode EndExpression = ParseExpressionNode(parentName);
+                                            if (EndExpression != null)
+                                            {
+                                                //
+                                                // Now it gets complicated
+                                                // if the next word is Step then there is a step expression
+                                                // if its { there is no step
+                                                //
+                                                if (FetchToken(out token, out tokenType) == true)
+                                                {
+                                                    if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                    {
+                                                        CCompoundNode comp = new CCompoundNode();
+                                                        if (ParseCompoundNode(comp, parentName, false))
+                                                        {
+                                                            CForNode fnode = new CForNode();
+                                                            fnode.VariableName = strVariableName;
+                                                            fnode.StartExpression = StartExpression;
+                                                            fnode.EndExpression = EndExpression;
+                                                            fnode.Body = comp;
+                                                            fnode.StepExpression = null;
+                                                            parentNode.AddStatement(fnode);
+                                                            result = true;
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (token == "step")
+                                                        {
+                                                            ExpressionNode StepExpression = ParseExpressionNode(parentName);
+                                                            if (StepExpression != null)
+                                                            {
+                                                                if (FetchToken(out token, out tokenType) == true)
+                                                                {
+                                                                    if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                                    {
+                                                                        CCompoundNode comp = new CCompoundNode();
+                                                                        if (ParseCompoundNode(comp, parentName, false))
+                                                                        {
+                                                                            CForNode fnode = new CForNode();
+                                                                            fnode.VariableName = strVariableName;
+
+                                                                            fnode.StartExpression = StartExpression;
+                                                                            fnode.EndExpression = EndExpression;
+                                                                            fnode.Body = comp;
+                                                                            fnode.StepExpression = StepExpression;
+                                                                            parentNode.AddStatement(fnode);
+
+                                                                            result = true;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ReportSyntaxError("Syntax error in for");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ReportSyntaxError("For expected to, found " + token);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ReportSyntaxError("For expected = found " + token);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("For Loop expected variable name found " + token);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseFunctionDeclarationStatement(CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+            bool bInLibrary = tokeniser.InIncludeFile();
+            string returnTypeName = "";
+            //
+            // Format is
+            // Function <type> <Name>( [Parameter List] );
+            //
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            String token;
+            //
+            // Fetch token which should be a name
+            //
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // This token must be a type
+                    // ie int, double,bool,string,handle,testtarget
+                    //
+                    SymbolTable.SymbolType FunctionType = SymbolTable.SymbolType.unknown;
+                    returnTypeName = TitleCase(token);
+                    switch (returnTypeName)
+                    {
+                        case "Int":
+                            {
+                                FunctionType = SymbolTable.SymbolType.intvariable;
+                            }
+                            break;
+
+                        case "Double":
+                            {
+                                FunctionType = SymbolTable.SymbolType.doublevariable;
+                            }
+                            break;
+
+                        case "String":
+                            {
+                                FunctionType = SymbolTable.SymbolType.stringvariable;
+                            }
+                            break;
+
+                        case "Bool":
+                            {
+                                FunctionType = SymbolTable.SymbolType.boolvariable;
+                            }
+                            break;
+
+                        case "Solid":
+                            {
+                                FunctionType = SymbolTable.SymbolType.solidvariable;
+                            }
+                            break;
+
+                        case "Handle":
+                            {
+                                FunctionType = SymbolTable.SymbolType.handlevariable;
+                            }
+                            break;
+                    }
+
+                    if (FunctionType == SymbolTable.SymbolType.unknown)
+                    {
+                        //Have a look to see if its a struct
+                        string tmp = TitleCase(token);
+                        StructDefinition def = StructDefinitiontTable.Instance().FindStruct(tmp);
+                        if (def != null)
+                        {
+                            FunctionType = SymbolTable.SymbolType.structname;
+                        }
+                    }
+
+                    if (FunctionType == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Function declaration expected return type");
+                    }
+                    else
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.Identifier)
+                            {
+                                String FunctionName = token;
+                                //
+                                // Should be an open bracket
+                                //
+                                if (FetchToken(out token, out tokenType) == true)
+                                {
+                                    if (tokenType == Tokeniser.TokenType.OpenBracket)
+                                    {
+                                        CFunctionNode proc = new CFunctionNode();
+                                        if (ParseProcedureParameters(proc, FunctionName))
+                                        {
+                                            if (FetchToken(out token, out tokenType) == true)
+                                            {
+                                                if (tokenType == Tokeniser.TokenType.CloseBracket)
+                                                {
+                                                    if (FetchToken(out token, out tokenType) == true)
+                                                    {
+                                                        if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                        {
+                                                            //
+                                                            // Try parsing the body
+                                                            //
+                                                            CFunctionBodyNode cmp = new CFunctionBodyNode();
+                                                            if (ParseCompoundNode(cmp, FunctionName, false))
+                                                            {
+                                                                proc.Name = FunctionName;
+                                                                proc.Body = cmp;
+                                                                proc.ReturnType = FunctionType;
+                                                                proc.ReturnTypeName = returnTypeName;
+                                                                proc.IsInLibrary = bInLibrary;
+
+                                                                // It goes in a separate procedures list
+                                                                //
+                                                                FunctionCache.Instance().AddFunction(proc);
+
+                                                                parentNode.AddStatement(proc);
+                                                                //
+                                                                // add a reference to the symbol table
+                                                                //
+                                                                SymbolTable.Instance().AddSymbol(FunctionName, SymbolTable.SymbolType.functionname);
+
+                                                                result = true;
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ReportSyntaxError("Function declaration expected { but found " + token);
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    ReportSyntaxError("Function declaration expected ) but found " + token);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ReportSyntaxError("Function declaration expected ( but found " + token);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        private bool ParseHandleStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            //
+            // See if there is an identifier following the name
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        HandleDeclarationNode node = new HandleDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        parentNode.AddStatement(node);
+                        parentNode.AddSymbol(token, SymbolTable.SymbolType.handlevariable);
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Handle expected ;");
+                            }
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+
+            return result;
+        }
+
+        private ExpressionNode ParseHexNumericConstant(String token)
+        {
+            ExpressionNode exp = null;
+            token = token.ToLower().Replace("0x", "");
+            int Val;
+            if (HexToInt(token, out Val))
+            {
+                IntConstantNode nd = new IntConstantNode();
+                nd.Value = Val;
+                exp = nd;
+            }
+            return exp;
+        }
+
+        private bool ParseIdentifiedStatement(string Identifier, CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            switch (Identifier)
+            {
+                case "bool":
+                    {
+                        result = ParseBoolStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "double":
+                    {
+                        result = ParseDoubleStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "exit":
+                    {
+                        result = ParseExitStatement(parentNode);
+                    }
+                    break;
+
+                case "for":
+                    {
+                        result = ParseForStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "function":
+                    {
+                        result = ParseFunctionDeclarationStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "handle":
+                    {
+                        result = ParseHandleStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "solid":
+                    {
+                        result = ParseSolidStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "if":
+                    {
+                        result = ParseIfStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "int":
+                    {
+                        result = ParseIntStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "procedure":
+                    {
+                        result = ParseProcedureStatement(parentNode);
+                    }
+                    break;
+
+                case "print":
+                    {
+                        result = ParsePrintStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "return":
+                    {
+                        result = ParseReturnStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "string":
+                    {
+                        result = ParseStringStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "struct":
+                    {
+                        result = ParseStructStatement(parentNode);
+                    }
+                    break;
+
+                case "include":
+                    {
+                        result = ParseIncludeStatement(parentNode);
+                    }
+                    break;
+
+                case "while":
+                    {
+                        result = ParseWhileStatement(parentNode, parentName);
+                    }
+                    break;
+
+                default:
+                    {
+                        ReportSyntaxError("Unexpected keyword " + Identifier);
+                    }
+                    break;
+            }
+
+            return result;
+        }
+
+        private bool ParseIfStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.OpenBracket)
+                {
+                    ExpressionNode exp = ParseExpressionNode(parentName);
+                    if (exp != null)
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.CloseBracket)
+                            {
+                                if (FetchToken(out token, out tokenType) == true)
+                                {
+                                    if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                    {
+                                        CCompoundNode cmp = new CCompoundNode();
+                                        if (ParseCompoundNode(cmp, parentName, false))
+                                        {
+                                            CIfNode wn = new CIfNode();
+                                            wn.Expression = exp;
+                                            wn.TrueBody = cmp;
+                                            wn.FalseBody = null;
+                                            parentNode.AddStatement(wn);
+                                            result = true;
+
+                                            //
+                                            // Take a sneaky peek to see if the next token is an else
+                                            //
+
+                                            //   if (FetchToken(out token, out tokenType) == true)
+                                            if (tokeniser.GetToken(out token, out tokenType) == true)
+                                            {
+                                                if (token == "else")
+                                                {
+                                                    if (FetchToken(out token, out tokenType) == true)
+                                                    {
+                                                        if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                        {
+                                                            CCompoundNode elsecmp = new CCompoundNode();
+                                                            if (ParseCompoundNode(elsecmp, parentName, false))
+                                                            {
+                                                                wn.FalseBody = elsecmp;
+                                                            }
+                                                            else
+                                                            {
+                                                                result = false;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    //
+                                                    // Not an error, just no else present.
+                                                    //
+                                                    tokeniser.PutTokenBack();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ReportSyntaxError("if expected {, found " + token);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ReportSyntaxError("if expected ), found " + token);
+                            }
+                        }
+                        else
+                        {
+                            ReportSyntaxError("if expected )");
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        private bool ParseIncludeStatement(CCompoundNode parentNode)
+        {
+            bool result = false;
+            //
+            // This parse function is different from the rest in that "Use"
+            // does not create a run time object. Its more of a interpreter directive
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            //
+            // Fetch token which should be a name
+            //
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.QuotedString)
+                {
+                    IncludeNode node = new IncludeNode();
+                    node.Path = token;
+                    parentNode.AddUseStatement(node);
+
+                    if (CheckForSemiColon())
+                    {
+                        token = token.Substring(1, token.Length - 2);
+                        // Ask the tokeniser to start reading from the new path.
+                        // Once its done it will revert back to the current one
+                        // so in theory they can be be stacked quite deep
+                        if (tokeniser.SetSource(token))
+                        {
+                            result = true;
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Can't open Include file " + token);
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Include expected ;");
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Include expected quoted string");
+                }
+            }
+
+            return result;
+        }
+
+        private ExpressionNode ParseInputStringFunction(String parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode TextExpression = ParseExpressionNode(parentName);
+            if (TextExpression != null)
+            {
+                CInputStringNode val = new CInputStringNode();
+                val.Expression = TextExpression;
+                exp = val;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseIntrinsicFunction(string functionName, String parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode ResultNode = null;
+
+            //
+            // If this is a function call the next token should be bracket
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.OpenBracket)
+                {
+                    functionName = functionName.ToLower();
+                    switch (functionName)
+                    {
+                        case "abs":
+                            {
+                                exp = GetFunctionNode<AbsNode>(parentName);
+                            }
+                            break;
+
+                        case "atan":
+                            {
+                                exp = GetFunctionNode<AtanNode>(parentName);
+                            }
+                            break;
+
+                        case "cos":
+                            {
+                                exp = GetFunctionNode<CosNode>(parentName);
+                            }
+                            break;
+
+                        case "degrees":
+                            {
+                                exp = GetFunctionNode<DegreesNode>(parentName);
+                            }
+                            break;
+
+                        case "inputstring":
+                            {
+                                exp = ParseInputStringFunction(parentName);
+                            }
+                            break;
+
+                        case "len":
+                            {
+                                exp = GetFunctionNode<LenNode>(parentName);
+                            }
+                            break;
+
+                        case "make":
+                            {
+                                exp = ParseMakeFunction(parentName);
+                            }
+                            break;
+
+                        case "now":
+                            {
+                                exp = ParseNowFunction(parentName);
+                            }
+                            break;
+
+                        case "pcname":
+                            {
+                                exp = ParsePCNameFunction(parentName);
+                            }
+                            break;
+
+                        case "pos":
+                            {
+                                exp = ParsePosFunction(parentName);
+                            }
+                            break;
+
+                        case "rad":
+                            {
+                                exp = GetFunctionNode<RadNode>(parentName);
+                            }
+                            break;
+
+                        case "replaceall":
+                            {
+                                exp = ParseReplaceAllFunction(parentName);
+                            }
+                            break;
+
+                        case "sin":
+                            {
+                                exp = GetFunctionNode<SinNode>(parentName);
+                            }
+                            break;
+
+                        case "sqrt":
+                            {
+                                exp = GetFunctionNode<SqrtNode>(parentName);
+                            }
+                            break;
+
+                        case "str":
+                            {
+                                exp = GetFunctionNode<StrNode>(parentName);
+                            }
+                            break;
+
+                        case "substring":
+                            {
+                                exp = ParseSubStringFunction(parentName);
+                            }
+                            break;
+
+                        case "tan":
+                            {
+                                exp = GetFunctionNode<TanNode>(parentName);
+                            }
+                            break;
+
+                        case "trim":
+                            {
+                                exp = GetFunctionNode<TrimNode>(parentName);
+                            }
+                            break;
+
+                        case "trimleft":
+                            {
+                                exp = GetFunctionNode<TrimLeftNode>(parentName);
+                            }
+                            break;
+
+                        case "trimright":
+                            {
+                                exp = GetFunctionNode<TrimRightNode>(parentName);
+                            }
+                            break;
+
+                        case "val":
+                            {
+                                exp = GetFunctionNode<ValNode>(parentName);
+                            }
+                            break;
+                    }
+
+                    //
+                    // The next token should be close bracket
+                    //
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.CloseBracket)
+                        {
+                            if (exp != null)
+                            {
+                                ResultNode = exp;
+                            }
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Function " + functionName + " Expected )");
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Function " + functionName + " Expected (");
+                }
+            }
+            else
+            {
+                ReportSyntaxError("Function " + functionName + " Expected (");
+            }
+
+            return ResultNode;
+        }
+
+        private bool ParseIntStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            //
+            // See if there is an identifier following the int
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        parentNode.AddSymbol(token, SymbolTable.SymbolType.intvariable);
+                        IntDeclarationNode intnode = new IntDeclarationNode();
+                        intnode.IsInLibrary = tokeniser.InIncludeFile();
+                        intnode.VarName = strVarName;
+                        parentNode.AddStatement(intnode);
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Int expected ;");
+                            }
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+
+            return result;
+        }
+
+        private ExpressionNode ParseLogicalExpression(String parentName)
+        {
+            ExpressionNode exp = null;
+            exp = ParseComparativeExpression(parentName);
+            if (exp != null)
+            {
+                bool bDone = false;
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                while (!bDone)
+                {
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.LogicalAnd)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseComparativeExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                AndNode Andexp = new AndNode();
+                                Andexp.LeftNode = LeftNode;
+                                Andexp.RightNode = RightNode;
+                                exp = Andexp;
+                            }
+                        }
+                        else
+                            if (tokenType == Tokeniser.TokenType.LogicalOr)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseComparativeExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                OrNode Orexp = new OrNode();
+                                Orexp.LeftNode = LeftNode;
+                                Orexp.RightNode = RightNode;
+                                exp = Orexp;
+                            }
+                        }
+                        else
+                        {
+                            tokeniser.PutTokenBack();
+                            bDone = true;
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode solidexp1 = ParseExpressionNode(parentName);
+            if (solidexp1 != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Make expected ,");
+                }
+                else
+                {
+                    ExpressionNode xExp = ParseExpressionNode(parentName);
+                    if (xExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("Make expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode yExp = ParseExpressionNode(parentName);
+                            if (yExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("Make expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode zExp = ParseExpressionNode(parentName);
+                                    if (zExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError("Make expected ,");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode xSize = ParseExpressionNode(parentName);
+                                            if (xSize != null)
+                                            {
+                                                if (CheckForComma() == false)
+                                                {
+                                                    ReportSyntaxError("Make expected ,");
+                                                }
+                                                else
+                                                {
+                                                    ExpressionNode ySize = ParseExpressionNode(parentName);
+                                                    if (ySize != null)
+                                                    {
+                                                        if (CheckForComma() == false)
+                                                        {
+                                                            ReportSyntaxError("Make expected ,");
+                                                        }
+                                                        else
+                                                        {
+                                                            ExpressionNode zSize = ParseExpressionNode(parentName);
+                                                            if (zSize != null)
+                                                            {
+                                                                exp = new MakeNode(solidexp1, xExp, yExp, zExp, xSize, ySize, zSize);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMultiplicativeExpression(String parentName)
+        {
+            ExpressionNode exp = null;
+            exp = ParseFactor(parentName);
+            if (exp != null)
+            {
+                bool bDone = false;
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                while (!bDone)
+                {
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.Multiplication)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseFactor(parentName);
+                            if (RightNode != null)
+                            {
+                                MultiplicationNode Addexp = new MultiplicationNode();
+                                Addexp.LeftNode = LeftNode;
+                                Addexp.RightNode = RightNode;
+                                exp = Addexp;
+                            }
+                        }
+                        else
+                            if (tokenType == Tokeniser.TokenType.Division)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                DivisionNode Subexp = new DivisionNode();
+                                Subexp.LeftNode = LeftNode;
+                                Subexp.RightNode = RightNode;
+                                exp = Subexp;
+                            }
+                        }
+                        else
+                                if (tokenType == Tokeniser.TokenType.Mod)
+                        {
+                            ExpressionNode LeftNode = exp;
+                            ExpressionNode RightNode = ParseMultiplicativeExpression(parentName);
+                            if (RightNode != null)
+                            {
+                                ModNode Subexp = new ModNode();
+                                Subexp.LeftNode = LeftNode;
+                                Subexp.RightNode = RightNode;
+                                exp = Subexp;
+                            }
+                        }
+                        else
+                        {
+                            tokeniser.PutTokenBack();
+                            bDone = true;
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseNowFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            NowNode nd = new NowNode();
+            exp = nd;
+            return exp;
+        }
+
+        private ExpressionNode ParseNumericConstant(String token)
+        {
+            ExpressionNode exp = null;
+            //
+            // Is it a double or an int
+            //
+            if (token.IndexOf(".") > -1)
+            {
+                DoubleConstantNode nd = new DoubleConstantNode();
+                nd.Value = Convert.ToDouble(token);
+                exp = nd;
+            }
+            else
+            {
+                IntConstantNode nd = new IntConstantNode();
+                nd.Value = Convert.ToInt32(token);
+                exp = nd;
+            }
+            return exp;
+        }
+
+        private bool ParseParam(SymbolTable.SymbolType symbolType, ProcedureNode proc, string strFunctionName)
+        {
+            bool result = false;
+            String token = "";
+            // we already know the type so look for a name
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String strParamName = strFunctionName + token;
+                    String ExternalName = token;
+                    // if its not a duplicate then add it to the symbol table
+                    if (SymbolTable.Instance().FindSymbol(strParamName) == SymbolTable.SymbolType.unknown)
+                    {
+                        Symbol Symbol = SymbolTable.Instance().AddSymbol(strParamName, symbolType);
+                        proc.AddParameter(strParamName, symbolType);
+
+                        result = true;
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Duplicate parameter name");
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected parameter name");
+                }
+            }
+
+            return result;
+        }
+
+        private ExpressionNode ParseParenthesis(String parentName)
+        {
+            ExpressionNode exp = null;
+
+            ExpressionNode contents = ParseExpressionNode(parentName);
+            if (contents != null)
+            {
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (tokenType == Tokeniser.TokenType.CloseBracket)
+                    {
+                        ParenthesisNode pn = new ParenthesisNode();
+                        pn.Expression = contents;
+                        exp = pn;
+                    }
+                    else
+                    {
+                        ReportSyntaxError(" Closing bracket missing from expression");
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Unexpected eof in expression");
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParsePCNameFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            GetPCNameNode nd = new GetPCNameNode();
+            exp = nd;
+            return exp;
+        }
+
+        private ExpressionNode ParsePosFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode TextExpression = ParseExpressionNode(parentName);
+            if (TextExpression != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Pos function expected ,");
+                }
+                else
+                {
+                    ExpressionNode SearchExpression = ParseExpressionNode(parentName);
+                    if (SearchExpression != null)
+                    {
+                        IndexNode pos = new IndexNode();
+                        pos.Expression = TextExpression;
+                        pos.SearchExpression = SearchExpression;
+                        exp = pos;
+                    }
+                }
+            }
+
+            return exp;
+        }
+
+        private bool ParsePrintStatement(CCompoundNode parentNode, String parentName)
+        {
+            //
+            // Syntax Report <Expression>[,Expression...];
+            //
+            bool result = false;
+            PrintNode rep = new PrintNode();
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+
+            bool bDone = false;
+            do
+            {
+                //
+                // See if it there is a nice expression
+                //
+                ExpressionNode exp = ParseExpressionNode(parentName);
+                if (exp != null)
+                {
+                    rep.AddExpression(exp);
+
+                    //
+                    // If there is a comma there should another expression
+                    //
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.Comma)
+                        {
+                            bDone = false;
+                        }
+                        else if (tokenType == Tokeniser.TokenType.SemiColon)
+                        {
+                            parentNode.AddStatement(rep);
+                            result = true;
+
+                            bDone = true;
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Unexpected token processing Report expect , or ; found " + token);
+                            bDone = true;
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Unexpected end of file processing Report");
+                        bDone = true;
+                    }
+                }
+                else
+                {
+                    bDone = true;
+                }
+            } while (bDone == false);
+
+            return result;
+        }
+
+        private bool ParseProcedureCall(string Identifier, CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (SymbolTable.Instance().FindSymbol(Identifier) == SymbolTable.SymbolType.procedurename)
+            {
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (tokenType == Tokeniser.TokenType.OpenBracket)
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            CallProcedureNode call = new CallProcedureNode();
+                            call.ProcedureName = TitleCase(Identifier);
+                            call.IsInLibrary = tokeniser.InIncludeFile();
+                            //
+                            // special case, no parameters i.e. MyProc()
+                            //
+                            if (tokenType == Tokeniser.TokenType.CloseBracket)
+                            {
+                                if (CheckForSemiColon())
+                                {
+                                    parentNode.AddStatement(call);
+                                    result = true;
+                                }
+                            }
+                            else
+                            {
+                                tokeniser.PutTokenBack();
+
+                                bool bDone = false;
+                                do
+                                {
+                                    //
+                                    // See if it there is a nice expression
+                                    //
+                                    ExpressionNode exp = ParseExpressionForCallNode(parentName);
+                                    if (exp != null)
+                                    {
+                                        call.AddParameterExpression(exp);
+
+                                        //
+                                        // If there is a comma there should another expression
+                                        //
+                                        if (FetchToken(out token, out tokenType) == true)
+                                        {
+                                            if (tokenType == Tokeniser.TokenType.Comma)
+                                            {
+                                                bDone = false;
+                                            }
+                                            else if (tokenType == Tokeniser.TokenType.CloseBracket)
+                                            {
+                                                if (CheckForSemiColon())
+                                                {
+                                                    parentNode.AddStatement(call);
+                                                    result = true;
+                                                }
+
+                                                bDone = true;
+                                            }
+                                            else
+                                            {
+                                                ReportSyntaxError("Unexpected token processing function call. Expected ) found " + token);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ReportSyntaxError("Unexpected end of file ");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bDone = true;
+                                    }
+                                } while (bDone == false);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseProcedureParameters(ProcedureNode proc, string strFunctionName)
+        {
+            bool result = true;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            bool bDone = false;
+
+            while (!bDone)
+            {
+                bDone = true;
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (tokenType == Tokeniser.TokenType.Identifier)
+                    {
+                        string tmp = TitleCase(token);
+                        StructDefinition def = StructDefinitiontTable.Instance().FindStruct(tmp);
+                        if (def != null)
+                        {
+                            result = ParseStructParam(proc, strFunctionName, def);
+                            bDone = false;
+                        }
+                        else
+                        {
+                            switch (token)
+                            {
+                                case "int":
+                                    {
+                                        result = ParseParam(SymbolTable.SymbolType.intvariable, proc, strFunctionName);
+                                        bDone = false;
+                                    }
+                                    break;
+
+                                case "double":
+                                    {
+                                        result = ParseParam(SymbolTable.SymbolType.doublevariable, proc, strFunctionName);
+                                        bDone = false;
+                                    }
+                                    break;
+
+                                case "string":
+                                    {
+                                        result = ParseParam(SymbolTable.SymbolType.stringvariable, proc, strFunctionName);
+                                        bDone = false;
+                                    }
+                                    break;
+
+                                case "bool":
+                                    {
+                                        result = ParseParam(SymbolTable.SymbolType.boolvariable, proc, strFunctionName);
+                                        bDone = false;
+                                    }
+                                    break;
+
+                                case "solid":
+                                    {
+                                        result = ParseParam(SymbolTable.SymbolType.solidvariable, proc, strFunctionName);
+                                        bDone = false;
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (tokenType == Tokeniser.TokenType.CloseBracket)
+                        {
+                            tokeniser.PutTokenBack();
+                        }
+                        else
+                        {
+                            if (tokenType == Tokeniser.TokenType.Comma)
+                            {
+                                // Just eat it and go round again
+                                bDone = false;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseProcedureStatement(CCompoundNode parentNode)
+        {
+            //
+            // Note this is handling a procedure declaration NOT a call
+            //
+            // only Basic syntax at the moment
+            // procedure name()
+            // {
+            // }
+            bool result = false;
+            String token = "";
+            bool bInLibrary = tokeniser.InIncludeFile();
+
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            //
+            // Fetch token which should be a name
+            //
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String strFunctionName = TitleCase(token);
+                    //
+                    // Make sure it hasn't aleady been declared
+                    //
+                    if (SymbolTable.Instance().FindSymbol(strFunctionName) == SymbolTable.SymbolType.unknown)
+                    {
+                        //
+                        // Should be an open bracket
+                        //
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.OpenBracket)
+                            {
+                                ProcedureNode proc = new ProcedureNode();
+                                if (ParseProcedureParameters(proc, strFunctionName))
+                                {
+                                    if (FetchToken(out token, out tokenType) == true)
+                                    {
+                                        if (tokenType == Tokeniser.TokenType.CloseBracket)
+                                        {
+                                            if (FetchToken(out token, out tokenType) == true)
+                                            {
+                                                if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                {
+                                                    //
+                                                    // Try parsing the body
+                                                    //
+                                                    CCompoundNode cmp = new CCompoundNode();
+
+                                                    if (ParseCompoundNode(cmp, strFunctionName, false))
+                                                    {
+                                                        proc.Name = strFunctionName;
+                                                        proc.Body = cmp;
+                                                        proc.ReturnType = SymbolTable.SymbolType.unknown;
+                                                        proc.IsInLibrary = bInLibrary;
+
+                                                        //
+                                                        // Dont add this procedure to the parent body.
+                                                        // It goes in a separate procedures list
+                                                        //
+                                                        CProcedureCache.Instance().AddProcedure(proc);
+
+                                                        parentNode.AddStatement(proc);
+                                                        //
+                                                        // add a reference to the symbol table
+                                                        //
+                                                        SymbolTable.Instance().AddSymbol(strFunctionName, SymbolTable.SymbolType.procedurename);
+
+                                                        result = true;
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    ReportSyntaxError("Procedure declaration expected { but found " + token);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ReportSyntaxError("Procedure declaration expected ) but found " + token);
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ReportSyntaxError("Procedure declaration expected ( but found " + token);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Multiple declaration of " + token);
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Procedure declaration expected name but found " + token);
+                }
+            }
+            return result;
+        }
+
+        private bool ParseProgramBlock(Script script)
+        {
+            bool result = false;
+
+            //
+            // Fetch the first non comment token
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                String Identifier = token.ToLower();
+                if (Identifier == "program")
+                {
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.QuotedString)
+                        {
+                            CProgramNode tn = new CProgramNode();
+                            tn.Name = token;
+                            if (ParseBody(tn))
+                            {
+                                script.AddNode(tn);
+                                result = true;
+                            }
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Expected Quoted String found " + token);
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected Program found" + token);
+                }
+            }
+            return result;
+        }
+
+        private ExpressionNode ParseReplaceAllFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode TextExpression = ParseExpressionNode(parentName);
+            if (TextExpression != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("ReplaceAll expected ,");
+                }
+                else
+                {
+                    ExpressionNode OldCharsExpression = ParseExpressionNode(parentName);
+                    if (OldCharsExpression != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("ReplaceAll expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode NewCharsExpression = ParseExpressionNode(parentName);
+                            if (NewCharsExpression != null)
+                            {
+                                ReplaceAllNode val = new ReplaceAllNode();
+                                val.TextExpression = TextExpression;
+                                val.OldExpression = OldCharsExpression;
+                                val.NewExpression = NewCharsExpression;
+                                exp = val;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return exp;
+        }
+
+        private bool ParseReturnStatement(CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+            //
+            // Format is
+            // Return Expression;
+            //
+
+            ExpressionNode exp = ParseExpressionNode(parentName);
+            if (exp != null)
+            {
+                result = CheckForSemiColon();
+                if (!result)
+                {
+                    ReportSyntaxError("Return expected ;");
+                }
+                else
+                {
+                    ReturnNode ret = new ReturnNode();
+                    ret.Expression = exp;
+                    parentNode.AddStatement(ret);
+                    ret.Parent = parentNode;
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseSolidStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            //
+            // See if there is an identifier following the name
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        SolidDeclarationNode node = new SolidDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        parentNode.AddStatement(node);
+                        parentNode.AddSymbol(token, SymbolTable.SymbolType.solidvariable);
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Solid expected ;");
+                            }
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+
+            return result;
+        }
+
+        private bool ParseSource(Script script)
+        {
+            bool result = false;
+            result = ParseProgramBlock(script);
+            return result;
+        }
+
+        private bool ParseStatement(CCompoundNode parentNode, String parentName, bool IsBody)
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (tokeniser.GetToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+
+                    if (IsKeyword(Identifier))
+                    {
+                        result = ParseIdentifiedStatement(Identifier, parentNode, parentName);
+                    }
+                    else
+                    {
+                        result = ParseUnidentifiedStatement(Identifier, parentNode, parentName);
+                    }
+                }
+                else
+                {
+                    if (tokenType == Tokeniser.TokenType.Comment)
+                    {
+                        bool bProcessingUseFile = tokeniser.InIncludeFile();
+                        String CommentLine = tokeniser.GetToEndOfLine();
+
+                        if (IsBody)
+                        {
+                            if (bProcessingUseFile == false)
+                            {
+                                CCommentNode node = new CCommentNode();
+                                node.Text = CommentLine.Trim();
+                                parentNode.AddStatement(node);
+                            }
+                        }
+                        else
+                        {
+                            CCommentNode node = new CCommentNode();
+                            node.Text = CommentLine.Trim();
+                            parentNode.AddStatement(node);
+                        }
+                        result = true;
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Unknown Statement type " + token);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private ExpressionNode ParseStrFunction(String parentName)
+        {
+            return GetFunctionNode<StrNode>(parentName);
+        }
+
+        private ExpressionNode ParseStringConstant(String strText)
+        {
+            ExpressionNode exp = null;
+            //
+            // remove quotes
+            //
+            strText = strText.Substring(1);
+            strText = strText.Substring(0, strText.Length - 1);
+            StringConstantNode nd = new StringConstantNode();
+            nd.Value = strText;
+            exp = nd;
+            return exp;
+        }
+
+        private bool ParseStringStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            //
+            // See if there is an identifier following the int
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        parentNode.AddSymbol(token, SymbolTable.SymbolType.stringvariable);
+                        StringDeclarationNode node = new StringDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        parentNode.AddStatement(node);
+
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("String expected ;");
+                            }
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+
+            return result;
+        }
+
+        private bool ParseStructFieldAssignment(String leftidentifier, CCompoundNode parentNode, String parentName)
+        {
+            // we expect a fieldname then an assignment
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    string rightidentifier = token.ToLower();
+
+                    // see if the field name matches a field in the struct definition
+                    bool foundfield = false;
+                    Symbol sym = SymbolTable.Instance().FindSymbol(parentName + leftidentifier, SymbolTable.SymbolType.structname);
+                    StructSymbol strsym = sym as StructSymbol;
+                    string fieldName = "";
+                    if (strsym != null)
+                    {
+                        foreach (Symbol fs in strsym.FieldValues.Symbols)
+                        {
+                            if (fs.Name.ToLower() == rightidentifier)
+                            {
+                                foundfield = true;
+                                fieldName = fs.Name;
+                                break;
+                            }
+                        }
+                    }
+                    if (!foundfield)
+                    {
+                        ReportSyntaxError("Expected field name , found " + token);
+                    }
+                    else
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.Assignment)
+                            {
+                                ReportSyntaxError("Expected =");
+                            }
+                            else
+                            {
+                                ExpressionNode exp = ParseExpressionNode(parentName);
+                                if (exp != null)
+                                {
+                                    result = CheckForSemiColon();
+                                    if (!result)
+                                    {
+                                        ReportSyntaxError("Expected ;");
+                                    }
+                                    else
+                                    {
+                                        AssignStructFieldNode asn = new AssignStructFieldNode();
+                                        asn.VariableName = parentName + leftidentifier;
+                                        asn.ExternalName = leftidentifier;
+                                        asn.FieldName = fieldName;
+                                        asn.ExpressionNode = exp;
+                                        parentNode.AddStatement(asn);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected structure name on right side of assignment");
+                }
+            }
+            return result;
+        }
+
+        private bool ParseStructParam(ProcedureNode proc, string functionName, StructDefinition def)
+        {
+            bool result = false;
+            String token = "";
+            // we already know the type so look for a name
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String paramName = functionName + token;
+                    String externalName = token;
+                    // if its not a duplicate then add it to the symbol table
+                    if (SymbolTable.Instance().FindSymbol(paramName) == SymbolTable.SymbolType.unknown)
+                    {
+                        Symbol symbol = SymbolTable.Instance().AddStructSymbol(paramName, def);
+                        proc.AddStructParameter(paramName, def);
+
+                        result = true;
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Duplicate parameter name");
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected parameter name");
+                }
+            }
+
+            return result;
+        }
+
+        private bool ParseStructStatement(CCompoundNode parentNode)
+        {
+            //
+            // Note this is handling a struct declaration NOT a reference
+            //
+            // only Basic syntax at the moment
+            // struct name
+            // {
+            //   int x;
+            //   double y;
+            // }
+            bool result = false;
+            String token = "";
+            bool bInLibrary = tokeniser.InIncludeFile();
+
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            //
+            // Fetch token which should be a name
+            //
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    token = TitleCase(token);
+                    //
+                    // Make sure it hasn't aleady been declared
+                    //
+                    if (StructDefinitiontTable.Instance().FindStruct(token) == null)
+                    {
+                        String strStructName = token;
+
+                        //
+                        // Should be an open bracket
+                        //
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.OpenCurly)
+                            {
+                                //
+                                // Try parsing the body
+                                //
+                                CCompoundNode cmp = new CCompoundNode();
+
+                                if (ParseCompoundNode(cmp, strStructName, false))
+                                {
+                                    StructNode stNode = new StructNode();
+                                    stNode.Name = strStructName;
+                                    stNode.Body = cmp;
+
+                                    //
+                                    // Dont add this procedure to the parent body.
+                                    // It goes in a separate structures list
+                                    //
+                                    StructDefinitiontTable.Instance().AddStruct(stNode);
+                                    stNode.IsInLibrary = bInLibrary;
+                                    parentNode.AddStatement(stNode);
+                                    result = true;
+                                }
+                            }
+                            else
+                            {
+                                ReportSyntaxError("Structure declaration expected { but found " + token);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Structure declaration expected name but found " + token);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private ExpressionNode ParseStructSymbolForCall(string externalName, string parentName, StructSymbol structSymbol)
+        {
+            StructSymbolForCallNode exp = new StructSymbolForCallNode();
+            exp.ExternalName = externalName;
+            exp.Symbol = structSymbol;
+            exp.Name = parentName + externalName;
+            return exp;
+        }
+
+        private bool ParseStructVarDeclaration(StructDefinition def, CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+
+            // See if there is an identifier
+            //
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+
+                    String strVarName = token;
+                    token = parentName + token;
+
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        StructSymbol sym = new StructSymbol();
+                        sym.Name = token;
+                        sym.SymbolType = SymbolTable.SymbolType.structname;
+                        sym.Definition = def;
+                        sym.SetFields();
+
+                        SymbolTable.Instance().AddStructSymbol(sym);
+
+                        StructVarDeclarationNode node = new StructVarDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        node.DeclarationType = def.StructName;
+                        parentNode.AddStatement(node);
+
+                        result = CheckForSemiColon();
+                        if (!result)
+                        {
+                            ReportSyntaxError(" expected ;");
+                        }
+                    }
+                }
+                else
+                    ReportSyntaxError("Expected variable name");
+            }
+            return result;
+        }
+
+        private ExpressionNode ParseSubStringFunction(string parentName)
+        {
+            //
+            // Syntax is either
+            // SubString( Source, Index )
+            // SubString( Source, Index, Length )
+            //
+            ExpressionNode exp = null;
+            ExpressionNode TextExpression = ParseExpressionNode(parentName);
+            if (TextExpression != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Substring function expected ,");
+                }
+                else
+                {
+                    ExpressionNode IndexExpression = ParseExpressionNode(parentName);
+                    if (IndexExpression != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            tokeniser.PutTokenBack();
+
+                            SubStringNode pos = new SubStringNode();
+                            pos.SourceExpression = TextExpression;
+                            pos.IndexExpression = IndexExpression;
+                            exp = pos;
+                        }
+                        else
+                        {
+                            ExpressionNode LengthExpression = ParseExpressionNode(parentName);
+                            if (LengthExpression != null)
+                            {
+                                SubStringNode pos = new SubStringNode();
+                                pos.SourceExpression = TextExpression;
+                                pos.IndexExpression = IndexExpression;
+                                pos.LengthExpression = LengthExpression;
+                                exp = pos;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseTrue()
+        {
+            ExpressionNode exp = new TrueConstantNode();
+
+            return exp;
+        }
+
+        private ExpressionNode ParseUnaryMinus(String parentName)
+        {
+            //
+            // A unary miinus as oppsed to a subtraction i.e.
+            // x = -1;
+            //
+            ExpressionNode exp = null;
+            ExpressionNode factor = ParseFactor(parentName);
+            if (factor != null)
+            {
+                CUnaryMinusNode minus = new CUnaryMinusNode();
+                minus.LeftNode = factor;
+                exp = minus;
+            }
+            return exp;
+        }
+
+        private bool ParseUnidentifiedStatement(string Identifier, CCompoundNode parentNode, string parentName)
+        {
+            bool result = false;
+
+            if (SymbolTable.Instance().FindSymbol(Identifier) == SymbolTable.SymbolType.procedurename)
+            {
+                result = ParseProcedureCall(Identifier, parentNode, parentName);
+            }
+            else
+            {
+                string tmp = TitleCase(Identifier);
+                StructDefinition def = StructDefinitiontTable.Instance().FindStruct(tmp);
+                if (def != null)
+                {
+                    result = ParseStructVarDeclaration(def, parentNode, parentName);
+                }
+                else
+                {
+                    if (SymbolTable.Instance().FindSymbol(Identifier) == SymbolTable.SymbolType.structname)
+                    {
+                        result = ParseAssignmentToStruct(Identifier, parentNode, "");
+                    }
+                    else
+                    if (SymbolTable.Instance().FindSymbol(parentName + Identifier) == SymbolTable.SymbolType.structname)
+                    {
+                        result = ParseAssignmentToStruct(Identifier, parentNode, parentName);
+                    }
+                    else
+                    {
+                        result = ParseAssignment(Identifier, parentNode, parentName);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private ExpressionNode ParseUserFunctionCall(string Identifier, string parentName)
+        {
+            ExpressionNode callexp = null;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (SymbolTable.Instance().FindSymbol(Identifier) == SymbolTable.SymbolType.functionname)
+            {
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (tokenType == Tokeniser.TokenType.OpenBracket)
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            CCallFunctionNode call = new CCallFunctionNode();
+                            call.FunctionName = Identifier;
+                            call.IsInLibrary = tokeniser.InIncludeFile();
+                            //
+                            // special case, no parameters i.e. MyProc()
+                            //
+                            if (tokenType == Tokeniser.TokenType.CloseBracket)
+                            {
+                                callexp = call;
+                            }
+                            else
+                            {
+                                tokeniser.PutTokenBack();
+
+                                bool bDone = false;
+                                do
+                                {
+                                    //
+                                    // See if it there is a nice expression
+                                    //
+                                    ExpressionNode exp = ParseExpressionNode(parentName);
+                                    if (exp != null)
+                                    {
+                                        call.AddParameterExpression(exp);
+
+                                        //
+                                        // If there is a comma there should another expression
+                                        //
+                                        if (FetchToken(out token, out tokenType) == true)
+                                        {
+                                            if (tokenType == Tokeniser.TokenType.Comma)
+                                            {
+                                                bDone = false;
+                                            }
+                                            else if (tokenType == Tokeniser.TokenType.CloseBracket)
+                                            {
+                                                callexp = call;
+                                                bDone = true;
+                                            }
+                                            else
+                                            {
+                                                ReportSyntaxError("Unexpected token processing function call. Expected ) found " + token);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ReportSyntaxError("Unexpected end of file ");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bDone = true;
+                                    }
+                                } while (bDone == false);
+                            }
+                        }
+                    }
+                }
+            }
+            return callexp;
+        }
+
+        private ExpressionNode ParseValFunction(String parentName)
+        {
+            return GetFunctionNode<ValNode>(parentName);
+        }
+
+        private ExpressionNode ParseVariableNode(String strName, String parentName)
+        {
+            ExpressionNode exp = null;
+
+            //
+            // Check for local variable
+            //
+            String ExternalName = strName;
+            String strTarget = parentName + strName;
+            SymbolTable.SymbolType typ = SymbolTable.Instance().FindSymbol(strTarget);
+            if (typ != SymbolTable.SymbolType.unknown)
+            {
+                VariableNode vn = new VariableNode();
+                vn.Name = strTarget;
+                vn.ExternalName = ExternalName;
+                vn.Symbol = SymbolTable.Instance().FindSymbol(strTarget, typ);
+                exp = vn;
+            }
+            else
+            {
+                //
+                // Try to match up with a global
+                //
+                typ = SymbolTable.Instance().FindSymbol(strName);
+                if (typ != SymbolTable.SymbolType.unknown)
+                {
+                    VariableNode vn = new VariableNode();
+                    vn.Name = strTarget;
+                    vn.Symbol = SymbolTable.Instance().FindSymbol(strName, typ);
+                    vn.ExternalName = ExternalName;
+                    exp = vn;
+                }
+                else
+                {
+                    ReportSyntaxError("Unidentified variable " + strName);
+                }
+            }
+
+            return exp;
+        }
+
+        private bool ParseWhileStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.OpenBracket)
+                {
+                    ExpressionNode exp = ParseExpressionNode(parentName);
+                    if (exp != null)
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.CloseBracket)
+                            {
+                                if (FetchToken(out token, out tokenType) == true)
+                                {
+                                    if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                    {
+                                        CCompoundNode cmp = new CCompoundNode();
+                                        if (ParseCompoundNode(cmp, parentName, false))
+                                        {
+                                            WhileNode wn = new WhileNode();
+                                            wn.Expression = exp;
+                                            wn.Body = cmp;
+                                            parentNode.AddStatement(wn);
+                                            result = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        ReportSyntaxError("While expected {");
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                ReportSyntaxError("While expected )");
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("While expected (");
+                }
+            }
+            return result;
+        }
+
+        private bool ParseWholeStructAssignment(String leftidentifier, CCompoundNode parentNode, String parentName)
+        {
+            // we should either see  a struct variable name followed by a semi colon;
+            // or an expression;
+            bool result = false;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    string rightidentifier = "";
+                    string rightlocal = token;
+
+                    // look for the symbol as a local
+                    bool foundSym = false;
+                    if (parentNode.FindSymbol(parentName + token) == SymbolTable.SymbolType.structname)
+                    {
+                        foundSym = true;
+
+                        rightidentifier = parentName + token;
+                    }
+                    else
+                    if (parentNode.FindSymbol(token) == SymbolTable.SymbolType.structname)
+                    {
+                        // its a global
+                        foundSym = true;
+                        rightidentifier = token;
+                    }
+
+                    if (foundSym)
+                    {
+                        result = CheckForSemiColon();
+                        if (!result)
+                        {
+                            ReportSyntaxError("Expected ;");
+                        }
+                        else
+                        {
+                            AssignWholeStructNode asn = new AssignWholeStructNode();
+                            asn.LeftExternalName = leftidentifier;
+                            asn.RightExternalName = rightlocal;
+                            asn.LeftVariableName = parentName + leftidentifier;
+                            asn.RightVariableName = rightidentifier;
+                            parentNode.AddStatement(asn);
+                        }
+                    }
+                    else
+                    {
+                        tokeniser.PutTokenBack();
+
+                        // treat as struct = expression;
+                        ExpressionNode exp = ParseExpressionNode(parentName);
+                        if (exp != null)
+                        {
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError("Expected ;");
+                            }
+                            else
+                            {
+                                AssignExpressionToStructNode asn = new AssignExpressionToStructNode();
+                                asn.ExternalName = leftidentifier;
+
+                                asn.VariableName = parentName + leftidentifier;
+
+                                asn.ExpressionNode = exp;
+                                parentNode.AddStatement(asn);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected structure name on right side of assignment");
+                }
+            }
+            return result;
+        }
+
+        private void ReportSyntaxError(string p)
+        {
+            Log.Instance().AddEntry(tokeniser.GetSourceUpToIndex());
+            Log.Instance().AddEntry(p);
+        }
+
+        private string TitleCase(string str)
+        {
+            string res = "";
+            if (str.Length > 0)
+            {
+                if (str.Length > 1)
+                {
+                    res = str.Substring(0, 1).ToUpper() + str.Substring(1);
+                }
+                else
+                {
+                    res = str.ToUpper();
+                }
+            }
+            return res;
+        }
+    }
+}

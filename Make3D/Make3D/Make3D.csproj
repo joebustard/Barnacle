@@ -211,6 +211,10 @@
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="ViewModels\ScriptViewModel.cs" />
+    <Compile Include="Views\ScriptView.xaml.cs">
+      <DependentUpon>ScriptView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\BuildPlate\BuildPlate.cs" />
     <Compile Include="ViewModels\BuildPlate\BuildPlateManager.cs" />
     <Compile Include="Models\CameraUtils.cs" />
@@ -481,6 +485,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\ScriptView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\TriggerInterfaceControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -627,6 +635,10 @@
       <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>
       <Name>EarClipperLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Interpreter\Interpreter.csproj">
+      <Project>{B650D680-AB32-4F89-A012-E72F59E4AF22}</Project>
+      <Name>Interpreter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManifoldLib\ManifoldLib.csproj">
       <Project>{DABC6ACF-3F5E-469B-BCC0-6F676287B245}</Project>
       <Name>ManifoldLib</Name>
@@ -738,6 +750,7 @@
     <Resource Include="Images\Buttons\Group.png" />
     <Resource Include="Images\Barnicle.png" />
     <Resource Include="Images\Barnicle2.png" />
+    <Resource Include="templates\LimpetTemplate.txt" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -751,9 +764,11 @@
     <PostBuildEvent>mkdir $(TargetDir)templates
 mkdir $(TargetDir)data
 mkdir $(TargetDir)data\figure
+mkdir $(TargetDir)libs
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
 copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
 copy /Y $(SolutionDir)make3d\Data\*.* $(TargetDir)data
+copy /Y $(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs
 del   /q $(TargetDir)data\figure\*.txt
 copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
 

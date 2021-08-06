@@ -136,7 +136,7 @@ namespace VisualSolutionExplorer
         public void CreateNewFile()
         {
             string f = _folder.CreateNewFile();
-            NotifySolutionChanged("NewFile", f, "");
+            NotifySolutionChanged("NewFile", f, _folder.FileTemplate);
             IsExpanded = true;
             LoadChildren();
         }
