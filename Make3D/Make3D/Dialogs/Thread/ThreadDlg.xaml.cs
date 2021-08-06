@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Media3D;
 
@@ -343,7 +344,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void GenerateShape()
+        private async void GenerateShape()
         {
             ClearShape();
             WarningText = "";
@@ -359,53 +360,60 @@ namespace Make3D.Dialogs
                 }
                 else
                 {
-                    // Helix1 is the spiral for the main diameter
-                    CreateHelix(helix1, majorRadius, angle, length);
-
-                    // helix2 is helix1 offset by the crest
-                    helix2.Clear();
-                    foreach (Point3D p in helix1)
-                    {
-                        helix2.Add(new Point3D(p.X, p.Y, p.Z + crest));
-                    }
-
-                    // add the crest
-                    TriangulateHelixPair(helix1, helix2);
-
-                    // Helix3 is the spiral for the minor diameter
-                    CreateHelix(helix3, minorRadius, angle, length, pitch / 2);
-
-                    // helix4 is helix1 offset by the crest
-                    helix4.Clear();
-                    foreach (Point3D p in helix3)
-                    {
-                        helix4.Add(new Point3D(p.X, p.Y, p.Z + root));
-                    }
-
-                    // add the root
-                    TriangulateHelixPair(helix3, helix4);
-
-                    TriangulateHelixPair(helix2, helix3);
-                    CreateHelix(helix5, minorRadius, angle, length, (-pitch / 2.0) + root);
-                    TriangulateHelixPair(helix5, helix1);
-
-                    // create start disk
-                    Point3D pnt1 = helix3[0];
-                    CreateDisk(startDisk, minorRadius, pnt1.Z - pitch);
-                    TriangulateDisk(startDisk, new Point3D(0, 0, pnt1.Z - pitch), true);
-
-                    // attach to helix
-                    ExpandDisk(startDisk, pitch, false);
-
-                    // create end disk
-                    Point3D helix4Pnt = helix2[helix4.Count - 1];
-                    CreateDisk(endDisk, minorRadius, helix4Pnt.Z + pitch / 2);
-                    TriangulateDisk(endDisk, new Point3D(0, 0, helix4Pnt.Z + pitch / 2));
-                    // attach to helix
-                    // AttachDiskToHelix(endDisk, helix2, pitch, false);
-                    ExpandDisk(endDisk, -pitch, true);
+                    Cursor = System.Windows.Input.Cursors.Wait;
+                   GenerateThread();
+                    Cursor = System.Windows.Input.Cursors.Arrow;
                 }
             }
+        }
+
+        private void GenerateThread()
+        {
+            // Helix1 is the spiral for the main diameter
+            CreateHelix(helix1, majorRadius, angle, length);
+
+            // helix2 is helix1 offset by the crest
+            helix2.Clear();
+            foreach (Point3D p in helix1)
+            {
+                helix2.Add(new Point3D(p.X, p.Y, p.Z + crest));
+            }
+
+            // add the crest
+            TriangulateHelixPair(helix1, helix2);
+
+            // Helix3 is the spiral for the minor diameter
+            CreateHelix(helix3, minorRadius, angle, length, pitch / 2);
+
+            // helix4 is helix1 offset by the crest
+            helix4.Clear();
+            foreach (Point3D p in helix3)
+            {
+                helix4.Add(new Point3D(p.X, p.Y, p.Z + root));
+            }
+
+            // add the root
+            TriangulateHelixPair(helix3, helix4);
+
+            TriangulateHelixPair(helix2, helix3);
+            CreateHelix(helix5, minorRadius, angle, length, (-pitch / 2.0) + root);
+            TriangulateHelixPair(helix5, helix1);
+
+            // create start disk
+            Point3D pnt1 = helix3[0];
+            CreateDisk(startDisk, minorRadius, pnt1.Z - pitch);
+            TriangulateDisk(startDisk, new Point3D(0, 0, pnt1.Z - pitch), true);
+
+            // attach to helix
+            ExpandDisk(startDisk, pitch, false);
+
+            // create end disk
+            Point3D helix4Pnt = helix2[helix4.Count - 1];
+            CreateDisk(endDisk, minorRadius, helix4Pnt.Z + pitch / 2);
+            TriangulateDisk(endDisk, new Point3D(0, 0, helix4Pnt.Z + pitch / 2));
+            // attach to helix
+            ExpandDisk(endDisk, -pitch, true);
+            return ;
         }
 
         private void LoadEditorParameters()
