@@ -1,0 +1,70 @@
+ // Version 1.0
+ // standard definitions
+ Struct Vertex
+ {
+   double x;
+   double y;
+   double z;
+ }
+
+ Struct Size
+ {
+   double width;
+   double height;
+   double depth;
+ }
+
+ Struct Colour
+ {
+   Int a;
+   Int r;
+   Int g;
+   int b;
+ }
+
+ Colour Black;
+ Colour White;
+ Colour Red;
+ Colour Blue;
+ Colour Yellow;
+ Colour Green;
+ Colour Gray;
+
+    Function Colour Argb( Int  a, Int  r, Int  g, Int  b ) 
+    {
+       Colour c ;
+       c.a = a ;
+       c.r = r ;
+       c.g = g ;
+       c.b = b ;
+       Return c ;
+   } 
+
+ Function Vertex Zero()
+ {
+   Vertex v;
+   v.X = 0.0;
+   v.Y = 0.0;
+   v.Z= 0.0;
+ }
+
+ procedure SetDefaultColours()
+ {
+   Red = Argb(255,255,0,0);
+   Black = Argb(255,0,0,0);
+   White = Argb(255,255,255,255);
+   Blue = Argb(255,0,0,255);
+   Green = Argb(255,0,255,0);
+   Yellow = Argb(255,255,240,0);
+   Gray = Argb(255,128,128,128);
+ }
+
+ procedure InitialiseLimpLib()
+ {
+   SetDefaultColours();
+ }
+
+ // Initialise the library
+ // This will run automatically when the application is run
+ InitialiseLimpLib();
+

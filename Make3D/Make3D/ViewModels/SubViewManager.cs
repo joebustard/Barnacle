@@ -45,20 +45,10 @@ namespace Make3D.ViewModels
             {
                 result = new StartupView();
             }
-            /*
-            if (name == "about")
+            if (name == "script")
             {
-                result = new AboutBoxView();
+                result = new ScriptView();
             }
-            if (name == "printpreview")
-            {
-                result = new PrintPreviewView();
-            }
-            if (name == "pageedit")
-            {
-                result = new PageEditView();
-            }
-            */
             return result;
         }
     }

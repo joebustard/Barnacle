@@ -246,8 +246,12 @@
                     <Custom:RibbonCheckBox x:Name="ShowBuildPlate" Label="Build Plate" IsChecked="{Binding ShowBuildPlateChecked}" />
                     <ComboBox x:Name="SelectBuildPlateNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select build plate" ItemsSource="{Binding BuildPlateNames}" SelectedItem="{Binding SelectedBuildPlate}" />
                 </Custom:RibbonGroup>
-                <Custom:RibbonGroup Name="OptionGroup" Header="Options">
+                <!---
+                <Custom:RibbonGroup Name="ViewGroup" Header="View">
+                    <Custom:RibbonButton x:Name="EditorButton" Label="Editor" Command="{Binding ViewCommand}" CommandParameter="Editor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ScriptButton" Label="Script" Command="{Binding ViewCommand}" CommandParameter="Script" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
+                -->
                 <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Make3D;component/Images/Buttons/question1.png">
                     <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
@@ -255,11 +259,11 @@
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <DockPanel LastChildFill="True">
-                <TabControl Width="160" HorizontalContentAlignment="Left">
+                <TabControl Width="160" HorizontalContentAlignment="Left" x:Name="SolutionPanel">
                     <TabItem Header="Solution">
                         <vsx1:SolutionExplorerControl x:Name="SolutionExplorer" />
                     </TabItem>
-                    <TabItem Header="Edit">
+                    <TabItem Header="Edit" x:Name="EditPanel">
 
                         <Grid HorizontalAlignment="Stretch">
                             <ScrollViewer>
@@ -274,7 +278,7 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="Object">
+                    <TabItem Header="Object" x:Name="ObjectPanel">
                         <ScrollViewer>
                             <Grid HorizontalAlignment="Stretch">
                                 <Views:ObjectPropertiesView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />

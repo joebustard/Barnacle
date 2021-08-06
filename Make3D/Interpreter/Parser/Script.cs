@@ -43,6 +43,21 @@ namespace ScriptLanguage
             return parseTree;
         }
 
+        public String ToErrorRichText(String s)
+        {
+            //
+            // Rich Text document block
+            //
+            String Result = @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}{\colortbl ;\red0\green128\blue0;\red0\green0\blue0;\red0\green128\blue128;\red128\green128\blue128;\red128\green0\blue0}\viewkind4\uc1\pard\f0\fs20 ";
+            s = s.Replace(@"\", @"\\");
+            s = s.Replace(System.Environment.NewLine, @"\par ");
+            s = s.Replace(@"{", @"\{");
+            s = s.Replace(@"}", @"\}");
+            Result += s;
+            Result += "}";
+            return Result;
+        }
+
         public String ToRichText()
         {
             //

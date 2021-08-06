@@ -14,6 +14,8 @@ namespace Make3D.Views
     /// </summary>
     public partial class DefaultView : UserControl
     {
+        private DefaultViewModel vm;
+
         public DefaultView()
         {
             InitializeComponent();
@@ -31,6 +33,8 @@ namespace Make3D.Views
             NotificationManager.Subscribe("ReloadProject", ReloadProject);
             NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
             NotificationManager.Subscribe("ImportRefresh", RefreshAfterImport);
+            NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
+            vm = DataContext as DefaultViewModel;
         }
 
         public void CheckPoint()
@@ -66,6 +70,21 @@ namespace Make3D.Views
             System.Diagnostics.Process.Start(startInfo);
         }
 
+        private void ChangeSolutionPanelVisibility(object param)
+        {
+            bool vis = (bool)param;
+            if (vis)
+            {
+                // SolutionPanel.Visibility = Visibility.Visible;
+                EnableEditorControls(true);
+            }
+            else
+            {
+                //SolutionPanel.Visibility = Visibility.Collapsed;
+                EnableEditorControls(false);
+            }
+        }
+
         private void CheckExit(object sender)
         {
             MessageBoxResult res = MessageBox.Show("Document has changed. Save before exiting?", "Warning", MessageBoxButton.YesNoCancel);
@@ -93,6 +112,25 @@ namespace Make3D.Views
                     SaveFile(sender);
                 }
             }
+        }
+
+        private void EnableEditorControls(bool b)
+        {
+            /*
+            ShowAxis.IsEnabled = b;
+            ShowBuildPlate.IsEnabled = b;
+            ShowFloor.IsEnabled = b;
+            ShowMarker.IsEnabled = b;
+            */
+            ShowGroup.IsEnabled = b;
+            SelectionGroup.IsEnabled = b;
+            MeshGroup.IsEnabled = b;
+            ToolGroup.IsEnabled = b;
+            DataGroup.IsEnabled = b;
+            ProjectGroup.IsEnabled = b;
+            SelectionGroup.IsEnabled = b;
+            ObjectPanel.IsEnabled = b;
+            EditPanel.IsEnabled = b;
         }
 
         private void Grid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -294,6 +332,7 @@ namespace Make3D.Views
                         ext = ext.ToLower();
                         if (ext == ".txt")
                         {
+                            vm.SwitchToView("Editor");
                             if (p != BaseViewModel.Document.FilePath)
                             {
                                 CheckSaveFirst(null);
@@ -311,9 +350,17 @@ namespace Make3D.Views
                         }
                         else
                         {
-                            // throw the file at the operating system
-                            // if its a batch or command file, use environment variables
-                            if (ext == ".cmd" || ext == ".bat")
+                            // Is it a limpet script file
+                            // if so change view and load it
+                            if (ext == ".lmp")
+                            {
+                                vm.SwitchToView("Script");
+                                NotificationManager.Notify("LimpetLoaded", p);
+                            }
+                            else
+                             // throw the file at the operating system
+                             // if its a batch or command file, use environment variables
+                             if (ext == ".cmd" || ext == ".bat")
                             {
                                 LaunchCmdOrBat(p);
                             }
@@ -365,6 +412,7 @@ namespace Make3D.Views
                 case "NewFile":
                     {
                         string fName = parameter1;
+                        string fileTemplate = parameter2;
                         string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
@@ -383,6 +431,24 @@ namespace Make3D.Views
                                     NotificationManager.Notify("Refresh", null);
                                     NotificationManager.Notify("ObjectSelected", null);
                                     //  UndoManager.Clear();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (fileTemplate != null)
+                            {
+                                String templatePath = AppDomain.CurrentDomain.BaseDirectory + "templates\\" + fileTemplate;
+                                if (File.Exists(templatePath))
+                                {
+                                    try
+                                    {
+                                        File.Copy(templatePath, p);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        MessageBox.Show(ex.Message);
+                                    }
                                 }
                             }
                         }

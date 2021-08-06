@@ -8,7 +8,6 @@ namespace VisualSolutionExplorer
 {
     public class ProjectFolder : IComparable<ProjectFolder>
     {
-        public string SupportedFileExtension;
         private List<ProjectFile> _projectFiles = new List<ProjectFile>();
         private List<ProjectFolder> _projectFolders = null;
         private bool supportsFiles;
@@ -17,6 +16,7 @@ namespace VisualSolutionExplorer
         public ProjectFolder(string name)
         {
             this.FolderName = name;
+
             Init();
         }
 
@@ -27,7 +27,6 @@ namespace VisualSolutionExplorer
         }
 
         public Boolean AutoLoad { get; set; }
-
         public bool CanBeRenamed { get; set; }
 
         // should this folder be cleared when a clean command is issued
@@ -37,6 +36,7 @@ namespace VisualSolutionExplorer
         public bool Explorer { get; set; }
 
         public bool Export { get; set; }
+        public string FileTemplate { get; set; }
         public string FolderName { get; set; }
         public string FolderPath { get; set; }
         public string OldName { get; set; }
@@ -51,6 +51,8 @@ namespace VisualSolutionExplorer
             get { return _projectFolders; }
             set { _projectFolders = value; }
         }
+
+        public string SupportedFileExtension { get; set; }
 
         public bool SupportsFiles
         {
@@ -118,6 +120,14 @@ namespace VisualSolutionExplorer
                 {
                     TimeDependency = ele.GetAttribute("TimeDependency");
                 }
+                if (ele.HasAttribute("Extension"))
+                {
+                    SupportedFileExtension = ele.GetAttribute("Extension");
+                }
+                if (ele.HasAttribute("Template"))
+                {
+                    FileTemplate = ele.GetAttribute("Template");
+                }
                 SupportsSubFolders = GetBoolean(ele, "AddSubs");
                 SupportsFiles = GetBoolean(ele, "AddFiles");
                 Clean = GetBoolean(ele, "Clean");
@@ -158,6 +168,8 @@ namespace VisualSolutionExplorer
             el.SetAttribute("AddFiles", SupportsFiles.ToString());
             el.SetAttribute("Explorer", Explorer.ToString());
             el.SetAttribute("Clean", Clean.ToString());
+            el.SetAttribute("Extension", SupportedFileExtension.ToString());
+            el.SetAttribute("Template", FileTemplate.ToString());
             if (AutoLoad)
             {
                 el.SetAttribute("AutoLoad", AutoLoad.ToString());
@@ -485,6 +497,7 @@ namespace VisualSolutionExplorer
             _projectFolders = new List<ProjectFolder>();
             _projectFiles = new List<ProjectFile>();
             SupportedFileExtension = "txt";
+            FileTemplate = "";
             Export = false;
             Clean = false;
             Explorer = false;
