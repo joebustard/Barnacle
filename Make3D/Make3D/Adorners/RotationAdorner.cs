@@ -25,7 +25,7 @@ namespace Make3D.Models.Adorners
             sphere = null;
             selectedSphere = false;
             bounds = new Bounds3D();
-            NotificationManager.Subscribe("ScaleRefresh", OnScaleRefresh);
+            NotificationManager.Subscribe("RotationAdorner","ScaleRefresh", OnScaleRefresh);
         }
 
         public Bounds3D Bounds
