@@ -33,7 +33,7 @@ namespace Make3D.Models.Adorners
             labelLocations = new List<Point3D>();
             thumbLabels = new List<Label>();
             ViewPort = null;
-            NotificationManager.Subscribe("ScaleRefresh", OnScaleRefresh);
+            NotificationManager.Subscribe("SizeAdorner","ScaleRefresh", OnScaleRefresh);
         }
 
         public Bounds3D Bounds
