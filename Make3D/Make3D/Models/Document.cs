@@ -29,7 +29,7 @@ namespace Make3D.Models
         {
             ModelScales.Initialise();
             Clear();
-            NotificationManager.Subscribe("DocDirty", OnDocDirty);
+            NotificationManager.Subscribe("Document","DocDirty", OnDocDirty);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -893,7 +893,7 @@ namespace Make3D.Models
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
-                                // only reference an object if its exportable/referenceable
+                            // only reference an object if its exportable/referenceable
                                 if (obj.Exportable)
                                 {
                                     Content.Add(obj);

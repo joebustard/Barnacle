@@ -1,5 +1,6 @@
 ﻿using EarClipperLib;
 using Make3D.Models;
+using Make3D.Object3DLib;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;

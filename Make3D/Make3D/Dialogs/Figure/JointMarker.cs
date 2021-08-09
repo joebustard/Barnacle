@@ -11,17 +11,17 @@ namespace Make3D.Dialogs.Figure
 {
     internal class JointMarker : Object3D
     {
+
+        public delegate void BoneRotate(Bone bn);
+        public BoneRotate OnBoneRotated { get; set; }
         public JointMarker()
         {
             Bone = null;
             Dirty = false;
         }
 
-        public delegate void BoneRotate(Bone bn);
-
         public Bone Bone { get; set; }
         public bool Dirty { get; set; }
-        public BoneRotate OnBoneRotated { get; set; }
 
         public override void Rotate(Point3D rot)
         {

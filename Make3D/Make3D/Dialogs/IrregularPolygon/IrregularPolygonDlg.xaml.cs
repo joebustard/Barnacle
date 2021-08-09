@@ -268,23 +268,28 @@ namespace Make3D.Dialogs
             if (points != null)
             {
                 double rad = 3;
+                System.Windows.Media.Brush br = null;
                 for (int i = 0; i < points.Count; i++)
                 {
+                    System.Windows.Point p = points[i];
                     if (selectedPoint == i)
                     {
                         rad = 6;
+                        br = System.Windows.Media.Brushes.Transparent;
                     }
                     else
                     {
                         rad = 3;
+                        br = System.Windows.Media.Brushes.Red;
                     }
-                    System.Windows.Point p = points[i];
+                    
                     Ellipse el = new Ellipse();
 
                     Canvas.SetLeft(el, p.X - rad);
                     Canvas.SetTop(el, p.Y - rad);
                     el.Width = 2 * rad;
                     el.Height = 2 * rad;
+                    el.Stroke = System.Windows.Media.Brushes.Red;
                     el.Fill = System.Windows.Media.Brushes.Red;
                     el.MouseDown += MainCanvas_MouseDown;
                     el.MouseMove += MainCanvas_MouseMove;

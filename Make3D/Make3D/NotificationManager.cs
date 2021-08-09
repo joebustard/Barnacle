@@ -57,12 +57,22 @@ namespace Make3D
         public static void Subscribe(string name, RXMessage fnc)
         {
             ObserverDef df = new ObserverDef();
+            df.subscriberName = "";
             df.messageName = name;
             df.observer = fnc;
             df.alive = true;
             observers.Add(df);
         }
 
+        public static void Subscribe(string subscriberName,string eventName, RXMessage fnc)
+        {
+            ObserverDef df = new ObserverDef();
+            df.subscriberName = subscriberName;
+            df.messageName = eventName;
+            df.observer = fnc;
+            df.alive = true;
+            observers.Add(df);
+        }
         public static void Unsubscribe(String s)
         {
             List<ObserverDef> obs = new List<ObserverDef>();
@@ -77,9 +87,23 @@ namespace Make3D
             observers = obs;
         }
 
+        public static void ViewUnsubscribe(String s)
+        {
+            List<ObserverDef> obs = new List<ObserverDef>();
+
+            foreach (ObserverDef df in observers)
+            {
+                if (df.subscriberName.ToLower() != s.ToLower())
+                {
+                    obs.Add(df);
+                }
+            }
+            observers = obs;
+        }
         private struct ObserverDef
         {
             public bool alive;
+            public string subscriberName;
             public string messageName;
             public RXMessage observer;
         }

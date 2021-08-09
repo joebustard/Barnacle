@@ -96,8 +96,8 @@ namespace Make3D.Dialogs
             figureModels = new List<FigureModel>();
             availableFigureModels = new List<string>();
             modelAssignments = new List<ModelAssignmentControl>();
-            NotificationManager.Subscribe("SelectedFigure", SelectedFigureModelChanged);
-            NotificationManager.Subscribe("FigureScale", SelectedFigureScaleChanged);
+            NotificationManager.Subscribe("FigureDlg","SelectedFigure", SelectedFigureModelChanged);
+            NotificationManager.Subscribe("FigureDlg", "FigureScale", SelectedFigureScaleChanged);
             ModelGroup = MyModelGroup;
         }
 

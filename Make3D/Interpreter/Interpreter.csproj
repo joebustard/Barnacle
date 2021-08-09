@@ -172,24 +172,6 @@
     <Compile Include="Parser\Script.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiagramLib\DiagramLib.csproj">
-      <Project>{538ADF24-1278-4DF2-83E2-5406E690A3A1}</Project>
-      <Name>DiagramLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MapLib\MapLib.csproj">
-      <Project>{89630C20-7308-4F02-B3B8-8F8A673778D2}</Project>
-      <Name>MapLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\UtilServices\UtilServices.csproj">
-      <Project>{7ECB204A-8644-4E94-828E-AA9251FBC8D8}</Project>
-      <Name>UtilServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\XmlLib\XmlLib.csproj">
-      <Project>{229C9BB4-E99D-4328-AD3B-81D89251951B}</Project>
-      <Name>XmlLib</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Libs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
