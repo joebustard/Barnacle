@@ -119,6 +119,101 @@ namespace Make3D.Object3DLib
             return neo;
         }
 
+        public bool Init()
+        {
+            bool result = false;
+            if (leftObject != null && rightObject != null)
+            {
+                Color = leftObject.Color;
+                Bounds3D leftBnd = leftObject.AbsoluteBounds;
+                Bounds3D rightBnd = rightObject.AbsoluteBounds;
+                Point3D leftPnt = leftObject.Position;
+                Point3D rightPnt = rightObject.Position;
+                Bounds3D combined = new Bounds3D();
+                combined.Add(leftBnd);
+                combined.Add(rightBnd);
+
+                result = PerformOperation();
+            }
+
+            return result;
+        }
+
+        public bool PerformOperation()
+        {
+            bool res = false;
+            absoluteBounds = new Bounds3D();
+            leftObject.RelativeToAbsolute();
+            rightObject.RelativeToAbsolute();
+            Logger.Log("Left Solid\r\n============\r\n");
+            leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
+            // The original objects have their own  scale that is taken into account by their own RelativeToAbsolutes
+            // But the combined object may have been scaled too so take that into acccount now
+            //  leftSolid.Scale(Scale.X, Scale.Y, Scale.Z);
+            Logger.Log("Right Solid\r\n============\r\n");
+            rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
+            //  rightSolid.Scale(Scale.X, Scale.Y, Scale.Z);
+            modeller = new BooleanModeller(leftSolid, rightSolid);
+            if (modeller.State == true)
+            {
+                Solid result = null;
+                switch (PrimType)
+                {
+                    case "groupunion":
+                        {
+                            result = modeller.GetUnion();
+                        }
+                        break;
+
+                    case "groupdifference":
+                        {
+                            result = modeller.GetDifference();
+                        }
+                        break;
+
+                    case "groupreversedifference":
+                        {
+                            result = modeller.GetReverseDifference();
+                        }
+                        break;
+
+                    case "groupintersection":
+                        {
+                            result = modeller.GetIntersection();
+                        }
+                        break;
+                }
+
+                if (result != null)
+                {
+                    AbsoluteObjectVertices = new Point3DCollection();
+                    TriangleIndices = new System.Windows.Media.Int32Collection();
+                    Vector3D[] vc = result.GetVertices();
+                    foreach (Vector3D v in vc)
+                    {
+                        Point3D p = new Point3D(v.X, v.Y, v.Z);
+                        AbsoluteObjectVertices.Add(p);
+                        absoluteBounds.Adjust(p);
+                    }
+                    int[] ids = result.GetIndices();
+                    for (int i = 0; i < ids.Length; i++)
+                    {
+                        TriangleIndices.Add(ids[i]);
+                    }
+
+                    double nx = absoluteBounds.MidPoint().X;
+                    double ny = absoluteBounds.MidPoint().Y;
+                    double nz = absoluteBounds.MidPoint().Z;
+                    Position = new Point3D(nx, ny, nz);
+
+                    AbsoluteToRelative();
+                    SetMesh();
+                    res = true;
+                }
+            }
+            return res;
+        }
+
         public override void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -336,101 +431,6 @@ namespace Make3D.Object3DLib
             }
             leftObject.WriteBinary(writer);
             rightObject.WriteBinary(writer);
-        }
-
-        internal bool Init()
-        {
-            bool result = false;
-            if (leftObject != null && rightObject != null)
-            {
-                Color = leftObject.Color;
-                Bounds3D leftBnd = leftObject.AbsoluteBounds;
-                Bounds3D rightBnd = rightObject.AbsoluteBounds;
-                Point3D leftPnt = leftObject.Position;
-                Point3D rightPnt = rightObject.Position;
-                Bounds3D combined = new Bounds3D();
-                combined.Add(leftBnd);
-                combined.Add(rightBnd);
-
-                result = PerformOperation();
-            }
-
-            return result;
-        }
-
-        internal bool PerformOperation()
-        {
-            bool res = false;
-            absoluteBounds = new Bounds3D();
-            leftObject.RelativeToAbsolute();
-            rightObject.RelativeToAbsolute();
-            Logger.Log("Left Solid\r\n============\r\n");
-            leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
-            // The original objects have their own  scale that is taken into account by their own RelativeToAbsolutes
-            // But the combined object may have been scaled too so take that into acccount now
-            //  leftSolid.Scale(Scale.X, Scale.Y, Scale.Z);
-            Logger.Log("Right Solid\r\n============\r\n");
-            rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
-            //  rightSolid.Scale(Scale.X, Scale.Y, Scale.Z);
-            modeller = new BooleanModeller(leftSolid, rightSolid);
-            if (modeller.State == true)
-            {
-                Solid result = null;
-                switch (PrimType)
-                {
-                    case "groupunion":
-                        {
-                            result = modeller.GetUnion();
-                        }
-                        break;
-
-                    case "groupdifference":
-                        {
-                            result = modeller.GetDifference();
-                        }
-                        break;
-
-                    case "groupreversedifference":
-                        {
-                            result = modeller.GetReverseDifference();
-                        }
-                        break;
-
-                    case "groupintersection":
-                        {
-                            result = modeller.GetIntersection();
-                        }
-                        break;
-                }
-
-                if (result != null)
-                {
-                    AbsoluteObjectVertices = new Point3DCollection();
-                    TriangleIndices = new System.Windows.Media.Int32Collection();
-                    Vector3D[] vc = result.GetVertices();
-                    foreach (Vector3D v in vc)
-                    {
-                        Point3D p = new Point3D(v.X, v.Y, v.Z);
-                        AbsoluteObjectVertices.Add(p);
-                        absoluteBounds.Adjust(p);
-                    }
-                    int[] ids = result.GetIndices();
-                    for (int i = 0; i < ids.Length; i++)
-                    {
-                        TriangleIndices.Add(ids[i]);
-                    }
-
-                    double nx = absoluteBounds.MidPoint().X;
-                    double ny = absoluteBounds.MidPoint().Y;
-                    double nz = absoluteBounds.MidPoint().Z;
-                    Position = new Point3D(nx, ny, nz);
-
-                    AbsoluteToRelative();
-                    SetMesh();
-                    res = true;
-                }
-            }
-            return res;
         }
 
         private void AbsoluteToRelative()

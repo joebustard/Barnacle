@@ -1,6 +1,7 @@
 ﻿using Make3D.Dialogs.Figure;
 using Make3D.Models;
 using Make3D.Models.Adorners;
+using Make3D.Object3DLib;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;

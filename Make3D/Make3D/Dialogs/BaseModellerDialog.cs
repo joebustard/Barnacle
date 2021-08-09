@@ -1,4 +1,6 @@
-﻿using Make3D.Models;
+﻿using Make3D.EditorParameterLib;
+using Make3D.Models;
+using Make3D.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

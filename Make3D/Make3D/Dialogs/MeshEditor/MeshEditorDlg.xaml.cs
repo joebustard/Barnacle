@@ -1,6 +1,7 @@
 ﻿using Make3D.Dialogs.MeshEditor;
 using Make3D.Models;
 using Make3D.Models.Adorners;
+using Make3D.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
