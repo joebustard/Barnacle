@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make3D.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -892,7 +893,7 @@ namespace Make3D.Models
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
-                            // only reference an object if its exportable/referenceable
+                                // only reference an object if its exportable/referenceable
                                 if (obj.Exportable)
                                 {
                                     Content.Add(obj);

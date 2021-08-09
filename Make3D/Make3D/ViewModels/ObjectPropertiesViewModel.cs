@@ -1,4 +1,5 @@
 ﻿using Make3D.Models;
+using Make3D.Object3DLib;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -12,6 +13,7 @@ namespace Make3D.ViewModels
     {
         private bool canScale;
 
+        private bool exportable;
         private Color objectColour;
 
         private string objectName;
@@ -25,7 +27,7 @@ namespace Make3D.ViewModels
         private double rotationZ;
 
         private Object3D selectedObject;
-       public ICommand SetRotationCommand { get; set; }
+
         public ObjectPropertiesViewModel()
         {
             selectedObject = null;
@@ -48,18 +50,6 @@ namespace Make3D.ViewModels
             CanScale = false;
         }
 
-        private void OnSetRotation(object obj)
-        {
-            string v = obj.ToString();
-            double d = Convert.ToDouble(v);
-            rotationX = d;
-            rotationY = d;
-            rotationZ = d;
-            NotifyPropertyChanged("RotationX");
-            NotifyPropertyChanged("RotationY");
-            NotifyPropertyChanged("RotationZ");
-        }
-
         public bool CanScale
         {
             get
@@ -75,15 +65,14 @@ namespace Make3D.ViewModels
                 }
             }
         }
-        private bool exportable;
 
         public bool Exportable
         {
-            get 
-            { 
-            return exportable; 
+            get
+            {
+                return exportable;
             }
-            set 
+            set
             {
                 if (exportable != value)
                 {
@@ -272,9 +261,7 @@ namespace Make3D.ViewModels
         }
 
         public ICommand RotateXCommand { get; set; }
-
         public ICommand RotateYCommand { get; set; }
-
         public ICommand RotateZCommand { get; set; }
 
         public double RotationX
@@ -441,6 +428,8 @@ namespace Make3D.ViewModels
                 }
             }
         }
+
+        public ICommand SetRotationCommand { get; set; }
 
         private double GetDouble(string value)
         {
@@ -673,6 +662,18 @@ namespace Make3D.ViewModels
             NotifyPropertyChanged("ScaleX");
             NotifyPropertyChanged("ScaleY");
             NotifyPropertyChanged("ScaleZ");
+        }
+
+        private void OnSetRotation(object obj)
+        {
+            string v = obj.ToString();
+            double d = Convert.ToDouble(v);
+            rotationX = d;
+            rotationY = d;
+            rotationZ = d;
+            NotifyPropertyChanged("RotationX");
+            NotifyPropertyChanged("RotationY");
+            NotifyPropertyChanged("RotationZ");
         }
 
         private void RotateSelected(Point3D p2)

@@ -224,27 +224,19 @@
     <Compile Include="Models\LoopSmoothing\LoopSmoother.cs" />
     <Compile Include="Models\LoopSmoothing\LoopPoint.cs" />
     <Compile Include="Models\LoopSmoothing\LoopUtils.cs" />
-    <Compile Include="Models\EditorParameter.cs" />
-    <Compile Include="Models\EditorParameters.cs" />
-    <Compile Include="Models\ExternalReference.cs" />
     <Compile Include="Models\Floor.cs" />
     <Compile Include="Models\FloorMarker.cs" />
     <Compile Include="Models\Grid.cs" />
-    <Compile Include="Models\Group3D.cs" />
     <Compile Include="Models\LineUtils.cs" />
-    <Compile Include="Models\Logger.cs" />
     <Compile Include="Models\MeshExtensions.cs" />
     <Compile Include="Models\MeshUtils.cs" />
     <Compile Include="Models\Mru\MostRecentlyUsedManager.cs" />
     <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
-    <Compile Include="Models\PointUtils.cs" />
     <Compile Include="Models\PolarCamera.cs" />
     <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectExporter.cs" />
     <Compile Include="Models\ModelScales.cs" />
-    <Compile Include="Models\ReferenceGrpoup3D.cs" />
-    <Compile Include="Models\ReferenceObject3D.cs" />
     <Compile Include="Models\STLExporter.cs" />
     <Compile Include="Models\ToolFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -274,12 +266,7 @@
     </Compile>
     <Compile Include="Adorners\RotationAdorner.cs" />
     <Compile Include="Adorners\SizeAdorner.cs" />
-    <Compile Include="Models\Bounds3D.cs" />
-    <Compile Include="Models\IcoSphereCreator.cs" />
-    <Compile Include="Models\Object3D.cs" />
     <Compile Include="Models\Document.cs" />
-    <Compile Include="Models\PrimitiveGenerator.cs" />
-    <Compile Include="Models\Scale3D.cs" />
     <Compile Include="NotificationManager.cs" />
     <Compile Include="UserControls\TriggerInterfaceControl.xaml.cs">
       <DependentUpon>TriggerInterfaceControl.xaml</DependentUpon>
@@ -635,6 +622,10 @@
       <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>
       <Name>EarClipperLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EditorParameterLib\EditorParameterLib.csproj">
+      <Project>{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}</Project>
+      <Name>EditorParameterLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">
       <Project>{B650D680-AB32-4F89-A012-E72F59E4AF22}</Project>
       <Name>Interpreter</Name>
@@ -646,6 +637,10 @@
     <ProjectReference Include="..\MeshDecimator\MeshDecimator.csproj">
       <Project>{f49d5d98-df95-4a31-a42f-da6d92c242dd}</Project>
       <Name>MeshDecimator</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
+      <Project>{5F92B002-B820-4A56-A2B1-482C252BA8BE}</Project>
+      <Name>Object3DLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PlacementLib\PlacementLib.csproj">
       <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>

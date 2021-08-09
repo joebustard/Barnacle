@@ -1,7 +1,9 @@
 ﻿using Make3D.Dialogs;
+using Make3D.EditorParameterLib;
 using Make3D.Models;
 using Make3D.Models.Adorners;
 using Make3D.Models.LoopSmoothing;
+using Make3D.Object3DLib;
 using Make3D.ViewModel.BuildPlates;
 using ManifoldLib;
 using MeshDecimator;
@@ -321,7 +323,6 @@ namespace Make3D.ViewModels
 
         internal void KeyDown(Key key, bool shift, bool ctrl)
         {
-
             switch (key)
             {
                 case Key.Up:
@@ -1443,6 +1444,13 @@ namespace Make3D.ViewModels
             return res;
         }
 
+        private void MakeSizeAdorner()
+        {
+            selectedObjectAdorner = new SizeAdorner(camera);
+            selectedObjectAdorner.Overlay = Overlay;
+            selectedObjectAdorner.ViewPort = ViewPort;
+        }
+
         private void MoveCameraDelta(Point lastMouse, Point newPos)
         {
             double dx = newPos.X - lastMouse.X;
@@ -2096,7 +2104,6 @@ namespace Make3D.ViewModels
                                 {
                                     System.Windows.MessageBox.Show("File already exists:" + targetPath, "Error");
                                 }
-
                             }
                         }
                         BaseViewModel.Project.Save();
@@ -2701,13 +2708,6 @@ namespace Make3D.ViewModels
             selectedItems.Clear();
         }
 
-        private void MakeSizeAdorner()
-        {
-            selectedObjectAdorner = new SizeAdorner(camera);
-            selectedObjectAdorner.Overlay = Overlay;
-            selectedObjectAdorner.ViewPort = ViewPort;
-        }
-
         private void ResetSelectionColours()
         {
             List<GeometryModel3D> tmp = modelItems.OfType<GeometryModel3D>().ToList();
@@ -2878,7 +2878,7 @@ namespace Make3D.ViewModels
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[0];
                 selectedItems.Add(ob);
-                if ( selectedObjectAdorner == null )
+                if (selectedObjectAdorner == null)
                 {
                     MakeSizeAdorner();
                 }
