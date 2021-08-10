@@ -30,7 +30,6 @@ namespace Make3D.ViewModels
 
         public BaseViewModel()
         {
-
             if (project == null)
             {
                 project = new Project();
@@ -138,7 +137,7 @@ namespace Make3D.ViewModels
             lastChangeWasNudge = false;
             if (Document != null)
             {
-                string s = undoer.GetNextCheckPointName();
+                string s = undoer.GetNextCheckPointName(Document.DocumentId.ToString());
                 Document.Write(s);
             }
         }
@@ -162,9 +161,9 @@ namespace Make3D.ViewModels
 
         public void Undo()
         {
-            if (undoer.CanUndo())
+            if (undoer.CanUndo(Document.DocumentId.ToString()))
             {
-                string s = undoer.GetLastCheckPointName();
+                string s = undoer.GetLastCheckPointName(Document.DocumentId.ToString());
                 Document.Read(s, true);
                 NotificationManager.Notify("Refresh", null);
             }

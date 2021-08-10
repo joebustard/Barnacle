@@ -107,5 +107,17 @@ namespace Make3D.Views
             MemoryStream ms = new MemoryStream(ASCIIEncoding.ASCII.GetBytes(vm.Rtf));
             tr.Load(ms, DataFormats.Rtf);
         }
+
+        private void UserControl_KeyDown(object sender, KeyEventArgs e)
+        {
+            vm.KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+                                 Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+        }
+
+        private void UserControl_KeyUp(object sender, KeyEventArgs e)
+        {
+            vm.KeyUp(e.Key, Keyboard.IsKeyDown(Key.LeftShift) | Keyboard.IsKeyDown(Key.RightShift),
+                             Keyboard.IsKeyDown(Key.LeftCtrl) | Keyboard.IsKeyDown(Key.RightCtrl));
+        }
     }
 }

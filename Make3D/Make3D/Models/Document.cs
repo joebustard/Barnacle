@@ -82,6 +82,11 @@ namespace Make3D.Models
             }
         }
 
+        public Guid DocumentId
+        {
+            get { return documentID; }
+        }
+
         public string Extension { get; set; }
 
         public string FileFilter { get; set; }

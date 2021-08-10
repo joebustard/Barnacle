@@ -1,16 +1,22 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Make3D
 {
     public static class undoer
     {
         private static int checkId = -1;
+        private static Dictionary<string, int> checkIds = new Dictionary<string, int>();
         private static int maxCheckId = -1;
         private static string undoFolderName = "";
 
-        public static bool CanUndo()
+        public static bool CanUndo(string idString)
         {
-            return checkId > -1;
+            if (!checkIds.ContainsKey(idString))
+            {
+                checkIds[idString] = 0;
+            }
+            return checkIds[idString] > 0;
         }
 
         public static void ClearUndoFiles()
@@ -29,25 +35,29 @@ namespace Make3D
             catch
             {
             }
-            checkId = -1;
-            maxCheckId = -1;
+            checkIds.Clear();
         }
 
-        public static string GetLastCheckPointName()
+        public static string GetLastCheckPointName(string idString)
         {
-            string s = undoFolderName + "\\tmpfile" + checkId.ToString() + ".bob";
-            checkId--;
+            if (!checkIds.ContainsKey(idString))
+            {
+                checkIds[idString] = 0;
+            }
+            string s = undoFolderName + "\\" + idString + "_" + checkIds[idString].ToString() + ".bob";
+            checkIds[idString] = checkIds[idString] - 1;
             return s;
         }
 
-        public static string GetNextCheckPointName()
+        public static string GetNextCheckPointName(string idString)
         {
-            checkId++;
-            if (checkId > maxCheckId)
+            if (!checkIds.ContainsKey(idString))
             {
-                maxCheckId = checkId;
+                checkIds[idString] = 0;
             }
-            return undoFolderName + "\\tmpfile" + checkId.ToString() + ".bob";
+            checkIds[idString] = checkIds[idString] + 1;
+
+            return undoFolderName + "\\" + idString + "_" + checkIds[idString].ToString() + ".bob";
         }
 
         public static void Initialise(string ufn)

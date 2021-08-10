@@ -41,7 +41,7 @@ namespace Make3D.Views
         {
             if (BaseViewModel.Document != null)
             {
-                string s = undoer.GetNextCheckPointName();
+                string s = undoer.GetNextCheckPointName(BaseViewModel.Document.DocumentId.ToString());
                 BaseViewModel.Document.Write(s);
             }
         }

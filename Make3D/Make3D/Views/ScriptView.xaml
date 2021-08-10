@@ -37,7 +37,45 @@
                     <Button Grid.Row="6" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" />
                 </Grid>
             </TabItem>
-            <TabItem Header="3D Output">
+            <TabItem Header="3D Output From Script">
+                <Grid>
+                    <Viewport3D Name="viewport3D1" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
+
+                        <Viewport3D.Camera>
+                            <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPos}" LookDirection = "{Binding LookDirection}">
+                            </PerspectiveCamera>
+                        </Viewport3D.Camera>
+
+                        <ModelVisual3D>
+                            <ModelVisual3D.Content>
+                                <Model3DGroup>
+                                    <AmbientLight Color="#FF808080" />
+                                    <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                                    </DirectionalLight>
+                                    <DirectionalLight x:Name = "dirLightMain2" Direction = "1,1,1" Color="Yellow">
+                                    </DirectionalLight>
+                                </Model3DGroup>
+                            </ModelVisual3D.Content>
+                        </ModelVisual3D>
+
+                        <ModelVisual3D x:Name = "MyModel">
+                            <ModelVisual3D.Content>
+
+                                <Model3DGroup Children="{Binding ModelItems}">
+                                </Model3DGroup>
+                            </ModelVisual3D.Content>
+
+                            <ModelVisual3D.Transform>
+                                <RotateTransform3D>
+                                    <RotateTransform3D.Rotation>
+                                        <AxisAngleRotation3D x:Name = "rotate" Axis = "0 0 1" />
+                                    </RotateTransform3D.Rotation>
+                                </RotateTransform3D>
+                            </ModelVisual3D.Transform>
+                        </ModelVisual3D>
+                    </Viewport3D>
+                    <Canvas Name="overlayCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                </Grid>
             </TabItem>
         </TabControl>
     </Grid>

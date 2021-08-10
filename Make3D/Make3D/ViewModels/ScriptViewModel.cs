@@ -1,4 +1,5 @@
-﻿using ScriptLanguage;
+﻿using Make3D.Models;
+using ScriptLanguage;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,8 +8,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 
 namespace Make3D.ViewModels
 {
@@ -21,11 +24,16 @@ program ""Name""
 }
 ";
 
+        private PolarCamera camera;
         private string filePath;
         private FlowDocument flowDocument;
         private Interpreter interpreter;
+        private Vector3D lookDirection;
+        private Model3DCollection modelItems;
         private string rtf;
+
         private Script script;
+
         private bool updatedInternally;
 
         public ScriptViewModel()
@@ -40,9 +48,19 @@ program ""Name""
             interpreter.LoadFromText(script, defaultSource);
             Rtf = script.ToRichText();
             ScriptCommand = new RelayCommand(OnScriptCommand);
-
+            camera = new PolarCamera();
+            lookDirection.X = -camera.CameraPos.X;
+            lookDirection.Y = -camera.CameraPos.Y;
+            lookDirection.Z = -camera.CameraPos.Z;
+            lookDirection.Normalize();
             NotificationManager.Subscribe("LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("LimpetClosing", OnLimpetClosing);
+        }
+
+        public Point3D CameraPos
+        {
+            get { return camera.CameraPos; }
+            set { NotifyPropertyChanged(); }
         }
 
         public bool Dirty { get; set; }
@@ -63,6 +81,40 @@ program ""Name""
                 }
             }
         }
+
+        public Vector3D LookDirection
+        {
+            get
+            {
+                return lookDirection;
+            }
+            set
+            {
+                if (lookDirection != value)
+                {
+                    lookDirection = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Model3DCollection ModelItems
+        {
+            get
+            {
+                return modelItems;
+            }
+            set
+            {
+                if (modelItems != value)
+                {
+                    modelItems = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Canvas Overlay { get; internal set; }
 
         public String Rtf
         {
@@ -108,6 +160,14 @@ program ""Name""
         }
 
         internal String RawText { get; set; }
+
+        internal void KeyDown(Key key, bool v1, bool v2)
+        {
+        }
+
+        internal void KeyUp(Key key, bool v1, bool v2)
+        {
+        }
 
         internal void RunScript()
         {
