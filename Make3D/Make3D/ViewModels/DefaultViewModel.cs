@@ -137,10 +137,10 @@ namespace Make3D.ViewModels
             buildPlateManager = new BuildPlateManager();
             buildPlateManager.Initialise();
 
-            if (buildPlateManager.BuildPlates.Count > 0)
-            {
-                SelectedBuildPlate = buildPlateManager.BuildPlates[0].PrinterName;
-            }
+            //if (buildPlateManager.BuildPlates.Count > 0)
+            //{
+            //    SelectedBuildPlate = buildPlateManager.BuildPlates[0].PrinterName;
+            //}
             foreach (BuildPlate bp in buildPlateManager.BuildPlates)
             {
                 buildPlateNames.Add(bp.PrinterName);
@@ -166,10 +166,11 @@ namespace Make3D.ViewModels
             CreateToolMenus();
             EnableAllTools(true);
             NotificationManager.Notify("ProjectChanged", Project);
-            if (buildPlateManager.BuildPlates.Count > 0)
-            {
-                NotificationManager.Notify("BuildPlate", buildPlateManager.BuildPlates[0]);
-            }
+            /* if (buildPlateManager.BuildPlates.Count > 0)
+             {
+                 NotificationManager.Notify("BuildPlate", buildPlateManager.BuildPlates[0]);
+             }
+             */
             LoadShowSettings();
         }
 

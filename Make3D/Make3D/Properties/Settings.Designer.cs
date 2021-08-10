@@ -25,7 +25,7 @@ namespace Make3D.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Ender 3")]
         public string SelectedBuildPlate {
             get {
                 return ((string)(this["SelectedBuildPlate"]));

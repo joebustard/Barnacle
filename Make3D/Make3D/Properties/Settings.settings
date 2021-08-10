@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SelectedBuildPlate" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
+      <Value Profile="(Default)">Ender 3</Value>
     </Setting>
     <Setting Name="ShowBuildPlate" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>

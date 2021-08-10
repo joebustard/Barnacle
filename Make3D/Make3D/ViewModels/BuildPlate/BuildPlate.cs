@@ -16,6 +16,7 @@ namespace Make3D.ViewModel.BuildPlates
             Width = 210;
             Height = 210;
             BorderThickness = 5;
+            BorderColour = Colors.CadetBlue;
         }
 
         public Color BorderColour { get; set; }

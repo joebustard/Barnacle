@@ -21,6 +21,7 @@ namespace Make3D.Models
         private string caption;
         private bool dirty;
 
+        private Guid documentID;
         private List<String> referencedFiles;
 
         private int revision;
@@ -29,7 +30,8 @@ namespace Make3D.Models
         {
             ModelScales.Initialise();
             Clear();
-            NotificationManager.Subscribe("Document","DocDirty", OnDocDirty);
+            NotificationManager.Subscribe("Document", "DocDirty", OnDocDirty);
+            documentID = Guid.NewGuid();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -185,6 +187,10 @@ namespace Make3D.Models
                     {
                         GetInt(docele, "NextId", ref nextId, 0);
                         GetInt(docele, "Revision", ref revision, 1);
+                        if (docele.HasAttribute("Guid"))
+                        {
+                            Guid.TryParse(docele.GetAttribute("Guid"), out documentID);
+                        }
                     }
                 }
                 XmlNodeList nodes = docNode.ChildNodes;
@@ -344,6 +350,7 @@ namespace Make3D.Models
             docNode.SetAttribute("NextId", nextId.ToString());
             revision++;
             docNode.SetAttribute("Revision", revision.ToString());
+            docNode.SetAttribute("Guid", documentID.ToString());
 
             foreach (String rf in referencedFiles)
             {
@@ -366,6 +373,7 @@ namespace Make3D.Models
             {
                 writer.Write(nextId);
                 writer.Write(revision);
+                writer.Write(documentID.ToString());
                 writer.Write(referencedFiles.Count);
                 foreach (String rf in referencedFiles)
                 {
@@ -893,7 +901,7 @@ namespace Make3D.Models
                             obj.SetMesh();
                             if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
                             {
-                            // only reference an object if its exportable/referenceable
+                                // only reference an object if its exportable/referenceable
                                 if (obj.Exportable)
                                 {
                                     Content.Add(obj);
@@ -949,6 +957,8 @@ namespace Make3D.Models
             {
                 nextId = reader.ReadInt32();
                 revision = reader.ReadInt32();
+                string id = reader.ReadString();
+                Guid.TryParse(id, out documentID);
                 int count = reader.ReadInt32();
                 for (int i = 0; i < count; i++)
                 {
