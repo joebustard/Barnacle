@@ -104,7 +104,16 @@ namespace ScriptLanguage
                                 }
                                 else
                                 {
-                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                    sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.solidvariable);
+                                    if (sym != null)
+                                    {
+                                        sym.SolidValue = (int)sti.IntValue;
+                                        result = true;
+                                    }
+                                    else
+                                    {
+                                        Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                    }
                                 }
                             }
                         }

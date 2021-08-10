@@ -1,9 +1,18 @@
-﻿using System;
+﻿using Make3D.Object3DLib;
+using System;
+
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
     internal class MakeNode : ExpressionNode
     {
+        private static string[] rotatedPrimitives =
+      {
+            "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
+        };
+
         private ExpressionNode typeExp;
         private ExpressionNode xExp;
         private ExpressionNode xSize;
@@ -44,6 +53,7 @@ namespace ScriptLanguage
                     {
                         if (sti.MyType == StackItem.ItemType.sval)
                         {
+                            string shape = sti.StringValue;
                             double x = 0;
                             double y = 0;
                             double z = 0;
@@ -59,7 +69,29 @@ namespace ScriptLanguage
                                 )
                             {
                                 result = true;
-                                // need to actually create an object
+                                Color color = Colors.Beige;
+                                Object3D obj = new Object3D();
+
+                                obj.Name = "Solid";
+                                obj.PrimType = "Mesh";
+                                obj.Scale = new Scale3D(20, 20, 20);
+
+                                obj.Position = new Point3D(x, y, z);
+
+                                obj.BuildPrimitive(shape);
+                                obj.ScaleMesh(sx, sy, sz);
+                                for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+                                {
+                                    if (rotatedPrimitives[i] == shape)
+                                    {
+                                        obj.SwapYZAxies();
+
+                                        break;
+                                    }
+                                }
+                                obj.Remesh();
+                                Script.ResultArtefacts.Add(obj);
+                                ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count);
                             }
                         }
                         else

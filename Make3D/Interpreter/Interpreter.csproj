@@ -174,6 +174,20 @@
   <ItemGroup>
     <Folder Include="Libs\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CSGLib\CSGLib.csproj">
+      <Project>{cb0cafac-72ab-4d29-a570-d6f97519bbd3}</Project>
+      <Name>CSGLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EditorParameterLib\EditorParameterLib.csproj">
+      <Project>{5bd65286-f34e-45ae-9e8d-2e7a0dff6d0d}</Project>
+      <Name>EditorParameterLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
+      <Project>{5f92b002-b820-4a56-a2b1-482c252ba8be}</Project>
+      <Name>Object3DLib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

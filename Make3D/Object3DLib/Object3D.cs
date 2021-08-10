@@ -222,8 +222,9 @@ namespace Make3D.Object3DLib
             return res;
         }
 
-        public void BuildPrimitive(string obType)
+        public bool BuildPrimitive(string obType)
         {
+            bool built = false;
             Point3DCollection pnts = new Point3DCollection();
             Int32Collection indices = new Int32Collection();
             Vector3DCollection normals = new Vector3DCollection();
@@ -234,6 +235,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Pink);
+                        built = true;
                     }
                     break;
 
@@ -241,6 +243,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
+                        built = true;
                     }
                     break;
 
@@ -248,6 +251,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateCylinder(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Orange);
+                        built = true;
                     }
                     break;
 
@@ -255,6 +259,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Lavender);
+                        built = true;
                     }
                     break;
 
@@ -262,6 +267,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateRoundRoof(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Aquamarine);
+                        built = true;
                     }
                     break;
 
@@ -269,6 +275,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateCone(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.LightSeaGreen);
+                        built = true;
                     }
                     break;
 
@@ -276,6 +283,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GeneratePyramid(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Yellow);
+                        built = true;
                     }
                     break;
 
@@ -283,6 +291,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GeneratePyramid2(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
+                        built = true;
                     }
                     break;
 
@@ -290,6 +299,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateTorus(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.MistyRose);
+                        built = true;
                     }
                     break;
 
@@ -297,6 +307,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateCap(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.LimeGreen);
+                        built = true;
                     }
                     break;
 
@@ -304,6 +315,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GeneratePolygon(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.LightYellow);
+                        built = true;
                     }
                     break;
 
@@ -311,6 +323,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateTube(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Magenta);
+                        built = true;
                     }
                     break;
 
@@ -318,6 +331,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GenerateRightAngle(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0x00, 0xAB, 0xEF));
+                        built = true;
                     }
                     break;
 
@@ -325,6 +339,7 @@ namespace Make3D.Object3DLib
                     {
                         PrimitiveGenerator.GeneratePointy(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0xEF, 0xAB, 0x00));
+                        built = true;
                     }
                     break;
 
@@ -334,6 +349,7 @@ namespace Make3D.Object3DLib
                     }
                     break;
             }
+            return built;
         }
 
         public void CalcScale(bool move = true)

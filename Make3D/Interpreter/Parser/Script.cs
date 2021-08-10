@@ -1,3 +1,4 @@
+using Make3D.Object3DLib;
 using System;
 using System.Collections.Generic;
 
@@ -12,12 +13,12 @@ namespace ScriptLanguage
         public Script()
         {
             parseTree = null;
-            ResultArtefacts = new List<object>();
+            ResultArtefacts = new List<Object3D>();
         }
 
         // This is used a generic way of returning objects or data created when the script is
         // run.
-        public static List<object> ResultArtefacts
+        public static List<Object3D> ResultArtefacts
         {
             get;
             set;
@@ -41,6 +42,11 @@ namespace ScriptLanguage
         {
             parseTree.HighLight = true;
             return parseTree;
+        }
+
+        public void SetResultsContent(List<Object3D> content)
+        {
+            ResultArtefacts = content;
         }
 
         public String ToErrorRichText(String s)
