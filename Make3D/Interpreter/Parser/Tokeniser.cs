@@ -70,7 +70,8 @@ namespace ScriptLanguage
             OpenBlockComment,
             CloseBlockComment,
             Hash,
-            Dot
+            Dot,
+            Not
         };
 
         public String GetSourceUpToIndex()
@@ -502,6 +503,27 @@ namespace ScriptLanguage
                                     }
                                     break;
 
+                                case '!':
+                                    {
+                                        //
+                                        // Assume its a single !
+                                        //
+                                        kType = TokenType.Not;
+                                        kToken = "!";
+                                        GetBy();
+                                        //
+                                        // CHeck if its actually &&
+                                        //
+                                        if (by == '=')
+                                        {
+                                            kType = TokenType.InEquality;
+                                            kToken = "!=";
+                                            GetBy();
+                                        }
+
+                                        result = true;
+                                    }
+                                    break;
                                 case (char)65533:
                                     {
                                     }

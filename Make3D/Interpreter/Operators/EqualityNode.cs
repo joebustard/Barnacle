@@ -2,14 +2,14 @@
 
 namespace ScriptLanguage
 {
-    internal class CInEqualityNode : ExpressionNode
+    internal class EqualityNode : ExpressionNode
     {
         private ExpressionNode leftNode;
 
         private ExpressionNode rightNode;
 
         // Instance constructor
-        public CInEqualityNode()
+        public EqualityNode()
         {
             leftNode = null;
             rightNode = null;
@@ -41,7 +41,7 @@ namespace ScriptLanguage
             if (result)
             {
                 //
-                // Ask the expression on the right to execute
+                // Ask the expression on the left to execute
                 //
                 result = rightNode.Execute();
                 if (result)
@@ -59,12 +59,12 @@ namespace ScriptLanguage
                             bool valid = StackComparator.Compare(leftVal, rightVal, out comparisonResult);
                             if (!valid)
                             {
-                                Log.Instance().AddEntry("Run Time Error : Type Mismatch !=");
+                                Log.Instance().AddEntry("Run Time Error : Type Mismatch ==");
                                 result = false;
                             }
                             else
                             {
-                                ExecutionStack.Instance().Push((bool)(comparisonResult != 0));
+                                ExecutionStack.Instance().Push((bool)(comparisonResult == 0));
                             }
                         }
                     }
@@ -80,31 +80,13 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = "";
-            if (leftNode != null)
-            {
-                result = leftNode.ToRichText();
-                result += RichTextFormatter.Operator(" != ");
-                if (rightNode != null)
-                {
-                    result += rightNode.ToRichText();
-                }
-            }
+            String result = leftNode.ToRichText() + RichTextFormatter.Operator(" == ") + rightNode.ToRichText();
             return result;
         }
 
         public override String ToString()
         {
-            String result = "";
-            if (leftNode != null)
-            {
-                result = leftNode.ToString();
-                result += " != ";
-                if (rightNode != null)
-                {
-                    result += rightNode.ToString();
-                }
-            }
+            String result = leftNode.ToString() + " == " + rightNode.ToString();
             return result;
         }
     }

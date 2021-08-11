@@ -24,7 +24,7 @@ namespace ScriptLanguage
         ///
         public override bool Execute()
         {
-            throw new NotImplementedException();
+            
 
             return false;
         }

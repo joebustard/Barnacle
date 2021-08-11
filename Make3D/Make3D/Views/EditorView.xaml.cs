@@ -22,11 +22,11 @@ namespace Make3D.Views
         public EditorView()
         {
             InitializeComponent();
-            NotificationManager.Subscribe("UpdateDisplay", UpdateDisplay);
-            NotificationManager.Subscribe("MultiPaste", OnMultiPaste);
-            NotificationManager.Subscribe("KeyUp", OnKeyUp);
-            NotificationManager.Subscribe("KeyDown", OnKeyDown);
-            NotificationManager.Subscribe("Settings", OnSettings);
+            NotificationManager.Subscribe("Editor","UpdateDisplay", UpdateDisplay);
+            NotificationManager.Subscribe("Editor", "MultiPaste", OnMultiPaste);
+            NotificationManager.Subscribe("Editor", "KeyUp", OnKeyUp);
+            NotificationManager.Subscribe("Editor", "KeyDown", OnKeyDown);
+            NotificationManager.Subscribe("Editor", "Settings", OnSettings);
             UpdateDisplay(null);
 
             vm = DataContext as EditorViewModel;

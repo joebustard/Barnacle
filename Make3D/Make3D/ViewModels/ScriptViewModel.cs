@@ -347,7 +347,7 @@ program ""Name""
                 {
                     try
                     {
-                        File.WriteAllText(filePath, RawText);
+                        File.WriteAllText(filePath, Source);
                     }
                     catch (Exception ex)
                     {
