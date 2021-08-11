@@ -342,7 +342,7 @@ program ""Name""
         {
             if (Dirty == true && filePath != "")
             {
-                MessageBoxResult res = MessageBox.Show("Script changed.|Save changes before closing?", "Warning", MessageBoxButton.YesNo);
+                MessageBoxResult res = MessageBox.Show("Script changed." + System.Environment.NewLine + "Save changes before closing?", "Warning", MessageBoxButton.YesNo);
                 if (res == MessageBoxResult.Yes)
                 {
                     try
@@ -353,6 +353,15 @@ program ""Name""
                     {
                         MessageBox.Show(ex.Message);
                     }
+                }
+            }
+            BaseViewModel.ScriptResults = null;
+            if (content.Count > 0)
+            {
+                MessageBoxResult res = MessageBox.Show("Objects have been created. Do you want to save them in the model?", "Warning", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.Yes)
+                {
+                    BaseViewModel.ScriptResults = content;
                 }
             }
         }

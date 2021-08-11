@@ -65,6 +65,8 @@ namespace Make3D.ViewModels
             get { return recentlyUsedManager; }
         }
 
+        public static object ScriptResults { get; protected set; }
+
         public SolidColorBrush FillColor
         {
             get
