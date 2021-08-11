@@ -82,60 +82,60 @@ namespace Make3D.ViewModels
             modelItems = new Model3DCollection();
 
             modelItems.Add(floor.FloorMesh);
-            NotificationManager.Subscribe("Editor","ZoomIn", ZoomIn);
-            NotificationManager.Subscribe("Editor","ZoomOut", ZoomOut);
-            NotificationManager.Subscribe("Editor","ZoomReset", ZoomReset);
-            NotificationManager.Subscribe("Editor","CameraCommand", OnCameraCommand);
-            NotificationManager.Subscribe("Editor","AddObject", OnAddObject);
-            NotificationManager.Subscribe("Editor","Refresh", OnRefresh);
-            NotificationManager.Subscribe("Editor","RefreshAdorners", OnRefreshAdorners);
-            NotificationManager.Subscribe("Editor","NewDocument", OnNewDocument);
-            NotificationManager.Subscribe("Editor","Remesh", OnRemesh);
-            NotificationManager.Subscribe("Editor","Select", Select);
-            NotificationManager.Subscribe("Editor","Group", OnGroup);
-            NotificationManager.Subscribe("Editor","Cut", OnCut);
-            NotificationManager.Subscribe("Editor","Copy", OnCopy);
-            NotificationManager.Subscribe("Editor","Paste", OnPaste);
-            NotificationManager.Subscribe("Editor","PasteAt", OnPasteAt);
-            NotificationManager.Subscribe("Editor","DoMultiPaste", OnMultiPaste);
-            NotificationManager.Subscribe("Editor","CircularPaste", OnCircularPaste);
+            NotificationManager.Subscribe("Editor", "ZoomIn", ZoomIn);
+            NotificationManager.Subscribe("Editor", "ZoomOut", ZoomOut);
+            NotificationManager.Subscribe("Editor", "ZoomReset", ZoomReset);
+            NotificationManager.Subscribe("Editor", "CameraCommand", OnCameraCommand);
+            NotificationManager.Subscribe("Editor", "AddObject", OnAddObject);
+            NotificationManager.Subscribe("Editor", "Refresh", OnRefresh);
+            NotificationManager.Subscribe("Editor", "RefreshAdorners", OnRefreshAdorners);
+            NotificationManager.Subscribe("Editor", "NewDocument", OnNewDocument);
+            NotificationManager.Subscribe("Editor", "Remesh", OnRemesh);
+            NotificationManager.Subscribe("Editor", "Select", Select);
+            NotificationManager.Subscribe("Editor", "Group", OnGroup);
+            NotificationManager.Subscribe("Editor", "Cut", OnCut);
+            NotificationManager.Subscribe("Editor", "Copy", OnCopy);
+            NotificationManager.Subscribe("Editor", "Paste", OnPaste);
+            NotificationManager.Subscribe("Editor", "PasteAt", OnPasteAt);
+            NotificationManager.Subscribe("Editor", "DoMultiPaste", OnMultiPaste);
+            NotificationManager.Subscribe("Editor", "CircularPaste", OnCircularPaste);
 
-            NotificationManager.Subscribe("Editor","Export", OnExport);
-            NotificationManager.Subscribe("Editor","ExportParts", OnExportParts);
-            NotificationManager.Subscribe("Editor","Slice", OnSlice);
-            NotificationManager.Subscribe("Editor","Split", OnSplit);
-            NotificationManager.Subscribe("Editor","Import", OnImport);
-            NotificationManager.Subscribe("Editor","MoveObjectToFloor", OnMoveObjectToFloor);
-            NotificationManager.Subscribe("Editor","MoveObjectToCentre", OnMoveObjectToCentre);
-            NotificationManager.Subscribe("Editor","Marker", MoveToMarker);
-            NotificationManager.Subscribe("Editor","Alignment", OnAlignment);
-            NotificationManager.Subscribe("Editor","Distribute", OnDistribute);
-            NotificationManager.Subscribe("Editor","Flip", OnFlip);
-            NotificationManager.Subscribe("Editor","LoopSmooth", OnLoopSmooth);
-            NotificationManager.Subscribe("Editor","Reorigin", OnReorigin);
+            NotificationManager.Subscribe("Editor", "Export", OnExport);
+            NotificationManager.Subscribe("Editor", "ExportParts", OnExportParts);
+            NotificationManager.Subscribe("Editor", "Slice", OnSlice);
+            NotificationManager.Subscribe("Editor", "Split", OnSplit);
+            NotificationManager.Subscribe("Editor", "Import", OnImport);
+            NotificationManager.Subscribe("Editor", "MoveObjectToFloor", OnMoveObjectToFloor);
+            NotificationManager.Subscribe("Editor", "MoveObjectToCentre", OnMoveObjectToCentre);
+            NotificationManager.Subscribe("Editor", "Marker", MoveToMarker);
+            NotificationManager.Subscribe("Editor", "Alignment", OnAlignment);
+            NotificationManager.Subscribe("Editor", "Distribute", OnDistribute);
+            NotificationManager.Subscribe("Editor", "Flip", OnFlip);
+            NotificationManager.Subscribe("Editor", "LoopSmooth", OnLoopSmooth);
+            NotificationManager.Subscribe("Editor", "Reorigin", OnReorigin);
 
-            NotificationManager.Subscribe("Editor","Size", OnSize);
-            NotificationManager.Subscribe("Editor","Undo", OnUndo);
+            NotificationManager.Subscribe("Editor", "Size", OnSize);
+            NotificationManager.Subscribe("Editor", "Undo", OnUndo);
 
-            NotificationManager.Subscribe("Editor","BezierFuselage", OnFuselage);
+            NotificationManager.Subscribe("Editor", "BezierFuselage", OnFuselage);
 
-            NotificationManager.Subscribe("Editor","MeshEdit", OnMeshEdit);
-            NotificationManager.Subscribe("Editor","MeshHull", OnMeshHull);
+            NotificationManager.Subscribe("Editor", "MeshEdit", OnMeshEdit);
+            NotificationManager.Subscribe("Editor", "MeshHull", OnMeshHull);
 
-            NotificationManager.Subscribe("Editor","ShowFloor", OnShowFloor);
-            NotificationManager.Subscribe("Editor","ShowBuildPlate", OnShowBuildPlate);
-            NotificationManager.Subscribe("Editor","ShowFloorMarker", OnShowFloorMarker);
-            NotificationManager.Subscribe("Editor","ShowAxies", OnShowAxies);
-            NotificationManager.Subscribe("Editor","SelectObjectName", SelectObjectByName);
+            NotificationManager.Subscribe("Editor", "ShowFloor", OnShowFloor);
+            NotificationManager.Subscribe("Editor", "ShowBuildPlate", OnShowBuildPlate);
+            NotificationManager.Subscribe("Editor", "ShowFloorMarker", OnShowFloorMarker);
+            NotificationManager.Subscribe("Editor", "ShowAxies", OnShowAxies);
+            NotificationManager.Subscribe("Editor", "SelectObjectName", SelectObjectByName);
 
-            NotificationManager.Subscribe("Editor","Tool", OnTool);
+            NotificationManager.Subscribe("Editor", "Tool", OnTool);
 
-            NotificationManager.Subscribe("Editor","ManifoldTest", OnManifoldTest);
-            NotificationManager.Subscribe("Editor","RemoveDupVertices", OnRemoveDupVertices);
-            NotificationManager.Subscribe("Editor","UnrefVertices", OnRemoveUnrefVertices);
-            NotificationManager.Subscribe("Editor","Loading", LoadingNewFile);
+            NotificationManager.Subscribe("Editor", "ManifoldTest", OnManifoldTest);
+            NotificationManager.Subscribe("Editor", "RemoveDupVertices", OnRemoveDupVertices);
+            NotificationManager.Subscribe("Editor", "UnrefVertices", OnRemoveUnrefVertices);
+            NotificationManager.Subscribe("Editor", "Loading", LoadingNewFile);
 
-            NotificationManager.Subscribe("Editor","BuildPlate", BuildPlateChanged);
+            NotificationManager.Subscribe("Editor", "BuildPlate", BuildPlateChanged);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -146,6 +146,7 @@ namespace Make3D.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             showBuildPlate = true;
+            CheckForScriptResults();
             RegenerateDisplayList();
         }
 
@@ -919,6 +920,22 @@ namespace Make3D.ViewModels
             printerPlate.Height = bp.Height;
             printerPlate.BorderThickness = bp.BorderThickness;
             RegenerateDisplayList();
+        }
+
+        private void CheckForScriptResults()
+        {
+            if (ScriptResults != null)
+            {
+                List<Object3D> obs = ScriptResults as List<Object3D>;
+                if (obs != null)
+                {
+                    foreach (Object3D ob in obs)
+                    {
+                        document.Content.Add(ob);
+                    }
+                }
+            }
+            ScriptResults = null;
         }
 
         private bool CheckIfContentSelected(GeometryModel3D geo, bool append, bool sizer, bool control)
