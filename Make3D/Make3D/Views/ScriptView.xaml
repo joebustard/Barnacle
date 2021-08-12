@@ -31,7 +31,7 @@
                         <Button x:Name="LoadScript" Margin="2,2,2,2" Content="Load" Command="{Binding ScriptCommand}" CommandParameter="Load" />
                         <Button x:Name="SaveScript" Margin="2,2,2,2" Content="Save" Command="{Binding ScriptCommand}" CommandParameter="Save" />
                     </UniformGrid>
-                    <RichTextBox Grid.Row="1" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" />
+                    <RichTextBox Grid.Row="1" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" />
                     <Button Grid.Row="2" Content="Run" Click="RunClicked" />
                     <TextBox x:Name="ResultsBox" Grid.Row="3" Grid.RowSpan="3" Background="Black" Foreground="AntiqueWhite" />
                     <Button Grid.Row="6" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" />

@@ -62,6 +62,9 @@
     <Compile Include="Declarations\StructVarDeclarationNode.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
+    <Compile Include="SolidStatements\SolidColourNode.cs" />
+    <Compile Include="SolidStatements\SolidNameNode.cs" />
+    <Compile Include="SolidStatements\SolidRotate.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
     <Compile Include="Statements\AssignWholeStructNode.cs" />
     <Compile Include="Statements\AssignWholeStructToExpressionNode.cs" />
@@ -130,13 +133,12 @@
     <Compile Include="Statements\CReadLineNode.cs" />
     <Compile Include="IntrinsicFunctions\ReplaceAllNode.cs" />
     <Compile Include="IntrinsicFunctions\ReplaceNode.cs" />
-    <Compile Include="Statements\CReplayNode.cs" />
     <Compile Include="Statements\CReportNode.cs" />
     <Compile Include="Statements\ReturnNode.cs" />
     <Compile Include="IntrinsicFunctions\SinNode.cs" />
     <Compile Include="Execution\SourceFileStackEntry.cs" />
     <Compile Include="Execution\StackItem.cs" />
-    <Compile Include="Statements\CStatementNode.cs" />
+    <Compile Include="Statements\StatementNode.cs" />
     <Compile Include="Constants\StringConstantNode.cs" />
     <Compile Include="Declarations\StringDeclarationNode.cs" />
     <Compile Include="IntrinsicFunctions\StrNode.cs" />

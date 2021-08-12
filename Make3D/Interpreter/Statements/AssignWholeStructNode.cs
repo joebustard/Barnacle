@@ -2,7 +2,7 @@
 
 namespace ScriptLanguage
 {
-    internal class AssignWholeStructNode : CStatementNode
+    internal class AssignWholeStructNode : StatementNode
     {
         private String leftExternalName;
         private String leftVariableName;

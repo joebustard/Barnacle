@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CReadFileNode : CStatementNode
+    internal class CReadFileNode : StatementNode
     {
         private ExpressionNode _Expression;
 

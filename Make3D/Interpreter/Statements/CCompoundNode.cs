@@ -6,20 +6,20 @@ namespace ScriptLanguage
     public class CCompoundNode : ParseTreeNode
     {
         public bool IsTestBody;
-        public List<CStatementNode> Statements;
-        protected List<CStatementNode> UseStatements;
+        public List<StatementNode> Statements;
+        protected List<StatementNode> UseStatements;
         private int CurrentSingleStepStatement;
 
         // Instance constructor
         public CCompoundNode()
         {
-            Statements = new List<CStatementNode>();
-            UseStatements = new List<CStatementNode>();
+            Statements = new List<StatementNode>();
+            UseStatements = new List<StatementNode>();
             IsTestBody = false;
             CurrentSingleStepStatement = 0;
         }
 
-        public void AddStatement(CStatementNode st)
+        public void AddStatement(StatementNode st)
         {
             if (Statements != null)
             {
@@ -124,7 +124,7 @@ namespace ScriptLanguage
 
             if (IsTestBody)
             {
-                foreach (CStatementNode ust in UseStatements)
+                foreach (StatementNode ust in UseStatements)
                 {
                     result += ust.ToRichText();
                     result += @"\par";
@@ -136,7 +136,7 @@ namespace ScriptLanguage
 
             for (int i = 0; i < Statements.Count; i++)
             {
-                CStatementNode st = Statements[i];
+                StatementNode st = Statements[i];
                 result += st.ToRichText();
                 if (!st.IsInLibrary)
                 {
@@ -156,7 +156,7 @@ namespace ScriptLanguage
 
             if (IsTestBody)
             {
-                foreach (CStatementNode ust in UseStatements)
+                foreach (StatementNode ust in UseStatements)
                 {
                     result += ust.ToString();
                     result += "\n";
@@ -165,7 +165,7 @@ namespace ScriptLanguage
 
             for (int i = 0; i < Statements.Count; i++)
             {
-                CStatementNode st = Statements[i];
+                StatementNode st = Statements[i];
                 result += st.ToString();
                 if (!st.IsInLibrary)
                 {

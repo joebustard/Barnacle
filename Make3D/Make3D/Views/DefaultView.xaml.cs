@@ -496,6 +496,14 @@ namespace Make3D.Views
                                 }
                                 File.Move(old, ren);
                             }
+                            else
+                            {
+                                if (File.Exists(ren))
+                                {
+                                    File.Delete(ren);
+                                }
+                                File.Move(old, ren);
+                            }
                         }
                         catch (Exception)
                         {

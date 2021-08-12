@@ -2,7 +2,7 @@ using System;
 
 namespace ScriptLanguage
 {
-    internal class IncludeNode : CStatementNode
+    internal class IncludeNode : StatementNode
     {
         private String path;
 

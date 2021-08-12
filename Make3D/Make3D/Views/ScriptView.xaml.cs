@@ -29,13 +29,14 @@ namespace Make3D.Views
         private GeometryModel3D lastHitModel;
         private Point3D lastHitPoint;
         private Point lastMousePos;
+        private bool loaded;
         private String previousText;
-
         private ScriptViewModel vm;
 
         public ScriptView()
         {
             InitializeComponent();
+            loaded = false;
         }
 
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
@@ -89,16 +90,7 @@ namespace Make3D.Views
         {
             dispatcherTimer.Stop();
 
-            TextRange tr = new TextRange(ScriptBox.Document.ContentStart, ScriptBox.Document.ContentEnd);
-            string scriptText = tr.Text;
-            if (previousText != scriptText)
-            {
-                if (vm.ScriptText(scriptText))
-                {
-                    SetDisplayRtf();
-                }
-                previousText = scriptText;
-            }
+            RefreshInterpreterSource();
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -147,11 +139,28 @@ namespace Make3D.Views
             SetDisplayRtf();
         }
 
+        private bool RefreshInterpreterSource()
+        {
+            bool ok = false;
+            TextRange tr = new TextRange(ScriptBox.Document.ContentStart, ScriptBox.Document.ContentEnd);
+            string scriptText = tr.Text;
+
+            if (vm.ScriptText(scriptText))
+            {
+                SetDisplayRtf();
+                ok = true;
+            }
+            return ok;
+        }
+
         private void RunClicked(object sender, RoutedEventArgs e)
         {
             ResultsBox.Text = "";
-            vm.SetResultsBox(ResultsBox);
-            vm.RunScript();
+            if (RefreshInterpreterSource())
+            {
+                vm.SetResultsBox(ResultsBox);
+                vm.RunScript();
+            }
         }
 
         private void ScriptBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -162,12 +171,12 @@ namespace Make3D.Views
         private void ScriptBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             TextRange tr = new TextRange(ScriptBox.Document.ContentStart, ScriptBox.Document.ContentEnd);
-            vm.RawText = tr.Text;
-            System.Diagnostics.Debug.WriteLine("******");
-            System.Diagnostics.Debug.WriteLine(tr.Text);
-
+            vm.Source = tr.Text;
             DeferSyntaxCheck();
-            vm.Dirty = true;
+            if (loaded)
+            {
+                vm.Dirty = true;
+            }
         }
 
         private void ScriptView_Loaded(object sender, RoutedEventArgs e)
@@ -177,10 +186,11 @@ namespace Make3D.Views
             vm.SetResultsBox(ResultsBox);
             SetDisplayRtf();
             dispatcherTimer = new DispatcherTimer();
-            dispatcherTimer.Interval = new TimeSpan(0, 0, 5);
+            dispatcherTimer.Interval = new TimeSpan(0, 1, 0);
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Start();
-            NotificationManager.Subscribe("UpdateScript", OnUpdate);
+            NotificationManager.Subscribe("Script", "UpdateScript", OnUpdate);
+            loaded = true;
         }
 
         private void SetDisplayRtf()

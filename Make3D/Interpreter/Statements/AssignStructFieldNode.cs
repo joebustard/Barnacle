@@ -2,7 +2,7 @@
 
 namespace ScriptLanguage
 {
-    internal class AssignStructFieldNode : CStatementNode
+    internal class AssignStructFieldNode : StatementNode
     {
         private ExpressionNode _ExpressionNode;
         private String externalName;

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CCloseFileNode : CStatementNode
+    internal class CCloseFileNode : StatementNode
     {
         private ExpressionNode _Expression;
 

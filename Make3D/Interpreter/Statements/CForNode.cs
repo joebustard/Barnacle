@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CForNode : CStatementNode
+    internal class CForNode : StatementNode
     {
         private CCompoundNode _Body;
 

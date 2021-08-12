@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class ReturnNode : CStatementNode
+    internal class ReturnNode : StatementNode
     {
         public CCompoundNode Parent;
 

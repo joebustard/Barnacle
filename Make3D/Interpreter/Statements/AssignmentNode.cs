@@ -2,7 +2,7 @@ using System;
 
 namespace ScriptLanguage
 {
-    internal class AssignmentNode : CStatementNode
+    internal class AssignmentNode : StatementNode
     {
         private ExpressionNode _ExpressionNode;
         private String _ExternalName;

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CIfNode : CStatementNode
+    internal class CIfNode : StatementNode
     {
         private ExpressionNode _Expression;
 

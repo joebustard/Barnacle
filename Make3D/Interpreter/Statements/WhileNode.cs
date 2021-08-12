@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class WhileNode : CStatementNode
+    internal class WhileNode : StatementNode
     {
         private CCompoundNode _Body;
 

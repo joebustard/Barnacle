@@ -73,8 +73,8 @@ program ""Name""
             lookDirection.Normalize();
             cameraMode = CameraModes.CameraMoveLookCenter;
             modelItems = new Model3DCollection();
-            NotificationManager.Subscribe("LimpetLoaded", OnLimpetLoaded);
-            NotificationManager.Subscribe("LimpetClosing", OnLimpetClosing);
+            NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
+            NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
         }
 
         private enum CameraModes
@@ -385,6 +385,7 @@ program ""Name""
                 Dirty = false;
                 filePath = fileName;
                 NotificationManager.Notify("UpdateScript", null);
+                content.Clear();
             }
         }
 
@@ -416,7 +417,7 @@ program ""Name""
                         {
                             try
                             {
-                                File.WriteAllText(filePath, RawText);
+                                File.WriteAllText(filePath, Source);
                                 Dirty = false;
                             }
                             catch (Exception ex)

@@ -47,7 +47,7 @@ namespace ScriptLanguage
         {
             StructDefinition def = new StructDefinition();
             def.StructName = stNode.Name;
-            foreach ( CStatementNode nd in stNode.Body.Statements)
+            foreach ( StatementNode nd in stNode.Body.Statements)
             {
                 if ( nd is DeclarationNode)
                 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ScriptLanguage
 {
-    public class ProcedureNode : CStatementNode
+    public class ProcedureNode : StatementNode
     {
         protected CCompoundNode _Body;
         protected SymbolTable.SymbolType _ReturnType;

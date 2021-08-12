@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CReadLineNode : CStatementNode
+    internal class CReadLineNode : StatementNode
     {
         private ExpressionNode _FilePathExpression;
         private String _VariableName;

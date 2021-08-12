@@ -2,7 +2,7 @@
 
 namespace ScriptLanguage
 {
-    internal class CallProcedureNode : CStatementNode
+    internal class CallProcedureNode : StatementNode
     {
         private ExpressionCollection expressions;
         private String procedureName;

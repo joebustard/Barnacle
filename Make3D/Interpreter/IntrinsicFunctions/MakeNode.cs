@@ -91,7 +91,7 @@ namespace ScriptLanguage
                                 }
                                 obj.Remesh();
                                 Script.ResultArtefacts.Add(obj);
-                                ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count);
+                                ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
                             }
                         }
                         else

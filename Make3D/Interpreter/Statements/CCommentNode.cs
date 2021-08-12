@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    class CCommentNode : CStatementNode
+    class CCommentNode : StatementNode
     {
         private String _Text;
         public String Text

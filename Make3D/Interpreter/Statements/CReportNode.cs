@@ -2,7 +2,7 @@ using System;
 
 namespace ScriptLanguage
 {
-    internal class PrintNode : CStatementNode
+    internal class PrintNode : StatementNode
     {
         private ExpressionNode _Expression;
 

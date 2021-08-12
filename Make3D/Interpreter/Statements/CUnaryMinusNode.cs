@@ -9,18 +9,18 @@ namespace ScriptLanguage
 {
     internal class CUnaryMinusNode : ExpressionNode
     {
-        private ExpressionNode _LeftNode;
+        private ExpressionNode leftNode;
 
         // Instance constructor
         public CUnaryMinusNode()
         {
-            _LeftNode = null;
+            leftNode = null;
         }
 
         public ExpressionNode LeftNode
         {
-            get { return _LeftNode; }
-            set { _LeftNode = value; }
+            get { return leftNode; }
+            set { leftNode = value; }
         }
 
         /// Execute this node
@@ -33,7 +33,7 @@ namespace ScriptLanguage
             //
             // Ask the expression on the left to execute
             //
-            result = _LeftNode.Execute();
+            result = leftNode.Execute();
             if (result)
             {
                 //
@@ -66,13 +66,13 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.Operator("-") + _LeftNode.ToRichText();
+            String result = RichTextFormatter.Operator("-") + leftNode.ToRichText();
             return result;
         }
 
         public override String ToString()
         {
-            String result = "-" + _LeftNode.ToString();
+            String result = "-" + leftNode.ToString();
             return result;
         }
     }

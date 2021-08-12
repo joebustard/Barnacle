@@ -2,7 +2,7 @@ using System;
 
 namespace ScriptLanguage
 {
-    internal class DeclarationNode : CStatementNode
+    internal class DeclarationNode : StatementNode
     {
         private string declarationType;
         private String varName;

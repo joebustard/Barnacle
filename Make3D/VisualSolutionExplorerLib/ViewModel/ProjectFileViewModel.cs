@@ -43,7 +43,8 @@ namespace VisualSolutionExplorer
             TextIcon,
             ImageIcon,
             StlIcon,
-            PrinterIcon
+            PrinterIcon,
+            ScriptIcon
         }
 
         public FileContextMenuViewModel ContextMenu
@@ -200,6 +201,12 @@ namespace VisualSolutionExplorer
         {
             switch (iconToShow)
             {
+                case IconType.ScriptIcon:
+                    {
+                        icon = new BitmapImage(ImageUri("Script.png"));
+                    }
+                    break;
+
                 case IconType.ImageIcon:
                     {
                         icon = new BitmapImage(ImageUri("ImageFile.png"));
@@ -258,6 +265,12 @@ namespace VisualSolutionExplorer
                     case ".png":
                         {
                             IconToShow = IconType.ImageIcon;
+                        }
+                        break;
+
+                    case ".lmp":
+                        {
+                            IconToShow = IconType.ScriptIcon;
                         }
                         break;
 

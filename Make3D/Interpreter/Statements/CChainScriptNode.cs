@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CChainScriptNode : CStatementNode
+    internal class CChainScriptNode : StatementNode
     {
         private ExpressionNode _Expression;
 

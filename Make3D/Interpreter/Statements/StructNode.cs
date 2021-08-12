@@ -2,7 +2,7 @@
 
 namespace ScriptLanguage
 {
-    internal class StructNode : CStatementNode
+    internal class StructNode : StatementNode
     {
         protected CCompoundNode body;
         protected String name;

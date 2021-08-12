@@ -8,7 +8,7 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    class CExitNode : CStatementNode
+    class CExitNode : StatementNode
     {
 #region ctors
         // Instance constructor

@@ -931,6 +931,10 @@ namespace Make3D.ViewModels
                 {
                     foreach (Object3D ob in obs)
                     {
+                        if (Document.ContainsName(ob.Name))
+                        {
+                            ob.Name = Document.DuplicateName(ob.Name);
+                        }
                         document.Content.Add(ob);
                     }
                 }
@@ -1466,6 +1470,29 @@ namespace Make3D.ViewModels
             selectedObjectAdorner = new SizeAdorner(camera);
             selectedObjectAdorner.Overlay = Overlay;
             selectedObjectAdorner.ViewPort = ViewPort;
+        }
+
+        private void MoveAllToCentre()
+        {
+            Point3D target = new Point3D(0, 0, 0);
+            Bounds3D tmpBounds = new Bounds3D();
+
+            foreach (Object3D ob in Document.Content)
+            {
+                tmpBounds.Add(ob.AbsoluteBounds);
+            }
+
+            foreach (Object3D ob in Document.Content)
+            {
+                double dAbsX = target.X + (ob.Position.X - tmpBounds.MidPoint().X);
+
+                double dAbsY = ob.Position.Y;
+
+                double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
+                ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
+                ob.RelativeToAbsolute();
+            }
+            Document.Dirty = true;
         }
 
         private void MoveCameraDelta(Point lastMouse, Point newPos)
@@ -2659,6 +2686,7 @@ namespace Make3D.ViewModels
                 double dy = c.Position.Y - c.OriginalPosition.Y;
                 o.Position = new Point3D(o.Position.X + dx - arr.Width / 2, o.Position.Y, o.Position.Z + dy - arr.Height / 2);
             }
+            MoveAllToCentre();
             RegenerateDisplayList();
             Document.Dirty = true;
         }

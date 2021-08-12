@@ -7,15 +7,23 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    internal class CReplayNode : ParseTreeNode
+    public class StatementNode : ParseTreeNode
     {
+        protected bool isInLibrary;
+
+        public bool IsInLibrary
+        {
+            get { return isInLibrary; }
+            set { isInLibrary = value; }
+        }
+
         // Instance constructor
-        public CReplayNode()
+        public StatementNode()
         {
         }
 
         // Copy constructor
-        public CReplayNode(CReplayNode it)
+        public StatementNode(StatementNode it)
         {
         }
 
@@ -24,9 +32,7 @@ namespace ScriptLanguage
         ///
         public override bool Execute()
         {
-            throw new NotImplementedException();
-
-            return false;
+            return true;
         }
 
         /// Returns a String representation of this node that can be used for
@@ -34,6 +40,12 @@ namespace ScriptLanguage
         ///
         ///
         public override String ToRichText()
+        {
+            String result = "";
+            return result;
+        }
+
+        public override String ToString()
         {
             String result = "";
             return result;

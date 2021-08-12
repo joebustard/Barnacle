@@ -71,7 +71,8 @@ namespace ScriptLanguage
             CloseBlockComment,
             Hash,
             Dot,
-            Not
+            Not,
+            UnknownChar
         };
 
         public String GetSourceUpToIndex()
@@ -524,6 +525,7 @@ namespace ScriptLanguage
                                         result = true;
                                     }
                                     break;
+
                                 case (char)65533:
                                     {
                                     }
@@ -531,8 +533,12 @@ namespace ScriptLanguage
 
                                 default:
                                     {
-                                        throw new Exception("Unexpected char " + by.ToString());
+                                        kType = TokenType.UnknownChar;
+                                        kToken = by.ToString();
+                                        GetBy();
+                                        result = false;
                                     }
+                                    break;
                             }
                         }
                     }
