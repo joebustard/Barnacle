@@ -53,33 +53,22 @@ namespace ScriptLanguage
                     //
                     // try pulling two items off the stack
                     //
-                    StackItem RightVal = ExecutionStack.Instance().Pull();
-                    if (RightVal != null)
+                    StackItem rightVal = ExecutionStack.Instance().Pull();
+                    if (rightVal != null)
                     {
-                        StackItem LeftVal = ExecutionStack.Instance().Pull();
-                        if (LeftVal != null)
+                        StackItem leftVal = ExecutionStack.Instance().Pull();
+                        if (leftVal != null)
                         {
-                            //
-                            // Are both types the same ie. not adding double to a string
-                            //
-                            if (LeftVal.MyType == RightVal.MyType)
+                            int comparisonResult;
+                            bool valid = StackComparator.Compare(leftVal, rightVal, out comparisonResult);
+                            if (!valid)
                             {
-                                if (LeftVal.MyType == StackItem.ItemType.ival)
-                                {
-                                    ExecutionStack.Instance().Push((bool)(LeftVal.IntValue <= RightVal.IntValue));
-                                }
-                                else if (LeftVal.MyType == StackItem.ItemType.dval)
-                                {
-                                    ExecutionStack.Instance().Push((bool)(LeftVal.DoubleValue <= RightVal.DoubleValue));
-                                }
-                                else
-                                {
-                                    Log.Instance().AddEntry("Run Time Error : Comparing  types that can't be Compared");
-                                }
+                                Log.Instance().AddEntry("Run Time Error : Type Mismatch <=");
+                                result = false;
                             }
                             else
                             {
-                                Log.Instance().AddEntry("Run Time Error : Type Mismatch in Compare");
+                                ExecutionStack.Instance().Push((bool)(comparisonResult == 0) || (bool)(comparisonResult < 0));
                             }
                         }
                     }

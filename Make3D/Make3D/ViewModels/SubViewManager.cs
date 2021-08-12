@@ -10,6 +10,7 @@ namespace Make3D.ViewModels
 {
     public class SubViewManager
     {
+        private string currentViewName = "";
         public void CloseCurrent()
         {
             NotificationManager.Unsubscribe("Copy");
@@ -31,6 +32,10 @@ namespace Make3D.ViewModels
 
         public UserControl GetView(string name)
         {
+            if (currentViewName != null && currentViewName != "")
+            {
+                NotificationManager.ViewUnsubscribe(currentViewName);
+            }
             name = name.ToLower().Trim();
             UserControl result = null;
             if (name == "default")
@@ -49,6 +54,7 @@ namespace Make3D.ViewModels
             {
                 result = new ScriptView();
             }
+            currentViewName = name;
             return result;
         }
     }

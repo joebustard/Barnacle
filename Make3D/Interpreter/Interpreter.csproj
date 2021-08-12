@@ -61,6 +61,7 @@
     <Compile Include="Declarations\SolidDeclarationNode.cs" />
     <Compile Include="Declarations\StructVarDeclarationNode.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />
+    <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
     <Compile Include="Statements\AssignWholeStructNode.cs" />
     <Compile Include="Statements\AssignWholeStructToExpressionNode.cs" />
@@ -91,7 +92,7 @@
     <Compile Include="Operators\DivisonNode.cs" />
     <Compile Include="Constants\DoubleConstantNode.cs" />
     <Compile Include="Declarations\DoubleDeclarationNode.cs" />
-    <Compile Include="Operators\EqualityNot.cs" />
+    <Compile Include="Operators\EqualityNode.cs" />
     <Compile Include="Execution\ExecutionStack.cs" />
     <Compile Include="Statements\CExitNode.cs" />
     <Compile Include="Execution\ExpressionCollection.cs" />

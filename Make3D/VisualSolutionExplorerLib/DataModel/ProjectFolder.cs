@@ -95,6 +95,7 @@ namespace VisualSolutionExplorer
             fo.SupportsFiles = SupportsFiles;
             fo.SupportedFileExtension = SupportedFileExtension;
             fo.Export = Export;
+            fo.FileTemplate = FileTemplate;
             fo.CanBeRenamed = true;
             _projectFolders.Add(fo);
             _projectFolders.Sort();
