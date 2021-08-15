@@ -282,7 +282,7 @@ namespace Make3D.Dialogs
                         rad = 3;
                         br = System.Windows.Media.Brushes.Red;
                     }
-                    
+
                     Ellipse el = new Ellipse();
 
                     Canvas.SetLeft(el, p.X - rad);
@@ -293,6 +293,7 @@ namespace Make3D.Dialogs
                     el.Fill = System.Windows.Media.Brushes.Red;
                     el.MouseDown += MainCanvas_MouseDown;
                     el.MouseMove += MainCanvas_MouseMove;
+                    el.ContextMenu = PointMenu(el);
                     MainCanvas.Children.Add(el);
 
                     if (selectedPoint == i && showOrtho)
@@ -528,6 +529,22 @@ namespace Make3D.Dialogs
             return mn;
         }
 
+        private ContextMenu PointMenu(object tag)
+        {
+            ContextMenu mn = new ContextMenu();
+            MenuItem mni = new MenuItem();
+            mni.Header = "Delete Point";
+            mni.Click += DeletePointClicked;
+            mni.Tag = tag;
+            mn.Items.Add(mni);
+            return mn;
+        }
+
+        private void DeletePointClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             Line ln = sender as Line;
@@ -574,27 +591,48 @@ namespace Make3D.Dialogs
         private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             selectedPoint = -1;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
 
+            double rad = 3;
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                System.Windows.Point p = points[i];
+                if (position.X >= p.X - rad && position.X <= p.X + rad)
+                {
+                    if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
+                    {
+
+                        selectedPoint = i;
+
+                        break;
+                    }
+                }
+            }
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                double rad = 3;
-                System.Windows.Point position = e.GetPosition(MainCanvas);
-                for (int i = 0; i < points.Count; i++)
+                UpdateDisplay();
+            }
+            else
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                if ( sender is Ellipse)
                 {
-                    System.Windows.Point p = points[i];
-                    if (position.X >= p.X - rad && position.X <= p.X + rad)
+                    Ellipse el = sender as Ellipse;
+                    if ( points.Count > 3)
                     {
-                        if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
+                        MessageBoxResult res = MessageBox.Show("Delete the point", "Edit", MessageBoxButton.YesNo);
+                        if ( res == MessageBoxResult.Yes)
                         {
-                            selectedPoint = i;
-
-                            break;
+                            points.RemoveAt(selectedPoint);
+                            UpdateDisplay();
                         }
                     }
                 }
             }
-            UpdateDisplay();
         }
+
+
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -663,7 +701,7 @@ namespace Make3D.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MainCanvas.ContextMenu = LineMenu();
+            
             string imageName = EditorParameters.Get("ImagePath");
             if (imageName != "")
             {

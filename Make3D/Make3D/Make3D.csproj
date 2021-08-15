@@ -746,6 +746,9 @@
     <Resource Include="Images\Barnicle.png" />
     <Resource Include="Images\Barnicle2.png" />
     <Resource Include="templates\LimpetTemplate.txt" />
+    <Resource Include="Images\Buttons\SplitX.png" />
+    <Resource Include="Images\Buttons\SplitY.png" />
+    <Resource Include="Images\Buttons\SplitZ.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

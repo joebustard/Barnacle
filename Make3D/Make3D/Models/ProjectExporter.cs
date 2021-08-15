@@ -16,7 +16,15 @@ namespace Make3D.Models
                     doc.Load(f);
                     Bounds3D allBounds = new Bounds3D();
                     allBounds.Zero();
-                    if (exportEmptyFiles || doc.Content.Count > 0)
+                    bool hasContent = false;
+                    foreach (Object3D ob in doc.Content)
+                    {
+                        if (ob.Exportable == true)
+                        {
+                        hasContent =true;
+                        }
+                    }
+                    if (exportEmptyFiles || hasContent)
                     {
                         foreach (Object3D ob in doc.Content)
                         {

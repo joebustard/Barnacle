@@ -408,17 +408,20 @@ namespace Make3D.Models
             List<Object3D> exportList = new List<Object3D>();
             foreach (Object3D ob in Content)
             {
-                Object3D clone = ob.Clone();
-                if (scalefactor != 1.0)
+                if (ob.Exportable)
                 {
-                    clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
-                    clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                    Object3D clone = ob.Clone();
+                    if (scalefactor != 1.0)
+                    {
+                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                    }
+                    if (ProjectSettings.FloorAll)
+                    {
+                        clone.MoveToFloor();
+                    }
+                    exportList.Add(clone);
                 }
-                if (ProjectSettings.FloorAll)
-                {
-                    clone.MoveToFloor();
-                }
-                exportList.Add(clone);
             }
 
             STLExporter exp = new STLExporter();
