@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Make3D.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,14 +9,14 @@ using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class SolidRotateNode : StatementNode
+    internal class SolidResizeNode : StatementNode
     {
         private ExpressionNode expression;
         private ExpressionCollection expressions;
         private String externalName;
         private String variableName;
 
-        public SolidRotateNode()
+        public SolidResizeNode()
         {
             variableName = "";
             expressions = new ExpressionCollection();
@@ -73,16 +74,26 @@ namespace ScriptLanguage
                                     result = PullDouble(out zr);
                                     if (result)
                                     {
-                                        Point3D rot = new Point3D(xr, yr, zr);
-                                        Script.ResultArtefacts[objectIndex].Rotate(rot);
-                                        Script.ResultArtefacts[objectIndex].Remesh();
+                                        Scale3D sc = Script.ResultArtefacts[objectIndex].Scale;
+                                        if (xr > 0 && yr > 0 && zr > 0 && sc.X > 0 && sc.Y > 0 && sc.Z > 0)
+                                        {
+                                            xr = xr / sc.X;
+                                            yr = yr / sc.Y;
+                                            zr = zr / sc.Z;
+                                            Script.ResultArtefacts[objectIndex].ScaleMesh(xr, yr, zr);
+                                            Script.ResultArtefacts[objectIndex].Remesh();
+                                        }
+                                        else
+                                        {
+                                            Log.Instance().AddEntry("Run Time Error : Resize value must be > 0");
+                                        }
                                     }
                                 }
                             }
                         }
                         else
                         {
-                            Log.Instance().AddEntry("Run Time Error : SetName solid name incorrect");
+                            Log.Instance().AddEntry("Run Time Error : Position solid name incorrect");
                         }
                     }
                 }
@@ -95,7 +106,7 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Rotate ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Resize ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
                 result += expressions.ToRichText();
                 result += " ;";
                 if (HighLight)
@@ -111,7 +122,7 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + "Rotate " + externalName + ", " + expressions.ToString();
+                result = Indentor.Indentation() + "Resize " + externalName + ", " + expressions.ToString();
                 result += " ;";
             }
             return result;

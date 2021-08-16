@@ -8,14 +8,14 @@ using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class SolidRotateNode : StatementNode
+    internal class SolidPositionNode : StatementNode
     {
         private ExpressionNode expression;
         private ExpressionCollection expressions;
         private String externalName;
         private String variableName;
 
-        public SolidRotateNode()
+        public SolidPositionNode()
         {
             variableName = "";
             expressions = new ExpressionCollection();
@@ -73,8 +73,8 @@ namespace ScriptLanguage
                                     result = PullDouble(out zr);
                                     if (result)
                                     {
-                                        Point3D rot = new Point3D(xr, yr, zr);
-                                        Script.ResultArtefacts[objectIndex].Rotate(rot);
+                                        Point3D pos = new Point3D(xr, yr, zr);
+                                        Script.ResultArtefacts[objectIndex].Position = pos;
                                         Script.ResultArtefacts[objectIndex].Remesh();
                                     }
                                 }
@@ -82,7 +82,7 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            Log.Instance().AddEntry("Run Time Error : SetName solid name incorrect");
+                            Log.Instance().AddEntry("Run Time Error : Position solid name incorrect");
                         }
                     }
                 }
@@ -95,7 +95,7 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Rotate ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Position ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
                 result += expressions.ToRichText();
                 result += " ;";
                 if (HighLight)
@@ -111,7 +111,7 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + "Rotate " + externalName + ", " + expressions.ToString();
+                result = Indentor.Indentation() + "Position " + externalName + ", " + expressions.ToString();
                 result += " ;";
             }
             return result;

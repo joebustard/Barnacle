@@ -403,3 +403,6 @@ Make3D/.vs/Make3D/v15/.suo
 *.ide
 *.ide-shm
 *.ide-wal
+*.ide
+*.ide-shm
+*.ide-wal

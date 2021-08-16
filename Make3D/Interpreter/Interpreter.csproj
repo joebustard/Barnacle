@@ -64,7 +64,9 @@
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />
     <Compile Include="SolidStatements\SolidNameNode.cs" />
+    <Compile Include="SolidStatements\SolidPosition.cs" />
     <Compile Include="SolidStatements\SolidRotate.cs" />
+    <Compile Include="SolidStatements\SolidSize.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
     <Compile Include="Statements\AssignWholeStructNode.cs" />
     <Compile Include="Statements\AssignWholeStructToExpressionNode.cs" />

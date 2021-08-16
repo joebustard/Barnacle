@@ -25,9 +25,11 @@ namespace ScriptLanguage
                 "if",
                 "include",
                 "int",
+                "position",
                 "procedure",
                 "print",
                 "rotate",
+                "resize",
                 "return",
                 "run",
                 "setcolour",
@@ -1351,6 +1353,24 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "position":
+                    {
+                        result = ParsePositionStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "resize":
+                    {
+                        result = ParseResizeStatement(parentNode, parentName);
+                    }
+                    break;
+
+                case "return":
+                    {
+                        result = ParseReturnStatement(parentNode, parentName);
+                    }
+                    break;
+
                 case "rotate":
                     {
                         result = ParseRotateStatement(parentNode, parentName);
@@ -1396,12 +1416,6 @@ namespace ScriptLanguage
                 case "print":
                     {
                         result = ParsePrintStatement(parentNode, parentName);
-                    }
-                    break;
-
-                case "return":
-                    {
-                        result = ParseReturnStatement(parentNode, parentName);
                     }
                     break;
 
@@ -2126,6 +2140,109 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private bool ParsePositionStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+                    String ExternalVarName = Identifier;
+                    Identifier = parentName + Identifier;                   //
+
+                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Undefined variable " + Identifier);
+                    }
+                    else
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.Comma)
+                            {
+                                ReportSyntaxError("Expected ,");
+                            }
+                            else
+                            {
+                                bool bDone = false;
+                                SolidPositionNode asn = new SolidPositionNode();
+                                asn.VariableName = Identifier;
+                                asn.ExternalName = ExternalVarName;
+                                asn.ExpressionNode = null;
+                                do
+                                {
+                                    //
+                                    // See if it there is a nice expression
+                                    //
+
+                                    ExpressionNode exp = ParseExpressionNode(parentName);
+                                    if (exp != null)
+                                    {
+                                        asn.AddExpression(exp);
+
+                                        //
+                                        // If there is a comma there should another expression
+                                        //
+                                        if (FetchToken(out token, out tokenType) == true)
+                                        {
+                                            if (tokenType == Tokeniser.TokenType.Comma)
+                                            {
+                                                bDone = false;
+                                            }
+                                            else if (tokenType == Tokeniser.TokenType.SemiColon)
+                                            {
+                                                bDone = true;
+                                            }
+                                            else
+                                            {
+                                                ReportSyntaxError("Unexpected token processing Position expect , or ; found " + token);
+                                                bDone = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ReportSyntaxError("Unexpected end of file processing Position");
+                                            bDone = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bDone = true;
+                                    }
+                                } while (bDone == false);
+
+                                if (tokenType != Tokeniser.TokenType.SemiColon)
+                                {
+                                    ReportSyntaxError("Position Expected ;");
+                                }
+                                else
+                                {
+                                    if (asn.ExpressionCount == 3)
+                                    {
+                                        parentNode.AddStatement(asn);
+                                        result = true;
+                                    }
+                                    else
+                                    {
+                                        ReportSyntaxError("Position Expected x,y,z");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Position Expected Solid Identifier");
+                }
+            }
+            return result;
+        }
+
         private bool ParsePrintStatement(CCompoundNode parentNode, String parentName)
         {
             //
@@ -2534,6 +2651,109 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private bool ParseResizeStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+                    String ExternalVarName = Identifier;
+                    Identifier = parentName + Identifier;                   //
+
+                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Undefined variable " + Identifier);
+                    }
+                    else
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.Comma)
+                            {
+                                ReportSyntaxError("Expected ,");
+                            }
+                            else
+                            {
+                                bool bDone = false;
+                                SolidResizeNode asn = new SolidResizeNode();
+                                asn.VariableName = Identifier;
+                                asn.ExternalName = ExternalVarName;
+                                asn.ExpressionNode = null;
+                                do
+                                {
+                                    //
+                                    // See if it there is a nice expression
+                                    //
+
+                                    ExpressionNode exp = ParseExpressionNode(parentName);
+                                    if (exp != null)
+                                    {
+                                        asn.AddExpression(exp);
+
+                                        //
+                                        // If there is a comma there should another expression
+                                        //
+                                        if (FetchToken(out token, out tokenType) == true)
+                                        {
+                                            if (tokenType == Tokeniser.TokenType.Comma)
+                                            {
+                                                bDone = false;
+                                            }
+                                            else if (tokenType == Tokeniser.TokenType.SemiColon)
+                                            {
+                                                bDone = true;
+                                            }
+                                            else
+                                            {
+                                                ReportSyntaxError("Unexpected token processing Resize expect , or ; found " + token);
+                                                bDone = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ReportSyntaxError("Unexpected end of file processing Resize");
+                                            bDone = true;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        bDone = true;
+                                    }
+                                } while (bDone == false);
+
+                                if (tokenType != Tokeniser.TokenType.SemiColon)
+                                {
+                                    ReportSyntaxError("Resize Expected ;");
+                                }
+                                else
+                                {
+                                    if (asn.ExpressionCount == 3)
+                                    {
+                                        parentNode.AddStatement(asn);
+                                        result = true;
+                                    }
+                                    else
+                                    {
+                                        ReportSyntaxError("Resize Expected x,y,z");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Rotate Expected Solid Identifier");
+                }
+            }
+            return result;
+        }
+
         private bool ParseReturnStatement(CCompoundNode parentNode, string parentName)
         {
             bool result = false;
@@ -2617,8 +2837,6 @@ namespace ScriptLanguage
                                             }
                                             else if (tokenType == Tokeniser.TokenType.SemiColon)
                                             {
-                                                result = true;
-
                                                 bDone = true;
                                             }
                                             else
@@ -2641,11 +2859,19 @@ namespace ScriptLanguage
 
                                 if (tokenType != Tokeniser.TokenType.SemiColon)
                                 {
-                                    ReportSyntaxError("Expected ;");
+                                    ReportSyntaxError("Rotate Expected ;");
                                 }
                                 else
                                 {
-                                    parentNode.AddStatement(asn);
+                                    if (asn.ExpressionCount == 3)
+                                    {
+                                        parentNode.AddStatement(asn);
+                                        result = true;
+                                    }
+                                    else
+                                    {
+                                        ReportSyntaxError("Rotate Expected x,y,z");
+                                    }
                                 }
                             }
                         }
@@ -2653,7 +2879,7 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                    ReportSyntaxError("SetColour Expected Solid Identifier");
+                    ReportSyntaxError("Rotate Expected Solid Identifier");
                 }
             }
             return result;

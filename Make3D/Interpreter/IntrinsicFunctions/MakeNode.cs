@@ -80,6 +80,7 @@ namespace ScriptLanguage
 
                                 obj.BuildPrimitive(shape);
                                 obj.ScaleMesh(sx, sy, sz);
+
                                 for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
                                 {
                                     if (rotatedPrimitives[i] == shape)
@@ -89,6 +90,7 @@ namespace ScriptLanguage
                                         break;
                                     }
                                 }
+                                obj.CalcScale(false);
                                 obj.Remesh();
                                 Script.ResultArtefacts.Add(obj);
                                 ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);

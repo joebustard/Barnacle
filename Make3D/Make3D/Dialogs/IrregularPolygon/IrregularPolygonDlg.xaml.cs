@@ -252,6 +252,10 @@ namespace Make3D.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
+        private void DeletePointClicked(object sender, RoutedEventArgs e)
+        {
+        }
+
         private void DisplayLines()
         {
             if (points != null && points.Count > 2)
@@ -267,6 +271,14 @@ namespace Make3D.Dialogs
         {
             if (points != null)
             {
+                double ox = double.NaN;
+                double oy = double.NaN;
+                if (selectedPoint != -1)
+                {
+                    ox = points[selectedPoint].X;
+                    oy = points[selectedPoint].Y;
+                }
+
                 double rad = 3;
                 System.Windows.Media.Brush br = null;
                 for (int i = 0; i < points.Count; i++)
@@ -275,12 +287,19 @@ namespace Make3D.Dialogs
                     if (selectedPoint == i)
                     {
                         rad = 6;
-                        br = System.Windows.Media.Brushes.Transparent;
+                        br = System.Windows.Media.Brushes.Green;
                     }
                     else
                     {
                         rad = 3;
                         br = System.Windows.Media.Brushes.Red;
+                        if (ox != double.NaN)
+                        {
+                            if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
+                            {
+                                br = System.Windows.Media.Brushes.Blue;
+                            }
+                        }
                     }
 
                     Ellipse el = new Ellipse();
@@ -289,8 +308,8 @@ namespace Make3D.Dialogs
                     Canvas.SetTop(el, p.Y - rad);
                     el.Width = 2 * rad;
                     el.Height = 2 * rad;
-                    el.Stroke = System.Windows.Media.Brushes.Red;
-                    el.Fill = System.Windows.Media.Brushes.Red;
+                    el.Stroke = br;
+                    el.Fill = br;
                     el.MouseDown += MainCanvas_MouseDown;
                     el.MouseMove += MainCanvas_MouseMove;
                     el.ContextMenu = PointMenu(el);
@@ -529,22 +548,6 @@ namespace Make3D.Dialogs
             return mn;
         }
 
-        private ContextMenu PointMenu(object tag)
-        {
-            ContextMenu mn = new ContextMenu();
-            MenuItem mni = new MenuItem();
-            mni.Header = "Delete Point";
-            mni.Click += DeletePointClicked;
-            mni.Tag = tag;
-            mn.Items.Add(mni);
-            return mn;
-        }
-
-        private void DeletePointClicked(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             Line ln = sender as Line;
@@ -588,6 +591,51 @@ namespace Make3D.Dialogs
             UpdateDisplay();
         }
 
+        private void MainCanvas_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (selectedPoint != -1)
+            {
+                bool shift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
+                double d = 1;
+                if (shift)
+                {
+                    d = 0.1;
+                }
+                switch (e.Key)
+                {
+                    case Key.Left:
+                    case Key.L:
+                        {
+                            points[selectedPoint] += new Vector(-d, 0);
+                        }
+                        break;
+
+                    case Key.Right:
+                    case Key.R:
+                        {
+                            points[selectedPoint] += new Vector(d, 0);
+                        }
+                        break;
+
+                    case Key.U:
+                    case Key.Up:
+                        {
+                            points[selectedPoint] += new Vector(0, d);
+                        }
+                        break;
+
+                    case Key.D:
+                    case Key.Down:
+                        {
+                            points[selectedPoint] += new Vector(0, -d);
+                        }
+                        break;
+                }
+                GenerateFaces();
+                UpdateDisplay();
+            }
+        }
+
         private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             selectedPoint = -1;
@@ -602,7 +650,6 @@ namespace Make3D.Dialogs
                 {
                     if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
                     {
-
                         selectedPoint = i;
 
                         break;
@@ -616,13 +663,13 @@ namespace Make3D.Dialogs
             else
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                if ( sender is Ellipse)
+                if (sender is Ellipse)
                 {
                     Ellipse el = sender as Ellipse;
-                    if ( points.Count > 3)
+                    if (points.Count > 3)
                     {
                         MessageBoxResult res = MessageBox.Show("Delete the point", "Edit", MessageBoxButton.YesNo);
-                        if ( res == MessageBoxResult.Yes)
+                        if (res == MessageBoxResult.Yes)
                         {
                             points.RemoveAt(selectedPoint);
                             UpdateDisplay();
@@ -631,8 +678,6 @@ namespace Make3D.Dialogs
                 }
             }
         }
-
-
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
@@ -645,7 +690,7 @@ namespace Make3D.Dialogs
             }
             else
             {
-                selectedPoint = -1;
+                //selectedPoint = -1;
             }
 
             UpdateDisplay();
@@ -660,6 +705,17 @@ namespace Make3D.Dialogs
             scale *= 0.9;
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
+        }
+
+        private ContextMenu PointMenu(object tag)
+        {
+            ContextMenu mn = new ContextMenu();
+            MenuItem mni = new MenuItem();
+            mni.Header = "Delete Point";
+            mni.Click += DeletePointClicked;
+            mni.Tag = tag;
+            mn.Items.Add(mni);
+            return mn;
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -701,7 +757,6 @@ namespace Make3D.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
             string imageName = EditorParameters.Get("ImagePath");
             if (imageName != "")
             {
