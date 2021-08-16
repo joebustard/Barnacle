@@ -591,51 +591,6 @@ namespace Make3D.Dialogs
             UpdateDisplay();
         }
 
-        private void MainCanvas_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (selectedPoint != -1)
-            {
-                bool shift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
-                double d = 1;
-                if (shift)
-                {
-                    d = 0.1;
-                }
-                switch (e.Key)
-                {
-                    case Key.Left:
-                    case Key.L:
-                        {
-                            points[selectedPoint] += new Vector(-d, 0);
-                        }
-                        break;
-
-                    case Key.Right:
-                    case Key.R:
-                        {
-                            points[selectedPoint] += new Vector(d, 0);
-                        }
-                        break;
-
-                    case Key.U:
-                    case Key.Up:
-                        {
-                            points[selectedPoint] += new Vector(0, d);
-                        }
-                        break;
-
-                    case Key.D:
-                    case Key.Down:
-                        {
-                            points[selectedPoint] += new Vector(0, -d);
-                        }
-                        break;
-                }
-                GenerateFaces();
-                UpdateDisplay();
-            }
-        }
-
         private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             selectedPoint = -1;
@@ -698,6 +653,51 @@ namespace Make3D.Dialogs
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+        }
+
+        private void MainCanvas_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (selectedPoint != -1)
+            {
+                bool shift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
+                double d = 1;
+                if (shift)
+                {
+                    d = 0.1;
+                }
+                switch (e.Key)
+                {
+                    case Key.Left:
+                    case Key.L:
+                        {
+                            points[selectedPoint] += new Vector(-d, 0);
+                        }
+                        break;
+
+                    case Key.Right:
+                    case Key.R:
+                        {
+                            points[selectedPoint] += new Vector(d, 0);
+                        }
+                        break;
+
+                    case Key.U:
+                    case Key.Up:
+                        {
+                            points[selectedPoint] += new Vector(0, -d);
+                        }
+                        break;
+
+                    case Key.D:
+                    case Key.Down:
+                        {
+                            points[selectedPoint] += new Vector(0, d);
+                        }
+                        break;
+                }
+                GenerateFaces();
+                UpdateDisplay();
+            }
         }
 
         private void OutButton_Click(object sender, RoutedEventArgs e)

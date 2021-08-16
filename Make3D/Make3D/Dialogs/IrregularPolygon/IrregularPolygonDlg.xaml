@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="IrregularPolygonDlg" Height="800" Width="800" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }" KeyDown="MainCanvas_KeyDown">
+        Title="IrregularPolygonDlg" Height="800" Width="800" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }" PreviewKeyDown="MainCanvas_PreviewKeyDown">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -69,9 +69,9 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ControlBorder}" KeyDown="MainCanvas_KeyDown">
+        <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ControlBorder}">
             <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp" KeyDown="MainCanvas_KeyDown">
+                <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="MainScale" />
                     </Canvas.LayoutTransform>
