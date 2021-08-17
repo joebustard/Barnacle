@@ -25,7 +25,7 @@ namespace ScriptLanguage
                 "if",
                 "include",
                 "int",
-                "position",
+                "move",
                 "procedure",
                 "print",
                 "rotate",
@@ -50,6 +50,7 @@ namespace ScriptLanguage
                 "inputstring",
                 "len",
                 "make",
+                "makestadium",
                 "now",
                 "pcname",
                 "rad",
@@ -1353,7 +1354,7 @@ namespace ScriptLanguage
                     }
                     break;
 
-                case "position":
+                case "move":
                     {
                         result = ParsePositionStatement(parentNode, parentName);
                     }
@@ -1661,6 +1662,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makestadium":
+                            {
+                                exp = ParseMakeStadiumFunction(parentName);
+                            }
+                            break;
+
                         case "now":
                             {
                                 exp = ParseNowFunction(parentName);
@@ -1939,6 +1946,62 @@ namespace ScriptLanguage
                                                         }
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeStadiumFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode shapeExp = ParseExpressionNode(parentName);
+            if (shapeExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakeStadium expected ,");
+                }
+                else
+                {
+                    ExpressionNode r1Exp = ParseExpressionNode(parentName);
+                    if (r1Exp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("MakeStadium expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode r2Exp = ParseExpressionNode(parentName);
+                            if (r2Exp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("MakeStadium expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode gexp = ParseExpressionNode(parentName);
+                                    if (gexp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError("MakeStadium expected ,");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode hExp = ParseExpressionNode(parentName);
+                                            if (hExp != null)
+                                            {
+                                                MakeStadiumNode mn = new MakeStadiumNode(shapeExp, r1Exp, r2Exp, gexp, hExp);
+                                                exp = mn;
                                             }
                                         }
                                     }

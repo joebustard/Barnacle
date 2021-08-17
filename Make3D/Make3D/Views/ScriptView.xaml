@@ -38,7 +38,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="3D Output From Script">
-                <Grid MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseWheel="Grid_MouseWheel" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
+                <Grid MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseDown="Grid_MouseDown" MouseWheel="Grid_MouseWheel" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
                     <Viewport3D Name="viewport3D1" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
 
                         <Viewport3D.Camera>

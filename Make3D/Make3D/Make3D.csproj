@@ -630,6 +630,10 @@
       <Project>{B650D680-AB32-4F89-A012-E72F59E4AF22}</Project>
       <Name>Interpreter</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MakerLib\MakerLib.csproj">
+      <Project>{83ac0da3-1ee8-4fe1-96e4-c9adcd88f44e}</Project>
+      <Name>MakerLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ManifoldLib\ManifoldLib.csproj">
       <Project>{DABC6ACF-3F5E-469B-BCC0-6F676287B245}</Project>
       <Name>ManifoldLib</Name>

@@ -95,7 +95,7 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Position ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Move ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
                 result += expressions.ToRichText();
                 result += " ;";
                 if (HighLight)
@@ -111,7 +111,7 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + "Position " + externalName + ", " + expressions.ToString();
+                result = Indentor.Indentation() + "Move " + externalName + ", " + expressions.ToString();
                 result += " ;";
             }
             return result;

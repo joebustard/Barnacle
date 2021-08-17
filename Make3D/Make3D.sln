@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31205.134
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1525
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Make3D", "Make3D\Make3D.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -34,6 +34,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Object3DLib", "Object3DLib\Object3DLib.csproj", "{5F92B002-B820-4A56-A2B1-482C252BA8BE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorParameterLib", "EditorParameterLib\EditorParameterLib.csproj", "{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MakerLib", "MakerLib\MakerLib.csproj", "{83AC0DA3-1EE8-4FE1-96E4-C9ADCD88F44E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -101,6 +103,10 @@ Global
 		{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83AC0DA3-1EE8-4FE1-96E4-C9ADCD88F44E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83AC0DA3-1EE8-4FE1-96E4-C9ADCD88F44E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83AC0DA3-1EE8-4FE1-96E4-C9ADCD88F44E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83AC0DA3-1EE8-4FE1-96E4-C9ADCD88F44E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
