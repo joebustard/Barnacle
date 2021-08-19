@@ -133,6 +133,7 @@
     <Compile Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml.cs">
       <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\IrregularPolygon\PolyPoint.cs" />
     <Compile Include="Dialogs\LinearLoft\LinearLoftDialog.xaml.cs" />
     <Compile Include="Dialogs\MeshEditor\Mesh.cs" />
     <Compile Include="Dialogs\MeshEditor\MeshEditorDlg.xaml.cs">

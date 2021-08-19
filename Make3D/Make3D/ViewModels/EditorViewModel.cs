@@ -2423,7 +2423,7 @@ namespace Make3D.ViewModels
             {
                 CheckPoint();
                 RecalculateAllBounds();
-                selectedObjectAdorner.Clear();
+                selectedObjectAdorner?.Clear();
                 foreach (Object3D cl in ObjectClipboard.Items)
                 {
                     Object3D o = cl.Clone();
