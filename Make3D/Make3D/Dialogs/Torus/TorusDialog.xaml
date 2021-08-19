@@ -48,7 +48,7 @@
                 <Button x:Name="MainRadiusMinus" Grid.Row="1" Click="MainRadiusMinus_Click">-</Button>
             </Grid>
 
-            <Label Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">Horizontal Radius</Label>
+            <Label Grid.Column="1" Grid.Row="3" VerticalAlignment="Center">Ring Radius</Label>
             <TextBox Grid.Column="2" Grid.Row="3" x:Name="HorizontalRadiusBox" VerticalAlignment="Center" TextChanged="HorizontalRadiusBox_TextChanged" />
             <Grid Grid.Row="3" Grid.Column="3">
                 <Grid.RowDefinitions>
@@ -70,7 +70,7 @@
                 <Button x:Name="VerticalRadiusMinus" Grid.Row="1" Click="VerticalRadiusMinus_Click">-</Button>
             </Grid>
 
-            <Label Grid.Column="1" Grid.Row="7" VerticalAlignment="Center">Stretch</Label>
+            <Label Grid.Column="1" Grid.Row="7" VerticalAlignment="Center">Height</Label>
             <TextBox Grid.Column="2" Grid.Row="7" x:Name="StretchBox" VerticalAlignment="Center" TextChanged="StretchBox_TextChanged" />
             <Grid Grid.Row="7" Grid.Column="3">
                 <Grid.RowDefinitions>

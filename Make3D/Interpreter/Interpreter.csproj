@@ -63,6 +63,7 @@
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
+    <Compile Include="SolidFunctions\MakeTube.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />
     <Compile Include="SolidStatements\SolidNameNode.cs" />
     <Compile Include="SolidStatements\SolidPosition.cs" />

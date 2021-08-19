@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models
+namespace Make3D.Object3DLib
 {
-    internal class PolarCoordinate
+    public class PolarCoordinate
     {
         private const double TwoPI = Math.PI * 2.0;
         private double phi;
@@ -60,6 +60,17 @@ namespace Make3D.Models
             }
         }
 
+        public PolarCoordinate Clone()
+        {
+            PolarCoordinate res = new PolarCoordinate(Theta, Phi, Rho);
+            return res;
+        }
+
+        public void Dump()
+        {
+            System.Diagnostics.Debug.WriteLine($"Phi {Phi:F3} Theta {Theta:F3} Rho {Rho:F3}");
+        }
+
         public Point3D GetPoint3D()
         {
             double x = Rho * Math.Sin(Phi) * Math.Cos(Theta);
@@ -73,17 +84,6 @@ namespace Make3D.Models
             Rho = Math.Sqrt(p.X * p.X + p.Y * p.Y + p.Z * p.Z);
             Phi = Math.Acos(p.Z / Rho);
             Theta = Math.Acos(p.X / Math.Sqrt(p.X * p.X + p.Y * p.Y)) * (p.Y < 0 ? -1.0 : 1.0);
-        }
-
-        internal PolarCoordinate Clone()
-        {
-            PolarCoordinate res = new PolarCoordinate(Theta, Phi, Rho);
-            return res;
-        }
-
-        internal void Dump()
-        {
-            System.Diagnostics.Debug.WriteLine($"Phi {Phi:F3} Theta {Theta:F3} Rho {Rho:F3}");
         }
     }
 }

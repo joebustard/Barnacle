@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MakerLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ namespace Make3D.Dialogs
         private double horizontalRadius;
         private int knobFactor = 2;
         private double mainRadius;
-        private double power = 1;
+
         private double stretch;
         private double verticalRadius;
 
@@ -94,62 +95,31 @@ namespace Make3D.Dialogs
         {
             Vertices.Clear();
             Faces.Clear();
-            int mainSteps = (int)((Math.PI * 2.0) / dTheta);
-            int subSteps = (int)((Math.PI * 2.0) / dPhi);
+            double height = stretch;
+
             if (TypeAButton.IsChecked == true)
             {
-                power = 1;
+                curveType = 0;
             }
             if (TypeBButton.IsChecked == true)
             {
-                power = 3;
+                curveType = 1;
             }
             if (TypeCButton.IsChecked == true)
             {
-                power = 5;
+                curveType = 2;
             }
-            double theta1;
-            double theta2;
-            for (int i = 0; i < mainSteps; i++)
+            if (TypeDButton.IsChecked == true)
             {
-                int j = i + 1;
-                if (j >= mainSteps)
-                {
-                    j = 0;
-                }
-                theta1 = (double)i * dTheta;
-                theta2 = (double)j * dTheta;
-
-                double phi1;
-                double phi2;
-
-                for (int l = 0; l < subSteps; l++)
-                {
-                    int k = l + 1;
-                    if (k >= subSteps)
-                    {
-                        k = 0;
-                    }
-                    phi1 = l * dPhi;
-                    phi2 = k * dPhi;
-                    Point3D p1 = TorusPoint(theta1, phi1);
-                    Point3D p2 = TorusPoint(theta1, phi2);
-                    Point3D p3 = TorusPoint(theta2, phi2);
-                    Point3D p4 = TorusPoint(theta2, phi1);
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-                    int v4 = AddVertice(p4);
-
-                    Faces.Add(v1);
-                    Faces.Add(v2);
-                    Faces.Add(v3);
-
-                    Faces.Add(v1);
-                    Faces.Add(v3);
-                    Faces.Add(v4);
-                }
+                curveType = 3;
             }
+            GenerateTorus(mainRadius, horizontalRadius, verticalRadius, curveType, knobFactor, height);
+        }
+
+        private void GenerateTorus(double mr, double hr, double vr, int curve, double knobFactor, double height)
+        {
+            TorusMaker tm = new TorusMaker(mr, hr, vr, curve, knobFactor, height);
+            tm.Generate(Vertices, Faces);
         }
 
         private void HorizontalRadiusBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -253,39 +223,6 @@ namespace Make3D.Dialogs
                 {
                 }
             }
-        }
-
-        private Point3D TorusPoint(double t, double p)
-        {
-            Point3D res = new Point3D(0, 0, 0);
-            if (curveType >= 1 && curveType < 4)
-            {
-                res = TorusPoint2(t, p);
-            }
-            else
-            {
-                res = TorusPoint3(t, p);
-            }
-
-            return res;
-        }
-
-        private Point3D TorusPoint2(double t, double p)
-        {
-            double x = (mainRadius + horizontalRadius * (Math.Pow(Math.Cos(p), power))) * Math.Cos(t);
-            double z = (mainRadius + verticalRadius * (Math.Pow(Math.Cos(p), power))) * Math.Sin(t);
-            double y = stretch * Math.Sin(p);
-            Point3D res = new Point3D(x, y, z);
-            return res;
-        }
-
-        private Point3D TorusPoint3(double t, double p)
-        {
-            double x = (mainRadius + horizontalRadius * (Math.Cos(p) * Math.Abs(Math.Sin(knobFactor * t)))) * Math.Cos(t);
-            double z = (mainRadius + verticalRadius * (Math.Cos(p) * Math.Abs(Math.Sin(knobFactor * t)))) * Math.Sin(t);
-            double y = stretch * Math.Sin(p);
-            Point3D res = new Point3D(x, y, z);
-            return res;
         }
 
         private void TypeAButton_Checked(object sender, RoutedEventArgs e)

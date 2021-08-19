@@ -51,6 +51,7 @@ namespace ScriptLanguage
                 "len",
                 "make",
                 "makestadium",
+                "maketube",
                 "now",
                 "pcname",
                 "rad",
@@ -1668,6 +1669,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "maketube":
+                            {
+                                exp = ParseMakeTubeFunction(parentName);
+                            }
+                            break;
+
                         case "now":
                             {
                                 exp = ParseNowFunction(parentName);
@@ -2002,6 +2009,73 @@ namespace ScriptLanguage
                                             {
                                                 MakeStadiumNode mn = new MakeStadiumNode(shapeExp, r1Exp, r2Exp, gexp, hExp);
                                                 exp = mn;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeTubeFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode radiusExp = ParseExpressionNode(parentName);
+            if (radiusExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakeTube expected ,");
+                }
+                else
+                {
+                    ExpressionNode thExp = ParseExpressionNode(parentName);
+                    if (thExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("MakeTube expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode lowExp = ParseExpressionNode(parentName);
+                            if (lowExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("MakeTube expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode upperExp = ParseExpressionNode(parentName);
+                                    if (upperExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError("MakeTube expected ,");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode hExp = ParseExpressionNode(parentName);
+                                            if (hExp != null)
+                                            {
+                                                if (CheckForComma() == false)
+                                                {
+                                                    ReportSyntaxError("MakeTube expected ,");
+                                                }
+                                                else
+                                                {
+                                                    ExpressionNode sweepExp = ParseExpressionNode(parentName);
+                                                    if (sweepExp != null)
+                                                    {
+                                                        MakeTubeNode mn = new MakeTubeNode(radiusExp, thExp, lowExp, upperExp, hExp, sweepExp);
+                                                        exp = mn;
+                                                    }
+                                                }
                                             }
                                         }
                                     }

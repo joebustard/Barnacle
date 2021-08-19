@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using Object3DLib;
+using Make3D.Object3DLib;
+using MakerLib;
 
 namespace Make3D.Dialogs
 {
@@ -180,6 +183,7 @@ namespace Make3D.Dialogs
 
         private void GenerateRing()
         {
+            /*
             List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
 
             double cx = InnerRadius;
@@ -207,6 +211,10 @@ namespace Make3D.Dialogs
             polarProfile.Add(pcol);
 
             SweepPolarProfileTheta(polarProfile, cx, 0, sweepDegrees, rotDivisions);
+    */
+            TubeMaker tm = new TubeMaker(innerRadius, TubeThickness, lowerBevel, upperBevel, tubeHeight, sweepDegrees);
+            tm.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void SaveEditorParameters()

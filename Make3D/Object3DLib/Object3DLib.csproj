@@ -53,6 +53,7 @@
     <Compile Include="Logger.cs" />
     <Compile Include="Object3D.cs" />
     <Compile Include="PointUtils.cs" />
+    <Compile Include="PolarCoordinate.cs" />
     <Compile Include="PrimitiveGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceGrpoup3D.cs" />

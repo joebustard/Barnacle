@@ -234,7 +234,6 @@
     <Compile Include="Models\MuliPasteConfig.cs" />
     <Compile Include="Models\ObjectClipboard.cs" />
     <Compile Include="Models\PolarCamera.cs" />
-    <Compile Include="Models\PolarCoordinate.cs" />
     <Compile Include="Models\ProjectExporter.cs" />
     <Compile Include="Models\ModelScales.cs" />
     <Compile Include="Models\STLExporter.cs" />

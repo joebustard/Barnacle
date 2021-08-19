@@ -688,14 +688,17 @@ namespace Make3D.Models
         {
             if (File.Exists(fileName))
             {
-                Object3D ob = null;
+                Object3D ob = new Object3D();
+                ob.Name = fileName;
+                Content.Add(ob);
+
                 string[] lines = File.ReadAllLines(fileName);
                 foreach (string s in lines)
                 {
                     string t = s.Trim();
                     if (t != "")
                     {
-                        if (!t.StartsWith("#)"))
+                        if (!t.StartsWith("#"))
                         {
                             if (t.StartsWith("o"))
                             {
@@ -782,15 +785,15 @@ namespace Make3D.Models
                     }
                 }
                 ob.PrimType = "Mesh";
-                ob.CalcScale();
-                ob.RelativeToAbsolute();
 
+                /*
                 ob.Mesh.Positions = ob.AbsoluteObjectVertices;
                 ob.Mesh.TriangleIndices = ob.TriangleIndices;
                 ob.Mesh.Normals = ob.Normals;
                 ob.Rotate(new Point3D(-90, 0, 0));
-                ob.MoveToFloor();
+                */
                 ob.Remesh();
+                ob.MoveToFloor();
             }
         }
 
