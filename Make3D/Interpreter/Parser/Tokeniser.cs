@@ -72,7 +72,9 @@ namespace ScriptLanguage
             Hash,
             Dot,
             Not,
-            UnknownChar
+            UnknownChar,
+            OpenSquare,
+            CloseSquare
         };
 
         public String GetSourceUpToIndex()
@@ -297,6 +299,24 @@ namespace ScriptLanguage
                                     {
                                         kType = TokenType.CloseCurly;
                                         kToken = "}";
+                                        GetBy();
+                                        result = true;
+                                    }
+                                    break;
+
+                                case '[':
+                                    {
+                                        kType = TokenType.OpenSquare;
+                                        kToken = "[";
+                                        GetBy();
+                                        result = true;
+                                    }
+                                    break;
+
+                                case ']':
+                                    {
+                                        kType = TokenType.CloseSquare;
+                                        kToken = "]";
                                         GetBy();
                                         result = true;
                                     }

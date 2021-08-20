@@ -58,11 +58,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Declarations\ArrayDeclaration.cs" />
     <Compile Include="Declarations\SolidDeclarationNode.cs" />
     <Compile Include="Declarations\StructVarDeclarationNode.cs" />
+    <Compile Include="Execution\Array.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
+    <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTube.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />
     <Compile Include="SolidStatements\SolidNameNode.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="SolidStatements\SolidRotate.cs" />
     <Compile Include="SolidStatements\SolidSize.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
+    <Compile Include="Statements\AssignToArrayElement.cs" />
     <Compile Include="Statements\AssignWholeStructNode.cs" />
     <Compile Include="Statements\AssignWholeStructToExpressionNode.cs" />
     <Compile Include="Statements\FieldNode.cs" />

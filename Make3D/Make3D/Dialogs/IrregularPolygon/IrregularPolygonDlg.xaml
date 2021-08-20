@@ -40,6 +40,20 @@
                     <CheckBox IsChecked="{Binding ShowOrtho}">Show Ortho</CheckBox>
                 </StackPanel>
             </Border>
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
+                <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue">
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.2*" />
+
+                        <DataGridTextColumn Header="X" Binding="{Binding X}" Width="0.4*">
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="0.4*">
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
         </Grid>
         <Border Grid.Row="0"  Grid.Column="1" Style="{StaticResource ControlBorder}" MouseMove="Viewport_MouseMove">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"

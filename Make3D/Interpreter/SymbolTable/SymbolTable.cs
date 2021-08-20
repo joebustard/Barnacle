@@ -14,6 +14,12 @@ namespace ScriptLanguage
         public List<Symbol> Symbols;
         static private SymbolTable Singleton;
 
+        // Instance constructor
+        public SymbolTable()
+        {
+            Symbols = new List<Symbol>();
+        }
+
         public enum SymbolType
         {
             unknown,
@@ -25,13 +31,8 @@ namespace ScriptLanguage
             functionname,
             handlevariable,
             solidvariable,
+            boolarrayvariable,
             structname
-        }
-
-        // Instance constructor
-        public SymbolTable()
-        {
-            Symbols = new List<Symbol>();
         }
 
         public static SymbolTable Instance()

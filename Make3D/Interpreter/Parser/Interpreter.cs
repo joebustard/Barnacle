@@ -51,6 +51,7 @@ namespace ScriptLanguage
                 "len",
                 "make",
                 "makestadium",
+                "maketorus",
                 "maketube",
                 "now",
                 "pcname",
@@ -393,6 +394,77 @@ namespace ScriptLanguage
             return result;
         }
 
+        private bool ParseAssignmentToArrayElement(String Identifier, CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            String ExternalVarName = Identifier;
+            Identifier = parentName + Identifier;                   //
+
+            if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+            {
+                ReportSyntaxError("Undefined variable " + Identifier);
+            }
+            else
+            {
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (token != "[")
+                    {
+                        ReportSyntaxError("Expected [");
+                    }
+                    else
+                    {
+                        ExpressionNode indexexp = ParseExpressionNode(parentName);
+                        if (indexexp != null)
+                        {
+                            if (FetchToken(out token, out tokenType) == true)
+                            {
+                                if (token != "]")
+                                {
+                                    ReportSyntaxError("Expected ]");
+                                }
+                                else
+                                {
+                                    if (FetchToken(out token, out tokenType) == true)
+                                    {
+                                        if (tokenType != Tokeniser.TokenType.Assignment)
+                                        {
+                                            ReportSyntaxError("Expected =");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode exp = ParseExpressionNode(parentName);
+                                            if (exp != null)
+                                            {
+                                                result = CheckForSemiColon();
+                                                if (!result)
+                                                {
+                                                    ReportSyntaxError("Expected ;");
+                                                }
+                                                else
+                                                {
+                                                    AssignToArrayElement asn = new AssignToArrayElement();
+                                                    asn.VariableName = Identifier;
+                                                    asn.ExternalName = ExternalVarName;
+                                                    asn.ValueExpression = exp;
+                                                    asn.IndexExpression = indexexp;
+                                                    parentNode.AddStatement(asn);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         private bool ParseAssignmentToStruct(String identifier, CCompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -473,49 +545,83 @@ namespace ScriptLanguage
             return result;
         }
 
+        private void ParseBoolArrayDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
+        {
+            ExpressionNode exp = ParseExpressionNode(parentName);
+            if (exp != null)
+            {
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (token == "]")
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.Identifier)
+                            {
+                                //
+                                // To avoid local variable names clashing with other variables
+                                // we prefix them with the parent [procedures name
+                                //
+                                String strVarName = token;
+                                token = parentName + token;
+                                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                                {
+                                    ReportSyntaxError("Duplicate variable name");
+                                }
+                                else
+                                {
+                                    ArrayDeclarationNode node = new ArrayDeclarationNode();
+                                    node.VarName = strVarName;
+                                    node.ItemType = SymbolTable.SymbolType.boolarrayvariable;
+                                    node.Dimensions = exp;
+                                    node.IsInLibrary = tokeniser.InIncludeFile();
+                                    parentNode.AddStatement(node);
+
+                                    parentNode.AddSymbol(token, SymbolTable.SymbolType.boolarrayvariable);
+
+                                    result = CheckForSemiColon();
+                                    if (!result)
+                                    {
+                                        ReportSyntaxError("Bool expected ;");
+                                    }
+                                }
+                            }
+                            else
+                                ReportSyntaxError("Expected variable name");
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected ]");
+                }
+            }
+            else
+            {
+                ReportSyntaxError("Expected size expression");
+            }
+        }
+
         private bool ParseBoolStatement(CCompoundNode parentNode, String parentName)
         {
             bool result = false;
 
             //
-            // See if there is an identifier following the int
+            // See if there is an identifier following the type
             //
             String token = "";
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-                    String strVarName = token;
-                    token = parentName + token;
-                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Duplicate variable name");
-                    }
-                    else
-                    {
-                        CBoolDeclarationNode node = new CBoolDeclarationNode();
-                        node.VarName = strVarName;
-                        node.IsInLibrary = tokeniser.InIncludeFile();
-                        parentNode.AddStatement(node);
-
-                        parentNode.AddSymbol(token, SymbolTable.SymbolType.boolvariable);
-                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
-                        {
-                            result = CheckForSemiColon();
-                            if (!result)
-                            {
-                                ReportSyntaxError("Bool expected ;");
-                            }
-                        }
-                    }
+                    // array
+                    ParseBoolArrayDeclaration(parentNode, parentName, ref result, ref token, tokenType);
                 }
                 else
-                    ReportSyntaxError("Expected variable name");
+                {
+                    ParseSingleBoolDeclaration(parentNode, parentName, ref result, ref token, tokenType);
+                }
             }
 
             return result;
@@ -1669,6 +1775,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "maketorus":
+                            {
+                                exp = ParseMakeTorusFunction(parentName);
+                            }
+                            break;
+
                         case "maketube":
                             {
                                 exp = ParseMakeTubeFunction(parentName);
@@ -2009,6 +2121,73 @@ namespace ScriptLanguage
                                             {
                                                 MakeStadiumNode mn = new MakeStadiumNode(shapeExp, r1Exp, r2Exp, gexp, hExp);
                                                 exp = mn;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeTorusFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode mrExp = ParseExpressionNode(parentName);
+            if (mrExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakeTorus expected ,");
+                }
+                else
+                {
+                    ExpressionNode hr = ParseExpressionNode(parentName);
+                    if (hr != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("MakeTorus expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode vr = ParseExpressionNode(parentName);
+                            if (vr != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("MakeTorus expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode curveExp = ParseExpressionNode(parentName);
+                                    if (curveExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError("MakeTorus expected ,");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode knobExp = ParseExpressionNode(parentName);
+                                            if (knobExp != null)
+                                            {
+                                                if (CheckForComma() == false)
+                                                {
+                                                    ReportSyntaxError("MakeTorus expected ,");
+                                                }
+                                                else
+                                                {
+                                                    ExpressionNode hExp = ParseExpressionNode(parentName);
+                                                    if (hExp != null)
+                                                    {
+                                                        MakeTorusNode mn = new MakeTorusNode(mrExp, hr, vr, curveExp, knobExp, hExp);
+                                                        exp = mn;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -3176,6 +3355,42 @@ namespace ScriptLanguage
             return result;
         }
 
+        private void ParseSingleBoolDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
+        {
+            if (tokenType == Tokeniser.TokenType.Identifier)
+            {
+                //
+                // To avoid local variable names clashing with other variables
+                // we prefix them with the parent [procedures name
+                //
+                String strVarName = token;
+                token = parentName + token;
+                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                {
+                    ReportSyntaxError("Duplicate variable name");
+                }
+                else
+                {
+                    CBoolDeclarationNode node = new CBoolDeclarationNode();
+                    node.VarName = strVarName;
+                    node.IsInLibrary = tokeniser.InIncludeFile();
+                    parentNode.AddStatement(node);
+
+                    parentNode.AddSymbol(token, SymbolTable.SymbolType.boolvariable);
+                    if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                    {
+                        result = CheckForSemiColon();
+                        if (!result)
+                        {
+                            ReportSyntaxError("Bool expected ;");
+                        }
+                    }
+                }
+            }
+            else
+                ReportSyntaxError("Expected variable name");
+        }
+
         private bool ParseSolidStatement(CCompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -3693,6 +3908,11 @@ namespace ScriptLanguage
                     if (SymbolTable.Instance().FindSymbol(parentName + Identifier) == SymbolTable.SymbolType.structname)
                     {
                         result = ParseAssignmentToStruct(Identifier, parentNode, parentName);
+                    }
+                    else
+                    if (SymbolTable.Instance().FindSymbol(parentName + Identifier) == SymbolTable.SymbolType.boolarrayvariable)
+                    {
+                        result = ParseAssignmentToArrayElement(Identifier, parentNode, parentName);
                     }
                     else
                     {

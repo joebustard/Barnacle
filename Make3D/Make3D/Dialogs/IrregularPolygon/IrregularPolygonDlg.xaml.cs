@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -73,6 +74,22 @@ namespace Make3D.Dialogs
 
                     NotifyPropertyChanged();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public List<PolyPoint> Points
+        {
+            get
+            {
+                return points;
+            }
+            set
+            {
+                if (value != points)
+                {
+                    points = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -198,10 +215,10 @@ namespace Make3D.Dialogs
             ln.Stroke = br;
             ln.StrokeThickness = 6;
             ln.Fill = br;
-            ln.X1 = points[i].Point.X;
-            ln.Y1 = points[i].Point.Y;
-            ln.X2 = points[v].Point.X;
-            ln.Y2 = points[v].Point.Y;
+            ln.X1 = points[i].X;
+            ln.Y1 = points[i].Y;
+            ln.X2 = points[v].X;
+            ln.Y2 = points[v].Y;
             ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
             MainCanvas.Children.Add(ln);
         }
@@ -275,8 +292,8 @@ namespace Make3D.Dialogs
                 double oy = double.NaN;
                 if (selectedPoint != -1)
                 {
-                    ox = points[selectedPoint].Point.X;
-                    oy = points[selectedPoint].Point.Y;
+                    ox = points[selectedPoint].X;
+                    oy = points[selectedPoint].Y;
                 }
 
                 double rad = 3;
@@ -345,9 +362,9 @@ namespace Make3D.Dialogs
             double top = 0;
             for (int i = 0; i < points.Count; i++)
             {
-                if (points[i].Point.Y > top)
+                if (points[i].Y > top)
                 {
-                    top = points[i].Point.Y;
+                    top = points[i].Y;
                 }
             }
             for (int i = 0; i < points.Count; i++)
@@ -359,8 +376,8 @@ namespace Make3D.Dialogs
                 }
                 else
                 {
-                    double x = ToMM(points[i].Point.X);
-                    double y = ToMM(top - points[i].Point.Y);
+                    double x = ToMM(points[i].X);
+                    double y = ToMM(top - points[i].Y);
                     tmp.Insert(0, new System.Windows.Point(x, y));
                 }
             }
@@ -435,7 +452,7 @@ namespace Make3D.Dialogs
             String s = "";
             for (int i = 0; i < points.Count; i++)
             {
-                s += points[i].Point.X.ToString() + "," + points[i].Point.Y.ToString();
+                s += points[i].X.ToString() + "," + points[i].Y.ToString();
                 if (i < points.Count - 1)
                 {
                     s += ",";
@@ -461,12 +478,12 @@ namespace Make3D.Dialogs
                 if (localImage == null)
                 {
                     // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(points[i].Point.X, top - points[i].Point.Y));
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
                 else
                 {
-                    double x = ToMM(points[i].Point.X);
-                    double y = ToMM(top - points[i].Point.Y);
+                    double x = ToMM(points[i].X);
+                    double y = ToMM(top - points[i].Y);
                     tmp.Insert(0, new System.Windows.Point(x, y));
                 }
             }
@@ -536,6 +553,7 @@ namespace Make3D.Dialogs
             points.Add(new PolyPoint(100, 10));
             points.Add(new PolyPoint(100, 100));
             points.Add(new PolyPoint(10, 100));
+            SetPointIds();
         }
 
         private ContextMenu LineMenu()
@@ -557,7 +575,7 @@ namespace Make3D.Dialogs
                 System.Windows.Point position = e.GetPosition(MainCanvas);
                 for (int i = 0; i < points.Count; i++)
                 {
-                    if (points[i].Point.X == ln.X1 && points[i].Point.Y == ln.Y1)
+                    if (points[i].X == ln.X1 && points[i].Y == ln.Y1)
                     {
                         found = i;
                         break;
@@ -568,10 +586,16 @@ namespace Make3D.Dialogs
                     if (found < points.Count - 1)
                     {
                         points.Insert(found + 1, new PolyPoint(position));
+                        SetPointIds();
+                        PointGrid.ItemsSource = Points;
+                        CollectionViewSource.GetDefaultView(Points).Refresh();
                     }
                     else
                     {
-                        points.Add( new PolyPoint(position));
+                        points.Add(new PolyPoint(position));
+                        SetPointIds();
+                        PointGrid.ItemsSource = Points;
+                        CollectionViewSource.GetDefaultView(Points).Refresh();
                     }
                 }
             }
@@ -640,7 +664,8 @@ namespace Make3D.Dialogs
             PositionLabel.Content = $"({position.X},{position.Y})";
             if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
             {
-                points[selectedPoint].Point = position;
+                points[selectedPoint].X = position.X;
+                points[selectedPoint].Y = position.Y;
                 GenerateFaces();
             }
             else
@@ -670,28 +695,28 @@ namespace Make3D.Dialogs
                     case Key.Left:
                     case Key.L:
                         {
-                            points[selectedPoint].Point += new Vector(-d, 0);
+                            points[selectedPoint].X -= d;
                         }
                         break;
 
                     case Key.Right:
                     case Key.R:
                         {
-                            points[selectedPoint].Point += new Vector(d, 0);
+                            points[selectedPoint].X += d;
                         }
                         break;
 
                     case Key.U:
                     case Key.Up:
                         {
-                            points[selectedPoint].Point += new Vector(0, -d);
+                            points[selectedPoint].Y -= d;
                         }
                         break;
 
                     case Key.D:
                     case Key.Down:
                         {
-                            points[selectedPoint].Point += new Vector(0, d);
+                            points[selectedPoint].Y += d;
                         }
                         break;
                 }
@@ -726,6 +751,14 @@ namespace Make3D.Dialogs
             MainScale.ScaleY = scale;
             GenerateFaces();
             UpdateDisplay();
+        }
+
+        private void SetPointIds()
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                points[i].Id = i + 1;
+            }
         }
 
         private double ToMM(double x)
