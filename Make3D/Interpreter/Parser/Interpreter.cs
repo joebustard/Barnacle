@@ -20,6 +20,7 @@ namespace ScriptLanguage
                 "double",
                 "else",
                 "exit",
+                "floor",
                 "function",
                 "for",
                 "if",
@@ -1553,6 +1554,11 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "floor":
+                    {
+                        result = ParseFloorStatement(parentNode, parentName);
+                    }
+                    break;
                 case "for":
                     {
                         result = ParseForStatement(parentNode, parentName);
@@ -3358,7 +3364,56 @@ namespace ScriptLanguage
             }
             return result;
         }
+        private bool ParseFloorStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
 
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+                    String ExternalVarName = Identifier;
+                    Identifier = parentName + Identifier;                   //
+
+                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Undefined variable " + Identifier);
+                    }
+                    else
+                    {
+
+                        SolidFloor asn = new SolidFloor();
+                        asn.VariableName = Identifier;
+                        asn.ExternalName = ExternalVarName;
+
+
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.SemiColon)
+                        {
+                            ReportSyntaxError("Rotate Expected ;");
+                        }
+                        else
+                        {
+                           
+                                parentNode.AddStatement(asn);
+                                result = true;
+                            }
+
+                        }
+                    }
+                }
+
+                else
+                {
+                    ReportSyntaxError("Floor Expected Solid Identifier");
+                }
+            }
+            return result;
+        }
         private bool ParseSetColourStatement(CCompoundNode parentNode, String parentName)
         {
             bool result = false;

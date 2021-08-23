@@ -237,7 +237,11 @@ namespace CSGLib
             int signFace1Vert1, signFace1Vert2, signFace1Vert3, signFace2Vert1, signFace2Vert2, signFace2Vert3;
             int numFacesBefore = NumFaces;
             int numFacesStart = NumFaces + obj.NumFaces;
-
+            int facesLimit = 50 * numFacesStart;
+            if ( facesLimit > 1000000)
+            {
+                facesLimit = 1000000;
+            }
             //if the objects bounds overlap...
             if (_Bound.Overlap(obj._Bound))
             {
@@ -311,7 +315,8 @@ namespace CSGLib
                                             SplitFace(i, segment1, segment2);
 
                                             //prevent from infinite loop (with a loss of faces...)
-                                            if (numFacesStart * 100 < NumFaces)
+                                            //                                            if (numFacesStart * 100 < NumFaces)
+                                            if (NumFaces > facesLimit)
                                             {
                                                 //Logger.Log("possible infinite loop situation: terminating faces split");
                                                 return false;

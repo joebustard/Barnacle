@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,7 @@ namespace Make3D.Dialogs
         private double height = 10;
         private bool hollowShape;
         private BitmapImage localImage;
-        private List<PolyPoint> points;
+        private ObservableCollection<PolyPoint> points;
         private double scale;
         private int selectedPoint;
         private bool showOrtho;
@@ -34,7 +35,7 @@ namespace Make3D.Dialogs
         public PlateletDlg()
         {
             InitializeComponent();
-            points = new List<PolyPoint>();
+            points = new ObservableCollection<PolyPoint>();
 
             selectedPoint = -1;
             scale = 1.0;
@@ -78,7 +79,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        public List<PolyPoint> Points
+        public ObservableCollection<PolyPoint> Points
         {
             get
             {
@@ -799,11 +800,16 @@ namespace Make3D.Dialogs
             if (s != "")
             {
                 string[] words = s.Split(',');
-                points.Clear();
+                Points.Clear();
+                ObservableCollection<PolyPoint> ptmp = new ObservableCollection<PolyPoint>();
+                int j = 0;
                 for (int i = 0; i < words.GetLength(0); i += 2)
                 {
-                    points.Add(new PolyPoint(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
+                    ptmp.Add(new PolyPoint(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
+                    ptmp[j].Id = i + 1;
+                    j++;
                 }
+                Points = ptmp;
             }
             UpdateCameraPos();
             MyModelGroup.Children.Clear();

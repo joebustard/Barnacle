@@ -74,6 +74,7 @@ namespace ScriptLanguage
                                     result = PullDouble(out zr);
                                     if (result)
                                     {
+                                        Script.ResultArtefacts[objectIndex].CalcScale(false);
                                         Scale3D sc = Script.ResultArtefacts[objectIndex].Scale;
                                         if (xr > 0 && yr > 0 && zr > 0 && sc.X > 0 && sc.Y > 0 && sc.Z > 0)
                                         {
