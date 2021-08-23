@@ -62,7 +62,7 @@ namespace ScriptLanguage
                             {
                                 int arrayIndex = sti.IntValue;
 
-                                AssignTopOfStackToVar(_VariableName, arrayIndex);
+                                result = AssignTopOfStackToVar(_VariableName, arrayIndex);
                             }
                         }
                     }
@@ -102,58 +102,55 @@ namespace ScriptLanguage
         private bool AssignTopOfStackToVar(string VariableName, int arrayIndex)
         {
             bool result = false;
-            StackItem sti = ExecutionStack.Instance().Pull();
-            if (sti != null)
+            ArraySymbol sym = SymbolTable.Instance().FindArraySymbol(VariableName);
+            if (arrayIndex < 0 || arrayIndex >= sym.Array.Length)
             {
-                switch (sti.MyType)
+                Log.Instance().AddEntry("Run Time Error : Array index out of bounds");
+            }
+            else
+            {
+                StackItem sti = ExecutionStack.Instance().Pull();
+                if (sti != null)
                 {
-                    case StackItem.ItemType.ival:
-                        {
-                            Symbol sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.intvariable);
-                            if (sym != null)
+                    switch (sti.MyType)
+                    {
+                        case StackItem.ItemType.ival:
                             {
-                                sym.IntValue = sti.IntValue;
-                                result = true;
-                            }
-                            else
-                            {
-                                sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.doublevariable);
-                                if (sym != null)
+                                if (sym.ItemType == SymbolTable.SymbolType.intarrayvariable)
                                 {
-                                    sym.DoubleValue = (double)sti.IntValue;
+                                    sym.Array.Set(arrayIndex, sti.IntValue);
                                     result = true;
                                 }
                                 else
+                                if (sym.ItemType == SymbolTable.SymbolType.doublearrayvariable)
                                 {
-                                    sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.solidvariable);
-                                    if (sym != null)
-                                    {
-                                        sym.SolidValue = (int)sti.IntValue;
-                                        result = true;
-                                    }
-                                    else
-                                    {
-                                        Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
-                                    }
+                                    sym.Array.Set(arrayIndex, (double)sti.IntValue);
+                                    result = true;
                                 }
                             }
-                        }
-                        break;
+                            break;
 
-                    case StackItem.ItemType.dval:
-                        {
-                            Symbol sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.doublevariable);
-                            if (sym != null)
+                        case StackItem.ItemType.dval:
                             {
-                                sym.DoubleValue = sti.DoubleValue;
-                                result = true;
-                            }
-                            else
-                            {
-                                sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.intvariable);
-                                if (sym != null)
+                                if (sym.ItemType == SymbolTable.SymbolType.doublearrayvariable)
                                 {
-                                    sym.IntValue = (int)Math.Floor(sti.DoubleValue);
+                                    sym.Array.Set(arrayIndex, sti.DoubleValue);
+                                    result = true;
+                                }
+                                else
+                                 if (sym.ItemType == SymbolTable.SymbolType.intarrayvariable)
+                                {
+                                    sym.Array.Set(arrayIndex, (double)sti.IntValue);
+                                    result = true;
+                                }
+                            }
+                            break;
+
+                        case StackItem.ItemType.bval:
+                            {
+                                if (sym.ItemType == SymbolTable.SymbolType.boolarrayvariable)
+                                {
+                                    sym.Array.Set(arrayIndex, sti.BooleanValue);
                                     result = true;
                                 }
                                 else
@@ -161,69 +158,50 @@ namespace ScriptLanguage
                                     Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                                 }
                             }
-                        }
-                        break;
+                            break;
 
-                    case StackItem.ItemType.bval:
-                        {
-                            Symbol sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.boolarrayvariable);
-                            if (sym != null)
+                        case StackItem.ItemType.sval:
                             {
-                                // ************************************* WRONG *********************/
-                                sym.BooleanValue = sti.BooleanValue;
-                                result = true;
+                                if (sym.ItemType == SymbolTable.SymbolType.stringarrayvariable)
+                                {
+                                    sym.Array.Set(arrayIndex, sti.StringValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
                             }
-                            else
-                            {
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
-                            }
-                        }
-                        break;
+                            break;
 
-                    case StackItem.ItemType.sval:
-                        {
-                            Symbol sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.stringvariable);
-                            if (sym != null)
+                        case StackItem.ItemType.hval:
                             {
-                                sym.StringValue = sti.StringValue;
-                                result = true;
+                                if (sym.ItemType == SymbolTable.SymbolType.handlearrayvariable)
+                                {
+                                    sym.Array.Set(arrayIndex, sti.HandleValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
                             }
-                            else
-                            {
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
-                            }
-                        }
-                        break;
+                            break;
 
-                    case StackItem.ItemType.hval:
-                        {
-                            Symbol sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.handlevariable);
-                            if (sym != null)
+                        case StackItem.ItemType.sldval:
                             {
-                                sym.HandleValue = sti.HandleValue;
-                                result = true;
+                                if (sym.ItemType == SymbolTable.SymbolType.solidarrayvariable)
+                                {
+                                    sym.Array.Set(arrayIndex, sti.SolidValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
                             }
-                            else
-                            {
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
-                            }
-                        }
-                        break;
-
-                    case StackItem.ItemType.sldval:
-                        {
-                            Symbol sym = SymbolTable.Instance().FindSymbol(VariableName, SymbolTable.SymbolType.solidvariable);
-                            if (sym != null)
-                            {
-                                sym.SolidValue = sti.SolidValue;
-                                result = true;
-                            }
-                            else
-                            {
-                                Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
-                            }
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
             return result;

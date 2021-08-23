@@ -32,6 +32,11 @@ namespace ScriptLanguage
             handlevariable,
             solidvariable,
             boolarrayvariable,
+            intarrayvariable,
+            doublearrayvariable,
+            stringarrayvariable,
+            handlearrayvariable,
+            solidarrayvariable,
             structname
         }
 
@@ -42,6 +47,16 @@ namespace ScriptLanguage
                 Singleton = new SymbolTable();
             }
             return Singleton;
+        }
+
+        public Symbol AddArraySymbol(string strName, SymbolType symbolType)
+        {
+            ArraySymbol sym = new ArraySymbol();
+            sym.Name = strName;
+            sym.ItemType = symbolType;
+            sym.SymbolType = symbolType;
+            Symbols.Add(sym);
+            return sym;
         }
 
         public Symbol AddStructSymbol(StructSymbol sym)
@@ -73,6 +88,21 @@ namespace ScriptLanguage
         public void Clear()
         {
             Symbols.Clear();
+        }
+
+        public ArraySymbol FindArraySymbol(string strName)
+        {
+            Symbol result = null;
+            foreach (Symbol sym in Symbols)
+            {
+                if ((sym.Name.ToLower() == strName.ToLower()) &&
+                    (sym is ArraySymbol))
+                {
+                    result = sym;
+                    break;
+                }
+            }
+            return (ArraySymbol)result;
         }
 
         public SymbolType FindSymbol(string strName)

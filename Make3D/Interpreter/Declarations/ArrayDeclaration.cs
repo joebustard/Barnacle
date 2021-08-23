@@ -16,7 +16,10 @@ namespace ScriptLanguage
         {
             DeclarationType = "Array";
             dimensions = null;
+            ActualSymbol = null;
         }
+
+        public Symbol ActualSymbol { get; set; }
 
         public ExpressionNode Dimensions
         {
@@ -28,6 +31,25 @@ namespace ScriptLanguage
         {
             get { return itemType; }
             set { itemType = value; }
+        }
+
+        public override bool Execute()
+        {
+            bool res = false;
+            if (ActualSymbol != null)
+            {
+                int dim = 0;
+                if (EvalExpression(dimensions, ref dim, "Dimensions"))
+                {
+                    // tell the symbol how big the array should be
+                    ActualSymbol.SetSize(dim);
+                    res = true;
+                }
+                else
+                {
+                }
+            }
+            return res;
         }
 
         public override String ToRichText()
@@ -54,12 +76,45 @@ namespace ScriptLanguage
             return result;
         }
 
+        private bool EvalExpression(ExpressionNode exp, ref int x, string v)
+        {
+            bool result = exp.Execute();
+            if (result)
+            {
+                result = false;
+                StackItem sti = ExecutionStack.Instance().Pull();
+                if (sti != null)
+                {
+                    if (sti.MyType == StackItem.ItemType.ival)
+                    {
+                        x = sti.IntValue;
+                        result = true;
+                    }
+                    else if (sti.MyType == StackItem.ItemType.dval)
+                    {
+                        x = (int)sti.DoubleValue;
+                        result = true;
+                    }
+                }
+            }
+            if (!result)
+            {
+                Log.Instance().AddEntry("Array : " + v + " expression error");
+            }
+            return result;
+        }
+
         private string GetTypeName()
         {
             string r = "???";
             switch (itemType)
             {
                 case SymbolTable.SymbolType.boolarrayvariable: r = "Bool"; break;
+                case SymbolTable.SymbolType.intarrayvariable: r = "Int"; break;
+                case SymbolTable.SymbolType.doublearrayvariable: r = "Double"; break;
+                case SymbolTable.SymbolType.stringarrayvariable: r = "String"; break;
+                case SymbolTable.SymbolType.handlearrayvariable: r = "Handle"; break;
+                case SymbolTable.SymbolType.solidarrayvariable: r = "Solid"; break;
             }
             return r;
         }

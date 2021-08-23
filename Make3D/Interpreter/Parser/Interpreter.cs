@@ -47,7 +47,9 @@ namespace ScriptLanguage
                 "atan",
                 "cos",
                 "degrees",
+                "difference",
                 "inputstring",
+                "intersection",
                 "len",
                 "make",
                 "makestadium",
@@ -65,6 +67,7 @@ namespace ScriptLanguage
                 "trim",
                 "trimleft",
                 "trimright",
+                "union",
                 "val"
             };
         }
@@ -348,6 +351,123 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private void ParseArrayDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, ref Tokeniser.TokenType tokenType, SymbolTable.SymbolType arrayType)
+        {
+            ExpressionNode exp = ParseExpressionNode(parentName);
+            if (exp != null)
+            {
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (token == "]")
+                    {
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType == Tokeniser.TokenType.Identifier)
+                            {
+                                //
+                                // To avoid local variable names clashing with other variables
+                                // we prefix them with the parent [procedures name
+                                //
+                                String strVarName = token;
+                                token = parentName + token;
+                                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                                {
+                                    ReportSyntaxError("Duplicate variable name");
+                                }
+                                else
+                                {
+                                    Symbol sym = parentNode.AddArraySymbol(token, arrayType);
+
+                                    ArrayDeclarationNode node = new ArrayDeclarationNode();
+                                    node.VarName = strVarName;
+                                    node.ItemType = arrayType;
+                                    node.Dimensions = exp;
+                                    node.ActualSymbol = sym;
+                                    node.IsInLibrary = tokeniser.InIncludeFile();
+                                    parentNode.AddStatement(node);
+
+                                    result = CheckForSemiColon();
+                                    if (!result)
+                                    {
+                                        ReportSyntaxError("Expected ;");
+                                    }
+                                }
+                            }
+                            else
+                                ReportSyntaxError("Expected variable name");
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected ]");
+                }
+            }
+            else
+            {
+                ReportSyntaxError("Expected size expression");
+            }
+        }
+
+        private ExpressionNode ParseArrayVariableNode(String strName, String parentName)
+        {
+            ExpressionNode exp = null;
+
+            ExpressionNode indexExp = ParseExpressionNode(parentName);
+            if (indexExp != null)
+            {
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                if (FetchToken(out token, out tokenType) == true)
+                {
+                    if (token != "]")
+                    {
+                        ReportSyntaxError("Expected ]");
+                    }
+                    else
+                    {
+                        //
+                        // Check for local variable
+                        //
+                        String ExternalName = strName;
+                        String strTarget = parentName + strName;
+
+                        ArraySymbol arsym = SymbolTable.Instance().FindArraySymbol(strTarget);
+                        if (arsym != null)
+                        {
+                            ArrayVariableNode vn = new ArrayVariableNode();
+                            vn.Name = strTarget;
+                            vn.ExternalName = ExternalName;
+                            vn.Symbol = arsym;
+                            vn.IndexExpression = indexExp;
+                            exp = vn;
+                        }
+                        else
+                        {
+                            //
+                            // Try to match up with a global
+                            //
+                            ArraySymbol glsym = SymbolTable.Instance().FindArraySymbol(strTarget);
+                            if (glsym != null)
+                            {
+                                ArrayVariableNode vn = new ArrayVariableNode();
+                                vn.Name = strTarget;
+                                vn.Symbol = glsym;
+                                vn.ExternalName = ExternalName;
+                                vn.IndexExpression = indexExp;
+                                exp = vn;
+                            }
+                            else
+                            {
+                                ReportSyntaxError("Unidentified variable " + strName);
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
         private bool ParseAssignment(String Identifier, CCompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -547,59 +667,7 @@ namespace ScriptLanguage
 
         private void ParseBoolArrayDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
         {
-            ExpressionNode exp = ParseExpressionNode(parentName);
-            if (exp != null)
-            {
-                if (FetchToken(out token, out tokenType) == true)
-                {
-                    if (token == "]")
-                    {
-                        if (FetchToken(out token, out tokenType) == true)
-                        {
-                            if (tokenType == Tokeniser.TokenType.Identifier)
-                            {
-                                //
-                                // To avoid local variable names clashing with other variables
-                                // we prefix them with the parent [procedures name
-                                //
-                                String strVarName = token;
-                                token = parentName + token;
-                                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                                {
-                                    ReportSyntaxError("Duplicate variable name");
-                                }
-                                else
-                                {
-                                    ArrayDeclarationNode node = new ArrayDeclarationNode();
-                                    node.VarName = strVarName;
-                                    node.ItemType = SymbolTable.SymbolType.boolarrayvariable;
-                                    node.Dimensions = exp;
-                                    node.IsInLibrary = tokeniser.InIncludeFile();
-                                    parentNode.AddStatement(node);
-
-                                    parentNode.AddSymbol(token, SymbolTable.SymbolType.boolarrayvariable);
-
-                                    result = CheckForSemiColon();
-                                    if (!result)
-                                    {
-                                        ReportSyntaxError("Bool expected ;");
-                                    }
-                                }
-                            }
-                            else
-                                ReportSyntaxError("Expected variable name");
-                        }
-                    }
-                }
-                else
-                {
-                    ReportSyntaxError("Expected ]");
-                }
-            }
-            else
-            {
-                ReportSyntaxError("Expected size expression");
-            }
+            ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.boolarrayvariable);
         }
 
         private bool ParseBoolStatement(CCompoundNode parentNode, String parentName)
@@ -616,7 +684,7 @@ namespace ScriptLanguage
                 if (token == "[")
                 {
                     // array
-                    ParseBoolArrayDeclaration(parentNode, parentName, ref result, ref token, tokenType);
+                    ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.boolarrayvariable);
                 }
                 else
                 {
@@ -827,6 +895,29 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseDifferenceFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Difference expected ,");
+                }
+                else
+                {
+                    ExpressionNode rightSolid = ParseExpressionNode(parentName);
+                    if (rightSolid != null)
+                    {
+                        CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupdifference");
+                        exp = mn;
+                    }
+                }
+            }
+            return exp;
+        }
+
         private bool ParseDoubleStatement(CCompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -838,41 +929,48 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-                    String strVarName = token;
-                    token = parentName + token;
-
-                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    // array
+                    ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.doublearrayvariable);
+                }
+                else
+                {
+                    if (tokenType == Tokeniser.TokenType.Identifier)
                     {
-                        ReportSyntaxError("Duplicate variable name");
-                    }
-                    else
-                    {
-                        DoubleDeclarationNode node = new DoubleDeclarationNode();
-                        node.VarName = strVarName;
-                        node.IsInLibrary = tokeniser.InIncludeFile();
-                        parentNode.AddStatement(node);
+                        //
+                        // To avoid local variable names clashing with other variables
+                        // we prefix them with the parent [procedures name
+                        //
+                        String strVarName = token;
+                        token = parentName + token;
 
-                        parentNode.AddSymbol(token, SymbolTable.SymbolType.doublevariable);
-                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                         {
-                            result = CheckForSemiColon();
-                            if (!result)
+                            ReportSyntaxError("Duplicate variable name");
+                        }
+                        else
+                        {
+                            DoubleDeclarationNode node = new DoubleDeclarationNode();
+                            node.VarName = strVarName;
+                            node.IsInLibrary = tokeniser.InIncludeFile();
+                            parentNode.AddStatement(node);
+
+                            parentNode.AddSymbol(token, SymbolTable.SymbolType.doublevariable);
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
                             {
-                                ReportSyntaxError("Double expected ;");
+                                result = CheckForSemiColon();
+                                if (!result)
+                                {
+                                    ReportSyntaxError("Double expected ;");
+                                }
                             }
                         }
                     }
+                    else
+                        ReportSyntaxError("Expected variable name");
                 }
-                else
-                    ReportSyntaxError("Expected variable name");
             }
-
             return result;
         }
 
@@ -954,6 +1052,11 @@ namespace ScriptLanguage
                             if (tokenType == Tokeniser.TokenType.Dot)
                             {
                                 exp = ParseFieldNode(vname, parentName);
+                            }
+                            else
+                            if (tokenType == Tokeniser.TokenType.OpenSquare)
+                            {
+                                exp = ParseArrayVariableNode(vname, parentName);
                             }
                             else
                             {
@@ -1369,40 +1472,47 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-                    String strVarName = token;
-                    token = parentName + token;
+                    // array
+                    ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.handlearrayvariable);
+                }
+                else
+                {
+                    if (tokenType == Tokeniser.TokenType.Identifier)
+                    {
+                        //
+                        // To avoid local variable names clashing with other variables
+                        // we prefix them with the parent [procedures name
+                        //
+                        String strVarName = token;
+                        token = parentName + token;
 
-                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Duplicate variable name");
-                    }
-                    else
-                    {
-                        HandleDeclarationNode node = new HandleDeclarationNode();
-                        node.VarName = strVarName;
-                        node.IsInLibrary = tokeniser.InIncludeFile();
-                        parentNode.AddStatement(node);
-                        parentNode.AddSymbol(token, SymbolTable.SymbolType.handlevariable);
-                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                         {
-                            result = CheckForSemiColon();
-                            if (!result)
+                            ReportSyntaxError("Duplicate variable name");
+                        }
+                        else
+                        {
+                            HandleDeclarationNode node = new HandleDeclarationNode();
+                            node.VarName = strVarName;
+                            node.IsInLibrary = tokeniser.InIncludeFile();
+                            parentNode.AddStatement(node);
+                            parentNode.AddSymbol(token, SymbolTable.SymbolType.handlevariable);
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
                             {
-                                ReportSyntaxError("Handle expected ;");
+                                result = CheckForSemiColon();
+                                if (!result)
+                                {
+                                    ReportSyntaxError("Handle expected ;");
+                                }
                             }
                         }
                     }
+                    else
+                        ReportSyntaxError("Expected variable name");
                 }
-                else
-                    ReportSyntaxError("Expected variable name");
             }
-
             return result;
         }
 
@@ -1710,6 +1820,29 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseIntersectionFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Intersection expected ,");
+                }
+                else
+                {
+                    ExpressionNode rightSolid = ParseExpressionNode(parentName);
+                    if (rightSolid != null)
+                    {
+                        CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupintersection");
+                        exp = mn;
+                    }
+                }
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseIntrinsicFunction(string functionName, String parentName)
         {
             ExpressionNode exp = null;
@@ -1751,9 +1884,21 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "difference":
+                            {
+                                exp = ParseDifferenceFunction(parentName);
+                            }
+                            break;
+
                         case "inputstring":
                             {
                                 exp = ParseInputStringFunction(parentName);
+                            }
+                            break;
+
+                        case "intersection":
+                            {
+                                exp = ParseIntersectionFunction(parentName);
                             }
                             break;
 
@@ -1865,6 +2010,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "union":
+                            {
+                                exp = ParseUnionFunction(parentName);
+                            }
+                            break;
+
                         case "val":
                             {
                                 exp = GetFunctionNode<ValNode>(parentName);
@@ -1914,40 +2065,47 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-                    String strVarName = token;
-                    token = parentName + token;
+                    // array
+                    ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.intarrayvariable);
+                }
+                else
+                {
+                    if (tokenType == Tokeniser.TokenType.Identifier)
+                    {
+                        //
+                        // To avoid local variable names clashing with other variables
+                        // we prefix them with the parent [procedures name
+                        //
+                        String strVarName = token;
+                        token = parentName + token;
 
-                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Duplicate variable name");
-                    }
-                    else
-                    {
-                        parentNode.AddSymbol(token, SymbolTable.SymbolType.intvariable);
-                        IntDeclarationNode intnode = new IntDeclarationNode();
-                        intnode.IsInLibrary = tokeniser.InIncludeFile();
-                        intnode.VarName = strVarName;
-                        parentNode.AddStatement(intnode);
-                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                         {
-                            result = CheckForSemiColon();
-                            if (!result)
+                            ReportSyntaxError("Duplicate variable name");
+                        }
+                        else
+                        {
+                            parentNode.AddSymbol(token, SymbolTable.SymbolType.intvariable);
+                            IntDeclarationNode intnode = new IntDeclarationNode();
+                            intnode.IsInLibrary = tokeniser.InIncludeFile();
+                            intnode.VarName = strVarName;
+                            parentNode.AddStatement(intnode);
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
                             {
-                                ReportSyntaxError("Int expected ;");
+                                result = CheckForSemiColon();
+                                if (!result)
+                                {
+                                    ReportSyntaxError("Int expected ;");
+                                }
                             }
                         }
                     }
+                    else
+                        ReportSyntaxError("Expected variable name");
                 }
-                else
-                    ReportSyntaxError("Expected variable name");
             }
-
             return result;
         }
 
@@ -3402,40 +3560,47 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-                    String strVarName = token;
-                    token = parentName + token;
+                    // array
+                    ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.solidarrayvariable);
+                }
+                else
+                {
+                    if (tokenType == Tokeniser.TokenType.Identifier)
+                    {
+                        //
+                        // To avoid local variable names clashing with other variables
+                        // we prefix them with the parent [procedures name
+                        //
+                        String strVarName = token;
+                        token = parentName + token;
 
-                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Duplicate variable name");
-                    }
-                    else
-                    {
-                        SolidDeclarationNode node = new SolidDeclarationNode();
-                        node.VarName = strVarName;
-                        node.IsInLibrary = tokeniser.InIncludeFile();
-                        parentNode.AddStatement(node);
-                        parentNode.AddSymbol(token, SymbolTable.SymbolType.solidvariable);
-                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                         {
-                            result = CheckForSemiColon();
-                            if (!result)
+                            ReportSyntaxError("Duplicate variable name");
+                        }
+                        else
+                        {
+                            SolidDeclarationNode node = new SolidDeclarationNode();
+                            node.VarName = strVarName;
+                            node.IsInLibrary = tokeniser.InIncludeFile();
+                            parentNode.AddStatement(node);
+                            parentNode.AddSymbol(token, SymbolTable.SymbolType.solidvariable);
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
                             {
-                                ReportSyntaxError("Solid expected ;");
+                                result = CheckForSemiColon();
+                                if (!result)
+                                {
+                                    ReportSyntaxError("Solid expected ;");
+                                }
                             }
                         }
                     }
+                    else
+                        ReportSyntaxError("Expected variable name");
                 }
-                else
-                    ReportSyntaxError("Expected variable name");
             }
-
             return result;
         }
 
@@ -3910,7 +4075,7 @@ namespace ScriptLanguage
                         result = ParseAssignmentToStruct(Identifier, parentNode, parentName);
                     }
                     else
-                    if (SymbolTable.Instance().FindSymbol(parentName + Identifier) == SymbolTable.SymbolType.boolarrayvariable)
+                    if (SymbolTable.Instance().FindArraySymbol(parentName + Identifier) != null)
                     {
                         result = ParseAssignmentToArrayElement(Identifier, parentNode, parentName);
                     }
@@ -3921,6 +4086,29 @@ namespace ScriptLanguage
                 }
             }
             return result;
+        }
+
+        private ExpressionNode ParseUnionFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Union expected ,");
+                }
+                else
+                {
+                    ExpressionNode rightSolid = ParseExpressionNode(parentName);
+                    if (rightSolid != null)
+                    {
+                        CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupunion");
+                        exp = mn;
+                    }
+                }
+            }
+            return exp;
         }
 
         private ExpressionNode ParseUserFunctionCall(string Identifier, string parentName)
