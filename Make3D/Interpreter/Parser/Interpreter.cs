@@ -16,6 +16,7 @@ namespace ScriptLanguage
             {
                 "bool",
                 "chainscript",
+                "delete",
                 "do",
                 "double",
                 "else",
@@ -1541,7 +1542,11 @@ namespace ScriptLanguage
                         result = ParseBoolStatement(parentNode, parentName);
                     }
                     break;
-
+                case "delete":
+                    {
+                        result = ParseDeleteStatement(parentNode, parentName);
+                    }
+                    break;
                 case "double":
                     {
                         result = ParseDoubleStatement(parentNode, parentName);
@@ -3394,7 +3399,7 @@ namespace ScriptLanguage
                         {
                             if (tokenType != Tokeniser.TokenType.SemiColon)
                         {
-                            ReportSyntaxError("Rotate Expected ;");
+                            ReportSyntaxError("Floor Expected ;");
                         }
                         else
                         {
@@ -3410,6 +3415,57 @@ namespace ScriptLanguage
                 else
                 {
                     ReportSyntaxError("Floor Expected Solid Identifier");
+                }
+            }
+            return result;
+        }
+
+        private bool ParseDeleteStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+                    String ExternalVarName = Identifier;
+                    Identifier = parentName + Identifier;                   //
+
+                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Undefined variable " + Identifier);
+                    }
+                    else
+                    {
+
+                        SolidDelete asn = new SolidDelete();
+                        asn.VariableName = Identifier;
+                        asn.ExternalName = ExternalVarName;
+
+
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.SemiColon)
+                            {
+                                ReportSyntaxError("Delete Expected ;");
+                            }
+                            else
+                            {
+
+                                parentNode.AddStatement(asn);
+                                result = true;
+                            }
+
+                        }
+                    }
+                }
+
+                else
+                {
+                    ReportSyntaxError("Delete Expected Solid Identifier");
                 }
             }
             return result;

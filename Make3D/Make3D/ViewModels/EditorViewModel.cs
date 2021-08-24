@@ -931,11 +931,14 @@ namespace Make3D.ViewModels
                 {
                     foreach (Object3D ob in obs)
                     {
-                        if (Document.ContainsName(ob.Name))
+                        if (ob != null)
                         {
-                            ob.Name = Document.DuplicateName(ob.Name);
+                            if (Document.ContainsName(ob.Name))
+                            {
+                                ob.Name = Document.DuplicateName(ob.Name);
+                            }
+                            document.Content.Add(ob);
                         }
-                        document.Content.Add(ob);
                     }
                 }
             }

@@ -211,10 +211,13 @@ program ""Name""
             totalFaces = 0;
             foreach (Object3D ob in content)
             {
-                totalFaces += ob.TotalFaces;
+                if (ob != null)
+                {
+                    totalFaces += ob.TotalFaces;
 
-                GeometryModel3D gm = GetMesh(ob);
-                modelItems.Add(gm);
+                    GeometryModel3D gm = GetMesh(ob);
+                    modelItems.Add(gm);
+                }
             }
 
             NotifyPropertyChanged("ModelItems");

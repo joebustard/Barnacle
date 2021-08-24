@@ -69,6 +69,7 @@
     <Compile Include="SolidFunctions\MakeTube.cs" />
     <Compile Include="SolidFunctions\CSGNode.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />
+    <Compile Include="SolidStatements\SolidDelete.cs" />
     <Compile Include="SolidStatements\SolidFloor.cs" />
     <Compile Include="SolidStatements\SolidNameNode.cs" />
     <Compile Include="SolidStatements\SolidPosition.cs" />
