@@ -104,6 +104,9 @@
     <Compile Include="Dialogs\BezierSurface\ControlPointManager.cs" />
     <Compile Include="Dialogs\BezierSurface\Patch.cs" />
     <Compile Include="Dialogs\BezierSurface\Surface.cs" />
+    <Compile Include="Dialogs\BiCorn\BicornDlg.xaml.cs">
+      <DependentUpon>BicornDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
@@ -317,6 +320,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\BezierSurface\BezierSurfaceDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\BiCorn\BicornDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

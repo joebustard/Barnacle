@@ -1014,7 +1014,7 @@ namespace Make3D.ViewModels
         private void CreateDecorativeToolMenu()
         {
             decorativeToolsToShow = new List<ToolDef>();
-
+            decorativeToolsToShow.Add(new ToolDef("Bicorn", true, "Bicorn", "Create a bicorn shape."));
             NotifyPropertyChanged("DecorativeToolsToShow");
         }
 

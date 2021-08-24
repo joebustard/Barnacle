@@ -41,6 +41,10 @@ namespace Make3D.Models
                     res = new TorusDialog();
                     break;
 
+                case "Bicorn":
+                    res = new BicornDlg();
+                    break;
+
                 case "SpurGear":
                     res = new SpurGearDialog();
                     break;
