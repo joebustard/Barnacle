@@ -172,14 +172,15 @@
                         <Custom:RibbonButton x:Name="SameBoth" Label="All Same" Command="{Binding SizeCommand}" CommandParameter="SameAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same size as the first selected one" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="Group" Label="Group" SmallImageSource="/Make3D;component/Images/Buttons/group.png">
-                        <Custom:RibbonButton x:Name="GroupUnion" Label="Group Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupUnion" Label="Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
 
-                        <Custom:RibbonButton x:Name="GroupDifference" Label="Group Difference" Command="{Binding GroupCommand}" CommandParameter="GroupDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupDifference" Label="Difference" Command="{Binding GroupCommand}" CommandParameter="GroupDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
 
-                        <Custom:RibbonButton x:Name="GroupReverseDifference" Label="Group Reverse Difference" Command="{Binding GroupCommand}" CommandParameter="GroupReverseDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupReverseDifference" Label="Reverse Difference" Command="{Binding GroupCommand}" CommandParameter="GroupReverseDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
 
-                        <Custom:RibbonButton x:Name="GroupIntersection" Label="Group Intersection" Command="{Binding GroupCommand}" CommandParameter="GroupIntersection" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
-
+                        <Custom:RibbonButton x:Name="GroupIntersection" Label="Intersection" Command="{Binding GroupCommand}" CommandParameter="GroupIntersection" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupCutOut" Label="Cut Out" Command="{Binding GroupCommand}" CommandParameter="GroupCut" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Cut the second part from the first but keep both." />
+                        <Custom:RibbonSeparator />
                         <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
                         <!--
                         <Custom:RibbonSeparator />

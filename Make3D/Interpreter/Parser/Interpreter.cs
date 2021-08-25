@@ -15,7 +15,7 @@ namespace ScriptLanguage
             keywords = new String[]
             {
                 "bool",
-                "chainscript",
+
                 "delete",
                 "do",
                 "double",
@@ -48,6 +48,7 @@ namespace ScriptLanguage
                 "abs",
                 "atan",
                 "cos",
+                "cutout",
                 "degrees",
                 "difference",
                 "inputstring",
@@ -409,6 +410,94 @@ namespace ScriptLanguage
             {
                 ReportSyntaxError("Expected size expression");
             }
+        }
+
+        private bool ParseArrayParam(SymbolTable.SymbolType symbolType, ProcedureNode proc, string strFunctionName)
+        {
+            bool result = false;
+            // convert the type into equivalent array
+            switch (symbolType)
+            {
+                case SymbolTable.SymbolType.boolvariable:
+                    {
+                        symbolType = SymbolTable.SymbolType.boolarrayvariable;
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.intvariable:
+                    {
+                        symbolType = SymbolTable.SymbolType.intarrayvariable;
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.doublevariable:
+                    {
+                        symbolType = SymbolTable.SymbolType.doublearrayvariable;
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.stringvariable:
+                    {
+                        symbolType = SymbolTable.SymbolType.stringarrayvariable;
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.solidvariable:
+                    {
+                        symbolType = SymbolTable.SymbolType.solidarrayvariable;
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.handlevariable:
+                    {
+                        symbolType = SymbolTable.SymbolType.handlearrayvariable;
+                    }
+                    break;
+            }
+            String token = "";
+            // we already know the type so look for a name
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (token == "]")
+                {
+                    if (FetchToken(out token, out tokenType) && tokenType == Tokeniser.TokenType.Identifier)
+                    {
+                        String strParamName = strFunctionName + token;
+                        String ExternalName = token;
+                        // if its not a duplicate then add it to the symbol table
+                        if (SymbolTable.Instance().FindSymbol(strParamName) == SymbolTable.SymbolType.unknown)
+                        {
+                            Symbol Symbol = SymbolTable.Instance().AddArraySymbol(strParamName, symbolType);
+                            proc.AddParameter(strParamName, symbolType);
+
+                            result = true;
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Duplicate parameter name");
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Expected parameter name");
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("]");
+                }
+            }
+            return result;
+        }
+
+        private ExpressionNode ParseArraySymbolForCall(string externalName, string parentName, ArraySymbol arrSymbol)
+        {
+            ArraySymbolForCallNode exp = new ArraySymbolForCallNode();
+            exp.ExternalName = externalName;
+            exp.Symbol = arrSymbol;
+            exp.Name = parentName + externalName;
+            return exp;
         }
 
         private ExpressionNode ParseArrayVariableNode(String strName, String parentName)
@@ -897,6 +986,75 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseCutoutFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("Cutout expected ,");
+                }
+                else
+                {
+                    ExpressionNode rightSolid = ParseExpressionNode(parentName);
+                    if (rightSolid != null)
+                    {
+                        CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupcut");
+                        exp = mn;
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private bool ParseDeleteStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+                    String ExternalVarName = Identifier;
+                    Identifier = parentName + Identifier;                   //
+
+                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Undefined variable " + Identifier);
+                    }
+                    else
+                    {
+                        SolidDelete asn = new SolidDelete();
+                        asn.VariableName = Identifier;
+                        asn.ExternalName = ExternalVarName;
+
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.SemiColon)
+                            {
+                                ReportSyntaxError("Delete Expected ;");
+                            }
+                            else
+                            {
+                                parentNode.AddStatement(asn);
+                                result = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Delete Expected Solid Identifier");
+                }
+            }
+            return result;
+        }
+
         private ExpressionNode ParseDifferenceFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -1009,8 +1167,16 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                    tokeniser.PutTokenBack();
-                    exp = ParseExpressionNode(parentName);
+                    sym = SymbolTable.Instance().FindArraySymbol(identifier);
+                    if (sym != null)
+                    {
+                        exp = ParseArraySymbolForCall(token, parentName, sym as ArraySymbol);
+                    }
+                    else
+                    {
+                        tokeniser.PutTokenBack();
+                        exp = ParseExpressionNode(parentName);
+                    }
                 }
             }
             return exp;
@@ -1189,6 +1355,52 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private bool ParseFloorStatement(CCompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (tokenType == Tokeniser.TokenType.Identifier)
+                {
+                    String Identifier = token.ToLower();
+                    String ExternalVarName = Identifier;
+                    Identifier = parentName + Identifier;                   //
+
+                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+                    {
+                        ReportSyntaxError("Undefined variable " + Identifier);
+                    }
+                    else
+                    {
+                        SolidFloor asn = new SolidFloor();
+                        asn.VariableName = Identifier;
+                        asn.ExternalName = ExternalVarName;
+
+                        if (FetchToken(out token, out tokenType) == true)
+                        {
+                            if (tokenType != Tokeniser.TokenType.SemiColon)
+                            {
+                                ReportSyntaxError("Floor Expected ;");
+                            }
+                            else
+                            {
+                                parentNode.AddStatement(asn);
+                                result = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    ReportSyntaxError("Floor Expected Solid Identifier");
+                }
+            }
+            return result;
+        }
+
         private bool ParseForStatement(CCompoundNode parentNode, string parentName)
         {
             bool result = false;
@@ -1201,10 +1413,11 @@ namespace ScriptLanguage
             {
                 if (tokenType == Tokeniser.TokenType.Identifier)
                 {
+                    String localName = token;
                     String strVariableName = parentName + token;                   //
-                    //
-                    // Make sure it has already been declared
-                    //
+                                                                                   //
+                                                                                   // Make sure it has already been declared
+                                                                                   //
                     if (SymbolTable.Instance().FindSymbol(strVariableName) != SymbolTable.SymbolType.unknown)
                     {
                         //
@@ -1241,6 +1454,7 @@ namespace ScriptLanguage
                                                         {
                                                             CForNode fnode = new CForNode();
                                                             fnode.VariableName = strVariableName;
+                                                            fnode.LocalName = localName;
                                                             fnode.StartExpression = StartExpression;
                                                             fnode.EndExpression = EndExpression;
                                                             fnode.Body = comp;
@@ -1265,7 +1479,7 @@ namespace ScriptLanguage
                                                                         {
                                                                             CForNode fnode = new CForNode();
                                                                             fnode.VariableName = strVariableName;
-
+                                                                            fnode.LocalName = localName;
                                                                             fnode.StartExpression = StartExpression;
                                                                             fnode.EndExpression = EndExpression;
                                                                             fnode.Body = comp;
@@ -1327,132 +1541,148 @@ namespace ScriptLanguage
             {
                 if (tokenType == Tokeniser.TokenType.Identifier)
                 {
+                    string typeId = token;
                     //
                     // This token must be a type
                     // ie int, double,bool,string,handle,testtarget
                     //
-                    SymbolTable.SymbolType FunctionType = SymbolTable.SymbolType.unknown;
-                    returnTypeName = TitleCase(token);
-                    switch (returnTypeName)
+                    bool isArray = false;
+                    if (FetchToken(out token, out tokenType) == true)
                     {
-                        case "Int":
-                            {
-                                FunctionType = SymbolTable.SymbolType.intvariable;
-                            }
-                            break;
-
-                        case "Double":
-                            {
-                                FunctionType = SymbolTable.SymbolType.doublevariable;
-                            }
-                            break;
-
-                        case "String":
-                            {
-                                FunctionType = SymbolTable.SymbolType.stringvariable;
-                            }
-                            break;
-
-                        case "Bool":
-                            {
-                                FunctionType = SymbolTable.SymbolType.boolvariable;
-                            }
-                            break;
-
-                        case "Solid":
-                            {
-                                FunctionType = SymbolTable.SymbolType.solidvariable;
-                            }
-                            break;
-
-                        case "Handle":
-                            {
-                                FunctionType = SymbolTable.SymbolType.handlevariable;
-                            }
-                            break;
-                    }
-
-                    if (FunctionType == SymbolTable.SymbolType.unknown)
-                    {
-                        //Have a look to see if its a struct
-                        string tmp = TitleCase(token);
-                        StructDefinition def = StructDefinitiontTable.Instance().FindStruct(tmp);
-                        if (def != null)
+                        if (token == "[")
                         {
-                            FunctionType = SymbolTable.SymbolType.structname;
+                            isArray = true;
+                            if (!FetchToken(out token, out tokenType) || token != "]")
+                            {
+                            }
                         }
-                    }
-
-                    if (FunctionType == SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Function declaration expected return type");
-                    }
-                    else
-                    {
-                        if (FetchToken(out token, out tokenType) == true)
+                        else
                         {
-                            if (tokenType == Tokeniser.TokenType.Identifier)
-                            {
-                                String FunctionName = token;
-                                //
-                                // Should be an open bracket
-                                //
-                                if (FetchToken(out token, out tokenType) == true)
+                            tokeniser.PutTokenBack();
+                        }
+                        SymbolTable.SymbolType FunctionType = SymbolTable.SymbolType.unknown;
+                        returnTypeName = TitleCase(typeId);
+                        switch (returnTypeName)
+                        {
+                            case "Int":
                                 {
-                                    if (tokenType == Tokeniser.TokenType.OpenBracket)
+                                    FunctionType = isArray ? SymbolTable.SymbolType.intarrayvariable : SymbolTable.SymbolType.intvariable;
+                                }
+                                break;
+
+                            case "Double":
+                                {
+                                    FunctionType = isArray ? SymbolTable.SymbolType.doublearrayvariable : SymbolTable.SymbolType.doublevariable;
+                                }
+                                break;
+
+                            case "String":
+                                {
+                                    FunctionType = isArray ? SymbolTable.SymbolType.stringarrayvariable : SymbolTable.SymbolType.stringvariable;
+                                }
+                                break;
+
+                            case "Bool":
+                                {
+                                    FunctionType = isArray ? SymbolTable.SymbolType.boolarrayvariable : SymbolTable.SymbolType.boolvariable;
+                                }
+                                break;
+
+                            case "Solid":
+                                {
+                                    FunctionType = isArray ? SymbolTable.SymbolType.solidarrayvariable : SymbolTable.SymbolType.solidvariable;
+                                }
+                                break;
+
+                            case "Handle":
+                                {
+                                    FunctionType = isArray ? SymbolTable.SymbolType.handlearrayvariable : SymbolTable.SymbolType.handlevariable;
+                                }
+                                break;
+                        }
+
+                        if (FunctionType == SymbolTable.SymbolType.unknown)
+                        {
+                            //Have a look to see if its a struct
+                            string tmp = TitleCase(token);
+                            StructDefinition def = StructDefinitiontTable.Instance().FindStruct(tmp);
+                            if (def != null)
+                            {
+                                FunctionType = SymbolTable.SymbolType.structname;
+                            }
+                        }
+
+                        if (FunctionType == SymbolTable.SymbolType.unknown)
+                        {
+                            ReportSyntaxError("Function declaration expected return type");
+                        }
+                        else
+                        {
+                            if (FetchToken(out token, out tokenType) == true)
+                            {
+                                if (tokenType == Tokeniser.TokenType.Identifier)
+                                {
+                                    String FunctionName = token;
+                                    //
+                                    // Should be an open bracket
+                                    //
+                                    if (FetchToken(out token, out tokenType) == true)
                                     {
-                                        CFunctionNode proc = new CFunctionNode();
-                                        if (ParseProcedureParameters(proc, FunctionName))
+                                        if (tokenType == Tokeniser.TokenType.OpenBracket)
                                         {
-                                            if (FetchToken(out token, out tokenType) == true)
+                                            CFunctionNode proc = new CFunctionNode();
+                                            if (ParseProcedureParameters(proc, FunctionName))
                                             {
-                                                if (tokenType == Tokeniser.TokenType.CloseBracket)
+                                                if (FetchToken(out token, out tokenType) == true)
                                                 {
-                                                    if (FetchToken(out token, out tokenType) == true)
+                                                    if (tokenType == Tokeniser.TokenType.CloseBracket)
                                                     {
-                                                        if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                        if (FetchToken(out token, out tokenType) == true)
                                                         {
-                                                            //
-                                                            // Try parsing the body
-                                                            //
-                                                            CFunctionBodyNode cmp = new CFunctionBodyNode();
-                                                            if (ParseCompoundNode(cmp, FunctionName, false))
+                                                            if (tokenType == Tokeniser.TokenType.OpenCurly)
                                                             {
-                                                                proc.Name = FunctionName;
-                                                                proc.Body = cmp;
-                                                                proc.ReturnType = FunctionType;
-                                                                proc.ReturnTypeName = returnTypeName;
-                                                                proc.IsInLibrary = bInLibrary;
-
-                                                                // It goes in a separate procedures list
                                                                 //
-                                                                FunctionCache.Instance().AddFunction(proc);
-
-                                                                parentNode.AddStatement(proc);
+                                                                // Try parsing the body
                                                                 //
-                                                                // add a reference to the symbol table
-                                                                //
-                                                                SymbolTable.Instance().AddSymbol(FunctionName, SymbolTable.SymbolType.functionname);
+                                                                CFunctionBodyNode cmp = new CFunctionBodyNode();
+                                                                if (ParseCompoundNode(cmp, FunctionName, false))
+                                                                {
+                                                                    proc.Name = FunctionName;
+                                                                    proc.Body = cmp;
+                                                                    proc.ReturnType = FunctionType;
+                                                                    proc.ReturnTypeName = returnTypeName;
+                                                                    proc.IsInLibrary = bInLibrary;
 
-                                                                result = true;
+                                                                    // It goes in a separate procedures list
+                                                                    //
+                                                                    FunctionCache.Instance().AddFunction(proc);
+
+                                                                    parentNode.AddStatement(proc);
+                                                                    //
+                                                                    // add a reference to the symbol table
+                                                                    //
+                                                                    SymbolTable.Instance().AddSymbol(FunctionName, SymbolTable.SymbolType.functionname);
+
+                                                                    result = true;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                ReportSyntaxError("Function declaration expected { but found " + token);
                                                             }
                                                         }
-                                                        else
-                                                        {
-                                                            ReportSyntaxError("Function declaration expected { but found " + token);
-                                                        }
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    ReportSyntaxError("Function declaration expected ) but found " + token);
+                                                    else
+                                                    {
+                                                        ReportSyntaxError("Function declaration expected ) but found " + token);
+                                                    }
                                                 }
                                             }
                                         }
-                                    }
-                                    else
-                                    {
-                                        ReportSyntaxError("Function declaration expected ( but found " + token);
+                                        else
+                                        {
+                                            ReportSyntaxError("Function declaration expected ( but found " + token);
+                                        }
                                     }
                                 }
                             }
@@ -1542,11 +1772,13 @@ namespace ScriptLanguage
                         result = ParseBoolStatement(parentNode, parentName);
                     }
                     break;
+
                 case "delete":
                     {
                         result = ParseDeleteStatement(parentNode, parentName);
                     }
                     break;
+
                 case "double":
                     {
                         result = ParseDoubleStatement(parentNode, parentName);
@@ -1564,6 +1796,7 @@ namespace ScriptLanguage
                         result = ParseFloorStatement(parentNode, parentName);
                     }
                     break;
+
                 case "for":
                     {
                         result = ParseForStatement(parentNode, parentName);
@@ -1886,6 +2119,12 @@ namespace ScriptLanguage
                         case "cos":
                             {
                                 exp = GetFunctionNode<CosNode>(parentName);
+                            }
+                            break;
+
+                        case "cutout":
+                            {
+                                exp = ParseCutoutFunction(parentName);
                             }
                             break;
 
@@ -2535,26 +2774,33 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    String strParamName = strFunctionName + token;
-                    String ExternalName = token;
-                    // if its not a duplicate then add it to the symbol table
-                    if (SymbolTable.Instance().FindSymbol(strParamName) == SymbolTable.SymbolType.unknown)
-                    {
-                        Symbol Symbol = SymbolTable.Instance().AddSymbol(strParamName, symbolType);
-                        proc.AddParameter(strParamName, symbolType);
-
-                        result = true;
-                    }
-                    else
-                    {
-                        ReportSyntaxError("Duplicate parameter name");
-                    }
+                    result = ParseArrayParam(symbolType, proc, strFunctionName);
                 }
                 else
                 {
-                    ReportSyntaxError("Expected parameter name");
+                    if (tokenType == Tokeniser.TokenType.Identifier)
+                    {
+                        String strParamName = strFunctionName + token;
+                        String ExternalName = token;
+                        // if its not a duplicate then add it to the symbol table
+                        if (SymbolTable.Instance().FindSymbol(strParamName) == SymbolTable.SymbolType.unknown)
+                        {
+                            Symbol Symbol = SymbolTable.Instance().AddSymbol(strParamName, symbolType);
+                            proc.AddParameter(strParamName, symbolType);
+
+                            result = true;
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Duplicate parameter name");
+                        }
+                    }
+                    else
+                    {
+                        ReportSyntaxError("Expected parameter name");
+                    }
                 }
             }
 
@@ -3369,107 +3615,7 @@ namespace ScriptLanguage
             }
             return result;
         }
-        private bool ParseFloorStatement(CCompoundNode parentNode, String parentName)
-        {
-            bool result = false;
 
-            String token = "";
-            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
-            if (FetchToken(out token, out tokenType) == true)
-            {
-                if (tokenType == Tokeniser.TokenType.Identifier)
-                {
-                    String Identifier = token.ToLower();
-                    String ExternalVarName = Identifier;
-                    Identifier = parentName + Identifier;                   //
-
-                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Undefined variable " + Identifier);
-                    }
-                    else
-                    {
-
-                        SolidFloor asn = new SolidFloor();
-                        asn.VariableName = Identifier;
-                        asn.ExternalName = ExternalVarName;
-
-
-                        if (FetchToken(out token, out tokenType) == true)
-                        {
-                            if (tokenType != Tokeniser.TokenType.SemiColon)
-                        {
-                            ReportSyntaxError("Floor Expected ;");
-                        }
-                        else
-                        {
-                           
-                                parentNode.AddStatement(asn);
-                                result = true;
-                            }
-
-                        }
-                    }
-                }
-
-                else
-                {
-                    ReportSyntaxError("Floor Expected Solid Identifier");
-                }
-            }
-            return result;
-        }
-
-        private bool ParseDeleteStatement(CCompoundNode parentNode, String parentName)
-        {
-            bool result = false;
-
-            String token = "";
-            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
-            if (FetchToken(out token, out tokenType) == true)
-            {
-                if (tokenType == Tokeniser.TokenType.Identifier)
-                {
-                    String Identifier = token.ToLower();
-                    String ExternalVarName = Identifier;
-                    Identifier = parentName + Identifier;                   //
-
-                    if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
-                    {
-                        ReportSyntaxError("Undefined variable " + Identifier);
-                    }
-                    else
-                    {
-
-                        SolidDelete asn = new SolidDelete();
-                        asn.VariableName = Identifier;
-                        asn.ExternalName = ExternalVarName;
-
-
-                        if (FetchToken(out token, out tokenType) == true)
-                        {
-                            if (tokenType != Tokeniser.TokenType.SemiColon)
-                            {
-                                ReportSyntaxError("Delete Expected ;");
-                            }
-                            else
-                            {
-
-                                parentNode.AddStatement(asn);
-                                result = true;
-                            }
-
-                        }
-                    }
-                }
-
-                else
-                {
-                    ReportSyntaxError("Delete Expected Solid Identifier");
-                }
-            }
-            return result;
-        }
         private bool ParseSetColourStatement(CCompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -4255,7 +4401,7 @@ namespace ScriptLanguage
                                     //
                                     // See if it there is a nice expression
                                     //
-                                    ExpressionNode exp = ParseExpressionNode(parentName);
+                                    ExpressionNode exp = ParseExpressionForCallNode(parentName);
                                     if (exp != null)
                                     {
                                         call.AddParameterExpression(exp);

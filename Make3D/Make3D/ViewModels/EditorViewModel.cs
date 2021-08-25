@@ -1436,6 +1436,13 @@ namespace Make3D.ViewModels
         private bool MakeGroup3D(string s)
         {
             bool res = false;
+            bool cut = false;
+            if (s == "groupcut")
+            {
+                cut = true;
+                s = "groupdifference";
+            }
+
             if (selectedObjectAdorner.NumberOfSelectedObjects() >= 2)
             {
                 CheckPoint();
@@ -1447,7 +1454,15 @@ namespace Make3D.ViewModels
                     grp.Name = leftie.Name;
                     grp.Description = leftie.Description;
                     grp.LeftObject = leftie;
-                    grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
+                    if (cut)
+                    {
+                        Object3D cln = selectedObjectAdorner.SelectedObjects[i].Clone();
+                        grp.RightObject = cln;
+                    }
+                    else
+                    {
+                        grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
+                    }
                     grp.PrimType = s;
 
                     if (grp.Init())

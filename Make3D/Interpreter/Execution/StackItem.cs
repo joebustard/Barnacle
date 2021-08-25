@@ -4,13 +4,27 @@ namespace ScriptLanguage
 {
     public class StackItem
     {
-        private bool _BooleanValue;
-        private double _DoubleValue;
-        private int _HandleValue;
-        private int _IntValue;
-        private ItemType _myType;
-        private String _StringValue;
+        private bool booleanValue;
+        private double doubleValue;
+        private int handleValue;
+        private int intValue;
+        private ItemType myType;
+        private object objectValue;
         private int solidValue;
+        private String stringValue;
+
+        // Instance constructor
+        public StackItem()
+        {
+            intValue = 0;
+            doubleValue = 0.0;
+            stringValue = "";
+            booleanValue = false;
+            handleValue = 0;
+            solidValue = -1;
+            objectValue = null;
+            myType = ItemType.noval;
+        }
 
         public enum ItemType
         {
@@ -21,37 +35,44 @@ namespace ScriptLanguage
             bval,
             hval,
             tval,
-            sldval
+            sldval,
+            arrayval
         }
 
         public bool BooleanValue
         {
-            get { return _BooleanValue; }
-            set { _BooleanValue = value; }
+            get { return booleanValue; }
+            set { booleanValue = value; }
         }
 
         public double DoubleValue
         {
-            get { return _DoubleValue; }
-            set { _DoubleValue = value; }
+            get { return doubleValue; }
+            set { doubleValue = value; }
         }
 
         public int HandleValue
         {
-            get { return _HandleValue; }
-            set { _HandleValue = value; }
+            get { return handleValue; }
+            set { handleValue = value; }
         }
 
         public int IntValue
         {
-            get { return _IntValue; }
-            set { _IntValue = value; }
+            get { return intValue; }
+            set { intValue = value; }
         }
 
         public ItemType MyType
         {
-            get { return _myType; }
-            set { _myType = value; }
+            get { return myType; }
+            set { myType = value; }
+        }
+
+        public object ObjectValue
+        {
+            get { return objectValue; }
+            set { objectValue = value; }
         }
 
         public int SolidValue
@@ -62,20 +83,8 @@ namespace ScriptLanguage
 
         public String StringValue
         {
-            get { return _StringValue; }
-            set { _StringValue = value; }
-        }
-
-        // Instance constructor
-        public StackItem()
-        {
-            _IntValue = 0;
-            _DoubleValue = 0.0;
-            _StringValue = "";
-            _BooleanValue = false;
-            _HandleValue = 0;
-            solidValue = -1;
-            _myType = ItemType.noval;
+            get { return stringValue; }
+            set { stringValue = value; }
         }
     }
 }

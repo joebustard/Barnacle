@@ -59,6 +59,8 @@ namespace ScriptLanguage
             set { _EndExpression = value; }
         }
 
+        public string LocalName { get; internal set; }
+
         public ExpressionNode StartExpression
         {
             get { return _StartExpression; }
@@ -229,7 +231,7 @@ namespace ScriptLanguage
         public override String ToRichText()
         {
             String result = Indentor.Indentation() + RichTextFormatter.KeyWord("For ") +
-                            RichTextFormatter.VariableName(_VariableName) +
+                            RichTextFormatter.VariableName(LocalName) +
                             RichTextFormatter.Operator(" = ") +
                             _StartExpression.ToRichText() + " " +
                             RichTextFormatter.KeyWord("To ") + " " +
@@ -252,7 +254,7 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = Indentor.Indentation() + "For " +
-                            _VariableName +
+                            LocalName +
                             " = " +
                             _StartExpression.ToString() + " " +
                             "To " + " " +

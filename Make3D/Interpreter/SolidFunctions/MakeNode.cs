@@ -73,12 +73,13 @@ namespace ScriptLanguage
                                 Object3D obj = new Object3D();
 
                                 obj.Name = "Solid";
-                                obj.PrimType = "Mesh";
+
                                 obj.Scale = new Scale3D(20, 20, 20);
 
                                 obj.Position = new Point3D(x, y, z);
 
                                 obj.BuildPrimitive(shape);
+                                obj.PrimType = "Mesh";
                                 obj.ScaleMesh(sx, sy, sz);
 
                                 for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)

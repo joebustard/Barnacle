@@ -82,9 +82,20 @@ namespace ScriptLanguage
                         break;
                     }
 
+                case SymbolTable.SymbolType.boolarrayvariable:
+                    {
+                        PType = RichTextFormatter.KeyWord("Bool [] ");
+                        break;
+                    }
+
                 case SymbolTable.SymbolType.doublevariable:
                     {
                         PType = RichTextFormatter.KeyWord("Double ");
+                        break;
+                    }
+                case SymbolTable.SymbolType.doublearrayvariable:
+                    {
+                        PType = RichTextFormatter.KeyWord("Double [] ");
                         break;
                     }
 
@@ -93,10 +104,20 @@ namespace ScriptLanguage
                         PType = RichTextFormatter.KeyWord("Handle ");
                         break;
                     }
+                case SymbolTable.SymbolType.handlearrayvariable:
+                    {
+                        PType = RichTextFormatter.KeyWord("Handle [] ");
+                        break;
+                    }
 
                 case SymbolTable.SymbolType.solidvariable:
                     {
                         PType = RichTextFormatter.KeyWord("Solid ");
+                        break;
+                    }
+                case SymbolTable.SymbolType.solidarrayvariable:
+                    {
+                        PType = RichTextFormatter.KeyWord("Solid [] ");
                         break;
                     }
                 case SymbolTable.SymbolType.intvariable:
@@ -104,10 +125,19 @@ namespace ScriptLanguage
                         PType = RichTextFormatter.KeyWord("Int ");
                         break;
                     }
-
+                case SymbolTable.SymbolType.intarrayvariable:
+                    {
+                        PType = RichTextFormatter.KeyWord("Int [] ");
+                        break;
+                    }
                 case SymbolTable.SymbolType.stringvariable:
                     {
                         PType = RichTextFormatter.KeyWord("String ");
+                        break;
+                    }
+                case SymbolTable.SymbolType.stringarrayvariable:
+                    {
+                        PType = RichTextFormatter.KeyWord("String []");
                         break;
                     }
 
@@ -137,21 +167,42 @@ namespace ScriptLanguage
                         break;
                     }
 
+                case SymbolTable.SymbolType.boolarrayvariable:
+                    {
+                        PType = "Bool [] ";
+                        break;
+                    }
                 case SymbolTable.SymbolType.doublevariable:
                     {
                         PType = "Double ";
                         break;
                     }
 
+                case SymbolTable.SymbolType.doublearrayvariable:
+                    {
+                        PType = "Double [] ";
+                        break;
+                    }
                 case SymbolTable.SymbolType.handlevariable:
                     {
                         PType = "Handle ";
                         break;
                     }
 
+                case SymbolTable.SymbolType.handlearrayvariable:
+                    {
+                        PType = "Handle [] ";
+                        break;
+                    }
                 case SymbolTable.SymbolType.solidvariable:
                     {
                         PType = "Solid ";
+                        break;
+                    }
+
+                case SymbolTable.SymbolType.solidarrayvariable:
+                    {
+                        PType = "Solid [] ";
                         break;
                     }
                 case SymbolTable.SymbolType.intvariable:
@@ -159,13 +210,22 @@ namespace ScriptLanguage
                         PType = "Int ";
                         break;
                     }
-
+                case SymbolTable.SymbolType.intarrayvariable:
+                    {
+                        PType = "Int [] ";
+                        break;
+                    }
                 case SymbolTable.SymbolType.stringvariable:
                     {
                         PType = "String ";
                         break;
                     }
 
+                case SymbolTable.SymbolType.stringarrayvariable:
+                    {
+                        PType = "String []";
+                        break;
+                    }
                 case SymbolTable.SymbolType.structname:
                     {
                         if (StructDefinition != null)
@@ -179,6 +239,25 @@ namespace ScriptLanguage
             String ParamName = name.Substring(ParentName.Length);
             String result = PType + " " + ParamName;
             return result;
+        }
+
+        private static StackItem GetArrayRef(Symbol sym, ref bool result)
+        {
+            StackItem sti = ExecutionStack.Instance().Pull();
+            if (sti.MyType == StackItem.ItemType.arrayval)
+            {
+                if ((sti.ObjectValue as ArraySymbol).SymbolType == sym.SymbolType)
+                {
+                    (sym as ArraySymbol).Array = (sti.ObjectValue as ArraySymbol).Array;
+                    result = true;
+                }
+                else
+                {
+                    Log.Instance().AddEntry("Run time error parameter type mismatch in procedure call");
+                }
+            }
+
+            return sti;
         }
 
         private bool PullParam(Symbol sym)
@@ -219,6 +298,17 @@ namespace ScriptLanguage
                             sym.DoubleValue = sti.DoubleValue;
                             result = true;
                         }
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.boolarrayvariable:
+                case SymbolTable.SymbolType.intarrayvariable:
+                case SymbolTable.SymbolType.doublearrayvariable:
+                case SymbolTable.SymbolType.stringarrayvariable:
+                case SymbolTable.SymbolType.handlearrayvariable:
+                case SymbolTable.SymbolType.solidarrayvariable:
+                    {
+                        sti = GetArrayRef(sym, ref result);
                     }
                     break;
 

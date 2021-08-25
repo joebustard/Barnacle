@@ -75,6 +75,7 @@
     <Compile Include="SolidStatements\SolidPosition.cs" />
     <Compile Include="SolidStatements\SolidRotate.cs" />
     <Compile Include="SolidStatements\SolidSize.cs" />
+    <Compile Include="Statements\ArraySymbolForCall.cs" />
     <Compile Include="Statements\ArrayVariableNode.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
     <Compile Include="Statements\AssignToArrayElement.cs" />

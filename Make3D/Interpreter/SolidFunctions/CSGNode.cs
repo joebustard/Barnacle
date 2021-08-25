@@ -35,19 +35,30 @@ namespace ScriptLanguage
             int ls = -1;
             int rs = -1;
 
-            if (EvalExpression(leftSolid, ref ls, "Solid1") &&
+            if (EvalExpression(leftSolid, ref ls, "LeftSolid") &&
                 EvalExpression(rightSolid, ref rs, "RightSolid"))
             {
                 Object3D leftie = Script.ResultArtefacts[ls];
                 Object3D rightie = Script.ResultArtefacts[rs];
+                leftie.CalcScale(false);
 
+                rightie.CalcScale(false);
                 Group3D grp = new Group3D();
                 grp.Name = leftie.Name;
                 grp.Description = leftie.Description;
                 grp.LeftObject = leftie;
-                grp.RightObject = rightie;
-                grp.PrimType = PrimType;
+                if (PrimType == "groupcut")
+                {
+                    grp.RightObject = rightie.Clone();
 
+                    grp.RightObject.CalcScale(false);
+                    grp.PrimType = "groupdifference";
+                }
+                else
+                {
+                    grp.RightObject = rightie;
+                    grp.PrimType = PrimType;
+                }
                 if (grp.Init())
                 {
                     grp.CalcScale(false);
@@ -123,6 +134,10 @@ namespace ScriptLanguage
             else if (PrimType == "groupintersection")
             {
                 res = "Intersect";
+            }
+            else if (PrimType == "groupcut")
+            {
+                res = "Cutout";
             }
             return res;
         }

@@ -47,6 +47,14 @@ namespace ScriptLanguage
             StackItems.Add(sti);
         }
 
+        public void Push(ArraySymbol v)
+        {
+            StackItem sti = new StackItem();
+            sti.ObjectValue = v;
+            sti.MyType = StackItem.ItemType.arrayval;
+            StackItems.Add(sti);
+        }
+
         public void Push(double v)
         {
             StackItem sti = new StackItem();
