@@ -190,6 +190,7 @@ namespace Make3D.Views
             dispatcherTimer.Tick += DispatcherTimer_Tick;
             dispatcherTimer.Start();
             NotificationManager.Subscribe("Script", "UpdateScript", OnUpdate);
+            vm.ScriptBox = ScriptBox;
             loaded = true;
         }
 

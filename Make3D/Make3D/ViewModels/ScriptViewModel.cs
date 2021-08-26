@@ -40,8 +40,11 @@ program ""Name""
         private Point lastMouse;
         private Vector3D lookDirection;
         private Model3DCollection modelItems;
+        private RichTextBox richTextBox;
         private string rtf;
         private Script script;
+        private int searchIndex;
+        private string searchText;
         private bool showAxies;
         private bool showFloor;
         private int totalFaces;
@@ -66,6 +69,7 @@ program ""Name""
             interpreter.LoadFromText(script, defaultSource, filePath);
             Rtf = script.ToRichText();
             ScriptCommand = new RelayCommand(OnScriptCommand);
+            FindCommand = new RelayCommand(OnFind);
             camera = new PolarCamera();
             lookDirection.X = -camera.CameraPos.X;
             lookDirection.Y = -camera.CameraPos.Y;
@@ -73,6 +77,7 @@ program ""Name""
             lookDirection.Normalize();
             cameraMode = CameraModes.CameraMoveLookCenter;
             modelItems = new Model3DCollection();
+            searchIndex = 0;
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
         }
@@ -92,6 +97,8 @@ program ""Name""
         }
 
         public bool Dirty { get; set; }
+
+        public ICommand FindCommand { get; set; }
 
         public FlowDocument FlowDoc
         {
@@ -160,9 +167,40 @@ program ""Name""
             }
         }
 
+        public RichTextBox ScriptBox
+        {
+            get
+            {
+                return richTextBox;
+            }
+            set
+            {
+                if (value != richTextBox)
+                {
+                    richTextBox = value;
+                }
+            }
+        }
+
         public ICommand ScriptCommand
         {
             get; set;
+        }
+
+        public string SearchText
+        {
+            get
+            {
+                return searchText;
+            }
+            set
+            {
+                if (searchText != value)
+                {
+                    searchText = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public String Source
@@ -322,6 +360,31 @@ program ""Name""
             return gm;
         }
 
+        private TextPointer GetTextPositionAtOffset(TextPointer position, int characterCount)
+        {
+            while (position != null)
+            {
+                if (position.GetPointerContext(LogicalDirection.Forward) == TextPointerContext.Text)
+                {
+                    int count = position.GetTextRunLength(LogicalDirection.Forward);
+                    if (characterCount <= count)
+                    {
+                        return position.GetPositionAtOffset(characterCount);
+                    }
+
+                    characterCount -= count;
+                }
+
+                TextPointer nextContextPosition = position.GetNextContextPosition(LogicalDirection.Forward);
+                if (nextContextPosition == null)
+                    return position;
+
+                position = nextContextPosition;
+            }
+
+            return position;
+        }
+
         private void LookToCenter()
         {
             lookDirection.X = -camera.CameraPos.X;
@@ -339,6 +402,18 @@ program ""Name""
 
             camera.Move(dx, dy);
             NotifyPropertyChanged("CameraPos");
+        }
+
+        private void OnFind(object obj)
+        {
+            if (searchText != null && searchText != "" && richTextBox != null)
+            {
+                searchIndex = richTextBox.Find(searchText, searchIndex + 1);
+                if (searchIndex < 0)
+                {
+                    searchIndex = 0;
+                }
+            }
         }
 
         private void OnLimpetClosing(object param)

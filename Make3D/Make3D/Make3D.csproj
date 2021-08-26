@@ -215,6 +215,7 @@
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="Views\ScriptView.xaml.cs">
       <DependentUpon>ScriptView.xaml</DependentUpon>

@@ -26,15 +26,25 @@
                         <RowDefinition  Height="25" />
                         <RowDefinition  Height="25" />
                     </Grid.RowDefinitions>
-                    <UniformGrid Grid.Row="0"  Columns="3" Rows="1">
-                        <Button x:Name="NewScript" Margin="2,2,2,2" Content="New" Command="{Binding ScriptCommand}" CommandParameter="New" />
-                        <Button x:Name="LoadScript" Margin="2,2,2,2" Content="Load" Command="{Binding ScriptCommand}" CommandParameter="Load" />
-                        <Button x:Name="SaveScript" Margin="2,2,2,2" Content="Save" Command="{Binding ScriptCommand}" CommandParameter="Save" />
+                    <UniformGrid Grid.Row="0"  Columns="5" Rows="1">
+                        <Menu>
+                            <MenuItem Header="_File">
+                                <MenuItem Header="_New" Command="{Binding ScriptCommand}" CommandParameter="New" />
+                                <MenuItem Header="_Load" Command="{Binding ScriptCommand}" CommandParameter="Load" />
+                                <MenuItem Header="_Save" Command="{Binding ScriptCommand}" CommandParameter="Save" />
+                            </MenuItem>
+                        </Menu>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Name="SearchBox" Width="100" Margin="2,2,0,2" Text="{Binding SearchText}" />
+                            <Button x:Name="SearchBut" Content="Find" Command="{Binding FindCommand}" />
+                        </StackPanel>
+
+                        <Button  Margin="2,2,2,2" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" ToolTip="Clear results log" />
+                        <Button  Margin="2,2,2,2" Content="Run" Click="RunClicked" ToolTip="Run the script" />
                     </UniformGrid>
                     <RichTextBox Grid.Row="1" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" />
-                    <Button Grid.Row="2" Content="Run" Click="RunClicked" />
+
                     <TextBox x:Name="ResultsBox" Grid.Row="3" Grid.RowSpan="3" Background="Black" Foreground="AntiqueWhite" />
-                    <Button Grid.Row="6" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" />
                 </Grid>
             </TabItem>
             <TabItem Header="3D Output From Script">
