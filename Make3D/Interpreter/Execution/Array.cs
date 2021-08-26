@@ -45,6 +45,11 @@ namespace ScriptLanguage
             return elements[arrayIndex];
         }
 
+        internal object[] GetAll()
+        {
+            return elements;
+        }
+
         internal void Set(int arrayIndex, object obj)
         {
             elements[arrayIndex] = obj;

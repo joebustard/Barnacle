@@ -134,9 +134,16 @@ namespace ScriptLanguage
                 // result += CProcedureCache.Instance().ToString();
             }
 
+            bool lastWasComment = false;
             for (int i = 0; i < Statements.Count; i++)
             {
                 StatementNode st = Statements[i];
+                // add a blank line before first line of comment
+                if (!lastWasComment && st is CommentNode && st.IsInLibrary == false)
+                {
+                    result += @"\par";
+                }
+                lastWasComment = (st is CommentNode);
                 result += st.ToRichText();
                 if (!st.IsInLibrary)
                 {
@@ -145,6 +152,7 @@ namespace ScriptLanguage
             }
             Indentor.Outdent();
             result += Indentor.Indentation() + @"\}";
+            result = result.Replace(@"\par\par\par", @"\par\par");
             return result;
         }
 
@@ -163,9 +171,17 @@ namespace ScriptLanguage
                 }
             }
 
+            bool lastWasComment = false;
             for (int i = 0; i < Statements.Count; i++)
             {
                 StatementNode st = Statements[i];
+
+                if (!lastWasComment && st is CommentNode && st.IsInLibrary == false)
+                {
+                    result += "\n";
+                }
+                lastWasComment = (st is CommentNode);
+
                 result += st.ToString();
                 if (!st.IsInLibrary)
                 {
@@ -174,6 +190,7 @@ namespace ScriptLanguage
             }
             Indentor.Outdent();
             result += Indentor.Indentation() + "}";
+            result = result.Replace("\n\n", "\n");
             return result;
         }
 

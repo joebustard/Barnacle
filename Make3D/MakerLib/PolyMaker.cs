@@ -10,7 +10,7 @@ using System.Windows.Media.Media3D;
 
 namespace MakerLib
 {
-    internal class PolyMaker : MakerBase
+    public class PolyMaker : MakerBase
     {
         private double height;
         private List<System.Windows.Point> points;

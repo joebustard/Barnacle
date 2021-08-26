@@ -230,42 +230,49 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = Indentor.Indentation() + RichTextFormatter.KeyWord("For ") +
-                            RichTextFormatter.VariableName(LocalName) +
-                            RichTextFormatter.Operator(" = ") +
-                            _StartExpression.ToRichText() + " " +
-                            RichTextFormatter.KeyWord("To ") + " " +
-                            _EndExpression.ToRichText();
-            if (_StepExpression != null)
+            String result = "";
+            if (!isInLibrary)
             {
-                result += RichTextFormatter.KeyWord(" Step ") +
-                           _StepExpression.ToRichText();
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("For ") +
+                           RichTextFormatter.VariableName(LocalName) +
+                           RichTextFormatter.Operator(" = ") +
+                           _StartExpression.ToRichText() + " " +
+                           RichTextFormatter.KeyWord("To ") + " " +
+                           _EndExpression.ToRichText();
+                if (_StepExpression != null)
+                {
+                    result += RichTextFormatter.KeyWord(" Step ") +
+                               _StepExpression.ToRichText();
+                }
+                result += @" \par";
+                if (HighLight)
+                {
+                    result = RichTextFormatter.Highlight(result);
+                }
+                result += _Body.ToRichText();
             }
-            result += @" \par";
-            if (HighLight)
-            {
-                result = RichTextFormatter.Highlight(result);
-            }
-            result += _Body.ToRichText();
-
             return result;
         }
 
         public override String ToString()
         {
-            String result = Indentor.Indentation() + "For " +
-                            LocalName +
-                            " = " +
-                            _StartExpression.ToString() + " " +
-                            "To " + " " +
-                            _EndExpression.ToString();
-            if (_StepExpression != null)
+            String result = "";
+            if (!isInLibrary)
             {
-                result += " Step " + _StepExpression.ToString();
-            }
-            result += "\n";
+                result = Indentor.Indentation() + "For " +
+                           LocalName +
+                           " = " +
+                           _StartExpression.ToString() + " " +
+                           "To " + " " +
+                           _EndExpression.ToString();
+                if (_StepExpression != null)
+                {
+                    result += " Step " + _StepExpression.ToString();
+                }
+                result += "\n";
 
-            result += _Body.ToString();
+                result += _Body.ToString();
+            }
             return result;
         }
 

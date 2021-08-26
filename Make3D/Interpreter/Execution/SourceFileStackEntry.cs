@@ -116,25 +116,48 @@ namespace ScriptLanguage
             by = m_Buffer[0];
         }
 
-        internal bool SetSource(string FilePath)
+        internal bool SetSource(string FilePath, string basefolder)
         {
             bool result = false;
             m_Buffer = null;
+
             if (System.IO.File.Exists(FilePath))
             {
-                System.IO.StreamReader fin = new System.IO.StreamReader(FilePath);
-
-                int FileSize = (int)fin.BaseStream.Length;
-                if (FileSize > 0)
-                {
-                    result = true;
-                    m_Buffer = new char[FileSize];
-                    fin.Read((char[])m_Buffer, 0, FileSize);
-                    by = m_Buffer[0];
-                }
-                fin.Close();
-                m_BufferIndex = 0;
+                result = ReadTarget(FilePath);
             }
+            else
+            {
+                if (basefolder != "")
+                {
+                    if (!basefolder.EndsWith(@"\"))
+                    {
+                        basefolder += "\\";
+                    }
+                    string target = basefolder + FilePath;
+                    if (System.IO.File.Exists(target))
+                    {
+                        result = ReadTarget(target);
+                    }
+                }
+            }
+            return result;
+        }
+
+        private bool ReadTarget(string target)
+        {
+            bool result = false;
+            System.IO.StreamReader fin = new System.IO.StreamReader(target);
+
+            int FileSize = (int)fin.BaseStream.Length;
+            if (FileSize > 0)
+            {
+                result = true;
+                m_Buffer = new char[FileSize];
+                fin.Read((char[])m_Buffer, 0, FileSize);
+                by = m_Buffer[0];
+            }
+            fin.Close();
+            m_BufferIndex = 0;
             return result;
         }
     }

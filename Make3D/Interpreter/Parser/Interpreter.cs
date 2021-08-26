@@ -55,6 +55,7 @@ namespace ScriptLanguage
                 "intersection",
                 "len",
                 "make",
+                "makeplatelet",
                 "makestadium",
                 "maketorus",
                 "maketube",
@@ -84,6 +85,8 @@ namespace ScriptLanguage
                 if (FilePath != "")
                 {
                     tokeniser.Initialise();
+                    string originalScriptFolder = System.IO.Path.GetDirectoryName(FilePath);
+                    tokeniser.SetRunningFolder(originalScriptFolder);
                     if (tokeniser.SetSource(FilePath))
                     {
                         result = ParseSource(script);
@@ -93,7 +96,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        public bool LoadFromText(Script script, string text)
+        public bool LoadFromText(Script script, string text, string originalfilePath)
         {
             bool result = false;
             SymbolTable.Instance().Clear();
@@ -105,7 +108,13 @@ namespace ScriptLanguage
             {
                 if (text != "")
                 {
+                    string originalScriptFolder = "";
+                    if (originalfilePath != "")
+                    {
+                        originalScriptFolder = System.IO.Path.GetDirectoryName(originalfilePath);
+                    }
                     tokeniser.Initialise();
+                    tokeniser.SetRunningFolder(originalScriptFolder);
                     tokeniser.SetText(text);
                     result = ParseSource(script);
                 }
@@ -327,6 +336,7 @@ namespace ScriptLanguage
                                 AdditionNode Addexp = new AdditionNode();
                                 Addexp.LeftNode = LeftNode;
                                 Addexp.RightNode = RightNode;
+                                Addexp.IsInLibrary = tokeniser.InIncludeFile();
                                 exp = Addexp;
                             }
                         }
@@ -531,6 +541,7 @@ namespace ScriptLanguage
                             vn.ExternalName = ExternalName;
                             vn.Symbol = arsym;
                             vn.IndexExpression = indexExp;
+                            vn.IsInLibrary = tokeniser.InIncludeFile();
                             exp = vn;
                         }
                         else
@@ -801,6 +812,7 @@ namespace ScriptLanguage
                 {
                     CChainScriptNode chain = new CChainScriptNode();
                     chain.Expression = exp;
+                    chain.IsInLibrary = tokeniser.InIncludeFile();
                     parentNode.AddStatement(chain);
                 }
             }
@@ -823,6 +835,7 @@ namespace ScriptLanguage
                 {
                     CCloseFileNode crfile = new CCloseFileNode();
                     crfile.Expression = exp;
+                    crfile.IsInLibrary = tokeniser.InIncludeFile();
                     parentNode.AddStatement(crfile);
                 }
             }
@@ -858,6 +871,7 @@ namespace ScriptLanguage
                                 EqualityNode Andexp = new EqualityNode();
                                 Andexp.LeftNode = LeftNode;
                                 Andexp.RightNode = RightNode;
+                                Andexp.IsInLibrary = tokeniser.InIncludeFile();
                                 exp = Andexp;
                             }
                         }
@@ -1003,6 +1017,7 @@ namespace ScriptLanguage
                     {
                         CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupcut");
                         exp = mn;
+                        mn.IsInLibrary = tokeniser.InIncludeFile();
                     }
                 }
             }
@@ -1032,7 +1047,7 @@ namespace ScriptLanguage
                         SolidDelete asn = new SolidDelete();
                         asn.VariableName = Identifier;
                         asn.ExternalName = ExternalVarName;
-
+                        asn.IsInLibrary = tokeniser.InIncludeFile();
                         if (FetchToken(out token, out tokenType) == true)
                         {
                             if (tokenType != Tokeniser.TokenType.SemiColon)
@@ -1139,7 +1154,8 @@ namespace ScriptLanguage
             bool result = CheckForSemiColon();
             if (result)
             {
-                CExitNode en = new CExitNode();
+                ExitNode en = new ExitNode();
+                en.IsInLibrary = tokeniser.InIncludeFile();
                 parentNode.AddStatement(en);
             }
             else
@@ -1271,7 +1287,7 @@ namespace ScriptLanguage
         private ExpressionNode ParseFalse()
         {
             ExpressionNode exp = new FalseConstantNode();
-
+            exp.IsInLibrary = tokeniser.InIncludeFile();
             return exp;
         }
 
@@ -1297,6 +1313,7 @@ namespace ScriptLanguage
                         vn.ExternalObjectName = ExternalName;
                         vn.FieldName = token;
                         vn.Symbol = SymbolTable.Instance().FindSymbol(strTarget, typ);
+                        vn.IsInLibrary = tokeniser.InIncludeFile();
                         exp = vn;
                     }
                     else
@@ -1378,7 +1395,7 @@ namespace ScriptLanguage
                         SolidFloor asn = new SolidFloor();
                         asn.VariableName = Identifier;
                         asn.ExternalName = ExternalVarName;
-
+                        asn.IsInLibrary = tokeniser.InIncludeFile();
                         if (FetchToken(out token, out tokenType) == true)
                         {
                             if (tokenType != Tokeniser.TokenType.SemiColon)
@@ -1604,7 +1621,7 @@ namespace ScriptLanguage
                         if (FunctionType == SymbolTable.SymbolType.unknown)
                         {
                             //Have a look to see if its a struct
-                            string tmp = TitleCase(token);
+                            string tmp = TitleCase(typeId);
                             StructDefinition def = StructDefinitiontTable.Instance().FindStruct(tmp);
                             if (def != null)
                             {
@@ -1644,7 +1661,7 @@ namespace ScriptLanguage
                                                                 //
                                                                 // Try parsing the body
                                                                 //
-                                                                CFunctionBodyNode cmp = new CFunctionBodyNode();
+                                                                FunctionBodyNode cmp = new FunctionBodyNode();
                                                                 if (ParseCompoundNode(cmp, FunctionName, false))
                                                                 {
                                                                     proc.Name = FunctionName;
@@ -1942,6 +1959,7 @@ namespace ScriptLanguage
                                             wn.Expression = exp;
                                             wn.TrueBody = cmp;
                                             wn.FalseBody = null;
+                                            wn.IsInLibrary = tokeniser.InIncludeFile();
                                             parentNode.AddStatement(wn);
                                             result = true;
 
@@ -2019,6 +2037,7 @@ namespace ScriptLanguage
                 {
                     IncludeNode node = new IncludeNode();
                     node.Path = token;
+                    node.IsInLibrary = tokeniser.InIncludeFile();
                     parentNode.AddUseStatement(node);
 
                     if (CheckForSemiColon())
@@ -2080,6 +2099,7 @@ namespace ScriptLanguage
                     if (rightSolid != null)
                     {
                         CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupintersection");
+                        mn.IsInLibrary = tokeniser.InIncludeFile();
                         exp = mn;
                     }
                 }
@@ -2090,7 +2110,7 @@ namespace ScriptLanguage
         private ExpressionNode ParseIntrinsicFunction(string functionName, String parentName)
         {
             ExpressionNode exp = null;
-            ExpressionNode ResultNode = null;
+            ExpressionNode resultNode = null;
 
             //
             // If this is a function call the next token should be bracket
@@ -2161,6 +2181,12 @@ namespace ScriptLanguage
                         case "make":
                             {
                                 exp = ParseMakeFunction(parentName);
+                            }
+                            break;
+
+                        case "makeplatelet":
+                            {
+                                exp = ParseMakePlateletFunction(parentName);
                             }
                             break;
 
@@ -2282,7 +2308,7 @@ namespace ScriptLanguage
                         {
                             if (exp != null)
                             {
-                                ResultNode = exp;
+                                resultNode = exp;
                             }
                         }
                         else
@@ -2300,8 +2326,11 @@ namespace ScriptLanguage
             {
                 ReportSyntaxError("Function " + functionName + " Expected (");
             }
-
-            return ResultNode;
+            if (resultNode != null)
+            {
+                resultNode.IsInLibrary = tokeniser.InIncludeFile();
+            }
+            return resultNode;
         }
 
         private bool ParseIntStatement(CCompoundNode parentNode, String parentName)
@@ -2381,6 +2410,7 @@ namespace ScriptLanguage
                                 AndNode Andexp = new AndNode();
                                 Andexp.LeftNode = LeftNode;
                                 Andexp.RightNode = RightNode;
+                                Andexp.IsInLibrary = tokeniser.InIncludeFile();
                                 exp = Andexp;
                             }
                         }
@@ -2469,6 +2499,7 @@ namespace ScriptLanguage
                                                             if (zSize != null)
                                                             {
                                                                 exp = new MakeNode(solidexp1, xExp, yExp, zExp, xSize, ySize, zSize);
+                                                                exp.IsInLibrary = tokeniser.InIncludeFile();
                                                             }
                                                         }
                                                     }
@@ -2479,6 +2510,30 @@ namespace ScriptLanguage
                                 }
                             }
                         }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakePlateletFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode pointArrayExp = ParseExpressionForCallNode(parentName);
+            if (pointArrayExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakePlatelet expected ,");
+                }
+                else
+                {
+                    ExpressionNode heightExp = ParseExpressionNode(parentName);
+                    if (heightExp != null)
+                    {
+                        MakePlateletNode mn = new MakePlateletNode(pointArrayExp, heightExp);
+                        mn.IsInLibrary = tokeniser.InIncludeFile();
+                        exp = mn;
                     }
                 }
             }
@@ -2528,6 +2583,7 @@ namespace ScriptLanguage
                                             if (hExp != null)
                                             {
                                                 MakeStadiumNode mn = new MakeStadiumNode(shapeExp, r1Exp, r2Exp, gexp, hExp);
+                                                mn.IsInLibrary = tokeniser.InIncludeFile();
                                                 exp = mn;
                                             }
                                         }
@@ -2697,6 +2753,7 @@ namespace ScriptLanguage
                                 MultiplicationNode Addexp = new MultiplicationNode();
                                 Addexp.LeftNode = LeftNode;
                                 Addexp.RightNode = RightNode;
+                                Addexp.IsInLibrary = tokeniser.InIncludeFile();
                                 exp = Addexp;
                             }
                         }
@@ -2741,6 +2798,7 @@ namespace ScriptLanguage
         {
             ExpressionNode exp = null;
             NowNode nd = new NowNode();
+            nd.IsInLibrary = tokeniser.InIncludeFile();
             exp = nd;
             return exp;
         }
@@ -2755,6 +2813,7 @@ namespace ScriptLanguage
             {
                 DoubleConstantNode nd = new DoubleConstantNode();
                 nd.Value = Convert.ToDouble(token);
+                nd.IsInLibrary = tokeniser.InIncludeFile();
                 exp = nd;
             }
             else
@@ -2822,6 +2881,7 @@ namespace ScriptLanguage
                     {
                         ParenthesisNode pn = new ParenthesisNode();
                         pn.Expression = contents;
+                        pn.IsInLibrary = tokeniser.InIncludeFile();
                         exp = pn;
                     }
                     else
@@ -2841,6 +2901,7 @@ namespace ScriptLanguage
         {
             ExpressionNode exp = null;
             GetPCNameNode nd = new GetPCNameNode();
+            nd.IsInLibrary = tokeniser.InIncludeFile();
             exp = nd;
             return exp;
         }
@@ -2863,6 +2924,7 @@ namespace ScriptLanguage
                         IndexNode pos = new IndexNode();
                         pos.Expression = TextExpression;
                         pos.SearchExpression = SearchExpression;
+                        pos.IsInLibrary = tokeniser.InIncludeFile();
                         exp = pos;
                     }
                 }
@@ -2981,6 +3043,7 @@ namespace ScriptLanguage
             //
             bool result = false;
             PrintNode rep = new PrintNode();
+            rep.IsInLibrary = tokeniser.InIncludeFile();
             String token = "";
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
 
@@ -3372,6 +3435,8 @@ namespace ScriptLanguage
                                 val.TextExpression = TextExpression;
                                 val.OldExpression = OldCharsExpression;
                                 val.NewExpression = NewCharsExpression;
+
+                                val.IsInLibrary = tokeniser.InIncludeFile();
                                 exp = val;
                             }
                         }
@@ -3415,6 +3480,7 @@ namespace ScriptLanguage
                                 asn.VariableName = Identifier;
                                 asn.ExternalName = ExternalVarName;
                                 asn.ExpressionNode = null;
+                                asn.IsInLibrary = tokeniser.InIncludeFile();
                                 do
                                 {
                                     //
@@ -3505,6 +3571,7 @@ namespace ScriptLanguage
                 {
                     ReturnNode ret = new ReturnNode();
                     ret.Expression = exp;
+                    ret.IsInLibrary = tokeniser.InIncludeFile();
                     parentNode.AddStatement(ret);
                     ret.Parent = parentNode;
                 }
@@ -3546,6 +3613,7 @@ namespace ScriptLanguage
                                 asn.VariableName = Identifier;
                                 asn.ExternalName = ExternalVarName;
                                 asn.ExpressionNode = null;
+                                asn.IsInLibrary = tokeniser.InIncludeFile();
                                 do
                                 {
                                     //
@@ -3649,6 +3717,7 @@ namespace ScriptLanguage
                                 asn.VariableName = Identifier;
                                 asn.ExternalName = ExternalVarName;
                                 asn.ExpressionNode = null;
+                                asn.IsInLibrary = tokeniser.InIncludeFile();
                                 do
                                 {
                                     //
@@ -3755,6 +3824,7 @@ namespace ScriptLanguage
                                         asn.VariableName = Identifier;
                                         asn.ExternalName = ExternalVarName;
                                         asn.ExpressionNode = exp;
+                                        asn.IsInLibrary = tokeniser.InIncludeFile();
                                         parentNode.AddStatement(asn);
                                     }
                                 }
@@ -3899,14 +3969,14 @@ namespace ScriptLanguage
                         {
                             if (bProcessingUseFile == false)
                             {
-                                CCommentNode node = new CCommentNode();
+                                CommentNode node = new CommentNode();
                                 node.Text = CommentLine.Trim();
                                 parentNode.AddStatement(node);
                             }
                         }
                         else
                         {
-                            CCommentNode node = new CCommentNode();
+                            CommentNode node = new CommentNode();
                             node.Text = CommentLine.Trim();
                             parentNode.AddStatement(node);
                         }
@@ -3936,6 +4006,7 @@ namespace ScriptLanguage
             strText = strText.Substring(0, strText.Length - 1);
             StringConstantNode nd = new StringConstantNode();
             nd.Value = strText;
+            nd.IsInLibrary = tokeniser.InIncludeFile();
             exp = nd;
             return exp;
         }
@@ -4047,6 +4118,7 @@ namespace ScriptLanguage
                                         asn.ExternalName = leftidentifier;
                                         asn.FieldName = fieldName;
                                         asn.ExpressionNode = exp;
+                                        asn.IsInLibrary = tokeniser.InIncludeFile();
                                         parentNode.AddStatement(asn);
                                     }
                                 }
@@ -4259,6 +4331,7 @@ namespace ScriptLanguage
                             SubStringNode pos = new SubStringNode();
                             pos.SourceExpression = TextExpression;
                             pos.IndexExpression = IndexExpression;
+                            pos.IsInLibrary = tokeniser.InIncludeFile();
                             exp = pos;
                         }
                         else
@@ -4283,7 +4356,7 @@ namespace ScriptLanguage
         private ExpressionNode ParseTrue()
         {
             ExpressionNode exp = new TrueConstantNode();
-
+            exp.IsInLibrary = tokeniser.InIncludeFile();
             return exp;
         }
 
@@ -4299,6 +4372,7 @@ namespace ScriptLanguage
             {
                 CUnaryMinusNode minus = new CUnaryMinusNode();
                 minus.LeftNode = factor;
+                minus.IsInLibrary = tokeniser.InIncludeFile();
                 exp = minus;
             }
             return exp;
@@ -4361,6 +4435,7 @@ namespace ScriptLanguage
                     if (rightSolid != null)
                     {
                         CSGNode mn = new CSGNode(leftSolid, rightSolid, "groupunion");
+                        mn.IsInLibrary = tokeniser.InIncludeFile();
                         exp = mn;
                     }
                 }
@@ -4464,6 +4539,7 @@ namespace ScriptLanguage
                 vn.Name = strTarget;
                 vn.ExternalName = ExternalName;
                 vn.Symbol = SymbolTable.Instance().FindSymbol(strTarget, typ);
+                vn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = vn;
             }
             else
@@ -4515,6 +4591,7 @@ namespace ScriptLanguage
                                             WhileNode wn = new WhileNode();
                                             wn.Expression = exp;
                                             wn.Body = cmp;
+                                            wn.IsInLibrary = tokeniser.InIncludeFile();
                                             parentNode.AddStatement(wn);
                                             result = true;
                                         }
@@ -4584,6 +4661,7 @@ namespace ScriptLanguage
                             asn.RightExternalName = rightlocal;
                             asn.LeftVariableName = parentName + leftidentifier;
                             asn.RightVariableName = rightidentifier;
+                            asn.IsInLibrary = tokeniser.InIncludeFile();
                             parentNode.AddStatement(asn);
                         }
                     }

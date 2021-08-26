@@ -1,10 +1,10 @@
 ﻿namespace ScriptLanguage
 {
-    internal class CFunctionBodyNode : CCompoundNode
+    internal class FunctionBodyNode : CCompoundNode
     {
         private bool bReturned;
 
-        public CFunctionBodyNode() : base()
+        public FunctionBodyNode() : base()
         {
             bReturned = false;
         }

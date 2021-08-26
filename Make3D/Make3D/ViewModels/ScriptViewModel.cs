@@ -63,7 +63,7 @@ program ""Name""
             grid = new Grid3D();
             interpreter = new Interpreter();
             script = new Script();
-            interpreter.LoadFromText(script, defaultSource);
+            interpreter.LoadFromText(script, defaultSource, filePath);
             Rtf = script.ToRichText();
             ScriptCommand = new RelayCommand(OnScriptCommand);
             camera = new PolarCamera();
@@ -291,7 +291,7 @@ program ""Name""
         internal bool ScriptText(string scriptText)
         {
             Source = scriptText;
-            bool result = interpreter.LoadFromText(script, Source);
+            bool result = interpreter.LoadFromText(script, Source, filePath);
             if (result)
             {
                 Rtf = script.ToRichText();
@@ -377,7 +377,7 @@ program ""Name""
                 Source = File.ReadAllText(fileName);
                 interpreter = new Interpreter();
                 script = new Script();
-                if (interpreter.LoadFromText(script, Source))
+                if (interpreter.LoadFromText(script, Source, fileName))
                 {
                     Rtf = script.ToRichText();
                 }
@@ -401,7 +401,7 @@ program ""Name""
                 case "new":
                     {
                         Source = defaultSource;
-                        interpreter.LoadFromText(script, Source);
+                        interpreter.LoadFromText(script, Source, filePath);
                         Rtf = script.ToRichText();
                         NotificationManager.Notify("UpdateScript", null);
                         Dirty = true;

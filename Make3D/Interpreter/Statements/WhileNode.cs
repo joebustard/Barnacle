@@ -202,28 +202,36 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = Indentor.Indentation() + RichTextFormatter.KeyWord("While") + "( ";
-            result += _Expression.ToRichText();
-            result += @" )";
-            if ((HighLight) && (CurrentSingleStepMode != SingleSteppingMode.SteppingThroughBody))
+            String result = "";
+            if (!isInLibrary)
             {
-                result = RichTextFormatter.Highlight(result);
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("While") + "( ";
+                result += _Expression.ToRichText();
+                result += @" )";
+                if ((HighLight) && (CurrentSingleStepMode != SingleSteppingMode.SteppingThroughBody))
+                {
+                    result = RichTextFormatter.Highlight(result);
+                }
+                result += @"\par ";
+                result += _Body.ToRichText();
+                result += @" \par";
             }
-            result += @"\par ";
-            result += _Body.ToRichText();
-            result += @" \par";
             return result;
         }
 
         public override String ToString()
         {
-            String result = Indentor.Indentation() + "While (";
-            result += _Expression.ToString();
-            result += @" )";
+            String result = "";
+            if (!isInLibrary)
+            {
+                result = Indentor.Indentation() + "While (";
+                result += _Expression.ToString();
+                result += @" )";
 
-            result += "\n";
-            result += _Body.ToString();
-            result += "\n";
+                result += "\n";
+                result += _Body.ToString();
+                result += "\n";
+            }
             return result;
         }
     }

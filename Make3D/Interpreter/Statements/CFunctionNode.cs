@@ -156,9 +156,9 @@ namespace ScriptLanguage
                     }
                 }
                 result += " )";
-                result += @" \par ";
+                result += @"\par";
                 result += _Body.ToRichText();
-                result += @" \par ";
+                result += @"\par";
             }
             return result;
         }

@@ -223,32 +223,40 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = Indentor.Indentation() + RichTextFormatter.KeyWord("If ") + "( " + _Expression.ToRichText() + @" ) \par";
-            if (HighLight)
+            String result = "";
+            if (!isInLibrary)
             {
-                result = RichTextFormatter.Highlight(result);
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("If ") + "( " + _Expression.ToRichText() + @" ) \par";
+                if (HighLight)
+                {
+                    result = RichTextFormatter.Highlight(result);
+                }
+                result += _TrueBody.ToRichText();
+                if (_FalseBody != null)
+                {
+                    result += @"\par" + Indentor.Indentation() + RichTextFormatter.KeyWord("Else ") + @"\par";
+                    result += _FalseBody.ToRichText();
+                }
+                result += @"\par";
             }
-            result += _TrueBody.ToRichText();
-            if (_FalseBody != null)
-            {
-                result += @"\par" + Indentor.Indentation() + RichTextFormatter.KeyWord("Else ") + @"\par";
-                result += _FalseBody.ToRichText();
-            }
-            result += @"\par";
             return result;
         }
 
         public override String ToString()
         {
-            String result = Indentor.Indentation() + "If ( " + _Expression.ToString() + " )\n";
-
-            result += _TrueBody.ToString();
-            if (_FalseBody != null)
+            String result = "";
+            if (!isInLibrary)
             {
-                result += "\n" + Indentor.Indentation() + "Else\n";
-                result += _FalseBody.ToString();
+                result = Indentor.Indentation() + "If ( " + _Expression.ToString() + " )\n";
+
+                result += _TrueBody.ToString();
+                if (_FalseBody != null)
+                {
+                    result += "\n" + Indentor.Indentation() + "Else\n";
+                    result += _FalseBody.ToString();
+                }
+                result += "\n";
             }
-            result += "\n";
             return result;
         }
     }

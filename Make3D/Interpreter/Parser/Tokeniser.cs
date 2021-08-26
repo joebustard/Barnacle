@@ -14,6 +14,7 @@ namespace ScriptLanguage
 
         private int CurrentSourceStackIndex;
 
+        private string originalSourceFolder;
         private List<SourceFileStackEntry> SourceFileStack;
 
         //private int m_BufferIndex;
@@ -588,11 +589,16 @@ namespace ScriptLanguage
             CurrentSourceStackIndex = -1;
         }
 
+        internal void SetRunningFolder(string or)
+        {
+            this.originalSourceFolder = or;
+        }
+
         internal bool SetSource(string FilePath)
         {
             bool result;
             SourceFileStackEntry sourcefile = new SourceFileStackEntry();
-            result = sourcefile.SetSource(FilePath);
+            result = sourcefile.SetSource(FilePath, originalSourceFolder);
             SourceFileStack.Add(sourcefile);
             CurrentSourceFile = sourcefile;
             CurrentSourceStackIndex++;

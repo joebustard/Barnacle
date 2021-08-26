@@ -114,21 +114,29 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = Indentor.Indentation() + RichTextFormatter.KeyWord("Print ") + " ";
-            result += expressions.ToRichText();
-            result += " ;";
-            if (HighLight)
+            String result = "";
+            if (!isInLibrary)
             {
-                result = RichTextFormatter.Highlight(result);
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Print ") + " ";
+                result += expressions.ToRichText();
+                result += " ;";
+                if (HighLight)
+                {
+                    result = RichTextFormatter.Highlight(result);
+                }
             }
             return result;
         }
 
         public override String ToString()
         {
-            String result = Indentor.Indentation() + "Print ";
-            result += expressions.ToString();
-            result += " ;";
+            String result = "";
+            if (!isInLibrary)
+            {
+                result = Indentor.Indentation() + "Print ";
+                result += expressions.ToString();
+                result += " ;";
+            }
             return result;
         }
     }
