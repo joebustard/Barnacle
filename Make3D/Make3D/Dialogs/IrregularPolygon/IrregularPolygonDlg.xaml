@@ -41,7 +41,7 @@
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
-                <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" Background="LightGray" RowBackground="LightYellow" AlternatingRowBackground="LightBlue">
+                <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" SelectedIndex="{Binding PointIndex}" >
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.2*" />
@@ -52,6 +52,18 @@
                         <DataGridTextColumn Header="Y" Binding="{Binding Y}" Width="0.4*">
                         </DataGridTextColumn>
                     </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Selected}" Value="true">
+                                    <Setter Property="Background" Value="Yellow"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Selected}" Value="false">
+                                    <Setter Property="Background" Value="Red"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
                 </DataGrid>
             </Border>
         </Grid>

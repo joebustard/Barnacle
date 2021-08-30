@@ -55,7 +55,22 @@ namespace Make3D.Dialogs
             get { return new System.Windows.Point(X, Y); }
         }
 
-        public bool Selected { get; set; }
+        private bool selected;
+        public bool Selected
+        {
+            get
+            {
+                return selected;
+            }
+            set
+            {
+                if (selected != value)
+                {
+                    selected = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public double X
         {
