@@ -64,6 +64,7 @@
     <Compile Include="Execution\Array.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
+    <Compile Include="SolidFunctions\MakeBicorn.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
     <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTube.cs" />

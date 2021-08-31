@@ -1,0 +1,154 @@
+﻿using Make3D.Object3DLib;
+using MakerLib;
+using System;
+
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+
+namespace ScriptLanguage
+{
+    internal class MakeBicornNode : ExpressionNode
+    {
+        private ExpressionNode doubleupExp;
+        private ExpressionNode heightExp;
+        private ExpressionNode radius1Exp;
+        private ExpressionNode radius2Exp;
+
+        public MakeBicornNode()
+        {
+        }
+
+        public MakeBicornNode(ExpressionNode r1, ExpressionNode r2, ExpressionNode h, ExpressionNode g) : base(r1)
+        {
+            this.radius1Exp = r1;
+            this.doubleupExp = g;
+
+            this.radius2Exp = r2;
+            this.heightExp = h;
+        }
+
+        /// Execute this node
+        /// returning false terminates the application
+        ///
+        public override bool Execute()
+        {
+            bool result = false;
+
+            double r1 = 0;
+            double r2 = 0;
+            bool g = false;
+            double h = 0;
+
+            if (EvalExpression(radius1Exp, ref r1, "Radius1") &&
+                EvalExpression(radius2Exp, ref r2, "Radius2") &&
+                EvalExpression(heightExp, ref h, "Height") &&
+                EvalExpression(doubleupExp, ref g, "DoubleUp")
+                )
+            {
+                if (r1 > 0 && r2 > 0 && h > 0)
+                {
+                    result = true;
+
+                    Object3D obj = new Object3D();
+
+                    obj.Name = "Bicorn";
+                    obj.PrimType = "Mesh";
+                    obj.Scale = new Scale3D(20, 20, 20);
+
+                    obj.Position = new Point3D(0, 0, 0);
+                    BicornMaker BicornMaker = new BicornMaker(r1, r2, h, g);
+                    BicornMaker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                    obj.CalcScale(false);
+                    obj.Remesh();
+                    Script.ResultArtefacts.Add(obj);
+                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                }
+                else
+                {
+                    Log.Instance().AddEntry("MakeBicorn : Illegal value");
+                }
+            }
+
+            return result;
+        }
+
+        /// Returns a String representation of this node that can be used for
+        /// Pretty Printing
+        ///
+        ///
+        public override String ToRichText()
+        {
+            String result = RichTextFormatter.KeyWord("MakeBicorn") + "( ";
+
+            result += radius1Exp.ToRichText() + ", ";
+            result += radius2Exp.ToRichText() + ", ";
+            result += heightExp.ToRichText() + ", ";
+            result += doubleupExp.ToRichText();
+            result += " )";
+            return result;
+        }
+
+        public override String ToString()
+        {
+            String result = "MakeBicorn( ";
+
+            result += radius1Exp.ToString() + ", ";
+            result += radius2Exp.ToString() + ", ";
+            result += heightExp.ToString() + ", ";
+            result += doubleupExp.ToString();
+            result += " )";
+            return result;
+        }
+
+        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
+        {
+            bool result = exp.Execute();
+            if (result)
+            {
+                result = false;
+                StackItem sti = ExecutionStack.Instance().Pull();
+                if (sti != null)
+                {
+                    if (sti.MyType == StackItem.ItemType.ival)
+                    {
+                        x = sti.IntValue;
+                        result = true;
+                    }
+                    else if (sti.MyType == StackItem.ItemType.dval)
+                    {
+                        x = sti.DoubleValue;
+                        result = true;
+                    }
+                }
+            }
+            if (!result)
+            {
+                Log.Instance().AddEntry("MakeBicorn : " + v + " expression error");
+            }
+            return result;
+        }
+
+        private bool EvalExpression(ExpressionNode exp, ref bool x, string v)
+        {
+            bool result = exp.Execute();
+            if (result)
+            {
+                result = false;
+                StackItem sti = ExecutionStack.Instance().Pull();
+                if (sti != null)
+                {
+                    if (sti.MyType == StackItem.ItemType.bval)
+                    {
+                        x = sti.BooleanValue;
+                        result = true;
+                    }
+                }
+            }
+            if (!result)
+            {
+                Log.Instance().AddEntry("MakeBicorn : " + v + " expression error");
+            }
+            return result;
+        }
+    }
+}

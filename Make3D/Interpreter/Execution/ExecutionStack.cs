@@ -92,6 +92,108 @@ namespace ScriptLanguage
             StackItems.Clear();
         }
 
+        internal bool PullSymbol(Symbol symbol)
+        {
+            bool result = false;
+            StackItem.ItemType tt = TypeOfTop();
+            switch (symbol.SymbolType)
+            {
+                case SymbolTable.SymbolType.intvariable:
+                    {
+                        if (tt == StackItem.ItemType.ival)
+                        {
+                            StackItem it = Pull();
+                            symbol.IntValue = it.IntValue;
+                            result = true;
+                        }
+                        else
+                        {
+                            if (tt == StackItem.ItemType.dval)
+                            {
+                                StackItem it = Pull();
+                                symbol.IntValue = (int)it.DoubleValue;
+                                result = true;
+                            }
+                        }
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.doublevariable:
+                    {
+                        if (tt == StackItem.ItemType.ival)
+                        {
+                            StackItem it = Pull();
+                            symbol.DoubleValue = it.IntValue;
+                            result = true;
+                        }
+                        else
+                        {
+                            if (tt == StackItem.ItemType.dval)
+                            {
+                                StackItem it = Pull();
+                                symbol.DoubleValue = it.DoubleValue;
+                                result = true;
+                            }
+                        }
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.boolvariable:
+                    {
+                        if (tt == StackItem.ItemType.ival)
+                        {
+                            StackItem it = Pull();
+                            symbol.BooleanValue = (it.IntValue != 0);
+                            result = true;
+                        }
+                        else
+                        {
+                            if (tt == StackItem.ItemType.bval)
+                            {
+                                StackItem it = Pull();
+                                symbol.BooleanValue = it.BooleanValue;
+                                result = true;
+                            }
+                        }
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.stringvariable:
+                    {
+                        if (tt == StackItem.ItemType.sval)
+                        {
+                            StackItem it = Pull();
+                            symbol.StringValue = it.StringValue;
+                            result = true;
+                        }
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.solidvariable:
+                    {
+                        if (tt == StackItem.ItemType.sldval)
+                        {
+                            StackItem it = Pull();
+                            symbol.SolidValue = it.SolidValue;
+                            result = true;
+                        }
+                    }
+                    break;
+
+                case SymbolTable.SymbolType.handlevariable:
+                    {
+                        if (tt == StackItem.ItemType.hval)
+                        {
+                            StackItem it = Pull();
+                            symbol.HandleValue = it.HandleValue;
+                            result = true;
+                        }
+                    }
+                    break;
+            }
+            return result;
+        }
+
         internal StackItem.ItemType TypeOfTop()
         {
             StackItem.ItemType Result = StackItem.ItemType.noval;

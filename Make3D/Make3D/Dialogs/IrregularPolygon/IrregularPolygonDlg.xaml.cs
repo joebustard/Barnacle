@@ -37,8 +37,8 @@ namespace Make3D.Dialogs
             InitializeComponent();
             points = new ObservableCollection<PolyPoint>();
 
-            selectedPoint = -1;
-            pointIndex = -1;
+            SelectedPoint = -1;
+
             scale = 1.0;
             wallWidth = 5;
             solidShape = true;
@@ -92,6 +92,31 @@ namespace Make3D.Dialogs
                 {
                     points = value;
                     NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public int SelectedPoint
+        {
+            get
+            {
+                return selectedPoint;
+            }
+            set
+            {
+                if (selectedPoint != value)
+                {
+                    selectedPoint = value;
+                    NotifyPropertyChanged();
+                    ClearPointSelections();
+                    if (points != null)
+                    {
+                        if (selectedPoint >= 0 && selectedPoint < points.Count)
+                        {
+                            points[selectedPoint].Selected = true;
+                        }
+                    }
+                    UpdateDisplay();
                 }
             }
         }
@@ -227,6 +252,17 @@ namespace Make3D.Dialogs
 
         private void AddPointClicked(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void ClearPointSelections()
+        {
+            if (points != null)
+            {
+                for (int i = 0; i < points.Count; i++)
+                {
+                    points[i].Selected = false;
+                }
+            }
         }
 
         private void CreateSideFace(List<System.Windows.Point> pnts, int i)
@@ -613,39 +649,6 @@ namespace Make3D.Dialogs
             MainCanvas.Height = localImage.Height;
             UpdateDisplay();
         }
-        private int pointIndex;
-        public int PointIndex
-        {
-            get { return pointIndex; }
-            set
-            {
-                if (pointIndex != value)
-                {
-                    pointIndex = value;
-                    NotifyPropertyChanged();
-                    ClearPointSelections();
-                    if (points != null)
-                    {
-                        if (pointIndex >= 0 && pointIndex < points.Count)
-                        {
-                            points[pointIndex].Selected = true;
-                            selectedPoint = pointIndex;
-                        }
-                    }
-                    UpdateDisplay();
-                }
-            }
-        }
-        private void ClearPointSelections()
-        {
-            if (points != null)
-            {
-                for (int i = 0; i < points.Count; i++)
-                {
-                    points[i].Selected = false;
-                }
-            }
-        }
 
         private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -653,8 +656,8 @@ namespace Make3D.Dialogs
             {
                 Points[selectedPoint].Selected = false;
             }
-            selectedPoint = -1;
-            pointIndex = -1;
+            SelectedPoint = -1;
+
             System.Windows.Point position = e.GetPosition(MainCanvas);
 
             double rad = 3;
@@ -666,9 +669,9 @@ namespace Make3D.Dialogs
                 {
                     if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
                     {
-                        selectedPoint = i;
+                        SelectedPoint = i;
                         Points[selectedPoint].Selected = true;
-                        pointIndex = selectedPoint;
+
                         break;
                     }
                 }

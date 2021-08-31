@@ -55,6 +55,7 @@ namespace ScriptLanguage
                 "intersection",
                 "len",
                 "make",
+                "makebicorn",
                 "makeplatelet",
                 "makestadium",
                 "maketorus",
@@ -137,37 +138,36 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool CheckForInitialiser(CCompoundNode parentNode, String parentName, string Identifier, String strExternalName)
+        private bool CheckForInitialiser(CCompoundNode parentNode, String parentName, string Identifier, String strExternalName, DeclarationNode dec)
         {
             //
             // This function checks if there is an optional initialiser
             // It is OK for there not to be one
             //
             bool Result = true;
-            String token = "";
-            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
-            if (FetchToken(out token, out tokenType) == true)
+            if (dec != null)
             {
-                if (tokenType == Tokeniser.TokenType.Assignment)
+                String token = "";
+                Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+                if (FetchToken(out token, out tokenType) == true)
                 {
-                    ExpressionNode exp = ParseExpressionNode(parentName);
-                    if (exp != null)
+                    if (tokenType == Tokeniser.TokenType.Assignment)
                     {
-                        AssignmentNode ass = new AssignmentNode();
-                        ass.ExpressionNode = exp;
-                        ass.VariableName = Identifier;
-                        parentNode.AddStatement(ass);
-                        ass.ExternalName = strExternalName;
+                        ExpressionNode exp = ParseExpressionNode(parentName);
+                        if (exp != null)
+                        {
+                            dec.Initialiser = exp;
+                        }
+                        else
+                        {
+                            ReportSyntaxError("Illegal initialiser");
+                            Result = false;
+                        }
                     }
                     else
                     {
-                        ReportSyntaxError("Illegal initialiser");
-                        Result = false;
+                        tokeniser.PutTokenBack();
                     }
-                }
-                else
-                {
-                    tokeniser.PutTokenBack();
                 }
             }
             return Result;
@@ -367,37 +367,94 @@ namespace ScriptLanguage
         private void ParseArrayDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, ref Tokeniser.TokenType tokenType, SymbolTable.SymbolType arrayType)
         {
             ExpressionNode exp = ParseExpressionNode(parentName);
-            if (exp != null)
+            if (exp == null)
             {
-                if (FetchToken(out token, out tokenType) == true)
-                {
-                    if (token == "]")
-                    {
-                        if (FetchToken(out token, out tokenType) == true)
-                        {
-                            if (tokenType == Tokeniser.TokenType.Identifier)
-                            {
-                                //
-                                // To avoid local variable names clashing with other variables
-                                // we prefix them with the parent [procedures name
-                                //
-                                String strVarName = token;
-                                token = parentName + token;
-                                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                                {
-                                    ReportSyntaxError("Duplicate variable name");
-                                }
-                                else
-                                {
-                                    Symbol sym = parentNode.AddArraySymbol(token, arrayType);
+                tokeniser.PutTokenBack();
+            }
 
-                                    ArrayDeclarationNode node = new ArrayDeclarationNode();
-                                    node.VarName = strVarName;
-                                    node.ItemType = arrayType;
-                                    node.Dimensions = exp;
-                                    node.ActualSymbol = sym;
-                                    node.IsInLibrary = tokeniser.InIncludeFile();
-                                    parentNode.AddStatement(node);
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                if (token == "]")
+                {
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.Identifier)
+                        {
+                            //
+                            // To avoid local variable names clashing with other variables
+                            // we prefix them with the parent [procedures name
+                            //
+                            String strVarName = token;
+                            token = parentName + token;
+                            if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                            {
+                                ReportSyntaxError("Duplicate variable name");
+                            }
+                            else
+                            {
+                                Symbol sym = parentNode.AddArraySymbol(token, arrayType);
+
+                                ArrayDeclarationNode node = new ArrayDeclarationNode();
+                                node.VarName = strVarName;
+                                node.ItemType = arrayType;
+                                node.Dimensions = exp;
+                                node.ActualSymbol = sym;
+                                node.IsInLibrary = tokeniser.InIncludeFile();
+                                parentNode.AddStatement(node);
+                                if (FetchToken(out token, out tokenType) == true)
+                                {
+                                    if (token == "=")
+                                    {
+                                        if (FetchToken(out token, out tokenType) == true)
+                                        {
+                                            if (token == "{")
+                                            {
+                                                bool bDone = false;
+                                                do
+                                                {
+                                                    //
+                                                    // See if it there is a nice expression
+                                                    //
+                                                    ExpressionNode iexp = ParseExpressionNode(parentName);
+                                                    if (iexp != null)
+                                                    {
+                                                        node.AddInitialiserExpression(iexp);
+
+                                                        //
+                                                        // If there is a comma there should another expression
+                                                        //
+                                                        if (FetchToken(out token, out tokenType) == true)
+                                                        {
+                                                            if (tokenType == Tokeniser.TokenType.Comma)
+                                                            {
+                                                                bDone = false;
+                                                            }
+                                                            else if (tokenType == Tokeniser.TokenType.CloseCurly)
+                                                            {
+                                                                bDone = true;
+                                                            }
+                                                            else
+                                                            {
+                                                                ReportSyntaxError("Unexpected token processing array initialiser Expected ) found " + token);
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            ReportSyntaxError("Unexpected end of file ");
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        bDone = true;
+                                                    }
+                                                } while (bDone == false);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        tokeniser.PutTokenBack();
+                                    }
 
                                     result = CheckForSemiColon();
                                     if (!result)
@@ -406,19 +463,15 @@ namespace ScriptLanguage
                                     }
                                 }
                             }
-                            else
-                                ReportSyntaxError("Expected variable name");
                         }
+                        else
+                            ReportSyntaxError("Expected variable name");
                     }
-                }
-                else
-                {
-                    ReportSyntaxError("Expected ]");
                 }
             }
             else
             {
-                ReportSyntaxError("Expected size expression");
+                ReportSyntaxError("Expected ]");
             }
         }
 
@@ -1126,13 +1179,15 @@ namespace ScriptLanguage
                         }
                         else
                         {
+                            Symbol sym = parentNode.AddSymbol(token, SymbolTable.SymbolType.doublevariable);
                             DoubleDeclarationNode node = new DoubleDeclarationNode();
                             node.VarName = strVarName;
+                            node.Name = token;
+                            node.Symbol = sym;
                             node.IsInLibrary = tokeniser.InIncludeFile();
                             parentNode.AddStatement(node);
 
-                            parentNode.AddSymbol(token, SymbolTable.SymbolType.doublevariable);
-                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
                             {
                                 result = CheckForSemiColon();
                                 if (!result)
@@ -1743,12 +1798,15 @@ namespace ScriptLanguage
                         }
                         else
                         {
+                            Symbol sym = parentNode.AddSymbol(token, SymbolTable.SymbolType.handlevariable);
                             HandleDeclarationNode node = new HandleDeclarationNode();
                             node.VarName = strVarName;
+                            node.Name = token;
+                            node.Symbol = sym;
                             node.IsInLibrary = tokeniser.InIncludeFile();
                             parentNode.AddStatement(node);
-                            parentNode.AddSymbol(token, SymbolTable.SymbolType.handlevariable);
-                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
                             {
                                 result = CheckForSemiColon();
                                 if (!result)
@@ -2184,6 +2242,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makebicorn":
+                            {
+                                exp = ParseMakeBicornFunction(parentName);
+                            }
+                            break;
+
                         case "makeplatelet":
                             {
                                 exp = ParseMakePlateletFunction(parentName);
@@ -2366,12 +2430,15 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            parentNode.AddSymbol(token, SymbolTable.SymbolType.intvariable);
+                            Symbol symbol = parentNode.AddSymbol(token, SymbolTable.SymbolType.intvariable);
                             IntDeclarationNode intnode = new IntDeclarationNode();
                             intnode.IsInLibrary = tokeniser.InIncludeFile();
                             intnode.VarName = strVarName;
+                            intnode.Name = token;
+
+                            intnode.Symbol = symbol;
                             parentNode.AddStatement(intnode);
-                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName, intnode))
                             {
                                 result = CheckForSemiColon();
                                 if (!result)
@@ -2431,6 +2498,53 @@ namespace ScriptLanguage
                         {
                             tokeniser.PutTokenBack();
                             bDone = true;
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeBicornFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+
+            ExpressionNode r1Exp = ParseExpressionNode(parentName);
+            if (r1Exp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakeBicorn expected ,");
+                }
+                else
+                {
+                    ExpressionNode r2Exp = ParseExpressionNode(parentName);
+                    if (r2Exp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("MakeBicorn expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode hexp = ParseExpressionNode(parentName);
+                            if (hexp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("MakeBicorn expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode gExp = ParseExpressionNode(parentName);
+                                    if (gExp != null)
+                                    {
+                                        MakeBicornNode mn = new MakeBicornNode(r1Exp, r2Exp, hexp, gExp);
+                                        mn.IsInLibrary = tokeniser.InIncludeFile();
+                                        exp = mn;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -3856,13 +3970,15 @@ namespace ScriptLanguage
                 }
                 else
                 {
+                    Symbol sym = parentNode.AddSymbol(token, SymbolTable.SymbolType.boolvariable);
                     CBoolDeclarationNode node = new CBoolDeclarationNode();
                     node.VarName = strVarName;
                     node.IsInLibrary = tokeniser.InIncludeFile();
+                    node.Name = token;
+                    node.Symbol = sym;
                     parentNode.AddStatement(node);
 
-                    parentNode.AddSymbol(token, SymbolTable.SymbolType.boolvariable);
-                    if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                    if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
                     {
                         result = CheckForSemiColon();
                         if (!result)
@@ -3913,8 +4029,9 @@ namespace ScriptLanguage
                             node.VarName = strVarName;
                             node.IsInLibrary = tokeniser.InIncludeFile();
                             parentNode.AddStatement(node);
-                            parentNode.AddSymbol(token, SymbolTable.SymbolType.solidvariable);
-                            if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                            Symbol symbol = parentNode.AddSymbol(token, SymbolTable.SymbolType.solidvariable);
+                            node.Symbol = symbol;
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
                             {
                                 result = CheckForSemiColon();
                                 if (!result)
@@ -4022,39 +4139,49 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             if (FetchToken(out token, out tokenType) == true)
             {
-                if (tokenType == Tokeniser.TokenType.Identifier)
+                if (token == "[")
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-                    String strVarName = token;
-                    token = parentName + token;
-
-                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                    // array
+                    ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.stringarrayvariable);
+                }
+                else
+                {
+                    if (tokenType == Tokeniser.TokenType.Identifier)
                     {
-                        ReportSyntaxError("Duplicate variable name");
-                    }
-                    else
-                    {
-                        parentNode.AddSymbol(token, SymbolTable.SymbolType.stringvariable);
-                        StringDeclarationNode node = new StringDeclarationNode();
-                        node.VarName = strVarName;
-                        node.IsInLibrary = tokeniser.InIncludeFile();
-                        parentNode.AddStatement(node);
+                        //
+                        // To avoid local variable names clashing with other variables
+                        // we prefix them with the parent [procedures name
+                        //
+                        String strVarName = token;
+                        token = parentName + token;
 
-                        if (CheckForInitialiser(parentNode, parentName, token, strVarName))
+                        if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                         {
-                            result = CheckForSemiColon();
-                            if (!result)
+                            ReportSyntaxError("Duplicate variable name");
+                        }
+                        else
+                        {
+                            Symbol sym = parentNode.AddSymbol(token, SymbolTable.SymbolType.stringvariable);
+                            StringDeclarationNode node = new StringDeclarationNode();
+                            node.VarName = strVarName;
+                            node.IsInLibrary = tokeniser.InIncludeFile();
+                            node.Name = token;
+                            node.Symbol = sym;
+                            parentNode.AddStatement(node);
+
+                            if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
                             {
-                                ReportSyntaxError("String expected ;");
+                                result = CheckForSemiColon();
+                                if (!result)
+                                {
+                                    ReportSyntaxError("String expected ;");
+                                }
                             }
                         }
                     }
+                    else
+                        ReportSyntaxError("Expected variable name");
                 }
-                else
-                    ReportSyntaxError("Expected variable name");
             }
 
             return result;

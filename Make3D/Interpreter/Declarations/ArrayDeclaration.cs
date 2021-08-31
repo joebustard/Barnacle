@@ -9,6 +9,7 @@ namespace ScriptLanguage
     internal class ArrayDeclarationNode : DeclarationNode
     {
         private ExpressionNode dimensions;
+        private ExpressionCollection initialisers;
         private SymbolTable.SymbolType itemType;
 
         // Instance constructor
@@ -17,6 +18,7 @@ namespace ScriptLanguage
             DeclarationType = "Array";
             dimensions = null;
             ActualSymbol = null;
+            initialisers = new ExpressionCollection();
         }
 
         public Symbol ActualSymbol { get; set; }
@@ -27,10 +29,21 @@ namespace ScriptLanguage
             set { dimensions = value; }
         }
 
+        public ExpressionCollection Initialisers
+        {
+            get { return initialisers; }
+            set { initialisers = value; }
+        }
+
         public SymbolTable.SymbolType ItemType
         {
             get { return itemType; }
             set { itemType = value; }
+        }
+
+        public void AddInitialiserExpression(ExpressionNode nd)
+        {
+            initialisers.InsertAtStart(nd);
         }
 
         public override bool Execute()
@@ -39,7 +52,7 @@ namespace ScriptLanguage
             if (ActualSymbol != null)
             {
                 int dim = 0;
-                if (EvalExpression(dimensions, ref dim, "Dimensions"))
+                if (dimensions != null && EvalExpression(dimensions, ref dim, "Dimensions"))
                 {
                     // tell the symbol how big the array should be
                     ActualSymbol.SetSize(dim);
@@ -47,6 +60,15 @@ namespace ScriptLanguage
                 }
                 else
                 {
+                    if (initialisers != null && initialisers.Execute())
+                    {
+                        ActualSymbol.SetSize(initialisers.Count());
+                        for (int i = 0; i < initialisers.Count(); i++)
+                        {
+                            PullInitialValues(ActualSymbol as ArraySymbol, i);
+                        }
+                        res = true;
+                    }
                 }
             }
             return res;
@@ -57,7 +79,23 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord(GetTypeName() + " ") + "[" + dimensions.ToRichText() + "] " + RichTextFormatter.VariableName(VarName) + " ;";
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord(GetTypeName() + " ") + "[";
+                if (dimensions != null)
+                {
+                    result += dimensions.ToRichText();
+                }
+                result += "] " + RichTextFormatter.VariableName(VarName);
+                if (initialisers != null)
+                {
+                    result += " = " + @"\par";
+                    result += Indentor.Indentation() + @"\{\par ";
+                    result += Indentor.Indentation() + Indentor.Indentation() + initialisers.ToRichText() + @"\par";
+                    result += Indentor.Indentation() + @"\} ;\par";
+                }
+                else
+                {
+                    result += " ;";
+                }
                 if (HighLight)
                 {
                     result = RichTextFormatter.Highlight(result);
@@ -71,7 +109,20 @@ namespace ScriptLanguage
             String result = "";
             if (!IsInLibrary)
             {
-                result = Indentor.Indentation() + GetTypeName() + " [" + dimensions.ToString() + "] " + VarName + " ;";
+                result = Indentor.Indentation() + GetTypeName() + " [";
+                if (dimensions != null)
+                {
+                    result += dimensions.ToString();
+                }
+                result += "] " + VarName;
+                if (initialisers != null)
+                {
+                    result += "=\n";
+                    result += Indentor.Indentation() + "{\n";
+                    result += Indentor.Indentation() + initialisers.ToString();
+                    result += "\n" + Indentor.Indentation() + "}";
+                }
+                result += " ;";
             }
             return result;
         }
@@ -117,6 +168,114 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.solidarrayvariable: r = "Solid"; break;
             }
             return r;
+        }
+
+        private bool PullInitialValues(ArraySymbol arrSym, int arrayIndex)
+        {
+            bool result = false;
+
+            if (arrayIndex < 0 || arrayIndex >= arrSym.Array.Length)
+            {
+                Log.Instance().AddEntry("Run Time Error : Array index out of bounds");
+            }
+            else
+            {
+                StackItem sti = ExecutionStack.Instance().Pull();
+                if (sti != null)
+                {
+                    switch (sti.MyType)
+                    {
+                        case StackItem.ItemType.ival:
+                            {
+                                if (arrSym.ItemType == SymbolTable.SymbolType.intarrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, sti.IntValue);
+                                    result = true;
+                                }
+                                else
+                                if (arrSym.ItemType == SymbolTable.SymbolType.doublearrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, (double)sti.IntValue);
+                                    result = true;
+                                }
+                            }
+                            break;
+
+                        case StackItem.ItemType.dval:
+                            {
+                                if (arrSym.ItemType == SymbolTable.SymbolType.doublearrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, sti.DoubleValue);
+                                    result = true;
+                                }
+                                else
+                                 if (arrSym.ItemType == SymbolTable.SymbolType.intarrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, (double)sti.IntValue);
+                                    result = true;
+                                }
+                            }
+                            break;
+
+                        case StackItem.ItemType.bval:
+                            {
+                                if (arrSym.ItemType == SymbolTable.SymbolType.boolarrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, sti.BooleanValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
+                            }
+                            break;
+
+                        case StackItem.ItemType.sval:
+                            {
+                                if (arrSym.ItemType == SymbolTable.SymbolType.stringarrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, sti.StringValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
+                            }
+                            break;
+
+                        case StackItem.ItemType.hval:
+                            {
+                                if (arrSym.ItemType == SymbolTable.SymbolType.handlearrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, sti.HandleValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
+                            }
+                            break;
+
+                        case StackItem.ItemType.sldval:
+                            {
+                                if (arrSym.ItemType == SymbolTable.SymbolType.solidarrayvariable)
+                                {
+                                    arrSym.Array.Set(arrayIndex, sti.SolidValue);
+                                    result = true;
+                                }
+                                else
+                                {
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                }
+                            }
+                            break;
+                    }
+                }
+            }
+            return result;
         }
     }
 }
