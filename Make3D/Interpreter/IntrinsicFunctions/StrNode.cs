@@ -7,7 +7,7 @@ namespace ScriptLanguage
         // Instance constructor
         public StrNode()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         /// Execute this node
@@ -16,9 +16,9 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (_Expression != null)
+            if (parameterExpression != null)
             {
-                result = _Expression.Execute();
+                result = parameterExpression.Execute();
                 if (result)
                 {
                     result = false;
@@ -81,7 +81,7 @@ namespace ScriptLanguage
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("Str(");
-            result += _Expression.ToRichText();
+            result += parameterExpression.ToRichText();
             result += " )";
 
             return result;
@@ -90,7 +90,7 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = "Str(";
-            result += _Expression.ToString();
+            result += parameterExpression.ToString();
             result += " )";
 
             return result;

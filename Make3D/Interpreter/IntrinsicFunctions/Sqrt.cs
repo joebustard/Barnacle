@@ -7,7 +7,7 @@ namespace ScriptLanguage
         // Instance constructor
         public SqrtNode()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         /// Execute this node
@@ -16,9 +16,9 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (_Expression != null)
+            if (parameterExpression != null)
             {
-                if (_Expression.Execute())
+                if (parameterExpression.Execute())
                 {
                     StackItem sti = ExecutionStack.Instance().Pull();
                     if (sti != null)
@@ -52,13 +52,13 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("Sqrt(") + _Expression.ToRichText() + " )";
+            String result = RichTextFormatter.KeyWord("Sqrt(") + parameterExpression.ToRichText() + " )";
             return result;
         }
 
         public override String ToString()
         {
-            String result = "Sqrt( " + _Expression.ToString() + " )";
+            String result = "Sqrt( " + parameterExpression.ToString() + " )";
             return result;
         }
     }

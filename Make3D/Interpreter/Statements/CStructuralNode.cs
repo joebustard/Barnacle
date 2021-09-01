@@ -9,12 +9,12 @@ namespace ScriptLanguage
 {
     public class CStructuralNode : ParseTreeNode
     {
-        private CCompoundNode compoundNode;
+        private CompoundNode compoundNode;
 
         // Instance constructor
         public CStructuralNode()
         {
-            compoundNode = new CCompoundNode();
+            compoundNode = new CompoundNode();
         }
 
         /// Execute this node

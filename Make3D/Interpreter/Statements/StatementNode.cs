@@ -62,8 +62,7 @@ namespace ScriptLanguage
 
         /// Returns a String representation of this node that can be used for
         /// Pretty Printing
-        ///
-        ///
+
         public override String ToRichText()
         {
             String result = "";

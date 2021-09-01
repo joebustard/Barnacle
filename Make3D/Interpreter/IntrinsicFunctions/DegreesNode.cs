@@ -7,7 +7,7 @@ namespace ScriptLanguage
         // Instance constructor
         public DegreesNode()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         /// Execute this node
@@ -16,9 +16,9 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (_Expression != null)
+            if (parameterExpression != null)
             {
-                if (_Expression.Execute())
+                if (parameterExpression.Execute())
                 {
                     StackItem sti = ExecutionStack.Instance().Pull();
                     if (sti != null)
@@ -52,13 +52,13 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("Degrees(") + _Expression.ToRichText() + " )";
+            String result = RichTextFormatter.KeyWord("Degrees(") + parameterExpression.ToRichText() + " )";
             return result;
         }
 
         public override String ToString()
         {
-            String result = "Degrees(" + _Expression.ToString() + " )";
+            String result = "Degrees(" + parameterExpression.ToString() + " )";
             return result;
         }
     }

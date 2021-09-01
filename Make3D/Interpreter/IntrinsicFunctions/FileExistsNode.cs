@@ -12,7 +12,7 @@ namespace ScriptLanguage
         // Instance constructor
         public FileExistsNode()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         /// Execute this node
@@ -59,13 +59,13 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("FileExists(") + _Expression.ToRichText() + " )";
+            String result = RichTextFormatter.KeyWord("FileExists(") + parameterExpression.ToRichText() + " )";
             return result;
         }
 
         public override String ToString()
         {
-            String result = "FileExists(" + _Expression.ToString() + " )";
+            String result = "FileExists(" + parameterExpression.ToString() + " )";
             return result;
         }
     }

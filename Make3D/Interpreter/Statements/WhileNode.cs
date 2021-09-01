@@ -9,7 +9,7 @@ namespace ScriptLanguage
 {
     internal class WhileNode : StatementNode
     {
-        private CCompoundNode _Body;
+        private CompoundNode _Body;
 
         private ExpressionNode _Expression;
 
@@ -30,7 +30,7 @@ namespace ScriptLanguage
             SteppingThroughBody
         }
 
-        public CCompoundNode Body
+        public CompoundNode Body
         {
             set { _Body = value; }
         }

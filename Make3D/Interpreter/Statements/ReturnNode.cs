@@ -9,7 +9,7 @@ namespace ScriptLanguage
 {
     internal class ReturnNode : StatementNode
     {
-        public CCompoundNode Parent;
+        public CompoundNode Parent;
 
         private ExpressionNode expression;
 

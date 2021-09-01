@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ScriptLanguage
 {
-    public class CCompoundNode : ParseTreeNode
+    public class CompoundNode : ParseTreeNode
     {
         public bool IsTestBody;
         public List<StatementNode> Statements;
@@ -11,7 +11,7 @@ namespace ScriptLanguage
         private int CurrentSingleStepStatement;
 
         // Instance constructor
-        public CCompoundNode()
+        public CompoundNode()
         {
             Statements = new List<StatementNode>();
             UseStatements = new List<StatementNode>();

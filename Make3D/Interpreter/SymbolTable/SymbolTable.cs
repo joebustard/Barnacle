@@ -105,6 +105,35 @@ namespace ScriptLanguage
             return (ArraySymbol)result;
         }
 
+        public ArraySymbol FindArraySymbol(string parent, string name)
+        {
+            Symbol result = null;
+            string local = parent + name;
+            // locals first
+            foreach (Symbol sym in Symbols)
+            {
+                if ((sym.Name.ToLower() == local.ToLower()) &&
+                    (sym is ArraySymbol))
+                {
+                    result = sym;
+                    break;
+                }
+            }
+            if ( result == null )
+            {
+                foreach (Symbol sym in Symbols)
+                {
+                    if ((sym.Name.ToLower() == name.ToLower()) &&
+                        (sym is ArraySymbol))
+                    {
+                        result = sym;
+                        break;
+                    }
+                }
+            }
+            return (ArraySymbol)result;
+        }
+
         public SymbolType FindSymbol(string strName)
         {
             SymbolType result = SymbolType.unknown;

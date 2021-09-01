@@ -11,9 +11,9 @@ namespace ScriptLanguage
     {
         private ExpressionNode _Expression;
 
-        private CCompoundNode _FalseBody;
+        private CompoundNode _FalseBody;
 
-        private CCompoundNode _TrueBody;
+        private CompoundNode _TrueBody;
 
         private SingleSteppingMode CurrentSingleStepMode;
 
@@ -39,12 +39,12 @@ namespace ScriptLanguage
             set { _Expression = value; }
         }
 
-        public CCompoundNode FalseBody
+        public CompoundNode FalseBody
         {
             set { _FalseBody = value; }
         }
 
-        public CCompoundNode TrueBody
+        public CompoundNode TrueBody
         {
             set { _TrueBody = value; }
         }

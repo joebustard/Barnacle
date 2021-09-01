@@ -151,7 +151,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool CheckForInitialiser(CCompoundNode parentNode, String parentName, string Identifier, String strExternalName, DeclarationNode dec)
+        private bool CheckForInitialiser(CompoundNode parentNode, String parentName, string Identifier, String strExternalName, DeclarationNode dec)
         {
             //
             // This function checks if there is an optional initialiser
@@ -327,7 +327,7 @@ namespace ScriptLanguage
             return IsKnownFunction;
         }
 
-        private bool ParseAlignStatement(CCompoundNode parentNode, String parentName, string id)
+        private bool ParseAlignStatement(CompoundNode parentNode, String parentName, string id)
         {
             bool result = false;
             SolidAlignmentNode sal = new SolidAlignmentNode();
@@ -431,7 +431,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private void ParseArrayDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, ref Tokeniser.TokenType tokenType, SymbolTable.SymbolType arrayType)
+        private void ParseArrayDeclaration(CompoundNode parentNode, string parentName, ref bool result, ref string token, ref Tokeniser.TokenType tokenType, SymbolTable.SymbolType arrayType)
         {
             ExpressionNode exp = ParseExpressionNode(parentName);
             if (exp == null)
@@ -630,7 +630,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private ExpressionNode ParseArrayVariableNode(String strName, String parentName)
+        private ExpressionNode ParseArrayVariableNode(String name, String parentName)
         {
             ExpressionNode exp = null;
 
@@ -650,15 +650,15 @@ namespace ScriptLanguage
                         //
                         // Check for local variable
                         //
-                        String ExternalName = strName;
-                        String strTarget = parentName + strName;
+                        String externalName = name;
+                        String internalName = parentName + name;
 
-                        ArraySymbol arsym = SymbolTable.Instance().FindArraySymbol(strTarget);
+                        ArraySymbol arsym = SymbolTable.Instance().FindArraySymbol(parentName, name);
                         if (arsym != null)
                         {
                             ArrayVariableNode vn = new ArrayVariableNode();
-                            vn.Name = strTarget;
-                            vn.ExternalName = ExternalName;
+                            vn.Name = internalName;
+                            vn.ExternalName = externalName;
                             vn.Symbol = arsym;
                             vn.IndexExpression = indexExp;
                             vn.IsInLibrary = tokeniser.InIncludeFile();
@@ -669,19 +669,19 @@ namespace ScriptLanguage
                             //
                             // Try to match up with a global
                             //
-                            ArraySymbol glsym = SymbolTable.Instance().FindArraySymbol(strTarget);
+                            ArraySymbol glsym = SymbolTable.Instance().FindArraySymbol(internalName);
                             if (glsym != null)
                             {
                                 ArrayVariableNode vn = new ArrayVariableNode();
-                                vn.Name = strTarget;
+                                vn.Name = internalName;
                                 vn.Symbol = glsym;
-                                vn.ExternalName = ExternalName;
+                                vn.ExternalName = externalName;
                                 vn.IndexExpression = indexExp;
                                 exp = vn;
                             }
                             else
                             {
-                                ReportSyntaxError("Unidentified variable " + strName);
+                                ReportSyntaxError("Unidentified variable " + name);
                             }
                         }
                     }
@@ -690,15 +690,29 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseAssignment(String Identifier, CCompoundNode parentNode, String parentName)
+        private bool ParseAssignment(String identifier, CompoundNode parentNode, String parentName)
         {
             bool result = false;
-            String ExternalVarName = Identifier;
-            Identifier = parentName + Identifier;                   //
+            String externalName = identifier;
+            string internalName = identifier;
+            bool foundSym = false;
 
-            if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+            if (parentNode.FindSymbol(parentName + identifier) != SymbolTable.SymbolType.unknown)
             {
-                ReportSyntaxError("Undefined variable " + Identifier);
+                internalName = parentName + identifier;
+                foundSym = true;
+            }
+            else
+            {
+                if (parentNode.FindSymbol(identifier) != SymbolTable.SymbolType.unknown)
+                {
+                    internalName = identifier;
+                    foundSym = true;
+                }
+            }
+            if (!foundSym)
+            {
+                ReportSyntaxError("Undefined variable " + externalName);
             }
             else
             {
@@ -723,8 +737,8 @@ namespace ScriptLanguage
                             else
                             {
                                 AssignmentNode asn = new AssignmentNode();
-                                asn.VariableName = Identifier;
-                                asn.ExternalName = ExternalVarName;
+                                asn.VariableName = internalName;
+                                asn.ExternalName = externalName;
                                 asn.ExpressionNode = exp;
                                 parentNode.AddStatement(asn);
                             }
@@ -736,15 +750,30 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseAssignmentToArrayElement(String Identifier, CCompoundNode parentNode, String parentName)
+        private bool ParseAssignmentToArrayElement(String identifier, CompoundNode parentNode, String parentName)
         {
             bool result = false;
-            String ExternalVarName = Identifier;
-            Identifier = parentName + Identifier;                   //
+            String externalName = identifier;
+            string internalName = identifier;
 
-            if (parentNode.FindSymbol(Identifier) == SymbolTable.SymbolType.unknown)
+            bool foundSym = false;
+
+            if (parentNode.FindSymbol(externalName) != SymbolTable.SymbolType.unknown)
             {
-                ReportSyntaxError("Undefined variable " + Identifier);
+                internalName = externalName;
+                foundSym = true;
+            }
+            else
+            {
+                if (parentNode.FindSymbol(parentName + identifier) != SymbolTable.SymbolType.unknown)
+                {
+                    internalName = parentName + identifier;
+                    foundSym = true;
+                }
+            }
+            if (!foundSym)
+            {
+                ReportSyntaxError("Undefined variable " + identifier);
             }
             else
             {
@@ -788,8 +817,8 @@ namespace ScriptLanguage
                                                 else
                                                 {
                                                     AssignToArrayElement asn = new AssignToArrayElement();
-                                                    asn.VariableName = Identifier;
-                                                    asn.ExternalName = ExternalVarName;
+                                                    asn.VariableName = internalName;
+                                                    asn.ExternalName = externalName;
                                                     asn.ValueExpression = exp;
                                                     asn.IndexExpression = indexexp;
                                                     parentNode.AddStatement(asn);
@@ -807,7 +836,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseAssignmentToStruct(String identifier, CCompoundNode parentNode, String parentName)
+        private bool ParseAssignmentToStruct(String identifier, CompoundNode parentNode, String parentName)
         {
             bool result = false;
             String externalVarName = identifier;
@@ -866,7 +895,7 @@ namespace ScriptLanguage
             {
                 if (tokenType == Tokeniser.TokenType.OpenCurly)
                 {
-                    CCompoundNode CompNode = new CCompoundNode();
+                    CompoundNode CompNode = new CompoundNode();
                     CompNode.IsTestBody = true;
                     //
                     // We have to pass in a procedure name to help separate local variables
@@ -887,12 +916,12 @@ namespace ScriptLanguage
             return result;
         }
 
-        private void ParseBoolArrayDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
+        private void ParseBoolArrayDeclaration(CompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
         {
             ParseArrayDeclaration(parentNode, parentName, ref result, ref token, ref tokenType, SymbolTable.SymbolType.boolarrayvariable);
         }
 
-        private bool ParseBoolStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseBoolStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
 
@@ -917,7 +946,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseChainScriptStatement(CCompoundNode parentNode, string parentName)
+        private bool ParseChainScriptStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
             ExpressionNode exp = ParseExpressionNode(parentName);
@@ -940,7 +969,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseCloseFileStatement(CCompoundNode parentNode, string parentName)
+        private bool ParseCloseFileStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
             ExpressionNode exp = ParseExpressionNode(parentName);
@@ -1071,7 +1100,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseCompoundNode(CCompoundNode CompNode, String parentName, bool IsTestBody)
+        private bool ParseCompoundNode(CompoundNode CompNode, String parentName, bool IsTestBody)
         {
             //
             // The opening curly should have processed already
@@ -1144,7 +1173,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseDeleteStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseDeleteStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "Delete";
@@ -1200,7 +1229,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseDoubleStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseDoubleStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
 
@@ -1225,7 +1254,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseExitStatement(CCompoundNode parentNode)
+        private bool ParseExitStatement(CompoundNode parentNode)
         {
             bool result = CheckForSemiColon();
             if (result)
@@ -1448,7 +1477,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseFloorStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseFloorStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "Floor";
@@ -1457,7 +1486,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseForStatement(CCompoundNode parentNode, string parentName)
+        private bool ParseForStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
             String token = "";
@@ -1505,7 +1534,7 @@ namespace ScriptLanguage
                                                 {
                                                     if (tokenType == Tokeniser.TokenType.OpenCurly)
                                                     {
-                                                        CCompoundNode comp = new CCompoundNode();
+                                                        CompoundNode comp = new CompoundNode();
                                                         if (ParseCompoundNode(comp, parentName, false))
                                                         {
                                                             CForNode fnode = new CForNode();
@@ -1530,7 +1559,7 @@ namespace ScriptLanguage
                                                                 {
                                                                     if (tokenType == Tokeniser.TokenType.OpenCurly)
                                                                     {
-                                                                        CCompoundNode comp = new CCompoundNode();
+                                                                        CompoundNode comp = new CompoundNode();
                                                                         if (ParseCompoundNode(comp, parentName, false))
                                                                         {
                                                                             CForNode fnode = new CForNode();
@@ -1579,7 +1608,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseFunctionDeclarationStatement(CCompoundNode parentNode, string parentName)
+        private bool ParseFunctionDeclarationStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
             bool bInLibrary = tokeniser.InIncludeFile();
@@ -1749,7 +1778,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseHandleStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseHandleStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
 
@@ -1788,7 +1817,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseIdentifiedStatement(string Identifier, CCompoundNode parentNode, String parentName)
+        private bool ParseIdentifiedStatement(string Identifier, CompoundNode parentNode, String parentName)
         {
             bool result = false;
             switch (Identifier)
@@ -1965,7 +1994,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseIfStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseIfStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             String token = "";
@@ -1985,7 +2014,7 @@ namespace ScriptLanguage
                                 {
                                     if (tokenType == Tokeniser.TokenType.OpenCurly)
                                     {
-                                        CCompoundNode cmp = new CCompoundNode();
+                                        CompoundNode cmp = new CompoundNode();
                                         if (ParseCompoundNode(cmp, parentName, false))
                                         {
                                             CIfNode wn = new CIfNode();
@@ -2009,7 +2038,7 @@ namespace ScriptLanguage
                                                     {
                                                         if (tokenType == Tokeniser.TokenType.OpenCurly)
                                                         {
-                                                            CCompoundNode elsecmp = new CCompoundNode();
+                                                            CompoundNode elsecmp = new CompoundNode();
                                                             if (ParseCompoundNode(elsecmp, parentName, false))
                                                             {
                                                                 wn.FalseBody = elsecmp;
@@ -2052,7 +2081,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseIncludeStatement(CCompoundNode parentNode)
+        private bool ParseIncludeStatement(CompoundNode parentNode)
         {
             bool result = false;
             //
@@ -2378,7 +2407,7 @@ namespace ScriptLanguage
             return resultNode;
         }
 
-        private bool ParseIntStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseIntStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
 
@@ -2793,7 +2822,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseMoveStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseMoveStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "Move";
@@ -3005,7 +3034,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParsePrintStatement(CCompoundNode parentNode, String parentName)
+        private bool ParsePrintStatement(CompoundNode parentNode, String parentName)
         {
             //
             // Syntax Report <Expression>[,Expression...];
@@ -3064,7 +3093,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseProcedureCall(string Identifier, CCompoundNode parentNode, string parentName)
+        private bool ParseProcedureCall(string Identifier, CompoundNode parentNode, string parentName)
         {
             bool result = false;
             String token = "";
@@ -3232,7 +3261,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseProcedureStatement(CCompoundNode parentNode)
+        private bool ParseProcedureStatement(CompoundNode parentNode)
         {
             //
             // Note this is handling a procedure declaration NOT a call
@@ -3280,7 +3309,7 @@ namespace ScriptLanguage
                                                     //
                                                     // Try parsing the body
                                                     //
-                                                    CCompoundNode cmp = new CCompoundNode();
+                                                    CompoundNode cmp = new CompoundNode();
 
                                                     if (ParseCompoundNode(cmp, strFunctionName, false))
                                                     {
@@ -3416,7 +3445,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseResizeStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseResizeStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "Resize";
@@ -3425,7 +3454,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseReturnStatement(CCompoundNode parentNode, string parentName)
+        private bool ParseReturnStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
             //
@@ -3453,7 +3482,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseRotateStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseRotateStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "Rotate";
@@ -3462,7 +3491,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseSetColourStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseSetColourStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "SetColour";
@@ -3471,7 +3500,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseSetNameStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseSetNameStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             string label = "SetName";
@@ -3480,13 +3509,13 @@ namespace ScriptLanguage
             return result;
         }
 
-        private void ParseSingleBoolDeclaration(CCompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
+        private void ParseSingleBoolDeclaration(CompoundNode parentNode, string parentName, ref bool result, ref string token, Tokeniser.TokenType tokenType)
         {
             CBoolDeclarationNode node = new CBoolDeclarationNode();
             result = ParseSingleDeclaration(parentNode, parentName, ref token, tokenType, node, SymbolTable.SymbolType.boolvariable, "Bool");
         }
 
-        private bool ParseSingleDeclaration(CCompoundNode parentNode, string parentName, ref string token, Tokeniser.TokenType tokenType, DeclarationNode node, SymbolTable.SymbolType st, string label)
+        private bool ParseSingleDeclaration(CompoundNode parentNode, string parentName, ref string token, Tokeniser.TokenType tokenType, DeclarationNode node, SymbolTable.SymbolType st, string label)
         {
             bool result = false;
             if (tokenType == Tokeniser.TokenType.Identifier)
@@ -3528,7 +3557,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseSolidStatement(CCompoundNode parentNode, string parentName, string label, int expectedExpressions, SolidStatement asn)
+        private bool ParseSolidStatement(CompoundNode parentNode, string parentName, string label, int expectedExpressions, SolidStatement asn)
         {
             bool result = false;
             String token = "";
@@ -3598,7 +3627,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseSolidStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseSolidStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
 
@@ -3630,7 +3659,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseStackStatement(CCompoundNode parentNode, String parentName, string id)
+        private bool ParseStackStatement(CompoundNode parentNode, String parentName, string id)
         {
             bool result = false;
             SolidAlignmentNode sal = new SolidAlignmentNode();
@@ -3678,7 +3707,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseStatement(CCompoundNode parentNode, String parentName, bool IsBody)
+        private bool ParseStatement(CompoundNode parentNode, String parentName, bool IsBody)
         {
             bool result = false;
             String token = "";
@@ -3751,7 +3780,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseStringStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseStringStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
 
@@ -3777,7 +3806,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseStructFieldAssignment(String leftidentifier, CCompoundNode parentNode, String parentName)
+        private bool ParseStructFieldAssignment(String leftidentifier, CompoundNode parentNode, String parentName)
         {
             // we expect a fieldname then an assignment
             bool result = false;
@@ -3885,7 +3914,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseStructStatement(CCompoundNode parentNode)
+        private bool ParseStructStatement(CompoundNode parentNode)
         {
             //
             // Note this is handling a struct declaration NOT a reference
@@ -3926,7 +3955,7 @@ namespace ScriptLanguage
                                 //
                                 // Try parsing the body
                                 //
-                                CCompoundNode cmp = new CCompoundNode();
+                                CompoundNode cmp = new CompoundNode();
 
                                 if (ParseCompoundNode(cmp, strStructName, false))
                                 {
@@ -3968,7 +3997,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseStructVarDeclaration(StructDefinition def, CCompoundNode parentNode, string parentName)
+        private bool ParseStructVarDeclaration(StructDefinition def, CompoundNode parentNode, string parentName)
         {
             bool result = false;
 
@@ -4090,7 +4119,7 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private bool ParseUnidentifiedStatement(string Identifier, CCompoundNode parentNode, string parentName)
+        private bool ParseUnidentifiedStatement(string Identifier, CompoundNode parentNode, string parentName)
         {
             bool result = false;
 
@@ -4118,7 +4147,7 @@ namespace ScriptLanguage
                         result = ParseAssignmentToStruct(Identifier, parentNode, parentName);
                     }
                     else
-                    if (SymbolTable.Instance().FindArraySymbol(parentName + Identifier) != null)
+                    if (SymbolTable.Instance().FindArraySymbol(parentName, Identifier) != null)
                     {
                         result = ParseAssignmentToArrayElement(Identifier, parentNode, parentName);
                     }
@@ -4235,49 +4264,50 @@ namespace ScriptLanguage
             return GetFunctionNode<ValNode>(parentName);
         }
 
-        private ExpressionNode ParseVariableNode(String strName, String parentName)
+        private ExpressionNode ParseVariableNode(String name, String parentName)
         {
             ExpressionNode exp = null;
 
             //
             // Check for local variable
             //
-            String ExternalName = strName;
-            String strTarget = parentName + strName;
-            SymbolTable.SymbolType typ = SymbolTable.Instance().FindSymbol(strTarget);
+            String externalName = name;
+            String internalName = name;
+            bool fd = false;
+
+            SymbolTable.SymbolType typ = SymbolTable.Instance().FindSymbol(parentName + name);
             if (typ != SymbolTable.SymbolType.unknown)
             {
+                internalName = parentName + name;
+                fd = true;
+            }
+            else
+            {
+                typ = SymbolTable.Instance().FindSymbol(externalName);
+                if (typ != SymbolTable.SymbolType.unknown)
+                {
+                    internalName = externalName;
+                    fd = true;
+                }
+            }
+            if (fd)
+            {
                 VariableNode vn = new VariableNode();
-                vn.Name = strTarget;
-                vn.ExternalName = ExternalName;
-                vn.Symbol = SymbolTable.Instance().FindSymbol(strTarget, typ);
+                vn.Name = internalName;
+                vn.ExternalName = externalName;
+                vn.Symbol = SymbolTable.Instance().FindSymbol(internalName, typ);
                 vn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = vn;
             }
             else
             {
-                //
-                // Try to match up with a global
-                //
-                typ = SymbolTable.Instance().FindSymbol(strName);
-                if (typ != SymbolTable.SymbolType.unknown)
-                {
-                    VariableNode vn = new VariableNode();
-                    vn.Name = strTarget;
-                    vn.Symbol = SymbolTable.Instance().FindSymbol(strName, typ);
-                    vn.ExternalName = ExternalName;
-                    exp = vn;
-                }
-                else
-                {
-                    ReportSyntaxError("Unidentified variable " + strName);
-                }
+                ReportSyntaxError("Unidentified variable " + name);
             }
 
             return exp;
         }
 
-        private bool ParseWhileStatement(CCompoundNode parentNode, String parentName)
+        private bool ParseWhileStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
             String token = "";
@@ -4297,7 +4327,7 @@ namespace ScriptLanguage
                                 {
                                     if (tokenType == Tokeniser.TokenType.OpenCurly)
                                     {
-                                        CCompoundNode cmp = new CCompoundNode();
+                                        CompoundNode cmp = new CompoundNode();
                                         if (ParseCompoundNode(cmp, parentName, false))
                                         {
                                             WhileNode wn = new WhileNode();
@@ -4329,7 +4359,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool ParseWholeStructAssignment(String leftidentifier, CCompoundNode parentNode, String parentName)
+        private bool ParseWholeStructAssignment(String leftidentifier, CompoundNode parentNode, String parentName)
         {
             // we should either see  a struct variable name followed by a semi colon;
             // or an expression;

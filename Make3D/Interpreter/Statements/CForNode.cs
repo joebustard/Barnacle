@@ -9,7 +9,7 @@ namespace ScriptLanguage
 {
     internal class CForNode : StatementNode
     {
-        private CCompoundNode _Body;
+        private CompoundNode _Body;
 
         private ExpressionNode _EndExpression;
 
@@ -48,7 +48,7 @@ namespace ScriptLanguage
             SteppingThroughBody
         }
 
-        public CCompoundNode Body
+        public CompoundNode Body
         {
             set { _Body = value; }
         }

@@ -4,18 +4,18 @@ namespace ScriptLanguage
 {
     internal class SingleParameterFunction : ExpressionNode
     {
-        protected ExpressionNode _Expression;
+        protected ExpressionNode parameterExpression;
 
         // Instance constructor
         public SingleParameterFunction()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         public ExpressionNode Expression
         {
-            get { return _Expression; }
-            set { _Expression = value; }
+            get { return parameterExpression; }
+            set { parameterExpression = value; }
         }
     }
 }

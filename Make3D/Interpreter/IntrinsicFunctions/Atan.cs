@@ -7,7 +7,7 @@ namespace ScriptLanguage
         // Instance constructor
         public AtanNode()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         /// Execute this node
@@ -16,9 +16,9 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (_Expression != null)
+            if (parameterExpression != null)
             {
-                if (_Expression.Execute())
+                if (parameterExpression.Execute())
                 {
                     StackItem sti = ExecutionStack.Instance().Pull();
                     if (sti != null)
@@ -52,13 +52,13 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("Atan(") + _Expression.ToRichText() + " )";
+            String result = RichTextFormatter.KeyWord("Atan(") + parameterExpression.ToRichText() + " )";
             return result;
         }
 
         public override String ToString()
         {
-            String result = "Atan(" + _Expression.ToString() + " )";
+            String result = "Atan(" + parameterExpression.ToString() + " )";
             return result;
         }
     }

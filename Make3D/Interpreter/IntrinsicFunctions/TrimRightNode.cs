@@ -12,7 +12,7 @@ namespace ScriptLanguage
         // Instance constructor
         public TrimRightNode()
         {
-            _Expression = null;
+            parameterExpression = null;
         }
 
         /// Execute this node
@@ -21,9 +21,9 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (_Expression != null)
+            if (parameterExpression != null)
             {
-                result = _Expression.Execute();
+                result = parameterExpression.Execute();
                 if (result)
                 {
                     result = false;
@@ -53,7 +53,7 @@ namespace ScriptLanguage
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("TrimRight") + "( ";
-            result += _Expression.ToRichText();
+            result += parameterExpression.ToRichText();
             result += " )";
             return result;
         }
@@ -61,7 +61,7 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = "TrimRight(";
-            result += _Expression.ToString();
+            result += parameterExpression.ToString();
             result += " )";
             return result;
         }

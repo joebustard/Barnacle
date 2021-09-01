@@ -4,7 +4,7 @@ namespace ScriptLanguage
 {
     internal class StructNode : StatementNode
     {
-        protected CCompoundNode body;
+        protected CompoundNode body;
         protected String name;
 
         // Instance constructor
@@ -14,7 +14,7 @@ namespace ScriptLanguage
             body = null;
         }
 
-        public CCompoundNode Body
+        public CompoundNode Body
         {
             get { return body; }
             set { body = value; }

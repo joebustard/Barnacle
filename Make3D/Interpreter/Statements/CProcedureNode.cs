@@ -5,7 +5,7 @@ namespace ScriptLanguage
 {
     public class ProcedureNode : StatementNode
     {
-        protected CCompoundNode _Body;
+        protected CompoundNode _Body;
         protected SymbolTable.SymbolType _ReturnType;
 
         protected String name;
@@ -21,7 +21,7 @@ namespace ScriptLanguage
             _Body = null;
         }
 
-        public CCompoundNode Body
+        public CompoundNode Body
         {
             set { _Body = value; }
         }
