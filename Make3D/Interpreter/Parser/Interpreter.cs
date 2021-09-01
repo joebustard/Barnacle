@@ -63,6 +63,7 @@ namespace ScriptLanguage
                 "cutout",
                 "degrees",
                 "difference",
+                "dim",
                 "inputstring",
                 "intersection",
                 "len",
@@ -1175,6 +1176,30 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseDimFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String token = "";
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                ArraySymbol sym = SymbolTable.Instance().FindArraySymbol(parentName + token);
+                if (sym != null)
+                {
+                    DimNode dm = new DimNode();
+                    dm.Symbol = sym;
+                    dm.ArrayName = token;
+                    dm.IsInLibrary = tokeniser.InIncludeFile();
+                    exp = dm;
+                }
+                else
+                {
+                    ReportSyntaxError("Dim expected array name");
+                }
+            }
+            return exp;
+        }
+
         private bool ParseDoubleStatement(CCompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -1782,10 +1807,10 @@ namespace ScriptLanguage
 
                 case "stackleft":
                 case "stackright":
-                case "stacktop":
-                case "stackbottom":
+                case "stackabove":
+                case "stackbelow":
                 case "stackfront":
-                case "stackback":
+                case "stackbehind":
 
                     {
                         result = ParseStackStatement(parentNode, parentName, Identifier);
@@ -2165,6 +2190,12 @@ namespace ScriptLanguage
                         case "difference":
                             {
                                 exp = ParseDifferenceFunction(parentName);
+                            }
+                            break;
+
+                        case "dim":
+                            {
+                                exp = ParseDimFunction(parentName);
                             }
                             break;
 
@@ -3949,11 +3980,6 @@ namespace ScriptLanguage
             {
                 if (tokenType == Tokeniser.TokenType.Identifier)
                 {
-                    //
-                    // To avoid local variable names clashing with other variables
-                    // we prefix them with the parent [procedures name
-                    //
-
                     String strVarName = token;
                     token = parentName + token;
 

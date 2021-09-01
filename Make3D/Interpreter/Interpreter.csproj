@@ -62,6 +62,7 @@
     <Compile Include="Declarations\SolidDeclarationNode.cs" />
     <Compile Include="Declarations\StructVarDeclarationNode.cs" />
     <Compile Include="Execution\Array.cs" />
+    <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidFunctions\MakeBicorn.cs" />
