@@ -85,7 +85,7 @@ namespace ScriptLanguage
                     result += dimensions.ToRichText();
                 }
                 result += "] " + RichTextFormatter.VariableName(VarName);
-                if (initialisers != null)
+                if (initialisers != null && initialisers.Count() > 0)
                 {
                     result += " = " + @"\par";
                     result += Indentor.Indentation() + @"\{\par ";
@@ -115,7 +115,7 @@ namespace ScriptLanguage
                     result += dimensions.ToString();
                 }
                 result += "] " + VarName;
-                if (initialisers != null)
+                if (initialisers != null && initialisers.Count() > 0)
                 {
                     result += "=\n";
                     result += Indentor.Indentation() + "{\n";

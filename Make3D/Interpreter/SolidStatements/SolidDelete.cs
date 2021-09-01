@@ -6,77 +6,41 @@ using System.Threading.Tasks;
 
 namespace ScriptLanguage
 {
-   internal class SolidDelete : StatementNode
+    internal class SolidDeleteNode : SolidStatement
     {
-
-        private String externalName;
-        private String variableName;
-
-        public SolidDelete()
+        public SolidDeleteNode()
         {
-            variableName = "";
+            label = "Delete";
+            expressions = new ExpressionCollection();
         }
-
-
-        public String ExternalName
-        {
-            get { return externalName; }
-            set { externalName = value; }
-        }
-
-        public String VariableName
-        {
-            get { return variableName; }
-            set { variableName = value; }
-        }
-
 
         public override bool Execute()
         {
             bool result = false;
-
-            Symbol sym = SymbolTable.Instance().FindSymbol(variableName, SymbolTable.SymbolType.solidvariable);
-            if (sym != null)
+            if (expressions != null)
             {
-                int objectIndex = sym.SolidValue;
-                if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count)
+                result = expressions.Execute();
+                if (result)
                 {
-                    Script.ResultArtefacts[objectIndex]=null;
-                    sym.SolidValue = -1;
-                     result = true;
-                }
-                else
-                {
-                    Log.Instance().AddEntry("Run Time Error : Delete solid name incorrect");
-                }
-            }
-            return result;
-        }
-
-        public override String ToRichText()
-        {
-            String result = "";
-            if (!IsInLibrary)
-            {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Delete ") + RichTextFormatter.VariableName(externalName) + " ;";
-                if (HighLight)
-                {
-                    result = RichTextFormatter.Highlight(result);
+                    int objectIndex;
+                    if (!PullSolid(out objectIndex))
+                    {
+                        Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                    }
+                    else
+                    {
+                        if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
+                        {
+                            Script.ResultArtefacts[objectIndex] = null;
+                        }
+                        else
+                        {
+                            Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
+                        }
+                    }
                 }
             }
             return result;
         }
-
-        public override String ToString()
-        {
-            String result = "";
-            if (!IsInLibrary)
-            {
-                result = Indentor.Indentation() + "Delete " + externalName + " ;";
-            }
-            return result;
-        }
-
-
     }
 }

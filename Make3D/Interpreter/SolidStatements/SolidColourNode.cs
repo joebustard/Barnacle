@@ -1,46 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 
 namespace ScriptLanguage
 {
-    internal class SolidColourNode : StatementNode
+    internal class SolidColourNode : SolidStatement
     {
-        private ExpressionNode expression;
-        private ExpressionCollection expressions;
-        private String externalName;
-        private String variableName;
-
         public SolidColourNode()
         {
-            variableName = "";
+            label = "SetColour";
             expressions = new ExpressionCollection();
-        }
-
-        public ExpressionNode ExpressionNode
-        {
-            get { return expression; }
-            set { expression = value; }
-        }
-
-        public String ExternalName
-        {
-            get { return externalName; }
-            set { externalName = value; }
-        }
-
-        public String VariableName
-        {
-            get { return variableName; }
-            set { variableName = value; }
-        }
-
-        public void AddExpression(ExpressionNode exp)
-        {
-            expressions.InsertAtStart(exp);
         }
 
         public override bool Execute()
@@ -51,11 +18,14 @@ namespace ScriptLanguage
                 result = expressions.Execute();
                 if (result)
                 {
-                    Symbol sym = SymbolTable.Instance().FindSymbol(variableName, SymbolTable.SymbolType.solidvariable);
-                    if (sym != null)
+                    int objectIndex;
+                    if (!PullSolid(out objectIndex))
                     {
-                        int objectIndex = sym.SolidValue;
-                        if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count)
+                        Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                    }
+                    else
+                    {
+                        if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
                         {
                             byte A;
                             byte R;
@@ -79,63 +49,7 @@ namespace ScriptLanguage
                                 }
                             }
                         }
-                        else
-                        {
-                            Log.Instance().AddEntry("Run Time Error : SetName solid name incorrect");
-                        }
                     }
-                }
-            }
-            return result;
-        }
-
-        public override String ToRichText()
-        {
-            String result = "";
-            if (!IsInLibrary)
-            {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord("SetColour ") + RichTextFormatter.VariableName(externalName) + RichTextFormatter.Operator(", ");
-                result += expressions.ToRichText();
-                result += " ;";
-                if (HighLight)
-                {
-                    result = RichTextFormatter.Highlight(result);
-                }
-            }
-            return result;
-        }
-
-        public override String ToString()
-        {
-            String result = "";
-            if (!IsInLibrary)
-            {
-                result = Indentor.Indentation() + "SetColour " + externalName + ", " + expressions.ToString();
-                result += " ;";
-            }
-            return result;
-        }
-
-        private bool PullByte(out byte a)
-        {
-            bool result = false;
-            a = 0;
-            StackItem sti = ExecutionStack.Instance().Pull();
-            if (sti != null)
-            {
-                if (sti.MyType == StackItem.ItemType.ival)
-                {
-                    int v = sti.IntValue;
-                    if (v < 0)
-                    {
-                        v = 0;
-                    }
-                    if (v > 255)
-                    {
-                        v = 255;
-                    }
-                    a = (byte)v;
-                    result = true;
                 }
             }
             return result;

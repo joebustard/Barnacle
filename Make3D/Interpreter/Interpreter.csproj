@@ -70,6 +70,7 @@
     <Compile Include="SolidFunctions\MakeTube.cs" />
     <Compile Include="SolidFunctions\CSGNode.cs" />
     <Compile Include="SolidFunctions\MakePlatelet.cs" />
+    <Compile Include="SolidStatements\SolidAlignment.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />
     <Compile Include="SolidStatements\SolidDelete.cs" />
     <Compile Include="SolidStatements\SolidFloor.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="SolidStatements\SolidPosition.cs" />
     <Compile Include="SolidStatements\SolidRotate.cs" />
     <Compile Include="SolidStatements\SolidSize.cs" />
+    <Compile Include="SolidStatements\SolidStatement.cs" />
     <Compile Include="Statements\ArraySymbolForCall.cs" />
     <Compile Include="Statements\ArrayVariableNode.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
