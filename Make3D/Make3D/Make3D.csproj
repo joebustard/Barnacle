@@ -638,6 +638,10 @@
       <Project>{B650D680-AB32-4F89-A012-E72F59E4AF22}</Project>
       <Name>Interpreter</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LineLib\LineLib.csproj">
+      <Project>{8248f033-5de9-46e4-bf7c-0b108f120577}</Project>
+      <Name>LineLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MakerLib\MakerLib.csproj">
       <Project>{83ac0da3-1ee8-4fe1-96e4-c9adcd88f44e}</Project>
       <Name>MakerLib</Name>

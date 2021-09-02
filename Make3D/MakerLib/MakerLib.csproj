@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
+    <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="MakerBase.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="StadiumMaker.cs" />

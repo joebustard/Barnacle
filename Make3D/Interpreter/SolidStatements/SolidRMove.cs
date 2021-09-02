@@ -8,11 +8,11 @@ using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class SolidPositionNode : SolidStatement
+    internal class SolidRMoveNode : SolidStatement
     {
-        public SolidPositionNode()
+        public SolidRMoveNode()
         {
-            label = "Move";
+            label = "RMove";
             expressions = new ExpressionCollection();
         }
 
@@ -46,8 +46,8 @@ namespace ScriptLanguage
                                     result = PullDouble(out zr);
                                     if (result)
                                     {
-                                        Point3D pos = new Point3D(xr, yr, zr);
-                                        Script.ResultArtefacts[objectIndex].Position = pos;
+                                        Vector3D rel = new Vector3D(xr, yr, zr);
+                                        Script.ResultArtefacts[objectIndex].Position += rel;
                                         Script.ResultArtefacts[objectIndex].Remesh();
                                     }
                                 }

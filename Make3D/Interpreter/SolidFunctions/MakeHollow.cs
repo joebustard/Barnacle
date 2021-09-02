@@ -7,21 +7,23 @@ using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class MakePlateletNode : ExpressionNode
+    internal class MakeHollowNode : ExpressionNode
     {
         private ExpressionNode heightExp;
-        private string label = "MakePlatelet";
+        private string label = "MakeHollow";
         private ExpressionNode pointArrayExp;
+        private ExpressionNode wallThicknessExp;
 
-        public MakePlateletNode()
+        public MakeHollowNode()
         {
         }
 
-        public MakePlateletNode(ExpressionNode p, ExpressionNode h) : base(h)
+        public MakeHollowNode(ExpressionNode p, ExpressionNode h, ExpressionNode wth) : base(h)
         {
             this.pointArrayExp = p;
 
             this.heightExp = h;
+            this.wallThicknessExp = wth;
         }
 
         /// Execute this node
@@ -32,8 +34,9 @@ namespace ScriptLanguage
             bool result = false;
             double[] coords = null;
             double h = 0;
-
+            double wt = 0;
             if (EvalExpression(heightExp, ref h, "Height") &&
+                EvalExpression(wallThicknessExp, ref wt, "WallThickness") &&
                  EvalExpression(pointArrayExp, ref coords, "PointArray"))
             {
                 if (coords != null && coords.GetLength(0) >= 6 && h > 0)
@@ -52,7 +55,7 @@ namespace ScriptLanguage
                     obj.Scale = new Scale3D(20, 20, 20);
 
                     obj.Position = new Point3D(0, 0, 0);
-                    PolyMaker maker = new PolyMaker(points, h);
+                    HollowPolyMaker maker = new HollowPolyMaker(points, h, wt);
                     maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
                     obj.CalcScale(false);
                     obj.Remesh();
@@ -75,7 +78,8 @@ namespace ScriptLanguage
         {
             String result = RichTextFormatter.KeyWord($"{label}") + "( ";
             result += pointArrayExp.ToRichText() + ", ";
-            result += heightExp.ToRichText();
+            result += heightExp.ToRichText() + ", ";
+            result += wallThicknessExp.ToRichText();
             result += " )";
             return result;
         }
@@ -84,7 +88,9 @@ namespace ScriptLanguage
         {
             String result = $"{label}( ";
             result += pointArrayExp.ToString() + ", ";
-            result += heightExp.ToString();
+            result += heightExp.ToString() + ", ";
+            result += wallThicknessExp.ToString();
+            result += " )";
             result += " )";
             return result;
         }
@@ -144,7 +150,7 @@ namespace ScriptLanguage
             }
             if (!result)
             {
-                Log.Instance().AddEntry($"{label} : " + v + " expression error");
+                Log.Instance().AddEntry("MakeTube : " + v + " expression error");
             }
             return result;
         }

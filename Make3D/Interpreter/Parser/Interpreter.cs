@@ -39,6 +39,7 @@ namespace ScriptLanguage
                 "rotate",
                 "resize",
                 "return",
+                "rmove",
                 "run",
                 "setcolour",
                 "setname",
@@ -69,6 +70,7 @@ namespace ScriptLanguage
                 "len",
                 "make",
                 "makebicorn",
+                "makehollow",
                 "makeplatelet",
                 "makestadium",
                 "maketorus",
@@ -1900,6 +1902,12 @@ namespace ScriptLanguage
                     }
                     break;
 
+                case "rmove":
+                    {
+                        result = ParseRMoveStatement(parentNode, parentName);
+                    }
+                    break;
+
                 case "resize":
                     {
                         result = ParseResizeStatement(parentNode, parentName);
@@ -2258,6 +2266,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makehollow":
+                            {
+                                exp = ParseMakeHollowFunction(parentName);
+                            }
+                            break;
+
                         case "makeplatelet":
                             {
                                 exp = ParseMakePlateletFunction(parentName);
@@ -2607,6 +2621,42 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeHollowFunction(string parentName)
+        {
+            string label = "MakeHollow";
+            ExpressionNode exp = null;
+            ExpressionNode pointArrayExp = ParseExpressionForCallNode(parentName);
+            if (pointArrayExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError($"{label} expected ,");
+                }
+                else
+                {
+                    ExpressionNode heightExp = ParseExpressionNode(parentName);
+                    if (heightExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError($"{label} expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode thickExp = ParseExpressionNode(parentName);
+                            if (thickExp != null)
+                            {
+                                MakeHollowNode mn = new MakeHollowNode(pointArrayExp, heightExp, thickExp);
+                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                exp = mn;
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseMakePlateletFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -2826,7 +2876,7 @@ namespace ScriptLanguage
         {
             bool result = false;
             string label = "Move";
-            SolidPositionNode asn = new SolidPositionNode();
+            SolidMoveNode asn = new SolidMoveNode();
             result = ParseSolidStatement(parentNode, parentName, label, 4, asn);
 
             return result;
@@ -3478,6 +3528,16 @@ namespace ScriptLanguage
                     ret.Parent = parentNode;
                 }
             }
+
+            return result;
+        }
+
+        private bool ParseRMoveStatement(CompoundNode parentNode, String parentName)
+        {
+            bool result = false;
+            string label = "RMove";
+            SolidRMoveNode asn = new SolidRMoveNode();
+            result = ParseSolidStatement(parentNode, parentName, label, 4, asn);
 
             return result;
         }

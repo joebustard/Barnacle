@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
+using Make3D.LineLib;
 
 namespace Make3D.Dialogs
 {
