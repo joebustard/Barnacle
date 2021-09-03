@@ -7,48 +7,68 @@ using System.Windows;
 
 namespace Make3D.LineLib
 {
-    public class LineSegment : PathSegment
+    public class LineSegment : FlexiSegment
     {
-        /*
-        public LineSegment(Point point1, Point point2)
+        public LineSegment(int p0, int p1)
         {
-            P0 = new PathPoint(point1);
-            P1 = new PathPoint(point2);
-            Offset = new Point(0, 0);
+            P0 = p0;
+            P1 = p1;
         }
 
-        public LineSegment(PathPoint point1, PathPoint point2)
+        public int P0 { get; set; }
+        public int P1 { get; set; }
+
+        public override void DeletePoints(List<FlexiPoint> points)
         {
-            P0 = point1;
-            P1 = point2;
-            Offset = new Point(0, 0);
+            points.RemoveAt(P1);
         }
 
-        public Point Offset { get; set; }
-        public PathPoint P0 { get; set; }
-        public PathPoint P1 { get; set; }
+        public override void DisplayPoints(List<Point> res, List<FlexiPoint> pnts)
+        {
+            res.Add(pnts[P1].Point);
+        }
 
-        public override PathPoint End()
+        public override int End()
         {
             return P1;
         }
 
-        public Point GetCoord(double t, bool addOffset = true)
+        public Point GetCoord(double t, List<FlexiPoint> points)
         {
-            double x = P0.X + t * (P1.X - P0.X);
-            double y = P0.Y + t * (P1.Y - P0.Y);
-            if (addOffset)
-            {
-                x += Offset.X;
-                y += Offset.Y;
-            }
+            double x = points[P0].Point.X + t * (points[P1].Point.X - points[P0].Point.X);
+            double y = points[P0].Point.Y + t * (points[P1].Point.Y - points[P0].Point.Y);
+
             return new Point(x, y);
         }
 
-        public override PathPoint Start()
+        public override void GetSegmentPoints(List<FlexiPoint> res, List<FlexiPoint> pnts)
+        {
+            res.Add(pnts[P1]);
+        }
+
+        public override void PointInserted(int v2, int n)
+        {
+            if (P0 >= v2)
+            {
+                P0 += n;
+            }
+
+            if (P1 >= v2)
+            {
+                P1 += n;
+            }
+        }
+
+        public override int Start()
         {
             return P0;
         }
-        */
+
+        public override string ToString()
+        {
+            string s = "L," + P0.ToString() + "," + P1.ToString();
+
+            return s;
+        }
     }
 }

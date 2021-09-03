@@ -18,7 +18,7 @@ namespace Make3D.Models
                     break;
 
                 case "Scribble":
-                    res = new Scribble();
+                    res = new ScribbleDlg();
                     break;
 
                 case "LinearLoft":

@@ -44,11 +44,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BezierLine.cs" />
-    <Compile Include="PathLine.cs" />
+    <Compile Include="FlexiBezier.cs" />
+    <Compile Include="FlexiPath.cs" />
+    <Compile Include="FlexiPoint.cs" />
     <Compile Include="LineSegment.cs" />
-    <Compile Include="PathPoint.cs" />
-    <Compile Include="PathSegment.cs" />
+    <Compile Include="FlexiSegment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

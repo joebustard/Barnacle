@@ -12,6 +12,8 @@ namespace Make3D.Dialogs
     {
         private int id;
 
+        private bool selected;
+
         private double x;
 
         private double y;
@@ -32,7 +34,22 @@ namespace Make3D.Dialogs
             Selected = false;
         }
 
+        public PolyPoint(double x, double y, int id) : this(x, y)
+        {
+            Id = id;
+            X = x;
+            Y = y;
+            Selected = false;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public enum PointMode
+        {
+            Data,
+            Control1,
+            Control2
+        }
 
         public int Id
         {
@@ -50,12 +67,13 @@ namespace Make3D.Dialogs
             }
         }
 
+        public PointMode Mode { get; set; }
+
         public System.Windows.Point Point
         {
             get { return new System.Windows.Point(X, Y); }
         }
 
-        private bool selected;
         public bool Selected
         {
             get

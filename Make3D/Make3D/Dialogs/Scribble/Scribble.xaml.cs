@@ -1,20 +1,126 @@
-﻿using System;
-using System.ComponentModel;
+﻿using Make3D.LineLib;
+using Make3D.Models;
+using Microsoft.Win32;
+using PolygonTriangulationLib;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows;
-using System.Windows.Media.Media3D;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using Image = System.Windows.Controls.Image;
 
 namespace Make3D.Dialogs
 {
-    /// <summary>
-    /// Interaction logic for Blank.xaml
-    /// </summary>
-    public partial class Scribble : BaseModellerDialog, INotifyPropertyChanged
+    public partial class ScribbleDlg : BaseModellerDialog
     {
-        public Scribble()
+        private FlexiPath flexiPath;
+        private double height = 10;
+        private bool hollowShape;
+        private BitmapImage localImage;
+        private bool moving;
+        private ObservableCollection<PolyPoint> polyPoints;
+        private double scale;
+        private int selectedPoint;
+        private bool showOrtho;
+        private Visibility showWidth;
+        private bool solidShape;
+        private int wallWidth;
+
+        public ScribbleDlg()
         {
             InitializeComponent();
-            ToolName = "Scribble";
+            polyPoints = new ObservableCollection<PolyPoint>();
+            flexiPath = new FlexiPath();
+            selectedPoint = -1;
+
+            scale = 1.0;
+            wallWidth = 5;
+            solidShape = true;
+            hollowShape = false;
+            showOrtho = true;
+            showWidth = Visibility.Hidden;
+
+            InitialisePoints();
+
+            EditorParameters.ToolName = "Scribble";
             DataContext = this;
+            SolidShape = true;
+            Camera.Distance = Camera.Distance * 3.0;
+            ModelGroup = MyModelGroup;
+            moving = false;
+        }
+
+        public bool HollowShape
+        {
+            get
+            {
+                return hollowShape;
+            }
+            set
+            {
+                if (hollowShape != value)
+                {
+                    hollowShape = value;
+                    if (hollowShape == true)
+                    {
+                        ShowWidth = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowWidth = Visibility.Hidden;
+                    }
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public ObservableCollection<PolyPoint> Points
+        {
+            get
+            {
+                return polyPoints;
+            }
+            set
+            {
+                if (value != polyPoints)
+                {
+                    polyPoints = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public int SelectedPoint
+        {
+            get
+            {
+                return selectedPoint;
+            }
+            set
+            {
+                if (selectedPoint != value)
+                {
+                    selectedPoint = value;
+                    NotifyPropertyChanged();
+                    ClearPointSelections();
+                    if (polyPoints != null)
+                    {
+                        if (selectedPoint >= 0 && selectedPoint < polyPoints.Count)
+                        {
+                            polyPoints[selectedPoint].Selected = true;
+                        }
+                    }
+                    UpdateDisplay();
+                }
+            }
         }
 
         public override bool ShowAxies
@@ -29,7 +135,7 @@ namespace Make3D.Dialogs
                 {
                     showAxies = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -46,41 +152,779 @@ namespace Make3D.Dialogs
                 {
                     showFloor = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool ShowOrtho
+        {
+            get
+            {
+                return showOrtho;
+            }
+            set
+            {
+                if (value != showOrtho)
+                {
+                    showOrtho = value;
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public Visibility ShowWidth
+        {
+            get
+            {
+                return showWidth;
+            }
+            set
+            {
+                if (showWidth != value)
+                {
+                    showWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool SolidShape
+        {
+            get
+            {
+                return solidShape;
+            }
+            set
+            {
+                if (solidShape != value)
+                {
+                    solidShape = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public int WallWidth
+        {
+            get
+            {
+                return wallWidth;
+            }
+            set
+            {
+                if (wallWidth != value)
+                {
+                    wallWidth = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            SaveEditorParmeters();
+            GeneratePointParams();
+            GenerateFaces();
             DialogResult = true;
             Close();
         }
 
-        private void GenerateShape()
+        private void AddLine(int i, int v, List<System.Windows.Point> points)
+        {
+            if (v >= points.Count)
+            {
+                v = 0;
+            }
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 6;
+            ln.Fill = br;
+            ln.X1 = points[i].X;
+            ln.Y1 = points[i].Y;
+            ln.X2 = points[v].X;
+            ln.Y2 = points[v].Y;
+            ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
+            MainCanvas.Children.Add(ln);
+        }
+
+        private void AddPointClicked(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void ClearPointSelections()
+        {
+            if (polyPoints != null)
+            {
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    polyPoints[i].Selected = false;
+                }
+            }
+        }
+
+        private void CreateSideFace(List<System.Windows.Point> pnts, int i)
+        {
+            int v = i + 1;
+            if (v == pnts.Count)
+            {
+                v = 0;
+            }
+
+            int c0 = AddVertice(pnts[i].X, pnts[i].Y, 0.0);
+            int c1 = AddVertice(pnts[i].X, pnts[i].Y, height);
+            int c2 = AddVertice(pnts[v].X, pnts[v].Y, height);
+            int c3 = AddVertice(pnts[v].X, pnts[v].Y, 0.0);
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c1);
+
+            Faces.Add(c0);
+            Faces.Add(c3);
+            Faces.Add(c2);
+        }
+
+        private void DashLine(double x1, double y1, double x2, double y2)
+        {
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 2;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.Fill = br;
+            ln.X1 = x1;
+            ln.Y1 = y1;
+            ln.X2 = x2;
+            ln.Y2 = y2;
+
+            MainCanvas.Children.Add(ln);
+        }
+
+        private void DeletePointClicked(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void DisplayLines()
+        {
+            if (flexiPath != null)
+            {
+                List<System.Windows.Point> points = flexiPath.DisplayPoints();
+                if (points != null && points.Count > 2)
+                {
+                    for (int i = 0; i < points.Count; i++)
+                    {
+                        AddLine(i, i + 1, points);
+                    }
+                }
+            }
+        }
+
+        private void DisplayPoints()
+        {
+            if (polyPoints != null)
+            {
+                double ox = double.NaN;
+                double oy = double.NaN;
+                if (selectedPoint != -1)
+                {
+                    ox = polyPoints[selectedPoint].X;
+                    oy = polyPoints[selectedPoint].Y;
+                }
+
+                double rad = 3;
+                System.Windows.Media.Brush br = null;
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    System.Windows.Point p = polyPoints[i].Point;
+                    if (selectedPoint == i)
+                    {
+                        rad = 6;
+                        br = System.Windows.Media.Brushes.LightGreen;
+                    }
+                    else
+                    {
+                        rad = 3;
+                        br = System.Windows.Media.Brushes.Red;
+                        if (ox != double.NaN)
+                        {
+                            if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
+                            {
+                                br = System.Windows.Media.Brushes.Blue;
+                            }
+                        }
+                    }
+
+                    Ellipse el = new Ellipse();
+
+                    Canvas.SetLeft(el, p.X - rad);
+                    Canvas.SetTop(el, p.Y - rad);
+                    el.Width = 2 * rad;
+                    el.Height = 2 * rad;
+                    el.Stroke = br;
+                    el.Fill = br;
+                    el.MouseDown += MainCanvas_MouseDown;
+                    el.MouseMove += MainCanvas_MouseMove;
+                    el.ContextMenu = PointMenu(el);
+                    MainCanvas.Children.Add(el);
+
+                    if (selectedPoint == i && showOrtho)
+                    {
+                        DashLine(p.X, 0, p.X, MainCanvas.ActualHeight - 1);
+                        DashLine(0, p.Y, MainCanvas.ActualWidth - 1, p.Y);
+                    }
+                }
+
+                // now draw any control connectors
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
+                    {
+                        int j = i - 1;
+                        if (j < 0)
+                        {
+                            j = polyPoints.Count - 1;
+                        }
+                        DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
+                    }
+                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
+                    {
+                        int j = i + 1;
+                        if (j == polyPoints.Count)
+                        {
+                            j = 0;
+                        }
+                        DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
+                    }
+                }
+            }
+        }
+
+        private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
+        {
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 1;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.Fill = br;
+            ln.X1 = p1.X;
+            ln.Y1 = p1.Y;
+            ln.X2 = p2.X;
+            ln.Y2 = p2.Y;
+
+            MainCanvas.Children.Add(ln);
+        }
+
+        private void GenerateFaces()
+        {
+            if (SolidShape)
+            {
+                GenerateSolid();
+            }
+            else
+            {
+                GenerateHollow();
+            }
+        }
+
+        private void GenerateHollow()
+        {
+            List<System.Windows.Point> points = flexiPath.DisplayPoints();
+            List<PointF> outerPolygon = new List<PointF>();
+            List<PointF> innerPolygon = new List<PointF>();
+            ClearShape();
+            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+            double top = 0;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Y > top)
+                {
+                    top = points[i].Y;
+                }
+            }
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (localImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                else
+                {
+                    double x = ToMM(points[i].X);
+                    double y = ToMM(top - points[i].Y);
+                    tmp.Insert(0, new System.Windows.Point(x, y));
+                }
+            }
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                outerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
+                innerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
+            }
+            outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
+            innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
+            outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+            innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth / 2.0F);
+            tmp.Clear();
+            for (int i = outerPolygon.Count - 1; i >= 0; i--)
+            {
+                tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i);
+            }
+
+            tmp.Clear();
+            for (int i = 0; i < innerPolygon.Count; i++)
+            {
+                tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i);
+            }
+
+            for (int i = 0; i < outerPolygon.Count; i++)
+            {
+                int j = i + 1;
+                if (j == outerPolygon.Count)
+                {
+                    j = 0;
+                }
+                int c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
+                int c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
+                int c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
+                int c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c0);
+                Faces.Add(c3);
+                Faces.Add(c2);
+
+                c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, height);
+                c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, height);
+                c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, height);
+                c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, height);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
+            }
+
+            CentreVertices();
+        }
+
+        private void GeneratePointParams()
+        {
+            String s = flexiPath.ToString();
+            EditorParameters.Set("Points", s);
+        }
+
+        private void GenerateSolid()
         {
             ClearShape();
+            List<System.Windows.Point> points = flexiPath.DisplayPoints();
+            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+            double top = 0;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Y > top)
+                {
+                    top = points[i].Y;
+                }
+            }
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (localImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                else
+                {
+                    double x = ToMM(points[i].X);
+                    double y = ToMM(top - points[i].Y);
+                    tmp.Insert(0, new System.Windows.Point(x, y));
+                }
+            }
+
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i);
+            }
+            // triangulate the basic polygon
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<PointF> pf = new List<PointF>();
+            foreach (System.Windows.Point p in tmp)
+            {
+                pf.Add(new PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0.0);
+                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0.0);
+                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0.0);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                c0 = AddVertice(t.Points[0].X, t.Points[0].Y, height);
+                c1 = AddVertice(t.Points[1].X, t.Points[1].Y, height);
+                c2 = AddVertice(t.Points[2].X, t.Points[2].Y, height);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+            }
+            CentreVertices();
         }
 
-        private void LoadEditorParameters()
+        private void GetRawFlexiPoints()
         {
-            // load back the tool specific parameters
+            polyPoints.Clear();
+            List<FlexiPoint> pnts = flexiPath.GetSegmentPoints();
+            foreach (FlexiPoint p in pnts)
+            {
+                PolyPoint ply = new PolyPoint(p.Point.X, p.Point.Y, p.Id);
+                ply.Mode = (PolyPoint.PointMode)p.Mode;
+                polyPoints.Add(ply);
+            }
+            SetPointIds();
         }
 
-        private void SaveEditorParmeters()
+        private void ImageButton_Click(object sender, RoutedEventArgs e)
         {
-            // save the parameters for the tool
+            OpenFileDialog opDlg = new OpenFileDialog();
+            opDlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.png) | *.jpg; *.jpeg; *.jpe; *.png";
+            if (opDlg.ShowDialog() == true)
+            {
+                try
+                {
+                    LoadImage(opDlg.FileName);
+                }
+                catch
+                {
+                }
+            }
+
+            UpdateDisplay();
+        }
+
+        private void InButton_Click(object sender, RoutedEventArgs e)
+        {
+            scale *= 1.1;
+            MainScale.ScaleX = scale;
+            MainScale.ScaleY = scale;
+        }
+
+        private void InitialisePoints()
+        {
+            flexiPath.Clear();
+            flexiPath.Start = new FlexiPoint(new System.Windows.Point(10, 10), 0);
+            flexiPath.AddLine(new System.Windows.Point(100, 10));
+            flexiPath.AddCurve(new System.Windows.Point(120, 25),
+                               new System.Windows.Point(120, 75),
+                               new System.Windows.Point(100, 100));
+            flexiPath.AddLine(new System.Windows.Point(10, 100));
+            GetRawFlexiPoints();
+        }
+
+        private void InsertCurveSegment(int startIndex, System.Windows.Point position)
+        {
+            flexiPath.InsertCurveSegment(startIndex, position);
+        }
+
+        private void InsertLineSegment(int startIndex, System.Windows.Point position)
+        {
+            flexiPath.InsertLineSegment(startIndex, position);
+        }
+
+        private ContextMenu LineMenu()
+        {
+            ContextMenu mn = new ContextMenu();
+            MenuItem mni = new MenuItem();
+            mni.Header = "Add Point";
+            mni.Click += AddPointClicked;
+            mn.Items.Add(mni);
+            return mn;
+        }
+
+        private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Line ln = sender as Line;
+            int found = -1;
+            if (ln != null)
+            {
+                System.Windows.Point position = e.GetPosition(MainCanvas);
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                    {
+                        found = i;
+                        break;
+                    }
+                }
+                if (found != -1)
+                {
+                    if (found < polyPoints.Count - 1)
+                    {
+                        if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                        {
+                            InsertCurveSegment(found, position);
+                        }
+                        else
+                        {
+                            InsertLineSegment(found, position);
+                        }
+                        GetRawFlexiPoints();
+                        PointGrid.ItemsSource = Points;
+                        CollectionViewSource.GetDefaultView(Points).Refresh();
+                    }
+                    else
+                    {
+                        flexiPath.AddLine(position);
+                        PointGrid.ItemsSource = Points;
+                        CollectionViewSource.GetDefaultView(Points).Refresh();
+                    }
+                }
+            }
+        }
+
+        private void LoadImage(string f)
+        {
+            Uri fileUri = new Uri(f);
+            localImage = new BitmapImage();
+            localImage.BeginInit();
+            localImage.UriSource = fileUri;
+            //    localImage.DecodePixelWidth = 800;
+            localImage.EndInit();
+            EditorParameters.Set("ImagePath", f);
+            MainCanvas.Width = localImage.Width;
+            MainCanvas.Height = localImage.Height;
+            UpdateDisplay();
+        }
+
+        private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (selectedPoint >= 0)
+                {
+                    Points[selectedPoint].Selected = false;
+                }
+                SelectedPoint = -1;
+
+                System.Windows.Point position = e.GetPosition(MainCanvas);
+
+                double rad = 3;
+
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    System.Windows.Point p = polyPoints[i].Point;
+                    if (position.X >= p.X - rad && position.X <= p.X + rad)
+                    {
+                        if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
+                        {
+                            SelectedPoint = i;
+                            Points[i].Selected = true;
+                            moving = true;
+                            break;
+                        }
+                    }
+                }
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    UpdateDisplay();
+                }
+                else
+                if (e.RightButton == MouseButtonState.Pressed)
+                {
+                    if (sender is Ellipse)
+                    {
+                        Ellipse el = sender as Ellipse;
+                        if (polyPoints.Count > 3)
+                        {
+                            MessageBoxResult res = MessageBox.Show("Delete the point", "Edit", MessageBoxButton.YesNo);
+                            if (res == MessageBoxResult.Yes)
+                            {
+                                polyPoints.RemoveAt(selectedPoint);
+                                UpdateDisplay();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            PositionLabel.Content = $"({position.X},{position.Y})";
+            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed && moving)
+            {
+                polyPoints[selectedPoint].X = position.X;
+                polyPoints[selectedPoint].Y = position.Y;
+                flexiPath.SetPointPos(selectedPoint, position);
+                GenerateFaces();
+                UpdateDisplay();
+            }
+            else
+            {
+                moving = false;
+            }
+        }
+
+        private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            moving = false;
+        }
+
+        private void MainCanvas_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (selectedPoint != -1)
+            {
+                bool shift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
+                double d = 1;
+                if (shift)
+                {
+                    d = 0.1;
+                }
+                switch (e.Key)
+                {
+                    case Key.Left:
+                    case Key.L:
+                        {
+                            polyPoints[selectedPoint].X -= d;
+                        }
+                        break;
+
+                    case Key.Right:
+                    case Key.R:
+                        {
+                            polyPoints[selectedPoint].X += d;
+                        }
+                        break;
+
+                    case Key.U:
+                    case Key.Up:
+                        {
+                            polyPoints[selectedPoint].Y -= d;
+                        }
+                        break;
+
+                    case Key.D:
+                    case Key.Down:
+                        {
+                            polyPoints[selectedPoint].Y += d;
+                        }
+                        break;
+                }
+                GenerateFaces();
+                UpdateDisplay();
+            }
+        }
+
+        private void OutButton_Click(object sender, RoutedEventArgs e)
+        {
+            scale *= 0.9;
+            MainScale.ScaleX = scale;
+            MainScale.ScaleY = scale;
+        }
+
+        private ContextMenu PointMenu(object tag)
+        {
+            ContextMenu mn = new ContextMenu();
+            MenuItem mni = new MenuItem();
+            mni.Header = "Delete Point";
+            mni.Click += DeletePointClicked;
+            mni.Tag = tag;
+            mn.Items.Add(mni);
+            return mn;
+        }
+
+        private void ResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitialisePoints();
+            scale = 1;
+            MainScale.ScaleX = scale;
+            MainScale.ScaleY = scale;
+            GenerateFaces();
+            UpdateDisplay();
+        }
+
+        private void SetPointIds()
+        {
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                polyPoints[i].Id = i + 1;
+            }
+        }
+
+        private double ToMM(double x)
+        {
+            double res = x;
+            if (localImage != null)
+            {
+                res = 25.4 * x / localImage.DpiX;
+            }
+            return res;
+        }
+
+        private void UpdateDisplay()
+        {
+            MainCanvas.Children.Clear();
+            if (localImage != null)
+            {
+                Image image = new System.Windows.Controls.Image();
+                image.Source = localImage;
+                image.Width = localImage.Width;
+                image.Height = localImage.Height;
+                MainCanvas.Children.Add(image);
+            }
+            DisplayLines();
+            DisplayPoints();
+            GenerateFaces();
+            Redisplay();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadEditorParameters();
-            GenerateShape();
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                LoadImage(imageName);
+            }
+            String s = EditorParameters.Get("Points");
+            if (s != "")
+            {
+                flexiPath.FromString(s);
+                GetRawFlexiPoints();
+            }
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
-
-            Redisplay();
+            GenerateFaces();
+            UpdateDisplay();
         }
     }
 }
