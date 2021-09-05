@@ -247,5 +247,13 @@ namespace Make3D.LineLib
                 }
             }
         }
+
+        public void DeselectAll()
+        {
+            foreach( FlexiSegment sg in segs)
+            {
+                sg.Selected = false;
+            }
+        }
     }
 }

@@ -34,5 +34,7 @@ namespace Make3D.LineLib
         {
             return -1;
         }
+
+        public bool Selected { get; set; }
     }
 }
