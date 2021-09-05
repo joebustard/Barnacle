@@ -43,7 +43,10 @@ namespace ScriptLanguage
 
                     for (int i = 0; i < coords.GetLength(0); i += 2)
                     {
-                        points.Add(new System.Windows.Point(coords[i], coords[i + 1]));
+                        if (i + 1 < coords.GetLength(0))
+                        {
+                            points.Add(new System.Windows.Point(coords[i], coords[i + 1]));
+                        }
                     }
                     Object3D obj = new Object3D();
 

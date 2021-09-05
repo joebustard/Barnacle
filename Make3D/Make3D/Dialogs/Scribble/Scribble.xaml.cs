@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Image = System.Windows.Controls.Image;
+using Rectangle = System.Windows.Shapes.Rectangle;
 
 namespace Make3D.Dialogs
 {
@@ -239,10 +240,10 @@ namespace Make3D.Dialogs
             {
                 v = 0;
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 32, 32, 255));
             Line ln = new Line();
             ln.Stroke = br;
-            ln.StrokeThickness = 6;
+            ln.StrokeThickness = 3;
             ln.Fill = br;
             ln.X1 = points[i].X;
             ln.Y1 = points[i].Y;
@@ -342,10 +343,13 @@ namespace Make3D.Dialogs
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
                     System.Windows.Point p = polyPoints[i].Point;
+                    
                     if (selectedPoint == i)
                     {
                         rad = 6;
                         br = System.Windows.Media.Brushes.LightGreen;
+                        
+
                     }
                     else
                     {
@@ -358,20 +362,21 @@ namespace Make3D.Dialogs
                                 br = System.Windows.Media.Brushes.Blue;
                             }
                         }
+                        
                     }
 
-                    Ellipse el = new Ellipse();
-
-                    Canvas.SetLeft(el, p.X - rad);
-                    Canvas.SetTop(el, p.Y - rad);
-                    el.Width = 2 * rad;
-                    el.Height = 2 * rad;
-                    el.Stroke = br;
-                    el.Fill = br;
-                    el.MouseDown += MainCanvas_MouseDown;
-                    el.MouseMove += MainCanvas_MouseMove;
-                    el.ContextMenu = PointMenu(el);
-                    MainCanvas.Children.Add(el);
+                    if (polyPoints[i].Mode == PolyPoint.PointMode.Data)
+                    {
+                        p = MakeEllipse(rad, br, p);
+                    }
+                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
+                    {
+                        p = MakeRect(rad, br, p);
+                    }
+                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
+                    {
+                        p = MakeTri(rad, br, p);
+                    }
 
                     if (selectedPoint == i && showOrtho)
                     {
@@ -405,6 +410,65 @@ namespace Make3D.Dialogs
             }
         }
 
+        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            Ellipse el = new Ellipse();
+
+            Canvas.SetLeft(el, p.X - rad);
+            Canvas.SetTop(el, p.Y - rad);
+            el.Width = 2 * rad;
+            el.Height = 2 * rad;
+            el.Stroke = br;
+            el.Fill = br;
+            el.MouseDown += MainCanvas_MouseDown;
+            el.MouseMove += MainCanvas_MouseMove;
+            el.ContextMenu = PointMenu(el);
+            MainCanvas.Children.Add(el);
+            return p;
+        }
+        private System.Windows.Point MakeRect(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            Rectangle el = new Rectangle();
+
+            Canvas.SetLeft(el, p.X - rad);
+            Canvas.SetTop(el, p.Y - rad);
+            el.Width = 2 * rad;
+            el.Height = 2 * rad;
+            el.Stroke = br;
+            el.Fill = br;
+            el.MouseDown += MainCanvas_MouseDown;
+            el.MouseMove += MainCanvas_MouseMove;
+            el.ContextMenu = PointMenu(el);
+            MainCanvas.Children.Add(el);
+            return p;
+        }
+
+        private System.Windows.Point MakeTri(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            PointCollection myPointCollection = new PointCollection();
+            myPointCollection.Add(new System.Windows.Point(0.5, 0));
+            myPointCollection.Add(new System.Windows.Point(0, 1));
+            myPointCollection.Add(new System.Windows.Point(1, 1));
+
+            Polygon myPolygon = new Polygon();
+            myPolygon.Points = myPointCollection;
+            myPolygon.Fill = br;
+            
+            myPolygon.Stretch = Stretch.Fill;
+            myPolygon.Stroke = System.Windows.Media.Brushes.Black;
+            myPolygon.StrokeThickness = 2;
+            Canvas.SetLeft(myPolygon, p.X - rad);
+            Canvas.SetTop(myPolygon, p.Y - rad);
+            myPolygon.Width = 2 * rad;
+            myPolygon.Height = 2 * rad;
+            myPolygon.Stroke = br;
+            myPolygon.Fill = br;
+            myPolygon.MouseDown += MainCanvas_MouseDown;
+            myPolygon.MouseMove += MainCanvas_MouseMove;
+            myPolygon.ContextMenu = PointMenu(myPolygon);
+            MainCanvas.Children.Add(myPolygon);
+            return p;
+        }
         private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -640,9 +704,7 @@ namespace Make3D.Dialogs
             flexiPath.Clear();
             flexiPath.Start = new FlexiPoint(new System.Windows.Point(10, 10), 0);
             flexiPath.AddLine(new System.Windows.Point(100, 10));
-            flexiPath.AddCurve(new System.Windows.Point(120, 25),
-                               new System.Windows.Point(120, 75),
-                               new System.Windows.Point(100, 100));
+            flexiPath.AddLine(new System.Windows.Point(100, 100));
             flexiPath.AddLine(new System.Windows.Point(10, 100));
             GetRawFlexiPoints();
         }

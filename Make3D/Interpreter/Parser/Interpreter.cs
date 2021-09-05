@@ -2962,16 +2962,33 @@ namespace ScriptLanguage
             //
             if (token.IndexOf(".") > -1)
             {
-                DoubleConstantNode nd = new DoubleConstantNode();
-                nd.Value = Convert.ToDouble(token);
-                nd.IsInLibrary = tokeniser.InIncludeFile();
-                exp = nd;
+                try
+                {
+                    DoubleConstantNode nd = new DoubleConstantNode();
+                    nd.Value = Convert.ToDouble(token);
+                    nd.IsInLibrary = tokeniser.InIncludeFile();
+                    exp = nd;
+                }
+                catch (Exception ex)
+                {
+                    ReportSyntaxError("Invalid double constant");
+
+                }
             }
             else
             {
-                IntConstantNode nd = new IntConstantNode();
-                nd.Value = Convert.ToInt32(token);
-                exp = nd;
+                try
+                {
+
+                    IntConstantNode nd = new IntConstantNode();
+                    nd.Value = Convert.ToInt32(token);
+                    exp = nd;
+                }
+                catch (Exception ex)
+                {
+                    ReportSyntaxError("Invalid int constant");
+
+                }
             }
             return exp;
         }
@@ -3004,12 +3021,12 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            ReportSyntaxError("Duplicate parameter name");
+                            ReportSyntaxError("Duplicate parameter name "+token);
                         }
                     }
                     else
                     {
-                        ReportSyntaxError("Expected parameter name");
+                        ReportSyntaxError("Expected parameter name, found " + token);
                     }
                 }
             }
@@ -3037,7 +3054,7 @@ namespace ScriptLanguage
                     }
                     else
                     {
-                        ReportSyntaxError(" Closing bracket missing from expression");
+                        ReportSyntaxError("Closing bracket missing from expression");
                     }
                 }
                 else

@@ -66,7 +66,7 @@ namespace ScriptLanguage
                 {
                     StackItem sti = ExecutionStack.Instance().Pull();
 
-                    switch (sti.MyType)
+                    switch (sti?.MyType)
                     {
                         case StackItem.ItemType.bval:
                             {
