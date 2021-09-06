@@ -23,6 +23,7 @@ namespace Make3D.Dialogs
         private FlexiPath flexiPath;
         private double height = 10;
         private bool hollowShape;
+        private bool lineShape;
         private BitmapImage localImage;
         private bool moving;
         private ObservableCollection<PolyPoint> polyPoints;
@@ -44,6 +45,7 @@ namespace Make3D.Dialogs
             wallWidth = 5;
             solidShape = true;
             hollowShape = false;
+            lineShape = false;
             showOrtho = true;
             showWidth = Visibility.Hidden;
 
@@ -69,6 +71,32 @@ namespace Make3D.Dialogs
                 {
                     hollowShape = value;
                     if (hollowShape == true)
+                    {
+                        ShowWidth = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowWidth = Visibility.Hidden;
+                    }
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool LineShape
+        {
+            get
+            {
+                return lineShape;
+            }
+            set
+            {
+                if (lineShape != value)
+                {
+                    lineShape = value;
+                    if (lineShape == true)
                     {
                         ShowWidth = Visibility.Visible;
                     }
@@ -234,16 +262,23 @@ namespace Make3D.Dialogs
             Close();
         }
 
-        private void AddLine(int i, int v, List<System.Windows.Point> points)
+        private void AddLine(int i, int v, List<System.Windows.Point> points, bool joinLast)
         {
             if (v >= points.Count)
             {
-                v = 0;
+                if (joinLast)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    return;
+                }
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 32, 32, 255));
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
             Line ln = new Line();
             ln.Stroke = br;
-            ln.StrokeThickness = 3;
+            ln.StrokeThickness = 6;
             ln.Fill = br;
             ln.X1 = points[i].X;
             ln.Y1 = points[i].Y;
@@ -268,12 +303,21 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void CreateSideFace(List<System.Windows.Point> pnts, int i)
+        private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
         {
             int v = i + 1;
+
             if (v == pnts.Count)
             {
-                v = 0;
+                if (autoclose)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    // dont process the final point if caller doesn't want it
+                    return;
+                }
             }
 
             int c0 = AddVertice(pnts[i].X, pnts[i].Y, 0.0);
@@ -320,7 +364,7 @@ namespace Make3D.Dialogs
                 {
                     for (int i = 0; i < points.Count; i++)
                     {
-                        AddLine(i, i + 1, points);
+                        AddLine(i, i + 1, points, !LineShape);
                     }
                 }
             }
@@ -343,13 +387,10 @@ namespace Make3D.Dialogs
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
                     System.Windows.Point p = polyPoints[i].Point;
-                    
                     if (selectedPoint == i)
                     {
                         rad = 6;
                         br = System.Windows.Media.Brushes.LightGreen;
-                        
-
                     }
                     else
                     {
@@ -495,7 +536,14 @@ namespace Make3D.Dialogs
             }
             else
             {
-                GenerateHollow();
+                if (HollowShape)
+                {
+                    GenerateHollow();
+                }
+                else
+                {
+                    GenerateLine();
+                }
             }
         }
 
@@ -535,8 +583,8 @@ namespace Make3D.Dialogs
             }
             outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
             innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
-            outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
-            innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth / 2.0F);
+            // outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+            innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth);
             tmp.Clear();
             for (int i = outerPolygon.Count - 1; i >= 0; i--)
             {
@@ -591,6 +639,131 @@ namespace Make3D.Dialogs
                 Faces.Add(c3);
             }
 
+            CentreVertices();
+        }
+
+        private void GenerateLine()
+        {
+            List<System.Windows.Point> points = flexiPath.DisplayPoints();
+            List<PointF> outerPolygon = new List<PointF>();
+            List<PointF> innerPolygon = new List<PointF>();
+            ClearShape();
+            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+            double top = 0;
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (points[i].Y > top)
+                {
+                    top = points[i].Y;
+                }
+            }
+            for (int i = 0; i < points.Count; i++)
+            {
+                if (localImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                else
+                {
+                    double x = ToMM(points[i].X);
+                    double y = ToMM(top - points[i].Y);
+                    tmp.Insert(0, new System.Windows.Point(x, y));
+                }
+            }
+
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                outerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
+                innerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
+            }
+
+            outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
+            innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
+            // outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+            innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth);
+            System.Windows.Point opf = Perpendicular(new System.Windows.Point(outerPolygon[0].X, outerPolygon[0].Y), new System.Windows.Point(outerPolygon[1].X, outerPolygon[1].Y), 0, -wallWidth);
+            innerPolygon[0] = new PointF((float)opf.X, (float)opf.Y);
+            opf = Perpendicular(new System.Windows.Point(outerPolygon[outerPolygon.Count - 2].X, outerPolygon[outerPolygon.Count - 2].Y), new System.Windows.Point(outerPolygon[outerPolygon.Count - 1].X, outerPolygon[outerPolygon.Count - 1].Y), 1, -wallWidth);
+            innerPolygon[innerPolygon.Count - 1] = new PointF((float)opf.X, (float)opf.Y);
+            //  outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+            // innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth / 2.0F);
+            tmp.Clear();
+            for (int i = outerPolygon.Count - 1; i >= 0; i--)
+            {
+                tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i, false);
+            }
+
+            tmp.Clear();
+            for (int i = 0; i < innerPolygon.Count; i++)
+            {
+                tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i, false);
+            }
+            int c0, c1, c2, c3;
+            for (int i = 0; i < outerPolygon.Count - 1; i++)
+            {
+                int j = i + 1;
+                if (j == outerPolygon.Count)
+                {
+                    j = 0;
+                }
+                c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
+                c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
+                c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
+                c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                Faces.Add(c0);
+                Faces.Add(c3);
+                Faces.Add(c2);
+
+                c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, height);
+                c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, height);
+                c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, height);
+                c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, height);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
+            }
+            c0 = AddVertice(outerPolygon[0].X, outerPolygon[0].Y, 0.0);
+            c1 = AddVertice(innerPolygon[0].X, innerPolygon[0].Y, 0.0);
+            c2 = AddVertice(innerPolygon[0].X, innerPolygon[0].Y, height);
+            c3 = AddVertice(outerPolygon[0].X, outerPolygon[0].Y, height);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c3);
+            int l = outerPolygon.Count - 1;
+            c0 = AddVertice(outerPolygon[l].X, outerPolygon[l].Y, 0.0);
+            c1 = AddVertice(innerPolygon[l].X, innerPolygon[l].Y, 0.0);
+            c2 = AddVertice(innerPolygon[l].X, innerPolygon[l].Y, height);
+            c3 = AddVertice(outerPolygon[l].X, outerPolygon[l].Y, height);
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c1);
+
+            Faces.Add(c0);
+            Faces.Add(c3);
+            Faces.Add(c2);
             CentreVertices();
         }
 
@@ -912,6 +1085,52 @@ namespace Make3D.Dialogs
             scale *= 0.9;
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
+        }
+
+        private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
+        {
+            double x;
+            double y;
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            double grad = dy / dx;
+            if (Math.Abs(p1.Y - p2.Y) < 0.00001)
+            {
+                x = p1.X + t * (p2.X - p1.X);
+                if (dx > 0)
+                {
+                    y = p1.Y + distanceFromLine;
+                }
+                else
+                {
+                    y = p1.Y - distanceFromLine;
+                }
+            }
+            else
+            if (Math.Abs(p1.X - p2.X) < 0.00001)
+            {
+                if (dy > 0)
+                {
+                    x = p1.X - distanceFromLine;
+                }
+                else
+                {
+                    x = p1.X + distanceFromLine;
+                }
+                y = p1.Y + t * (p2.Y - p1.Y);
+            }
+            else
+            {
+                double perp = -1.0 / grad;
+
+                double sgn = Math.Sign(distanceFromLine);
+                distanceFromLine = Math.Abs(distanceFromLine);
+                System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
+                x = tp.X + sgn * Math.Sqrt((distanceFromLine * distanceFromLine) / (1.0 + (1.0 / (grad * grad))));
+                y = tp.Y + perp * (x - tp.X);
+            }
+            System.Windows.Point res = new System.Windows.Point(x, y);
+            return res;
         }
 
         private ContextMenu PointMenu(object tag)

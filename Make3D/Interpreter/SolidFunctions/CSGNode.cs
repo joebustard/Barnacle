@@ -40,34 +40,37 @@ namespace ScriptLanguage
             {
                 Object3D leftie = Script.ResultArtefacts[ls];
                 Object3D rightie = Script.ResultArtefacts[rs];
-                leftie.CalcScale(false);
+                if (leftie != null && rightie != null)
+                {
+                    leftie.CalcScale(false);
 
-                rightie.CalcScale(false);
-                Group3D grp = new Group3D();
-                grp.Name = leftie.Name;
-                grp.Description = leftie.Description;
-                grp.LeftObject = leftie;
-                if (PrimType == "groupcut")
-                {
-                    grp.RightObject = rightie.Clone();
+                    rightie.CalcScale(false);
+                    Group3D grp = new Group3D();
+                    grp.Name = leftie.Name;
+                    grp.Description = leftie.Description;
+                    grp.LeftObject = leftie;
+                    if (PrimType == "groupcut")
+                    {
+                        grp.RightObject = rightie.Clone();
 
-                    grp.RightObject.CalcScale(false);
-                    grp.PrimType = "groupdifference";
-                }
-                else
-                {
-                    grp.RightObject = rightie;
-                    grp.PrimType = PrimType;
-                }
-                if (grp.Init())
-                {
-                    grp.CalcScale(false);
-                    grp.Remesh();
-                    Script.ResultArtefacts.Add(grp);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                    //  Script.ResultArtefacts[ls] = null;
-                    //  Script.ResultArtefacts[rs] = null;
-                    result = true;
+                        grp.RightObject.CalcScale(false);
+                        grp.PrimType = "groupdifference";
+                    }
+                    else
+                    {
+                        grp.RightObject = rightie;
+                        grp.PrimType = PrimType;
+                    }
+                    if (grp.Init())
+                    {
+                        grp.CalcScale(false);
+                        grp.Remesh();
+                        Script.ResultArtefacts.Add(grp);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                        //  Script.ResultArtefacts[ls] = null;
+                        //  Script.ResultArtefacts[rs] = null;
+                        result = true;
+                    }
                 }
             }
             return result;
