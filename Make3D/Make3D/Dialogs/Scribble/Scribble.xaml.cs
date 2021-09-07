@@ -284,6 +284,7 @@ namespace Make3D.Dialogs
             ln.Y1 = points[i].Y;
             ln.X2 = points[v].X;
             ln.Y2 = points[v].Y;
+            ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
             ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
             MainCanvas.Children.Add(ln);
         }
@@ -386,130 +387,76 @@ namespace Make3D.Dialogs
                 System.Windows.Media.Brush br = null;
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
-                    System.Windows.Point p = polyPoints[i].Point;
-                    if (selectedPoint == i)
+                    if (polyPoints[i].Visible)
                     {
-                        rad = 6;
-                        br = System.Windows.Media.Brushes.LightGreen;
-                    }
-                    else
-                    {
-                        rad = 3;
-                        br = System.Windows.Media.Brushes.Red;
-                        if (ox != double.NaN)
+                        System.Windows.Point p = polyPoints[i].Point;
+                        if (selectedPoint == i)
                         {
-                            if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
+                            rad = 6;
+                            br = System.Windows.Media.Brushes.LightGreen;
+                        }
+                        else
+                        {
+                            rad = 3;
+                            br = System.Windows.Media.Brushes.Red;
+                            if (ox != double.NaN)
                             {
-                                br = System.Windows.Media.Brushes.Blue;
+                                if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
+                                {
+                                    br = System.Windows.Media.Brushes.Blue;
+                                }
                             }
                         }
-                        
-                    }
 
-                    if (polyPoints[i].Mode == PolyPoint.PointMode.Data)
-                    {
-                        p = MakeEllipse(rad, br, p);
-                    }
-                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
-                    {
-                        p = MakeRect(rad, br, p);
-                    }
-                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
-                    {
-                        p = MakeTri(rad, br, p);
-                    }
+                        if (polyPoints[i].Mode == PolyPoint.PointMode.Data)
+                        {
+                            p = MakeEllipse(rad, br, p);
+                        }
+                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
+                        {
+                            p = MakeRect(rad, br, p);
+                        }
+                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
+                        {
+                            p = MakeTri(rad, br, p);
+                        }
 
-                    if (selectedPoint == i && showOrtho)
-                    {
-                        DashLine(p.X, 0, p.X, MainCanvas.ActualHeight - 1);
-                        DashLine(0, p.Y, MainCanvas.ActualWidth - 1, p.Y);
+                        if (selectedPoint == i && showOrtho)
+                        {
+                            DashLine(p.X, 0, p.X, MainCanvas.ActualHeight - 1);
+                            DashLine(0, p.Y, MainCanvas.ActualWidth - 1, p.Y);
+                        }
                     }
                 }
 
                 // now draw any control connectors
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
-                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
+                    if (polyPoints[i].Visible)
                     {
-                        int j = i - 1;
-                        if (j < 0)
+                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
                         {
-                            j = polyPoints.Count - 1;
+                            int j = i - 1;
+                            if (j < 0)
+                            {
+                                j = polyPoints.Count - 1;
+                            }
+                            DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
                         }
-                        DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
-                    }
-                    if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
-                    {
-                        int j = i + 1;
-                        if (j == polyPoints.Count)
+                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
                         {
-                            j = 0;
+                            int j = i + 1;
+                            if (j == polyPoints.Count)
+                            {
+                                j = 0;
+                            }
+                            DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
                         }
-                        DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
                     }
                 }
             }
         }
 
-        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
-        {
-            Ellipse el = new Ellipse();
-
-            Canvas.SetLeft(el, p.X - rad);
-            Canvas.SetTop(el, p.Y - rad);
-            el.Width = 2 * rad;
-            el.Height = 2 * rad;
-            el.Stroke = br;
-            el.Fill = br;
-            el.MouseDown += MainCanvas_MouseDown;
-            el.MouseMove += MainCanvas_MouseMove;
-            el.ContextMenu = PointMenu(el);
-            MainCanvas.Children.Add(el);
-            return p;
-        }
-        private System.Windows.Point MakeRect(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
-        {
-            Rectangle el = new Rectangle();
-
-            Canvas.SetLeft(el, p.X - rad);
-            Canvas.SetTop(el, p.Y - rad);
-            el.Width = 2 * rad;
-            el.Height = 2 * rad;
-            el.Stroke = br;
-            el.Fill = br;
-            el.MouseDown += MainCanvas_MouseDown;
-            el.MouseMove += MainCanvas_MouseMove;
-            el.ContextMenu = PointMenu(el);
-            MainCanvas.Children.Add(el);
-            return p;
-        }
-
-        private System.Windows.Point MakeTri(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
-        {
-            PointCollection myPointCollection = new PointCollection();
-            myPointCollection.Add(new System.Windows.Point(0.5, 0));
-            myPointCollection.Add(new System.Windows.Point(0, 1));
-            myPointCollection.Add(new System.Windows.Point(1, 1));
-
-            Polygon myPolygon = new Polygon();
-            myPolygon.Points = myPointCollection;
-            myPolygon.Fill = br;
-            
-            myPolygon.Stretch = Stretch.Fill;
-            myPolygon.Stroke = System.Windows.Media.Brushes.Black;
-            myPolygon.StrokeThickness = 2;
-            Canvas.SetLeft(myPolygon, p.X - rad);
-            Canvas.SetTop(myPolygon, p.Y - rad);
-            myPolygon.Width = 2 * rad;
-            myPolygon.Height = 2 * rad;
-            myPolygon.Stroke = br;
-            myPolygon.Fill = br;
-            myPolygon.MouseDown += MainCanvas_MouseDown;
-            myPolygon.MouseMove += MainCanvas_MouseMove;
-            myPolygon.ContextMenu = PointMenu(myPolygon);
-            MainCanvas.Children.Add(myPolygon);
-            return p;
-        }
         private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -842,6 +789,7 @@ namespace Make3D.Dialogs
             {
                 PolyPoint ply = new PolyPoint(p.Point.X, p.Point.Y, p.Id);
                 ply.Mode = (PolyPoint.PointMode)p.Mode;
+                ply.Visible = p.Selected;
                 polyPoints.Add(ply);
             }
             SetPointIds();
@@ -884,7 +832,7 @@ namespace Make3D.Dialogs
 
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
         {
-            flexiPath.InsertCurveSegment(startIndex, position);
+            flexiPath.ConvertLineCurveSegment(startIndex, position);
         }
 
         private void InsertLineSegment(int startIndex, System.Windows.Point position)
@@ -900,6 +848,25 @@ namespace Make3D.Dialogs
             mni.Click += AddPointClicked;
             mn.Items.Add(mni);
             return mn;
+        }
+
+        private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Line ln = sender as Line;
+            bool found = false;
+            if (ln != null)
+            {
+                System.Windows.Point position = e.GetPosition(MainCanvas);
+                found = flexiPath.SelectAtPoint(position);
+
+                if (found)
+                {
+                    GetRawFlexiPoints();
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                    Redisplay();
+                }
+            }
         }
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -1078,6 +1045,67 @@ namespace Make3D.Dialogs
                 GenerateFaces();
                 UpdateDisplay();
             }
+        }
+
+        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            Ellipse el = new Ellipse();
+
+            Canvas.SetLeft(el, p.X - rad);
+            Canvas.SetTop(el, p.Y - rad);
+            el.Width = 2 * rad;
+            el.Height = 2 * rad;
+            el.Stroke = br;
+            el.Fill = br;
+            el.MouseDown += MainCanvas_MouseDown;
+            el.MouseMove += MainCanvas_MouseMove;
+            el.ContextMenu = PointMenu(el);
+            MainCanvas.Children.Add(el);
+            return p;
+        }
+
+        private System.Windows.Point MakeRect(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            Rectangle el = new Rectangle();
+
+            Canvas.SetLeft(el, p.X - rad);
+            Canvas.SetTop(el, p.Y - rad);
+            el.Width = 2 * rad;
+            el.Height = 2 * rad;
+            el.Stroke = br;
+            el.Fill = br;
+            el.MouseDown += MainCanvas_MouseDown;
+            el.MouseMove += MainCanvas_MouseMove;
+            el.ContextMenu = PointMenu(el);
+            MainCanvas.Children.Add(el);
+            return p;
+        }
+
+        private System.Windows.Point MakeTri(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            PointCollection myPointCollection = new PointCollection();
+            myPointCollection.Add(new System.Windows.Point(0.5, 0));
+            myPointCollection.Add(new System.Windows.Point(0, 1));
+            myPointCollection.Add(new System.Windows.Point(1, 1));
+
+            Polygon myPolygon = new Polygon();
+            myPolygon.Points = myPointCollection;
+            myPolygon.Fill = br;
+
+            myPolygon.Stretch = Stretch.Fill;
+            myPolygon.Stroke = System.Windows.Media.Brushes.Black;
+            myPolygon.StrokeThickness = 2;
+            Canvas.SetLeft(myPolygon, p.X - rad);
+            Canvas.SetTop(myPolygon, p.Y - rad);
+            myPolygon.Width = 2 * rad;
+            myPolygon.Height = 2 * rad;
+            myPolygon.Stroke = br;
+            myPolygon.Fill = br;
+            myPolygon.MouseDown += MainCanvas_MouseDown;
+            myPolygon.MouseMove += MainCanvas_MouseMove;
+            myPolygon.ContextMenu = PointMenu(myPolygon);
+            MainCanvas.Children.Add(myPolygon);
+            return p;
         }
 
         private void OutButton_Click(object sender, RoutedEventArgs e)

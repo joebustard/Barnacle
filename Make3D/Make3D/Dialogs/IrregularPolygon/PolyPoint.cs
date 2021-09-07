@@ -14,6 +14,7 @@ namespace Make3D.Dialogs
 
         private bool selected;
 
+        private bool visible;
         private double x;
 
         private double y;
@@ -24,6 +25,7 @@ namespace Make3D.Dialogs
             X = x;
             Y = y;
             Selected = false;
+            visible = false;
         }
 
         public PolyPoint(System.Windows.Point p)
@@ -32,6 +34,7 @@ namespace Make3D.Dialogs
             X = p.X;
             Y = p.Y;
             Selected = false;
+            visible = false;
         }
 
         public PolyPoint(double x, double y, int id) : this(x, y)
@@ -40,6 +43,7 @@ namespace Make3D.Dialogs
             X = x;
             Y = y;
             Selected = false;
+            visible = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -88,6 +92,12 @@ namespace Make3D.Dialogs
                     NotifyPropertyChanged();
                 }
             }
+        }
+
+        public bool Visible
+        {
+            get { return visible; }
+            set { visible = value; }
         }
 
         public double X

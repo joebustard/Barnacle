@@ -44,6 +44,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DistToLine.cs" />
     <Compile Include="FlexiBezier.cs" />
     <Compile Include="FlexiPath.cs" />
     <Compile Include="FlexiPoint.cs" />

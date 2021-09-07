@@ -23,9 +23,22 @@ namespace Make3D.LineLib
             points.RemoveAt(P1);
         }
 
+        public override void Deselect(List<FlexiPoint> points)
+        {
+            Selected = false;
+            points[P0].Selected = false;
+            points[P1].Selected = false;
+        }
+
         public override void DisplayPoints(List<Point> res, List<FlexiPoint> pnts)
         {
             res.Add(pnts[P1].Point);
+        }
+
+        public override double DistToPoint(Point position, List<FlexiPoint> points)
+        {
+            double dist = DistToLine.FindDistanceToLine(position, points[P0].Point, points[P1].Point);
+            return dist;
         }
 
         public override int End()
@@ -57,6 +70,13 @@ namespace Make3D.LineLib
             {
                 P1 += n;
             }
+        }
+
+        public override void Select(List<FlexiPoint> points)
+        {
+            Selected = true;
+            points[P0].Selected = true;
+            points[P1].Selected = true;
         }
 
         public override int Start()

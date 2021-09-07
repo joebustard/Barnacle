@@ -34,6 +34,15 @@ namespace Make3D.LineLib
             points.RemoveAt(P1);
         }
 
+        public override void Deselect(List<FlexiPoint> points)
+        {
+            Selected = false;
+            points[P0].Selected = false;
+            points[P1].Selected = false;
+            points[P2].Selected = false;
+            points[P3].Selected = false;
+        }
+
         public override void DisplayPoints(List<Point> res, List<FlexiPoint> pnts)
         {
             double dt = 0.1;
@@ -41,6 +50,28 @@ namespace Make3D.LineLib
             {
                 res.Add(GetCoord(t, pnts));
             }
+        }
+
+        public override double DistToPoint(Point position, List<FlexiPoint> points)
+        {
+            double minDist = double.MaxValue;
+            double t0 = 0.0;
+            double dt = 0.1;
+            double t1;
+            Point pt0 = GetCoord(t0, points);
+            t1 = t0 + dt;
+            while (t1 < 1.0)
+            {
+                Point pt1 = GetCoord(t1, points);
+                double dist = DistToLine.FindDistanceToLine(position, pt0, pt1);
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                }
+                pt0 = pt1;
+                t1 += dt;
+            }
+            return minDist;
         }
 
         public override int End()
@@ -105,6 +136,15 @@ namespace Make3D.LineLib
             p2 = new Point(points[P0].Point.X + (0.75 * (points[P3].Point.X - points[P0].Point.X)), points[P0].Point.Y + (0.75 * (points[P3].Point.Y - points[P0].Point.Y)));
             points[P1].Point = p1;
             points[P2].Point = p2;
+        }
+
+        public override void Select(List<FlexiPoint> points)
+        {
+            Selected = true;
+            points[P0].Selected = true;
+            points[P1].Selected = true;
+            points[P2].Selected = true;
+            points[P3].Selected = true;
         }
 
         public override int Start()

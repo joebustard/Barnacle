@@ -9,12 +9,23 @@ namespace Make3D.LineLib
 {
     public class FlexiSegment
     {
+        public bool Selected { get; set; }
+
         public virtual void DeletePoints(List<FlexiPoint> points)
+        {
+        }
+
+        public virtual void Deselect(List<FlexiPoint> points)
         {
         }
 
         public virtual void DisplayPoints(List<Point> res, List<FlexiPoint> pnts)
         {
+        }
+
+        public virtual double DistToPoint(Point position, List<FlexiPoint> res)
+        {
+            return double.MaxValue;
         }
 
         public virtual int End()
@@ -30,11 +41,13 @@ namespace Make3D.LineLib
         {
         }
 
+        public virtual void Select(List<FlexiPoint> points)
+        {
+        }
+
         public virtual int Start()
         {
             return -1;
         }
-
-        public bool Selected { get; set; }
     }
 }

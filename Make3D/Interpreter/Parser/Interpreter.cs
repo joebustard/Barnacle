@@ -1282,18 +1282,32 @@ namespace ScriptLanguage
             if (FetchToken(out token, out tokenType) == true)
 
             {
-                string identifier = parentName + token;
-                Symbol sym = SymbolTable.Instance().FindSymbol(identifier, SymbolTable.SymbolType.structname);
+                string internalName = parentName + token;
+                string externalName = token;
+                Symbol sym = SymbolTable.Instance().FindSymbol(internalName, SymbolTable.SymbolType.structname);
                 if (sym != null)
                 {
                     exp = ParseStructSymbolForCall(token, parentName, sym as StructSymbol);
                 }
                 else
                 {
-                    sym = SymbolTable.Instance().FindArraySymbol(identifier);
+                    sym = SymbolTable.Instance().FindArraySymbol(internalName);
                     if (sym != null)
                     {
-                        exp = ParseArraySymbolForCall(token, parentName, sym as ArraySymbol);
+                        if (FetchToken(out token, out tokenType) == true)
+
+                        {
+                            // is it trying to pass a whole array or just an element
+                            if (token != "[")
+                            {
+                                tokeniser.PutTokenBack();
+                                exp = ParseArraySymbolForCall(externalName, parentName, sym as ArraySymbol);
+                            }
+                            else
+                            {
+                                exp = ParseArrayVariableNode(internalName, parentName);
+                            }
+                        }
                     }
                     else
                     {
@@ -2972,14 +2986,12 @@ namespace ScriptLanguage
                 catch (Exception ex)
                 {
                     ReportSyntaxError("Invalid double constant");
-
                 }
             }
             else
             {
                 try
                 {
-
                     IntConstantNode nd = new IntConstantNode();
                     nd.Value = Convert.ToInt32(token);
                     exp = nd;
@@ -2987,7 +2999,6 @@ namespace ScriptLanguage
                 catch (Exception ex)
                 {
                     ReportSyntaxError("Invalid int constant");
-
                 }
             }
             return exp;
@@ -3021,7 +3032,7 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            ReportSyntaxError("Duplicate parameter name "+token);
+                            ReportSyntaxError("Duplicate parameter name " + token);
                         }
                     }
                     else

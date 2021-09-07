@@ -9,6 +9,7 @@ namespace Make3D.LineLib
 {
     public class FlexiPath
     {
+        private const double selectionDistance = 2;
         private List<FlexiPoint> points;
         private List<FlexiSegment> segs;
 
@@ -68,12 +69,46 @@ namespace Make3D.LineLib
             points.Clear();
         }
 
+        public void ConvertLineCurveSegment(int index, Point position)
+        {
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == index)
+                {
+                    int c1 = index;
+                    int c2 = c1 + 1;
+                    int c3 = c2 + 1;
+                    int c4 = c3 + 1;
+
+                    points.Insert(index + 1, new FlexiPoint(position, c3, FlexiPoint.PointMode.Control2));
+                    points.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.Control1));
+
+                    FlexiBezier ls = new FlexiBezier(c1, c2, c3, c4);
+                    // starting at segment i +1, if the point id is c2 or more
+                    PointInserted(segs, i + 1, c2, 2);
+                    segs[i] = ls;
+                    ls.ResetControlPoints(points);
+                    DeselectAll();
+                    ls.Select(points);
+                    break;
+                }
+            }
+        }
+
         public void DeleteLastSegment()
         {
             if (segs.Count > 0)
             {
                 segs[segs.Count - 1].DeletePoints(points);
                 segs.RemoveAt(segs.Count - 1);
+            }
+        }
+
+        public void DeselectAll()
+        {
+            foreach (FlexiSegment sg in segs)
+            {
+                sg.Deselect(points);
             }
         }
 
@@ -148,9 +183,38 @@ namespace Make3D.LineLib
                     LineSegment ls = new LineSegment(index + 1, index + 2);
                     PointInserted(segs, i + 1, index + 1, 1);
                     segs.Insert(i + 1, ls);
+                    DeselectAll();
+                    segs[i + 1].Select(points);
                     break;
                 }
             }
+        }
+
+        public bool SelectAtPoint(Point position)
+        {
+            bool found = false;
+
+            DeselectAll();
+            double minDistance = double.MaxValue;
+            FlexiSegment closest = null;
+            foreach (FlexiSegment sg in segs)
+            {
+                double d = sg.DistToPoint(position, points);
+                if (d < selectionDistance)
+                {
+                    if (d < minDistance)
+                    {
+                        minDistance = d;
+                        closest = sg;
+                        found = true;
+                    }
+                }
+            }
+            if (closest != null)
+            {
+                closest.Select(points);
+            }
+            return found;
         }
 
         public void SetPointPos(int index, Point position)
@@ -211,11 +275,16 @@ namespace Make3D.LineLib
             }
         }
 
-        private void PointInserted(List<FlexiSegment> segs, int v1, int v2, int numInserted)
+        private void PointInserted(List<FlexiSegment> segs, int startSegment, int v2, int numInserted)
         {
-            for (int i = v1; i < segs.Count; i++)
+            for (int i = startSegment; i < segs.Count; i++)
             {
                 segs[i].PointInserted(v2, numInserted);
+            }
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                points[i].Id = i;
             }
         }
 
@@ -245,14 +314,6 @@ namespace Make3D.LineLib
                         segs.Add(ls);
                     }
                 }
-            }
-        }
-
-        public void DeselectAll()
-        {
-            foreach( FlexiSegment sg in segs)
-            {
-                sg.Selected = false;
             }
         }
     }

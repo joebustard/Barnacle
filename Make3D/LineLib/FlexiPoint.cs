@@ -38,6 +38,8 @@ namespace Make3D.LineLib
         public PointMode Mode { get; set; }
         public System.Windows.Point Point { get; set; }
 
+        public bool Selected { get; set; }
+
         public override string ToString()
         {
             string s = "";

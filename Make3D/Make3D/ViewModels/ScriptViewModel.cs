@@ -486,6 +486,7 @@ program ""Name""
                 case "clear":
                     {
                         Log.Instance().Clear();
+                        content.Clear();
                     }
                     break;
 
