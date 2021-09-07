@@ -33,6 +33,14 @@ namespace Make3D.Dialogs
         private Visibility showWidth;
         private bool solidShape;
         private int wallWidth;
+        public enum SelectionMode
+        {
+        SelectPoint,
+        AddLine,
+        AddBezier,
+        DeleteSegment
+        };
+        private SelectionMode selectionMode;
 
         public ScribbleDlg()
         {
@@ -40,7 +48,7 @@ namespace Make3D.Dialogs
             polyPoints = new ObservableCollection<PolyPoint>();
             flexiPath = new FlexiPath();
             selectedPoint = -1;
-
+            selectionMode = SelectionMode.SelectPoint;
             scale = 1.0;
             wallWidth = 5;
             solidShape = true;
@@ -1234,6 +1242,26 @@ namespace Make3D.Dialogs
             MyModelGroup.Children.Clear();
             GenerateFaces();
             UpdateDisplay();
+        }
+
+        private void PickButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectionMode = SelectionMode.SelectPoint;
+        }
+
+        private void AddSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectionMode = SelectionMode.AddLine;
+        }
+
+        private void AddBezierButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectionMode = SelectionMode.AddBezier;
+        }
+
+        private void DelSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectionMode = SelectionMode.DeleteSegment;
         }
     }
 }

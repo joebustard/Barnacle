@@ -19,6 +19,7 @@
         <Grid Grid.Column="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="140" />
+                <RowDefinition Height="60" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
@@ -41,6 +42,14 @@
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
+                <UniformGrid Columns="4">
+                    <Button x:Name="PickButton" Content="Pick" Click="PickButton_Click"/>
+                    <Button x:Name="AddSegButton" Content="Seq" Click="AddSegButton_Click"/>
+                    <Button x:Name="AddBezierButton" Content="Bezier" Click="AddBezierButton_Click"/>
+                    <Button x:Name="DelSegButton" Content="Del" Click="DelSegButton_Click"/>
+                </UniformGrid>
+            </Border>
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="2" Grid.Column="0" Padding="2,2,2,10">
                 <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" SelectedIndex="{Binding SelectedPoint}">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.2*" />
