@@ -16,40 +16,42 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Border Grid.Row="0" Grid.Column="1"  Style="{StaticResource ControlBorder}">
+            <Grid>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
 
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label  Content="Radius 1" Width="100" />
-                <TextBox  Text="{Binding Radius1}" Width="100" />
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label  Content="Radius 2" Width="100" />
-                <TextBox  Text="{Binding Radius2}" Width="100" />
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <Label Content="Height" Width="100" />
-                <TextBox  Text="{Binding ShapeHeight}" Width="100" />
-            </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <CheckBox Width="100" Content="Double up" IsChecked="{Binding DoubleUp}" />
-            </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-        </Grid>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Label  Content="Radius 1" Width="100" />
+                    <TextBox  Text="{Binding Radius1}" Width="100" />
+                </StackPanel>
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Label  Content="Radius 2" Width="100" />
+                    <TextBox  Text="{Binding Radius2}" Width="100" />
+                </StackPanel>
+                <StackPanel Grid.Row="5" Orientation="Horizontal">
+                    <Label Content="Height" Width="100" />
+                    <TextBox  Text="{Binding ShapeHeight}" Width="100" />
+                </StackPanel>
+                <StackPanel Grid.Row="7" Orientation="Horizontal">
+                    <CheckBox Width="100" Content="Double up" IsChecked="{Binding DoubleUp}" />
+                </StackPanel>
+                <StackPanel Grid.Row="9" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                </StackPanel>
+            </Grid>
+        </Border>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">

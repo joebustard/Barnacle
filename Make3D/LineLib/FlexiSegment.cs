@@ -37,7 +37,16 @@ namespace Make3D.LineLib
         {
         }
 
+        public virtual int NumberOfPoints()
+        {
+            return 0;
+        }
+
         public virtual void PointInserted(int v2, int numInserted)
+        {
+        }
+
+        public virtual void PointsRemoved(int n)
         {
         }
 

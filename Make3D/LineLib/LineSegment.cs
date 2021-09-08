@@ -59,6 +59,11 @@ namespace Make3D.LineLib
             res.Add(pnts[P1]);
         }
 
+        public override int NumberOfPoints()
+        {
+            return 2;
+        }
+
         public override void PointInserted(int v2, int n)
         {
             if (P0 >= v2)
@@ -70,6 +75,12 @@ namespace Make3D.LineLib
             {
                 P1 += n;
             }
+        }
+
+        public override void PointsRemoved(int n)
+        {
+            P0 -= n;
+            P1 -= n;
         }
 
         public override void Select(List<FlexiPoint> points)

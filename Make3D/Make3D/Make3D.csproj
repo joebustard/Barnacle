@@ -765,6 +765,10 @@
     <Resource Include="Images\Buttons\SplitX.png" />
     <Resource Include="Images\Buttons\SplitY.png" />
     <Resource Include="Images\Buttons\SplitZ.png" />
+    <Resource Include="Images\Buttons\AddSegment.png" />
+    <Resource Include="Images\Buttons\AddSpline.png" />
+    <Resource Include="Images\Buttons\DeleteSegment.png" />
+    <Resource Include="Images\Buttons\SelectSegment.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

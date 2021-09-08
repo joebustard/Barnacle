@@ -29,18 +29,11 @@ namespace Make3D.Dialogs
         private ObservableCollection<PolyPoint> polyPoints;
         private double scale;
         private int selectedPoint;
+        private SelectionModeType selectionMode;
         private bool showOrtho;
         private Visibility showWidth;
         private bool solidShape;
         private int wallWidth;
-        public enum SelectionMode
-        {
-        SelectPoint,
-        AddLine,
-        AddBezier,
-        DeleteSegment
-        };
-        private SelectionMode selectionMode;
 
         public ScribbleDlg()
         {
@@ -48,7 +41,7 @@ namespace Make3D.Dialogs
             polyPoints = new ObservableCollection<PolyPoint>();
             flexiPath = new FlexiPath();
             selectedPoint = -1;
-            selectionMode = SelectionMode.SelectPoint;
+            selectionMode = SelectionModeType.SelectPoint;
             scale = 1.0;
             wallWidth = 5;
             solidShape = true;
@@ -65,7 +58,16 @@ namespace Make3D.Dialogs
             Camera.Distance = Camera.Distance * 3.0;
             ModelGroup = MyModelGroup;
             moving = false;
+            SetButtonBorderColours();
         }
+
+        public enum SelectionModeType
+        {
+            SelectPoint,
+            AddLine,
+            AddBezier,
+            DeleteSegment
+        };
 
         public bool HollowShape
         {
@@ -153,9 +155,26 @@ namespace Make3D.Dialogs
                         if (selectedPoint >= 0 && selectedPoint < polyPoints.Count)
                         {
                             polyPoints[selectedPoint].Selected = true;
+                            polyPoints[selectedPoint].Visible = true;
                         }
                     }
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public SelectionModeType SelectionMode
+        {
+            get
+            {
+                return selectionMode;
+            }
+            set
+            {
+                if (value != selectionMode)
+                {
+                    selectionMode = value;
+                    SetButtonBorderColours();
                 }
             }
         }
@@ -270,6 +289,46 @@ namespace Make3D.Dialogs
             Close();
         }
 
+        private void AddBezierButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.AddBezier;
+        }
+
+        private bool AddBezierFromPoint(MouseButtonEventArgs e, Line ln)
+        {
+            int found = -1;
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    InsertCurveSegment(found, position);
+
+                    GetRawFlexiPoints();
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                else
+                {
+                    //                   flexiPath.AddLine(position);
+                    //                   PointGrid.ItemsSource = Points;
+                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                added = true;
+            }
+
+            return added;
+        }
+
         private void AddLine(int i, int v, List<System.Windows.Point> points, bool joinLast)
         {
             if (v >= points.Count)
@@ -297,8 +356,54 @@ namespace Make3D.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
+        private bool AddLineFromPoint(MouseButtonEventArgs e, Line ln)
+        {
+            int found = -1;
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    // if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                    // {
+                    //      InsertCurveSegment(found, position);
+                    //  }
+                    //else
+                    //      {
+                    InsertLineSegment(found, position);
+                    //       }
+                    GetRawFlexiPoints();
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                else
+                {
+                    flexiPath.AddLine(position);
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                added = true;
+            }
+
+            return added;
+        }
+
         private void AddPointClicked(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void AddSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.AddLine;
         }
 
         private void ClearPointSelections()
@@ -308,6 +413,7 @@ namespace Make3D.Dialogs
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
                     polyPoints[i].Selected = false;
+                    polyPoints[i].Visible = false;
                 }
             }
         }
@@ -364,6 +470,46 @@ namespace Make3D.Dialogs
         {
         }
 
+        private bool DeleteSegment(MouseButtonEventArgs e, Line ln)
+        {
+            int found = -1;
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    flexiPath.DeleteSegmentStartingAt(found);
+
+                    GetRawFlexiPoints();
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                else
+                {
+                    flexiPath.AddLine(position);
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                added = true;
+            }
+
+            return added;
+        }
+
+        private void DelSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.DeleteSegment;
+        }
+
         private void DisplayLines()
         {
             if (flexiPath != null)
@@ -395,27 +541,32 @@ namespace Make3D.Dialogs
                 System.Windows.Media.Brush br = null;
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
-                    if (polyPoints[i].Visible)
+                    bool ortho = false;
+
+                    System.Windows.Point p = polyPoints[i].Point;
+                    if (selectedPoint == i)
                     {
-                        System.Windows.Point p = polyPoints[i].Point;
-                        if (selectedPoint == i)
+                        rad = 6;
+                        br = System.Windows.Media.Brushes.LightGreen;
+                    }
+                    else
+                    {
+                        rad = 3;
+                        br = System.Windows.Media.Brushes.Red;
+                        if (ox != double.NaN)
                         {
-                            rad = 6;
-                            br = System.Windows.Media.Brushes.LightGreen;
-                        }
-                        else
-                        {
-                            rad = 3;
-                            br = System.Windows.Media.Brushes.Red;
-                            if (ox != double.NaN)
+                            if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
                             {
-                                if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
-                                {
-                                    br = System.Windows.Media.Brushes.Blue;
-                                }
+                                br = System.Windows.Media.Brushes.Blue;
+                                ortho = true;
                             }
                         }
+                    }
 
+                    // only show the points if they are marked as visible
+                    // OR they are orthogonal to the selected one
+                    if (polyPoints[i].Visible || (ortho && showOrtho))
+                    {
                         if (polyPoints[i].Mode == PolyPoint.PointMode.Data)
                         {
                             p = MakeEllipse(rad, br, p);
@@ -637,7 +788,7 @@ namespace Make3D.Dialogs
             innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
             // outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
             innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth);
-            System.Windows.Point opf = Perpendicular(new System.Windows.Point(outerPolygon[0].X, outerPolygon[0].Y), new System.Windows.Point(outerPolygon[1].X, outerPolygon[1].Y), 0, -wallWidth);
+            System.Windows.Point opf = Perpendicular(new System.Windows.Point(outerPolygon[0].X, outerPolygon[0].Y), new System.Windows.Point(outerPolygon[1].X, outerPolygon[1].Y), 0, wallWidth);
             innerPolygon[0] = new PointF((float)opf.X, (float)opf.Y);
             opf = Perpendicular(new System.Windows.Point(outerPolygon[outerPolygon.Count - 2].X, outerPolygon[outerPolygon.Count - 2].Y), new System.Windows.Point(outerPolygon[outerPolygon.Count - 1].X, outerPolygon[outerPolygon.Count - 1].Y), 1, -wallWidth);
             innerPolygon[innerPolygon.Count - 1] = new PointF((float)opf.X, (float)opf.Y);
@@ -864,15 +1015,34 @@ namespace Make3D.Dialogs
             bool found = false;
             if (ln != null)
             {
-                System.Windows.Point position = e.GetPosition(MainCanvas);
-                found = flexiPath.SelectAtPoint(position);
-
-                if (found)
+                switch (selectionMode)
                 {
-                    GetRawFlexiPoints();
-                    PointGrid.ItemsSource = Points;
-                    CollectionViewSource.GetDefaultView(Points).Refresh();
-                    Redisplay();
+                    case SelectionModeType.SelectPoint:
+                        {
+                            found = SelectLineFromPoint(e);
+                        }
+                        break;
+
+                    case SelectionModeType.AddLine:
+                        {
+                            found = AddLineFromPoint(e, ln);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+
+                    case SelectionModeType.AddBezier:
+                        {
+                            found = AddBezierFromPoint(e, ln);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+
+                    case SelectionModeType.DeleteSegment:
+                        {
+                            found = DeleteSegment(e, ln);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
                 }
             }
         }
@@ -883,38 +1053,6 @@ namespace Make3D.Dialogs
             int found = -1;
             if (ln != null)
             {
-                System.Windows.Point position = e.GetPosition(MainCanvas);
-                for (int i = 0; i < polyPoints.Count; i++)
-                {
-                    if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
-                    {
-                        found = i;
-                        break;
-                    }
-                }
-                if (found != -1)
-                {
-                    if (found < polyPoints.Count - 1)
-                    {
-                        if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                        {
-                            InsertCurveSegment(found, position);
-                        }
-                        else
-                        {
-                            InsertLineSegment(found, position);
-                        }
-                        GetRawFlexiPoints();
-                        PointGrid.ItemsSource = Points;
-                        CollectionViewSource.GetDefaultView(Points).Refresh();
-                    }
-                    else
-                    {
-                        flexiPath.AddLine(position);
-                        PointGrid.ItemsSource = Points;
-                        CollectionViewSource.GetDefaultView(Points).Refresh();
-                    }
-                }
             }
         }
 
@@ -1129,20 +1267,7 @@ namespace Make3D.Dialogs
             double y;
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
-            double grad = dy / dx;
-            if (Math.Abs(p1.Y - p2.Y) < 0.00001)
-            {
-                x = p1.X + t * (p2.X - p1.X);
-                if (dx > 0)
-                {
-                    y = p1.Y + distanceFromLine;
-                }
-                else
-                {
-                    y = p1.Y - distanceFromLine;
-                }
-            }
-            else
+
             if (Math.Abs(p1.X - p2.X) < 0.00001)
             {
                 if (dy > 0)
@@ -1155,8 +1280,21 @@ namespace Make3D.Dialogs
                 }
                 y = p1.Y + t * (p2.Y - p1.Y);
             }
+            else if (Math.Abs(p1.Y - p2.Y) < 0.00001)
+            {
+                x = p1.X + t * (p2.X - p1.X);
+                if (dx > 0)
+                {
+                    y = p1.Y + distanceFromLine;
+                }
+                else
+                {
+                    y = p1.Y - distanceFromLine;
+                }
+            }
             else
             {
+                double grad = dy / dx;
                 double perp = -1.0 / grad;
 
                 double sgn = Math.Sign(distanceFromLine);
@@ -1167,6 +1305,11 @@ namespace Make3D.Dialogs
             }
             System.Windows.Point res = new System.Windows.Point(x, y);
             return res;
+        }
+
+        private void PickButton_Click(object sender, RoutedEventArgs e)
+        {
+            selectionMode = SelectionModeType.SelectPoint;
         }
 
         private ContextMenu PointMenu(object tag)
@@ -1188,6 +1331,65 @@ namespace Make3D.Dialogs
             MainScale.ScaleY = scale;
             GenerateFaces();
             UpdateDisplay();
+        }
+
+        private bool SelectLineFromPoint(MouseButtonEventArgs e)
+        {
+            bool found;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            found = flexiPath.SelectAtPoint(position);
+
+            if (found)
+            {
+                GetRawFlexiPoints();
+                PointGrid.ItemsSource = Points;
+                CollectionViewSource.GetDefaultView(Points).Refresh();
+                Redisplay();
+            }
+
+            return found;
+        }
+
+        private void SetButtonBorderColours()
+        {
+            switch (selectionMode)
+            {
+                case SelectionModeType.SelectPoint:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                    }
+                    break;
+
+                case SelectionModeType.AddLine:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                    }
+                    break;
+
+                case SelectionModeType.AddBezier:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                    }
+                    break;
+
+                case SelectionModeType.DeleteSegment:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                    }
+                    break;
+            }
         }
 
         private void SetPointIds()
@@ -1242,26 +1444,6 @@ namespace Make3D.Dialogs
             MyModelGroup.Children.Clear();
             GenerateFaces();
             UpdateDisplay();
-        }
-
-        private void PickButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectionMode = SelectionMode.SelectPoint;
-        }
-
-        private void AddSegButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectionMode = SelectionMode.AddLine;
-        }
-
-        private void AddBezierButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectionMode = SelectionMode.AddBezier;
-        }
-
-        private void DelSegButton_Click(object sender, RoutedEventArgs e)
-        {
-            selectionMode = SelectionMode.DeleteSegment;
         }
     }
 }

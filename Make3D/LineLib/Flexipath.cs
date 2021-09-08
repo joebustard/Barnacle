@@ -10,6 +10,7 @@ namespace Make3D.LineLib
     public class FlexiPath
     {
         private const double selectionDistance = 2;
+        private bool closed;
         private List<FlexiPoint> points;
         private List<FlexiSegment> segs;
 
@@ -17,6 +18,13 @@ namespace Make3D.LineLib
         {
             segs = new List<FlexiSegment>();
             points = new List<FlexiPoint>();
+            closed = true;
+        }
+
+        public bool Closed
+        {
+            get { return closed; }
+            set { closed = value; }
         }
 
         public FlexiPoint Start
@@ -104,6 +112,31 @@ namespace Make3D.LineLib
             }
         }
 
+        public void DeleteSegmentStartingAt(int index)
+        {
+            if (segs.Count > 2)
+            {
+                for (int i = 0; i < segs.Count; i++)
+                {
+                    if (segs[i].Start() == index)
+                    {
+                        int numPointsRemoved = segs[i].NumberOfPoints() - 1;
+                        segs[i].DeletePoints(points);
+                        segs.RemoveAt(i);
+
+                        PointsRemoved(segs, i, numPointsRemoved);
+
+                        DeselectAll();
+                        if (i < segs.Count)
+                        {
+                            segs[i].Select(points);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
         public void DeselectAll()
         {
             foreach (FlexiSegment sg in segs)
@@ -173,6 +206,7 @@ namespace Make3D.LineLib
 
         public void InsertLineSegment(int index, Point position)
         {
+            bool found = false;
             for (int i = 0; i < segs.Count; i++)
             {
                 if (segs[i].Start() == index)
@@ -185,7 +219,22 @@ namespace Make3D.LineLib
                     segs.Insert(i + 1, ls);
                     DeselectAll();
                     segs[i + 1].Select(points);
+                    found = true;
                     break;
+                }
+            }
+            if (!found && closed)
+            {
+                // special case, trying to split the imaginary line that connects
+                // the last point back to the first
+                if (segs[segs.Count - 1].End() == index)
+                {
+                    FlexiPoint np = new FlexiPoint(position, points.Count);
+                    points.Add(np);
+                    LineSegment ls = new LineSegment(segs[segs.Count - 1].End(), np.Id);
+                    segs.Add(ls);
+                    DeselectAll();
+                    ls.Select(points);
                 }
             }
         }
@@ -206,6 +255,22 @@ namespace Make3D.LineLib
                     {
                         minDistance = d;
                         closest = sg;
+                        found = true;
+                    }
+                }
+            }
+
+            // should the imaginary segment fro the last point back to the first be included
+            if (closed)
+            {
+                LineSegment ls = new LineSegment(points.Count - 1, 0);
+                double d = ls.DistToPoint(position, points);
+                if (d < selectionDistance)
+                {
+                    if (d < minDistance)
+                    {
+                        minDistance = d;
+                        closest = ls;
                         found = true;
                     }
                 }
@@ -285,6 +350,14 @@ namespace Make3D.LineLib
             for (int i = 0; i < points.Count; i++)
             {
                 points[i].Id = i;
+            }
+        }
+
+        private void PointsRemoved(List<FlexiSegment> segs, int index, int numPointsRemoved)
+        {
+            for (int i = index; i < segs.Count; i++)
+            {
+                segs[i].PointsRemoved(numPointsRemoved);
             }
         }
 

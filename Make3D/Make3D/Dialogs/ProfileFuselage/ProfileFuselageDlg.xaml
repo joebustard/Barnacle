@@ -116,9 +116,11 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
+            <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
+            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
+            <Button Content="Home" Grid.Column="3" Click="Front_Click" />
         </Grid>
 
         <Grid Grid.Column="1" Grid.Row="1">

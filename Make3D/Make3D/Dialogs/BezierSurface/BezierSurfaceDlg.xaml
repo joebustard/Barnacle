@@ -15,16 +15,18 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
+        <Border Grid.Row="0" Background="Transparent" Style="{StaticResource ControlBorder}"  Grid.Column="0">
+
         <Grid Grid.Column="0" Grid.Row="0">
 
-            <Grid.RowDefinitions>
+                <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
@@ -36,17 +38,17 @@
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" >Reset Control Points</Label>
-                <Button Margin="4,0,0,0" Click="ResetControlPoints_Click">Flat</Button>
-                <Button Margin="4,0,0,0" Click="ResetControlPointsDisk_Click">Disk</Button>
-                <Button Margin="4,0,0,0" Click="ResetControlPointsBow_Click">Bow</Button>
+                <Button Margin="4,2,0,0" Click="ResetControlPoints_Click">Flat</Button>
+                <Button Margin="4,2,0,0" Click="ResetControlPointsDisk_Click">Disk</Button>
+                <Button Margin="4,2,0,0" Click="ResetControlPointsBow_Click">Bow</Button>
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label Width="80" VerticalAlignment="Center" >Bend Up</Label>
-                <Button Margin="4,0,0,0" Click="UpX_Click">X</Button>
-                <Button Margin="4,0,0,0" Click="UpZ_Click">Z</Button>
-                <Button Margin="4,0,0,0" Click="UpXZ_Click">X+Z</Button>
-                <Button Margin="4,0,0,0" Click="UpDiag1_Click">Diag 1</Button>
-                <Button Margin="4,0,0,0" Click="UpDiag2_Click">Diag 2</Button>
+                <Button Margin="4,2,0,0" Click="UpX_Click">X</Button>
+                <Button Margin="4,2,0,0" Click="UpZ_Click">Z</Button>
+                <Button Margin="4,2,0,0" Click="UpXZ_Click">X+Z</Button>
+                <Button Margin="4,2,0,0" Click="UpDiag1_Click">Diag 1</Button>
+                <Button Margin="4,2,0,0" Click="UpDiag2_Click">Diag 2</Button>
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label Width="80" VerticalAlignment="Center" >Bend Down</Label>
@@ -59,6 +61,7 @@
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
         </Grid>
+        </Border>
         <Border x:Name="viewBorder" Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}" KeyDown="Grid_KeyDown" Focusable="True">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" KeyDown="Grid_KeyDown" Focusable="True">
@@ -98,8 +101,8 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
+            <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
+            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
             <Button Content="Home" Grid.Column="2" Click="Home_Click" />
         </Grid>
 
