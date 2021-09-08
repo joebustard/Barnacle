@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,26 +19,29 @@ namespace Make3D.LineLib
         public int P0 { get; set; }
         public int P1 { get; set; }
 
-        public override void DeletePoints(List<FlexiPoint> points)
+        public override void DeletePoints(ObservableCollection<FlexiPoint> points)
         {
             points.RemoveAt(P1);
         }
 
-        public override void Deselect(List<FlexiPoint> points)
+        public override void Deselect(ObservableCollection<FlexiPoint> points)
         {
             Selected = false;
             points[P0].Selected = false;
             points[P1].Selected = false;
+            points[P0].Visible = false;
+            points[P1].Visible = false;
         }
 
-        public override void DisplayPoints(List<Point> res, List<FlexiPoint> pnts)
+        public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
         {
-            res.Add(pnts[P1].Point);
+            res.Add(new Point(pnts[P1].X, pnts[P1].Y));
         }
 
-        public override double DistToPoint(Point position, List<FlexiPoint> points)
+        public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)
         {
-            double dist = DistToLine.FindDistanceToLine(position, points[P0].Point, points[P1].Point);
+        
+            double dist = DistToLine.FindDistanceToLine(position, points[P0].ToPoint(), points[P1].ToPoint());
             return dist;
         }
 
@@ -46,15 +50,15 @@ namespace Make3D.LineLib
             return P1;
         }
 
-        public Point GetCoord(double t, List<FlexiPoint> points)
+        public Point GetCoord(double t, ObservableCollection<FlexiPoint> points)
         {
-            double x = points[P0].Point.X + t * (points[P1].Point.X - points[P0].Point.X);
-            double y = points[P0].Point.Y + t * (points[P1].Point.Y - points[P0].Point.Y);
+            double x = points[P0].X + t * (points[P1].X - points[P0].X);
+            double y = points[P0].Y + t * (points[P1].Y - points[P0].Y);
 
             return new Point(x, y);
         }
 
-        public override void GetSegmentPoints(List<FlexiPoint> res, List<FlexiPoint> pnts)
+        public override void GetSegmentPoints(List<FlexiPoint> res, ObservableCollection<FlexiPoint> pnts)
         {
             res.Add(pnts[P1]);
         }
@@ -83,11 +87,13 @@ namespace Make3D.LineLib
             P1 -= n;
         }
 
-        public override void Select(List<FlexiPoint> points)
+        public override void Select(ObservableCollection<FlexiPoint> points)
         {
             Selected = true;
             points[P0].Selected = true;
+            points[P0].Visible = true;
             points[P1].Selected = true;
+            points[P1].Visible = true;
         }
 
         public override int Start()

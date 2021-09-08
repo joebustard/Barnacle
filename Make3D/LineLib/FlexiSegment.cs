@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,19 +12,19 @@ namespace Make3D.LineLib
     {
         public bool Selected { get; set; }
 
-        public virtual void DeletePoints(List<FlexiPoint> points)
+        public virtual void DeletePoints(ObservableCollection<FlexiPoint> points)
         {
         }
 
-        public virtual void Deselect(List<FlexiPoint> points)
+        public virtual void Deselect(ObservableCollection<FlexiPoint> points)
         {
         }
 
-        public virtual void DisplayPoints(List<Point> res, List<FlexiPoint> pnts)
+        public virtual void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
         {
         }
 
-        public virtual double DistToPoint(Point position, List<FlexiPoint> res)
+        public virtual double DistToPoint(Point position, ObservableCollection<FlexiPoint> res)
         {
             return double.MaxValue;
         }
@@ -33,7 +34,7 @@ namespace Make3D.LineLib
             return -1;
         }
 
-        public virtual void GetSegmentPoints(List<FlexiPoint> res, List<FlexiPoint> pnts)
+        public virtual void GetSegmentPoints(List<FlexiPoint> res, ObservableCollection<FlexiPoint> pnts)
         {
         }
 
@@ -50,7 +51,7 @@ namespace Make3D.LineLib
         {
         }
 
-        public virtual void Select(List<FlexiPoint> points)
+        public virtual void Select(ObservableCollection<FlexiPoint> points)
         {
         }
 

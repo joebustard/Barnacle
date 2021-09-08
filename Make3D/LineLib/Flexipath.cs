@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,13 +12,13 @@ namespace Make3D.LineLib
     {
         private const double selectionDistance = 2;
         private bool closed;
-        private List<FlexiPoint> points;
+        private ObservableCollection<FlexiPoint> points;
         private List<FlexiSegment> segs;
 
         public FlexiPath()
         {
             segs = new List<FlexiSegment>();
-            points = new List<FlexiPoint>();
+            points = new ObservableCollection<FlexiPoint>();
             closed = true;
         }
 
@@ -31,7 +32,7 @@ namespace Make3D.LineLib
         {
             get
             {
-                if (points != null && points[0] != null)
+                if (points != null && points.Count > 0 && points[0] != null)
                 {
                     return points[0];
                 }
@@ -50,6 +51,15 @@ namespace Make3D.LineLib
                 {
                     points[0] = value;
                 }
+            }
+        }
+
+        public ObservableCollection<FlexiPoint> FlexiPoints
+        {
+            get { return points; }
+            set
+            {
+                points = value;
             }
         }
 
@@ -150,7 +160,7 @@ namespace Make3D.LineLib
             // display points are NOT the same as the raw FlexiPoints;
             // Any curves etc may generate more intermediate display points
             List<Point> res = new List<Point>();
-            res.Add(Start.Point);
+            res.Add(Start.ToPoint());
             foreach (FlexiSegment sg in segs)
             {
                 sg.DisplayPoints(res, points);
@@ -286,7 +296,8 @@ namespace Make3D.LineLib
         {
             if (index >= 0 && index < points.Count)
             {
-                points[index].Point = position;
+                points[index].X = position.X;
+                points[index].Y = position.Y;
             }
         }
 

@@ -26,7 +26,7 @@ namespace Make3D.Dialogs
         private bool lineShape;
         private BitmapImage localImage;
         private bool moving;
-        private ObservableCollection<PolyPoint> polyPoints;
+       private ObservableCollection<FlexiPoint> polyPoints;
         private double scale;
         private int selectedPoint;
         private SelectionModeType selectionMode;
@@ -38,8 +38,9 @@ namespace Make3D.Dialogs
         public ScribbleDlg()
         {
             InitializeComponent();
-            polyPoints = new ObservableCollection<PolyPoint>();
+            //polyPoints = new ObservableCollection<PolyPoint>();
             flexiPath = new FlexiPath();
+            polyPoints = flexiPath.FlexiPoints;
             selectedPoint = -1;
             selectionMode = SelectionModeType.SelectPoint;
             scale = 1.0;
@@ -121,7 +122,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        public ObservableCollection<PolyPoint> Points
+        public ObservableCollection<FlexiPoint> Points
         {
             get
             {
@@ -543,7 +544,7 @@ namespace Make3D.Dialogs
                 {
                     bool ortho = false;
 
-                    System.Windows.Point p = polyPoints[i].Point;
+                    System.Windows.Point p = polyPoints[i].ToPoint();
                     if (selectedPoint == i)
                     {
                         rad = 6;
@@ -567,15 +568,15 @@ namespace Make3D.Dialogs
                     // OR they are orthogonal to the selected one
                     if (polyPoints[i].Visible || (ortho && showOrtho))
                     {
-                        if (polyPoints[i].Mode == PolyPoint.PointMode.Data)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Data)
                         {
                             p = MakeEllipse(rad, br, p);
                         }
-                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1)
                         {
                             p = MakeRect(rad, br, p);
                         }
-                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control2)
                         {
                             p = MakeTri(rad, br, p);
                         }
@@ -593,23 +594,23 @@ namespace Make3D.Dialogs
                 {
                     if (polyPoints[i].Visible)
                     {
-                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control1)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1)
                         {
                             int j = i - 1;
                             if (j < 0)
                             {
                                 j = polyPoints.Count - 1;
                             }
-                            DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
+                            DrawControlLine(polyPoints[i].ToPoint(), polyPoints[j].ToPoint());
                         }
-                        if (polyPoints[i].Mode == PolyPoint.PointMode.Control2)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control2)
                         {
                             int j = i + 1;
                             if (j == polyPoints.Count)
                             {
                                 j = 0;
                             }
-                            DrawControlLine(polyPoints[i].Point, polyPoints[j].Point);
+                            DrawControlLine(polyPoints[i].ToPoint(), polyPoints[j].ToPoint());
                         }
                     }
                 }
@@ -942,6 +943,7 @@ namespace Make3D.Dialogs
 
         private void GetRawFlexiPoints()
         {
+        /*
             polyPoints.Clear();
             List<FlexiPoint> pnts = flexiPath.GetSegmentPoints();
             foreach (FlexiPoint p in pnts)
@@ -952,6 +954,7 @@ namespace Make3D.Dialogs
                 polyPoints.Add(ply);
             }
             SetPointIds();
+            */
         }
 
         private void ImageButton_Click(object sender, RoutedEventArgs e)
@@ -1044,6 +1047,10 @@ namespace Make3D.Dialogs
                         }
                         break;
                 }
+                if ( found)
+                {
+                    UpdateDisplay();
+                }
             }
         }
 
@@ -1086,7 +1093,7 @@ namespace Make3D.Dialogs
 
                 for (int i = 0; i < polyPoints.Count; i++)
                 {
-                    System.Windows.Point p = polyPoints[i].Point;
+                    System.Windows.Point p = polyPoints[i].ToPoint();
                     if (position.X >= p.X - rad && position.X <= p.X + rad)
                     {
                         if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
