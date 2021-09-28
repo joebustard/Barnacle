@@ -10,7 +10,7 @@
             LogFileName = "DebugLog.txt";
         }
 
-        public static DebugLog Instance()
+        public static new DebugLog Instance()
         {
             if (Singleton == null)
             {

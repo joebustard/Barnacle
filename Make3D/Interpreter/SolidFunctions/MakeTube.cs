@@ -42,7 +42,6 @@ namespace ScriptLanguage
             double upper = 0;
             double lower = 0;
             double sweep = 0;
-            double g = 0;
             double h = 0;
 
             if (EvalExpression(radiusExp, ref r, "Radius") &&

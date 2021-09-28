@@ -79,7 +79,7 @@ namespace ScriptLanguage
             return Result;
         }
 
-        public string ToString()
+        public override string  ToString()
         {
             String Result = "";
 

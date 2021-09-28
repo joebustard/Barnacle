@@ -712,7 +712,7 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void Redisplay()
+        protected override void Redisplay()
         {
             if (MyModelGroup != null)
             {

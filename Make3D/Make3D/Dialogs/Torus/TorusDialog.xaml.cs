@@ -22,8 +22,7 @@ namespace Make3D.Dialogs
     public partial class TorusDialog : BaseModellerDialog
     {
         private int curveType = 1;
-        private double dPhi;
-        private double dTheta;
+
         private double horizontalRadius;
         private int knobFactor = 2;
         private double mainRadius;
@@ -38,8 +37,7 @@ namespace Make3D.Dialogs
             mainRadius = 5;
             horizontalRadius = 4;
             verticalRadius = 4;
-            dTheta = 0.1;
-            dPhi = 0.2;
+
             stretch = 4;
             ToolName = "Torus";
             ModelGroup = MyModelGroup;

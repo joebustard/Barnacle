@@ -30,7 +30,7 @@ namespace Make3D.Views
         private Point3D lastHitPoint;
         private Point lastMousePos;
         private bool loaded;
-        private String previousText;
+        
         private ScriptViewModel vm;
 
         public ScriptView()

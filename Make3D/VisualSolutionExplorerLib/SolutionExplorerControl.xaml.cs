@@ -9,10 +9,7 @@ namespace VisualSolutionExplorer
 {
     public partial class SolutionExplorerControl : UserControl
     {
-        private Point _lastMouseDown;
-
-        //TreeViewItem draggedItem, _target;
-        private TreeViewItem draggedItem, _target;
+       
 
         private List<ProjectFolder> folders;
         private Point startPoint;

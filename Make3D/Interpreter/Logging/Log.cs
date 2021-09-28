@@ -34,7 +34,7 @@ namespace ScriptLanguage
             }
         }
 
-        public static Log Instance()
+        public static  Log Instance()
         {
             if (singleton == null)
             {

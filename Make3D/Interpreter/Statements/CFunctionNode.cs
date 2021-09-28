@@ -46,7 +46,7 @@ namespace ScriptLanguage
             return true;
         }
 
-        public bool ExecuteFromCall()
+        public override bool ExecuteFromCall()
         {
             bool result = false;
             int i = 0;

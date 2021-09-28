@@ -32,7 +32,7 @@ namespace Make3D.Dialogs
         private string selectedTyreStyle;
 
         private bool showHubRing;
-        private Double twop = Math.PI * 2.0;
+       
 
         private double tyreDepth;
         private List<String> tyreStyles;

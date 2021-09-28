@@ -13,8 +13,7 @@ namespace Make3D.Dialogs.WireFrame
     {
         private Point3D endPoint;
         private GeometryModel3D model;
-        private Point3D position1;
-        private Point3D position2;
+
         private Point3D startPoint;
         private double thickness;
         private Int32Collection tris;

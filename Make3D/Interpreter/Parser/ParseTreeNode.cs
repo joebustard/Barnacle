@@ -50,7 +50,7 @@ namespace ScriptLanguage
             return "";
         }
 
-        public virtual String ToString()
+        public override String ToString()
         {
             return "";
         }
