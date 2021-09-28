@@ -9,20 +9,17 @@ namespace ScriptLanguage
 {
     internal class CIfNode : StatementNode
     {
-        private ExpressionNode _Expression;
-
-        private CompoundNode _FalseBody;
-
-        private CompoundNode _TrueBody;
-
         private SingleSteppingMode CurrentSingleStepMode;
+        private ExpressionNode expression;
+        private CompoundNode falseBody;
+        private CompoundNode trueBody;
 
         // Instance constructor
         public CIfNode()
         {
-            _Expression = null;
-            _TrueBody = null;
-            _FalseBody = null;
+            expression = null;
+            trueBody = null;
+            falseBody = null;
             CurrentSingleStepMode = SingleSteppingMode.TestingCondition;
         }
 
@@ -35,18 +32,18 @@ namespace ScriptLanguage
 
         public ExpressionNode Expression
         {
-            get { return _Expression; }
-            set { _Expression = value; }
+            get { return expression; }
+            set { expression = value; }
         }
 
         public CompoundNode FalseBody
         {
-            set { _FalseBody = value; }
+            set { falseBody = value; }
         }
 
         public CompoundNode TrueBody
         {
-            set { _TrueBody = value; }
+            set { trueBody = value; }
         }
 
         /// Execute this node
@@ -55,13 +52,13 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if ((_Expression != null) &&
-                 (_TrueBody != null))
+            if ((expression != null) &&
+                 (trueBody != null))
             {
                 result = true;
 
                 bool bRunTrueBody = false;
-                result = _Expression.Execute();
+                result = expression.Execute();
                 if (result == true)
                 {
                     StackItem sti = ExecutionStack.Instance().Pull();
@@ -98,13 +95,21 @@ namespace ScriptLanguage
                     {
                         if (bRunTrueBody)
                         {
-                            result = _TrueBody.Execute();
+                            result = trueBody.Execute();
+                            if ( result )
+                            {
+                                ParentCompound.InBreakMode = trueBody.InBreakMode;
+                            }
                         }
                         else
                         {
-                            if (_FalseBody != null)
+                            if (falseBody != null)
                             {
-                                result = _FalseBody.Execute();
+                                result = falseBody.Execute();
+                                if (result)
+                                {
+                                    ParentCompound.InBreakMode = falseBody.InBreakMode;
+                                }
                             }
                         }
                     }
@@ -123,7 +128,7 @@ namespace ScriptLanguage
                     {
                         bool bRunTrueBody = false;
 
-                        if (_Expression.Execute())
+                        if (expression.Execute())
                         {
                             StackItem sti = ExecutionStack.Instance().Pull();
                             bool result = true;
@@ -160,16 +165,16 @@ namespace ScriptLanguage
                                 if (bRunTrueBody)
                                 {
                                     HighLight = false;
-                                    _TrueBody.HighLight = true;
+                                    trueBody.HighLight = true;
                                     CurrentSingleStepMode = SingleSteppingMode.SteppingTrueBody;
                                     Status = SingleStepController.SteppingStatus.OK_Not_Complete;
                                 }
                                 else
                                 {
-                                    if (_FalseBody != null)
+                                    if (falseBody != null)
                                     {
                                         HighLight = false;
-                                        _FalseBody.HighLight = true;
+                                        falseBody.HighLight = true;
                                         CurrentSingleStepMode = SingleSteppingMode.SteppingFalseBody;
                                         Status = SingleStepController.SteppingStatus.OK_Not_Complete;
                                     }
@@ -192,7 +197,7 @@ namespace ScriptLanguage
 
                 case SingleSteppingMode.SteppingTrueBody:
                     {
-                        Status = _TrueBody.SingleStep();
+                        Status = trueBody.SingleStep();
                         //
                         // when the body is done, reset the if
                         //
@@ -205,7 +210,7 @@ namespace ScriptLanguage
 
                 case SingleSteppingMode.SteppingFalseBody:
                     {
-                        Status = _FalseBody.SingleStep();
+                        Status = falseBody.SingleStep();
                         if (Status != SingleStepController.SteppingStatus.OK_Not_Complete)
                         {
                             CurrentSingleStepMode = SingleSteppingMode.TestingCondition;
@@ -226,16 +231,16 @@ namespace ScriptLanguage
             String result = "";
             if (!isInLibrary)
             {
-                result = Indentor.Indentation() + RichTextFormatter.KeyWord("If ") + "( " + _Expression.ToRichText() + @" ) \par";
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("If ") + "( " + expression.ToRichText() + @" ) \par";
                 if (HighLight)
                 {
                     result = RichTextFormatter.Highlight(result);
                 }
-                result += _TrueBody.ToRichText();
-                if (_FalseBody != null)
+                result += trueBody.ToRichText();
+                if (falseBody != null)
                 {
                     result += @"\par" + Indentor.Indentation() + RichTextFormatter.KeyWord("Else ") + @"\par";
-                    result += _FalseBody.ToRichText();
+                    result += falseBody.ToRichText();
                 }
                 result += @"\par";
             }
@@ -247,13 +252,13 @@ namespace ScriptLanguage
             String result = "";
             if (!isInLibrary)
             {
-                result = Indentor.Indentation() + "If ( " + _Expression.ToString() + " )\n";
+                result = Indentor.Indentation() + "If ( " + expression.ToString() + " )\n";
 
-                result += _TrueBody.ToString();
-                if (_FalseBody != null)
+                result += trueBody.ToString();
+                if (falseBody != null)
                 {
                     result += "\n" + Indentor.Indentation() + "Else\n";
-                    result += _FalseBody.ToString();
+                    result += falseBody.ToString();
                 }
                 result += "\n";
             }

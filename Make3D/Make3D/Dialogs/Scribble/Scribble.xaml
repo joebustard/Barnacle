@@ -42,7 +42,7 @@
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
-                <UniformGrid Columns="4">
+                <UniformGrid Columns="5">
                     <Border x:Name="PickBorder" BorderThickness="4"  CornerRadius="2">
                         <Button x:Name="PickButton" Click="PickButton_Click" Style="{StaticResource SmallButton }" ToolTip="Select a segment or point">
                             <Image Source="/Make3D;component/Images/Buttons/SelectSegment.png" />
@@ -54,8 +54,13 @@
                         </Button>
                     </Border>
                     <Border x:Name="AddBezierBorder" BorderThickness="4"  CornerRadius="2">
-                        <Button x:Name="AddBezierButton"  Click="AddBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a spline">
+                        <Button x:Name="AddBezierButton"  Click="AddBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a cubic spline">
                             <Image Source="/Make3D;component/Images/Buttons/AddSpline.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddQuadBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddQuadBezierButton"  Click="AddQuadBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a quadratic spline">
+                            <Image Source="/Make3D;component/Images/Buttons/AddQuadBezier.png" />
                         </Button>
                     </Border>
                     <Border x:Name="DelSegBorder" BorderThickness="4"  CornerRadius="2">

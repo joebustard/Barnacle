@@ -45,9 +45,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DistToLine.cs" />
-    <Compile Include="FlexiBezier.cs" />
+    <Compile Include="FlexiCubicBezier.cs" />
     <Compile Include="FlexiPath.cs" />
     <Compile Include="FlexiPoint.cs" />
+    <Compile Include="FlexiQuadBezier.cs" />
     <Compile Include="LineSegment.cs" />
     <Compile Include="FlexiSegment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

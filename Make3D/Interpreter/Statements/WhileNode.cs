@@ -51,7 +51,7 @@ namespace ScriptLanguage
                  (_Body != null))
             {
                 result = true;
-
+                _Body.InBreakMode = false;
                 bool bRunBody = false;
                 do
                 {
@@ -75,14 +75,7 @@ namespace ScriptLanguage
                                 }
                                 break;
 
-                            case StackItem.ItemType.dval:
-                                {
-                                    Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
-                                    result = false;
-                                }
-                                break;
-
-                            case StackItem.ItemType.sval:
+                            default:
                                 {
                                     Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
                                     result = false;
@@ -96,7 +89,7 @@ namespace ScriptLanguage
                         }
                     }
                 } while (bRunBody &&
-                           result);
+                           result && !_Body.InBreakMode);
             }
             return result;
         }

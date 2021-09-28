@@ -36,16 +36,25 @@ namespace Make3D.LineLib
         {
             Data,
             Control1,
-            Control2
+            Control2,
+            ControlQ
         }
 
         public int Id { get; set; }
         public PointMode Mode { get; set; }
-       // public System.Windows.Point Point { get; set; }
-        public double X { get; set; }
-        public double Y { get; set; }
         public bool Selected { get; set; }
+
         public bool Visible { get; set; }
+
+        // public System.Windows.Point Point { get; set; }
+        public double X { get; set; }
+
+        public double Y { get; set; }
+
+        public Point ToPoint()
+        {
+            return new Point(X, Y);
+        }
 
         public override string ToString()
         {
@@ -55,10 +64,6 @@ namespace Make3D.LineLib
             s += Y.ToString() + ",";
             s += Mode.ToString();
             return s;
-        }
-        public Point ToPoint()
-        {
-            return new Point(X, Y);
         }
     }
 }

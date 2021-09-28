@@ -21,6 +21,7 @@ namespace ScriptLanguage
                 "alignfront",
                 "alignback",
                 "aligncentre",
+                "break",
                 "bool",
                 "delete",
                 "do",
@@ -65,9 +66,11 @@ namespace ScriptLanguage
                 "degrees",
                 "difference",
                 "dim",
+                "height",
                 "inputstring",
                 "intersection",
                 "len",
+                "length",
                 "make",
                 "makebicorn",
                 "makehollow",
@@ -78,6 +81,7 @@ namespace ScriptLanguage
                 "now",
                 "pcname",
                 "rad",
+                "rnd",
                 "replaceall",
                 "sin",
                 "sqrt",
@@ -88,6 +92,7 @@ namespace ScriptLanguage
                 "trimleft",
                 "trimright",
                 "union",
+                "width",
                 "val"
             };
         }
@@ -948,6 +953,23 @@ namespace ScriptLanguage
             return result;
         }
 
+        private bool ParseBreakStatement(CompoundNode parentNode)
+        {
+            bool result = CheckForSemiColon();
+            if (result)
+            {
+                BreakNode en = new BreakNode();
+                en.IsInLibrary = tokeniser.InIncludeFile();
+                parentNode.AddStatement(en);
+            }
+            else
+            {
+                ReportSyntaxError("Break expected ;");
+            }
+
+            return result;
+        }
+
         private bool ParseChainScriptStatement(CompoundNode parentNode, string parentName)
         {
             bool result = false;
@@ -1794,6 +1816,19 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseGetSolidSizeFunction(string parentName, string prim)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                GetSolidSizeNode mn = new GetSolidSizeNode(leftSolid, prim);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+            return exp;
+        }
+
         private bool ParseHandleStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -1859,6 +1894,12 @@ namespace ScriptLanguage
 
                     {
                         result = ParseStackStatement(parentNode, parentName, Identifier);
+                    }
+                    break;
+
+                case "break":
+                    {
+                        result = ParseBreakStatement(parentNode);
                     }
                     break;
 
@@ -2127,6 +2168,7 @@ namespace ScriptLanguage
                     if (CheckForSemiColon())
                     {
                         token = token.Substring(1, token.Length - 2);
+
                         // Ask the tokeniser to start reading from the new path.
                         // Once its done it will revert back to the current one
                         // so in theory they can be be stacked quite deep
@@ -2334,6 +2376,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "rnd":
+                            {
+                                exp = GetFunctionNode<RndNode>(parentName);
+                            }
+                            break;
+
                         case "replaceall":
                             {
                                 exp = ParseReplaceAllFunction(parentName);
@@ -2397,6 +2445,14 @@ namespace ScriptLanguage
                         case "val":
                             {
                                 exp = GetFunctionNode<ValNode>(parentName);
+                            }
+                            break;
+
+                        case "length":
+                        case "width":
+                        case "height":
+                            {
+                                exp = ParseGetSolidSizeFunction(parentName, functionName);
                             }
                             break;
                     }

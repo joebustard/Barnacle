@@ -19,7 +19,7 @@
         <Grid   Grid.Column="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
-                <RowDefinition Height="30" />
+                <RowDefinition Height="60" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
@@ -31,37 +31,65 @@
             </Grid.RowDefinitions>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="0" Grid.Column="0">
                 <UniformGrid>
-                    <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" />
-                    <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2" />
-                    <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2" />
-                    <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2" />
+                    <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" ToolTip="Reset the editing polygon points to a default shape" />
+                    <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2" ToolTip="Set a background image to overlay the editing polygon on" />
+                    <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2" ToolTip="Zoom in on editing polygon" />
+                    <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2" ToolTip="Zomm out from polygon" />
                 </UniformGrid>
             </Border>
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="10,0,0,0">
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
+                <UniformGrid Columns="5">
+                    <Border x:Name="PickBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="PickButton" Click="PickButton_Click" Style="{StaticResource SmallButton }" ToolTip="Select a segment or point">
+                            <Image Source="/Make3D;component/Images/Buttons/SelectSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddSegBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddSegButton"  Style="{StaticResource SmallButton}" Click="AddSegButton_Click" ToolTip="Insert a straight segment">
+                            <Image Source="/Make3D;component/Images/Buttons/AddSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddBezierButton"  Click="AddBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a cubic spline">
+                            <Image Source="/Make3D;component/Images/Buttons/AddSpline.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddQuadBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddQuadBezierButton"  Click="AddQuadBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a quadratic spline">
+                            <Image Source="/Make3D;component/Images/Buttons/AddQuadBezier.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="DelSegBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="DelSegButton"  Click="DelSegButton_Click" Style="{StaticResource SmallButton}" ToolTip="Delete a segment">
+                            <Image Source="/Make3D;component/Images/Buttons/DeleteSegment.png" />
+                        </Button>
+                    </Border>
+                </UniformGrid>
+            </Border>
+            <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Type</Label>
                 <ComboBox VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding TrackTypes}" SelectedItem="{Binding SelectedTrackType}" MinWidth="100"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="2"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">No. Of Links</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding NoOfLinks}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowLinkMarkers}">Link Markers</CheckBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Width</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding TrackWidth}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowOutline}">Outline</CheckBox>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Thickness</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Thickness}" MinWidth="50"></TextBox>
-
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="6"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Spud Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding SpudSize}" MinWidth="50"></TextBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="6"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="7"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center" Visibility="{Binding ShowGuideSize}">Guide Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding GuideSize}" MinWidth="50" Visibility="{Binding ShowGuideSize}"></TextBox>
             </StackPanel>

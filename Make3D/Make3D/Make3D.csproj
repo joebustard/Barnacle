@@ -186,6 +186,8 @@
     <Compile Include="Dialogs\Star\Star.xaml.cs">
       <DependentUpon>Star.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TankTrack\TankDialogGenerators.cs" />
+    <Compile Include="Dialogs\TankTrack\TankTrackUtils.cs" />
     <Compile Include="Dialogs\Thread\ThreadDlg.xaml.cs">
       <DependentUpon>ThreadDlg.xaml</DependentUpon>
     </Compile>
@@ -762,6 +764,7 @@
     <Resource Include="Images\Buttons\AddSpline.png" />
     <Resource Include="Images\Buttons\DeleteSegment.png" />
     <Resource Include="Images\Buttons\SelectSegment.png" />
+    <Resource Include="Images\Buttons\AddQuadBezier.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

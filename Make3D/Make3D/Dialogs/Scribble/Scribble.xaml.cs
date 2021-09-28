@@ -26,7 +26,7 @@ namespace Make3D.Dialogs
         private bool lineShape;
         private BitmapImage localImage;
         private bool moving;
-       private ObservableCollection<FlexiPoint> polyPoints;
+        private ObservableCollection<FlexiPoint> polyPoints;
         private double scale;
         private int selectedPoint;
         private SelectionModeType selectionMode;
@@ -67,7 +67,8 @@ namespace Make3D.Dialogs
             SelectPoint,
             AddLine,
             AddBezier,
-            DeleteSegment
+            DeleteSegment,
+            AddQuadBezier
         };
 
         public bool HollowShape
@@ -295,7 +296,7 @@ namespace Make3D.Dialogs
             SelectionMode = SelectionModeType.AddBezier;
         }
 
-        private bool AddBezierFromPoint(MouseButtonEventArgs e, Line ln)
+        private bool AddBezierFromPoint(MouseButtonEventArgs e, Line ln, bool cubic)
         {
             int found = -1;
             bool added = false;
@@ -312,9 +313,16 @@ namespace Make3D.Dialogs
             {
                 if (found < polyPoints.Count - 1)
                 {
-                    InsertCurveSegment(found, position);
+                    if (cubic)
+                    {
+                        InsertCurveSegment(found, position);
+                    }
+                    else
+                    {
+                        InsertQuadCurveSegment(found, position);
+                    }
 
-                    GetRawFlexiPoints();
+                    //GetRawFlexiPoints();
                     PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
@@ -382,7 +390,7 @@ namespace Make3D.Dialogs
                     //      {
                     InsertLineSegment(found, position);
                     //       }
-                    GetRawFlexiPoints();
+
                     PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
@@ -400,6 +408,11 @@ namespace Make3D.Dialogs
 
         private void AddPointClicked(object sender, RoutedEventArgs e)
         {
+        }
+
+        private void AddQuadBezierButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.AddQuadBezier;
         }
 
         private void AddSegButton_Click(object sender, RoutedEventArgs e)
@@ -490,7 +503,7 @@ namespace Make3D.Dialogs
                 {
                     flexiPath.DeleteSegmentStartingAt(found);
 
-                    GetRawFlexiPoints();
+                    //GetRawFlexiPoints();
                     PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
@@ -572,7 +585,8 @@ namespace Make3D.Dialogs
                         {
                             p = MakeEllipse(rad, br, p);
                         }
-                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1 ||
+                            polyPoints[i].Mode == FlexiPoint.PointMode.ControlQ)
                         {
                             p = MakeRect(rad, br, p);
                         }
@@ -594,7 +608,8 @@ namespace Make3D.Dialogs
                 {
                     if (polyPoints[i].Visible)
                     {
-                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1 ||
+                            polyPoints[i].Mode == FlexiPoint.PointMode.ControlQ)
                         {
                             int j = i - 1;
                             if (j < 0)
@@ -603,7 +618,8 @@ namespace Make3D.Dialogs
                             }
                             DrawControlLine(polyPoints[i].ToPoint(), polyPoints[j].ToPoint());
                         }
-                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control2)
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control2 ||
+                            polyPoints[i].Mode == FlexiPoint.PointMode.ControlQ)
                         {
                             int j = i + 1;
                             if (j == polyPoints.Count)
@@ -941,22 +957,6 @@ namespace Make3D.Dialogs
             CentreVertices();
         }
 
-        private void GetRawFlexiPoints()
-        {
-        /*
-            polyPoints.Clear();
-            List<FlexiPoint> pnts = flexiPath.GetSegmentPoints();
-            foreach (FlexiPoint p in pnts)
-            {
-                PolyPoint ply = new PolyPoint(p.Point.X, p.Point.Y, p.Id);
-                ply.Mode = (PolyPoint.PointMode)p.Mode;
-                ply.Visible = p.Selected;
-                polyPoints.Add(ply);
-            }
-            SetPointIds();
-            */
-        }
-
         private void ImageButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog opDlg = new OpenFileDialog();
@@ -989,7 +989,6 @@ namespace Make3D.Dialogs
             flexiPath.AddLine(new System.Windows.Point(100, 10));
             flexiPath.AddLine(new System.Windows.Point(100, 100));
             flexiPath.AddLine(new System.Windows.Point(10, 100));
-            GetRawFlexiPoints();
         }
 
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
@@ -1000,6 +999,11 @@ namespace Make3D.Dialogs
         private void InsertLineSegment(int startIndex, System.Windows.Point position)
         {
             flexiPath.InsertLineSegment(startIndex, position);
+        }
+
+        private void InsertQuadCurveSegment(int startIndex, System.Windows.Point position)
+        {
+            flexiPath.ConvertLineQuadCurveSegment(startIndex, position);
         }
 
         private ContextMenu LineMenu()
@@ -1035,7 +1039,14 @@ namespace Make3D.Dialogs
 
                     case SelectionModeType.AddBezier:
                         {
-                            found = AddBezierFromPoint(e, ln);
+                            found = AddBezierFromPoint(e, ln, true);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+
+                    case SelectionModeType.AddQuadBezier:
+                        {
+                            found = AddBezierFromPoint(e, ln, false);
                             SelectionMode = SelectionModeType.SelectPoint;
                         }
                         break;
@@ -1047,7 +1058,7 @@ namespace Make3D.Dialogs
                         }
                         break;
                 }
-                if ( found)
+                if (found)
                 {
                     UpdateDisplay();
                 }
@@ -1117,12 +1128,14 @@ namespace Make3D.Dialogs
                         Ellipse el = sender as Ellipse;
                         if (polyPoints.Count > 3)
                         {
+                            /*
                             MessageBoxResult res = MessageBox.Show("Delete the point", "Edit", MessageBoxButton.YesNo);
                             if (res == MessageBoxResult.Yes)
                             {
                                 polyPoints.RemoveAt(selectedPoint);
                                 UpdateDisplay();
                             }
+                            */
                         }
                     }
                 }
@@ -1348,7 +1361,7 @@ namespace Make3D.Dialogs
 
             if (found)
             {
-                GetRawFlexiPoints();
+                // GetRawFlexiPoints();
                 PointGrid.ItemsSource = Points;
                 CollectionViewSource.GetDefaultView(Points).Refresh();
                 Redisplay();
@@ -1366,6 +1379,7 @@ namespace Make3D.Dialogs
                         PickBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
@@ -1375,6 +1389,7 @@ namespace Make3D.Dialogs
                         PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
@@ -1384,6 +1399,17 @@ namespace Make3D.Dialogs
                         PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                    }
+                    break;
+
+                case SelectionModeType.AddQuadBezier:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
@@ -1393,6 +1419,7 @@ namespace Make3D.Dialogs
                         PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                     }
                     break;
@@ -1445,7 +1472,7 @@ namespace Make3D.Dialogs
             if (s != "")
             {
                 flexiPath.FromString(s);
-                GetRawFlexiPoints();
+                //GetRawFlexiPoints();
             }
             UpdateCameraPos();
             MyModelGroup.Children.Clear();

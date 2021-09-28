@@ -7,19 +7,18 @@ using System.Threading.Tasks;
 
 namespace ScriptLanguage
 {
-    internal class CSGNode : ExpressionNode
+    internal class GetSolidSizeNode : ExpressionNode
     {
-        private ExpressionNode leftSolid;
-        private ExpressionNode rightSolid;
+        private ExpressionNode solid;
 
-        public CSGNode()
+        public GetSolidSizeNode()
         {
         }
 
-        public CSGNode(ExpressionNode ls, ExpressionNode rs, string prim) : base(ls)
+        public GetSolidSizeNode(ExpressionNode ls, string prim) : base(ls)
         {
-            this.leftSolid = ls;
-            this.rightSolid = rs;
+            this.solid = ls;
+
             this.PrimType = prim;
         }
 
@@ -33,44 +32,23 @@ namespace ScriptLanguage
             bool result = false;
 
             int ls = -1;
-            int rs = -1;
 
-            if (EvalExpression(leftSolid, ref ls, "LeftSolid") &&
-                EvalExpression(rightSolid, ref rs, "RightSolid"))
+            if (EvalExpression(solid, ref ls, "Solid") && PrimType != null && PrimType != "")
             {
                 Object3D leftie = Script.ResultArtefacts[ls];
-                Object3D rightie = Script.ResultArtefacts[rs];
-                if (leftie != null && rightie != null)
+
+                if (leftie != null)
                 {
                     leftie.CalcScale(false);
-
-                    rightie.CalcScale(false);
-                    Group3D grp = new Group3D();
-                    grp.Name = leftie.Name;
-                    grp.Description = leftie.Description;
-                    grp.LeftObject = leftie;
-                    if (PrimType == "groupcut")
+                    double d = 0;
+                    switch (PrimType.ToLower())
                     {
-                        grp.RightObject = rightie.Clone();
-
-                        grp.RightObject.CalcScale(false);
-                        grp.PrimType = "groupdifference";
+                        case "length": d = leftie.Scale.X; break;
+                        case "height": d = leftie.Scale.Y; break;
+                        case "width": d = leftie.Scale.Z; break;
                     }
-                    else
-                    {
-                        grp.RightObject = rightie;
-                        grp.PrimType = PrimType;
-                    }
-                    if (grp.Init())
-                    {
-                        grp.CalcScale(false);
-                        grp.Remesh();
-                        Script.ResultArtefacts.Add(grp);
-                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                        //  Script.ResultArtefacts[ls] = null;
-                        //  Script.ResultArtefacts[rs] = null;
-                        result = true;
-                    }
+                    ExecutionStack.Instance().Push(d);
+                    result = true;
                 }
             }
             return result;
@@ -84,8 +62,7 @@ namespace ScriptLanguage
         {
             String result = RichTextFormatter.KeyWord(Id()) + "( ";
 
-            result += leftSolid.ToRichText() + ", ";
-            result += rightSolid.ToRichText();
+            result += solid.ToRichText();
             result += " )";
             return result;
         }
@@ -93,8 +70,7 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = Id() + "( ";
-            result += leftSolid.ToString() + ", ";
-            result += rightSolid.ToString();
+            result += solid.ToString();
             result += " )";
             return result;
         }
@@ -129,19 +105,16 @@ namespace ScriptLanguage
 
         private string Id()
         {
-            string res = "Union";
-            if (PrimType == "groupdifference")
+            string res = "Length";
+            if (PrimType == "width")
             {
-                res = "Difference";
+                res = "Width";
             }
-            else if (PrimType == "groupintersection")
+            else if (PrimType == "height")
             {
-                res = "Intersect";
+                res = "Height";
             }
-            else if (PrimType == "groupcut")
-            {
-                res = "Cutout";
-            }
+
             return res;
         }
     }

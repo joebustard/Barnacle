@@ -5,6 +5,7 @@ namespace ScriptLanguage
 {
     public class CompoundNode : ParseTreeNode
     {
+        public bool InBreakMode;
         public bool IsTestBody;
         public List<StatementNode> Statements;
         protected List<StatementNode> UseStatements;
@@ -16,6 +17,7 @@ namespace ScriptLanguage
             Statements = new List<StatementNode>();
             UseStatements = new List<StatementNode>();
             IsTestBody = false;
+            InBreakMode = false;
             CurrentSingleStepStatement = 0;
         }
 
@@ -24,6 +26,7 @@ namespace ScriptLanguage
             if (Statements != null)
             {
                 Statements.Add(st);
+                st.ParentCompound = this;
             }
         }
 
@@ -33,6 +36,7 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = true;
+            InBreakMode = false;
             if (Statements.Count > 0)
             {
                 //
@@ -41,16 +45,10 @@ namespace ScriptLanguage
                 //
                 int i = 0;
                 while ((i < Statements.Count) &&
-                        (result == true))
+                        (result == true) && !InBreakMode)
                 {
                     result = Statements[i].Execute();
                     i++;
-
-                    if (!result)
-                    {
-                        // CLog.Instance().AddEntry("Stopped at ");
-                        // CLog.Instance().AddEntry(Statements[i - 1].ToString());
-                    }
                 }
             }
 

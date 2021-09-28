@@ -28,6 +28,12 @@ namespace Make3D.LineLib
             set { closed = value; }
         }
 
+        public ObservableCollection<FlexiPoint> FlexiPoints
+        {
+            get { return points; }
+            set { points = value; }
+        }
+
         public FlexiPoint Start
         {
             get
@@ -54,22 +60,13 @@ namespace Make3D.LineLib
             }
         }
 
-        public ObservableCollection<FlexiPoint> FlexiPoints
-        {
-            get { return points; }
-            set
-            {
-                points = value;
-            }
-        }
-
         public void AddCurve(Point p1, Point p2, Point p3)
         {
             int i = points.Count - 1;
             points.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
             points.Add(new FlexiPoint(p2, i + 2, FlexiPoint.PointMode.Control2));
             points.Add(new FlexiPoint(p3, i + 3));
-            FlexiBezier bl = new FlexiBezier(i, i + 1, i + 2, i + 3);
+            FlexiCubicBezier bl = new FlexiCubicBezier(i, i + 1, i + 2, i + 3);
             segs.Add(bl);
         }
 
@@ -79,6 +76,16 @@ namespace Make3D.LineLib
             points.Add(new FlexiPoint(p1, i + 1));
             LineSegment ls = new LineSegment(i, i + 1);
             segs.Add(ls);
+        }
+
+        public void AddQCurve(Point p1, Point p2)
+        {
+            int i = points.Count - 1;
+            points.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
+            points.Add(new FlexiPoint(p2, i + 2));
+
+            FlexiQuadBezier bl = new FlexiQuadBezier(i, i + 1, i + 2);
+            segs.Add(bl);
         }
 
         public void Clear()
@@ -101,9 +108,33 @@ namespace Make3D.LineLib
                     points.Insert(index + 1, new FlexiPoint(position, c3, FlexiPoint.PointMode.Control2));
                     points.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.Control1));
 
-                    FlexiBezier ls = new FlexiBezier(c1, c2, c3, c4);
+                    FlexiCubicBezier ls = new FlexiCubicBezier(c1, c2, c3, c4);
                     // starting at segment i +1, if the point id is c2 or more
                     PointInserted(segs, i + 1, c2, 2);
+                    segs[i] = ls;
+                    ls.ResetControlPoints(points);
+                    DeselectAll();
+                    ls.Select(points);
+                    break;
+                }
+            }
+        }
+
+        public void ConvertLineQuadCurveSegment(int index, Point position)
+        {
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Start() == index)
+                {
+                    int c1 = index;
+                    int c2 = c1 + 1;
+                    int c3 = c2 + 1;
+
+                    points.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.ControlQ));
+
+                    FlexiQuadBezier ls = new FlexiQuadBezier(c1, c2, c3);
+                    // starting at segment i +1, if the point id is c2 or more
+                    PointInserted(segs, i + 1, c2, 1);
                     segs[i] = ls;
                     ls.ResetControlPoints(points);
                     DeselectAll();
@@ -205,7 +236,7 @@ namespace Make3D.LineLib
                     points.Insert(index + 1, new FlexiPoint(position, index + 2, FlexiPoint.PointMode.Control1));
                     points.Insert(index + 1, new FlexiPoint(position, index + 1));
 
-                    FlexiBezier ls = new FlexiBezier(index + 1, index + 2, index + 3, index + 4);
+                    FlexiCubicBezier ls = new FlexiCubicBezier(index + 1, index + 2, index + 3, index + 4);
                     PointInserted(segs, i + 1, index + 1, 3);
                     segs.Insert(i + 1, ls);
                     ls.ResetControlPoints(points);
@@ -343,6 +374,12 @@ namespace Make3D.LineLib
                                 m = FlexiPoint.PointMode.Control2;
                             }
                             break;
+
+                        case "ControlQ":
+                            {
+                                m = FlexiPoint.PointMode.ControlQ;
+                            }
+                            break;
                     }
 
                     FlexiPoint fp = new FlexiPoint(new Point(x, y), id, m);
@@ -388,13 +425,22 @@ namespace Make3D.LineLib
                         LineSegment ls = new LineSegment(p0, p1);
                         segs.Add(ls);
                     }
+                    if (words[0] == "CQ")
+                    {
+                        int p0 = Convert.ToInt32(words[1]);
+                        int p1 = Convert.ToInt32(words[2]);
+                        int p2 = Convert.ToInt32(words[3]);
+
+                        FlexiQuadBezier ls = new FlexiQuadBezier(p0, p1, p2);
+                        segs.Add(ls);
+                    }
                     if (words[0] == "C")
                     {
                         int p0 = Convert.ToInt32(words[1]);
                         int p1 = Convert.ToInt32(words[2]);
                         int p2 = Convert.ToInt32(words[3]);
                         int p3 = Convert.ToInt32(words[4]);
-                        FlexiBezier ls = new FlexiBezier(p0, p1, p2, p3);
+                        FlexiCubicBezier ls = new FlexiCubicBezier(p0, p1, p2, p3);
                         segs.Add(ls);
                     }
                 }

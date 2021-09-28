@@ -11,10 +11,9 @@ namespace ScriptLanguage
         private char by;
 
         private SourceFileStackEntry CurrentSourceFile;
-
         private int CurrentSourceStackIndex;
-
         private string originalSourceFolder;
+        private List<String> previousIncludes;
         private List<SourceFileStackEntry> SourceFileStack;
 
         //private int m_BufferIndex;
@@ -33,6 +32,7 @@ namespace ScriptLanguage
             strLastTokenPutBack = "";
             TypeOfLastTokenPutBack = TokenType.None;
             bHasPutBackToken = false;
+            previousIncludes = new List<string>();
         }
 
         public enum TokenType
@@ -410,7 +410,7 @@ namespace ScriptLanguage
                                         kToken = "=";
                                         GetBy();
                                         //
-                                        // CHeck if its actually == meaning equality
+                                        // Check if its actually == meaning equality
                                         //
                                         if (by == '=')
                                         {
@@ -587,6 +587,7 @@ namespace ScriptLanguage
             CurrentSourceFile = null;
             bHasPutBackToken = false;
             CurrentSourceStackIndex = -1;
+            previousIncludes.Clear();
         }
 
         internal void SetRunningFolder(string or)
@@ -594,15 +595,23 @@ namespace ScriptLanguage
             this.originalSourceFolder = or;
         }
 
-        internal bool SetSource(string FilePath)
+        internal bool SetSource(string filePath)
         {
-            bool result;
-            SourceFileStackEntry sourcefile = new SourceFileStackEntry();
-            result = sourcefile.SetSource(FilePath, originalSourceFolder);
-            SourceFileStack.Add(sourcefile);
-            CurrentSourceFile = sourcefile;
-            CurrentSourceStackIndex++;
-
+            bool result = true;
+            // dont process this file if we have already seen it.
+            // this is to prevent mutually recursive includes.
+            if (!previousIncludes.Contains(filePath))
+            {
+                previousIncludes.Add(filePath);
+                // we maintain a stack of source files, so if we are in the middle
+                // of processing one and we are told to include another, the new one is pushed to the top
+                // and becomes the current. Once its exhausted we can carry
+                SourceFileStackEntry sourcefile = new SourceFileStackEntry();
+                result = sourcefile.SetSource(filePath, originalSourceFolder);
+                SourceFileStack.Add(sourcefile);
+                CurrentSourceFile = sourcefile;
+                CurrentSourceStackIndex++;
+            }
             return result;
         }
 

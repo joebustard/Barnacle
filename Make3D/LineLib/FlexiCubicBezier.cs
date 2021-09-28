@@ -5,9 +5,9 @@ using System.Windows;
 
 namespace Make3D.LineLib
 {
-    public class FlexiBezier : FlexiSegment
+    public class FlexiCubicBezier : FlexiSegment
     {
-        public FlexiBezier()
+        public FlexiCubicBezier()
         {
             P0 = -1;
             P1 = -1;
@@ -15,7 +15,7 @@ namespace Make3D.LineLib
             P3 = -1;
         }
 
-        public FlexiBezier(int point1, int point2, int point3, int point4)
+        public FlexiCubicBezier(int point1, int point2, int point3, int point4)
         {
             P0 = point1;
             P1 = point2;
@@ -42,6 +42,10 @@ namespace Make3D.LineLib
             points[P1].Selected = false;
             points[P2].Selected = false;
             points[P3].Selected = false;
+            points[P0].Visible = false;
+            points[P1].Visible = false;
+            points[P2].Visible = false;
+            points[P3].Visible = false;
         }
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
@@ -161,6 +165,10 @@ namespace Make3D.LineLib
             points[P1].Selected = true;
             points[P2].Selected = true;
             points[P3].Selected = true;
+            points[P0].Visible = true;
+            points[P1].Visible = true;
+            points[P2].Visible = true;
+            points[P3].Visible = true;
         }
 
         public override int Start()

@@ -9,33 +9,25 @@ namespace ScriptLanguage
 {
     internal class CForNode : StatementNode
     {
-        private CompoundNode _Body;
-
-        private ExpressionNode _EndExpression;
-
-        private ExpressionNode _StartExpression;
-
-        private ExpressionNode _StepExpression;
-
-        private Symbol _Symbol;
-
         private String _VariableName;
-
+        private CompoundNode body;
         private SingleSteppingMode CurrentSingleStepMode;
-
+        private ExpressionNode endExpression;
+        private ExpressionNode startExpression;
         private double Step;
-
+        private ExpressionNode stepExpression;
+        private Symbol symbol;
         private SymbolTable.SymbolType symType;
 
         // Instance constructor
         public CForNode()
         {
-            _StartExpression = null;
-            _EndExpression = null;
-            _StepExpression = null;
-            _Body = null;
+            startExpression = null;
+            endExpression = null;
+            stepExpression = null;
+            body = null;
             symType = SymbolTable.SymbolType.unknown;
-            _Symbol = null;
+            symbol = null;
             CurrentSingleStepMode = SingleSteppingMode.NotStarted;
             Step = 1.0;
         }
@@ -50,27 +42,27 @@ namespace ScriptLanguage
 
         public CompoundNode Body
         {
-            set { _Body = value; }
+            set { body = value; }
         }
 
         public ExpressionNode EndExpression
         {
-            get { return _EndExpression; }
-            set { _EndExpression = value; }
+            get { return endExpression; }
+            set { endExpression = value; }
         }
 
         public string LocalName { get; internal set; }
 
         public ExpressionNode StartExpression
         {
-            get { return _StartExpression; }
-            set { _StartExpression = value; }
+            get { return startExpression; }
+            set { startExpression = value; }
         }
 
         public ExpressionNode StepExpression
         {
-            get { return _StepExpression; }
-            set { _StepExpression = value; }
+            get { return stepExpression; }
+            set { stepExpression = value; }
         }
 
         public String VariableName
@@ -85,16 +77,16 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (_Body != null)
+            if (body != null)
             {
-                if (_Symbol == null)
+                if (symbol == null)
                 {
                     symType = SymbolTable.Instance().FindSymbol(VariableName);
-                    _Symbol = SymbolTable.Instance().FindSymbol(VariableName, symType);
+                    symbol = SymbolTable.Instance().FindSymbol(VariableName, symType);
                 }
-                if (_StartExpression != null)
+                if (startExpression != null)
                 {
-                    result = _StartExpression.Execute();
+                    result = startExpression.Execute();
                     if (result)
                     {
                         result = AssignTopOfStackToVar(VariableName);
@@ -104,15 +96,18 @@ namespace ScriptLanguage
                             if (result)
                             {
                                 bool bExecuteBody;
-
+                                body.InBreakMode = false;
                                 bExecuteBody = ContinueLoop(Step);
-                                while (bExecuteBody && result)
+                                while (bExecuteBody && result && !body.InBreakMode)
                                 {
-                                    result = _Body.Execute();
-                                    if (result)
+                                    result = body.Execute();
+                                    if (!body.InBreakMode)
                                     {
-                                        AddStep(Step);
-                                        bExecuteBody = ContinueLoop(Step);
+                                        if (result)
+                                        {
+                                            AddStep(Step);
+                                            bExecuteBody = ContinueLoop(Step);
+                                        }
                                     }
                                 }
                             }
@@ -139,13 +134,13 @@ namespace ScriptLanguage
 
                 case SingleSteppingMode.InitialisingVariable:
                     {
-                        if (_Symbol == null)
+                        if (symbol == null)
                         {
                             symType = SymbolTable.Instance().FindSymbol(VariableName);
-                            _Symbol = SymbolTable.Instance().FindSymbol(VariableName, symType);
+                            symbol = SymbolTable.Instance().FindSymbol(VariableName, symType);
                         }
 
-                        if (_StartExpression.Execute())
+                        if (startExpression.Execute())
                         {
                             if (AssignTopOfStackToVar(VariableName))
                             {
@@ -157,7 +152,7 @@ namespace ScriptLanguage
                                         //
                                         // Make the curly bracket highlight
                                         //
-                                        _Body.HighLight = true;
+                                        body.HighLight = true;
                                         Status = SingleStepController.SteppingStatus.OK_Not_Complete;
                                     }
                                 }
@@ -175,7 +170,7 @@ namespace ScriptLanguage
                             // Condition indicataes that we need to go round the loop again
                             //
                             HighLight = false;
-                            _Body.HighLight = true;
+                            body.HighLight = true;
                             CurrentSingleStepMode = SingleSteppingMode.SteppingThroughBody;
                             Status = SingleStepController.SteppingStatus.OK_Not_Complete;
                         }
@@ -199,7 +194,7 @@ namespace ScriptLanguage
                         // For statement itself should not be highlighted
                         //
                         HighLight = false;
-                        SingleStepController.SteppingStatus BodyStatus = _Body.SingleStep();
+                        SingleStepController.SteppingStatus BodyStatus = body.SingleStep();
 
                         //
                         // If we have reached the end of the body we need to switch to testing the condition
@@ -236,20 +231,20 @@ namespace ScriptLanguage
                 result = Indentor.Indentation() + RichTextFormatter.KeyWord("For ") +
                            RichTextFormatter.VariableName(LocalName) +
                            RichTextFormatter.Operator(" = ") +
-                           _StartExpression.ToRichText() + " " +
+                           startExpression.ToRichText() + " " +
                            RichTextFormatter.KeyWord("To ") + " " +
-                           _EndExpression.ToRichText();
-                if (_StepExpression != null)
+                           endExpression.ToRichText();
+                if (stepExpression != null)
                 {
                     result += RichTextFormatter.KeyWord(" Step ") +
-                               _StepExpression.ToRichText();
+                               stepExpression.ToRichText();
                 }
                 result += @" \par";
                 if (HighLight)
                 {
                     result = RichTextFormatter.Highlight(result);
                 }
-                result += _Body.ToRichText();
+                result += body.ToRichText();
             }
             return result;
         }
@@ -262,35 +257,35 @@ namespace ScriptLanguage
                 result = Indentor.Indentation() + "For " +
                            LocalName +
                            " = " +
-                           _StartExpression.ToString() + " " +
+                           startExpression.ToString() + " " +
                            "To " + " " +
-                           _EndExpression.ToString();
-                if (_StepExpression != null)
+                           endExpression.ToString();
+                if (stepExpression != null)
                 {
-                    result += " Step " + _StepExpression.ToString();
+                    result += " Step " + stepExpression.ToString();
                 }
                 result += "\n";
 
-                result += _Body.ToString();
+                result += body.ToString();
             }
             return result;
         }
 
         private void AddStep(double Step)
         {
-            if (_Symbol != null)
+            if (symbol != null)
             {
-                switch (_Symbol.SymbolType)
+                switch (symbol.SymbolType)
                 {
                     case SymbolTable.SymbolType.intvariable:
                         {
-                            _Symbol.IntValue += Convert.ToInt32(Step); ;
+                            symbol.IntValue += Convert.ToInt32(Step); ;
                         }
                         break;
 
                     case SymbolTable.SymbolType.doublevariable:
                         {
-                            _Symbol.DoubleValue += Step;
+                            symbol.DoubleValue += Step;
                         }
                         break;
                 }
@@ -358,9 +353,9 @@ namespace ScriptLanguage
         {
             bool result = false; ;
             Step = 1.0;
-            if (_StepExpression != null)
+            if (stepExpression != null)
             {
-                result = _StepExpression.Execute();
+                result = stepExpression.Execute();
                 StackItem sti = ExecutionStack.Instance().Pull();
                 if (sti.MyType == StackItem.ItemType.ival)
                 {
@@ -387,26 +382,26 @@ namespace ScriptLanguage
         {
             bool bContinue = false;
             double SymbolValue = 0.0;
-            if (_Symbol != null)
+            if (symbol != null)
             {
-                switch (_Symbol.SymbolType)
+                switch (symbol.SymbolType)
                 {
                     case SymbolTable.SymbolType.intvariable:
                         {
-                            SymbolValue = (double)(_Symbol.IntValue);
+                            SymbolValue = (double)(symbol.IntValue);
                         }
                         break;
 
                     case SymbolTable.SymbolType.doublevariable:
                         {
-                            SymbolValue = (_Symbol.DoubleValue);
+                            SymbolValue = (symbol.DoubleValue);
                         }
                         break;
                 }
             }
-            if (_EndExpression != null)
+            if (endExpression != null)
             {
-                bool result = _EndExpression.Execute();
+                bool result = endExpression.Execute();
                 if (result)
                 {
                     StackItem sti = ExecutionStack.Instance().Pull();

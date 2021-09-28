@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,44 +7,50 @@ using System.Text;
 
 namespace ScriptLanguage
 {
-    public class StatementNode : ParseTreeNode
+    internal class BreakNode : StatementNode
     {
-        protected bool isInLibrary;
-
         // Instance constructor
-        public StatementNode()
+        public BreakNode()
         {
-            ParentCompound = null;
         }
-
-        public bool IsInLibrary
-        {
-            get { return isInLibrary; }
-            set { isInLibrary = value; }
-        }
-
-        public CompoundNode ParentCompound { get; internal set; }
 
         /// Execute this node
         /// returning false terminates the application
         ///
         public override bool Execute()
         {
+            if (ParentCompound != null)
+            {
+                ParentCompound.InBreakMode = true;
+            }
             return true;
         }
 
         /// Returns a String representation of this node that can be used for
         /// Pretty Printing
-
+        ///
+        ///
         public override String ToRichText()
         {
             String result = "";
+            if (!isInLibrary)
+            {
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Break") + " ;";
+                if (HighLight)
+                {
+                    result = RichTextFormatter.Highlight(result);
+                }
+            }
             return result;
         }
 
         public override String ToString()
         {
             String result = "";
+            if (!isInLibrary)
+            {
+                result = Indentor.Indentation() + "Break ;";
+            }
             return result;
         }
     }

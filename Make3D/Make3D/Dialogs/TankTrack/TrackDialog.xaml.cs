@@ -1,4 +1,5 @@
-﻿using Make3D.Models;
+﻿using Make3D.LineLib;
+using Make3D.Models;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -23,27 +25,32 @@ namespace Make3D.Dialogs
         public string selectedTrackType;
         private bool cf;
         private List<System.Windows.Point> editingPolygon;
+        private FlexiPath flexiPath;
         private double guideSize;
-        private double trackWidth = 10;
         private List<System.Windows.Point> innerPolygon;
         private BitmapImage localImage;
         private int noOfLinks;
         private List<System.Windows.Point> outerPolygon;
+        private ObservableCollection<FlexiPoint> polyPoints;
         private double scale;
         private int selectedPoint;
+        private SelectionModeType selectionMode;
         private Visibility showGuideSize;
         private bool showLinks;
+        private bool showOrtho = true;
         private bool showOutline;
         private double spudSize;
         private double thickness;
         private List<System.Windows.Point> trackPath;
         private ObservableCollection<String> trackTypes;
+        private double trackWidth = 10;
 
         public TrackDialog()
         {
             InitializeComponent();
             editingPolygon = new List<System.Windows.Point>();
-
+            flexiPath = new FlexiPath();
+            polyPoints = flexiPath.FlexiPoints;
             selectedPoint = -1;
             scale = 1.0;
             InitialisePoints();
@@ -66,6 +73,15 @@ namespace Make3D.Dialogs
             GuideSize = 1;
             ModelGroup = MyModelGroup;
         }
+
+        public enum SelectionModeType
+        {
+            SelectPoint,
+            AddLine,
+            AddBezier,
+            DeleteSegment,
+            AddQuadBezier
+        };
 
         public double GuideSize
         {
@@ -103,6 +119,22 @@ namespace Make3D.Dialogs
             }
         }
 
+        public ObservableCollection<FlexiPoint> Points
+        {
+            get
+            {
+                return polyPoints;
+            }
+            set
+            {
+                if (value != polyPoints)
+                {
+                    polyPoints = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string SelectedTrackType
         {
             get
@@ -125,6 +157,22 @@ namespace Make3D.Dialogs
                     NotifyPropertyChanged();
                     UpdateTrack();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public SelectionModeType SelectionMode
+        {
+            get
+            {
+                return selectionMode;
+            }
+            set
+            {
+                if (value != selectionMode)
+                {
+                    selectionMode = value;
+                    SetButtonBorderColours();
                 }
             }
         }
@@ -249,6 +297,21 @@ namespace Make3D.Dialogs
             }
         }
 
+        public ObservableCollection<String> TrackTypes
+        {
+            get
+            {
+                return trackTypes;
+            }
+            set
+            {
+                if (trackTypes != value)
+                {
+                    trackTypes = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public double TrackWidth
         {
@@ -268,36 +331,20 @@ namespace Make3D.Dialogs
             }
         }
 
-        public ObservableCollection<String> TrackTypes
-        {
-            get
-            {
-                return trackTypes;
-            }
-            set
-            {
-                if (trackTypes != value)
-                {
-                    trackTypes = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public void TestPerps()
         {
             System.Windows.Point p1 = new System.Windows.Point(1, 1);
             System.Windows.Point p2 = new System.Windows.Point(2, 2);
-            System.Windows.Point p3 = Perpendicular(p1, p2, 0, Math.Sqrt(2));
+            System.Windows.Point p3 = TankTrackUtils.Perpendicular(p1, p2, 0, Math.Sqrt(2));
 
             String s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 0 = {p3.X},{p3.Y}";
             System.Diagnostics.Debug.WriteLine(s);
 
-            p3 = Perpendicular(p1, p2, 0.5, Math.Sqrt(2));
+            p3 = TankTrackUtils.Perpendicular(p1, p2, 0.5, Math.Sqrt(2));
             s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 0.5 = {p3.X},{p3.Y}";
             System.Diagnostics.Debug.WriteLine(s);
 
-            p3 = Perpendicular(p1, p2, 1, Math.Sqrt(2));
+            p3 = TankTrackUtils.Perpendicular(p1, p2, 1, Math.Sqrt(2));
             s = $"{p1.X},{p1.Y},{p2.X},{p2.Y} at 1 = {p3.X},{p3.Y}";
             System.Diagnostics.Debug.WriteLine(s);
         }
@@ -308,6 +355,53 @@ namespace Make3D.Dialogs
             GenerateTrack();
             DialogResult = true;
             Close();
+        }
+
+        private void AddBezierButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.AddBezier;
+        }
+
+        private bool AddBezierFromPoint(MouseButtonEventArgs e, Line ln, bool cubic)
+        {
+            int found = -1;
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    if (cubic)
+                    {
+                        InsertCurveSegment(found, position);
+                    }
+                    else
+                    {
+                        InsertQuadCurveSegment(found, position);
+                    }
+
+                    //GetRawFlexiPoints();
+                    //PointGrid.ItemsSource = Points;
+                    //CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                else
+                {
+                    //                   flexiPath.AddLine(position);
+                    //                   PointGrid.ItemsSource = Points;
+                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                added = true;
+            }
+
+            return added;
         }
 
         private void AddEditingLineToDisplayList(int i, int v)
@@ -327,6 +421,84 @@ namespace Make3D.Dialogs
             ln.Y2 = editingPolygon[v].Y;
             ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
             MainCanvas.Children.Add(ln);
+        }
+
+        private void AddLine(int i, int v, List<System.Windows.Point> points, bool joinLast)
+        {
+            if (v >= points.Count)
+            {
+                if (joinLast)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    return;
+                }
+            }
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 6;
+            ln.Fill = br;
+            ln.X1 = points[i].X;
+            ln.Y1 = points[i].Y;
+            ln.X2 = points[v].X;
+            ln.Y2 = points[v].Y;
+            //    ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
+            ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
+            MainCanvas.Children.Add(ln);
+        }
+
+        private bool AddLineFromPoint(MouseButtonEventArgs e, Line ln)
+        {
+            int found = -1;
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    // if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                    // {
+                    //      InsertCurveSegment(found, position);
+                    //  }
+                    //else
+                    //      {
+                    InsertLineSegment(found, position);
+                    //       }
+                    //GetRawFlexiPoints();
+                    // PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                else
+                {
+                    flexiPath.AddLine(position);
+                    //  PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                added = true;
+            }
+
+            return added;
+        }
+
+        private void AddQuadBezierButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.AddQuadBezier;
+        }
+
+        private void AddSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.AddLine;
         }
 
         private void AddTrackLine(List<System.Windows.Point> pnts, int i, int v)
@@ -357,234 +529,89 @@ namespace Make3D.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
-        private void CentreGuideLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall)
+        private void ClearPointSelections()
         {
-            double dx = p2.X - p1.X;
-            double dy = p2.Y - p1.Y;
-
-            if (dx == 0 && dy != 0)
+            if (polyPoints != null)
             {
-                if (p2.Y > p1.Y)
+                for (int i = 0; i < polyPoints.Count; i++)
                 {
-                    // vertical downwards
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.2 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.3 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.5 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.6 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness - spudSize, p1.Y + 0.87 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
-
-                    if (firstCall)
-                    {
-                        inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
-                    }
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.2 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness - guideSize, p1.Y + 0.3 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness - guideSize, p1.Y + 0.5 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.6 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.87 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
+                    polyPoints[i].Selected = false;
+                    polyPoints[i].Visible = false;
                 }
-                else
-                {
-                    // vertical upwards
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.2 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.3 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.5 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.6 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness - spudSize, p1.Y + 0.87 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
-
-                    if (firstCall)
-                    {
-                        inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
-                    }
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.2 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.3 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.5 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.6 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.87 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
-                }
-            }
-            else
-            if (dy == 0)
-            {
-                if (p2.X - p1.X > 0)
-                {
-                    // Horizontal Left to right
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.4 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spudSize));
-                    outter.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
-
-                    if (firstCall)
-                    {
-                        inner.Add(new System.Windows.Point(p1.X, p1.Y + thickness));
-                    }
-                    inner.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.6 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
-                }
-                else
-                {
-                    // Horizontal right to Left
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X, p1.Y - +thickness));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.6 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness + spudSize));
-                    outter.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
-
-                    if (firstCall)
-                    {
-                        inner.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
-                    }
-                    inner.Add(new System.Windows.Point(p1.X + 0.2 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.3 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.5 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.6 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
-                }
-            }
-            else
-            {
-                double sign = -1;
-                if (dx > 0 && dy < 0)
-                {
-                    sign = 1;
-                }
-                else
-                if (dx > 0 && dy > 0)
-                {
-                    sign = -1;
-                }
-                else
-                if (dx < 0 && dy < 0)
-                {
-                    sign = 1;
-                }
-                else
-                if (dx < 0 && dy > 0)
-                {
-                    sign = -1;
-                }
-                System.Windows.Point o1 = Perpendicular(p1, p2, 0.0, -sign * thickness);
-                System.Windows.Point o2 = Perpendicular(p1, p2, 0.2, -sign * thickness);
-                System.Windows.Point o3 = Perpendicular(p1, p2, 0.3, -sign * thickness);
-                System.Windows.Point o4 = Perpendicular(p1, p2, 0.5, -sign * thickness);
-                System.Windows.Point o5 = Perpendicular(p1, p2, 0.6, -sign * thickness);
-                System.Windows.Point o6 = Perpendicular(p1, p2, 0.75, -sign * thickness);
-                System.Windows.Point o7 = Perpendicular(p1, p2, 0.87, -sign * (thickness + spudSize));
-                System.Windows.Point o8 = Perpendicular(p1, p2, 1.0, -sign * thickness);
-                if (firstCall)
-                {
-                    outter.Add(o1);
-                }
-                outter.Add(o2);
-                outter.Add(o3);
-                outter.Add(o4);
-                outter.Add(o5);
-                outter.Add(o6);
-                outter.Add(o7);
-                outter.Add(o8);
-
-                System.Windows.Point i1 = Perpendicular(p1, p2, 0.0, sign * thickness);
-                System.Windows.Point i2 = Perpendicular(p1, p2, 0.2, sign * thickness);
-                System.Windows.Point i3 = Perpendicular(p1, p2, 0.3, sign * (thickness + guideSize));
-                System.Windows.Point i4 = Perpendicular(p1, p2, 0.5, sign * (thickness + guideSize));
-                System.Windows.Point i5 = Perpendicular(p1, p2, 0.6, sign * thickness);
-                System.Windows.Point i6 = Perpendicular(p1, p2, 0.75, sign * thickness);
-                System.Windows.Point i7 = Perpendicular(p1, p2, 0.87, sign * thickness);
-                System.Windows.Point i8 = Perpendicular(p1, p2, 1.0, sign * thickness);
-                if (firstCall)
-                {
-                    inner.Add(i1);
-                }
-                inner.Add(i2);
-                inner.Add(i3);
-                inner.Add(i4);
-                inner.Add(i5);
-                inner.Add(i6);
-                inner.Add(i7);
-                inner.Add(i8);
             }
         }
 
-        private void CreateInnerFace(List<System.Windows.Point> ply, int i)
+        private void DashLine(double x1, double y1, double x2, double y2)
         {
-            int v = i + 1;
-            if (v == ply.Count)
-            {
-                v = 0;
-            }
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 2;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.Fill = br;
+            ln.X1 = x1;
+            ln.Y1 = y1;
+            ln.X2 = x2;
+            ln.Y2 = y2;
 
-            int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
-            int c1 = AddVertice(ply[i].X, ply[i].Y, trackWidth);
-            int c2 = AddVertice(ply[v].X, ply[v].Y, trackWidth);
-            int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c1);
-            Faces.Add(c2);
-
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c3);
+            MainCanvas.Children.Add(ln);
         }
 
-        private void CreateOutsideFace(List<System.Windows.Point> ply, int i)
+        private bool DeleteSegment(MouseButtonEventArgs e, Line ln)
         {
-            int v = i + 1;
-            if (v == ply.Count)
+            int found = -1;
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            for (int i = 0; i < polyPoints.Count; i++)
             {
-                v = 0;
+                if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    flexiPath.DeleteSegmentStartingAt(found);
+
+                    // PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                else
+                {
+                    flexiPath.AddLine(position);
+                    // PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                }
+                added = true;
             }
 
-            int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
-            int c1 = AddVertice(ply[i].X, ply[i].Y, trackWidth);
-            int c2 = AddVertice(ply[v].X, ply[v].Y, trackWidth);
-            int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c1);
+            return added;
+        }
 
-            Faces.Add(c0);
-            Faces.Add(c3);
-            Faces.Add(c2);
+        private void DelSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.DeleteSegment;
         }
 
         private void DisplayLines()
         {
+            if (flexiPath != null)
+            {
+                List<System.Windows.Point> points = flexiPath.DisplayPoints();
+                if (points != null && points.Count > 2)
+                {
+                    for (int i = 0; i < points.Count; i++)
+                    {
+                        AddLine(i, i + 1, points, true);
+                    }
+                }
+            }
+            /*
             if (editingPolygon != null && editingPolygon.Count > 2)
             {
                 for (int i = 0; i < editingPolygon.Count; i++)
@@ -592,34 +619,99 @@ namespace Make3D.Dialogs
                     AddEditingLineToDisplayList(i, i + 1);
                 }
             }
+            */
         }
 
         private void DisplayPoints()
         {
-            if (editingPolygon != null)
+            if (polyPoints != null)
             {
-                double rad = 3;
-                for (int i = 0; i < editingPolygon.Count; i++)
+                double ox = double.NaN;
+                double oy = double.NaN;
+                if (selectedPoint != -1)
                 {
+                    ox = polyPoints[selectedPoint].X;
+                    oy = polyPoints[selectedPoint].Y;
+                }
+
+                double rad = 3;
+                System.Windows.Media.Brush br = null;
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    bool ortho = false;
+
+                    System.Windows.Point p = polyPoints[i].ToPoint();
                     if (selectedPoint == i)
                     {
                         rad = 6;
+                        br = System.Windows.Media.Brushes.LightGreen;
                     }
                     else
                     {
                         rad = 3;
+                        br = System.Windows.Media.Brushes.Red;
+                        if (ox != double.NaN)
+                        {
+                            if (Math.Abs(p.X - ox) < 0.1 || Math.Abs(p.Y - oy) < 0.1)
+                            {
+                                br = System.Windows.Media.Brushes.Blue;
+                                ortho = true;
+                            }
+                        }
                     }
-                    System.Windows.Point p = editingPolygon[i];
-                    Ellipse el = new Ellipse();
 
-                    Canvas.SetLeft(el, p.X - rad);
-                    Canvas.SetTop(el, p.Y - rad);
-                    el.Width = 2 * rad;
-                    el.Height = 2 * rad;
-                    el.Fill = System.Windows.Media.Brushes.Red;
-                    el.MouseDown += MainCanvas_MouseDown;
-                    el.MouseMove += MainCanvas_MouseMove;
-                    MainCanvas.Children.Add(el);
+                    // only show the points if they are marked as visible
+                    // OR they are orthogonal to the selected one
+                    if (polyPoints[i].Visible || (ortho && showOrtho))
+                    {
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Data)
+                        {
+                            p = MakeEllipse(rad, br, p);
+                        }
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1 ||
+                            polyPoints[i].Mode == FlexiPoint.PointMode.ControlQ)
+                        {
+                            p = MakeRect(rad, br, p);
+                        }
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control2)
+                        {
+                            p = MakeTri(rad, br, p);
+                        }
+
+                        if (selectedPoint == i && showOrtho)
+                        {
+                            DashLine(p.X, 0, p.X, MainCanvas.ActualHeight - 1);
+                            DashLine(0, p.Y, MainCanvas.ActualWidth - 1, p.Y);
+                        }
+                    }
+                }
+
+                // now draw any control connectors
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    if (polyPoints[i].Visible)
+                    {
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control1 ||
+                            polyPoints[i].Mode == FlexiPoint.PointMode.ControlQ)
+                        {
+                            int j = i - 1;
+                            if (j < 0)
+                            {
+                                j = polyPoints.Count - 1;
+                            }
+                            DrawControlLine(polyPoints[i].ToPoint(), polyPoints[j].ToPoint());
+                        }
+                        if (polyPoints[i].Mode == FlexiPoint.PointMode.Control2 ||
+                            polyPoints[i].Mode == FlexiPoint.PointMode.ControlQ)
+                        {
+                            int j = i + 1;
+                            if (j == polyPoints.Count)
+                            {
+                                j = 0;
+                            }
+                            DrawControlLine(polyPoints[i].ToPoint(), polyPoints[j].ToPoint());
+                        }
+                    }
                 }
             }
         }
@@ -693,269 +785,22 @@ namespace Make3D.Dialogs
             }
         }
 
-        private void GenerateCentreGuideTrack()
+        private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
         {
-            if (outerPolygon != null)
-            {
-                outerPolygon.Clear();
-                innerPolygon.Clear();
-                bool firstCall = true;
-                for (int i = 0; i < trackPath.Count; i++)
-                {
-                    int j = i + 1;
-                    if (j >= trackPath.Count)
-                    {
-                        j = 0;
-                    }
-                    System.Windows.Point p1 = trackPath[i];
-                    System.Windows.Point p2 = trackPath[j];
-                    CentreGuideLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall);
-                    firstCall = false;
-                }
-            }
-        }
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 1;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.Fill = br;
+            ln.X1 = p1.X;
+            ln.Y1 = p1.Y;
+            ln.X2 = p2.X;
+            ln.Y2 = p2.Y;
 
-        private void GenerateFaces()
-        {
-            Faces.Clear();
-            Vertices.Clear();
-            MakeFacesFrommOuterAndInner();
-        }
-
-        private void MakeFacesFrommOuterAndInner()
-        {
-            List<System.Windows.Point> otmp = new List<System.Windows.Point>();
-            List<System.Windows.Point> itmp = new List<System.Windows.Point>();
-            if (outerPolygon != null)
-            {
-                double top = 0;
-                for (int i = 0; i < outerPolygon.Count; i++)
-                {
-                    if (outerPolygon[i].Y > top)
-                    {
-                        top = outerPolygon[i].Y;
-                    }
-                }
-                for (int i = 0; i < outerPolygon.Count; i++)
-                {
-                    if (localImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                        otmp.Insert(0, new System.Windows.Point(outerPolygon[i].X, top - outerPolygon[i].Y));
-                    }
-                    else
-                    {
-                        double x = ToMM(outerPolygon[i].X);
-                        double y = ToMM(top - outerPolygon[i].Y);
-                        otmp.Insert(0, new System.Windows.Point(x, y));
-                    }
-                }
-
-                // generate side triangles so original points are already in list
-                for (int i = 0; i < outerPolygon.Count; i++)
-                {
-                    CreateOutsideFace(otmp, i);
-                }
-                itmp.Clear();
-                for (int i = 0; i < innerPolygon.Count; i++)
-                {
-                    if (localImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                        itmp.Insert(0, new System.Windows.Point(innerPolygon[i].X, top - innerPolygon[i].Y));
-                    }
-                    else
-                    {
-                        double x = ToMM(innerPolygon[i].X);
-                        double y = ToMM(top - innerPolygon[i].Y);
-                        itmp.Insert(0, new System.Windows.Point(x, y));
-                    }
-                }
-
-                for (int i = 0; i < innerPolygon.Count; i++)
-                {
-                    CreateInnerFace(itmp, i);
-                }
-
-                for (int i = 0; i < innerPolygon.Count; i++)
-                {
-                    int v = i + 1;
-                    if (v == innerPolygon.Count)
-                    {
-                        v = 0;
-                    }
-
-                    int c0 = AddVertice(itmp[i].X, itmp[i].Y, 0.0);
-                    int c1 = AddVertice(otmp[i].X, otmp[i].Y, 0.0);
-                    int c2 = AddVertice(otmp[v].X, otmp[v].Y, 0.0);
-                    int c3 = AddVertice(itmp[v].X, itmp[v].Y, 0.0);
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-
-                    Faces.Add(c0);
-                    Faces.Add(c3);
-                    Faces.Add(c2);
-                }
-
-                for (int i = 0; i < innerPolygon.Count; i++)
-                {
-                    int v = i + 1;
-                    if (v == innerPolygon.Count)
-                    {
-                        v = 0;
-                    }
-
-                    int c0 = AddVertice(itmp[i].X, itmp[i].Y, trackWidth);
-                    int c1 = AddVertice(otmp[i].X, otmp[i].Y, trackWidth);
-                    int c2 = AddVertice(otmp[v].X, otmp[v].Y, trackWidth);
-                    int c3 = AddVertice(itmp[v].X, itmp[v].Y, trackWidth);
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c3);
-                }
-                CentreVertices();
-            }
-        }
-
-        private void GenerateSimpleTrack(int subType)
-        {
-            if (outerPolygon != null)
-            {
-                outerPolygon.Clear();
-                innerPolygon.Clear();
-                bool firstCall = true;
-                for (int i = 0; i < trackPath.Count; i++)
-                {
-                    int j = i + 1;
-                    if (j >= trackPath.Count)
-                    {
-                        j = 0;
-                    }
-                    System.Windows.Point p1 = trackPath[i];
-                    System.Windows.Point p2 = trackPath[j];
-                    switch (subType)
-                    {
-                        case 0:
-                            {
-                                SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall, 1);
-                            }
-                            break;
-
-                        case 1:
-                            {
-                                SimpleLinkPolygon(p1, p2, ref outerPolygon, ref innerPolygon, firstCall, -1);
-                            }
-                            break;
-                    }
-
-                    firstCall = false;
-                }
-            }
-        }
-        private void GenerateM1Track()
-        {
-            Faces.Clear();
-            Vertices.Clear();
-            GenerateM1Main();
-            GenerateM1LinkConnectors();
-
-        }
-
-        private void GenerateM1LinkConnectors()
-        {
-
-        }
-
-        private void GenerateM1Main()
-        {
-            if (outerPolygon != null)
-            {
-
-                for (int i = 0; i < trackPath.Count; i++)
-                {
-                    int j = i + 1;
-                    if (j >= trackPath.Count)
-                    {
-                        j = 0;
-                    }
-                    List<System.Windows.Point> linkProfile = new List<System.Windows.Point>();
-
-
-                    System.Windows.Point p1 = trackPath[i];
-                    System.Windows.Point p2 = trackPath[j];
-
-                    GetLinkPartProfile(p1, p2, ref linkProfile, m1MainPolyCoords, thickness);
-                    double partBackZ = 0;
-                    double partFrontZ = trackWidth;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
-                    
-                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness);
-                    partBackZ = trackWidth;
-                    partFrontZ = trackWidth+1;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
-
-                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness);
-                    partBackZ = -1;
-                    partFrontZ = 0;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
-                }
-
-            }
-        }
-
-        private void MakeFacesForLinkPart(List<System.Windows.Point> linkProfile, double partBackZ, double partFrontZ)
-        {
-            // make faces for this single link part
-            List<PointF> pf = new List<PointF>();
-            foreach (System.Windows.Point p in linkProfile)
-            {
-                pf.Add(new PointF((float)p.X, (float)p.Y));
-            }
-            TriangulationPolygon ply = new TriangulationPolygon();
-            ply.Points = pf.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, partBackZ);
-                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, partBackZ);
-                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, partBackZ);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
-
-                c0 = AddVertice(t.Points[0].X, t.Points[0].Y, partFrontZ);
-                c1 = AddVertice(t.Points[1].X, t.Points[1].Y, partFrontZ);
-                c2 = AddVertice(t.Points[2].X, t.Points[2].Y, partFrontZ);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
-            }
-
-            for (int k = 0; k < linkProfile.Count; k++)
-            {
-                int l = k + 1;
-                if (l >= linkProfile.Count)
-                {
-                    l = 0;
-                }
-                int c0 = AddVertice(linkProfile[k].X, linkProfile[k].Y, partBackZ);
-                int c1 = AddVertice(linkProfile[l].X, linkProfile[l].Y, partBackZ);
-                int c2 = AddVertice(linkProfile[l].X, linkProfile[l].Y, partFrontZ);
-                int c3 = AddVertice(linkProfile[k].X, linkProfile[k].Y, partFrontZ);
-
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
-
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c3);
-            }
+            MainCanvas.Children.Add(ln);
         }
 
         private void GenerateTrack()
@@ -978,6 +823,7 @@ namespace Make3D.Dialogs
                         GenerateCentreGuideTrack();
                         GenerateFaces();
                         break;
+
                     case "M1":
                         GenerateM1Track();
                         CentreVertices();
@@ -994,9 +840,10 @@ namespace Make3D.Dialogs
             if (NoOfLinks > 0 && trackPath != null)
             {
                 trackPath.Clear();
+                editingPolygon = flexiPath.DisplayPoints();
                 if (editingPolygon != null)
                 {
-                    double totalDist = PolygonLength(editingPolygon);
+                    double totalDist = TankTrackUtils.PolygonLength(editingPolygon);
                     double t;
                     double dt = 1.0 / NoOfLinks;
                     for (t = 0; t < 1; t += dt)
@@ -1005,6 +852,58 @@ namespace Make3D.Dialogs
                         trackPath.Add(p);
                     }
                 }
+            }
+        }
+
+        private void GetEditorParameters()
+        {
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                LoadImage(imageName);
+            }
+            String s = EditorParameters.Get("Points");
+            if (s != "")
+            {
+                string[] words = s.Split(',');
+                editingPolygon.Clear();
+                for (int i = 0; i < words.GetLength(0); i += 2)
+                {
+                    editingPolygon.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
+                }
+            }
+            s = EditorParameters.Get("NoOfLinks");
+            if (s != "")
+            {
+                NoOfLinks = Convert.ToInt16(s);
+            }
+
+            s = EditorParameters.Get("TrackType");
+            if (s != "")
+            {
+                SelectedTrackType = s;
+            }
+
+            s = EditorParameters.Get("Thickness");
+            if (s != "")
+            {
+                Thickness = Convert.ToDouble(s);
+            }
+
+            s = EditorParameters.Get("SpudSize");
+            if (s != "")
+            {
+                SpudSize = Convert.ToDouble(s); ;
+            }
+            s = EditorParameters.Get("GuideSize");
+            if (s != "")
+            {
+                GuideSize = Convert.ToDouble(s); ;
+            }
+            s = EditorParameters.Get("TrackWidth");
+            if (s != "")
+            {
+                TrackWidth = Convert.ToDouble(s); ;
             }
         }
 
@@ -1065,28 +964,43 @@ namespace Make3D.Dialogs
 
         private void InitialisePoints()
         {
-            editingPolygon.Clear();
+            flexiPath.Clear();
 
-            editingPolygon.Add(new System.Windows.Point(16.0308899744799, 97.118354607299));
-            editingPolygon.Add(new System.Windows.Point(18.9995733030873, 88.2123046214768));
-            editingPolygon.Add(new System.Windows.Point(25.1348951574346, 79.2295608223482));
-            editingPolygon.Add(new System.Windows.Point(36.3875756563591, 74.6411808335573));
-            editingPolygon.Add(new System.Windows.Point(43.1020597048191, 73.285088073382));
-            editingPolygon.Add(new System.Windows.Point(52.0791875361411, 73.7929855968123));
-            editingPolygon.Add(new System.Windows.Point(254.797849118189, 97.118354607299));
-            editingPolygon.Add(new System.Windows.Point(278.97141336542, 100.087037935906));
-            editingPolygon.Add(new System.Windows.Point(294.242196571272, 107.916125947681));
-            editingPolygon.Add(new System.Windows.Point(296.783513337065, 119.171430762668));
-            editingPolygon.Add(new System.Windows.Point(293.80634805609, 128.289529557677));
-            editingPolygon.Add(new System.Windows.Point(281.515999075655, 136.55943311594));
-            editingPolygon.Add(new System.Windows.Point(262.855703867266, 142.920897391527));
-            editingPolygon.Add(new System.Windows.Point(196.571272454067, 152.995014001776));
-            editingPolygon.Add(new System.Windows.Point(94.8329656568214, 150.549540451472));
-            editingPolygon.Add(new System.Windows.Point(84.6785978257837, 148.783563437378));
-            editingPolygon.Add(new System.Windows.Point(44.2592719076565, 133.870637251554));
-            editingPolygon.Add(new System.Windows.Point(31.2984042358894, 128.07748074849));
-            editingPolygon.Add(new System.Windows.Point(22.3923542500672, 122.140114091276));
-            editingPolygon.Add(new System.Windows.Point(16.8790852112249, 110.265380776846));
+            flexiPath.Start = new FlexiPoint(new System.Windows.Point(16.0308899744799, 97.118354607299));
+            flexiPath.AddLine(new System.Windows.Point(18.9995733030873, 88.2123046214768));
+            flexiPath.AddLine(new System.Windows.Point(25.1348951574346, 79.2295608223482));
+            flexiPath.AddLine(new System.Windows.Point(36.3875756563591, 74.6411808335573));
+            flexiPath.AddLine(new System.Windows.Point(43.1020597048191, 73.285088073382));
+            flexiPath.AddLine(new System.Windows.Point(52.0791875361411, 73.7929855968123));
+            flexiPath.AddLine(new System.Windows.Point(254.797849118189, 97.118354607299));
+            flexiPath.AddLine(new System.Windows.Point(278.97141336542, 100.087037935906));
+            flexiPath.AddLine(new System.Windows.Point(294.242196571272, 107.916125947681));
+            flexiPath.AddLine(new System.Windows.Point(296.783513337065, 119.171430762668));
+            flexiPath.AddLine(new System.Windows.Point(293.80634805609, 128.289529557677));
+            flexiPath.AddLine(new System.Windows.Point(281.515999075655, 136.55943311594));
+            flexiPath.AddLine(new System.Windows.Point(262.855703867266, 142.920897391527));
+            flexiPath.AddLine(new System.Windows.Point(196.571272454067, 152.995014001776));
+            flexiPath.AddLine(new System.Windows.Point(94.8329656568214, 150.549540451472));
+            flexiPath.AddLine(new System.Windows.Point(84.6785978257837, 148.783563437378));
+            flexiPath.AddLine(new System.Windows.Point(44.2592719076565, 133.870637251554));
+            flexiPath.AddLine(new System.Windows.Point(31.2984042358894, 128.07748074849));
+            flexiPath.AddLine(new System.Windows.Point(22.3923542500672, 122.140114091276));
+            flexiPath.AddLine(new System.Windows.Point(16.8790852112249, 110.265380776846));
+        }
+
+        private void InsertCurveSegment(int startIndex, System.Windows.Point position)
+        {
+            flexiPath.ConvertLineCurveSegment(startIndex, position);
+        }
+
+        private void InsertLineSegment(int startIndex, System.Windows.Point position)
+        {
+            flexiPath.InsertLineSegment(startIndex, position);
+        }
+
+        private void InsertQuadCurveSegment(int startIndex, System.Windows.Point position)
+        {
+            flexiPath.ConvertLineQuadCurveSegment(startIndex, position);
         }
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -1164,7 +1078,6 @@ namespace Make3D.Dialogs
                 editingPolygon[selectedPoint] = position;
                 GenerateTrackPath();
                 GenerateTrack();
-
             }
             else
             {
@@ -1177,7 +1090,67 @@ namespace Make3D.Dialogs
         {
             GenerateTrackPath();
             GenerateTrack();
+        }
 
+        private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            Ellipse el = new Ellipse();
+
+            Canvas.SetLeft(el, p.X - rad);
+            Canvas.SetTop(el, p.Y - rad);
+            el.Width = 2 * rad;
+            el.Height = 2 * rad;
+            el.Stroke = br;
+            el.Fill = br;
+            el.MouseDown += MainCanvas_MouseDown;
+            el.MouseMove += MainCanvas_MouseMove;
+            //   el.ContextMenu = PointMenu(el);
+            MainCanvas.Children.Add(el);
+            return p;
+        }
+
+        private System.Windows.Point MakeRect(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            System.Windows.Shapes.Rectangle el = new System.Windows.Shapes.Rectangle();
+
+            Canvas.SetLeft(el, p.X - rad);
+            Canvas.SetTop(el, p.Y - rad);
+            el.Width = 2 * rad;
+            el.Height = 2 * rad;
+            el.Stroke = br;
+            el.Fill = br;
+            el.MouseDown += MainCanvas_MouseDown;
+            el.MouseMove += MainCanvas_MouseMove;
+            //   el.ContextMenu = PointMenu(el);
+            MainCanvas.Children.Add(el);
+            return p;
+        }
+
+        private System.Windows.Point MakeTri(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
+        {
+            PointCollection myPointCollection = new PointCollection();
+            myPointCollection.Add(new System.Windows.Point(0.5, 0));
+            myPointCollection.Add(new System.Windows.Point(0, 1));
+            myPointCollection.Add(new System.Windows.Point(1, 1));
+
+            Polygon myPolygon = new Polygon();
+            myPolygon.Points = myPointCollection;
+            myPolygon.Fill = br;
+
+            myPolygon.Stretch = Stretch.Fill;
+            myPolygon.Stroke = System.Windows.Media.Brushes.Black;
+            myPolygon.StrokeThickness = 2;
+            Canvas.SetLeft(myPolygon, p.X - rad);
+            Canvas.SetTop(myPolygon, p.Y - rad);
+            myPolygon.Width = 2 * rad;
+            myPolygon.Height = 2 * rad;
+            myPolygon.Stroke = br;
+            myPolygon.Fill = br;
+            myPolygon.MouseDown += MainCanvas_MouseDown;
+            myPolygon.MouseMove += MainCanvas_MouseMove;
+            // myPolygon.ContextMenu = PointMenu(myPolygon);
+            MainCanvas.Children.Add(myPolygon);
+            return p;
         }
 
         private void OutButton_Click(object sender, RoutedEventArgs e)
@@ -1185,21 +1158,6 @@ namespace Make3D.Dialogs
             scale *= 0.9;
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
-        }
-
-        private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
-        {
-            double dx = p2.X - p1.X;
-            double dy = p2.Y - p1.Y;
-            double grad = dy / dx;
-            double perp = -1.0 / grad;
-            double sgn = Math.Sign(distanceFromLine);
-            distanceFromLine = Math.Abs(distanceFromLine);
-            System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
-            double x = tp.X + sgn * Math.Sqrt((distanceFromLine * distanceFromLine) / (1.0 + (1.0 / (grad * grad))));
-            double y = tp.Y + perp * (x - tp.X);
-            System.Windows.Point res = new System.Windows.Point(x, y);
-            return res;
         }
 
         private System.Windows.Point Perpendicular2(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
@@ -1216,21 +1174,10 @@ namespace Make3D.Dialogs
             System.Windows.Point res = new System.Windows.Point(x, y);
             return res;
         }
-        private double PolygonLength(List<System.Windows.Point> points)
+
+        private void PickButton_Click(object sender, RoutedEventArgs e)
         {
-            double res = 0;
-            for (int i = 0; i < points.Count; i++)
-            {
-                int j = i + 1;
-                if (j == points.Count)
-                {
-                    j = 0;
-                }
-                System.Windows.Point p1 = points[i];
-                System.Windows.Point p2 = points[j];
-                res += Distance(p1, p2);
-            }
-            return res;
+            SelectionMode = SelectionModeType.SelectPoint;
         }
 
         private void ResetButton_Click(object sender, RoutedEventArgs e)
@@ -1262,200 +1209,60 @@ namespace Make3D.Dialogs
             EditorParameters.Set("TrackWidth", TrackWidth.ToString());
         }
 
-        private void SimpleLinkPolygon(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> outter, ref List<System.Windows.Point> inner, bool firstCall, int spudSign)
+        private void SetButtonBorderColours()
         {
-            double spudDim = spudSign * spudSize;
-            double dx = p2.X - p1.X;
-            double dy = p2.Y - p1.Y;
-
-            if (dx == 0 && dy != 0)
+            switch (selectionMode)
             {
-                if (p2.Y > p1.Y)
-                {
-                    // vertical downwards
-                    if (firstCall)
+                case SelectionModeType.SelectPoint:
                     {
-                        outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness - spudDim, p1.Y + 0.87 * dy));
-                    outter.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
+                    break;
 
-                    if (firstCall)
+                case SelectionModeType.AddLine:
                     {
-                        inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.87 * dy));
-                    inner.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
-                }
-                else
-                {
-                    // vertical upwards
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p1.Y + 0.75 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness - spudDim, p1.Y + 0.87 * dy));
-                    outter.Add(new System.Windows.Point(p1.X - thickness, p2.Y));
+                    break;
 
-                    if (firstCall)
+                case SelectionModeType.AddBezier:
                     {
-                        inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y));
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.75 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p1.Y + 0.87 * dy));
-                    inner.Add(new System.Windows.Point(p1.X + thickness, p2.Y));
-                }
+                    break;
+
+                case SelectionModeType.AddQuadBezier:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                    }
+                    break;
+
+                case SelectionModeType.DeleteSegment:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                    }
+                    break;
             }
-            else
-            if (dy == 0)
-            {
-                if (p2.X - p1.X > 0)
-                {
-                    // Horizontal Left to right
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness - spudDim));
-                    outter.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
-
-                    if (firstCall)
-                    {
-                        inner.Add(new System.Windows.Point(p1.X, p1.Y + thickness));
-                    }
-                    inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness));
-                    inner.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
-                }
-                else
-                {
-                    // Horizontal right to Left
-                    if (firstCall)
-                    {
-                        outter.Add(new System.Windows.Point(p1.X, p1.Y - +thickness));
-                    }
-                    outter.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y + thickness));
-                    outter.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y + thickness + spudDim));
-                    outter.Add(new System.Windows.Point(p2.X, p2.Y + thickness));
-
-                    if (firstCall)
-                    {
-                        inner.Add(new System.Windows.Point(p1.X, p1.Y - thickness));
-                    }
-                    inner.Add(new System.Windows.Point(p1.X + 0.75 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p1.X + 0.87 * dx, p1.Y - thickness));
-                    inner.Add(new System.Windows.Point(p2.X, p2.Y - thickness));
-                }
-            }
-            else
-            {
-                double sign = -1;
-                if (dx > 0 && dy < 0)
-                {
-                    sign = 1;
-                }
-                else
-                if (dx > 0 && dy > 0)
-                {
-                    sign = -1;
-                }
-                else
-                if (dx < 0 && dy < 0)
-                {
-                    sign = 1;
-                }
-                else
-                if (dx < 0 && dy > 0)
-                {
-                    sign = -1;
-                }
-                System.Windows.Point o1 = Perpendicular(p1, p2, 0.0, -sign * thickness);
-                System.Windows.Point o2 = Perpendicular(p1, p2, 0.75, -sign * thickness);
-                System.Windows.Point o3 = Perpendicular(p1, p2, 0.87, -sign * (thickness + spudDim));
-                System.Windows.Point o4 = Perpendicular(p1, p2, 1.0, -sign * thickness);
-                if (firstCall)
-                {
-                    outter.Add(o1);
-                }
-                outter.Add(o2);
-                outter.Add(o3);
-                outter.Add(o4);
-
-                System.Windows.Point i1 = Perpendicular(p1, p2, 0.0, sign * thickness);
-                System.Windows.Point i2 = Perpendicular(p1, p2, 0.75, sign * thickness);
-                System.Windows.Point i3 = Perpendicular(p1, p2, 0.87, sign * thickness);
-                System.Windows.Point i4 = Perpendicular(p1, p2, 1.0, sign * thickness);
-                if (firstCall)
-                {
-                    inner.Add(i1);
-                }
-                inner.Add(i2);
-                inner.Add(i3);
-                inner.Add(i4);
-            }
-        }
-
-        System.Windows.Point[] m1MainPolyCoords =
-    {
-         new System.Windows.Point(0.0,0.05),
-         new System.Windows.Point(0.05,0.25),
-         new System.Windows.Point(0.1,1.0),
-         new System.Windows.Point(0.8,1.0),
-         new System.Windows.Point(0.9,0.1),
-
-          new System.Windows.Point(0.9,-0.1),
-         new System.Windows.Point(0.8,-1.0),
-         new System.Windows.Point(0.1,-1.0),
-         new System.Windows.Point(0.05,-0.25),
-         new System.Windows.Point(0.0,-0.05),
-        };
-        System.Windows.Point[] m1LinkConnectorCoords =
-    {
-         new System.Windows.Point(0.6,0.05),
-         new System.Windows.Point(0.65,0.9),
-         new System.Windows.Point(0.8,0.9),
-         new System.Windows.Point(0.86,3),
-         new System.Windows.Point(0.93,3),
-         new System.Windows.Point(1,0.9),
-         new System.Windows.Point(1.15,0.9),
-         new System.Windows.Point(1.2,0.05),
-
-
-         new System.Windows.Point(1.2,-0.05),
-
-
-         new System.Windows.Point(1.15,-0.9),
-         new System.Windows.Point(0.65,-0.9),
-         new System.Windows.Point(0.6,-0.05),
-     };
-        private void GetLinkPartProfile(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> poly, System.Windows.Point[] shape, double size)
-        {
-            poly.Clear();
-            for (int i = 0; i < shape.GetLength(0); i++)
-            {
-                System.Windows.Point po = shape[i];
-
-                System.Windows.Point o1 = Perpendicular2(p1, p2, po.X, po.Y * size);
-                if (localImage == null)
-                {
-                    // flipping coordinates so have to reverse polygon too
-                    o1.Y = -o1.Y;
-                }
-                else
-                {
-                    o1.X = ToMM(o1.X);
-                    o1.Y = ToMM(-o1.Y);
-
-                }
-
-                poly.Add(o1);
-            }
-
-
         }
 
         private double ToMM(double x)
@@ -1498,18 +1305,7 @@ namespace Make3D.Dialogs
         {
             GenerateTrackPath();
             GenerateTrack();
-
         }
-
-        /*
-                private double Distance(System.Windows.Point p1, System.Windows.Point p2)
-                {
-                    double d = Math.Sqrt((p2.X - p1.X) * (p2.X - p1.X) +
-                                           (p2.Y - p1.Y) * (p2.Y - p1.Y));
-
-                    return d;
-                }
-        */
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -1520,58 +1316,6 @@ namespace Make3D.Dialogs
 
             UpdateCameraPos();
             UpdateDisplay();
-        }
-
-        private void GetEditorParameters()
-        {
-            string imageName = EditorParameters.Get("ImagePath");
-            if (imageName != "")
-            {
-                LoadImage(imageName);
-            }
-            String s = EditorParameters.Get("Points");
-            if (s != "")
-            {
-                string[] words = s.Split(',');
-                editingPolygon.Clear();
-                for (int i = 0; i < words.GetLength(0); i += 2)
-                {
-                    editingPolygon.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
-                }
-            }
-            s = EditorParameters.Get("NoOfLinks");
-            if (s != "")
-            {
-                NoOfLinks = Convert.ToInt16(s);
-            }
-
-            s = EditorParameters.Get("TrackType");
-            if (s != "")
-            {
-                SelectedTrackType = s;
-            }
-
-            s = EditorParameters.Get("Thickness");
-            if (s != "")
-            {
-                Thickness = Convert.ToDouble(s);
-            }
-
-            s = EditorParameters.Get("SpudSize");
-            if (s != "")
-            {
-                SpudSize = Convert.ToDouble(s); ;
-            }
-            s = EditorParameters.Get("GuideSize");
-            if (s != "")
-            {
-                GuideSize = Convert.ToDouble(s); ;
-            }
-            s = EditorParameters.Get("TrackWidth");
-            if (s != "")
-            {
-                TrackWidth = Convert.ToDouble(s); ;
-            }
         }
     }
 }
