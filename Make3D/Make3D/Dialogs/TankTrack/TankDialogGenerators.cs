@@ -139,12 +139,12 @@ namespace Make3D.Dialogs
                     double partFrontZ = trackWidth;
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
 
-                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness);
+                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness + guideSize);
                     partBackZ = trackWidth;
                     partFrontZ = trackWidth + 1;
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
 
-                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness);
+                    GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness + guideSize);
                     partBackZ = -1;
                     partFrontZ = 0;
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);

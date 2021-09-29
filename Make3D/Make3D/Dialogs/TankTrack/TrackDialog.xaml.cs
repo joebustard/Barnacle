@@ -29,6 +29,7 @@ namespace Make3D.Dialogs
         private double guideSize;
         private List<System.Windows.Point> innerPolygon;
         private BitmapImage localImage;
+        private bool moving;
         private int noOfLinks;
         private List<System.Windows.Point> outerPolygon;
         private ObservableCollection<FlexiPoint> polyPoints;
@@ -72,6 +73,7 @@ namespace Make3D.Dialogs
             SpudSize = 1;
             GuideSize = 1;
             ModelGroup = MyModelGroup;
+            moving = false;
         }
 
         public enum SelectionModeType
@@ -135,6 +137,32 @@ namespace Make3D.Dialogs
             }
         }
 
+        public int SelectedPoint
+        {
+            get
+            {
+                return selectedPoint;
+            }
+            set
+            {
+                if (selectedPoint != value)
+                {
+                    selectedPoint = value;
+                    NotifyPropertyChanged();
+                    ClearPointSelections();
+                    if (polyPoints != null)
+                    {
+                        if (selectedPoint >= 0 && selectedPoint < polyPoints.Count)
+                        {
+                            polyPoints[selectedPoint].Selected = true;
+                            polyPoints[selectedPoint].Visible = true;
+                        }
+                    }
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public string SelectedTrackType
         {
             get
@@ -146,7 +174,8 @@ namespace Make3D.Dialogs
                 if (selectedTrackType != value)
                 {
                     selectedTrackType = value;
-                    if (selectedTrackType == "Centre Guide")
+                    if ((selectedTrackType == "Centre Guide") ||
+                        (selectedTrackType == "M1"))
                     {
                         ShowGuideSize = Visibility.Visible;
                     }
@@ -445,7 +474,7 @@ namespace Make3D.Dialogs
             ln.Y1 = points[i].Y;
             ln.X2 = points[v].X;
             ln.Y2 = points[v].Y;
-            //    ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
+            ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
             ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
             MainCanvas.Children.Add(ln);
         }
@@ -611,15 +640,6 @@ namespace Make3D.Dialogs
                     }
                 }
             }
-            /*
-            if (editingPolygon != null && editingPolygon.Count > 2)
-            {
-                for (int i = 0; i < editingPolygon.Count; i++)
-                {
-                    AddEditingLineToDisplayList(i, i + 1);
-                }
-            }
-            */
         }
 
         private void DisplayPoints()
@@ -1003,32 +1023,61 @@ namespace Make3D.Dialogs
             flexiPath.ConvertLineQuadCurveSegment(startIndex, position);
         }
 
+        private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Line ln = sender as Line;
+            bool found = false;
+            if (ln != null)
+            {
+                switch (selectionMode)
+                {
+                    case SelectionModeType.SelectPoint:
+                        {
+                            found = SelectLineFromPoint(e);
+                        }
+                        break;
+
+                    case SelectionModeType.AddLine:
+                        {
+                            found = AddLineFromPoint(e, ln);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+
+                    case SelectionModeType.AddBezier:
+                        {
+                            found = AddBezierFromPoint(e, ln, true);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+
+                    case SelectionModeType.AddQuadBezier:
+                        {
+                            found = AddBezierFromPoint(e, ln, false);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+
+                    case SelectionModeType.DeleteSegment:
+                        {
+                            found = DeleteSegment(e, ln);
+                            SelectionMode = SelectionModeType.SelectPoint;
+                        }
+                        break;
+                }
+                if (found)
+                {
+                    UpdateDisplay();
+                }
+            }
+        }
+
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
             Line ln = sender as Line;
             int found = -1;
             if (ln != null)
             {
-                System.Windows.Point position = e.GetPosition(MainCanvas);
-                for (int i = 0; i < editingPolygon.Count; i++)
-                {
-                    if (editingPolygon[i].X == ln.X1 && editingPolygon[i].Y == ln.Y1)
-                    {
-                        found = i;
-                        break;
-                    }
-                }
-                if (found != -1)
-                {
-                    if (found < editingPolygon.Count - 1)
-                    {
-                        editingPolygon.Insert(found + 1, position);
-                    }
-                    else
-                    {
-                        editingPolygon.Add(position);
-                    }
-                }
             }
         }
 
@@ -1048,48 +1097,65 @@ namespace Make3D.Dialogs
 
         private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            selectedPoint = -1;
-            if (e.LeftButton == MouseButtonState.Pressed)
+            try
             {
-                double rad = 3;
-                System.Windows.Point position = e.GetPosition(MainCanvas);
-                for (int i = 0; i < editingPolygon.Count; i++)
+                if (selectedPoint >= 0)
                 {
-                    System.Windows.Point p = editingPolygon[i];
+                    Points[selectedPoint].Selected = false;
+                }
+                SelectedPoint = -1;
+
+                System.Windows.Point position = e.GetPosition(MainCanvas);
+
+                double rad = 3;
+
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    System.Windows.Point p = polyPoints[i].ToPoint();
                     if (position.X >= p.X - rad && position.X <= p.X + rad)
                     {
                         if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
                         {
-                            selectedPoint = i;
+                            SelectedPoint = i;
+                            Points[i].Selected = true;
+                            moving = true;
                             break;
                         }
                     }
                 }
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    UpdateDisplay();
+                }
             }
-            UpdateDisplay();
+            catch (Exception ex)
+            {
+            }
         }
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
             PositionLabel.Content = $"({position.X},{position.Y})";
-            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
+            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed && moving)
             {
-                editingPolygon[selectedPoint] = position;
-                GenerateTrackPath();
-                GenerateTrack();
+                polyPoints[selectedPoint].X = position.X;
+                polyPoints[selectedPoint].Y = position.Y;
+                flexiPath.SetPointPos(selectedPoint, position);
+
+                UpdateDisplay();
             }
             else
             {
-                selectedPoint = -1;
+                moving = false;
             }
-            UpdateDisplay();
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
             GenerateTrackPath();
             GenerateTrack();
+            moving = false;
         }
 
         private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
@@ -1207,6 +1273,23 @@ namespace Make3D.Dialogs
             EditorParameters.Set("SpudSize", SpudSize.ToString());
             EditorParameters.Set("GuideSize", GuideSize.ToString());
             EditorParameters.Set("TrackWidth", TrackWidth.ToString());
+        }
+
+        private bool SelectLineFromPoint(MouseButtonEventArgs e)
+        {
+            bool found;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            found = flexiPath.SelectAtPoint(position);
+
+            if (found)
+            {
+                // GetRawFlexiPoints();
+                PointGrid.ItemsSource = Points;
+                CollectionViewSource.GetDefaultView(Points).Refresh();
+                Redisplay();
+            }
+
+            return found;
         }
 
         private void SetButtonBorderColours()

@@ -35,12 +35,14 @@ namespace Make3D.LineLib
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
         {
-            res.Add(new Point(pnts[P1].X, pnts[P1].Y));
+            if (P1 < pnts.Count())
+            {
+                res.Add(new Point(pnts[P1].X, pnts[P1].Y));
+            }
         }
 
         public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)
         {
-        
             double dist = DistToLine.FindDistanceToLine(position, points[P0].ToPoint(), points[P1].ToPoint());
             return dist;
         }

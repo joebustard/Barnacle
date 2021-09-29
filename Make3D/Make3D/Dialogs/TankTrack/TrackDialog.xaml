@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="Tank Track" Height="450" Width="800" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
+        Title="Tank Track" Height="800" Width="800" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -13,13 +13,14 @@
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="300" />
+            <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid   Grid.Column="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="100" />
                 <RowDefinition Height="60" />
+                <RowDefinition Height="175" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
@@ -66,30 +67,54 @@
                     </Border>
                 </UniformGrid>
             </Border>
-            <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="10,0,0,0">
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="2" Grid.Column="0" Padding="2,2,2,10">
+                <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" SelectedIndex="{Binding SelectedPoint}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.2*" />
+                        <DataGridTextColumn Header="X" Binding="{Binding X, StringFormat={}{0:n3}}" Width="0.4*">
+                        </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="Y" Binding="{Binding Y, StringFormat={}{0:n3}}" Width="0.4*">
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                    <DataGrid.RowStyle>
+                        <Style TargetType="DataGridRow">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Selected}" Value="true">
+                                    <Setter Property="Background" Value="Yellow"></Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Selected}" Value="Yellow">
+                                    <Setter Property="Background" Value="AliceBlue"></Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.RowStyle>
+                </DataGrid>
+            </Border>
+            <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Type</Label>
                 <ComboBox VerticalAlignment="Center" HorizontalAlignment="Stretch" ItemsSource="{Binding TrackTypes}" SelectedItem="{Binding SelectedTrackType}" MinWidth="100"></ComboBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="3"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">No. Of Links</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding NoOfLinks}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowLinkMarkers}">Link Markers</CheckBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="4"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Width</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding TrackWidth}" MinWidth="50"></TextBox>
                 <CheckBox VerticalAlignment="Center" Margin="4,0" IsChecked="{Binding ShowOutline}">Outline</CheckBox>
             </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Grid.Row="5"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="6"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Thickness</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding Thickness}" MinWidth="50"></TextBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="6"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="7"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center">Spud Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding SpudSize}" MinWidth="50"></TextBox>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Row="7"  Margin="10,0,0,0">
+            <StackPanel Orientation="Horizontal" Grid.Row="8"  Margin="10,0,0,0">
                 <Label Width="80" VerticalAlignment="Center" Visibility="{Binding ShowGuideSize}">Guide Size</Label>
                 <TextBox VerticalAlignment="Center" HorizontalAlignment="Stretch" Text="{Binding GuideSize}" MinWidth="50" Visibility="{Binding ShowGuideSize}"></TextBox>
             </StackPanel>
