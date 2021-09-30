@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Make3D.Dialogs"
         mc:Ignorable="d"
-        Title="IrregularPolygonDlg" Height="800" Width="800" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }" PreviewKeyDown="MainCanvas_PreviewKeyDown">
+        Title="Platelet" Height="800" Width="800" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }" PreviewKeyDown="MainCanvas_PreviewKeyDown">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="200" />
@@ -18,33 +18,62 @@
         </Grid.RowDefinitions>
         <Grid Grid.Column="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="140" />
+                <RowDefinition Height="160" />
+                <RowDefinition Height="60" />
                 <RowDefinition />
             </Grid.RowDefinitions>
 
             <Border Style="{StaticResource ControlBorder}" Grid.Row="0" Grid.Column="0" Padding="2,2,2,10">
                 <StackPanel>
-                    <UniformGrid>
-                        <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" />
-                        <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2" />
-                        <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2" />
-                        <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2" />
+                    <UniformGrid Margin="0,0,0,4">
+                        <Button x:Name="ResetButton" Content="Reset" Click="ResetButton_Click" Margin="2,2,2,2" ToolTip="Reset the polygon points back to the default square" />
+                        <Button x:Name="ImageButton" Content="Image" Click="ImageButton_Click" Margin="2,2,2,2" ToolTip="Load a background image to position the points over" />
+                        <Button x:Name="ZoomInButton" Content="Zoom In" Click="InButton_Click" Margin="2,2,2,2" ToolTip="Zoom in on polygon" />
+                        <Button x:Name="ZoomOutButton" Content="Zoom Out" Click="OutButton_Click" Margin="2,2,2,2" ToolTip="Zoom out on polygon" />
                     </UniformGrid>
                     <RadioButton GroupName="HollowGroup" IsChecked="{Binding SolidShape}">Solid</RadioButton>
                     <RadioButton GroupName="HollowGroup" IsChecked="{Binding HollowShape}">Hollow</RadioButton>
-                    <StackPanel Orientation="Horizontal" Margin="4,2,2,4">
-                        <Label Visibility="{Binding ShowWidth}" VerticalContentAlignment="Center">Width</Label>
+                    <RadioButton GroupName="HollowGroup" IsChecked="{Binding LineShape}">Line</RadioButton>
+                    <StackPanel Orientation="Horizontal" Margin="2,2,2,4">
+                        <Label Visibility="{Binding ShowWidth}" VerticalContentAlignment="Center" Margin="2,2,4,0">Width</Label>
                         <TextBox Visibility="{Binding ShowWidth}" VerticalContentAlignment="Center" Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}" Width="100" />
                     </StackPanel>
                     <CheckBox IsChecked="{Binding ShowOrtho}">Show Ortho</CheckBox>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
-                <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" SelectedIndex="{Binding PointIndex}">
+                <UniformGrid Columns="5">
+                    <Border x:Name="PickBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="PickButton" Click="PickButton_Click" Style="{StaticResource SmallButton }" ToolTip="Select a segment or point">
+                            <Image Source="/Make3D;component/Images/Buttons/SelectSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddSegBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddSegButton"  Style="{StaticResource SmallButton}" Click="AddSegButton_Click" ToolTip="Insert a straight segment">
+                            <Image Source="/Make3D;component/Images/Buttons/AddSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddBezierButton"  Click="AddBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a cubic spline">
+                            <Image Source="/Make3D;component/Images/Buttons/AddSpline.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddQuadBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddQuadBezierButton"  Click="AddQuadBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a quadratic spline">
+                            <Image Source="/Make3D;component/Images/Buttons/AddQuadBezier.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="DelSegBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="DelSegButton"  Click="DelSegButton_Click" Style="{StaticResource SmallButton}" ToolTip="Delete a segment">
+                            <Image Source="/Make3D;component/Images/Buttons/DeleteSegment.png" />
+                        </Button>
+                    </Border>
+                </UniformGrid>
+            </Border>
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="2" Grid.Column="0" Padding="2,2,2,10">
+                <DataGrid x:Name="PointGrid" AutoGenerateColumns="False" ItemsSource="{Binding Points}" SelectedIndex="{Binding SelectedPoint}">
                     <DataGrid.Columns>
-
                         <DataGridTextColumn Header="Id" Binding="{Binding Id}" Width="0.2*" />
-
                         <DataGridTextColumn Header="X" Binding="{Binding X, StringFormat={}{0:n3}}" Width="0.4*">
                         </DataGridTextColumn>
 
@@ -113,8 +142,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <CheckBox Content="Floor" Grid.Column="1" IsChecked="{Binding ShowFloor}" />
-                <CheckBox Content="Axies" Grid.Column="2" IsChecked="{Binding ShowAxies}" />
+                <CheckBox Content="Floor" Grid.Column="1" IsChecked="{Binding ShowFloor}" VerticalAlignment="Center" />
+                <CheckBox Content="Axies" Grid.Column="2" IsChecked="{Binding ShowAxies}" VerticalAlignment="Center" />
                 <Button Content="Home" Grid.Column="3" Click="Home_Click" />
                 <Label x:Name="PositionLabel" Grid.Column="4" />
             </Grid>

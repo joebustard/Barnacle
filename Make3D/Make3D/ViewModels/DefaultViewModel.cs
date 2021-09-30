@@ -1024,7 +1024,7 @@ namespace Make3D.ViewModels
             loftedToolsToShow.Add(new ToolDef("Vertical", true, "LinearLoft", "Create an object by vertical lofting."));
             loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
             loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
-            loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
+            //  loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
             NotifyPropertyChanged("LoftedToolsToShow");
         }
 

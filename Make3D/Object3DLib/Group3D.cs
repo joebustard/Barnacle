@@ -111,7 +111,7 @@ namespace Make3D.Object3DLib
             RelativeObjectVertices = null;
             neo.TriangleIndices = TriangleIndices;
             TriangleIndices = null;
-            AbsoluteObjectVertices = AbsoluteObjectVertices;
+            neo.AbsoluteObjectVertices = AbsoluteObjectVertices;
             AbsoluteObjectVertices = null;
             neo.AbsoluteBounds = AbsoluteBounds;
             AbsoluteBounds = null;

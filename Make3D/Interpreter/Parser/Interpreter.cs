@@ -92,6 +92,7 @@ namespace ScriptLanguage
                 "trimleft",
                 "trimright",
                 "union",
+                "unionall",
                 "width",
                 "val"
             };
@@ -2442,6 +2443,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "unionall":
+                            {
+                                exp = ParseUnionAllFunction(parentName);
+                            }
+                            break;
+
                         case "val":
                             {
                                 exp = GetFunctionNode<ValNode>(parentName);
@@ -4302,6 +4309,15 @@ namespace ScriptLanguage
                 }
             }
             return result;
+        }
+
+        private ExpressionNode ParseUnionAllFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            UnionAllNode mn = new UnionAllNode();
+            mn.IsInLibrary = tokeniser.InIncludeFile();
+            exp = mn;
+            return exp;
         }
 
         private ExpressionNode ParseUnionFunction(string parentName)

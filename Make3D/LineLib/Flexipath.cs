@@ -425,7 +425,7 @@ namespace Make3D.LineLib
                         LineSegment ls = new LineSegment(p0, p1);
                         segs.Add(ls);
                     }
-                    if (words[0] == "CQ")
+                    if (words[0] == "Q")
                     {
                         int p0 = Convert.ToInt32(words[1]);
                         int p1 = Convert.ToInt32(words[2]);

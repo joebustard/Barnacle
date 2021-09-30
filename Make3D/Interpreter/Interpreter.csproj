@@ -74,6 +74,7 @@
     <Compile Include="SolidFunctions\CSGNode.cs" />
     <Compile Include="SolidFunctions\MakePlatelet.cs" />
     <Compile Include="SolidFunctions\GetSolidSizeNode.cs" />
+    <Compile Include="SolidFunctions\UnionAllNode.cs" />
     <Compile Include="SolidStatements\SolidRMove.cs" />
     <Compile Include="SolidStatements\SolidAlignment.cs" />
     <Compile Include="SolidStatements\SolidColourNode.cs" />

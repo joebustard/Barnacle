@@ -157,7 +157,7 @@ namespace Make3D.LineLib
 
         public override string ToString()
         {
-            string s = "CQ," + P0.ToString() + "," + P1.ToString() + "," + P2.ToString();
+            string s = "Q," + P0.ToString() + "," + P1.ToString() + "," + P2.ToString();
 
             return s;
         }
