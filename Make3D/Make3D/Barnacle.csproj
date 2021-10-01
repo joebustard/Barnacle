@@ -91,6 +91,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Dialogs\AboutBox\AboutBoxDlg.xaml.cs">
+      <DependentUpon>AboutBoxDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\BaseModellerDialog.cs" />
     <Compile Include="Dialogs\BezierFuselage\BezierLine.cs" />
     <Compile Include="Dialogs\BezierFuselage\BulkheadControl.xaml.cs">
@@ -217,6 +220,7 @@
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="Views\ScriptView.xaml.cs">
@@ -311,6 +315,10 @@
     <Compile Include="Views\StartupView.xaml.cs">
       <DependentUpon>StartupView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Dialogs\AboutBox\AboutBoxDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\BezierFuselage\BulkheadControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

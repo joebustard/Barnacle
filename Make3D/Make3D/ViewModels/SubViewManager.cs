@@ -11,6 +11,8 @@ namespace Barnacle.ViewModels
     public class SubViewManager
     {
         private string currentViewName = "";
+        private string previousViewName = "";
+        public string CurrentViewName { get { return currentViewName; } }
 
         public void CloseCurrent()
         {
@@ -37,6 +39,10 @@ namespace Barnacle.ViewModels
             {
                 NotificationManager.ViewUnsubscribe(currentViewName);
             }
+            if (name != currentViewName)
+            {
+                previousViewName = currentViewName;
+            }
             name = name.ToLower().Trim();
             UserControl result = null;
             if (name == "default")
@@ -55,8 +61,21 @@ namespace Barnacle.ViewModels
             {
                 result = new ScriptView();
             }
+
             currentViewName = name;
             return result;
+        }
+
+        internal UserControl ReturnToPrevious()
+        {
+            if (previousViewName != null && previousViewName != "")
+            {
+                return GetView(previousViewName);
+            }
+            else
+            {
+                return GetView("editor");
+            }
         }
     }
 }

@@ -255,7 +255,7 @@
                 </Custom:RibbonGroup>
                 -->
                 <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Barnacle;component/Images/Buttons/question1.png">
-                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding AboutCommand}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
         </Custom:Ribbon>

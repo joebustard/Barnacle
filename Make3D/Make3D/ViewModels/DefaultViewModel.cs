@@ -1,4 +1,5 @@
-﻿using Barnacle.Models.Mru;
+﻿using Barnacle.Dialogs;
+using Barnacle.Models.Mru;
 using Barnacle.ViewModel.BuildPlates;
 using System;
 using System.Collections.Generic;
@@ -118,6 +119,7 @@ namespace Barnacle.ViewModels
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             ResetOriginCommand = new RelayCommand(OnReorigin);
             ViewCommand = new RelayCommand(OnView);
+            AboutCommand = new RelayCommand(OnAbout);
             showFloorChecked = false;
 
             ExitCommand = new RelayCommand(OnExit);
@@ -147,8 +149,7 @@ namespace Barnacle.ViewModels
             }
 
             BaseViewModel.Document.PropertyChanged += Document_PropertyChanged;
-            NotificationManager.Subscribe("CloseAbout", ReturnToDefaultView);
-            NotificationManager.Subscribe("ClosePrintPreview", ReturnToDefaultView);
+
             NotificationManager.Subscribe("SetFontName", SetFontName);
             NotificationManager.Subscribe("SetFontSize", SetFontSize);
             NotificationManager.Subscribe("SetFontBold", SetFontBold);
@@ -173,6 +174,8 @@ namespace Barnacle.ViewModels
              */
             LoadShowSettings();
         }
+
+        public ICommand AboutCommand { get; set; }
 
         public ICommand AddCommand { get; set; }
 
@@ -1123,6 +1126,12 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ObjectNames");
         }
 
+        private void OnAbout(object obj)
+        {
+            AboutBoxDlg dlg = new AboutBoxDlg();
+            dlg.ShowDialog();
+        }
+
         private void OnAdd(object obj)
         {
             string name = obj.ToString();
@@ -1415,11 +1424,6 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("ZoomReset", null);
             NotificationManager.Notify("UpdateDisplay", null);
-        }
-
-        private void ReturnToDefaultView(object param)
-        {
-            OnView("PageEdit");
         }
 
         private void SaveShowSettings()

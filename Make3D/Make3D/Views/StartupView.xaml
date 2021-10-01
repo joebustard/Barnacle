@@ -30,32 +30,34 @@
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="3" Content="{Binding AppIdentity}" FontSize="25"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
+        <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Content="{Binding AppIdentity}" FontSize="25"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
         <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource LargeButton}" Command="{Binding NewProjectCommand}">New Project</Button>
         <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource LargeButton}"  Command="{Binding BrowseProjectCommand}"  >Browse</Button>
         <Button Grid.Row="6" Grid.Column="1" Style="{StaticResource LargeButton}"  Command="{Binding OpenProjectCommand}"   Visibility="{Binding OpenVisible}">Open Project</Button>
-        <Border Grid.Row="1" Grid.Column="1" Background="White"  Width="180" BorderThickness="4">
+        <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ControlBorder}"  Background="White"  BorderThickness="4">
             <Label  HorizontalAlignment="Center"  HorizontalContentAlignment ="Center"
  VerticalContentAlignment="Center" FontSize="18"  Height="34"  >Recent Projects</Label>
         </Border>
-        <ListView Grid.Row="2" Grid.Column="1" Grid.RowSpan="4"  BorderThickness="4" ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel ItemWidth="160" MaxWidth="500" />
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplate>
+        <Border Grid.Row="2" Grid.Column="1" Grid.RowSpan="4" Style="{StaticResource ControlBorder}" Background="White">
+            <ListView  ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel ItemWidth="160" MaxWidth="500" />
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
 
-                <DataTemplate>
-                    <Border BorderThickness="4,4,4,4" BorderBrush="BlanchedAlmond" ToolTip="{Binding Path}">
+                    <DataTemplate>
+                        <Border BorderThickness="4,4,4,4" BorderBrush="BlanchedAlmond" ToolTip="{Binding Path}">
 
-                        <StackPanel Orientation="Vertical" ToolTip="{Binding Path}">
-                            <Image Width="48" Height="48" Source="/Barnacle;component/Images/Buttons/ExistingProject.png" ToolTip="{Binding Path}" />
-                            <Label HorizontalContentAlignment="Center" FontSize="16" Width="160" Content="{Binding Title}" ToolTip="{Binding Path}" />
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                            <StackPanel Orientation="Vertical" ToolTip="{Binding Path}">
+                                <Image Width="48" Height="48" Source="/Barnacle;component/Images/Buttons/ExistingProject.png" ToolTip="{Binding Path}" />
+                                <Label HorizontalContentAlignment="Center" FontSize="16" Width="160" Content="{Binding Title}" ToolTip="{Binding Path}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Border>
     </Grid>
 </UserControl>

@@ -1,5 +1,5 @@
-<Project ProjectName="FigureData" Open="\FigureData\WWIIBrCombat.txt" Created="17/05/2021 16:27:20">
-  <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1" SwapAxis="True" FloorAll="True" VersionExport="True">
+<Project ProjectName="FigureData" Open="\FigureData\Groin1.txt" Created="17/05/2021 16:27:20">
+  <Settings ExportRootName="&lt;FileName&gt;" BaseScale="1" ExportScale="1" SwapAxis="True" FloorAll="True" VersionExport="True" DefaultObjectColour="#FF5F9EA0">
     <Rotation X="0" Y="0" Z="0" />
   </Settings>
   <File Name="Bone.txt" Backup="False" Export="True" />
@@ -29,12 +29,12 @@
   <File Name="UpperLeftArm1.txt" Backup="False" Export="True" />
   <File Name="UpperRightArm1.txt" Backup="False" Export="True" />
   <File Name="WWIIBrCombat.txt" Backup="False" Export="True" />
-  <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False">
+  <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Extension="txt" Template="">
     <File Name="LeftWWIIBrCombat.txt" Backup="False" Export="False" />
     <File Name="SourceFigure (1).txt" Backup="False" Export="False" />
     <File Name="SourceFigure.txt" Backup="False" Export="False" />
   </Folder>
-  <Folder Name="Assemblies" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="True">
+  <Folder Name="Assemblies" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Extension="txt" Template="" Export="True">
     <File Name="Figure.txt" Backup="False" Export="False" />
   </Folder>
 </Project>

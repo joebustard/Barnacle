@@ -142,7 +142,7 @@ namespace ScriptLanguage
             }
             else if (PrimType == "groupintersection")
             {
-                res = "Intersect";
+                res = "Intersection";
             }
             else if (PrimType == "groupcut")
             {
