@@ -1,4 +1,4 @@
-﻿using Make3D.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models.LoopSmoothing
+namespace Barnacle.Models.LoopSmoothing
 {
     class LoopSmoother
     {

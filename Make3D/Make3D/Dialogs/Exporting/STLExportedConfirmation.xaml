@@ -1,9 +1,9 @@
-﻿<Window x:Class="Make3D.Dialogs.STLExportedConfirmation"
+﻿<Window x:Class="Barnacle.Dialogs.STLExportedConfirmation"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Make3D.Views"
+        xmlns:local="clr-namespace:Barnacle.Views"
         mc:Ignorable="d"
         Title="STL Exported Confirmation" Height="200" Width="800" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
     <Grid>

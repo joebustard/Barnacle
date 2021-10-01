@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for SpurGearDialog.xaml

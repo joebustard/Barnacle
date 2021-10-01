@@ -1,5 +1,5 @@
-﻿using Make3D.Models.Mru;
-using Make3D.ViewModel.BuildPlates;
+﻿using Barnacle.Models.Mru;
+using Barnacle.ViewModel.BuildPlates;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +13,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class DefaultViewModel : BaseViewModel, INotifyPropertyChanged
     {

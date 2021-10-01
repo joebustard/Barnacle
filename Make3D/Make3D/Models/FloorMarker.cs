@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public class FloorMarker
     {

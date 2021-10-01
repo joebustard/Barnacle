@@ -6,7 +6,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for UserControl1.xaml

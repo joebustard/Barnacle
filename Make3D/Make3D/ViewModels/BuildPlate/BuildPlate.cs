@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace Make3D.ViewModel.BuildPlates
+namespace Barnacle.ViewModel.BuildPlates
 {
     internal class BuildPlate
     {

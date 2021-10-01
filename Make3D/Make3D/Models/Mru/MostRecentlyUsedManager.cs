@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Models.Mru
+namespace Barnacle.Models.Mru
 {
     public class MostRecentlyUsedManager
     {
@@ -62,7 +62,6 @@ namespace Make3D.Models.Mru
 
         public void UpdateRecentFiles(string fileName)
         {
-            
             MruEntry existing = null;
             foreach (MruEntry mru in recentFilesList)
             {
@@ -86,7 +85,7 @@ namespace Make3D.Models.Mru
             }
             else
             {
-            // bump existing to front of list
+                // bump existing to front of list
                 recentFilesList.Remove(existing);
                 recentFilesList.Insert(0, existing);
                 SaveMru();

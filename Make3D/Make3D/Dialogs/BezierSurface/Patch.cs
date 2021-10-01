@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Dialogs.BezierSurface
+namespace Barnacle.Dialogs.BezierSurface
 {
     class Patch
     {

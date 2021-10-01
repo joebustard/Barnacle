@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Point = System.Windows.Point;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for ImageMarker.xaml

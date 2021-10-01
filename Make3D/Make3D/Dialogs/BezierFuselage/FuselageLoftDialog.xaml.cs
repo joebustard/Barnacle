@@ -1,4 +1,4 @@
-﻿using Make3D.Models;
+﻿using Barnacle.Models;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for FuselageLoftDialog.xaml

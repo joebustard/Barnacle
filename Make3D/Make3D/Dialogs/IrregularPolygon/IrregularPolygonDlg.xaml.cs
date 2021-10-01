@@ -1,8 +1,8 @@
-﻿using Make3D.Models;
+﻿using Barnacle.Models;
 using Microsoft.Win32;
-using Make3D.LineLib;
+using Barnacle.LineLib;
 
-using Make3D.Models;
+using Barnacle.Models;
 using Microsoft.Win32;
 
 using PolygonTriangulationLib;
@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 using Image = System.Windows.Controls.Image;
 using Rectangle = System.Windows.Shapes.Rectangle;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for IrregularPolygonDlg.xaml

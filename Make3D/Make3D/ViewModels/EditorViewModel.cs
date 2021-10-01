@@ -1,10 +1,10 @@
-﻿using Make3D.Dialogs;
-using Make3D.EditorParameterLib;
-using Make3D.Models;
-using Make3D.Models.Adorners;
-using Make3D.Models.LoopSmoothing;
-using Make3D.Object3DLib;
-using Make3D.ViewModel.BuildPlates;
+﻿using Barnacle.Dialogs;
+using Barnacle.EditorParameterLib;
+using Barnacle.Models;
+using Barnacle.Models.Adorners;
+using Barnacle.Models.LoopSmoothing;
+using Barnacle.Object3DLib;
+using Barnacle.ViewModel.BuildPlates;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
@@ -22,7 +22,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Workflow;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Make3D.UserControls
+namespace Barnacle.UserControls
 {
     /// <summary>
     /// Interaction logic for TriggerInterfaceControl.xaml

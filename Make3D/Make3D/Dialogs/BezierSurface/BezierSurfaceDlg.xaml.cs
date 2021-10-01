@@ -1,6 +1,6 @@
-﻿using Make3D.Dialogs.BezierSurface;
-using Make3D.Models;
-using Make3D.Models.Adorners;
+﻿using Barnacle.Dialogs.BezierSurface;
+using Barnacle.Models;
+using Barnacle.Models.Adorners;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for BezierSurface.xaml

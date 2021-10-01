@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace Make3D.Views
+namespace Barnacle.Views
 {
     /// <summary>
     /// Interaction logic for ObjectPropertiesView.xaml

@@ -1,11 +1,11 @@
-﻿<UserControl x:Class="Make3D.Views.ObjectPalette"
+﻿<UserControl x:Class="Barnacle.Views.ObjectPalette"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Make3D.Views"
+             xmlns:local="clr-namespace:Barnacle.Views"
 
-             xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
+             xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="800" Background="{StaticResource WindowBackBrush }">
     <UserControl.DataContext>
@@ -21,51 +21,51 @@
         <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top" MinHeight="160">
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Box" ToolTip="Add a box object">
-                <Image Source="/Make3D;component/Images/Buttons/Square.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Square.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Sphere" ToolTip="Add a sphere object">
-                <Image Source="/Make3D;component/Images/Buttons/Circle.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Circle.png" />
             </Button>
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cylinder" ToolTip="Add a cylinder object">
-                <Image Source="/Make3D;component/Images/Buttons/Cylinder.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Cylinder.png" />
             </Button>
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Roof" ToolTip="Add a roof object">
-                <Image Source="/Make3D;component/Images/Buttons/Roof.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Roof.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cone" ToolTip="Add a cone object">
-                <Image Source="/Make3D;component/Images/Buttons/Cone.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Cone.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid with a square base">
-                <Image Source="/Make3D;component/Images/Buttons/Pyramid.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Pyramid.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RoundRoof" ToolTip="Add a round roof object">
-                <Image Source="/Make3D;component/Images/Buttons/RoundRoof.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/RoundRoof.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Torus" ToolTip="Add a torus object">
-                <Image Source="/Make3D;component/Images/Buttons/Torus.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Torus.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cap" ToolTip="Add a cap object">
-                <Image Source="/Make3D;component/Images/Buttons/Cap.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Cap.png" />
             </Button>
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Polygon" ToolTip="Add a polygon object">
-                <Image Source="/Make3D;component/Images/Buttons/Polygon.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Polygon.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Tube" ToolTip="Add a tube object">
-                <Image Source="/Make3D;component/Images/Buttons/Tube.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
             </Button>
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RightAngle" ToolTip="Add a right angle object">
-                <Image Source="/Make3D;component/Images/Buttons/RightAngle.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/RightAngle.png" />
             </Button>
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pointy" ToolTip="Add a  pointy object">
-                <Image Source="/Make3D;component/Images/Buttons/Pointy.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Pointy.png" />
             </Button>
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid2" ToolTip="Add a pyramid with a triangular base">
-                <Image Source="/Make3D;component/Images/Buttons/Pyramid2.png" />
+                <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png" />
             </Button>
         </UniformGrid>
     </Grid>

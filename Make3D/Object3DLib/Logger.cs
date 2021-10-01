@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Make3D.Object3DLib
+namespace Barnacle.Object3DLib
 {
     public class Logger
     {

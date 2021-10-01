@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Object3DLib
+namespace Barnacle.Object3DLib
 {
     public class IcoSphereCreator
     {

@@ -2,7 +2,7 @@
 
 using System.Windows;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     public class BezierLine
     {

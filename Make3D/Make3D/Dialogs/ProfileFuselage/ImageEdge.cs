@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     internal class ImageEdge
     {

@@ -1,4 +1,4 @@
-﻿using Make3D.Dialogs.WireFrame;
+﻿using Barnacle.Dialogs.WireFrame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Dialogs.BezierSurface
+namespace Barnacle.Dialogs.BezierSurface
 {
     internal class ControlPointManager
     {

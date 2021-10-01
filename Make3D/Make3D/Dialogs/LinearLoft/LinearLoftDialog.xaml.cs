@@ -1,5 +1,5 @@
-﻿using Make3D.EditorParameterLib;
-using Make3D.Models;
+﻿using Barnacle.EditorParameterLib;
+using Barnacle.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,10 +10,10 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
-    /// Interaction logic for Make3D.DialogsDialog.xaml
+    /// Interaction logic for Barnacle.DialogsDialog.xaml
     /// </summary>
     public partial class LinearLoftDialog : BaseModellerDialog, INotifyPropertyChanged
 
@@ -329,11 +329,10 @@ namespace Make3D.Dialogs
             {
                 double divs = 20;
                 double ds = 1 / divs;
-                for(double d = 0; d <= 1.0;  d+= ds)
+                for (double d = 0; d <= 1.0; d += ds)
                 {
                     line.Add(new Point(0.5, d));
                 }
-
             }
             UpdateCameraPos();
             UpdateDisplay();

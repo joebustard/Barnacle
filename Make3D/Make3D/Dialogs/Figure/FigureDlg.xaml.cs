@@ -1,7 +1,7 @@
-﻿using Make3D.Dialogs.Figure;
-using Make3D.Models;
-using Make3D.Models.Adorners;
-using Make3D.Object3DLib;
+﻿using Barnacle.Dialogs.Figure;
+using Barnacle.Models;
+using Barnacle.Models.Adorners;
+using Barnacle.Object3DLib;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for Blank.xaml

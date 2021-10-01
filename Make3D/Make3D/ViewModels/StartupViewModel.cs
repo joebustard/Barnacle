@@ -1,4 +1,4 @@
-﻿using Make3D.Models.Mru;
+﻿using Barnacle.Models.Mru;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class StartupViewModel : BaseViewModel, INotifyPropertyChanged
     {

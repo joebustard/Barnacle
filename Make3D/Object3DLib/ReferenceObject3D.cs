@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
-namespace Make3D.Object3DLib
+namespace Barnacle.Object3DLib
 {
     public class ReferenceObject3D : Object3D
     {

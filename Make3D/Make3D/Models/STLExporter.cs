@@ -1,5 +1,5 @@
 ﻿using CSGLib;
-using Make3D.Object3DLib;
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public class STLExporter
     {

@@ -1,10 +1,10 @@
-﻿using Make3D.Models;
+﻿using Barnacle.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Media;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class SettingsViewModel : BaseViewModel, INotifyPropertyChanged
     {

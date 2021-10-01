@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public class ModelScales
     {

@@ -1,5 +1,5 @@
-﻿using Make3D.Models;
-using Make3D.Object3DLib;
+﻿using Barnacle.Models;
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models.Adorners
+namespace Barnacle.Models.Adorners
 {
     public class SizeAdorner : Adorner
     {

@@ -1,5 +1,5 @@
-﻿using Make3D.LineLib;
-using Make3D.Models;
+﻿using Barnacle.LineLib;
+using Barnacle.Models;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 using Image = System.Windows.Controls.Image;
 using Rectangle = System.Windows.Shapes.Rectangle;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     public partial class ScribbleDlg : BaseModellerDialog
     {

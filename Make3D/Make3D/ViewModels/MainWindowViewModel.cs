@@ -1,8 +1,8 @@
-﻿using Make3D.Views;
+﻿using Barnacle.Views;
 using System.ComponentModel;
 using System.Windows.Controls;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class MainWindowViewModel : BaseViewModel, INotifyPropertyChanged
     {

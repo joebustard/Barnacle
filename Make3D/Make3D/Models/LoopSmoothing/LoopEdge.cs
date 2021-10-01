@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Models.LoopSmoothing
+namespace Barnacle.Models.LoopSmoothing
 {
     class LoopEdge
     {

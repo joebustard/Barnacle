@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Make3D
+namespace Barnacle
 {
     public static class undoer
     {

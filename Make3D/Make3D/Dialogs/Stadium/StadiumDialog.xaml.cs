@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media.Media3D;
 using Point = System.Windows.Point;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for Stadium.xaml

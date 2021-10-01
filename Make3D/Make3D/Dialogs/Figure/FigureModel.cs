@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Dialogs.Figure
+namespace Barnacle.Dialogs.Figure
 {
     public class FigureModel
     {

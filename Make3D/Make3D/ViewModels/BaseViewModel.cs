@@ -1,5 +1,5 @@
-﻿using Make3D.Models;
-using Make3D.Models.Mru;
+﻿using Barnacle.Models;
+using Barnacle.Models.Mru;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -7,7 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using VisualSolutionExplorer;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class BaseViewModel : INotifyPropertyChanged
     {

@@ -1,6 +1,6 @@
-﻿using Make3D.EditorParameterLib;
-using Make3D.Models;
-using Make3D.Object3DLib;
+﻿using Barnacle.EditorParameterLib;
+using Barnacle.Models;
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     public class BaseModellerDialog : Window, INotifyPropertyChanged
     {

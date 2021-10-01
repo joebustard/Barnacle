@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     public class PolyPoint : INotifyPropertyChanged
     {

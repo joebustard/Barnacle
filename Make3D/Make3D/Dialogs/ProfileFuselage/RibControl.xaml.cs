@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using System.Xml;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for RibControl.xaml

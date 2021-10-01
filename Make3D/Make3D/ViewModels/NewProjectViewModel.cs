@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using TemplateLib;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class NewProjectViewModel : BaseViewModel, INotifyPropertyChanged
     {

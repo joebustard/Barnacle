@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Object3DLib
+namespace Barnacle.Object3DLib
 {
     public class Scale3D
     {

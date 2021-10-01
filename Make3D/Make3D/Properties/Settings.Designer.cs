@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Make3D.Properties {
+namespace Barnacle.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

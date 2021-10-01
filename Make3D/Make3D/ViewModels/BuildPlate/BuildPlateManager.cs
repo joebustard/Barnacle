@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Xml;
 
-namespace Make3D.ViewModel.BuildPlates
+namespace Barnacle.ViewModel.BuildPlates
 {
     internal class BuildPlateManager : INotifyPropertyChanged
     {

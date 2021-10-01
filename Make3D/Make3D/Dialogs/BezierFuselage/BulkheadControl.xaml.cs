@@ -6,9 +6,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
-using Make3D.LineLib;
+using Barnacle.LineLib;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for BulkheadControl.xaml

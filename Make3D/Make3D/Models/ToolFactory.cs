@@ -1,6 +1,6 @@
-﻿using Make3D.Dialogs;
+﻿using Barnacle.Dialogs;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public class ToolFactory
     {

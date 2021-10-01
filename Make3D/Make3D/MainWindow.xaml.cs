@@ -1,10 +1,10 @@
-﻿using Make3D.Models;
+﻿using Barnacle.Models;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Make3D
+namespace Barnacle
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

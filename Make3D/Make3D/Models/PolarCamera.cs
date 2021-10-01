@@ -1,10 +1,10 @@
-﻿using Make3D.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public class PolarCamera
     {

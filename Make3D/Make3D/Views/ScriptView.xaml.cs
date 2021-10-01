@@ -1,4 +1,4 @@
-﻿using Make3D.ViewModels;
+﻿using Barnacle.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 
-namespace Make3D.Views
+namespace Barnacle.Views
 {
     /// <summary>
     /// Interaction logic for ScriptView.xaml

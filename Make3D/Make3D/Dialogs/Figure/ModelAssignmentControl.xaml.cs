@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Make3D.Dialogs.Figure
+namespace Barnacle.Dialogs.Figure
 {
     /// <summary>
     /// Interaction logic for ModelAssignmentControl.xaml

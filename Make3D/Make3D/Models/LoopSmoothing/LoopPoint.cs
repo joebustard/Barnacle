@@ -2,7 +2,7 @@
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models.LoopSmoothing
+namespace Barnacle.Models.LoopSmoothing
 {
     internal class LoopPoint
     {

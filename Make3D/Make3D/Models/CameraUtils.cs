@@ -8,7 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Controls;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public static class CameraUtils
     {

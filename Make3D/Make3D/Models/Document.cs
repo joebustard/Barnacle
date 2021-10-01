@@ -1,4 +1,4 @@
-﻿using Make3D.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +11,7 @@ using System.Windows.Media.Media3D;
 using System.Xml;
 using VisualSolutionExplorer;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     internal class Document : INotifyPropertyChanged
     {

@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Make3D.Views
+namespace Barnacle.Views
 {
     /// <summary>
     /// Interaction logic for StartupView.xaml

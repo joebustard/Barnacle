@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Make3D.Views
+namespace Barnacle.Views
 {
     /// <summary>
     /// Interaction logic for MultiPasteDlg.xaml

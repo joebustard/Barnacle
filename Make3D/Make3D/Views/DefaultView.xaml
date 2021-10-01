@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="Make3D.Views.DefaultView"
+﻿<UserControl x:Class="Barnacle.Views.DefaultView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 
-             xmlns:Views="clr-namespace:Make3D.Views"
-          xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
-             xmlns:local="clr-namespace:Make3D.Views"
+             xmlns:Views="clr-namespace:Barnacle.Views"
+          xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
+             xmlns:local="clr-namespace:Barnacle.Views"
              xmlns:Custom="clr-namespace:System.Windows.Controls.Ribbon;assembly=System.Windows.Controls.Ribbon"
              xmlns:vsx1="clr-namespace:VisualSolutionExplorer;assembly=VisualSolutionExplorerLib"
              mc:Ignorable="d"
@@ -82,122 +82,122 @@
             </Custom:Ribbon.ApplicationMenu>
 
             <Custom:RibbonTab Name="HomeTab1" Header="Home">
-                <Custom:RibbonGroup Name="ClipboardGroup" Header="Clipboard" LargeImageSource="/Make3D;component/Images/Buttons/clipboard.png">
-                    <Custom:RibbonButton x:Name="CopyButton" Label="Cut" Command="{Binding CutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
-                    <Custom:RibbonButton x:Name="CutButton" Label="Copy" Command="{Binding CopyCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
-                    <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/paste.png" ToolTip="Paste at the right of the existing bounds" />
+                <Custom:RibbonGroup Name="ClipboardGroup" Header="Clipboard" LargeImageSource="/Barnacle;component/Images/Buttons/clipboard.png">
+                    <Custom:RibbonButton x:Name="CopyButton" Label="Cut" Command="{Binding CutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" />
+                    <Custom:RibbonButton x:Name="CutButton" Label="Copy" Command="{Binding CopyCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
+                    <Custom:RibbonButton x:Name="PasteButton" Label="Paste" Command="{Binding PasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/paste.png" ToolTip="Paste at the right of the existing bounds" />
 
-                    <Custom:RibbonButton x:Name="PasteAtButton" Label="Paste At" Command="{Binding PasteAtCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/pasteat.png" ToolTip="Paste at the floor marker if its present" />
-                    <Custom:RibbonButton x:Name="PasteMultiButton" Label="Multi Paste" Command="{Binding MultiPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/pastemulti.png" />
+                    <Custom:RibbonButton x:Name="PasteAtButton" Label="Paste At" Command="{Binding PasteAtCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/pasteat.png" ToolTip="Paste at the floor marker if its present" />
+                    <Custom:RibbonButton x:Name="PasteMultiButton" Label="Multi Paste" Command="{Binding MultiPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/pastemulti.png" />
 
-                    <Custom:RibbonButton x:Name="PasteCircularButton" Label="Circular Paste" Command="{Binding CircularPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/pastecircle.png" />
+                    <Custom:RibbonButton x:Name="PasteCircularButton" Label="Circular Paste" Command="{Binding CircularPasteCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/pastecircle.png" />
                 </Custom:RibbonGroup>
 
-                <Custom:RibbonGroup Name="SelectionGroup" Header="Selection" LargeImageSource="/Make3D;component/Images/Buttons/SelectAll.png">
+                <Custom:RibbonGroup Name="SelectionGroup" Header="Selection" LargeImageSource="/Barnacle;component/Images/Buttons/SelectAll.png">
 
-                    <Custom:RibbonButton x:Name="SelectFirstButton" Label="First" Command="{Binding SelectCommand}" CommandParameter="First" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectFirst.png" ToolTip="Select First" />
+                    <Custom:RibbonButton x:Name="SelectFirstButton" Label="First" Command="{Binding SelectCommand}" CommandParameter="First" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SelectFirst.png" ToolTip="Select First" />
 
-                    <Custom:RibbonButton x:Name="SelectPrevButton" Label="Previous" Command="{Binding SelectCommand}" CommandParameter="Previous" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectPrevious.png" ToolTip="Select Previous" />
+                    <Custom:RibbonButton x:Name="SelectPrevButton" Label="Previous" Command="{Binding SelectCommand}" CommandParameter="Previous" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SelectPrevious.png" ToolTip="Select Previous" />
 
-                    <Custom:RibbonButton x:Name="SelectNextButton" Label="Next" Command="{Binding SelectCommand}" CommandParameter="Next" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectNext.png" ToolTip="Select Next" />
+                    <Custom:RibbonButton x:Name="SelectNextButton" Label="Next" Command="{Binding SelectCommand}" CommandParameter="Next" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SelectNext.png" ToolTip="Select Next" />
 
-                    <Custom:RibbonButton x:Name="SelectLastButton" Label="Last" Command="{Binding SelectCommand}" CommandParameter="Last" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectLast.png" ToolTip="Select Last" />
+                    <Custom:RibbonButton x:Name="SelectLastButton" Label="Last" Command="{Binding SelectCommand}" CommandParameter="Last" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SelectLast.png" ToolTip="Select Last" />
 
-                    <Custom:RibbonButton x:Name="SelectAllButton" Label="All" Command="{Binding SelectCommand}" CommandParameter="All" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectAll.png" ToolTip="Select All" />
-                    <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SelectClear.png" ToolTip="Clear selection" />
+                    <Custom:RibbonButton x:Name="SelectAllButton" Label="All" Command="{Binding SelectCommand}" CommandParameter="All" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png" ToolTip="Select All" />
+                    <Custom:RibbonButton x:Name="SelectNoneButton" Label="Clear" Command="{Binding SelectCommand}" CommandParameter="Clear" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png" ToolTip="Clear selection" />
                     <ComboBox x:Name="SelectObjectNames"  MinWidth="100" HorizontalAlignment="Stretch" VerticalAlignment="Top"  ToolTip="Select an object by its name" ItemsSource="{Binding ObjectNames}" SelectedItem="{Binding SelectedObjectName}" />
                 </Custom:RibbonGroup>
 
-                <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Make3D;component/Images/Buttons/Project.png">
-                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/settings.png" />
-                    <Custom:RibbonMenuButton x:Name="Import" Label="Import"  SmallImageSource="/Make3D;component/Images/Buttons/Import.png">
-                        <Custom:RibbonButton x:Name="ImportOBJ" Label="OBJ" Command="{Binding ImportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" />
-                        <Custom:RibbonButton x:Name="ImportSTL" Label="STL" Command="{Binding ImportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Import the object in a single STL into the current file." />
-                        <Custom:RibbonButton x:Name="ImportMultiSTL" Label="Multiple STLs" Command="{Binding ImportCommand}" CommandParameter="MultiSTL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Import all the STLs from a folder into their own project files." />
+                <Custom:RibbonGroup Name="ProjectGroup" Header="Project" LargeImageSource="/Barnacle;component/Images/Buttons/Project.png">
+                    <Custom:RibbonButton x:Name="ProjectSettings" Label="Settings" Command="{Binding SettingsCommand}" CommandParameter="Settings" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/settings.png" />
+                    <Custom:RibbonMenuButton x:Name="Import" Label="Import"  SmallImageSource="/Barnacle;component/Images/Buttons/Import.png">
+                        <Custom:RibbonButton x:Name="ImportOBJ" Label="OBJ" Command="{Binding ImportCommand}" CommandParameter="OBJ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" />
+                        <Custom:RibbonButton x:Name="ImportSTL" Label="STL" Command="{Binding ImportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Import the object in a single STL into the current file." />
+                        <Custom:RibbonButton x:Name="ImportMultiSTL" Label="Multiple STLs" Command="{Binding ImportCommand}" CommandParameter="MultiSTL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Import all the STLs from a folder into their own project files." />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="Export" Label="Export"  SmallImageSource="/Make3D;component/Images/Buttons/export.png">
-                        <Custom:RibbonButton x:Name="AllModels" Label="Project" Command="{Binding ExportCommand}" CommandParameter="AllModels" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export all models from all files in the project" />
-                        <Custom:RibbonButton x:Name="STL" Label="Model" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export the contents of the current file into an export file" />
-                        <Custom:RibbonButton x:Name="STLParts" Label="Separate Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export each part from the current file into its own separate export file" />
+                    <Custom:RibbonMenuButton x:Name="Export" Label="Export"  SmallImageSource="/Barnacle;component/Images/Buttons/export.png">
+                        <Custom:RibbonButton x:Name="AllModels" Label="Project" Command="{Binding ExportCommand}" CommandParameter="AllModels" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export all models from all files in the project" />
+                        <Custom:RibbonButton x:Name="STL" Label="Model" Command="{Binding ExportCommand}" CommandParameter="STL" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export the contents of the current file into an export file" />
+                        <Custom:RibbonButton x:Name="STLParts" Label="Separate Parts" Command="{Binding ExportPartsCommand}" CommandParameter="STLParts" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export each part from the current file into its own separate export file" />
                         <Custom:RibbonSeparator />
-                        <Custom:RibbonButton x:Name="Clean" Label="Clean" Command="{Binding ExportCommand}" CommandParameter="Clean" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/clean.png" ToolTip="Delete all exported stl and printer files" />
+                        <Custom:RibbonButton x:Name="Clean" Label="Clean" Command="{Binding ExportCommand}" CommandParameter="Clean" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/clean.png" ToolTip="Delete all exported stl and printer files" />
                     </Custom:RibbonMenuButton>
                     <!--
                     <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
-                        <Custom:RibbonButton x:Name="Slicer" Label="Sl3cer" Command="{Binding SliceCommand}" CommandParameter="SliceAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice ( and copy to sdcard if present)" />
+                        <Custom:RibbonButton x:Name="Slicer" Label="Sl3cer" Command="{Binding SliceCommand}" CommandParameter="SliceAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice ( and copy to sdcard if present)" />
                     </Custom:RibbonMenuButton>
                     -->
                 </Custom:RibbonGroup>
-                <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Make3D;component/Images/Buttons/objects.png">
-                    <Custom:RibbonMenuButton x:Name="Flip" Label="Flip"  SmallImageSource="/Make3D;component/Images/Buttons/Flip.png">
-                        <Custom:RibbonButton x:Name="HorizontalFlip" Label="Horizontal" Command="{Binding FlipCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Flip objects vertices horizontally (left to right)." />
-                        <Custom:RibbonButton x:Name="VerticalFlip" Label="Vertical" Command="{Binding FlipCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Flip objects vertices vertically (top to bottom)." />
-                        <Custom:RibbonButton x:Name="DistalFlip" Label="Distal" Command="{Binding FlipCommand}" CommandParameter="Distal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Flip Flip objects vertices distally {back to front)." />
-                        <Custom:RibbonButton x:Name="InsideFlip" Label="Inside out" Command="{Binding FlipCommand}" CommandParameter="Inside" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Flip inside out." />
+                <Custom:RibbonGroup Name="DataGroup" Header="Objects" LargeImageSource="/Barnacle;component/Images/Buttons/objects.png">
+                    <Custom:RibbonMenuButton x:Name="Flip" Label="Flip"  SmallImageSource="/Barnacle;component/Images/Buttons/Flip.png">
+                        <Custom:RibbonButton x:Name="HorizontalFlip" Label="Horizontal" Command="{Binding FlipCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Flip objects vertices horizontally (left to right)." />
+                        <Custom:RibbonButton x:Name="VerticalFlip" Label="Vertical" Command="{Binding FlipCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Flip objects vertices vertically (top to bottom)." />
+                        <Custom:RibbonButton x:Name="DistalFlip" Label="Distal" Command="{Binding FlipCommand}" CommandParameter="Distal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Flip Flip objects vertices distally {back to front)." />
+                        <Custom:RibbonButton x:Name="InsideFlip" Label="Inside out" Command="{Binding FlipCommand}" CommandParameter="Inside" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Flip inside out." />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="Alignment" Label="Align"  SmallImageSource="/Make3D;component/Images/Buttons/Align.png">
-                        <Custom:RibbonButton x:Name="LeftAlignment" Label="Left" Command="{Binding AlignCommand}" CommandParameter="Left" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Align objects so their left edges match the first selected." />
-                        <Custom:RibbonButton x:Name="RightAlignment" Label="Right" Command="{Binding AlignCommand}" CommandParameter="Right" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so their right edges match the first selected." />
-                        <Custom:RibbonButton x:Name="TopAlignment" Label="Top" Command="{Binding AlignCommand}" CommandParameter="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/cut.png" ToolTip="Align objects so their top edges match the first selected." />
-                        <Custom:RibbonButton x:Name="BottomAlignment" Label="Bottom" Command="{Binding AlignCommand}" CommandParameter="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so their bottom edges match the first selected." />
+                    <Custom:RibbonMenuButton x:Name="Alignment" Label="Align"  SmallImageSource="/Barnacle;component/Images/Buttons/Align.png">
+                        <Custom:RibbonButton x:Name="LeftAlignment" Label="Left" Command="{Binding AlignCommand}" CommandParameter="Left" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Align objects so their left edges match the first selected." />
+                        <Custom:RibbonButton x:Name="RightAlignment" Label="Right" Command="{Binding AlignCommand}" CommandParameter="Right" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so their right edges match the first selected." />
+                        <Custom:RibbonButton x:Name="TopAlignment" Label="Top" Command="{Binding AlignCommand}" CommandParameter="Top" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Align objects so their top edges match the first selected." />
+                        <Custom:RibbonButton x:Name="BottomAlignment" Label="Bottom" Command="{Binding AlignCommand}" CommandParameter="Bottom" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so their bottom edges match the first selected." />
 
-                        <Custom:RibbonButton x:Name="FrontAlignment" Label="Front" Command="{Binding AlignCommand}" CommandParameter="Front" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so their front edges match the first selected." />
-                        <Custom:RibbonButton x:Name="BackAlignment" Label="Back" Command="{Binding AlignCommand}" CommandParameter="Back" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so their back edges match the first selected." />
+                        <Custom:RibbonButton x:Name="FrontAlignment" Label="Front" Command="{Binding AlignCommand}" CommandParameter="Front" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so their front edges match the first selected." />
+                        <Custom:RibbonButton x:Name="BackAlignment" Label="Back" Command="{Binding AlignCommand}" CommandParameter="Back" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so their back edges match the first selected." />
 
-                        <Custom:RibbonButton x:Name="FloorAlignment" Label="Floor" Command="{Binding AlignCommand}" CommandParameter="Floor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all on the floor." />
-                        <Custom:RibbonButton x:Name="CentreAlignment" Label="Center" Command="{Binding AlignCommand}" CommandParameter="Centre" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered on the first selected." />
-                        <Custom:RibbonButton x:Name="MarkerAlignment" Label="Marker" Command="{Binding MarkerCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Move items to the marker on the floor" />
+                        <Custom:RibbonButton x:Name="FloorAlignment" Label="Floor" Command="{Binding AlignCommand}" CommandParameter="Floor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all on the floor." />
+                        <Custom:RibbonButton x:Name="CentreAlignment" Label="Center" Command="{Binding AlignCommand}" CommandParameter="Centre" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered on the first selected." />
+                        <Custom:RibbonButton x:Name="MarkerAlignment" Label="Marker" Command="{Binding MarkerCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Move items to the marker on the floor" />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="Stack" Label="Stack"  SmallImageSource="/Make3D;component/Images/Buttons/Stack.png">
-                        <Custom:RibbonButton x:Name="StackLeftAlignment" Label="Stack Left" Command="{Binding AlignCommand}" CommandParameter="StackLeft" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the left of the first selected." />
-                        <Custom:RibbonButton x:Name="StackRightAlignment" Label="Stack Right" Command="{Binding AlignCommand}" CommandParameter="StackRight" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the right of the first selected." />
+                    <Custom:RibbonMenuButton x:Name="Stack" Label="Stack"  SmallImageSource="/Barnacle;component/Images/Buttons/Stack.png">
+                        <Custom:RibbonButton x:Name="StackLeftAlignment" Label="Stack Left" Command="{Binding AlignCommand}" CommandParameter="StackLeft" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the left of the first selected." />
+                        <Custom:RibbonButton x:Name="StackRightAlignment" Label="Stack Right" Command="{Binding AlignCommand}" CommandParameter="StackRight" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the right of the first selected." />
 
-                        <Custom:RibbonButton x:Name="StackVAlignment" Label="Stack Above" Command="{Binding AlignCommand}" CommandParameter="StackY" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked above the first selected." />
-                        <Custom:RibbonButton x:Name="StackBelowAlignment" Label="Stack Below" Command="{Binding AlignCommand}" CommandParameter="StackBottom" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked below the first selected." />
-                        <Custom:RibbonButton x:Name="StackZAlignment" Label="Stack In Front" Command="{Binding AlignCommand}" CommandParameter="StackZ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the front of the first selected." />
+                        <Custom:RibbonButton x:Name="StackVAlignment" Label="Stack Above" Command="{Binding AlignCommand}" CommandParameter="StackY" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked above the first selected." />
+                        <Custom:RibbonButton x:Name="StackBelowAlignment" Label="Stack Below" Command="{Binding AlignCommand}" CommandParameter="StackBottom" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked below the first selected." />
+                        <Custom:RibbonButton x:Name="StackZAlignment" Label="Stack In Front" Command="{Binding AlignCommand}" CommandParameter="StackZ" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked To the front of the first selected." />
 
-                        <Custom:RibbonButton x:Name="StackBehindAlignment" Label="Stack Behind" Command="{Binding AlignCommand}" CommandParameter="StackBehind" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked to the rear of the first selected." />
+                        <Custom:RibbonButton x:Name="StackBehindAlignment" Label="Stack Behind" Command="{Binding AlignCommand}" CommandParameter="StackBehind" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Align objects so they are all centered and stacked to the rear of the first selected." />
                     </Custom:RibbonMenuButton>
 
-                    <Custom:RibbonMenuButton x:Name="Distibution" Label="Distribution" SmallImageSource="/Make3D;component/Images/Buttons/Distribution.png">
-                        <Custom:RibbonButton x:Name="Optimum" Label="Optimum" Command="{Binding DistributeCommand}" CommandParameter="Optimum" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute all items to minimise printing footprint" />
-                        <Custom:RibbonButton x:Name="HEvenAlignment" Label="Horizontal Selection (X)" Command="{Binding DistributeCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the left most and right most" />
-                        <Custom:RibbonButton x:Name="VEvenAlignment" Label="Vertical Selection (Y)" Command="{Binding DistributeCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the highest and lowest" />
-                        <Custom:RibbonButton x:Name="DEvenAlignment" Label="Distal Selection (Z)" Command="{Binding DistributeCommand}" CommandParameter="Distal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the back most and front most" />
+                    <Custom:RibbonMenuButton x:Name="Distibution" Label="Distribution" SmallImageSource="/Barnacle;component/Images/Buttons/Distribution.png">
+                        <Custom:RibbonButton x:Name="Optimum" Label="Optimum" Command="{Binding DistributeCommand}" CommandParameter="Optimum" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Distribute all items to minimise printing footprint" />
+                        <Custom:RibbonButton x:Name="HEvenAlignment" Label="Horizontal Selection (X)" Command="{Binding DistributeCommand}" CommandParameter="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the left most and right most" />
+                        <Custom:RibbonButton x:Name="VEvenAlignment" Label="Vertical Selection (Y)" Command="{Binding DistributeCommand}" CommandParameter="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the highest and lowest" />
+                        <Custom:RibbonButton x:Name="DEvenAlignment" Label="Distal Selection (Z)" Command="{Binding DistributeCommand}" CommandParameter="Distal" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Distribute selection evenly between the back most and front most" />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="Size" Label="Size" SmallImageSource="/Make3D;component/Images/Buttons/Size.png">
-                        <Custom:RibbonButton x:Name="SameLength" Label="Same Length (X)" Command="{Binding SizeCommand}" CommandParameter="SameLength" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same length as the first selected one" />
-                        <Custom:RibbonButton x:Name="SameHeight" Label="Same Height (Y)" Command="{Binding SizeCommand}" CommandParameter="SameHeight" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same height as the first selected one" />
-                        <Custom:RibbonButton x:Name="SameWidth" Label="Same Width (Z)" Command="{Binding SizeCommand}" CommandParameter="SameWidth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same width as the first selected one" />
-                        <Custom:RibbonButton x:Name="SameBoth" Label="All Same" Command="{Binding SizeCommand}" CommandParameter="SameAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same size as the first selected one" />
+                    <Custom:RibbonMenuButton x:Name="Size" Label="Size" SmallImageSource="/Barnacle;component/Images/Buttons/Size.png">
+                        <Custom:RibbonButton x:Name="SameLength" Label="Same Length (X)" Command="{Binding SizeCommand}" CommandParameter="SameLength" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same length as the first selected one" />
+                        <Custom:RibbonButton x:Name="SameHeight" Label="Same Height (Y)" Command="{Binding SizeCommand}" CommandParameter="SameHeight" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same height as the first selected one" />
+                        <Custom:RibbonButton x:Name="SameWidth" Label="Same Width (Z)" Command="{Binding SizeCommand}" CommandParameter="SameWidth" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same width as the first selected one" />
+                        <Custom:RibbonButton x:Name="SameBoth" Label="All Same" Command="{Binding SizeCommand}" CommandParameter="SameAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Make all selected objects the same size as the first selected one" />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton x:Name="Group" Label="Group" SmallImageSource="/Make3D;component/Images/Buttons/group.png">
-                        <Custom:RibbonButton x:Name="GroupUnion" Label="Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                    <Custom:RibbonMenuButton x:Name="Group" Label="Group" SmallImageSource="/Barnacle;component/Images/Buttons/group.png">
+                        <Custom:RibbonButton x:Name="GroupUnion" Label="Union" Command="{Binding GroupCommand}" CommandParameter="GroupUnion" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
 
-                        <Custom:RibbonButton x:Name="GroupDifference" Label="Difference" Command="{Binding GroupCommand}" CommandParameter="GroupDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupDifference" Label="Difference" Command="{Binding GroupCommand}" CommandParameter="GroupDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
 
-                        <Custom:RibbonButton x:Name="GroupReverseDifference" Label="Reverse Difference" Command="{Binding GroupCommand}" CommandParameter="GroupReverseDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupReverseDifference" Label="Reverse Difference" Command="{Binding GroupCommand}" CommandParameter="GroupReverseDifference" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
 
-                        <Custom:RibbonButton x:Name="GroupIntersection" Label="Intersection" Command="{Binding GroupCommand}" CommandParameter="GroupIntersection" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
-                        <Custom:RibbonButton x:Name="GroupCutOut" Label="Cut Out" Command="{Binding GroupCommand}" CommandParameter="GroupCut" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Cut the second part from the first but keep both." />
+                        <Custom:RibbonButton x:Name="GroupIntersection" Label="Intersection" Command="{Binding GroupCommand}" CommandParameter="GroupIntersection" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupCutOut" Label="Cut Out" Command="{Binding GroupCommand}" CommandParameter="GroupCut" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Cut the second part from the first but keep both." />
                         <Custom:RibbonSeparator />
-                        <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="UngroupSelected" Label="Ungroup" Command="{Binding GroupCommand}" CommandParameter="Ungroup" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
                         <!--
                         <Custom:RibbonSeparator />
 
-                        <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
                         -->
                         <Custom:RibbonSeparator />
-                        <Custom:RibbonButton x:Name="GroupToMesh" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" />
+                        <Custom:RibbonButton x:Name="GroupToMesh" Label="Group To Mesh" Command="{Binding GroupCommand}" CommandParameter="Mesh" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
                     </Custom:RibbonMenuButton>
 
-                    <Custom:RibbonMenuButton x:Name="Split" Label="Split"  SmallImageSource="/Make3D;component/Images/Buttons/split.png">
-                        <Custom:RibbonButton x:Name="SplitX" Label="X" Command="{Binding SplitCommand}" CommandParameter="X" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SplitX.png" ToolTip="Split selected object in half along X axis" />
-                        <Custom:RibbonButton x:Name="SplitY" Label="Y" Command="{Binding SplitCommand}" CommandParameter="Y" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SplitY.png" ToolTip="Split selected object in half along Y axis" />
-                        <Custom:RibbonButton x:Name="SplitZ" Label="Z" Command="{Binding SplitCommand}" CommandParameter="Z" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/SplitZ.png" ToolTip="Split selected object in half along Z axis" />
+                    <Custom:RibbonMenuButton x:Name="Split" Label="Split"  SmallImageSource="/Barnacle;component/Images/Buttons/split.png">
+                        <Custom:RibbonButton x:Name="SplitX" Label="X" Command="{Binding SplitCommand}" CommandParameter="X" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SplitX.png" ToolTip="Split selected object in half along X axis" />
+                        <Custom:RibbonButton x:Name="SplitY" Label="Y" Command="{Binding SplitCommand}" CommandParameter="Y" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SplitY.png" ToolTip="Split selected object in half along Y axis" />
+                        <Custom:RibbonButton x:Name="SplitZ" Label="Z" Command="{Binding SplitCommand}" CommandParameter="Z" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/SplitZ.png" ToolTip="Split selected object in half along Z axis" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
-                <Custom:RibbonGroup Name="ToolGroup" Header="Shapes" LargeImageSource="/Make3D;component/Images/Buttons/Bolt.png">
+                <Custom:RibbonGroup Name="ToolGroup" Header="Shapes" LargeImageSource="/Barnacle;component/Images/Buttons/Bolt.png">
                     <Custom:RibbonMenuButton x:Name="ParametricTools" Label="Parametric" ItemContainerStyle="{StaticResource ToolMenuItemStyle}" ItemsSource="{Binding ParametricToolsToShow}">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton x:Name="LoftTools" Label="Lofted"
@@ -211,34 +211,34 @@
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
 
-                <Custom:RibbonGroup Name="MeshGroup" Header="Mesh" LargeImageSource="/Make3D;component/Images/Buttons/BigGear.png">
+                <Custom:RibbonGroup Name="MeshGroup" Header="Mesh" LargeImageSource="/Barnacle;component/Images/Buttons/BigGear.png">
                     <Custom:RibbonMenuButton Label="Edit">
-                        <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                        <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
-                        <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Loop smoothing" />
+                        <Custom:RibbonButton x:Name="MeshEditButton" Label="Edit Mesh" Command="{Binding MeshEditCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                        <Custom:RibbonButton x:Name="MeshHullButton" Label="Hull" Command="{Binding MeshHullCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" ToolTip="Replace the object by its convex hull" />
+                        <Custom:RibbonButton x:Name="MeshSmoothButton" Label="Smooth" Command="{Binding MeshSmoothCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Loop smoothing" />
                         <!--
-                        <Custom:RibbonButton x:Name="MeshRecenterButton" Label="Re-Origin" Command="{Binding MeshReoriginCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
+                        <Custom:RibbonButton x:Name="MeshRecenterButton" Label="Re-Origin" Command="{Binding MeshReoriginCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
                     -->
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
-                        <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
+                        <Custom:RibbonButton x:Name="DecimateButton" Label="Decimate" Command="{Binding SizeCommand}" CommandParameter="Decimate" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Reduce the number of faces in the selected object" />
 
-                        <Custom:RibbonButton x:Name="ManifoldButton" Label="Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
+                        <Custom:RibbonButton x:Name="ManifoldButton" Label="Manifold" Command="{Binding ManifoldCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Test if the selected object is manifold" />
 
-                        <Custom:RibbonButton x:Name="DupVertexButton" Label="Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
+                        <Custom:RibbonButton x:Name="DupVertexButton" Label="Duplicate Vertex" Command="{Binding DupVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Remove Duplicate Vertex" />
 
-                        <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Rem Unref Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
+                        <Custom:RibbonButton x:Name="UnrefVertexButton" Label="Rem Unref Vertex" Command="{Binding UnrefVertexCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Remove Unreferenced Vertices" />
 
-                        <Custom:RibbonButton x:Name="SetZeroButton" Label="Reset Origin" Command="{Binding ResetOriginCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/copy.png" ToolTip="Set or Reset the origin point of a selected mesh" />
+                        <Custom:RibbonButton x:Name="SetZeroButton" Label="Reset Origin" Command="{Binding ResetOriginCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" ToolTip="Set or Reset the origin point of a selected mesh" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
 
             <Custom:RibbonTab Name="ViewTab1" Header="View">
                 <Custom:RibbonGroup Name="ZoomGroup" Header="Zoom">
-                    <Custom:RibbonButton x:Name="ZoomOutButton" Label="Zoom Out" Command="{Binding ZoomOutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="ZoomInButton" Label="Zoom In" Command="{Binding ZoomInCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="Zoom100Button" Label="100%" Command="{Binding Zoom100Command}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ZoomOutButton" Label="Zoom Out" Command="{Binding ZoomOutCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ZoomInButton" Label="Zoom In" Command="{Binding ZoomInCommand}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="Zoom100Button" Label="100%" Command="{Binding Zoom100Command}" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
 
                 <Custom:RibbonGroup Name="ShowGroup" Header="Show">
@@ -250,12 +250,12 @@
                 </Custom:RibbonGroup>
                 <!---
                 <Custom:RibbonGroup Name="ViewGroup" Header="View">
-                    <Custom:RibbonButton x:Name="EditorButton" Label="Editor" Command="{Binding ViewCommand}" CommandParameter="Editor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="ScriptButton" Label="Script" Command="{Binding ViewCommand}" CommandParameter="Script" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="EditorButton" Label="Editor" Command="{Binding ViewCommand}" CommandParameter="Editor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ScriptButton" Label="Script" Command="{Binding ViewCommand}" CommandParameter="Script" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
                 -->
-                <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Make3D;component/Images/Buttons/question1.png">
-                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Make3D;component/Images/Buttons/question1.png" />
+                <Custom:RibbonGroup Name="HelpGroup" Header="Help" LargeImageSource="/Barnacle;component/Images/Buttons/question1.png">
+                    <Custom:RibbonButton x:Name="AboutButton" Label="About" Command="{Binding ViewCommand}" CommandParameter="About" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
         </Custom:Ribbon>

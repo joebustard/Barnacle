@@ -1,9 +1,9 @@
-﻿<local:BaseModellerDialog x:Class="Make3D.Dialogs.MeshEditorDlg"
+﻿<local:BaseModellerDialog x:Class="Barnacle.Dialogs.MeshEditorDlg"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Make3D.Dialogs"
+        xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
         Title="Mesh Editor" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" MouseDown="Grid_MouseDown" MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" KeyDown="MeshGrid_KeyDown" Background="{StaticResource WindowBackBrush }">
     <Grid x:Name="MeshGrid" VerticalAlignment="Stretch" KeyDown="MeshGrid_KeyDown">

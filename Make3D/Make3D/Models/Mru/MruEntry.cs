@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Models.Mru
+namespace Barnacle.Models.Mru
 {
     public class MruEntry
     {

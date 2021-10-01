@@ -1,5 +1,5 @@
-﻿using Make3D.Dialogs;
-using Make3D.ViewModels;
+﻿using Barnacle.Dialogs;
+using Barnacle.ViewModels;
 using Microsoft.Win32;
 using System;
 using System.IO;
@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using VisualSolutionExplorer;
 
-namespace Make3D.Views
+namespace Barnacle.Views
 {
     /// <summary>
     /// Interaction logic for DefaultView.xaml

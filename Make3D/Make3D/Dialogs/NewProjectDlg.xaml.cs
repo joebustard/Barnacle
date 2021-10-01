@@ -5,7 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TemplateLib;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for NewProject.xaml

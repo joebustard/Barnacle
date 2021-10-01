@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     public static class RichTextBoxExtensions
     {

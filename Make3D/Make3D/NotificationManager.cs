@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Make3D
+namespace Barnacle
 {
     public delegate void RXMessage(object param);
 

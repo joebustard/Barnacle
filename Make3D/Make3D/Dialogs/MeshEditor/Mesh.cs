@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Dialogs.MeshEditor
+namespace Barnacle.Dialogs.MeshEditor
 {
     public class Mesh
     {

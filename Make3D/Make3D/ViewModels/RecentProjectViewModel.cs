@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class RecentProjectViewModel : BaseViewModel, INotifyPropertyChanged
     {

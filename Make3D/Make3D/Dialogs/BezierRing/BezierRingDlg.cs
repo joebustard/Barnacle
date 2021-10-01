@@ -1,5 +1,5 @@
-﻿using Make3D.Models;
-using Make3D.Object3DLib;
+﻿using Barnacle.Models;
+using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,9 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
-using Make3D.LineLib;
+using Barnacle.LineLib;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for Blank.xaml

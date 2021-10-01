@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     public class ToolDef : INotifyPropertyChanged
     {

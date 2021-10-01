@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Make3D.LineLib
+namespace Barnacle.LineLib
 {
     public class FlexiPoint
     {

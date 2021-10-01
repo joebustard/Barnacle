@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     internal class ObjectPaletteViewModel : BaseViewModel, INotifyPropertyChanged
     {

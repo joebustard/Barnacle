@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using Make3D.Views;
+using Barnacle.Views;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     public class SubViewManager
     {
         private string currentViewName = "";
+
         public void CloseCurrent()
         {
             NotificationManager.Unsubscribe("Copy");

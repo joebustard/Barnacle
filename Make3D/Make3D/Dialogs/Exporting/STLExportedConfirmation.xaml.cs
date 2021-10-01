@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for STLExportedConfirmation.xaml

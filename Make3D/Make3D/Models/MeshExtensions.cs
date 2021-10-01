@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Models
+namespace Barnacle.Models
 {
     public static class MeshExtensions
     {

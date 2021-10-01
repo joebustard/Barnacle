@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace Make3D.ViewModels
+namespace Barnacle.ViewModels
 {
     public class RelayCommand : ICommand
     {

@@ -1,6 +1,6 @@
 ﻿using CSGLib;
 using HullLibrary;
-using Make3D.EditorParameterLib;
+using Barnacle.EditorParameterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,7 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
-namespace Make3D.Object3DLib
+namespace Barnacle.Object3DLib
 {
     public class Object3D
     {

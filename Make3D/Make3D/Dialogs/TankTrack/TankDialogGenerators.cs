@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     public partial class TrackDialog : BaseModellerDialog
     {

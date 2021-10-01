@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
-namespace Make3D.EditorParameterLib
+namespace Barnacle.EditorParameterLib
 {
     public class EditorParameters
     {

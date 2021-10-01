@@ -1,12 +1,12 @@
-﻿<Window x:Class="Make3D.MainWindow"
+﻿<Window x:Class="Barnacle.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Make3D"
+        xmlns:local="clr-namespace:Barnacle"
         mc:Ignorable="d"
-        xmlns:Views="clr-namespace:Make3D.Views"
-        xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
+        xmlns:Views="clr-namespace:Barnacle.Views"
+        xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
         Title="{Binding Caption}" Height="450" Width="800" KeyUp="Window_KeyUp" PreviewKeyDown="Window_KeyDown" Loaded="Window_Loaded">
     <Window.DataContext>
         <ViewModels:MainWindowViewModel />

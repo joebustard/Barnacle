@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace Make3D.Object3DLib
+namespace Barnacle.Object3DLib
 {
     public class LineUtils
     {

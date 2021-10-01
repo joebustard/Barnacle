@@ -1,5 +1,5 @@
-﻿using Make3D.LineLib;
-using Make3D.Models;
+﻿using Barnacle.LineLib;
+using Barnacle.Models;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
 
-namespace Make3D.Dialogs
+namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for TrackDialog.xaml

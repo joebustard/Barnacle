@@ -1,8 +1,8 @@
-﻿using Make3D.Models;
-using Make3D.Object3DLib;
+﻿using Barnacle.Models;
+using Barnacle.Object3DLib;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Dialogs.MeshEditor
+namespace Barnacle.Dialogs.MeshEditor
 {
     public class MeshVertex
     {

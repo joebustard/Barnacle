@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Make3D.Object3DLib;
+using Barnacle.Object3DLib;
 using Object3DLib;
 
 namespace MakerLib

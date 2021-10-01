@@ -1,10 +1,10 @@
-﻿<UserControl x:Class="Make3D.Views.ObjectPropertiesView"
+﻿<UserControl x:Class="Barnacle.Views.ObjectPropertiesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Make3D.Views"
-             xmlns:ViewModels="clr-namespace:Make3D.ViewModels"
+             xmlns:local="clr-namespace:Barnacle.Views"
+             xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="160">
@@ -55,8 +55,7 @@
             <RowDefinition Height="18" />
             <!-- reset rotation -->
             <RowDefinition Height="22" />
-            <RowDefinition Height="18"/>
-
+            <RowDefinition Height="18" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*" />
@@ -66,16 +65,15 @@
         <Label Grid.Row="0"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}"  Grid.RowSpan="2">Object</Label>
         <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="14" Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
 
-
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            
+
             <xctk:ColorPicker x:Name="_colorPicker" Grid.Column="0"
                                    VerticalAlignment="Stretch"  IsOpen="False" SelectedColor="{Binding ObjectColour}" />
-            <CheckBox Content="Export" Grid.Column="1" Margin="4,0,0,0" ToolTip="This object should be included in exports and references" VerticalAlignment="Center" IsChecked="{Binding Exportable}"/>
+            <CheckBox Content="Export" Grid.Column="1" Margin="4,0,0,0" ToolTip="This object should be included in exports and references" VerticalAlignment="Center" IsChecked="{Binding Exportable}" />
         </Grid>
         <Label Grid.Row="3"  Grid.ColumnSpan="3" Style="{StaticResource InverseLabel}"  >Position</Label>
 
@@ -155,15 +153,15 @@
         </UniformGrid>
         <Grid Grid.Row="25" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
-                <ColumnDefinition/>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="1" Command="{Binding SetRotationCommand}" CommandParameter="1" ToolTip="Set rotation parameters to 1" Style="{StaticResource SmallButton}"/>
-            <Button Grid.Column="1" Content="22.5" Command="{Binding SetRotationCommand}" CommandParameter="22.5" ToolTip="Set rotation parameters to 33.5" Style="{StaticResource SmallButton}"/>
-            <Button Grid.Column="2" Content="45" Command="{Binding SetRotationCommand}" CommandParameter="45" ToolTip="Set rotation parameters to 45" Style="{StaticResource SmallButton}"/>
-            <Button Grid.Column="3" Content="90" Command="{Binding SetRotationCommand}" CommandParameter="90" ToolTip="Set rotation parameters to 90" Style="{StaticResource SmallButton}"/>
+            <Button Grid.Column="0" Content="1" Command="{Binding SetRotationCommand}" CommandParameter="1" ToolTip="Set rotation parameters to 1" Style="{StaticResource SmallButton}" />
+            <Button Grid.Column="1" Content="22.5" Command="{Binding SetRotationCommand}" CommandParameter="22.5" ToolTip="Set rotation parameters to 33.5" Style="{StaticResource SmallButton}" />
+            <Button Grid.Column="2" Content="45" Command="{Binding SetRotationCommand}" CommandParameter="45" ToolTip="Set rotation parameters to 45" Style="{StaticResource SmallButton}" />
+            <Button Grid.Column="3" Content="90" Command="{Binding SetRotationCommand}" CommandParameter="90" ToolTip="Set rotation parameters to 90" Style="{StaticResource SmallButton}" />
         </Grid>
     </Grid>
 </UserControl>

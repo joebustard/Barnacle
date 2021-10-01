@@ -1,5 +1,5 @@
-﻿using Make3D.Models;
-using Make3D.ViewModels;
+﻿using Barnacle.Models;
+using Barnacle.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -7,7 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-namespace Make3D.Views
+namespace Barnacle.Views
 {
     /// <summary>
     /// Interaction logic for EditorView.xaml
