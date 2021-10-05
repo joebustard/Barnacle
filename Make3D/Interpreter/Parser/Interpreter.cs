@@ -3046,7 +3046,7 @@ namespace ScriptLanguage
                     nd.IsInLibrary = tokeniser.InIncludeFile();
                     exp = nd;
                 }
-                catch (Exception ex)
+                catch 
                 {
                     ReportSyntaxError("Invalid double constant");
                 }

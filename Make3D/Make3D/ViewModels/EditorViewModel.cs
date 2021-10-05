@@ -253,59 +253,66 @@ namespace Barnacle.ViewModels
 
         public void RegenerateDisplayList()
         {
-            CountFaces();
-            allBounds = new Bounds3D();
-            allBounds.Zero();
-            modelItems.Clear();
-            if (showFloor)
+            try
             {
-                modelItems.Add(floor.FloorMesh);
-                foreach (GeometryModel3D m in grid.Group.Children)
+                CountFaces();
+                allBounds = new Bounds3D();
+                allBounds.Zero();
+                modelItems.Clear();
+                if (showFloor)
                 {
-                    modelItems.Add(m);
+                    modelItems.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        modelItems.Add(m);
+                    }
+                    if (floorMarker != null && showFloorMarker)
+                    {
+                        foreach (GeometryModel3D m in floorMarker.MarkerMesh.Children)
+                        {
+                            modelItems.Add(m);
+                        }
+                    }
                 }
-                if (floorMarker != null && showFloorMarker)
+                if (showBuildPlate)
                 {
-                    foreach (GeometryModel3D m in floorMarker.MarkerMesh.Children)
+                    foreach (GeometryModel3D m in printerPlate.Group.Children)
                     {
                         modelItems.Add(m);
                     }
                 }
-            }
-            if (showBuildPlate)
-            {
-                foreach (GeometryModel3D m in printerPlate.Group.Children)
+                if (showAxies)
                 {
-                    modelItems.Add(m);
-                }
-            }
-            if (showAxies)
-            {
-                foreach (GeometryModel3D m in axies.Group.Children)
-                {
-                    modelItems.Add(m);
-                }
-            }
-            totalFaces = 0;
-            foreach (Object3D ob in Document.Content)
-            {
-                totalFaces += ob.TotalFaces;
-
-                GeometryModel3D gm = GetMesh(ob);
-                modelItems.Add(gm);
-                allBounds += ob.AbsoluteBounds;
-            }
-            if (showAdorners)
-            {
-                if (selectedObjectAdorner != null)
-                {
-                    foreach (Model3D md in selectedObjectAdorner.Adornments)
+                    foreach (GeometryModel3D m in axies.Group.Children)
                     {
-                        modelItems.Add(md);
+                        modelItems.Add(m);
                     }
                 }
+                totalFaces = 0;
+                foreach (Object3D ob in Document.Content)
+                {
+                    totalFaces += ob.TotalFaces;
+
+                    GeometryModel3D gm = GetMesh(ob);
+                    modelItems.Add(gm);
+                    allBounds += ob.AbsoluteBounds;
+                }
+                if (showAdorners)
+                {
+                    if (selectedObjectAdorner != null)
+                    {
+                        foreach (Model3D md in selectedObjectAdorner.Adornments)
+                        {
+                            modelItems.Add(md);
+                        }
+                    }
+                }
+                NotifyPropertyChanged("ModelItems");
             }
-            NotifyPropertyChanged("ModelItems");
+            catch
+            {
+
+            }
         }
 
         internal void DeselectAll()

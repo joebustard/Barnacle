@@ -350,6 +350,7 @@ namespace Barnacle.Models
 
         public virtual void Write(string file)
         {
+            GC.Collect();
             XmlDocument doc = new XmlDocument();
             XmlElement docNode = doc.CreateElement("Document");
             docNode.SetAttribute("NextId", nextId.ToString());

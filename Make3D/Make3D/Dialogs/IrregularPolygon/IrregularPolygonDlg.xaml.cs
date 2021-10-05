@@ -2,8 +2,7 @@
 using Microsoft.Win32;
 using Barnacle.LineLib;
 
-using Barnacle.Models;
-using Microsoft.Win32;
+
 
 using PolygonTriangulationLib;
 using System;
