@@ -116,10 +116,16 @@ namespace Barnacle.Dialogs
             double dx = localOb.Position.X;
             double dy = localOb.Position.Y;
             double dz = localOb.Position.Z;
-            Point3DCollection pn = new Point3DCollection();
+            // Point3DCollection pn = new Point3DCollection();
+            List<P3D> pn = new List<P3D>();
             for (int i = 0; i < localOb.RelativeObjectVertices.Count; i++)
             {
+                /*
                 pn.Add(new Point3D(localOb.RelativeObjectVertices[i].X + dx,
+                    localOb.RelativeObjectVertices[i].Y + dy,
+                    localOb.RelativeObjectVertices[i].Z + dz));
+*/
+                pn.Add(new P3D(localOb.RelativeObjectVertices[i].X + dx,
                     localOb.RelativeObjectVertices[i].Y + dy,
                     localOb.RelativeObjectVertices[i].Z + dz));
             }

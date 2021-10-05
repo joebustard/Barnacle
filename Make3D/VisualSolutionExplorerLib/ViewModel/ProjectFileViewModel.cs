@@ -17,11 +17,13 @@ namespace VisualSolutionExplorer
             : base(parent, true)
         {
             _projectFile = projfile;
-            contextMenu = new FileContextMenuViewModel();
+            contextMenu = new FileContextMenuViewModel(projfile.EditFile, projfile.RunFile);
             contextMenu.OnRenameFile = RenameFile;
             contextMenu.OnRemoveFile = RemoveFile;
             contextMenu.OnDeleteFile = DeleteFile;
             contextMenu.OnCopyFile = CopyFile;
+            contextMenu.OnEditFile = EditFile;
+            contextMenu.OnRunFile = RunFile;
             FileClickCommand = new RelayCommand(OnFileClickCommand);
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
@@ -164,6 +166,12 @@ namespace VisualSolutionExplorer
             }
         }
 
+        private void EditFile()
+        {
+            // can't edit yourself, have to ask the containing folder to do it
+            NotifySolutionChanged("EditFile", _projectFile.FileName, _projectFile.FilePath);
+        }
+
         private Uri ImageUri(string p)
         {
             return new Uri(@"pack://application:,,,/VisualSolutionExplorerLib;component/Images/" + p);
@@ -195,6 +203,11 @@ namespace VisualSolutionExplorer
         {
             _projectFile.RecordOldName();
             IsEditing = true;
+        }
+
+        private void RunFile()
+        {
+            NotifySolutionChanged("RunFile", _projectFile.FileName, _projectFile.FilePath);
         }
 
         private void SetIcon()

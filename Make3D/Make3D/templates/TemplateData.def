@@ -28,10 +28,10 @@
     <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
-<File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
     </Folder>
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
@@ -95,8 +95,8 @@
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-<File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />     
- <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+      <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
     </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
@@ -152,7 +152,7 @@
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-<File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
     </Folder>
@@ -209,11 +209,11 @@
     <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-<File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
     </Folder>
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+    <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
   </ProjectDefinition>
   <ProjectDefinition Name="Blank">
@@ -244,11 +244,11 @@
     <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
 
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-<File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
     </Folder>
-    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
+    <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True"  AddFiles="True" AutoLoad="True">
     </Folder>

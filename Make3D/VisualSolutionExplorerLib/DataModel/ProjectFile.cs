@@ -17,16 +17,22 @@ namespace VisualSolutionExplorer
             Source = String.Empty;
             Backup = false;
             Export = false;
+            EditFile = false;
+            RunFile = false;
             OutOfDate = false;
         }
 
         // should this file be added to the backup when a backup command is issued
         public bool Backup { get; set; }
 
+        // should the menu for this file show "Edit"
+        public bool EditFile { get; set; }
+
         // should this file be exported when an export all command is issued
         public bool Export { get; set; }
 
         public string FileName { get; set; }
+
         public string FilePath { get; internal set; }
 
         public int IconNumber
@@ -58,7 +64,12 @@ namespace VisualSolutionExplorer
         }
 
         public string OldName { get; set; }
+
         public bool OutOfDate { get; set; }
+
+        // should the menu for this file show "Run"
+        public bool RunFile { get; set; }
+
         public String Source { get; set; }
 
         public int CompareTo(ProjectFile comparePart)
@@ -88,6 +99,14 @@ namespace VisualSolutionExplorer
                 {
                     Export = Convert.ToBoolean(ele.GetAttribute("Export"));
                 }
+                if (ele.HasAttribute("Edit"))
+                {
+                    EditFile = Convert.ToBoolean(ele.GetAttribute("Edit"));
+                }
+                if (ele.HasAttribute("Run"))
+                {
+                    RunFile = Convert.ToBoolean(ele.GetAttribute("Run"));
+                }
             }
         }
 
@@ -98,6 +117,14 @@ namespace VisualSolutionExplorer
 
             fe.SetAttribute("Backup", Backup.ToString());
             fe.SetAttribute("Export", Export.ToString());
+            if (EditFile)
+            {
+                fe.SetAttribute("Edit", "True");
+            }
+            if (RunFile)
+            {
+                fe.SetAttribute("Run", "True");
+            }
             root.AppendChild(fe);
         }
 

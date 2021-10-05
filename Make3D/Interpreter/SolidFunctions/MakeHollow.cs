@@ -56,7 +56,9 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     HollowPolyMaker maker = new HollowPolyMaker(points, h, wt);
-                    maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                    Point3DCollection tmp = new Point3DCollection();
+                    maker.Generate(tmp, obj.TriangleIndices);
+                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
                     obj.CalcScale(false);
                     obj.Remesh();
                     Script.ResultArtefacts.Add(obj);

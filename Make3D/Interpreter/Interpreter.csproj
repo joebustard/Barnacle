@@ -68,6 +68,7 @@
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidFunctions\MakeBicorn.cs" />
     <Compile Include="SolidFunctions\MakeHollow.cs" />
+    <Compile Include="SolidFunctions\MakePath.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
     <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTube.cs" />
@@ -210,6 +211,10 @@
     <ProjectReference Include="..\EditorParameterLib\EditorParameterLib.csproj">
       <Project>{5bd65286-f34e-45ae-9e8d-2e7a0dff6d0d}</Project>
       <Name>EditorParameterLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LineLib\LineLib.csproj">
+      <Project>{8248F033-5DE9-46E4-BF7C-0B108F120577}</Project>
+      <Name>LineLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\MakerLib\MakerLib.csproj">
       <Project>{83ac0da3-1ee8-4fe1-96e4-c9adcd88f44e}</Project>

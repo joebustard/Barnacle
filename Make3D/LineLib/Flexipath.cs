@@ -214,6 +214,183 @@ namespace Barnacle.LineLib
             }
         }
 
+        public bool FromTextPath(string s)
+        {
+            List<FlexiPoint> pnts = new List<FlexiPoint>();
+            List<FlexiSegment> segments = new List<FlexiSegment>();
+            bool valid = true;
+            string tr = s.Trim().ToUpper();
+            tr = tr.Replace("  ", " ");
+            string[] blks = tr.Split(' ');
+            double x = 0;
+            double y = 0;
+            if (blks.GetLength(0) > 1)
+            {
+                int i = 0;
+                bool foundStart = false;
+                while (i < blks.GetLength(0) && valid)
+                {
+                    switch (blks[i])
+                    {
+                        case "M":
+                            {
+                                if (!foundStart)
+                                {
+                                    foundStart = true;
+                                    valid = GetCoord(blks[i + 1], ref x, ref y);
+                                    FlexiPoint fp = new FlexiPoint(x, y);
+                                    pnts.Add(fp);
+                                    i++;
+                                }
+                                else
+                                {
+                                    valid = false;
+                                }
+                            }
+                            break;
+
+                        case "L":
+                            {
+                                valid = GetCoord(blks[i + 1], ref x, ref y);
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                pnts.Add(fp);
+                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                segments.Add(sq);
+                                i++;
+                            }
+                            break;
+
+                        case "RL":
+                            {
+                                valid = GetCoord(blks[i + 1], ref x, ref y);
+                                x += pnts[pnts.Count - 1].X;
+                                y += pnts[pnts.Count - 1].Y;
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                pnts.Add(fp);
+                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                segments.Add(sq);
+                                i++;
+                            }
+                            break;
+
+                        case "Q":
+                            {
+                                valid = GetCoord(blks[i + 1], ref x, ref y);
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                fp.Mode = FlexiPoint.PointMode.ControlQ;
+                                pnts.Add(fp);
+                                if (valid)
+                                {
+                                    valid = GetCoord(blks[i + 2], ref x, ref y);
+                                    FlexiPoint fp2 = new FlexiPoint(x, y);
+                                    fp2.Mode = FlexiPoint.PointMode.Data;
+                                    pnts.Add(fp2);
+
+                                    FlexiQuadBezier sq = new FlexiQuadBezier(pnts.Count - 3, pnts.Count - 2, pnts.Count - 1);
+                                    segments.Add(sq);
+                                }
+                                i += 2;
+                            }
+                            break;
+
+                        case "RQ":
+                            {
+                                double ox = pnts[pnts.Count - 1].X;
+                                double oy = pnts[pnts.Count - 1].Y;
+                                valid = GetCoord(blks[i + 1], ref x, ref y);
+                                FlexiPoint fp = new FlexiPoint(x + ox, y + oy);
+                                fp.Mode = FlexiPoint.PointMode.ControlQ;
+                                pnts.Add(fp);
+                                if (valid)
+                                {
+                                    valid = GetCoord(blks[i + 2], ref x, ref y);
+                                    FlexiPoint fp2 = new FlexiPoint(x + ox, y + oy);
+                                    fp2.Mode = FlexiPoint.PointMode.Data;
+                                    pnts.Add(fp2);
+
+                                    FlexiQuadBezier sq = new FlexiQuadBezier(pnts.Count - 3, pnts.Count - 2, pnts.Count - 1);
+                                    segments.Add(sq);
+                                }
+                                i += 2;
+                            }
+                            break;
+
+                        case "C":
+                            {
+                                valid = GetCoord(blks[i + 1], ref x, ref y);
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                fp.Mode = FlexiPoint.PointMode.Control1;
+                                pnts.Add(fp);
+                                if (valid)
+                                {
+                                    valid = GetCoord(blks[i + 2], ref x, ref y);
+                                    FlexiPoint fp2 = new FlexiPoint(x, y);
+                                    fp2.Mode = FlexiPoint.PointMode.Control2;
+                                    pnts.Add(fp2);
+                                    if (valid)
+                                    {
+                                        valid = GetCoord(blks[i + 3], ref x, ref y);
+                                        FlexiPoint fp3 = new FlexiPoint(x, y);
+                                        fp3.Mode = FlexiPoint.PointMode.Control2;
+                                        pnts.Add(fp3);
+                                        FlexiCubicBezier sq = new FlexiCubicBezier(pnts.Count - 4, pnts.Count - 3, pnts.Count - 2, pnts.Count - 1);
+                                        segments.Add(sq);
+                                    }
+                                }
+
+                                i += 3;
+                            }
+                            break;
+
+                        case "RC":
+                            {
+                                double ox = pnts[pnts.Count - 1].X;
+                                double oy = pnts[pnts.Count - 1].Y;
+                                valid = GetCoord(blks[i + 1], ref x, ref y);
+                                FlexiPoint fp = new FlexiPoint(x + ox, y + oy);
+                                fp.Mode = FlexiPoint.PointMode.Control1;
+                                pnts.Add(fp);
+                                if (valid)
+                                {
+                                    valid = GetCoord(blks[i + 2], ref x, ref y);
+                                    FlexiPoint fp2 = new FlexiPoint(x + ox, y + oy);
+                                    fp2.Mode = FlexiPoint.PointMode.Control2;
+                                    pnts.Add(fp2);
+                                    if (valid)
+                                    {
+                                        valid = GetCoord(blks[i + 3], ref x, ref y);
+                                        FlexiPoint fp3 = new FlexiPoint(x + ox, y + oy);
+                                        fp3.Mode = FlexiPoint.PointMode.Control2;
+                                        pnts.Add(fp3);
+                                        FlexiCubicBezier sq = new FlexiCubicBezier(pnts.Count - 4, pnts.Count - 3, pnts.Count - 2, pnts.Count - 1);
+                                        segments.Add(sq);
+                                    }
+                                }
+
+                                i += 3;
+                            }
+                            break;
+                    }
+                    i++;
+                }
+            }
+            if (valid && pnts.Count > 2)
+            {
+                segs.Clear();
+                segs.AddRange(segments);
+
+                points.Clear();
+                int i = 0;
+                foreach (FlexiPoint f in pnts)
+                {
+                    f.Id = i;
+                    points.Add(f);
+                    i++;
+                }
+            }
+            return valid;
+        }
+
         public List<FlexiPoint> GetSegmentPoints()
         {
             List<FlexiPoint> res = new List<FlexiPoint>();
@@ -386,6 +563,25 @@ namespace Barnacle.LineLib
                     points.Add(fp);
                 }
             }
+        }
+
+        private bool GetCoord(string v, ref double x, ref double y)
+        {
+            bool res = false;
+            try
+            {
+                string[] words = v.Split(',');
+                if (words.GetLength(0) == 2)
+                {
+                    x = Convert.ToDouble(words[0]);
+                    y = Convert.ToDouble(words[1]);
+                    res = true;
+                }
+            }
+            catch
+            {
+            }
+            return res;
         }
 
         private void PointInserted(List<FlexiSegment> segs, int startSegment, int v2, int numInserted)

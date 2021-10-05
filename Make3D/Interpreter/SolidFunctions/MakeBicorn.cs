@@ -56,8 +56,12 @@ namespace ScriptLanguage
                     obj.Scale = new Scale3D(20, 20, 20);
 
                     obj.Position = new Point3D(0, 0, 0);
+                    Point3DCollection tmp = new Point3DCollection();
                     BicornMaker BicornMaker = new BicornMaker(r1, r2, h, g);
-                    BicornMaker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+
+                    BicornMaker.Generate(tmp, obj.TriangleIndices);
+                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+
                     obj.CalcScale(false);
                     obj.Remesh();
                     Script.ResultArtefacts.Add(obj);

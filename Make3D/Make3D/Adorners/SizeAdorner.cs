@@ -34,7 +34,7 @@ namespace Barnacle.Models.Adorners
             labelLocations = new List<Point3D>();
             thumbLabels = new List<Label>();
             ViewPort = null;
-            NotificationManager.Subscribe("SizeAdorner","ScaleRefresh", OnScaleRefresh);
+            NotificationManager.Subscribe("SizeAdorner", "ScaleRefresh", OnScaleRefresh);
         }
 
         public Bounds3D Bounds
@@ -204,7 +204,10 @@ namespace Barnacle.Models.Adorners
             Int32Collection indices = new Int32Collection();
             Vector3DCollection normals = new Vector3DCollection();
             PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
-            box.RelativeObjectVertices = pnts;
+            List<P3D> tmp = new List<P3D>();
+            PointUtils.PointCollectionToP3D(pnts, tmp);
+            //box.RelativeObjectVertices = pnts;
+            box.RelativeObjectVertices = tmp;
             box.TriangleIndices = indices;
             box.Normals = normals;
             box.Position = position;
@@ -237,7 +240,10 @@ namespace Barnacle.Models.Adorners
             Vector3DCollection normals = new Vector3DCollection();
             PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
             thumb.Name = name;
-            thumb.RelativeObjectVertices = pnts;
+            List<P3D> tmp = new List<P3D>();
+            PointUtils.PointCollectionToP3D(pnts, tmp);
+            //thumb.RelativeObjectVertices = pnts;
+            thumb.RelativeObjectVertices = tmp;
             thumb.TriangleIndices = indices;
             thumb.Normals = normals;
 

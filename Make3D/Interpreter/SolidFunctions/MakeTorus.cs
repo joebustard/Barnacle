@@ -67,7 +67,10 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     TorusMaker maker = new TorusMaker(mr, hr, vr, curve, knobs, h);
-                    maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                    Point3DCollection tmp = new Point3DCollection();
+                    //maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                    maker.Generate(tmp, obj.TriangleIndices);
+                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
                     obj.CalcScale(false);
                     obj.Remesh();
                     Script.ResultArtefacts.Add(obj);

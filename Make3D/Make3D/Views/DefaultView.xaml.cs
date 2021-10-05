@@ -1,7 +1,10 @@
 ﻿using Barnacle.Dialogs;
+using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
 using Microsoft.Win32;
+using ScriptLanguage;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -294,6 +297,43 @@ namespace Barnacle.Views
             LoadNamedProject(projName);
         }
 
+        private bool RunScript(string fileName)
+        {
+            List<Object3D> content = new List<Object3D>();
+            bool result = false;
+            NotificationManager.Notify("Select", "clear");
+            if (File.Exists(fileName))
+            {
+                string source = File.ReadAllText(fileName);
+                Interpreter interpreter = new Interpreter();
+                Script script = new Script();
+                if (interpreter.LoadFromText(script, source, fileName))
+                {
+                    content.Clear();
+                    script.SetResultsContent(content);
+                    if (!script.Execute())
+                    {
+                        MessageBox.Show("Script failed to run");
+                    }
+                    else
+                    {
+                        foreach (Object3D obj in content)
+                        {
+                            BaseViewModel.Document.Content.Add(obj);
+                        }
+                        content.Clear();
+                        GC.Collect();
+                        result = true;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Script failed to load");
+                }
+            }
+            return result;
+        }
+
         private void SaveAsFile(object sender)
         {
             SaveFileDialog dlg = new SaveFileDialog();
@@ -320,6 +360,66 @@ namespace Barnacle.Views
         {
             switch (changeEvent)
             {
+                case "EditFile":
+                    {
+                        string fName = parameter1;
+                        string p = Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+
+                        // is it a model file.
+                        string ext = System.IO.Path.GetExtension(p);
+                        ext = ext.ToLower();
+
+                        // Is it a limpet script file
+                        // if so change view and load it
+                        if (ext == ".lmp")
+                        {
+                            vm.SwitchToView("Script");
+                            NotificationManager.Notify("LimpetLoaded", p);
+                        }
+                        /*
+                        else
+                         // throw the file at the operating system
+                         // if its a batch or command file, use environment variables
+                         if (ext == ".cmd" || ext == ".bat")
+                        {
+                            LaunchCmdOrBat(p);
+                        }
+                        else
+                        {
+                            OpenFileUsingOS(p);
+                        }
+                    */
+                    }
+                    break;
+
+                case "RunFile":
+                    {
+                        string fName = parameter2;
+                        string p = Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+
+                        // is it a model file.
+                        string ext = System.IO.Path.GetExtension(p);
+                        ext = ext.ToLower();
+
+                        // Is it a limpet script file
+                        // if so change view and load it
+                        if (ext == ".lmp")
+                        {
+                            // runimpet script without switching view
+                            //vm.SwitchToView("Script");
+                            //NotificationManager.Notify("LimpetLoaded", p);
+                            if (RunScript(p))
+                            {
+                                NotificationManager.Notify("Refresh", null);
+                            }
+                        }
+                    }
+                    break;
+
                 case "SelectFile":
                     {
                         string fName = parameter1;

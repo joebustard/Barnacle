@@ -727,7 +727,8 @@ namespace Barnacle.Models
                                 double x = Convert.ToDouble(words[1]);
                                 double y = Convert.ToDouble(words[2]);
                                 double z = Convert.ToDouble(words[3]);
-                                Point3D p = new Point3D(x, y, z);
+                                //Point3D p = new Point3D(x, y, z);
+                                P3D p = new P3D(x, y, z);
                                 ob.RelativeObjectVertices.Add(p);
                             }
 
@@ -772,7 +773,8 @@ namespace Barnacle.Models
                                     cx = cx / indices.Count;
                                     cy = cy / indices.Count;
                                     cz = cz / indices.Count;
-                                    ob.RelativeObjectVertices.Add(new Point3D(cx, cy, cz));
+                                    //ob.RelativeObjectVertices.Add(new Point3D(cx, cy, cz));
+                                    ob.RelativeObjectVertices.Add(new P3D(cx, cy, cz));
                                     int id = ob.RelativeObjectVertices.Count - 1;
                                     for (int j = 0; j < indices.Count - 1; j++)
                                     {
@@ -803,11 +805,14 @@ namespace Barnacle.Models
             STLExporter exp = new STLExporter();
             Vector3DCollection normals = new Vector3DCollection();
             Point3DCollection pnts = new Point3DCollection();
+
             Int32Collection tris = new Int32Collection();
             Object3D ob = new Object3D();
             exp.Import(fileName, ref normals, ref pnts, ref tris);
             ob.Normals = normals;
-            ob.RelativeObjectVertices = pnts;
+            List<P3D> coords = new List<P3D>();
+            PointUtils.PointCollectionToP3D(pnts, coords);
+            ob.RelativeObjectVertices = coords;
             ob.TriangleIndices = tris;
             ob.PrimType = "Mesh";
             ob.CalcScale();

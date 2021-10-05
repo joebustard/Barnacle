@@ -8,7 +8,7 @@ namespace VisualSolutionExplorer
     {
         private ObservableCollection<ContextMenuAction> contextMenuActions;
 
-        public FileContextMenuViewModel()
+        public FileContextMenuViewModel(bool addEdit = false, bool addRun = false)
         {
             contextMenuActions = new ObservableCollection<ContextMenuAction>();
             ICommand renameFile = new RelayCommand(OnRenFile);
@@ -22,15 +22,35 @@ namespace VisualSolutionExplorer
 
             ICommand removeFile = new RelayCommand(HandleRemoveFile);
             contextMenuActions.Add(new ContextMenuAction("Remove", removeFile, "Remove the file from the project but do not delete it"));
+
+            if (addEdit || addRun)
+            {
+                contextMenuActions.Add(new ContextMenuSeparator());
+            }
+            if (addEdit)
+            {
+                ICommand editFile = new RelayCommand(HandleEditFile);
+                contextMenuActions.Add(new ContextMenuAction("Edit", editFile, "Open the script in the editor"));
+            }
+
+            if (addRun)
+            {
+                ICommand runFile = new RelayCommand(HandleRunFile);
+                contextMenuActions.Add(new ContextMenuAction("Run", runFile, "Run the script"));
+            }
         }
 
         public delegate void CopyFile();
 
         public delegate void DeleteFile();
 
+        public delegate void EditFile();
+
         public delegate void RemoveFile();
 
         public delegate void RenameFile();
+
+        public delegate void RunFile();
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -52,8 +72,10 @@ namespace VisualSolutionExplorer
 
         public DeleteFile OnCopyFile { get; set; }
         public DeleteFile OnDeleteFile { get; set; }
+        public EditFile OnEditFile { get; set; }
         public RemoveFile OnRemoveFile { get; set; }
         public RenameFile OnRenameFile { get; set; }
+        public RunFile OnRunFile { get; set; }
 
         protected virtual void NotifyPropertyChanged(string propertyName)
         {
@@ -77,11 +99,27 @@ namespace VisualSolutionExplorer
             }
         }
 
+        private void HandleEditFile(object obj)
+        {
+            if (OnEditFile != null)
+            {
+                OnEditFile();
+            }
+        }
+
         private void HandleRemoveFile(object obj)
         {
             if (OnRemoveFile != null)
             {
                 OnRemoveFile();
+            }
+        }
+
+        private void HandleRunFile(object obj)
+        {
+            if (OnRunFile != null)
+            {
+                OnRunFile();
             }
         }
 

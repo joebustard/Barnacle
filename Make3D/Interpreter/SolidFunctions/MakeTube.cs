@@ -64,7 +64,9 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     TubeMaker maker = new TubeMaker(r, th, lower, upper, h, sweep);
-                    maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                    Point3DCollection tmp = new Point3DCollection();
+                    maker.Generate(tmp, obj.TriangleIndices);
+                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
                     obj.CalcScale(false);
                     obj.Remesh();
                     Script.ResultArtefacts.Add(obj);

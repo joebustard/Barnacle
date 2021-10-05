@@ -250,6 +250,21 @@ namespace Barnacle.Dialogs.Figure
             return res;
         }
 
+        public List<P3D> RotatedPointCollection(List<P3D> src, double nxr, double nyr, double nzr)
+        {
+            List<P3D> res = new List<P3D>();
+            Matrix3D m3d = CalculateRotationMatrix(Degrees(nxr), Degrees(nyr), Degrees(nzr));
+            MatrixTransform3D transform = new MatrixTransform3D(m3d);
+
+            for (int i = 0; i < src.Count; i++)
+            {
+                Point3D s1 = new Point3D(src[i].X, src[i].Y, src[i].Z);
+                Point3D r1 = transform.Transform(s1);
+                res.Add(new P3D(r1.X, r1.Y, r1.Z));
+            }
+            return res;
+        }
+
         // only call this on the root bone
         public void Update()
         {
