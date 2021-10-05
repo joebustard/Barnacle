@@ -6,12 +6,6 @@ namespace ScriptLanguage
     {
         private String _Name;
 
-        public String Name
-        {
-            get { return _Name; }
-            set { _Name = value; }
-        }
-
         // Instance constructor
         public CProgramNode()
         {
@@ -24,6 +18,12 @@ namespace ScriptLanguage
             _Name = it.Name;
         }
 
+        public String Name
+        {
+            get { return _Name; }
+            set { _Name = value; }
+        }
+
         /// Execute this node
         /// returning false terminates the application
         ///
@@ -33,7 +33,7 @@ namespace ScriptLanguage
             bool result = false;
             if (Child != null)
             {
-                Child.Execute();
+                result = Child.Execute();
             }
             return result;
         }

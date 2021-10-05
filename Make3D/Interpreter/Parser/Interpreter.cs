@@ -74,6 +74,7 @@ namespace ScriptLanguage
                 "make",
                 "makebicorn",
                 "makehollow",
+                "makepath",
                 "makeplatelet",
                 "makestadium",
                 "maketorus",
@@ -2329,6 +2330,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makepath":
+                            {
+                                exp = ParseMakePathFunction(parentName);
+                            }
+                            break;
+
                         case "makeplatelet":
                             {
                                 exp = ParseMakePlateletFunction(parentName);
@@ -2728,6 +2735,30 @@ namespace ScriptLanguage
                                 exp = mn;
                             }
                         }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakePathFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode pathTextExp = ParseExpressionForCallNode(parentName);
+            if (pathTextExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakePath expected ,");
+                }
+                else
+                {
+                    ExpressionNode heightExp = ParseExpressionNode(parentName);
+                    if (heightExp != null)
+                    {
+                        MakePathNode mn = new MakePathNode(pathTextExp, heightExp);
+                        mn.IsInLibrary = tokeniser.InIncludeFile();
+                        exp = mn;
                     }
                 }
             }

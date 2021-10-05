@@ -1,4 +1,5 @@
-﻿using Barnacle.Models;
+﻿using Barnacle.LineLib;
+using Barnacle.Models;
 using System;
 using System.Diagnostics;
 using System.Windows;

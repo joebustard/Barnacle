@@ -17,6 +17,14 @@ namespace Barnacle.LineLib
             Visible = false;
         }
 
+        public FlexiPoint(double x, double y)
+        {
+            X = x;
+            Y = y;
+            Mode = PointMode.Data;
+            Visible = false;
+        }
+
         public FlexiPoint(System.Windows.Point p, int i)
         {
             X = p.X;

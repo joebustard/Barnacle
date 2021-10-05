@@ -32,13 +32,22 @@ namespace VisualSolutionExplorer
         // should this folder be cleared when a clean command is issued
         public bool Clean { get; set; }
 
-        // should this folder appear  on the project tree
+        // should the files added here show "Edit"
+        public bool EditFile { get; set; }
+
+        // can this folder be opened in explorer
         public bool Explorer { get; set; }
 
+        // should the contents of this folder be exported
+        // when a project export is done
         public bool Export { get; set; }
+
         public string FileTemplate { get; set; }
+
         public string FolderName { get; set; }
+
         public string FolderPath { get; set; }
+
         public string OldName { get; set; }
 
         public List<ProjectFile> ProjectFiles
@@ -51,6 +60,9 @@ namespace VisualSolutionExplorer
             get { return _projectFolders; }
             set { _projectFolders = value; }
         }
+
+        // should the files added here show "Run"
+        public bool RunFile { get; set; }
 
         public string SupportedFileExtension { get; set; }
 
@@ -81,6 +93,8 @@ namespace VisualSolutionExplorer
         {
             string fileName = GetNextFileName("New File", SupportedFileExtension);
             ProjectFile fi = new ProjectFile(fileName);
+            fi.EditFile = EditFile;
+            fi.RunFile = RunFile;
             _projectFiles.Add(fi);
             _projectFiles.Sort();
             fi.FilePath = FolderPath + "\\" + fileName;
@@ -95,6 +109,8 @@ namespace VisualSolutionExplorer
             fo.SupportsFiles = SupportsFiles;
             fo.SupportedFileExtension = SupportedFileExtension;
             fo.Export = Export;
+            fo.EditFile = EditFile;
+            fo.RunFile = RunFile;
             fo.FileTemplate = FileTemplate;
             fo.CanBeRenamed = true;
             _projectFolders.Add(fo);
@@ -134,6 +150,8 @@ namespace VisualSolutionExplorer
                 Clean = GetBoolean(ele, "Clean");
                 Explorer = GetBoolean(ele, "Explorer");
                 Export = GetBoolean(ele, "Export");
+                RunFile = GetBoolean(ele, "Run");
+                EditFile = GetBoolean(ele, "Edit");
                 XmlNodeList fileNodes = ele.SelectNodes("File");
                 foreach (XmlNode filn in fileNodes)
                 {
@@ -179,6 +197,14 @@ namespace VisualSolutionExplorer
             {
                 el.SetAttribute("Export", Export.ToString());
             }
+            if (RunFile)
+            {
+                el.SetAttribute("Run", RunFile.ToString());
+            }
+            if (EditFile)
+            {
+                el.SetAttribute("Edit", EditFile.ToString());
+            }
             if (TimeDependency != "")
             {
                 el.SetAttribute("TimeDependency", TimeDependency);
@@ -200,6 +226,10 @@ namespace VisualSolutionExplorer
             {
                 ProjectFile pf = new ProjectFile();
                 pf.FileName = ren;
+                pf.EditFile = EditFile;
+                pf.Export = Export;
+                pf.RunFile = RunFile;
+
                 ProjectFiles.Add(pf);
                 pf.FilePath = FolderPath + "\\" + pf.FileName;
             }
@@ -505,6 +535,8 @@ namespace VisualSolutionExplorer
             AutoLoad = false;
             CanBeRenamed = true;
             TimeDependency = "";
+            RunFile = false;
+            EditFile = false;
         }
 
         private void SetSubPaths()
