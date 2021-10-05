@@ -71,7 +71,9 @@ namespace ScriptLanguage
 
                                     obj.Position = new Point3D(0, 0, 0);
                                     StadiumMaker stadiumMaker = new StadiumMaker(shape, r1, r2, g, h);
-                                    stadiumMaker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                                    Point3DCollection tmp = new Point3DCollection(); ;
+                                    stadiumMaker.Generate(tmp, obj.TriangleIndices);
+                                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
                                     obj.CalcScale(false);
                                     obj.Remesh();
                                     Script.ResultArtefacts.Add(obj);

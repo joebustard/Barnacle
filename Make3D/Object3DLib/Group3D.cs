@@ -1,6 +1,7 @@
 ﻿using CSGLib;
 using HullLibrary;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -71,10 +72,13 @@ namespace Barnacle.Object3DLib
             res.Color = this.Color;
             res.leftObject = this.leftObject.Clone();
             res.rightObject = this.rightObject.Clone();
-            res.RelativeObjectVertices = new Point3DCollection();
-            foreach (Point3D po in this.RelativeObjectVertices)
+            // res.RelativeObjectVertices = new Point3DCollection();
+            res.RelativeObjectVertices = new List<P3D>();
+            //  foreach (Point3D po in this.RelativeObjectVertices)
+            foreach (P3D po in this.RelativeObjectVertices)
             {
-                Point3D pn = new Point3D(po.X, po.Y, po.Z);
+                //Point3D pn = new Point3D(po.X, po.Y, po.Z);
+                P3D pn = new P3D(po.X, po.Y, po.Z);
                 res.RelativeObjectVertices.Add(po);
             }
             res.AbsoluteObjectVertices = new Point3DCollection();
@@ -243,15 +247,17 @@ namespace Barnacle.Object3DLib
             sc.Y = GetDouble(sn, "Y");
             sc.Z = GetDouble(sn, "Z");
             Scale = sc;
-            RelativeObjectVertices = new Point3DCollection();
+            //RelativeObjectVertices = new Point3DCollection();
+            RelativeObjectVertices = new List<P3D>();
             XmlNodeList vtl = nd.SelectNodes("v");
             foreach (XmlNode vn in vtl)
             {
                 XmlElement el = vn as XmlElement;
-                Point3D pv = new Point3D();
-                pv.X = GetDouble(el, "X");
-                pv.Y = GetDouble(el, "Y");
-                pv.Z = GetDouble(el, "Z");
+                // Point3D pv = new Point3D();
+                P3D pv = new P3D();
+                pv.X = (float)GetDouble(el, "X");
+                pv.Y = (float)GetDouble(el, "Y");
+                pv.Z = (float)GetDouble(el, "Z");
                 RelativeObjectVertices.Add(pv);
             }
 
@@ -316,7 +322,8 @@ namespace Barnacle.Object3DLib
             y = reader.ReadDouble();
             z = reader.ReadDouble();
             Scale = new Scale3D(x, y, z);
-            RelativeObjectVertices = new Point3DCollection();
+            //RelativeObjectVertices = new Point3DCollection();
+            RelativeObjectVertices = new List<P3D>();
             int count = reader.ReadInt32();
 
             for (int i = 0; i < count; i++)
@@ -324,7 +331,8 @@ namespace Barnacle.Object3DLib
                 x = reader.ReadDouble();
                 y = reader.ReadDouble();
                 z = reader.ReadDouble();
-                RelativeObjectVertices.Add(new Point3D(x, y, z));
+                // RelativeObjectVertices.Add(new Point3D(x, y, z));
+                RelativeObjectVertices.Add(new P3D(x, y, z));
             }
 
             count = reader.ReadInt32();
@@ -376,7 +384,8 @@ namespace Barnacle.Object3DLib
                 scl.SetAttribute("Y", Scale.Y.ToString());
                 scl.SetAttribute("Z", Scale.Z.ToString());
                 ele.AppendChild(scl);
-                foreach (Point3D v in RelativeObjectVertices)
+                //  foreach (Point3D v in RelativeObjectVertices)
+                foreach (P3D v in RelativeObjectVertices)
                 {
                     XmlElement vertEle = doc.CreateElement("v");
                     vertEle.SetAttribute("X", v.X.ToString("F5"));
@@ -417,7 +426,8 @@ namespace Barnacle.Object3DLib
             writer.Write(Scale.Z);
             EditorParameters.WriteBinary(writer);
             writer.Write(RelativeObjectVertices.Count);
-            foreach (Point3D v in RelativeObjectVertices)
+            // foreach (Point3D v in RelativeObjectVertices)
+            foreach (P3D v in RelativeObjectVertices)
             {
                 writer.Write(v.X);
                 writer.Write(v.Y);
@@ -437,10 +447,12 @@ namespace Barnacle.Object3DLib
         {
             GetScaleFromAbsoluteExtent();
 
-            RelativeObjectVertices = new Point3DCollection();
+            //RelativeObjectVertices = new Point3DCollection();
+            RelativeObjectVertices = new List<P3D>();
             foreach (Point3D pnt in AbsoluteObjectVertices)
             {
-                Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
+                // Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
+                P3D p = new P3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
                 RelativeObjectVertices.Add(p);
             }
             scale = groupScale;

@@ -96,7 +96,7 @@ namespace Barnacle.Dialogs
             figureModels = new List<FigureModel>();
             availableFigureModels = new List<string>();
             modelAssignments = new List<ModelAssignmentControl>();
-            NotificationManager.Subscribe("FigureDlg","SelectedFigure", SelectedFigureModelChanged);
+            NotificationManager.Subscribe("FigureDlg", "SelectedFigure", SelectedFigureModelChanged);
             NotificationManager.Subscribe("FigureDlg", "FigureScale", SelectedFigureScaleChanged);
             ModelGroup = MyModelGroup;
         }
@@ -797,7 +797,7 @@ namespace Barnacle.Dialogs
             PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
             marker.Name = name;
             marker.Bone = bn;
-            marker.RelativeObjectVertices = pnts;
+            PointUtils.PointCollectionToP3D(pnts, marker.RelativeObjectVertices);
             marker.TriangleIndices = indices;
             marker.Normals = normals;
 
@@ -876,6 +876,7 @@ namespace Barnacle.Dialogs
             {
                 ob.Color = Colors.Red;
             }
+            /*
             foreach (Point3D p in sPnts)
             {
                 ob.RelativeObjectVertices.Add(new Point3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
@@ -884,7 +885,15 @@ namespace Barnacle.Dialogs
             {
                 ob.RelativeObjectVertices.Add(new Point3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
             }
-
+            */
+            foreach (Point3D p in sPnts)
+            {
+                ob.RelativeObjectVertices.Add(new P3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
+            }
+            foreach (Point3D p in drec.StartJointPoints)
+            {
+                ob.RelativeObjectVertices.Add(new P3D(p.X - ob.Position.X, p.Y - ob.Position.Y, p.Z - ob.Position.Z));
+            }
             // must have at least 4 points to do a hull
             if (ob.RelativeObjectVertices.Count > 4)
             {

@@ -12,6 +12,8 @@ using PlacementLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -305,7 +307,6 @@ namespace Barnacle.ViewModels
                     }
                 }
             }
-            NotifyPropertyChanged("ModelItems");
         }
 
         internal void DeselectAll()
@@ -658,7 +659,8 @@ namespace Barnacle.ViewModels
             Mesh mesh;
             MeshDecimator.Math.Vector3d[] vex = new MeshDecimator.Math.Vector3d[ob.RelativeObjectVertices.Count];
             int i = 0;
-            foreach (Point3D pnt in ob.RelativeObjectVertices)
+            //foreach (Point3D pnt in ob.RelativeObjectVertices)
+            foreach (P3D pnt in ob.RelativeObjectVertices)
             {
                 MeshDecimator.Math.Vector3d v = new MeshDecimator.Math.Vector3d(pnt.X, pnt.Y, pnt.Z);
                 vex[i] = v;
@@ -677,10 +679,11 @@ namespace Barnacle.ViewModels
         private static void RemoveDuplicateVertices(Object3D ob)
         {
             ManifoldChecker checker = new ManifoldChecker();
-            checker.Points = ob.RelativeObjectVertices;
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
+            // checker.Points = ob.RelativeObjectVertices;
             checker.Indices = ob.TriangleIndices;
             checker.RemoveDuplicateVertices();
-            ob.RelativeObjectVertices = checker.Points;
+            PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Indices;
             ob.Remesh();
         }
@@ -688,10 +691,12 @@ namespace Barnacle.ViewModels
         private static void RemoveUnrefVertices(Object3D ob)
         {
             ManifoldChecker checker = new ManifoldChecker();
-            checker.Points = ob.RelativeObjectVertices;
+            //.Points = ob.RelativeObjectVertices;
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
             checker.Indices = ob.TriangleIndices;
             checker.RemoveUnreferencedVertices();
-            ob.RelativeObjectVertices = checker.Points;
+            // ob.RelativeObjectVertices = checker.Points;
+            PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Indices;
             ob.Remesh();
         }
@@ -1050,7 +1055,8 @@ namespace Barnacle.ViewModels
                         for (int i = 0; i < smallerMesh.Vertices.GetLength(0); i++)
                         {
                             MeshDecimator.Math.Vector3d v = smallerMesh.Vertices[i];
-                            Point3D pnt = new Point3D(v.x, v.y, v.z);
+                            //Point3D pnt = new Point3D(v.x, v.y, v.z);
+                            P3D pnt = new P3D(v.x, v.y, v.z);
                             ob.RelativeObjectVertices.Add(pnt);
                         }
                         ob.TriangleIndices.Clear();
@@ -1109,7 +1115,8 @@ namespace Barnacle.ViewModels
                 DeselectAll();
 
                 editingObj.EditorParameters = dlg.EditorParameters;
-                editingObj.RelativeObjectVertices = dlg.Vertices;
+                PointUtils.PointCollectionToP3D(dlg.Vertices, editingObj.RelativeObjectVertices);
+                //editingObj.RelativeObjectVertices = dlg.Vertices;
                 editingObj.TriangleIndices = dlg.Faces;
 
                 RecalculateAllBounds();
@@ -1366,7 +1373,8 @@ namespace Barnacle.ViewModels
                 ShapeLoftDialog dlg = new ShapeLoftDialog();
                 if (dlg.ShowDialog() == true)
                 {
-                    obj.RelativeObjectVertices = dlg.Vertices;
+                    PointUtils.PointCollectionToP3D(dlg.Vertices, obj.RelativeObjectVertices);
+                    //obj.RelativeObjectVertices = dlg.Vertices;
                     obj.TriangleIndices = dlg.Faces;
                     obj.CalcScale(false);
                     res = true;
@@ -1377,7 +1385,8 @@ namespace Barnacle.ViewModels
                 FuselageLoftDialog dlg = new FuselageLoftDialog();
                 if (dlg.ShowDialog() == true)
                 {
-                    obj.RelativeObjectVertices = dlg.Vertices;
+                    // obj.RelativeObjectVertices = dlg.Vertices;
+                    PointUtils.PointCollectionToP3D(dlg.Vertices, obj.RelativeObjectVertices);
                     obj.TriangleIndices = dlg.Faces;
                     obj.CalcScale(false);
                     res = true;
@@ -1424,11 +1433,13 @@ namespace Barnacle.ViewModels
         {
             CheckPoint();
             LoopSmoother cms = new LoopSmoother();
-            Point3DCollection p3col = ob.RelativeObjectVertices;
+            // Point3DCollection p3col = ob.RelativeObjectVertices;
+            Point3DCollection p3col = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
             Int32Collection icol = ob.TriangleIndices;
 
             cms.Smooth(ref p3col, ref icol);
-            ob.RelativeObjectVertices = p3col;
+            PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
             ob.TriangleIndices = icol;
             ob.Remesh();
         }
@@ -1839,6 +1850,7 @@ namespace Barnacle.ViewModels
             if (selectedObjectAdorner != null)
             {
                 ObjectClipboard.Clear();
+                GC.Collect();
                 foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
                 {
                     ObjectClipboard.Add(o);
@@ -2201,7 +2213,9 @@ namespace Barnacle.ViewModels
                 foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                 {
                     ManifoldChecker checker = new ManifoldChecker();
-                    checker.Points = ob.RelativeObjectVertices;
+                    PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
+                    //     checker.Points = ob.RelativeObjectVertices;
+                    // checker.Points = ob.RelativeObjectVertices;
                     checker.Indices = ob.TriangleIndices;
                     checker.Check();
                     if (checker.IsManifold)
@@ -2253,7 +2267,9 @@ namespace Barnacle.ViewModels
                     {
                         dlg.EditorParameters = editingObj.EditorParameters;
                         dlg.MeshColour = editingObj.Color;
-                        dlg.SetInitialMesh(editingObj.RelativeObjectVertices, editingObj.TriangleIndices);
+                        Point3DCollection tmp = new Point3DCollection();
+                        PointUtils.P3DToPointCollection(editingObj.RelativeObjectVertices, tmp);
+                        dlg.SetInitialMesh(tmp, editingObj.TriangleIndices);
                         editingObj.CalcScale();
                     }
                 }
@@ -2274,7 +2290,8 @@ namespace Barnacle.ViewModels
                 DeselectAll();
 
                 editingObj.EditorParameters = dlg.EditorParameters;
-                editingObj.RelativeObjectVertices = dlg.Vertices;
+                PointUtils.PointCollectionToP3D(dlg.Vertices, editingObj.RelativeObjectVertices);
+                //editingObj.RelativeObjectVertices = dlg.Vertices;
                 editingObj.TriangleIndices = dlg.Faces;
 
                 RecalculateAllBounds();
@@ -2752,7 +2769,19 @@ namespace Barnacle.ViewModels
         {
             String s = $"Camera ({camera.CameraPos.X:F2},{camera.CameraPos.Y:F2},{camera.CameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
             NotificationManager.Notify("SetStatusText1", s);
-            s = $"Faces {totalFaces} Vertices {totalFaces * 3}";
+            NotifyPropertyChanged("ModelItems");
+            Process currentProcess = Process.GetCurrentProcess();
+            long usedMemory = currentProcess.PrivateMemorySize64;
+            double mb = usedMemory / (1024 * 1024);
+            double gb = mb / 1024;
+            if (gb > 1.0)
+            {
+                s = $"Faces {totalFaces} Vertices {totalFaces * 3}, Mem {gb.ToString("F3")}Gb";
+            }
+            else
+            {
+                s = $"Faces {totalFaces} Vertices {totalFaces * 3}, Mem {mb.ToString("F3", CultureInfo.InvariantCulture)}Mb";
+            }
             NotificationManager.Notify("SetStatusText3", s);
         }
 

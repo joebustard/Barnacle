@@ -34,7 +34,7 @@ namespace ScriptLanguage
             {
                 result = parseTree.Execute();
             }
-
+            GC.Collect();
             return result;
         }
 
@@ -79,7 +79,7 @@ namespace ScriptLanguage
             return Result;
         }
 
-        public override string  ToString()
+        public override string ToString()
         {
             String Result = "";
 

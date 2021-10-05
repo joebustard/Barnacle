@@ -26,7 +26,7 @@ namespace Barnacle.Models.Adorners
             sphere = null;
             selectedSphere = false;
             bounds = new Bounds3D();
-            NotificationManager.Subscribe("RotationAdorner","ScaleRefresh", OnScaleRefresh);
+            NotificationManager.Subscribe("RotationAdorner", "ScaleRefresh", OnScaleRefresh);
         }
 
         public Bounds3D Bounds
@@ -126,7 +126,9 @@ namespace Barnacle.Models.Adorners
             Int32Collection indices = new Int32Collection();
             Vector3DCollection normals = new Vector3DCollection();
             PrimitiveGenerator.GenerateSphere(ref pnts, ref indices, ref normals);
-            sphere.RelativeObjectVertices = pnts;
+            List<P3D> tmp = new List<P3D>();
+            PointUtils.PointCollectionToP3D(pnts, tmp);
+            sphere.RelativeObjectVertices = tmp;
             sphere.TriangleIndices = indices;
             sphere.Normals = normals;
             sphere.Position = position;
@@ -147,7 +149,10 @@ namespace Barnacle.Models.Adorners
             Vector3DCollection normals = new Vector3DCollection();
             PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
             rect.Name = name;
-            rect.RelativeObjectVertices = pnts;
+            List<P3D> tmp = new List<P3D>();
+            PointUtils.PointCollectionToP3D(pnts, tmp);
+            //  rect.RelativeObjectVertices = pnts;
+            rect.RelativeObjectVertices = tmp;
             rect.TriangleIndices = indices;
             rect.Normals = normals;
 

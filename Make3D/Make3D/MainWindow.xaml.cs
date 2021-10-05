@@ -1,8 +1,10 @@
 ﻿using Barnacle.Models;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle
 {
@@ -57,6 +59,13 @@ namespace Barnacle
             {
                 NotificationManager.Notify("ReloadProject", startProject);
             }
+        }
+
+        private struct V3D
+        {
+            public float X;
+            public float Y;
+            public float Z;
         }
     }
 }
