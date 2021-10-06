@@ -197,6 +197,11 @@ namespace ScriptLanguage
             return SymbolTable.Instance().AddArraySymbol(strName, symbolType);
         }
 
+        internal Symbol AddStructArraySymbol(string strName, StructDefinition def)
+        {
+            return SymbolTable.Instance().AddStructArraySymbol(strName, def);
+        }
+
         internal Symbol AddSymbol(string strName, SymbolTable.SymbolType symbolType)
         {
             return SymbolTable.Instance().AddSymbol(strName, symbolType);

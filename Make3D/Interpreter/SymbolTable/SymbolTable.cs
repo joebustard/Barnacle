@@ -37,6 +37,7 @@ namespace ScriptLanguage
             stringarrayvariable,
             handlearrayvariable,
             solidarrayvariable,
+            structarrayvariable,
             structname
         }
 
@@ -55,6 +56,16 @@ namespace ScriptLanguage
             sym.Name = strName;
             sym.ItemType = symbolType;
             sym.SymbolType = symbolType;
+            Symbols.Add(sym);
+            return sym;
+        }
+
+        public Symbol AddStructArraySymbol(string strName, StructDefinition def)
+        {
+            StructArraySymbol sym = new StructArraySymbol();
+            sym.Name = strName;
+            sym.Structure = def;
+            sym.SymbolType = SymbolType.structarrayvariable;
             Symbols.Add(sym);
             return sym;
         }
@@ -119,7 +130,7 @@ namespace ScriptLanguage
                     break;
                 }
             }
-            if ( result == null )
+            if (result == null)
             {
                 foreach (Symbol sym in Symbols)
                 {
@@ -132,6 +143,35 @@ namespace ScriptLanguage
                 }
             }
             return (ArraySymbol)result;
+        }
+
+        public StructArraySymbol FindStructArraySymbol(string parent, string name)
+        {
+            Symbol result = null;
+            string local = parent + name;
+            // locals first
+            foreach (Symbol sym in Symbols)
+            {
+                if ((sym.Name.ToLower() == local.ToLower()) &&
+                    (sym is StructArraySymbol))
+                {
+                    result = sym;
+                    break;
+                }
+            }
+            if (result == null)
+            {
+                foreach (Symbol sym in Symbols)
+                {
+                    if ((sym.Name.ToLower() == name.ToLower()) &&
+                        (sym is StructArraySymbol))
+                    {
+                        result = sym;
+                        break;
+                    }
+                }
+            }
+            return (StructArraySymbol)result;
         }
 
         public SymbolType FindSymbol(string strName)
@@ -161,6 +201,21 @@ namespace ScriptLanguage
                 }
             }
             return result;
+        }
+
+        public SymbolTable.SymbolType GetFieldType(string s)
+        {
+            SymbolTable.SymbolType ty = SymbolTable.SymbolType.unknown;
+            switch (s)
+            {
+                case "Bool": { ty = SymbolTable.SymbolType.boolvariable; break; }
+                case "Int": { ty = SymbolTable.SymbolType.intvariable; break; }
+                case "Double": { ty = SymbolTable.SymbolType.doublevariable; break; }
+                case "String": { ty = SymbolTable.SymbolType.stringvariable; break; }
+                case "Handle": { ty = SymbolTable.SymbolType.handlevariable; break; }
+                case "Solid": { ty = SymbolTable.SymbolType.solidvariable; break; }
+            }
+            return ty;
         }
 
         /// Returns a String representation of this node that can be used for

@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="Declarations\ArrayDeclaration.cs" />
     <Compile Include="Declarations\SolidDeclarationNode.cs" />
+    <Compile Include="Declarations\StructArrayDeclaration.cs" />
     <Compile Include="Declarations\StructVarDeclarationNode.cs" />
     <Compile Include="Execution\Array.cs" />
     <Compile Include="IntrinsicFunctions\Dim.cs" />
@@ -86,16 +87,19 @@
     <Compile Include="SolidStatements\SolidRotate.cs" />
     <Compile Include="SolidStatements\SolidSize.cs" />
     <Compile Include="SolidStatements\SolidStatement.cs" />
+    <Compile Include="Statements\AssignStructToArrayElementNode.cs" />
     <Compile Include="Statements\ArraySymbolForCall.cs" />
     <Compile Include="Statements\ArrayVariableNode.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
     <Compile Include="Statements\AssignToArrayElement.cs" />
     <Compile Include="Statements\AssignWholeStructNode.cs" />
-    <Compile Include="Statements\AssignWholeStructToExpressionNode.cs" />
+    <Compile Include="Statements\AssignExpressionToStructNode.cs" />
     <Compile Include="Statements\BreakNode.cs" />
     <Compile Include="Statements\FieldNode.cs" />
+    <Compile Include="Statements\StructArrayVariableNode.cs" />
     <Compile Include="Statements\StructSymbolForCall.cs" />
     <Compile Include="SymbolTable\ArraySymbol.cs" />
+    <Compile Include="SymbolTable\structarraysymbol.cs" />
     <Compile Include="SymbolTable\StructDefinitiontTable.cs" />
     <Compile Include="SymbolTable\StructDefinition.cs" />
     <Compile Include="IntrinsicFunctions\AbsNode.cs" />

@@ -8,8 +8,8 @@ namespace ScriptLanguage
 {
     internal class ArrayDeclarationNode : DeclarationNode
     {
-        private ExpressionNode dimensions;
-        private ExpressionCollection initialisers;
+        protected ExpressionNode dimensions;
+        protected ExpressionCollection initialisers;
         private SymbolTable.SymbolType itemType;
 
         // Instance constructor
@@ -127,7 +127,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool EvalExpression(ExpressionNode exp, ref int x, string v)
+        protected bool EvalExpression(ExpressionNode exp, ref int x, string v)
         {
             bool result = exp.Execute();
             if (result)
