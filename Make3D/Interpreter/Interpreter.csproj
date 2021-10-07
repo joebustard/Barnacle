@@ -89,15 +89,15 @@
     <Compile Include="SolidStatements\SolidStatement.cs" />
     <Compile Include="Statements\AssignStructToArrayElementNode.cs" />
     <Compile Include="Statements\ArraySymbolForCall.cs" />
-    <Compile Include="Statements\ArrayVariableNode.cs" />
+    <Compile Include="Factors\ArrayVariableNode.cs" />
     <Compile Include="Statements\AssignStructFieldNode.cs" />
     <Compile Include="Statements\AssignToArrayElement.cs" />
     <Compile Include="Statements\AssignWholeStructNode.cs" />
     <Compile Include="Statements\AssignExpressionToStructNode.cs" />
     <Compile Include="Statements\BreakNode.cs" />
-    <Compile Include="Statements\FieldNode.cs" />
-    <Compile Include="Statements\StructArrayFieldNode.cs" />
-    <Compile Include="Statements\StructArrayVariableNode.cs" />
+    <Compile Include="Factors\FieldNode.cs" />
+    <Compile Include="Factors\StructArrayFieldNode.cs" />
+    <Compile Include="Factors\StructArrayVariableNode.cs" />
     <Compile Include="Statements\StructSymbolForCall.cs" />
     <Compile Include="SymbolTable\ArraySymbol.cs" />
     <Compile Include="SymbolTable\structarraysymbol.cs" />
@@ -133,7 +133,6 @@
     <Compile Include="Parser\ExpressionNode.cs" />
     <Compile Include="Constants\FalseConstantNode.cs" />
     <Compile Include="IntrinsicFunctions\FileExistsNode.cs" />
-    <Compile Include="CFilesDifferNode.cs" />
     <Compile Include="Statements\CForNode.cs" />
     <Compile Include="Statements\FunctionBodyNode.cs" />
     <Compile Include="Execution\FunctionCache.cs" />
@@ -188,7 +187,7 @@
     <Compile Include="Statements\CUnaryMinusNode.cs" />
     <Compile Include="Statements\IncludeNode.cs" />
     <Compile Include="IntrinsicFunctions\ValNode.cs" />
-    <Compile Include="Statements\VariableNode.cs" />
+    <Compile Include="Factors\VariableNode.cs" />
     <Compile Include="Statements\WhileNode.cs" />
     <Compile Include="Statements\CWriteLineNode.cs" />
     <Compile Include="Execution\ExecutionResult.cs" />

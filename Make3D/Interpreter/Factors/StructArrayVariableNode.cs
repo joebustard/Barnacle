@@ -49,6 +49,7 @@ namespace ScriptLanguage
 
         public StructArraySymbol Symbol
         {
+            get { return symbol; }
             set { symbol = value; }
         }
 

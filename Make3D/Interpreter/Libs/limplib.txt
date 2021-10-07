@@ -7,11 +7,12 @@
    double z;
  }
 
+ // size
  Struct Size
  {
-   double width;
+   double length;
    double height;
-   double depth;
+   double width;
  }
 
  Struct Colour
@@ -29,6 +30,8 @@
  Colour Yellow;
  Colour Green;
  Colour Gray;
+ Colour Brown;
+Colour Purple;
 
     Function Colour Argb( Int  a, Int  r, Int  g, Int  b ) 
     {
@@ -57,7 +60,23 @@
    Green = Argb(255,0,255,0);
    Yellow = Argb(255,255,240,0);
    Gray = Argb(255,128,128,128);
+   Brown = Argb(255,219,41,41);
+   Purple = Argb(255,178,0,255);
  }
+
+procedure ColourSolid(Solid sl, Colour cl)
+{
+  SetColour sl,cl.A,cl.R,cl.G,cl.B;
+}
+
+Function Size GetSolidSize( Solid sl)
+{
+    Size result;
+    result.length = Length(sl);
+    result.height = Height( sl);
+    result.width = Width(sl);
+    return result;
+}
 
  procedure InitialiseLimpLib()
  {

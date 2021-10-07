@@ -30,7 +30,7 @@ namespace Barnacle.Views
         private Point3D lastHitPoint;
         private Point lastMousePos;
         private bool loaded;
-        
+
         private ScriptViewModel vm;
 
         public ScriptView()
@@ -74,6 +74,15 @@ namespace Barnacle.Views
             }
 
             return result;
+        }
+
+        private void CheckClicked(object sender, RoutedEventArgs e)
+        {
+            ResultsBox.Text = "";
+            if (RefreshInterpreterSource())
+            {
+                vm.SetResultsBox(ResultsBox);
+            }
         }
 
         private void DeferSyntaxCheck()

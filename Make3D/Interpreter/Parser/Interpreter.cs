@@ -1587,32 +1587,6 @@ namespace ScriptLanguage
             return GetFunctionNode<FileExistsNode>(parentName);
         }
 
-        private ExpressionNode ParseFilesDifferFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            ExpressionNode pathexp1 = ParseExpressionNode(parentName);
-            if (pathexp1 != null)
-            {
-                if (CheckForComma() == false)
-                {
-                    ReportSyntaxError("FilesDiffer expected ,");
-                }
-                else
-                {
-                    ExpressionNode pathexp2 = ParseExpressionNode(parentName);
-                    if (pathexp2 != null)
-                    {
-                        CFilesDifferNode fex = new CFilesDifferNode();
-                        fex.LeftExpression = pathexp1;
-                        fex.RightExpression = pathexp2;
-                        exp = fex;
-                    }
-                }
-            }
-
-            return exp;
-        }
-
         private bool ParseFloorStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;

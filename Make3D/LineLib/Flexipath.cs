@@ -260,6 +260,56 @@ namespace Barnacle.LineLib
                             }
                             break;
 
+                        case "H":
+                            {
+                                valid = GetNumber(blks[i + 1], ref x);
+                                y = pnts[pnts.Count - 1].Y;
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                pnts.Add(fp);
+                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                segments.Add(sq);
+                                i++;
+                            }
+                            break;
+
+                        case "RH":
+                            {
+                                valid = GetNumber(blks[i + 1], ref x);
+                                x = x + pnts[pnts.Count - 1].X;
+                                y = pnts[pnts.Count - 1].Y;
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                pnts.Add(fp);
+                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                segments.Add(sq);
+                                i++;
+                            }
+                            break;
+
+                        case "V":
+                            {
+                                valid = GetNumber(blks[i + 1], ref y);
+                                x = pnts[pnts.Count - 1].X;
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                pnts.Add(fp);
+                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                segments.Add(sq);
+                                i++;
+                            }
+                            break;
+
+                        case "RV":
+                            {
+                                valid = GetNumber(blks[i + 1], ref y);
+                                x = pnts[pnts.Count - 1].X;
+                                y = y + pnts[pnts.Count - 1].Y;
+                                FlexiPoint fp = new FlexiPoint(x, y);
+                                pnts.Add(fp);
+                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                segments.Add(sq);
+                                i++;
+                            }
+                            break;
+
                         case "RL":
                             {
                                 valid = GetCoord(blks[i + 1], ref x, ref y);
@@ -577,6 +627,20 @@ namespace Barnacle.LineLib
                     y = Convert.ToDouble(words[1]);
                     res = true;
                 }
+            }
+            catch
+            {
+            }
+            return res;
+        }
+
+        private bool GetNumber(string v, ref double x)
+        {
+            bool res = false;
+            try
+            {
+                x = Convert.ToDouble(v);
+                res = true;
             }
             catch
             {
