@@ -4247,14 +4247,56 @@ namespace ScriptLanguage
 
         private ExpressionNode ParseStructArrayVarNode(ExpressionNode indexExp, StructArraySymbol arsym, string externalName, string internalName)
         {
+            String token = "";
             ExpressionNode exp = null;
-            StructArrayVariableNode vn = new StructArrayVariableNode();
-            vn.Name = internalName;
-            vn.ExternalName = externalName;
-            vn.Symbol = arsym;
-            vn.IndexExpression = indexExp;
-            vn.IsInLibrary = tokeniser.InIncludeFile();
-            exp = vn;
+            Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
+            if (FetchToken(out token, out tokenType) == true)
+            {
+                // so we have a struct array factor e.g. = colours[0] but is it a
+                // field of the struct e.g. colours[0].R
+                if (token == ".")
+                {
+                    // yes its a field
+                    // get the field name
+                    if (FetchToken(out token, out tokenType) == true)
+                    {
+                        if (tokenType == Tokeniser.TokenType.Identifier)
+                        {
+                            // does it match a field in the  in the struct
+                            int field = arsym.Structure.FieldIndex(token);
+                            if (field == -1)
+                            {
+                                ReportSyntaxError($"Field ${token} is not part of structure.");
+                            }
+                            else
+                            {
+                                StructArrayFieldNode vn = new StructArrayFieldNode();
+                                vn.Name = internalName;
+                                vn.ExternalName = externalName;
+                                vn.Symbol = arsym;
+                                vn.FieldName = token;
+                                vn.FieldNumber = field;
+                                vn.IndexExpression = indexExp;
+                                vn.IsInLibrary = tokeniser.InIncludeFile();
+                                exp = vn;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    // no its the whole struct
+                    tokeniser.PutTokenBack();
+
+                    StructArrayVariableNode vn = new StructArrayVariableNode();
+                    vn.Name = internalName;
+                    vn.ExternalName = externalName;
+                    vn.Symbol = arsym;
+                    vn.IndexExpression = indexExp;
+                    vn.IsInLibrary = tokeniser.InIncludeFile();
+                    exp = vn;
+                }
+            }
             return exp;
         }
 

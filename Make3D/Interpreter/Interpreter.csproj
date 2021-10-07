@@ -96,6 +96,7 @@
     <Compile Include="Statements\AssignExpressionToStructNode.cs" />
     <Compile Include="Statements\BreakNode.cs" />
     <Compile Include="Statements\FieldNode.cs" />
+    <Compile Include="Statements\StructArrayFieldNode.cs" />
     <Compile Include="Statements\StructArrayVariableNode.cs" />
     <Compile Include="Statements\StructSymbolForCall.cs" />
     <Compile Include="SymbolTable\ArraySymbol.cs" />
