@@ -1,0 +1,12 @@
+<Link Name ="Simple1">
+<Part Name="MainBed" X="0.0" Y="0.0" Z="0.0" W="1.0">
+M 0.0,0.0
+RV -0.2
+RL 0.1,-0.1
+RH 0.7
+RL 0.1,0.1
+RV 0.4
+RL -0.1,0.1
+RH -0.7
+</Part>
+</Link>

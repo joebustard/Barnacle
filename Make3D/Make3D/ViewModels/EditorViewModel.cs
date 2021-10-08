@@ -313,7 +313,6 @@ namespace Barnacle.ViewModels
             }
             catch
             {
-
             }
         }
 
@@ -737,7 +736,7 @@ namespace Barnacle.ViewModels
                                 //dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - selectedObjectAdorner.Bounds.Lower.X);
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - bns.Lower.X);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -746,7 +745,7 @@ namespace Barnacle.ViewModels
                                 //dAbsX = ob.Position.X + (selectedObjectAdorner.Bounds.Upper.X - ob.AbsoluteBounds.Upper.X);
                                 dAbsX = ob.Position.X + (bns.Upper.X - ob.AbsoluteBounds.Upper.X);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -755,7 +754,7 @@ namespace Barnacle.ViewModels
                                 //dAbsY = ob.Position.Y + (selectedObjectAdorner.Bounds.Upper.Y - ob.AbsoluteBounds.Upper.Y);
                                 dAbsY = ob.Position.Y + (bns.Upper.Y - ob.AbsoluteBounds.Upper.Y);
                                 ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -764,7 +763,7 @@ namespace Barnacle.ViewModels
                                 //dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - selectedObjectAdorner.Bounds.Lower.Y);
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Lower.Y);
                                 ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -773,7 +772,7 @@ namespace Barnacle.ViewModels
                                 //dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - selectedObjectAdorner.Bounds.Lower.Z);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - bns.Lower.Z);
                                 ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -782,7 +781,7 @@ namespace Barnacle.ViewModels
                                 //                                dAbsZ = ob.Position.Z + (selectedObjectAdorner.Bounds.Upper.Z - ob.AbsoluteBounds.Upper.Z);
                                 dAbsZ = ob.Position.Z + (bns.Upper.Z - ob.AbsoluteBounds.Upper.Z);
                                 ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -791,7 +790,7 @@ namespace Barnacle.ViewModels
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - bns.MidPoint().X);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - bns.MidPoint().Z);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                             }
                             break;
 
@@ -801,7 +800,7 @@ namespace Barnacle.ViewModels
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Upper.Y) - 0.001;
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
@@ -812,7 +811,7 @@ namespace Barnacle.ViewModels
                                 dAbsY = bns.Lower.Y - (ob.AbsoluteBounds.Height / 2) + 0.001;
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
@@ -824,7 +823,7 @@ namespace Barnacle.ViewModels
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
@@ -836,7 +835,7 @@ namespace Barnacle.ViewModels
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
@@ -849,7 +848,7 @@ namespace Barnacle.ViewModels
                                 // dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - bns.Upper.Z) - 0.001;
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
@@ -862,7 +861,7 @@ namespace Barnacle.ViewModels
                                 // dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                 dAbsZ = bns.Lower.Z - (ob.AbsoluteBounds.Depth / 2) + 0.001;
                                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                ob.RelativeToAbsolute();
+                                ob.Remesh();
                                 bns.Add(ob.AbsoluteBounds);
                             }
                             break;
@@ -876,7 +875,7 @@ namespace Barnacle.ViewModels
                                     dAbsY = mp.Y + (ob.AbsoluteBounds.MidPoint().Y - midY);
                                     dAbsZ = mp.Z + (ob.AbsoluteBounds.MidPoint().Z - midZ);
                                     ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                                    ob.RelativeToAbsolute();
+                                    ob.Remesh();
                                 }
                             }
                             break;
@@ -1285,7 +1284,7 @@ namespace Barnacle.ViewModels
                 Object3D ob = selectedObjectAdorner.SelectedObjects[i];
 
                 ob.MoveToFloor();
-                ob.RelativeToAbsolute();
+                ob.Remesh();
             }
         }
 
@@ -1588,6 +1587,7 @@ namespace Barnacle.ViewModels
                     double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
                     ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
                     ob.RelativeToAbsolute();
+                    ob.Remesh();
                 }
                 Document.Dirty = true;
                 // move the selectors

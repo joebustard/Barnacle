@@ -1,8 +1,12 @@
-﻿using System;
+﻿using Barnacle.LineLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -192,6 +196,14 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public static double Distance(System.Windows.Point p1, System.Windows.Point p2)
+        {
+            double d = Math.Sqrt((p2.X - p1.X) * (p2.X - p1.X) +
+                                   (p2.Y - p1.Y) * (p2.Y - p1.Y));
+
+            return d;
+        }
+
         public static System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
         {
             double dx = p2.X - p1.X;
@@ -222,14 +234,6 @@ namespace Barnacle.Dialogs
                 res += Distance(p1, p2);
             }
             return res;
-        }
-
-        private static double Distance(System.Windows.Point p1, System.Windows.Point p2)
-        {
-            double d = Math.Sqrt((p2.X - p1.X) * (p2.X - p1.X) +
-                                   (p2.Y - p1.Y) * (p2.Y - p1.Y));
-
-            return d;
         }
     }
 }

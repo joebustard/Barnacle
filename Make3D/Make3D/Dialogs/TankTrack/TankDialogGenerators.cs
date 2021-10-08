@@ -1,10 +1,13 @@
-﻿using PolygonTriangulationLib;
+﻿using Barnacle.LineLib;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -42,6 +45,129 @@ namespace Barnacle.Dialogs
          new System.Windows.Point(0.05,-0.25),
          new System.Windows.Point(0.0,-0.05),
         };
+
+        internal void GenerateLinkPart(System.Windows.Point p1, System.Windows.Point p2, Point3DCollection vertices, Int32Collection faces, bool firstCall, double width, double thickness, Link link)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            foreach (LinkPart lp in link.Parts)
+            {
+                String pth = lp.PathText;
+                FlexiPath fp = new FlexiPath();
+                if (fp.FromTextPath(pth))
+                {
+                    List<System.Windows.Point> rawprofile = fp.DisplayPoints();
+                    List<System.Windows.Point> linkProfile = new List<System.Windows.Point>();
+                    // rawprofile should have the basic shape of the part
+                    // horizontal, with coordinates in the range 0 to 1
+                    if (Math.Abs(dx) < 0.000001 && dy > 0.0001)
+                    {
+                        VerticalUp(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                    }
+                    else if (Math.Abs(dx) < 0.000001 && dy < 0.0001)
+                    {
+                        VerticalDown(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                    }
+                    else if (dx > 0.0001 && Math.Abs(dy) < 0.0000011)
+                    {
+                        HorizontalRight(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                    }
+                    else if (dx < 0.0001 && Math.Abs(dy) < 0.000001)
+                    {
+                        HorizontalLeft(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                    }
+                    else
+                    {
+                        NonOrthogonal(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                    }
+
+                    double partBackZ = (lp.Z - lp.W / 2.0) * width;
+                    double partFrontZ = (lp.Z + lp.W / 2.0) * width;
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
+                }
+            }
+        }
+
+        private static void HorizontalLeft(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        {
+            double dx = p2.X - p1.X;
+            foreach (System.Windows.Point rawp in rawProfile)
+            {
+                double x = p1.X + ((rawp.X + xo) * dx);
+                double y = p1.Y - ((rawp.Y + yo) * height);
+                rotatedProfile.Add(new System.Windows.Point(x, y));
+            }
+        }
+
+        private static void HorizontalRight(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        {
+            double dx = p2.X - p1.X;
+            foreach (System.Windows.Point rawp in rawProfile)
+            {
+                double x = p1.X + ((rawp.X + xo) * dx);
+                double y = p1.Y + ((rawp.Y + yo) * height);
+                rotatedProfile.Add(new System.Windows.Point(x, y));
+            }
+        }
+
+        private static void NonOrthogonal(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            double dist = TankTrackUtils.Distance(p1, p2);
+            double sign = -1;
+            // right down
+            if (dx > 0 && dy < 0)
+            {
+                sign = 1;
+            }
+            else
+            if (dx > 0 && dy > 0)
+            {
+                sign = -1;
+            }
+            else
+            if (dx < 0 && dy < 0)
+            {
+                sign = 1;
+            }
+            else
+            if (dx < 0 && dy > 0)
+            {
+                sign = -1;
+            }
+
+            foreach (System.Windows.Point rawp in rawProfile)
+            {
+                //double x = p1.X + (rawp.X * dx);
+                //double y = p1.Y + (rawp.Y * height);
+                System.Windows.Point o1 = TankTrackUtils.Perpendicular(p1, p2, rawp.X + xo, sign * (rawp.Y + yo) * height);
+                rotatedProfile.Add(o1);
+            }
+        }
+
+        private static void VerticalDown(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        {
+            double dy = p2.Y - p1.Y;
+            foreach (System.Windows.Point rawp in rawProfile)
+            {
+                double x = p1.X + ((rawp.Y + yo) * height);
+                double y = p1.Y + ((rawp.X + xo) * dy);
+                rotatedProfile.Add(new System.Windows.Point(x, y));
+            }
+        }
+
+        private static void VerticalUp(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        {
+            double dy = p2.Y - p1.Y;
+            foreach (System.Windows.Point rawp in rawProfile)
+            {
+                // yes this is meant to look odd
+                double x = p1.X - ((rawp.Y + yo) * height);
+                double y = p1.Y + ((rawp.X + xo) * dy);
+                rotatedProfile.Add(new System.Windows.Point(x, y));
+            }
+        }
 
         private void CreateInnerFace(List<System.Windows.Point> ply, int i)
         {

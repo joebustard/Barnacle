@@ -189,6 +189,9 @@
     <Compile Include="Dialogs\Star\Star.xaml.cs">
       <DependentUpon>Star.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\TankTrack\ExternalLinks.cs" />
+    <Compile Include="Dialogs\TankTrack\Link.cs" />
+    <Compile Include="Dialogs\TankTrack\LinkPart.cs" />
     <Compile Include="Dialogs\TankTrack\TankDialogGenerators.cs" />
     <Compile Include="Dialogs\TankTrack\TankTrackUtils.cs" />
     <Compile Include="Dialogs\Thread\ThreadDlg.xaml.cs">
@@ -781,18 +784,18 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Dialogs\TankTrack\Tracks\" />
+    <Folder Include="Dialogs\TankTrack\Links\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)templates
 mkdir $(TargetDir)data
 mkdir $(TargetDir)data\figure
-mkdir $(TargetDir)data\tracks
+mkdir $(TargetDir)data\Links
 mkdir $(TargetDir)libs
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
 copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
-copy /Y $(SolutionDir)make3d\Dialogs\TankTrack\Tracks\*.* $(TargetDir)data\tracks
+copy /Y $(SolutionDir)make3d\Dialogs\TankTrack\Links\*.* $(TargetDir)data\Links
 copy /Y $(SolutionDir)make3d\Data\*.* $(TargetDir)data
 copy /Y $(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs
 del   /q $(TargetDir)data\figure\*.txt

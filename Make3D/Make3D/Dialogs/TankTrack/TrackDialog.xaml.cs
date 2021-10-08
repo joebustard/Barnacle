@@ -25,6 +25,7 @@ namespace Barnacle.Dialogs
         public string selectedTrackType;
         private bool cf;
         private List<System.Windows.Point> editingPolygon;
+        private ExternalLinks externalLinks;
         private FlexiPath flexiPath;
         private double guideSize;
         private List<System.Windows.Point> innerPolygon;
@@ -74,6 +75,14 @@ namespace Barnacle.Dialogs
             GuideSize = 1;
             ModelGroup = MyModelGroup;
             moving = false;
+            externalLinks = new ExternalLinks();
+            foreach (Link ln in externalLinks.Links)
+            {
+                if (!TrackTypes.Contains(ln.Name))
+                {
+                    TrackTypes.Add(ln.Name);
+                }
+            }
         }
 
         public enum SelectionModeType
@@ -416,10 +425,6 @@ namespace Barnacle.Dialogs
                     {
                         InsertQuadCurveSegment(found, position);
                     }
-
-                    //GetRawFlexiPoints();
-                    //PointGrid.ItemsSource = Points;
-                    //CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 else
                 {
@@ -496,22 +501,12 @@ namespace Barnacle.Dialogs
             {
                 if (found < polyPoints.Count - 1)
                 {
-                    // if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                    // {
-                    //      InsertCurveSegment(found, position);
-                    //  }
-                    //else
-                    //      {
                     InsertLineSegment(found, position);
-                    //       }
-                    //GetRawFlexiPoints();
-                    // PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 else
                 {
                     flexiPath.AddLine(position);
-                    //  PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 added = true;
@@ -848,7 +843,39 @@ namespace Barnacle.Dialogs
                         GenerateM1Track();
                         CentreVertices();
                         break;
+
+                    default:
+                        {
+                            foreach (Link ln in externalLinks.Links)
+                            {
+                                if (ln.Name == SelectedTrackType)
+                                {
+                                    GenerateTrackFomLink(ln);
+                                    CentreVertices();
+                                }
+                            }
+                        }
+                        break;
                 }
+            }
+        }
+
+        private void GenerateTrackFomLink(Link ln)
+        {
+            Faces.Clear();
+            Vertices.Clear();
+            bool firstCall = true;
+            for (int i = 0; i < trackPath.Count; i++)
+            {
+                int j = i + 1;
+                if (j >= trackPath.Count)
+                {
+                    j = 0;
+                }
+                System.Windows.Point p1 = trackPath[i];
+                System.Windows.Point p2 = trackPath[j];
+                GenerateLinkPart(p1, p2, Vertices, Faces, firstCall, trackWidth, thickness, ln);
+                firstCall = false;
             }
         }
 
@@ -885,12 +912,7 @@ namespace Barnacle.Dialogs
             String s = EditorParameters.Get("Points");
             if (s != "")
             {
-                string[] words = s.Split(',');
-                editingPolygon.Clear();
-                for (int i = 0; i < words.GetLength(0); i += 2)
-                {
-                    editingPolygon.Add(new System.Windows.Point(Convert.ToDouble(words[i]), Convert.ToDouble(words[i + 1])));
-                }
+                flexiPath.FromString(s);
             }
             s = EditorParameters.Get("NoOfLinks");
             if (s != "")
@@ -1257,15 +1279,7 @@ namespace Barnacle.Dialogs
 
         private void SaveEditorParameters()
         {
-            String s = "";
-            for (int i = 0; i < editingPolygon.Count; i++)
-            {
-                s += editingPolygon[i].X.ToString() + "," + editingPolygon[i].Y.ToString();
-                if (i < editingPolygon.Count - 1)
-                {
-                    s += ",";
-                }
-            }
+            String s = flexiPath.ToString();
             EditorParameters.Set("Points", s);
             EditorParameters.Set("NoOfLinks", NoOfLinks.ToString());
             EditorParameters.Set("TrackType", SelectedTrackType);

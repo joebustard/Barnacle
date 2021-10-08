@@ -623,6 +623,8 @@ namespace Barnacle.LineLib
                 string[] words = v.Split(',');
                 if (words.GetLength(0) == 2)
                 {
+                    words[0] = words[0].Trim();
+                    words[1] = words[1].Trim();
                     x = Convert.ToDouble(words[0]);
                     y = Convert.ToDouble(words[1]);
                     res = true;
@@ -639,7 +641,7 @@ namespace Barnacle.LineLib
             bool res = false;
             try
             {
-                x = Convert.ToDouble(v);
+                x = Convert.ToDouble(v.Trim());
                 res = true;
             }
             catch
