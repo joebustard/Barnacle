@@ -181,6 +181,7 @@ namespace Barnacle.Models
                 {
                     Content.Clear();
                     referencedFiles.Clear();
+                    GC.Collect();
                 }
                 XmlDocument doc = new XmlDocument();
                 doc.Load(file);
