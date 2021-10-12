@@ -363,11 +363,17 @@ namespace VisualSolutionExplorer
             if (AutoLoad)
             {
                 _projectFiles.Clear();
-                string[] fNames = Directory.GetFiles(baseFolder + FolderPath);
-                foreach (String fn in fNames)
+                try
                 {
-                    string nm = System.IO.Path.GetFileName(fn);
-                    AddExistingFile(nm);
+                    string[] fNames = Directory.GetFiles(baseFolder + FolderPath);
+                    foreach (String fn in fNames)
+                    {
+                        string nm = System.IO.Path.GetFileName(fn);
+                        AddExistingFile(nm);
+                    }
+                }
+                catch
+                { 
                 }
             }
 

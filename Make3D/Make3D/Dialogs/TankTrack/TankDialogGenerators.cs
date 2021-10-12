@@ -37,9 +37,9 @@ namespace Barnacle.Dialogs
          new System.Windows.Point(0.05,0.25),
          new System.Windows.Point(0.1,1.0),
          new System.Windows.Point(0.8,1.0),
-         new System.Windows.Point(0.9,0.1),
+         new System.Windows.Point(0.98,0.1),
 
-          new System.Windows.Point(0.9,-0.1),
+          new System.Windows.Point(0.98,-0.1),
          new System.Windows.Point(0.8,-1.0),
          new System.Windows.Point(0.1,-1.0),
          new System.Windows.Point(0.05,-0.25),

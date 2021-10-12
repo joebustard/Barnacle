@@ -1045,8 +1045,10 @@ namespace Barnacle.ViewModels
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
                 CheckPoint();
-                GC.Collect();
+                
                 Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                ob.AbsoluteObjectVertices.Clear();
+                GC.Collect();
                 MeshDecimator.Mesh mesh = ObjectMeshToDecimatorMesh(ob);
                 DecimatorSettings dlg = new DecimatorSettings();
                 dlg.OriginalFaceCount = mesh.TriangleCount;
@@ -1071,12 +1073,14 @@ namespace Barnacle.ViewModels
                         {
                             ob.TriangleIndices.Add(smallerMesh.Indices[i]);
                         }
-                        ob.Remesh();
-                        RegenerateDisplayList();
-                        GC.Collect();
+
                         Document.Dirty = true;
                     }
                 }
+                ob.Remesh();
+                RegenerateDisplayList();
+                GC.Collect();
+
             }
             else
             {
@@ -2176,6 +2180,8 @@ namespace Barnacle.ViewModels
                                         localDoc.Save(targetPath);
                                         string fldr = System.IO.Path.GetDirectoryName(targetPath);
                                         BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+                                        localDoc = null;
+                                        GC.Collect(); 
                                     }
                                     catch (Exception ex)
                                     {
