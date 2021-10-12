@@ -212,6 +212,8 @@ namespace Barnacle.Object3DLib
 
                     AbsoluteToRelative();
                     SetMesh();
+                    modeller = null;
+                    GC.Collect();
                     res = true;
                 }
             }
