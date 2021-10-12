@@ -271,7 +271,7 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.boolvariable:
                     {
                         sti = ExecutionStack.Instance().Pull();
-                        if (sti.MyType == StackItem.ItemType.bval)
+                        if (sti != null && sti.MyType == StackItem.ItemType.bval)
                         {
                             sym.BooleanValue = sti.BooleanValue;
                             result = true;
@@ -282,10 +282,18 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.intvariable:
                     {
                         sti = ExecutionStack.Instance().Pull();
-                        if (sti.MyType == StackItem.ItemType.ival)
+                        if (sti != null && sti.MyType == StackItem.ItemType.ival)
                         {
                             sym.IntValue = sti.IntValue;
                             result = true;
+                        }
+                        else
+                        {
+                            if (sti != null && sti.MyType == StackItem.ItemType.dval)
+                            {
+                                sym.IntValue = (int)sti.DoubleValue;
+                                result = true;
+                            }
                         }
                     }
                     break;
@@ -293,10 +301,18 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.doublevariable:
                     {
                         sti = ExecutionStack.Instance().Pull();
-                        if (sti.MyType == StackItem.ItemType.dval)
+                        if (sti != null && sti.MyType == StackItem.ItemType.dval)
                         {
                             sym.DoubleValue = sti.DoubleValue;
                             result = true;
+                        }
+                        else
+                        {
+                            if (sti != null && sti.MyType == StackItem.ItemType.ival)
+                            {
+                                sym.DoubleValue = (double)sti.IntValue;
+                                result = true;
+                            }
                         }
                     }
                     break;
@@ -315,7 +331,7 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.stringvariable:
                     {
                         sti = ExecutionStack.Instance().Pull();
-                        if (sti.MyType == StackItem.ItemType.sval)
+                        if (sti != null && sti.MyType == StackItem.ItemType.sval)
                         {
                             sym.StringValue = sti.StringValue;
                             result = true;
@@ -326,7 +342,7 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.handlevariable:
                     {
                         sti = ExecutionStack.Instance().Pull();
-                        if (sti.MyType == StackItem.ItemType.hval)
+                        if (sti != null && sti.MyType == StackItem.ItemType.hval)
                         {
                             sym.HandleValue = sti.HandleValue;
                             result = true;
@@ -337,7 +353,7 @@ namespace ScriptLanguage
                 case SymbolTable.SymbolType.solidvariable:
                     {
                         sti = ExecutionStack.Instance().Pull();
-                        if (sti.MyType == StackItem.ItemType.sldval)
+                        if (sti != null && sti.MyType == StackItem.ItemType.sldval)
                         {
                             sym.SolidValue = sti.SolidValue;
                             result = true;
