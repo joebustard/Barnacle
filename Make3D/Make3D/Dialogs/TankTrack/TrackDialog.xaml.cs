@@ -60,7 +60,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
             TrackTypes = new ObservableCollection<string>();
             TrackTypes.Add("Simple");
-            TrackTypes.Add("Simple 2");
+
             TrackTypes.Add("Centre Guide");
             TrackTypes.Add("M1");
 
@@ -820,6 +820,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateTrack()
         {
+            //BusyCon.Visibility = Visibility.Visible;
             if (trackPath != null)
             {
                 switch (SelectedTrackType)
@@ -857,6 +858,7 @@ namespace Barnacle.Dialogs
                         }
                         break;
                 }
+                //BusyCon.Visibility = Visibility.Hidden;
             }
         }
 

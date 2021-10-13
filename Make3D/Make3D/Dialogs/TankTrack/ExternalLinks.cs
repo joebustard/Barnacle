@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 
 namespace Barnacle.Dialogs
@@ -17,54 +18,57 @@ namespace Barnacle.Dialogs
             string[] files = Directory.GetFiles(appPath, "*.*");
             foreach (string fn in files)
             {
-                XmlDocument doc = new XmlDocument();
-                doc.Load(fn);
-                XmlNodeList xl = doc.SelectNodes("Link");
-                foreach (XmlNode nd in xl)
+                try
                 {
-                    XmlElement ele = nd as XmlElement;
-                    if (ele.HasAttribute("Name"))
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(fn);
+                    XmlNodeList xl = doc.SelectNodes("Link");
+                    foreach (XmlNode nd in xl)
                     {
-                        String lname = ele.GetAttribute("Name");
-                        Link link = new Link();
-                        link.Name = lname;
-                        XmlNodeList parts = ele.SelectNodes("Part");
-                        foreach (XmlNode partnd in parts)
+                        XmlElement ele = nd as XmlElement;
+                        if (ele.HasAttribute("Name"))
                         {
-                            XmlElement partel = partnd as XmlElement;
-                            if (partel.HasAttribute("Name"))
+                            String lname = ele.GetAttribute("Name");
+                            Link link = new Link();
+                            link.Name = lname;
+                            XmlNodeList parts = ele.SelectNodes("Part");
+                            foreach (XmlNode partnd in parts)
                             {
-                                String pname = partel.GetAttribute("Name");
-                                if (partel.HasAttribute("X"))
+                                XmlElement partel = partnd as XmlElement;
+                                if (partel.HasAttribute("Name"))
                                 {
-                                    String px = partel.GetAttribute("X");
-                                    if (partel.HasAttribute("Y"))
+                                    String pname = partel.GetAttribute("Name");
+                                    if (partel.HasAttribute("X"))
                                     {
-                                        String py = partel.GetAttribute("Y");
-                                        if (partel.HasAttribute("Z"))
+                                        String px = partel.GetAttribute("X");
+                                        if (partel.HasAttribute("Y"))
                                         {
-                                            String pz = partel.GetAttribute("Z");
-                                            if (partel.HasAttribute("W"))
+                                            String py = partel.GetAttribute("Y");
+                                            if (partel.HasAttribute("Z"))
                                             {
-                                                String pw = partel.GetAttribute("W");
-                                                string text = partel.InnerText;
-                                                text = text.Replace("\n", " ");
-                                                text = text.Replace("\r", " ");
-                                                text = text.Replace("  ", " ");
-                                                try
+                                                String pz = partel.GetAttribute("Z");
+                                                if (partel.HasAttribute("W"))
                                                 {
-                                                    LinkPart lp = new LinkPart();
-                                                    lp.Name = pname;
-                                                    lp.X = Convert.ToDouble(px);
-                                                    lp.Y = Convert.ToDouble(py);
-                                                    lp.Z = Convert.ToDouble(pz);
-                                                    lp.W = Convert.ToDouble(pw);
-                                                    lp.PathText = text;
-                                                    link.Add(lp);
-                                                    Links.Add(link);
-                                                }
-                                                catch
-                                                {
+                                                    String pw = partel.GetAttribute("W");
+                                                    string text = partel.InnerText;
+                                                    text = text.Replace("\n", " ");
+                                                    text = text.Replace("\r", " ");
+                                                    text = text.Replace("  ", " ");
+                                                    try
+                                                    {
+                                                        LinkPart lp = new LinkPart();
+                                                        lp.Name = pname;
+                                                        lp.X = Convert.ToDouble(px);
+                                                        lp.Y = Convert.ToDouble(py);
+                                                        lp.Z = Convert.ToDouble(pz);
+                                                        lp.W = Convert.ToDouble(pw);
+                                                        lp.PathText = text;
+                                                        link.Add(lp);
+                                                        Links.Add(link);
+                                                    }
+                                                    catch
+                                                    {
+                                                    }
                                                 }
                                             }
                                         }
@@ -73,6 +77,10 @@ namespace Barnacle.Dialogs
                             }
                         }
                     }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

@@ -78,11 +78,8 @@ namespace Barnacle.Views
 
         private void CheckClicked(object sender, RoutedEventArgs e)
         {
-            ResultsBox.Text = "";
-            if (RefreshInterpreterSource())
-            {
-                vm.SetResultsBox(ResultsBox);
-            }
+            vm.ClearResults();
+            RefreshInterpreterSource();
         }
 
         private void DeferSyntaxCheck()
@@ -164,10 +161,9 @@ namespace Barnacle.Views
 
         private void RunClicked(object sender, RoutedEventArgs e)
         {
-            ResultsBox.Text = "";
+            vm.ClearResults();
             if (RefreshInterpreterSource())
             {
-                vm.SetResultsBox(ResultsBox);
                 vm.RunScript();
             }
         }
@@ -192,7 +188,7 @@ namespace Barnacle.Views
         {
             vm = DataContext as ScriptViewModel;
             ScriptBox.Width = ScriptGrid.ActualWidth;
-            vm.SetResultsBox(ResultsBox);
+
             SetDisplayRtf();
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Interval = new TimeSpan(0, 1, 0);
@@ -200,6 +196,7 @@ namespace Barnacle.Views
             dispatcherTimer.Start();
             NotificationManager.Subscribe("Script", "UpdateScript", OnUpdate);
             vm.ScriptBox = ScriptBox;
+            vm.SetResultsBox(ResultsBox);
             loaded = true;
         }
 

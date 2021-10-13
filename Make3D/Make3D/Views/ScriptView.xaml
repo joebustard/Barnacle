@@ -39,7 +39,7 @@
                         <Button  Margin="2,2,2,2" Content="Check" Click="CheckClicked" ToolTip="Check the script for syntax errors but don't run it" />
                         <Button  Margin="2,2,2,2" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" ToolTip="Clear results log" />
                     </UniformGrid>
-                    <TextBox x:Name="ResultsBox" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" />
+                    <TextBox x:Name="ResultsBox" Text="{Binding ResultsText}" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" />
                     <RichTextBox Grid.Row="2" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" FontSize="16" />
                 </Grid>
             </TabItem>

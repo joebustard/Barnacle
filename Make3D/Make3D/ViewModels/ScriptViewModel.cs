@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -20,12 +21,15 @@ namespace Barnacle.ViewModels
     internal class ScriptViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private const String defaultSource = @"
-program ""Name""
+program ""Script Name""
 {
  Include ""libs\limplib.txt"" ;
+
+ // main starts here
 }
 ";
 
+        private static Action EmptyDelegate = delegate () { };
         private Axies axies;
         private PolarCamera camera;
         private CameraModes cameraMode;
@@ -40,6 +44,8 @@ program ""Name""
         private Point lastMouse;
         private Vector3D lookDirection;
         private Model3DCollection modelItems;
+        private TextBox resultsBox;
+        private string resultsText;
         private RichTextBox richTextBox;
         private string rtf;
         private Script script;
@@ -78,6 +84,7 @@ program ""Name""
             cameraMode = CameraModes.CameraMoveLookCenter;
             modelItems = new Model3DCollection();
             searchIndex = 0;
+            Log.Instance().UpdateText = UpdateText;
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
         }
@@ -150,6 +157,30 @@ program ""Name""
         }
 
         public Canvas Overlay { get; internal set; }
+
+        public string ResultsText
+        {
+            get
+            {
+                return resultsText;
+            }
+            set
+            {
+                if (resultsText != value)
+                {
+                    resultsText = value;
+                    if (resultsBox != null)
+                    {
+                        int iStartOfLine = resultsBox.Text.Length;
+                        Refresh(resultsBox);
+                        resultsBox.Select(iStartOfLine, 1);
+                        resultsBox.ScrollToEnd();
+                        Refresh(resultsBox);
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public String Rtf
         {
@@ -226,6 +257,16 @@ program ""Name""
         }
 
         internal String RawText { get; set; }
+
+        public static void Refresh(System.Windows.UIElement uiElement)
+        {
+            uiElement.Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Render, EmptyDelegate);
+        }
+
+        public void ClearResults()
+        {
+            ResultsText = "";
+        }
 
         public void RegenerateDisplayList()
         {
@@ -321,14 +362,22 @@ program ""Name""
         internal void RunScript()
         {
             content.Clear();
-            script.SetResultsContent(content);
-            script.Execute();
+            //script.SetResultsContent(content);
+            if (script.Execute())
+            {
+                Log.Instance().AddEntry("Complete");
+            }
+            else
+            {
+                Log.Instance().AddEntry("Failed");
+            }
             RegenerateDisplayList();
         }
 
         internal bool ScriptText(string scriptText)
         {
             Source = scriptText;
+
             bool result = interpreter.LoadFromText(script, Source, filePath);
             if (result)
             {
@@ -341,7 +390,7 @@ program ""Name""
 
         internal void SetResultsBox(System.Windows.Controls.TextBox resultsBox)
         {
-            Log.Instance().SetTextBox(resultsBox);
+            this.resultsBox = resultsBox;
         }
 
         private static GeometryModel3D GetMesh(Object3D obj)
@@ -537,6 +586,12 @@ program ""Name""
                     }
                     break;
             }
+        }
+
+        private void UpdateText(string s)
+        {
+            ResultsText += s;
+            CollectionViewSource.GetDefaultView(ResultsText).Refresh();
         }
 
         private void Zoom(double v)

@@ -113,6 +113,9 @@
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\BusyControl.xaml.cs">
+      <DependentUpon>BusyControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
@@ -339,6 +342,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Blank\Blank.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\BusyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -792,6 +799,7 @@
 mkdir $(TargetDir)data
 mkdir $(TargetDir)data\figure
 mkdir $(TargetDir)data\Links
+del   /q $(TargetDir)data\Links\*.txt
 mkdir $(TargetDir)libs
 copy /Y $(SolutionDir)make3d\templates\*.* $(TargetDir)templates
 copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data

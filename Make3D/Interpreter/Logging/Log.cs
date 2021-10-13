@@ -7,7 +7,9 @@ namespace ScriptLanguage
     public class Log
     {
         protected List<LogEntry> logEntrys;
+
         protected TextBox txtbox;
+
         private static Log singleton = null;
 
         private string logFileName = "Log.Txt";
@@ -18,6 +20,8 @@ namespace ScriptLanguage
             logEntrys = new List<LogEntry>();
             txtbox = null;
         }
+
+        public delegate void UpdateExternalText(string s);
 
         public string LogFileName
         {
@@ -34,7 +38,9 @@ namespace ScriptLanguage
             }
         }
 
-        public static  Log Instance()
+        public UpdateExternalText UpdateText { get; set; }
+
+        public static Log Instance()
         {
             if (singleton == null)
             {
@@ -49,15 +55,20 @@ namespace ScriptLanguage
             le.Text = Line;
             le.DateStamp = DateTime.Now.ToString();
             logEntrys.Add(le);
-
-            if (txtbox != null)
+            if (UpdateText != null)
             {
-                int iStartOfLine = txtbox.Text.Length;
-
-                txtbox.Text += le.DateStamp + " " + le.Text + "\r\n";
-                txtbox.Select(iStartOfLine, 1);
-                txtbox.ScrollToEnd();
+                UpdateText(le.DateStamp + " " + le.Text + "\r\n");
             }
+            /*
+                        if (txtbox != null)
+                        {
+                            int iStartOfLine = txtbox.Text.Length;
+
+                            txtbox.Text += le.DateStamp + " " + le.Text + "\r\n";
+                            txtbox.Select(iStartOfLine, 1);
+                            txtbox.ScrollToEnd();
+                        }
+                        */
         }
 
         public void Clear()

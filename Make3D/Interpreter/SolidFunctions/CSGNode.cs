@@ -72,6 +72,14 @@ namespace ScriptLanguage
 
                             result = true;
                         }
+                        else
+                        {
+                            Log.Instance().AddEntry(Id() + $" : Operation Failed");
+                        }
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry(Id() + $" : One of the solids is null (has it been deleted?) Failed");
                     }
                 }
                 else
