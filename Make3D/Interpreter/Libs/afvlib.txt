@@ -1,0 +1,85 @@
+
+   // Cut a grid of square holes out of a plate to form a grill
+   // pl is the solid to cut into
+   // x,y,z is the position of the centre of the grill
+   // glength = grid length
+   // gwidth = gridwidth
+   // holel is hole length
+   // holew is hole width
+   // gx is x gap between holes
+   // gz is z gap between holes
+   // THIS FUNCTION IS SLOW
+   Function Solid Cutgrill( Solid  pl, Double  x, Double  y, Double  z, Double  glength, Double  gwidth, Double  holel, Double  holew, Double  gx, Double  gz )
+   {
+       Solid result ;
+       Solid allholes ;
+       Double holeheight = 3.0 * Height ( pl ) ;
+       Double holesinx = glength / ( holel + gx ) ;
+       Double holesinz = gwidth / ( holew + gz ) ;
+       Double sx = x - ( glength / 2.0 ) ;
+       Double sz = z - ( gwidth / 2.0 ) ;
+       Double ex = sx + glength ;
+       Double ez = sz + gwidth ;
+       Double px ;
+       Double pz ;
+       Int holecount = 0 ;
+       For px = sx To  ex Step holel + gx 
+       {
+           For pz = sz To  ez Step holew + gz 
+           {
+               Solid hole = Make ( "box", px, y, pz, holel, holeheight, holew ) ;
+               Rotate hole, 0, 45, 0 ;
+               If ( holecount == 0 ) 
+               {
+                   allholes = hole ;
+               }
+               Else 
+               {
+                   Solid joined = Union ( allholes, hole ) ;
+                   Delete allholes ;
+                   Delete hole ;
+                   allholes = joined ;
+               }
+
+               holecount = holecount + 1 ;
+           }
+       }
+       result = Difference ( pl, allholes ) ;
+       Delete allholes ;
+       Delete pl ;
+       Return result ;
+   }
+
+// Make a line of rivits 
+// The line starts at first,firsty,firstz
+// The size of the rivit is given by rivetsize
+// the rivets are offset by dx,d,dz
+// numberofrivts
+ Function Solid Rivitline( Double  firstx, Double  firsty, Double  firstz, Double  rivitsize, Double  dx, Double  dy, Double  dz, Int  numberofrivits )
+   {
+       Solid result ;
+       Double px = firstx ;
+       Double py = firsty ;
+       Double pz = firstz ;
+       Int i ;
+       For i = 1 To  numberofrivits
+       {
+           Solid arivit = Make ( "cap", px, py, pz, rivitsize, rivitsize, rivitsize ) ;
+           If ( i == 1 )
+           {
+               result = arivit ;
+           }
+           Else
+           {
+               Solid joined = Union ( result, arivit ) ;
+               Delete result ;
+               Delete arivit ;
+               result = joined ;
+           }
+
+           px = px + dx ;
+           py = py + dy ;
+           pz = pz + dz ;
+       }
+       Return result ;
+   }
