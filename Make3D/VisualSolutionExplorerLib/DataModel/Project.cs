@@ -215,6 +215,7 @@ namespace VisualSolutionExplorer
             bool res = false;
             ProjectFolders.Clear();
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             try
             {
                 doc.Load(projectPath);
@@ -266,6 +267,7 @@ namespace VisualSolutionExplorer
         private void SaveFile(string solutionPath)
         {
             XmlDocument solutionDoc = new XmlDocument();
+            solutionDoc.XmlResolver = null;
             XmlElement root = solutionDoc.CreateElement("Project");
             root.SetAttribute("ProjectName", ProjectName);
             if (FirstFile != String.Empty)

@@ -214,8 +214,7 @@ namespace Barnacle.Models.Adorners
             box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
             //box.Scale.Adjust(1.1, 1.1, 1.1);
             box.Color = Color.FromArgb(150, 64, 64, 64);
-            box.RelativeToAbsolute();
-            box.SetMesh();
+            box.Remesh();
             Adornments.Add(GetMesh(box));
 
             if (addSizeThumbs)
@@ -254,8 +253,7 @@ namespace Barnacle.Models.Adorners
             thumb.Scale = new Scale3D(thumbSize, thumbSize, thumbSize);
             thumb.ScaleMesh(thumbSize, thumbSize, thumbSize);
             thumb.Color = col;
-            thumb.RelativeToAbsolute();
-            thumb.SetMesh();
+            thumb.Remesh();
             thumbs.Add(thumb);
             Adornments.Add(GetMesh(thumb));
         }

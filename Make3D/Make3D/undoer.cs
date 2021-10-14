@@ -5,9 +5,8 @@ namespace Barnacle
 {
     public static class undoer
     {
-        private static int checkId = -1;
         private static Dictionary<string, int> checkIds = new Dictionary<string, int>();
-        private static int maxCheckId = -1;
+
         private static string undoFolderName = "";
 
         public static bool CanUndo(string idString)

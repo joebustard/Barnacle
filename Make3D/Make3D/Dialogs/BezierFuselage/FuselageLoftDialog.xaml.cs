@@ -240,6 +240,7 @@ namespace Barnacle.Dialogs
             {
                 ObservableCollection<BulkheadControl> tmp = new ObservableCollection<BulkheadControl>();
                 XmlDocument doc = new XmlDocument();
+                doc.XmlResolver = null;
                 doc.Load(f);
 
                 XmlNode docNode = doc.SelectSingleNode("Fuselage");
@@ -532,6 +533,7 @@ namespace Barnacle.Dialogs
         private void Write(string f)
         {
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             XmlElement docNode = doc.CreateElement("Fuselage");
             foreach (BulkheadControl ob in bulkHeads)
             {

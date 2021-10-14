@@ -130,6 +130,7 @@ namespace TemplateLib
         private void CreateSolution(string projName, string pth, ProjectTemplateDefinition def)
         {
             XmlDocument solutionDoc = new XmlDocument();
+            solutionDoc.XmlResolver = null;
             XmlElement root = solutionDoc.CreateElement("Project");
             root.SetAttribute("ProjectName", projName);
             solutionDoc.AppendChild(root);
@@ -146,6 +147,7 @@ namespace TemplateLib
             if (File.Exists(f))
             {
                 XmlDocument doc = new XmlDocument();
+                doc.XmlResolver = null;
                 doc.Load(f);
                 XmlNode root = doc.SelectSingleNode("Defs");
 

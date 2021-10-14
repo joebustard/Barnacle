@@ -186,7 +186,7 @@
                 <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
                 <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
             </Grid>
-            <local:BusyControl x:Name="BusyCon" Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Hidden" />
         </Grid>
+        <local:BusyControl x:Name="BusyCon" Grid.RowSpan="2" Grid.ColumnSpan="2" Visibility="Hidden" />
     </Grid>
 </local:BaseModellerDialog>

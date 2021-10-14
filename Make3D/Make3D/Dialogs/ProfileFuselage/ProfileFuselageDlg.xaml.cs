@@ -656,6 +656,7 @@ namespace Barnacle.Dialogs
             this.Cursor = Cursors.Wait;
 
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             doc.Load(fileName);
             XmlNode docNode = doc.SelectSingleNode("Spars");
             XmlElement ele = docNode as XmlElement;
@@ -895,6 +896,7 @@ namespace Barnacle.Dialogs
         private void Write(string f)
         {
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             XmlElement docNode = doc.CreateElement("Spars");
             docNode.SetAttribute("NextLetter", RibManager.NextNameLetter.ToString());
             docNode.SetAttribute("NextNumber", RibManager.NextNameNumber.ToString());

@@ -15,6 +15,7 @@ namespace ConvertAerofoilsToXML
         private static void ProcessDats(string pth)
         {
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             XmlNode af = doc.CreateElement("Airfoils");
             doc.AppendChild(af);
 
@@ -80,7 +81,6 @@ namespace ConvertAerofoilsToXML
                             }
                             else
                             {
-
                                 XmlElement frst = af.FirstChild as XmlElement;
                                 if (frst.GetAttribute("Name").CompareTo(name) > 0)
                                 {
@@ -118,7 +118,6 @@ namespace ConvertAerofoilsToXML
                                         }
                                     }
                                 }
-
                             }
                         }
                     }

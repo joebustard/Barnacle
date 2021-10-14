@@ -2,8 +2,6 @@
 using Microsoft.Win32;
 using Barnacle.LineLib;
 
-
-
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
@@ -1073,11 +1071,6 @@ namespace Barnacle.Dialogs
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Line ln = sender as Line;
-            int found = -1;
-            if (ln != null)
-            {
-            }
         }
 
         private void LoadImage(string f)

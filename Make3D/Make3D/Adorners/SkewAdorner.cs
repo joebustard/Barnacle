@@ -200,8 +200,7 @@ namespace Barnacle.Models.Adorners
             thumb.Scale = new Scale3D(thumbSize, thumbSize, thumbSize);
             thumb.ScaleMesh(thumbSize, thumbSize, thumbSize);
             thumb.Color = col;
-            thumb.RelativeToAbsolute();
-            thumb.SetMesh();
+            thumb.Remesh();
             thumbs.Add(thumb);
             Adornments.Add(GetMesh(thumb));
         }

@@ -52,6 +52,7 @@ namespace Barnacle.Dialogs
             tipShapeNames = new List<string>();
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
             airFoilDoc = new XmlDocument();
+            airFoilDoc.XmlResolver = null;
             rootairfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             rootLength = 30;

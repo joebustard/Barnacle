@@ -64,6 +64,7 @@ namespace Barnacle.Dialogs
             DomedHub = false;
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
             airFoilDoc = new XmlDocument();
+            airFoilDoc.XmlResolver = null;
             airfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             loaded = false;

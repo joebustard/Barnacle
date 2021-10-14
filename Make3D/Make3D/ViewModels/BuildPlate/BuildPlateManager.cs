@@ -42,6 +42,7 @@ namespace Barnacle.ViewModel.BuildPlates
         {
             buildPlates.Clear();
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             doc.Load(file);
             XmlNode docNode = doc.SelectSingleNode("PlateDefinitions");
             if (docNode != null)
@@ -68,6 +69,7 @@ namespace Barnacle.ViewModel.BuildPlates
         public void Save(string file)
         {
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             XmlElement docNode = doc.CreateElement("PlateDefinitions");
             foreach (BuildPlate rf in buildPlates)
             {

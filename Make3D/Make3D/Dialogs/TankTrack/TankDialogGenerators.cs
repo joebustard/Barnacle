@@ -83,7 +83,7 @@ namespace Barnacle.Dialogs
 
                     double partBackZ = (lp.Z - lp.W / 2.0) * width;
                     double partFrontZ = (lp.Z + lp.W / 2.0) * width;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, vertices, faces);
                 }
             }
         }
@@ -169,7 +169,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void CreateInnerFace(List<System.Windows.Point> ply, int i)
+        private void CreateInnerFace(List<System.Windows.Point> ply, int i, Point3DCollection verts, Int32Collection facs)
         {
             int v = i + 1;
             if (v == ply.Count)
@@ -177,17 +177,17 @@ namespace Barnacle.Dialogs
                 v = 0;
             }
 
-            int c0 = AddVertice(ply[i].X, ply[i].Y, 0.0);
-            int c1 = AddVertice(ply[i].X, ply[i].Y, trackWidth);
-            int c2 = AddVertice(ply[v].X, ply[v].Y, trackWidth);
-            int c3 = AddVertice(ply[v].X, ply[v].Y, 0.0);
-            Faces.Add(c0);
-            Faces.Add(c1);
-            Faces.Add(c2);
+            int c0 = AddVertice(verts, ply[i].X, ply[i].Y, 0.0);
+            int c1 = AddVertice(verts, ply[i].X, ply[i].Y, trackWidth);
+            int c2 = AddVertice(verts, ply[v].X, ply[v].Y, trackWidth);
+            int c3 = AddVertice(verts, ply[v].X, ply[v].Y, 0.0);
+            facs.Add(c0);
+            facs.Add(c1);
+            facs.Add(c2);
 
-            Faces.Add(c0);
-            Faces.Add(c2);
-            Faces.Add(c3);
+            facs.Add(c0);
+            facs.Add(c2);
+            facs.Add(c3);
         }
 
         private void CreateOutsideFace(List<System.Windows.Point> ply, int i)
@@ -209,6 +209,27 @@ namespace Barnacle.Dialogs
             Faces.Add(c0);
             Faces.Add(c3);
             Faces.Add(c2);
+        }
+
+        private void CreateOutsideFace(List<System.Windows.Point> ply, int i, Point3DCollection verts, Int32Collection facs)
+        {
+            int v = i + 1;
+            if (v == ply.Count)
+            {
+                v = 0;
+            }
+
+            int c0 = AddVertice(verts, ply[i].X, ply[i].Y, 0.0);
+            int c1 = AddVertice(verts, ply[i].X, ply[i].Y, trackWidth);
+            int c2 = AddVertice(verts, ply[v].X, ply[v].Y, trackWidth);
+            int c3 = AddVertice(verts, ply[v].X, ply[v].Y, 0.0);
+            facs.Add(c0);
+            facs.Add(c2);
+            facs.Add(c1);
+
+            facs.Add(c0);
+            facs.Add(c3);
+            facs.Add(c2);
         }
 
         private void GenerateCentreGuideTrack()
@@ -240,11 +261,14 @@ namespace Barnacle.Dialogs
             MakeFacesFrommOuterAndInner();
         }
 
-        private void GenerateM1LinkConnectors()
+        private void GenerateFaces(Point3DCollection verts, Int32Collection facs)
         {
+            facs.Clear();
+            verts.Clear();
+            MakeFacesFrommOuterAndInner(verts, facs);
         }
 
-        private void GenerateM1Main()
+        private void GenerateM1Main(Point3DCollection verts, Int32Collection facs)
         {
             if (outerPolygon != null)
             {
@@ -263,17 +287,17 @@ namespace Barnacle.Dialogs
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1MainPolyCoords, thickness);
                     double partBackZ = 0;
                     double partFrontZ = trackWidth;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
 
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness + guideSize);
                     partBackZ = trackWidth;
                     partFrontZ = trackWidth + 1;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
 
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness + guideSize);
                     partBackZ = -1;
                     partFrontZ = 0;
-                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ);
+                    MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
                 }
             }
         }
@@ -282,11 +306,17 @@ namespace Barnacle.Dialogs
         {
             Faces.Clear();
             Vertices.Clear();
-            GenerateM1Main();
-            GenerateM1LinkConnectors();
+            GenerateM1Main(Vertices, Faces);
         }
 
-        private void GenerateSimpleTrack(int subType)
+        private void GenerateM1Track(Point3DCollection verts, Int32Collection facs)
+        {
+            facs.Clear();
+            verts.Clear();
+            GenerateM1Main(verts, facs);
+        }
+
+        private void GenerateSimpleTrack(int subType, Point3DCollection verts, Int32Collection facs)
         {
             if (outerPolygon != null)
             {
@@ -395,6 +425,56 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void MakeFacesForLinkPart(List<System.Windows.Point> linkProfile, double partBackZ, double partFrontZ, Point3DCollection verts, Int32Collection facs)
+        {
+            // make faces for this single link part
+            List<PointF> pf = new List<PointF>();
+            foreach (System.Windows.Point p in linkProfile)
+            {
+                pf.Add(new PointF((float)p.X, (float)p.Y));
+            }
+            TriangulationPolygon ply = new TriangulationPolygon();
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(verts, t.Points[0].X, t.Points[0].Y, partBackZ);
+                int c1 = AddVertice(verts, t.Points[1].X, t.Points[1].Y, partBackZ);
+                int c2 = AddVertice(verts, t.Points[2].X, t.Points[2].Y, partBackZ);
+                facs.Add(c0);
+                facs.Add(c2);
+                facs.Add(c1);
+
+                c0 = AddVertice(verts, t.Points[0].X, t.Points[0].Y, partFrontZ);
+                c1 = AddVertice(verts, t.Points[1].X, t.Points[1].Y, partFrontZ);
+                c2 = AddVertice(verts, t.Points[2].X, t.Points[2].Y, partFrontZ);
+                facs.Add(c0);
+                facs.Add(c1);
+                facs.Add(c2);
+            }
+
+            for (int k = 0; k < linkProfile.Count; k++)
+            {
+                int l = k + 1;
+                if (l >= linkProfile.Count)
+                {
+                    l = 0;
+                }
+                int c0 = AddVertice(verts, linkProfile[k].X, linkProfile[k].Y, partBackZ);
+                int c1 = AddVertice(verts, linkProfile[l].X, linkProfile[l].Y, partBackZ);
+                int c2 = AddVertice(verts, linkProfile[l].X, linkProfile[l].Y, partFrontZ);
+                int c3 = AddVertice(verts, linkProfile[k].X, linkProfile[k].Y, partFrontZ);
+
+                facs.Add(c0);
+                facs.Add(c1);
+                facs.Add(c2);
+
+                facs.Add(c0);
+                facs.Add(c2);
+                facs.Add(c3);
+            }
+        }
+
         private void MakeFacesFrommOuterAndInner()
         {
             List<System.Windows.Point> otmp = new List<System.Windows.Point>();
@@ -447,7 +527,7 @@ namespace Barnacle.Dialogs
 
                 for (int i = 0; i < innerPolygon.Count; i++)
                 {
-                    CreateInnerFace(itmp, i);
+                    CreateInnerFace(itmp, i, Vertices, Faces);
                 }
 
                 for (int i = 0; i < innerPolygon.Count; i++)
@@ -492,6 +572,106 @@ namespace Barnacle.Dialogs
                     Faces.Add(c3);
                 }
                 CentreVertices();
+            }
+        }
+
+        private void MakeFacesFrommOuterAndInner(Point3DCollection verts, Int32Collection facs)
+        {
+            List<System.Windows.Point> otmp = new List<System.Windows.Point>();
+            List<System.Windows.Point> itmp = new List<System.Windows.Point>();
+            if (outerPolygon != null)
+            {
+                double top = 0;
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    if (outerPolygon[i].Y > top)
+                    {
+                        top = outerPolygon[i].Y;
+                    }
+                }
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    if (localImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        otmp.Insert(0, new System.Windows.Point(outerPolygon[i].X, top - outerPolygon[i].Y));
+                    }
+                    else
+                    {
+                        double x = ToMM(outerPolygon[i].X);
+                        double y = ToMM(top - outerPolygon[i].Y);
+                        otmp.Insert(0, new System.Windows.Point(x, y));
+                    }
+                }
+
+                // generate side triangles so original points are already in list
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    CreateOutsideFace(otmp, i, verts, facs);
+                }
+                itmp.Clear();
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    if (localImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        itmp.Insert(0, new System.Windows.Point(innerPolygon[i].X, top - innerPolygon[i].Y));
+                    }
+                    else
+                    {
+                        double x = ToMM(innerPolygon[i].X);
+                        double y = ToMM(top - innerPolygon[i].Y);
+                        itmp.Insert(0, new System.Windows.Point(x, y));
+                    }
+                }
+
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    CreateInnerFace(itmp, i, verts, facs);
+                }
+
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    int v = i + 1;
+                    if (v == innerPolygon.Count)
+                    {
+                        v = 0;
+                    }
+
+                    int c0 = AddVertice(verts, itmp[i].X, itmp[i].Y, 0.0);
+                    int c1 = AddVertice(verts, otmp[i].X, otmp[i].Y, 0.0);
+                    int c2 = AddVertice(verts, otmp[v].X, otmp[v].Y, 0.0);
+                    int c3 = AddVertice(verts, itmp[v].X, itmp[v].Y, 0.0);
+                    facs.Add(c0);
+                    facs.Add(c2);
+                    facs.Add(c1);
+
+                    facs.Add(c0);
+                    facs.Add(c3);
+                    facs.Add(c2);
+                }
+
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    int v = i + 1;
+                    if (v == innerPolygon.Count)
+                    {
+                        v = 0;
+                    }
+
+                    int c0 = AddVertice(verts, itmp[i].X, itmp[i].Y, trackWidth);
+                    int c1 = AddVertice(verts, otmp[i].X, otmp[i].Y, trackWidth);
+                    int c2 = AddVertice(verts, otmp[v].X, otmp[v].Y, trackWidth);
+                    int c3 = AddVertice(verts, itmp[v].X, itmp[v].Y, trackWidth);
+                    facs.Add(c0);
+                    facs.Add(c1);
+                    facs.Add(c2);
+
+                    facs.Add(c0);
+                    facs.Add(c2);
+                    facs.Add(c3);
+                }
+                CentreVertices(verts, facs);
             }
         }
 

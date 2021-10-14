@@ -542,6 +542,26 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        protected int AddVertice(Point3DCollection verts, double x, double y, double z)
+        {
+            int res = -1;
+            for (int i = 0; i < verts.Count; i++)
+            {
+                if (PointUtils.equals(verts[i], x, y, z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                verts.Add(new Point3D(x, y, z));
+                res = verts.Count - 1;
+            }
+            return res;
+        }
+
         protected int AddVertice(Point3D v)
         {
             int res = -1;
@@ -587,6 +607,28 @@ namespace Barnacle.Dialogs
             {
                 Vertices[i] += offset;
                 bounds.Adjust(Vertices[i]);
+            }
+        }
+
+        protected void CentreVertices(Point3DCollection verts, Int32Collection facs)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(verts, ref min, ref max);
+
+            double scaleX = max.X - min.X;
+            double scaleY = max.Y - min.Y;
+            double scaleZ = max.Z - min.Z;
+
+            double midx = min.X + (scaleX / 2);
+            double midy = min.Y + (scaleY / 2);
+            double midz = min.Z + (scaleZ / 2);
+            Vector3D offset = new Vector3D(-midx, -min.Y, -midz);
+            // bounds.Zero();
+            for (int i = 0; i < verts.Count; i++)
+            {
+                verts[i] += offset;
+                //   bounds.Adjust(Vertices[i]);
             }
         }
 

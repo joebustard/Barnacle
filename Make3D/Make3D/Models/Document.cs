@@ -110,6 +110,7 @@ namespace Barnacle.Models
                 try
                 {
                     XmlDocument doc = new XmlDocument();
+                    doc.XmlResolver = null;
                     doc.Load(path);
                     XmlNode docNode = doc.SelectSingleNode("Document");
                     XmlNodeList nodes = docNode.ChildNodes;
@@ -184,6 +185,7 @@ namespace Barnacle.Models
                     GC.Collect();
                 }
                 XmlDocument doc = new XmlDocument();
+                doc.XmlResolver = null;
                 doc.Load(file);
                 XmlNode docNode = doc.SelectSingleNode("Document");
                 if (clearFirst)
@@ -353,6 +355,7 @@ namespace Barnacle.Models
         {
             GC.Collect();
             XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
             XmlElement docNode = doc.CreateElement("Document");
             docNode.SetAttribute("NextId", nextId.ToString());
             revision++;
@@ -904,6 +907,7 @@ namespace Barnacle.Models
                 {
                     DateTime timeStamp = File.GetLastWriteTime(fileName);
                     XmlDocument doc = new XmlDocument();
+                    doc.XmlResolver = null;
                     doc.Load(fileName);
                     XmlNode docNode = doc.SelectSingleNode("Document");
                     XmlNodeList nodes = docNode.ChildNodes;

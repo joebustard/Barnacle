@@ -805,8 +805,7 @@ namespace Barnacle.Dialogs
             marker.Scale = new Scale3D(size, size, size);
             marker.ScaleMesh(size, size, size);
             marker.Color = col;
-            marker.RelativeToAbsolute();
-            marker.SetMesh();
+            marker.Remesh();
             marker.Dirty = false;
             markers.Add(marker);
         }
@@ -1090,7 +1089,7 @@ namespace Barnacle.Dialogs
             if (dlg.ShowDialog() == true)
             {
                 XmlDocument doc = new XmlDocument();
-
+                doc.XmlResolver = null;
                 doc.Load(dlg.FileName);
                 XmlNode root = doc.FirstChild;
                 XmlElement ele = root as XmlElement;
@@ -1208,6 +1207,7 @@ namespace Barnacle.Dialogs
             if (dlg.ShowDialog() == true)
             {
                 XmlDocument doc = new XmlDocument();
+                doc.XmlResolver = null;
                 XmlElement docNode = doc.CreateElement("Pose");
                 doc.AppendChild(docNode);
                 docNode.SetAttribute("X", skeleton.StartPosition.X.ToString());

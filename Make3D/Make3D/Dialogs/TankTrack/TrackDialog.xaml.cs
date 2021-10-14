@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -818,54 +819,29 @@ namespace Barnacle.Dialogs
             MainCanvas.Children.Add(ln);
         }
 
-        private void GenerateTrack()
+        private async void GenerateTrack()
         {
-            //BusyCon.Visibility = Visibility.Visible;
-            if (trackPath != null)
+            BusyCon.Visibility = Visibility.Visible;
+            //    var result = await Task.Run(() => GenerationTask());
+            var result = GenerationTask();
+            Vertices.Clear();
+            Faces.Clear();
+            foreach (Point3D p in result.Vertices)
             {
-                switch (SelectedTrackType)
-                {
-                    case "Simple":
-                        GenerateSimpleTrack(0);
-                        GenerateFaces();
-                        break;
-
-                    case "Simple 2":
-                        GenerateSimpleTrack(1);
-                        GenerateFaces();
-                        break;
-
-                    case "Centre Guide":
-                        GenerateCentreGuideTrack();
-                        GenerateFaces();
-                        break;
-
-                    case "M1":
-                        GenerateM1Track();
-                        CentreVertices();
-                        break;
-
-                    default:
-                        {
-                            foreach (Link ln in externalLinks.Links)
-                            {
-                                if (ln.Name == SelectedTrackType)
-                                {
-                                    GenerateTrackFomLink(ln);
-                                    CentreVertices();
-                                }
-                            }
-                        }
-                        break;
-                }
-                //BusyCon.Visibility = Visibility.Hidden;
+                Vertices.Add(new Point3D(p.X, p.Y, p.Z));
             }
+            foreach (int i in result.Faces)
+            {
+                Faces.Add(i);
+            }
+
+            BusyCon.Visibility = Visibility.Hidden;
         }
 
-        private void GenerateTrackFomLink(Link ln)
+        private void GenerateTrackFomLink(Link ln, Point3DCollection verts, Int32Collection facs)
         {
-            Faces.Clear();
-            Vertices.Clear();
+            facs.Clear();
+            verts.Clear();
             bool firstCall = true;
             for (int i = 0; i < trackPath.Count; i++)
             {
@@ -876,7 +852,7 @@ namespace Barnacle.Dialogs
                 }
                 System.Windows.Point p1 = trackPath[i];
                 System.Windows.Point p2 = trackPath[j];
-                GenerateLinkPart(p1, p2, Vertices, Faces, firstCall, trackWidth, thickness, ln);
+                GenerateLinkPart(p1, p2, verts, facs, firstCall, trackWidth, thickness, ln);
                 firstCall = false;
             }
         }
@@ -902,6 +878,56 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
+        }
+
+        private Genresult GenerationTask()
+        {
+            Genresult result;
+            Point3DCollection verts = new Point3DCollection();
+            Int32Collection facs = new Int32Collection();
+            result.Vertices = verts;
+            result.Faces = facs;
+
+            if (trackPath != null)
+            {
+                switch (SelectedTrackType)
+                {
+                    case "Simple":
+                        GenerateSimpleTrack(0, verts, facs);
+                        GenerateFaces(verts, facs);
+                        break;
+
+                    case "Simple 2":
+                        GenerateSimpleTrack(1, verts, facs);
+                        GenerateFaces(verts, facs);
+                        break;
+
+                    case "Centre Guide":
+                        GenerateCentreGuideTrack();
+                        GenerateFaces(verts, facs);
+                        break;
+
+                    case "M1":
+                        GenerateM1Track(verts, facs);
+                        CentreVertices(verts, facs);
+                        break;
+
+                    default:
+                        {
+                            foreach (Link ln in externalLinks.Links)
+                            {
+                                if (ln.Name == SelectedTrackType)
+                                {
+                                    GenerateTrackFomLink(ln, verts, facs);
+                                    CentreVertices(verts, facs);
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+
+            return result;
         }
 
         private void GetEditorParameters()
@@ -1415,6 +1441,12 @@ namespace Barnacle.Dialogs
 
             UpdateCameraPos();
             UpdateDisplay();
+        }
+
+        private struct Genresult
+        {
+            public Int32Collection Faces;
+            public Point3DCollection Vertices;
         }
     }
 }

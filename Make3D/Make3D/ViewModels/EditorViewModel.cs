@@ -1045,7 +1045,7 @@ namespace Barnacle.ViewModels
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
             {
                 CheckPoint();
-                
+
                 Object3D ob = selectedObjectAdorner.SelectedObjects[0];
                 ob.AbsoluteObjectVertices.Clear();
                 GC.Collect();
@@ -1080,7 +1080,6 @@ namespace Barnacle.ViewModels
                 ob.Remesh();
                 RegenerateDisplayList();
                 GC.Collect();
-
             }
             else
             {
@@ -1530,7 +1529,7 @@ namespace Barnacle.ViewModels
 
                 double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
                 ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                ob.RelativeToAbsolute();
+                ob.Remesh();
             }
             Document.Dirty = true;
         }
@@ -1590,7 +1589,7 @@ namespace Barnacle.ViewModels
                     }
                     double dAbsZ = target.Z + (ob.Position.Z - tmpBounds.MidPoint().Z);
                     ob.Position = new Point3D(dAbsX, dAbsY, dAbsZ);
-                    ob.RelativeToAbsolute();
+
                     ob.Remesh();
                 }
                 Document.Dirty = true;
@@ -2181,7 +2180,7 @@ namespace Barnacle.ViewModels
                                         string fldr = System.IO.Path.GetDirectoryName(targetPath);
                                         BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
                                         localDoc = null;
-                                        GC.Collect(); 
+                                        GC.Collect();
                                     }
                                     catch (Exception ex)
                                     {
@@ -2974,8 +2973,10 @@ namespace Barnacle.ViewModels
 
         private void SelectFirst()
         {
-            if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
-                (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+            var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
+            var v2 = (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down);
+            if ((v1 == KeyStates.None) &&
+                (v2 == KeyStates.None))
             {
                 ResetSelection();
             }
@@ -2998,8 +2999,10 @@ namespace Barnacle.ViewModels
 
         private void SelectLast()
         {
-            if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
-                (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+            var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
+            var v2 = (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down);
+            if ((v1 == KeyStates.None) &&
+                (v2 == KeyStates.None))
             {
                 ResetSelection();
             }
@@ -3044,8 +3047,8 @@ namespace Barnacle.ViewModels
                         nxt = Document.Content[0];
                     }
                 }
-                var v1 = Keyboard.GetKeyStates(Key.LeftShift);
-                var v2 = Keyboard.GetKeyStates(Key.RightShift);
+                var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
+                var v2 = (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down);
                 if ((v1 == KeyStates.None) &&
                     (v2 == KeyStates.None))
                 {
@@ -3071,8 +3074,10 @@ namespace Barnacle.ViewModels
             {
                 string nm = param.ToString();
 
-                if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
-                    (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+                var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
+                var v2 = (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down);
+                if ((v1 == KeyStates.None) &&
+                    (v2 == KeyStates.None))
                 {
                     ResetSelection();
                 }
@@ -3105,8 +3110,10 @@ namespace Barnacle.ViewModels
             if (selectedItems.Count == 1)
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
-                if ((Keyboard.GetKeyStates(Key.LeftShift) == KeyStates.None) &&
-                    (Keyboard.GetKeyStates(Key.RightShift) == KeyStates.None))
+                var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
+                var v2 = (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down);
+                if ((v1 == KeyStates.None) &&
+                    (v2 == KeyStates.None))
                 {
                     ResetSelection();
                 }

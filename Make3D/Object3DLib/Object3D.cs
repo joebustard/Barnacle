@@ -225,6 +225,7 @@ namespace Barnacle.Object3DLib
                 try
                 {
                     XmlDocument doc = new XmlDocument();
+                    doc.XmlResolver = null;
                     doc.Load(path);
                     XmlNode docNode = doc.SelectSingleNode("Document");
                     XmlNodeList nodes = docNode.ChildNodes;
