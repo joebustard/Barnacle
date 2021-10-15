@@ -9,8 +9,10 @@ RL 0.1,0.1
 RV 0.4
 RL -0.1,0.1
 RH -0.8
+RV -0.2
 </Part>
 </Link>
+
 <Link Name="Side Guide">
 <Part Name="MainBed" X="0.0" Y="0.0" Z="0.5" W="0.8">
 M 0.0,0.0
@@ -35,6 +37,7 @@ RL -0.05,1.0
 RH -0.1
 RL -0.05,-1.0
 RH -0.1
+RL -0.1,-0.2
 </Part>
 <Part Name="InnerLink" X="0.7" Y="0.0" Z="0.05" W="0.1">
 M 0.0,0.0
@@ -49,6 +52,45 @@ RL -0.05,1.0
 RH -0.1
 RL -0.05,-1.0
 RH -0.1
+RL -0.1,-0.2
+</Part>
+</Link>
+<Link Name="Centre Guide">
+<Part Name="MainBed" X="0.0" Y="0.0" Z="0.5" W="0.2">
+M 0.0,0.0
+RV -0.2
+RH 1.0
+RV 0.4
+RH -0.35
+RL -0.05,1.0
+RH -0.2
+RL -0.05,-1.0
+RH -0.35
+RV -0.2
+</Part>
+<Part Name="OuterLink" X="0.0" Y="0.0" Z="0.8" W="0.4">
+M 0.0,0.0
+RV -0.2
+RL 0.1,-0.1
+RH 0.7
+RL 0.1,0.1
+RV 0.4
+RL -0.1,0.1
+RH -0.7
+RL -0.1,-0.1
+RV -0.2
+</Part>
+<Part Name="InnerLink" X="0.0" Y="0.0" Z="0.2" W="0.4">
+M 0.0,0.0
+RV -0.2
+RL 0.1,-0.1
+RH 0.7
+RL 0.1,0.1
+RV 0.4
+RL -0.1,0.1
+RH -0.7
+RL -0.1,-0.1
+RV -0.2
 </Part>
 </Link>
 </Links>

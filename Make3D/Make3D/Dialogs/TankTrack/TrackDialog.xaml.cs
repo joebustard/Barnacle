@@ -62,11 +62,9 @@ namespace Barnacle.Dialogs
             TrackTypes = new ObservableCollection<string>();
             TrackTypes.Add("Simple");
 
-            TrackTypes.Add("Centre Guide");
             TrackTypes.Add("M1");
 
-            SelectedTrackType = "Simple";
-            NoOfLinks = 100;
+            NoOfLinks = 50;
             trackPath = new List<System.Windows.Point>();
             outerPolygon = new List<System.Windows.Point>();
             innerPolygon = new List<System.Windows.Point>();
@@ -77,12 +75,23 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             moving = false;
             externalLinks = new ExternalLinks();
+            bool containsBasic = false;
             foreach (Link ln in externalLinks.Links)
             {
                 if (!TrackTypes.Contains(ln.Name))
                 {
                     TrackTypes.Add(ln.Name);
                 }
+                if (ln.Name == "Basic")
+                {
+                    containsBasic = true;
+                }
+            }
+
+            // if there is a link type called basic then use it as the default;
+            if (containsBasic)
+            {
+                SelectedTrackType = "Basic";
             }
         }
 
@@ -843,6 +852,14 @@ namespace Barnacle.Dialogs
             facs.Clear();
             verts.Clear();
             bool firstCall = true;
+            double top = double.MinValue;
+            for (int i = 0; i < trackPath.Count; i++)
+            {
+                if (trackPath[i].Y > top)
+                {
+                    top = trackPath[i].Y;
+                }
+            }
             for (int i = 0; i < trackPath.Count; i++)
             {
                 int j = i + 1;
@@ -850,8 +867,8 @@ namespace Barnacle.Dialogs
                 {
                     j = 0;
                 }
-                System.Windows.Point p1 = trackPath[i];
-                System.Windows.Point p2 = trackPath[j];
+                System.Windows.Point p1 = new System.Windows.Point(ToMM(trackPath[i].X), ToMM(top - trackPath[i].Y));
+                System.Windows.Point p2 = new System.Windows.Point(ToMM(trackPath[j].X), ToMM(top - trackPath[j].Y));
                 GenerateLinkPart(p1, p2, verts, facs, firstCall, trackWidth, thickness, ln);
                 firstCall = false;
             }
@@ -901,12 +918,12 @@ namespace Barnacle.Dialogs
                         GenerateSimpleTrack(1, verts, facs);
                         GenerateFaces(verts, facs);
                         break;
-
-                    case "Centre Guide":
-                        GenerateCentreGuideTrack();
-                        GenerateFaces(verts, facs);
-                        break;
-
+                    /*
+                                        case "Centre Guide":
+                                            GenerateCentreGuideTrack();
+                                            GenerateFaces(verts, facs);
+                                            break;
+                    */
                     case "M1":
                         GenerateM1Track(verts, facs);
                         CentreVertices(verts, facs);
@@ -914,12 +931,15 @@ namespace Barnacle.Dialogs
 
                     default:
                         {
-                            foreach (Link ln in externalLinks.Links)
+                            if (externalLinks != null)
                             {
-                                if (ln.Name == SelectedTrackType)
+                                foreach (Link ln in externalLinks.Links)
                                 {
-                                    GenerateTrackFomLink(ln, verts, facs);
-                                    CentreVertices(verts, facs);
+                                    if (ln.Name == SelectedTrackType)
+                                    {
+                                        GenerateTrackFomLink(ln, verts, facs);
+                                        CentreVertices(verts, facs);
+                                    }
                                 }
                             }
                         }

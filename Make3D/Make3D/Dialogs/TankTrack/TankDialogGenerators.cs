@@ -15,35 +15,33 @@ namespace Barnacle.Dialogs
     {
         private System.Windows.Point[] m1LinkConnectorCoords =
     {
-         new System.Windows.Point(0.6,0.05),
-         new System.Windows.Point(0.65,0.9),
-         new System.Windows.Point(0.8,0.9),
-         new System.Windows.Point(0.86,3),
-         new System.Windows.Point(0.93,3),
-         new System.Windows.Point(1,0.9),
-         new System.Windows.Point(1.15,0.9),
-         new System.Windows.Point(1.2,0.05),
-
-         new System.Windows.Point(1.2,-0.05),
-
-         new System.Windows.Point(1.15,-0.9),
-         new System.Windows.Point(0.65,-0.9),
          new System.Windows.Point(0.6,-0.05),
+         new System.Windows.Point(0.65,-0.9),
+         new System.Windows.Point(1.15,-0.9),
+        new System.Windows.Point(1.2,-0.05),
+         new System.Windows.Point(1.2,0.05),
+         new System.Windows.Point(1.15,0.9),
+         new System.Windows.Point(1,0.9),
+         new System.Windows.Point(0.93,3),
+         new System.Windows.Point(0.86,3),
+         new System.Windows.Point(0.8,0.9),
+         new System.Windows.Point(0.65,0.9),
+
+         new System.Windows.Point(0.6,0.05),
      };
 
         private System.Windows.Point[] m1MainPolyCoords =
     {
-         new System.Windows.Point(0.0,0.05),
-         new System.Windows.Point(0.05,0.25),
-         new System.Windows.Point(0.1,1.0),
-         new System.Windows.Point(0.8,1.0),
-         new System.Windows.Point(0.98,0.1),
-
-          new System.Windows.Point(0.98,-0.1),
-         new System.Windows.Point(0.8,-1.0),
+            new System.Windows.Point(0.0,-0.05),
+            new System.Windows.Point(0.05,-0.25),
          new System.Windows.Point(0.1,-1.0),
-         new System.Windows.Point(0.05,-0.25),
-         new System.Windows.Point(0.0,-0.05),
+         new System.Windows.Point(0.8,-1.0),
+          new System.Windows.Point(0.98,-0.1),
+         new System.Windows.Point(0.98,0.1),
+         new System.Windows.Point(0.8,1.0),
+         new System.Windows.Point(0.1,1.0),
+         new System.Windows.Point(0.05,0.25),
+         new System.Windows.Point(0.0,0.05),
         };
 
         internal void GenerateLinkPart(System.Windows.Point p1, System.Windows.Point p2, Point3DCollection vertices, Int32Collection faces, bool firstCall, double width, double thickness, Link link)
@@ -62,19 +60,19 @@ namespace Barnacle.Dialogs
                     // horizontal, with coordinates in the range 0 to 1
                     if (Math.Abs(dx) < 0.000001 && dy > 0.0001)
                     {
-                        VerticalUp(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                        VerticalDown(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
                     }
                     else if (Math.Abs(dx) < 0.000001 && dy < 0.0001)
                     {
-                        VerticalDown(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                        VerticalUp(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
                     }
                     else if (dx > 0.0001 && Math.Abs(dy) < 0.0000011)
                     {
-                        HorizontalRight(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                        HorizontalLeft(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
                     }
                     else if (dx < 0.0001 && Math.Abs(dy) < 0.000001)
                     {
-                        HorizontalLeft(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
+                        HorizontalRight(lp.X, lp.Y, p1, p2, rawprofile, linkProfile, thickness);
                     }
                     else
                     {
@@ -115,26 +113,26 @@ namespace Barnacle.Dialogs
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
             double dist = TankTrackUtils.Distance(p1, p2);
-            double sign = -1;
+            double sign = 1;
             // right down
             if (dx > 0 && dy < 0)
             {
-                sign = 1;
+                sign = -1;
             }
             else
             if (dx > 0 && dy > 0)
             {
-                sign = -1;
+                sign = 1;
             }
             else
             if (dx < 0 && dy < 0)
             {
-                sign = 1;
+                sign = -1;
             }
             else
             if (dx < 0 && dy > 0)
             {
-                sign = -1;
+                sign = 1;
             }
 
             foreach (System.Windows.Point rawp in rawProfile)
@@ -466,12 +464,12 @@ namespace Barnacle.Dialogs
                 int c3 = AddVertice(verts, linkProfile[k].X, linkProfile[k].Y, partFrontZ);
 
                 facs.Add(c0);
-                facs.Add(c1);
                 facs.Add(c2);
+                facs.Add(c1);
 
                 facs.Add(c0);
-                facs.Add(c2);
                 facs.Add(c3);
+                facs.Add(c2);
             }
         }
 
