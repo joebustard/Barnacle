@@ -362,7 +362,7 @@ program ""Script Name""
         internal void RunScript()
         {
             content.Clear();
-            //script.SetResultsContent(content);
+            script.SetResultsContent(content);
             if (script.Execute())
             {
                 Log.Instance().AddEntry("Complete");
