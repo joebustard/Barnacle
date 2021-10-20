@@ -78,6 +78,30 @@ Function Size GetSolidSize( Solid sl)
     return result;
 }
 
+Function Solid CleanUnion( solid s1, solid s2)
+{
+   solid t = union(s1,s2);
+   delete s1;
+   delete s2;
+   return t;
+}
+
+Function Solid CleanDifference( solid s1, solid s2)
+{
+   solid t = Difference(s1,s2);
+   delete s1;
+   delete s2;
+   return t;
+}
+
+Function Solid CleanIntersection( solid s1, solid s2)
+{
+   solid t = Intersection(s1,s2);
+   delete s1;
+   delete s2;
+   return t;
+}
+
  procedure InitialiseLimpLib()
  {
    SetDefaultColours();

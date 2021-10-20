@@ -54,6 +54,16 @@ namespace ScriptLanguage
                         if (sti.MyType == StackItem.ItemType.sval)
                         {
                             string shape = sti.StringValue;
+                            bool isSwapper = false;
+                            for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+                            {
+                                if (rotatedPrimitives[i] == shape)
+                                {
+                                    isSwapper = true;
+
+                                    break;
+                                }
+                            }
                             double x = 0;
                             double y = 0;
                             double z = 0;
@@ -80,17 +90,18 @@ namespace ScriptLanguage
 
                                 obj.BuildPrimitive(shape);
                                 obj.PrimType = "Mesh";
-                                obj.ScaleMesh(sx, sy, sz);
-
-                                for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+                                if (!isSwapper)
                                 {
-                                    if (rotatedPrimitives[i] == shape)
-                                    {
-                                        obj.SwapYZAxies();
-
-                                        break;
-                                    }
+                                    obj.ScaleMesh(sx, sy, sz);
                                 }
+                                else
+                                {
+                                    obj.ScaleMesh(sx, sz, sy);
+
+                                    obj.SwapYZAxies();
+                                }
+
+
                                 obj.CalcScale(false);
                                 obj.Remesh();
                                 Script.ResultArtefacts.Add(obj);
