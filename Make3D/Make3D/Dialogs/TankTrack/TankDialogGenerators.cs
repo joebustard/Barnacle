@@ -50,11 +50,9 @@ namespace Barnacle.Dialogs
             double dy = p2.Y - p1.Y;
             foreach (LinkPart lp in link.Parts)
             {
-                String pth = lp.PathText;
-                FlexiPath fp = new FlexiPath();
-                if (fp.FromTextPath(pth))
+                List<System.Windows.Point> rawprofile = lp.Profile;
+                if (rawprofile != null)
                 {
-                    List<System.Windows.Point> rawprofile = fp.DisplayPoints();
                     List<System.Windows.Point> linkProfile = new List<System.Windows.Point>();
                     // rawprofile should have the basic shape of the part
                     // horizontal, with coordinates in the range 0 to 1

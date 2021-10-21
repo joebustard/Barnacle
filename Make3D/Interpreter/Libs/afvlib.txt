@@ -22,11 +22,13 @@
        Double ez = sz + gwidth ;
        Double px ;
        Double pz ;
+       print "Cutting grill";
        Int holecount = 0 ;
        For px = sx To  ex Step holel + gx 
        {
            For pz = sz To  ez Step holew + gz 
            {
+               print "Cutting grill hole ",holecount +1;
                Solid hole = Make ( "box", px, y, pz, holel, holeheight, holew ) ;
                Rotate hole, 0, 45, 0 ;
                If ( holecount == 0 ) 
@@ -50,30 +52,30 @@
        Return result ;
    }
 
-// Make a line of rivits 
+// Make a line of rivets 
 // The line starts at first,firsty,firstz
-// The size of the rivit is given by rivetsize
+// The size of the rivet is given by rivetsize
 // the rivets are offset by dx,d,dz
 // numberofrivts
- Function Solid Rivitline( Double  firstx, Double  firsty, Double  firstz, Double  rivitsize, Double  dx, Double  dy, Double  dz, Int  numberofrivits )
+ Function Solid Rivetline( Double  firstx, Double  firsty, Double  firstz, Double  rivetsize, Double  dx, Double  dy, Double  dz, Int  numberofrivets )
    {
        Solid result ;
        Double px = firstx ;
        Double py = firsty ;
        Double pz = firstz ;
        Int i ;
-       For i = 1 To  numberofrivits
+       For i = 1 To  numberofrivets
        {
-           Solid arivit = Make ( "cap", px, py, pz, rivitsize, rivitsize, rivitsize ) ;
+           Solid arivet = Make ( "cap", px, py, pz, rivetsize, rivetsize, rivetsize ) ;
            If ( i == 1 )
            {
-               result = arivit ;
+               result = arivet ;
            }
            Else
            {
-               Solid joined = Union ( result, arivit ) ;
+               Solid joined = Union ( result, arivet ) ;
                Delete result ;
-               Delete arivit ;
+               Delete arivet ;
                result = joined ;
            }
 

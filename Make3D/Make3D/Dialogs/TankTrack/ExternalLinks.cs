@@ -68,7 +68,6 @@ namespace Barnacle.Dialogs
                                                             lp.W = Convert.ToDouble(pw);
                                                             lp.PathText = text;
                                                             link.Add(lp);
-                                                            Links.Add(link);
                                                         }
                                                         catch
                                                         {
@@ -79,6 +78,7 @@ namespace Barnacle.Dialogs
                                         }
                                     }
                                 }
+                                Links.Add(link);
                             }
                         }
                     }
