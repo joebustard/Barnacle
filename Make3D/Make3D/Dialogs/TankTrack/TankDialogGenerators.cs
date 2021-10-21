@@ -53,7 +53,7 @@ namespace Barnacle.Dialogs
                 List<System.Windows.Point> rawprofile = lp.Profile;
                 if (rawprofile != null)
                 {
-                    List<System.Windows.Point> linkProfile = new List<System.Windows.Point>();
+                    List<PointF> linkProfile = new List<PointF>();
                     // rawprofile should have the basic shape of the part
                     // horizontal, with coordinates in the range 0 to 1
                     if (Math.Abs(dx) < 0.000001 && dy > 0.0001)
@@ -84,29 +84,29 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private static void HorizontalLeft(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        private static void HorizontalLeft(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<PointF> rotatedProfile, double height)
         {
             double dx = p2.X - p1.X;
             foreach (System.Windows.Point rawp in rawProfile)
             {
                 double x = p1.X + ((rawp.X + xo) * dx);
                 double y = p1.Y - ((rawp.Y + yo) * height);
-                rotatedProfile.Add(new System.Windows.Point(x, y));
+                rotatedProfile.Add(new System.Drawing.PointF((float)x, (float)y));
             }
         }
 
-        private static void HorizontalRight(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        private static void HorizontalRight(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<PointF> rotatedProfile, double height)
         {
             double dx = p2.X - p1.X;
             foreach (System.Windows.Point rawp in rawProfile)
             {
                 double x = p1.X + ((rawp.X + xo) * dx);
                 double y = p1.Y + ((rawp.Y + yo) * height);
-                rotatedProfile.Add(new System.Windows.Point(x, y));
+                rotatedProfile.Add(new System.Drawing.PointF((float)x, (float)y));
             }
         }
 
-        private static void NonOrthogonal(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        private static void NonOrthogonal(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<PointF> rotatedProfile, double height)
         {
             double dx = p2.X - p1.X;
             double dy = p2.Y - p1.Y;
@@ -137,23 +137,23 @@ namespace Barnacle.Dialogs
             {
                 //double x = p1.X + (rawp.X * dx);
                 //double y = p1.Y + (rawp.Y * height);
-                System.Windows.Point o1 = TankTrackUtils.Perpendicular(p1, p2, rawp.X + xo, sign * (rawp.Y + yo) * height);
+                System.Drawing.PointF o1 = TankTrackUtils.PerpendicularF(p1, p2, rawp.X + xo, sign * (rawp.Y + yo) * height);
                 rotatedProfile.Add(o1);
             }
         }
 
-        private static void VerticalDown(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        private static void VerticalDown(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<PointF> rotatedProfile, double height)
         {
             double dy = p2.Y - p1.Y;
             foreach (System.Windows.Point rawp in rawProfile)
             {
                 double x = p1.X + ((rawp.Y + yo) * height);
                 double y = p1.Y + ((rawp.X + xo) * dy);
-                rotatedProfile.Add(new System.Windows.Point(x, y));
+                rotatedProfile.Add(new System.Drawing.PointF((float)x, (float)y));
             }
         }
 
-        private static void VerticalUp(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<System.Windows.Point> rotatedProfile, double height)
+        private static void VerticalUp(double xo, double yo, System.Windows.Point p1, System.Windows.Point p2, List<System.Windows.Point> rawProfile, List<PointF> rotatedProfile, double height)
         {
             double dy = p2.Y - p1.Y;
             foreach (System.Windows.Point rawp in rawProfile)
@@ -161,7 +161,7 @@ namespace Barnacle.Dialogs
                 // yes this is meant to look odd
                 double x = p1.X - ((rawp.Y + yo) * height);
                 double y = p1.Y + ((rawp.X + xo) * dy);
-                rotatedProfile.Add(new System.Windows.Point(x, y));
+                rotatedProfile.Add(new System.Drawing.PointF((float)x, (float)y));
             }
         }
 
@@ -275,7 +275,7 @@ namespace Barnacle.Dialogs
                     {
                         j = 0;
                     }
-                    List<System.Windows.Point> linkProfile = new List<System.Windows.Point>();
+                    List<PointF> linkProfile = new List<PointF>();
 
                     System.Windows.Point p1 = trackPath[i];
                     System.Windows.Point p2 = trackPath[j];
@@ -348,7 +348,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void GetLinkPartProfile(System.Windows.Point p1, System.Windows.Point p2, ref List<System.Windows.Point> poly, System.Windows.Point[] shape, double size)
+        private void GetLinkPartProfile(System.Windows.Point p1, System.Windows.Point p2, ref List<PointF> poly, System.Windows.Point[] shape, double size)
         {
             poly.Clear();
             for (int i = 0; i < shape.GetLength(0); i++)
@@ -367,7 +367,7 @@ namespace Barnacle.Dialogs
                     o1.Y = ToMM(-o1.Y);
                 }
 
-                poly.Add(o1);
+                poly.Add(new PointF((float)o1.X, (float)o1.Y));
             }
         }
 
@@ -421,16 +421,19 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void MakeFacesForLinkPart(List<System.Windows.Point> linkProfile, double partBackZ, double partFrontZ, Point3DCollection verts, Int32Collection facs)
+        private void MakeFacesForLinkPart(List<PointF> linkProfile, double partBackZ, double partFrontZ, Point3DCollection verts, Int32Collection facs)
         {
             // make faces for this single link part
+            /*
             List<PointF> pf = new List<PointF>();
             foreach (System.Windows.Point p in linkProfile)
             {
                 pf.Add(new PointF((float)p.X, (float)p.Y));
             }
+            */
             TriangulationPolygon ply = new TriangulationPolygon();
-            ply.Points = pf.ToArray();
+            // ply.Points = pf.ToArray();
+            ply.Points = linkProfile.ToArray();
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {

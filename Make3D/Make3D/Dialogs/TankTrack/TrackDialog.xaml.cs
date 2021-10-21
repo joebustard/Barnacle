@@ -939,6 +939,7 @@ namespace Barnacle.Dialogs
                                     {
                                         GenerateTrackFomLink(ln, verts, facs);
                                         CentreVertices(verts, facs);
+                                        break;
                                     }
                                 }
                             }

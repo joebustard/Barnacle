@@ -1052,6 +1052,7 @@ namespace Barnacle.ViewModels
                 MeshDecimator.Mesh mesh = ObjectMeshToDecimatorMesh(ob);
                 DecimatorSettings dlg = new DecimatorSettings();
                 dlg.OriginalFaceCount = mesh.TriangleCount;
+                dlg.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                 if (dlg.ShowDialog() == true)
                 {
                     int target = dlg.TargetFaceCount;
