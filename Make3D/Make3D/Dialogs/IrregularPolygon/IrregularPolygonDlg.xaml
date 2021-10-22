@@ -38,7 +38,7 @@
                         <Label Visibility="{Binding ShowWidth}" VerticalContentAlignment="Center" Margin="2,2,4,0">Width</Label>
                         <TextBox Visibility="{Binding ShowWidth}" VerticalContentAlignment="Center" Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}" Width="100" />
                     </StackPanel>
-                    <CheckBox IsChecked="{Binding ShowOrtho}">Show Ortho</CheckBox>
+                    <CheckBox IsChecked="{Binding ShowOrtho}" ToolTip="Show orthogononal guides and highligh orthogonal points">Show Ortho</CheckBox>
                 </StackPanel>
             </Border>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">

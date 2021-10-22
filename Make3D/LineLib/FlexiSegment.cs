@@ -24,6 +24,10 @@ namespace Barnacle.LineLib
         {
         }
 
+        public virtual void DisplayPointsF(List<System.Drawing.PointF> res, ObservableCollection<FlexiPoint> pnts)
+        {
+        }
+
         public virtual double DistToPoint(Point position, ObservableCollection<FlexiPoint> res)
         {
             return double.MaxValue;

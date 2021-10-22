@@ -1,4 +1,5 @@
 ﻿using Barnacle.LineLib;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,18 +11,20 @@ namespace Barnacle.Dialogs
     public class LinkPart
     {
         private FlexiPath flexipath;
-        private List<System.Windows.Point> profile;
+        private List<System.Drawing.PointF> profile;
+        private List<Triangle> triangles;
 
         public LinkPart()
         {
             PathText = "";
             profile = null;
+            triangles = null;
         }
 
         public String Name { get; set; }
         public String PathText { get; set; }
 
-        public List<System.Windows.Point> Profile
+        public List<System.Drawing.PointF> Profile
         {
             get
             {
@@ -32,7 +35,8 @@ namespace Barnacle.Dialogs
                         FlexiPath fp = new FlexiPath();
                         if (fp.FromTextPath(PathText))
                         {
-                            profile = fp.DisplayPoints();
+                            profile = fp.DisplayPointsF();
+                            GenerateTriangles();
                         }
                     }
                 }
@@ -40,9 +44,25 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public List<Triangle> Triangles
+        {
+            get { return triangles; }
+        }
+
         public double W { get; set; }
+
         public double X { get; set; }
+
         public double Y { get; set; }
+
         public double Z { get; set; }
+
+        private void GenerateTriangles()
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            // ply.Points = pf.ToArray();
+            ply.Points = profile.ToArray();
+            triangles = ply.Triangulate();
+        }
     }
 }
