@@ -8,5 +8,10 @@ namespace PolygonTriangulationLib
         {
             Points = new PointF[] { p0, p1, p2 };
         }
+
+        public Triangle()
+        {
+            Points = new PointF[3];
+        }
     }
 }

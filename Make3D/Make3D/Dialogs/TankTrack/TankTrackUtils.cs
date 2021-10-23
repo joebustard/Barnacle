@@ -219,6 +219,21 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        public static System.Drawing.PointF PerpendicularF(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            double grad = dy / dx;
+            double perp = -1.0 / grad;
+            double sgn = Math.Sign(distanceFromLine);
+            distanceFromLine = Math.Abs(distanceFromLine);
+            System.Windows.Point tp = new System.Windows.Point(p1.X + t * dx, p1.Y + t * dy);
+            double x = tp.X + sgn * Math.Sqrt((distanceFromLine * distanceFromLine) / (1.0 + (1.0 / (grad * grad))));
+            double y = tp.Y + perp * (x - tp.X);
+            System.Drawing.PointF res = new System.Drawing.PointF((float)x, (float)y);
+            return res;
+        }
+
         public static double PolygonLength(List<System.Windows.Point> points)
         {
             double res = 0;

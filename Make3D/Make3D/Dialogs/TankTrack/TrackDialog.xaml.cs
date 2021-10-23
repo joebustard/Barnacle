@@ -905,7 +905,7 @@ namespace Barnacle.Dialogs
             result.Vertices = verts;
             result.Faces = facs;
 
-            if (trackPath != null)
+            if (trackPath != null && SelectedTrackType != null)
             {
                 switch (SelectedTrackType)
                 {
@@ -939,6 +939,7 @@ namespace Barnacle.Dialogs
                                     {
                                         GenerateTrackFomLink(ln, verts, facs);
                                         CentreVertices(verts, facs);
+                                        break;
                                     }
                                 }
                             }

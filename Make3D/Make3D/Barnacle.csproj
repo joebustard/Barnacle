@@ -175,6 +175,9 @@
     <Compile Include="Dialogs\Reorigin\ReoriginDlg.xaml.cs">
       <DependentUpon>ReoriginDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Squirkle\CornerShape.xaml.cs">
+      <DependentUpon>CornerShape.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Scribble\Scribble.xaml.cs">
       <DependentUpon>Scribble.xaml</DependentUpon>
     </Compile>
@@ -185,6 +188,9 @@
     </Compile>
     <Compile Include="Dialogs\Exporting\STLExportedPartsConfirmation.xaml.cs">
       <DependentUpon>STLExportedPartsConfirmation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\Squirkle\SquirkleDlg.xaml.cs">
+      <DependentUpon>SquirkleDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Stadium\StadiumDialog.xaml.cs">
       <DependentUpon>StadiumDialog.xaml</DependentUpon>
@@ -425,6 +431,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\Squirkle\CornerShape.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\Scribble\Scribble.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -442,6 +452,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Exporting\STLExportedPartsConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Squirkle\SquirkleDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -783,6 +797,18 @@
     <Resource Include="Images\Buttons\DeleteSegment.png" />
     <Resource Include="Images\Buttons\SelectSegment.png" />
     <Resource Include="Images\Buttons\AddQuadBezier.png" />
+    <Resource Include="Images\Buttons\BottomLeft0.png" />
+    <Resource Include="Images\Buttons\BottomLeft1.png" />
+    <Resource Include="Images\Buttons\BottomRight0.png" />
+    <Resource Include="Images\Buttons\BottomRight1.png" />
+    <Resource Include="Images\Buttons\TopLeft0.png" />
+    <Resource Include="Images\Buttons\TopLeft1.png" />
+    <Resource Include="Images\Buttons\TopRight0.png" />
+    <Resource Include="Images\Buttons\TopRight1.png" />
+    <Resource Include="Images\Buttons\BottomLeft2.png" />
+    <Resource Include="Images\Buttons\BottomRight2.png" />
+    <Resource Include="Images\Buttons\TopLeft2.png" />
+    <Resource Include="Images\Buttons\TopRight2.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
