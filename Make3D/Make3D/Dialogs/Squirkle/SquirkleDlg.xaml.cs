@@ -11,13 +11,40 @@ namespace Barnacle.Dialogs
     public partial class SquirkleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
+        private double squirkleheight;
 
+        public double SquirkleHeight
+        {
+            get { return squirkleheight; }
+            set {
+                if (value != squirkleheight)
+                {
+                    squirkleheight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private double length;
+        public double Length
+        {
+            get { return length; }
+            set
+            {
+                if (value != length)
+                {
+                    length = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public SquirkleDlg()
         {
             InitializeComponent();
             ToolName = "Squirkle";
             DataContext = this;
             ModelGroup = MyModelGroup;
+            squirkleheight = 10;
+            length = 10;
         }
 
         public override bool ShowAxies
@@ -80,6 +107,12 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
+            string pathtext = "M 0,0 ";
+
+            if (TopLeftCornerShape.Mode == 0)
+            {
+
+            }
         }
 
         private void LoadEditorParameters()

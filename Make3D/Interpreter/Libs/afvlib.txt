@@ -52,6 +52,13 @@
        Return result ;
    }
 
+// Make a single rivet
+Function Solid MakeSingleRivet( double px, double py, double pz, double sz)
+{
+solid rv = Make ( "cap", px, py, pz, sz, sz, sz ) ;
+return rv;
+}
+
 // Make a line of rivets 
 // The line starts at first,firsty,firstz
 // The size of the rivet is given by rivetsize
@@ -66,7 +73,7 @@
        Int i ;
        For i = 1 To  numberofrivets
        {
-           Solid arivet = Make ( "cap", px, py, pz, rivetsize, rivetsize, rivetsize ) ;
+           Solid arivet = MakeSingleRivet( px, py, pz, rivetsize ) ;
            If ( i == 1 )
            {
                result = arivet ;

@@ -30,13 +30,27 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <UniformGrid Grid.Row="1" Rows="2" Columns="2" Width="128">
+            <Grid Grid.Row="1" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <Label VerticalAlignment="Center">Height</Label>
+                    <TextBox VerticalAlignment="Center" Text="{Binding SquirkleHeight}" Width="80" Margin="8,0,0,0"/>
+                </StackPanel>
+                <UniformGrid  Grid.Column="1" Rows="2" Columns="2" Width="128">
                 <local:CornerShape x:Name="TopLeftCornerShape" />
                 <local:CornerShape x:Name="TopRightCornerShape" />
                 <local:CornerShape x:Name="BottomLeftCornerShape" />
                 <local:CornerShape x:Name="BottomRightCornerShape" />
             </UniformGrid>
-            <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
+            </Grid>
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Label VerticalAlignment="Center">Length</Label>
+                <TextBox VerticalAlignment="Center" Text="{Binding Length}" Width="80" Margin="8,0,0,0"/>
+            </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">

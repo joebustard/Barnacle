@@ -128,16 +128,23 @@ namespace Barnacle.Object3DLib
             bool result = false;
             if (leftObject != null && rightObject != null)
             {
-                Color = leftObject.Color;
-                Bounds3D leftBnd = leftObject.AbsoluteBounds;
-                Bounds3D rightBnd = rightObject.AbsoluteBounds;
-                Point3D leftPnt = leftObject.Position;
-                Point3D rightPnt = rightObject.Position;
-                Bounds3D combined = new Bounds3D();
-                combined.Add(leftBnd);
-                combined.Add(rightBnd);
+                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
+                {
+                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
+                    {
 
-                result = PerformOperation();
+                        Color = leftObject.Color;
+                        Bounds3D leftBnd = leftObject.AbsoluteBounds;
+                        Bounds3D rightBnd = rightObject.AbsoluteBounds;
+                        Point3D leftPnt = leftObject.Position;
+                        Point3D rightPnt = rightObject.Position;
+                        Bounds3D combined = new Bounds3D();
+                        combined.Add(leftBnd);
+                        combined.Add(rightBnd);
+
+                        result = PerformOperation();
+                    }
+                }
             }
 
             return result;
