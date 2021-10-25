@@ -24,6 +24,9 @@ namespace Barnacle.Dialogs
     {
         private ImageSource currentImage;
         private CornerLocation location;
+        public delegate void ModeChanged(int mode);
+
+        public ModeChanged OnModeChanged;
 
         public CornerShape()
         {
@@ -94,6 +97,10 @@ namespace Barnacle.Dialogs
                 Mode = 0;
             }
             SetShapeImage(Mode);
+            if ( OnModeChanged != null)
+            {
+                OnModeChanged(Mode);
+            }
         }
 
         private Uri ImageUri(string p)
