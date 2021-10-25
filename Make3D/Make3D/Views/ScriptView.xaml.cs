@@ -79,7 +79,10 @@ namespace Barnacle.Views
         private void CheckClicked(object sender, RoutedEventArgs e)
         {
             vm.ClearResults();
-            RefreshInterpreterSource();
+            if (RefreshInterpreterSource())
+            {
+                ScriptLanguage.Log.Instance().AddEntry("OK");
+            }
         }
 
         private void DeferSyntaxCheck()

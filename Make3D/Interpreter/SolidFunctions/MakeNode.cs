@@ -13,6 +13,20 @@ namespace ScriptLanguage
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
         };
 
+        private static string[] shapenames =
+               {
+                "box",
+                "sphere",
+                "cylinder",
+                "roof",
+                "roundroof",
+                "cone",
+                "pyramid",
+                "pyramid2",
+                "torus",
+                "cap", "polygon", "tube", "rightangle", "pointy"
+            };
+
         private ExpressionNode typeExp;
         private ExpressionNode xExp;
         private ExpressionNode xSize;
@@ -53,59 +67,66 @@ namespace ScriptLanguage
                     {
                         if (sti.MyType == StackItem.ItemType.sval)
                         {
-                            string shape = sti.StringValue;
-                            bool isSwapper = false;
-                            for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+                            string shape = sti.StringValue.ToLower();
+                            if (ValidShape(shape))
                             {
-                                if (rotatedPrimitives[i] == shape)
+                                bool isSwapper = false;
+                                for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
                                 {
-                                    isSwapper = true;
+                                    if (rotatedPrimitives[i] == shape)
+                                    {
+                                        isSwapper = true;
 
-                                    break;
+                                        break;
+                                    }
+                                }
+                                double x = 0;
+                                double y = 0;
+                                double z = 0;
+                                double sx = 0;
+                                double sy = 0;
+                                double sz = 0;
+                                if (EvalExpression(xExp, ref x, "X") &&
+                                    EvalExpression(yExp, ref y, "Y") &&
+                                    EvalExpression(zExp, ref z, "Z") &&
+                                    EvalExpression(xSize, ref sx, "Size X") &&
+                                    EvalExpression(ySize, ref sy, "Size Y") &&
+                                    EvalExpression(zSize, ref sz, "Size Z")
+                                    )
+                                {
+                                    result = true;
+                                    Color color = Colors.Beige;
+                                    Object3D obj = new Object3D();
+
+                                    obj.Name = "Solid";
+
+                                    obj.Scale = new Scale3D(20, 20, 20);
+
+                                    obj.Position = new Point3D(x, y, z);
+
+                                    obj.BuildPrimitive(shape);
+                                    obj.PrimType = "Mesh";
+                                    if (!isSwapper)
+                                    {
+                                        obj.ScaleMesh(sx, sy, sz);
+                                    }
+                                    else
+                                    {
+                                        obj.ScaleMesh(sx, sz, sy);
+
+                                        obj.SwapYZAxies();
+                                    }
+
+                                    obj.CalcScale(false);
+                                    obj.Remesh();
+                                    Script.ResultArtefacts.Add(obj);
+                                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
                                 }
                             }
-                            double x = 0;
-                            double y = 0;
-                            double z = 0;
-                            double sx = 0;
-                            double sy = 0;
-                            double sz = 0;
-                            if (EvalExpression(xExp, ref x, "X") &&
-                                EvalExpression(yExp, ref y, "Y") &&
-                                EvalExpression(zExp, ref z, "Z") &&
-                                EvalExpression(xSize, ref sx, "Size X") &&
-                                EvalExpression(ySize, ref sy, "Size Y") &&
-                                EvalExpression(zSize, ref sz, "Size Z")
-                                )
+                            else
                             {
-                                result = true;
-                                Color color = Colors.Beige;
-                                Object3D obj = new Object3D();
-
-                                obj.Name = "Solid";
-
-                                obj.Scale = new Scale3D(20, 20, 20);
-
-                                obj.Position = new Point3D(x, y, z);
-
-                                obj.BuildPrimitive(shape);
-                                obj.PrimType = "Mesh";
-                                if (!isSwapper)
-                                {
-                                    obj.ScaleMesh(sx, sy, sz);
-                                }
-                                else
-                                {
-                                    obj.ScaleMesh(sx, sz, sy);
-
-                                    obj.SwapYZAxies();
-                                }
-
-
-                                obj.CalcScale(false);
-                                obj.Remesh();
-                                Script.ResultArtefacts.Add(obj);
-                                ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                                Log.Instance().AddEntry($"Make : solid shape {shape} not recognised");
+                                Log.Instance().AddEntry("Make : valid shapes are : box, sphere, cylinder, roof, roundroof, cone, pyramid, pyramid2, torus, cap, polygon, tube, rightangle, pointy");
                             }
                         }
                         else
@@ -178,6 +199,21 @@ namespace ScriptLanguage
                 Log.Instance().AddEntry("Make : " + v + " expression error");
             }
             return result;
+        }
+
+        private bool ValidShape(string shape)
+        {
+            bool res = false;
+            for (int i = 0; i < shapenames.Length; i++)
+            {
+                if (shapenames[i] == shape)
+                {
+                    res = true;
+                    break;
+                }
+            }
+
+            return res;
         }
     }
 }
