@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
 using PointF = System.Drawing.PointF;
+
 namespace Barnacle.Dialogs
 {
     /// <summary>
@@ -13,34 +14,11 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class SquirkleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private double squirkleheight;
         private double depth = 10;
-        public double SquirkleHeight
-        {
-            get { return squirkleheight; }
-            set
-            {
-                if (value != squirkleheight)
-                {
-                    squirkleheight = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
         private double length;
-        public double Length
-        {
-            get { return length; }
-            set
-            {
-                if (value != length)
-                {
-                    length = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        private double squirkleheight;
+        private string warningText;
+
         public SquirkleDlg()
         {
             InitializeComponent();
@@ -49,6 +27,30 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             squirkleheight = 10;
             length = 10;
+        }
+
+        public double Length
+        {
+            get
+            {
+                return length;
+            }
+            set
+            {
+                if (value != length)
+                {
+                    if (value < 1.0 || squirkleheight < 1.0)
+                    {
+                        WarningText = "Length and height must be 1.0 or more";
+                    }
+                    else
+                    {
+                        length = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
 
         public override bool ShowAxies
@@ -85,6 +87,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double SquirkleHeight
+        {
+            get
+            {
+                return squirkleheight;
+            }
+            set
+            {
+                if (value != squirkleheight)
+                {
+                    squirkleheight = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public string WarningText
         {
             get
@@ -107,6 +126,17 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
+
+        private void BLMode(int mode)
+        {
+            UpdateDisplay();
+        }
+
+        private void BRMode(int mode)
+        {
+            UpdateDisplay();
+        }
+
         private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
         {
             int v = i + 1;
@@ -128,73 +158,6 @@ namespace Barnacle.Dialogs
             Faces.Add(c3);
             Faces.Add(c2);
         }
-        private void GenerateShape()
-        {
-            ClearShape();
-            double h = squirkleheight / 4.0;
-            double l = length / 4.0;
-            string hseg = h.ToString();
-            string lseg = l.ToString();
-
-            string pathtext = "M 0,0 ";
-
-            pathtext += "RV -" + hseg + " ";
-            // bl
-            if (BottomLeftCornerShape.Mode == 0)
-            {
-                pathtext += "RV -" + hseg + " ";
-                pathtext += "RH " + lseg + " ";
-            }
-            if (BottomLeftCornerShape.Mode == 1)
-            {
-                pathtext += "RQ 0,-" + hseg + " "+lseg+",-"+hseg+" ";               
-            }
-            pathtext += "RH " + lseg + " ";
-
-
-
-            // br
-            pathtext += "RH " + lseg + " ";
-            if (BottomRightCornerShape.Mode == 0)
-            {
-                pathtext += "RH " + lseg + " ";
-                pathtext += "RV " + hseg + " ";
-            }
-            if (BottomRightCornerShape.Mode == 1)
-            {
-                pathtext += "RQ " + lseg + ",0 " + lseg + "," + hseg + " ";
-            }
-            pathtext += "RV " + lseg + " ";
-
-            // tr
-            pathtext += "RV " + lseg + " ";
-            if (TopRightCornerShape.Mode == 0)
-            {
-                pathtext += "RV " + hseg + " ";
-                pathtext += "RH -" + lseg + " ";
-            }
-            if (TopRightCornerShape.Mode == 1)
-            {
-                pathtext += "RQ 0," +hseg+ " -" + lseg + "," + hseg + " ";
-            }
-            pathtext += "RH -" + lseg + " ";
-
-            // tl
-            pathtext += "RH -" + lseg + " ";
-            if (TopLeftCornerShape.Mode == 0)
-            {
-                pathtext += "RH -" + lseg + " ";
-                pathtext += "RV -" + hseg + " ";
-            }
-            if (TopLeftCornerShape.Mode == 1)
-            {
-                pathtext += "RQ -" + hseg + ",0 -" + lseg + ",-" + hseg + " ";
-            }
-            pathtext += "RV -" + lseg + " ";
-
-            GenerateFromPath(pathtext);
-            Redisplay();
-        }
 
         private void GenerateFromPath(string pathtext)
         {
@@ -202,7 +165,6 @@ namespace Barnacle.Dialogs
             flexiPath.FromTextPath(pathtext);
             List<System.Windows.Point> points = flexiPath.DisplayPoints();
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-           
 
             // generate side triangles so original points are already in list
             for (int i = 0; i < points.Count; i++)
@@ -237,6 +199,88 @@ namespace Barnacle.Dialogs
             CentreVertices();
         }
 
+        private void GenerateShape()
+        {
+            ClearShape();
+            double h = squirkleheight / 4.0;
+            double l = length / 4.0;
+            string hseg = h.ToString();
+            string lseg = l.ToString();
+
+            string pathtext = "M 0,0 ";
+
+            pathtext += "RV -" + hseg + " ";
+            // bl
+            if (BottomLeftCornerShape.Mode == 0)
+            {
+                pathtext += "RV -" + hseg + " ";
+                pathtext += "RH " + lseg + " ";
+            }
+            if (BottomLeftCornerShape.Mode == 1)
+            {
+                pathtext += "RQ 0,-" + hseg + " " + lseg + ",-" + hseg + " ";
+            }
+            if (BottomLeftCornerShape.Mode == 2)
+            {
+                pathtext += "RQ " + lseg + ",0 " + lseg + ",-" + hseg + " ";
+            }
+            pathtext += "RH " + lseg + " ";
+
+            // br
+            pathtext += "RH " + lseg + " ";
+            if (BottomRightCornerShape.Mode == 0)
+            {
+                pathtext += "RH " + lseg + " ";
+                pathtext += "RV " + hseg + " ";
+            }
+            if (BottomRightCornerShape.Mode == 1)
+            {
+                pathtext += "RQ " + lseg + ",0 " + lseg + "," + hseg + " ";
+            }
+            if (BottomRightCornerShape.Mode == 2)
+            {
+                pathtext += "RQ 0," + hseg + " " + lseg + "," + hseg + " ";
+            }
+            pathtext += "RV " + lseg + " ";
+
+            // tr
+            pathtext += "RV " + lseg + " ";
+            if (TopRightCornerShape.Mode == 0)
+            {
+                pathtext += "RV " + hseg + " ";
+                pathtext += "RH -" + lseg + " ";
+            }
+            if (TopRightCornerShape.Mode == 1)
+            {
+                pathtext += "RQ 0," + hseg + " -" + lseg + "," + hseg + " ";
+            }
+            if (TopRightCornerShape.Mode == 2)
+            {
+                pathtext += "RQ -" + hseg + ",0 -" + lseg + ",-" + hseg + " ";
+            }
+            pathtext += "RH -" + lseg + " ";
+
+            // tl
+            pathtext += "RH -" + lseg + " ";
+            if (TopLeftCornerShape.Mode == 0)
+            {
+                pathtext += "RH -" + lseg + " ";
+                pathtext += "RV -" + hseg + " ";
+            }
+            if (TopLeftCornerShape.Mode == 1)
+            {
+                pathtext += "RQ -" + hseg + ",0 -" + lseg + ",-" + hseg + " ";
+            }
+            if (TopLeftCornerShape.Mode == 2)
+            {
+                pathtext += "RQ 0," + lseg + " " + hseg + "," + lseg + " ";
+            }
+            pathtext += "RV -" + lseg + " ";
+
+            GenerateFromPath(pathtext);
+            Redisplay();
+        }
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -245,6 +289,16 @@ namespace Barnacle.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+        }
+
+        private void TLMode(int mode)
+        {
+            UpdateDisplay();
+        }
+
+        private void TRMode(int mode)
+        {
+            UpdateDisplay();
         }
 
         private void UpdateDisplay()
@@ -272,25 +326,8 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             warningText = "";
+            GenerateShape();
             Redisplay();
         }
-
-        private void TLMode(int mode)
-        {
-            UpdateDisplay();
-        }
-        private void TRMode(int mode)
-        {
-            UpdateDisplay();
-        }
-        private void BLMode(int mode)
-        {
-            UpdateDisplay();
-        }
-        private void BRMode(int mode)
-        {
-            UpdateDisplay();
-        }
-
     }
 }
