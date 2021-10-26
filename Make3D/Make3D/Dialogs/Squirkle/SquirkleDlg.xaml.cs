@@ -256,7 +256,7 @@ namespace Barnacle.Dialogs
             }
             if (TopRightCornerShape.Mode == 2)
             {
-                pathtext += "RQ -" + hseg + ",0 -" + lseg + ",-" + hseg + " ";
+                pathtext += "RQ -" + lseg + ",0 -" + lseg + ",-" + hseg + " ";
             }
             pathtext += "RH -" + lseg + " ";
 
@@ -273,7 +273,7 @@ namespace Barnacle.Dialogs
             }
             if (TopLeftCornerShape.Mode == 2)
             {
-                pathtext += "RQ 0," + lseg + " " + hseg + "," + lseg + " ";
+                pathtext += "RQ 0,-" + lseg + " -" + hseg + ",-" + lseg + " ";
             }
             pathtext += "RV -" + lseg + " ";
 
