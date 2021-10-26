@@ -165,16 +165,19 @@ namespace Barnacle.Dialogs
             flexiPath.FromTextPath(pathtext);
             List<System.Windows.Point> points = flexiPath.DisplayPoints();
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-
-            // generate side triangles so original points are already in list
             for (int i = 0; i < points.Count; i++)
             {
-                CreateSideFace(points, i);
+                tmp.Add(new Point(points[i].X * length, points[i].Y * squirkleheight));
+            }
+            // generate side triangles so original points are already in list
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                CreateSideFace(tmp, i);
             }
             // triangulate the basic polygon
             TriangulationPolygon ply = new TriangulationPolygon();
             List<PointF> pf = new List<PointF>();
-            foreach (System.Windows.Point p in points)
+            foreach (System.Windows.Point p in tmp)
             {
                 pf.Add(new PointF((float)p.X, (float)p.Y));
             }
@@ -202,80 +205,82 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            double h = squirkleheight / 4.0;
-            double l = length / 4.0;
-            string hseg = h.ToString();
-            string lseg = l.ToString();
+            // double h = squirkleheight / 4.0;
+            //  double l = length / 4.0;
+            double h = 0.25;
+            double l = 0.25;
+            string yseg = h.ToString();
+            string xseg = l.ToString();
 
             string pathtext = "M 0,0 ";
 
-            pathtext += "RV -" + hseg + " ";
+            pathtext += "RV -" + yseg + " ";
             // bl
             if (BottomLeftCornerShape.Mode == 0)
             {
-                pathtext += "RV -" + hseg + " ";
-                pathtext += "RH " + lseg + " ";
+                pathtext += "RV -" + yseg + " ";
+                pathtext += "RH " + xseg + " ";
             }
             if (BottomLeftCornerShape.Mode == 1)
             {
-                pathtext += "RQ 0,-" + hseg + " " + lseg + ",-" + hseg + " ";
+                pathtext += "RQ 0,-" + yseg + " " + xseg + ",-" + yseg + " ";
             }
             if (BottomLeftCornerShape.Mode == 2)
             {
-                pathtext += "RQ " + lseg + ",0 " + lseg + ",-" + hseg + " ";
+                pathtext += "RQ " + xseg + ",0 " + xseg + ",-" + yseg + " ";
             }
-            pathtext += "RH " + lseg + " ";
+            pathtext += "RH " + xseg + " ";
 
             // br
-            pathtext += "RH " + lseg + " ";
+            pathtext += "RH " + xseg + " ";
             if (BottomRightCornerShape.Mode == 0)
             {
-                pathtext += "RH " + lseg + " ";
-                pathtext += "RV " + hseg + " ";
+                pathtext += "RH " + xseg + " ";
+                pathtext += "RV " + yseg + " ";
             }
             if (BottomRightCornerShape.Mode == 1)
             {
-                pathtext += "RQ " + lseg + ",0 " + lseg + "," + hseg + " ";
+                pathtext += "RQ " + xseg + ",0 " + xseg + "," + yseg + " ";
             }
             if (BottomRightCornerShape.Mode == 2)
             {
-                pathtext += "RQ 0," + hseg + " " + lseg + "," + hseg + " ";
+                pathtext += "RQ 0," + yseg + " " + xseg + "," + yseg + " ";
             }
-            pathtext += "RV " + lseg + " ";
+            pathtext += "RV " + yseg + " ";
 
             // tr
-            pathtext += "RV " + lseg + " ";
+            pathtext += "RV " + yseg + " ";
             if (TopRightCornerShape.Mode == 0)
             {
-                pathtext += "RV " + hseg + " ";
-                pathtext += "RH -" + lseg + " ";
+                pathtext += "RV " + yseg + " ";
+                pathtext += "RH -" + xseg + " ";
             }
             if (TopRightCornerShape.Mode == 1)
             {
-                pathtext += "RQ 0," + hseg + " -" + lseg + "," + hseg + " ";
+                pathtext += "RQ 0," + yseg + " -" + xseg + "," + yseg + " ";
             }
             if (TopRightCornerShape.Mode == 2)
             {
-                pathtext += "RQ -" + lseg + ",0 -" + lseg + ",-" + hseg + " ";
+                pathtext += "RQ -" + xseg + ",0 -" + xseg + "," + yseg + " ";
             }
-            pathtext += "RH -" + lseg + " ";
+            pathtext += "RH -" + xseg + " ";
 
             // tl
-            pathtext += "RH -" + lseg + " ";
+            pathtext += "RH -" + xseg + " ";
             if (TopLeftCornerShape.Mode == 0)
             {
-                pathtext += "RH -" + lseg + " ";
-                pathtext += "RV -" + hseg + " ";
+                pathtext += "RH -" + xseg + " ";
+                pathtext += "RV -" + yseg + " ";
             }
             if (TopLeftCornerShape.Mode == 1)
             {
-                pathtext += "RQ -" + hseg + ",0 -" + lseg + ",-" + hseg + " ";
+                pathtext += "RQ -" + yseg + ",0 -" + xseg + ",-" + yseg + " ";
             }
             if (TopLeftCornerShape.Mode == 2)
             {
-                pathtext += "RQ 0,-" + lseg + " -" + hseg + ",-" + lseg + " ";
+                pathtext += "RQ 0,-" + xseg + " -" + yseg + ",-" + xseg + " ";
             }
-            pathtext += "RV -" + lseg + " ";
+            pathtext += "RV -" + xseg + " ";
 
             GenerateFromPath(pathtext);
             Redisplay();
