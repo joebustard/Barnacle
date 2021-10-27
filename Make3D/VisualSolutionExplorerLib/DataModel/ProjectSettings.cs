@@ -12,12 +12,13 @@ namespace VisualSolutionExplorer
             BaseScale = "1";
             ExportScale = "1";
             ExportRootName = "<FileName>";
-            Description = "A 3D model created by Barnacle";
+            Description = "A 3D project created by Barnacle";
             ExportRotation = new Point3D(0, 0, 0);
             ExportAxisSwap = true;
             FloorAll = true;
             VersionExport = true;
             ExportEmptyFiles = false;
+            AutoSaveScript = true;
             DefaultObjectColour = Colors.CadetBlue;
         }
 
@@ -31,9 +32,15 @@ namespace VisualSolutionExplorer
         public bool FloorAll { get; set; }
         public bool VersionExport { get; set; }
         public Color  DefaultObjectColour { get; set; }
+        public bool AutoSaveScript { get; set; }
         internal void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
+            if (ele.HasAttribute("AutoSaveScript"))
+            {
+                string s = ele.GetAttribute("AutoSaveScript");
+                AutoSaveScript = Convert.ToBoolean(s);
+            }
             if (ele.HasAttribute("ExportRootName"))
             {
                 ExportRootName = ele.GetAttribute("ExportRootName");
@@ -94,6 +101,7 @@ namespace VisualSolutionExplorer
             ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
             ele.SetAttribute("FloorAll", FloorAll.ToString());
             ele.SetAttribute("VersionExport", VersionExport.ToString());
+            ele.SetAttribute("AutoSaveScript", AutoSaveScript.ToString());
             ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());
             XmlElement rot = doc.CreateElement("Rotation");
             rot.SetAttribute("X", ExportRotation.X.ToString());
