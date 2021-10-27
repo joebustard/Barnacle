@@ -53,16 +53,6 @@ namespace CSGLib
         /** solid where boolean operations will be applied */
         private Part Object1;
         private Part Object2;
-        public bool State { get; set; }
-        //--------------------------------CONSTRUCTORS----------------------------------//
-
-        /**
-        * Constructs a BooleanModeller object to apply boolean operation in two solids.
-        * Makes preliminary calculations
-        *
-        * @param solid1 first solid where boolean operations will be applied
-        * @param solid2 second solid where boolean operations will be applied
-        */
 
         public BooleanModeller(Solid solid1, Solid solid2)
         {
@@ -90,6 +80,16 @@ namespace CSGLib
         {
         }
 
+        public bool State { get; set; }
+        //--------------------------------CONSTRUCTORS----------------------------------//
+
+        /**
+        * Constructs a BooleanModeller object to apply boolean operation in two solids.
+        * Makes preliminary calculations
+        *
+        * @param solid1 first solid where boolean operations will be applied
+        * @param solid2 second solid where boolean operations will be applied
+        */
         //----------------------------------OVERRIDES-----------------------------------//
 
         /**
@@ -123,20 +123,20 @@ namespace CSGLib
             return result;
         }
 
+        public Solid GetIntersection()
+        {
+            //   Object2.InvertInsideFaces();
+            Solid result = ComposeSolid(Status.INSIDE, Status.SAME, Status.INSIDE);
+            //Object2.InvertInsideFaces();
+            return result;
+        }
+
         public Solid GetReverseDifference()
         {
             Object1.InvertInsideFaces();
             Solid result = ComposeSolid(Status.INSIDE, Status.OPPOSITE, Status.OUTSIDE);
             Object1.InvertInsideFaces();
 
-            return result;
-        }
-
-        public Solid GetIntersection()
-        {
-            //   Object2.InvertInsideFaces();
-            Solid result = ComposeSolid(Status.INSIDE, Status.SAME, Status.INSIDE);
-            //Object2.InvertInsideFaces();
             return result;
         }
 
@@ -177,6 +177,7 @@ namespace CSGLib
 
             //group the elements of the two solids whose faces fit with the desired status
             GroupObjectComponents(Object1, vertices, indices, faceStatus1, faceStatus2);
+            // GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
             GroupObjectComponents(Object2, vertices, indices, faceStatus3, faceStatus3);
 
             //turn the arrayLists to arrays

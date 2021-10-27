@@ -132,7 +132,6 @@ namespace Barnacle.Object3DLib
                 {
                     if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
                     {
-
                         Color = leftObject.Color;
                         Bounds3D leftBnd = leftObject.AbsoluteBounds;
                         Bounds3D rightBnd = rightObject.AbsoluteBounds;
@@ -156,14 +155,12 @@ namespace Barnacle.Object3DLib
             absoluteBounds = new Bounds3D();
             leftObject.RelativeToAbsolute();
             rightObject.RelativeToAbsolute();
-            Logger.Log("Left Solid\r\n============\r\n");
+            Logger.Log($"Left Solid {leftObject.AbsoluteObjectVertices.Count} pnts\r\n============\r\n");
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
-            // The original objects have their own  scale that is taken into account by their own RelativeToAbsolutes
-            // But the combined object may have been scaled too so take that into acccount now
-            //  leftSolid.Scale(Scale.X, Scale.Y, Scale.Z);
-            Logger.Log("Right Solid\r\n============\r\n");
+
+            Logger.Log($"Right Solid {rightObject.AbsoluteObjectVertices.Count} pnts\r\n============\r\n");
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
-            //  rightSolid.Scale(Scale.X, Scale.Y, Scale.Z);
+
             modeller = new BooleanModeller(leftSolid, rightSolid);
             if (modeller.State == true)
             {
@@ -200,28 +197,31 @@ namespace Barnacle.Object3DLib
                     AbsoluteObjectVertices = new Point3DCollection();
                     TriangleIndices = new System.Windows.Media.Int32Collection();
                     Vector3D[] vc = result.GetVertices();
-                    foreach (Vector3D v in vc)
+                    if (vc.GetLength(0) > 0)
                     {
-                        Point3D p = new Point3D(v.X, v.Y, v.Z);
-                        AbsoluteObjectVertices.Add(p);
-                        absoluteBounds.Adjust(p);
-                    }
-                    int[] ids = result.GetIndices();
-                    for (int i = 0; i < ids.Length; i++)
-                    {
-                        TriangleIndices.Add(ids[i]);
-                    }
+                        foreach (Vector3D v in vc)
+                        {
+                            Point3D p = new Point3D(v.X, v.Y, v.Z);
+                            AbsoluteObjectVertices.Add(p);
+                            absoluteBounds.Adjust(p);
+                        }
+                        int[] ids = result.GetIndices();
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            TriangleIndices.Add(ids[i]);
+                        }
 
-                    double nx = absoluteBounds.MidPoint().X;
-                    double ny = absoluteBounds.MidPoint().Y;
-                    double nz = absoluteBounds.MidPoint().Z;
-                    Position = new Point3D(nx, ny, nz);
+                        double nx = absoluteBounds.MidPoint().X;
+                        double ny = absoluteBounds.MidPoint().Y;
+                        double nz = absoluteBounds.MidPoint().Z;
+                        Position = new Point3D(nx, ny, nz);
 
-                    AbsoluteToRelative();
-                    SetMesh();
-                    modeller = null;
-                    GC.Collect();
-                    res = true;
+                        AbsoluteToRelative();
+                        SetMesh();
+                        modeller = null;
+                        GC.Collect();
+                        res = true;
+                    }
                 }
             }
             return res;

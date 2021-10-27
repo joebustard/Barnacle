@@ -30,9 +30,11 @@ namespace ScriptLanguage
                 result = true;
                 bool grpOk = true;
                 Object3D leftie = Script.ResultArtefacts[0];
+                leftie.Remesh();
                 for (int i = 1; i < Script.ResultArtefacts.Count && grpOk; i++)
                 {
                     Object3D rightie = Script.ResultArtefacts[i];
+                    rightie.Remesh();
                     if (leftie != null && rightie != null)
                     {
                         leftie.CalcScale(false);
@@ -52,7 +54,12 @@ namespace ScriptLanguage
                             grp.Remesh();
                             leftie = grp.ConvertToMesh();
                         }
+                        else
+                        {
+                            Log.Instance().AddEntry("UnionAll : Failed to union two objects");
+                        }
                     }
+                    leftie.Remesh();
                 }
 
                 Script.ResultArtefacts.Clear();
