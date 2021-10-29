@@ -6,7 +6,8 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
-using TestCSGLib;
+
+//using TestCSGLib;
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 using Solid = CSGLib.Solid;
 
@@ -373,6 +374,7 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        /*
         public bool TestInit()
         {
             bool result = false;
@@ -394,9 +396,11 @@ namespace Barnacle.Object3DLib
                             case "groupunion":
                                 {
                                     sl3 = sl1.Union(slds);
+                                    SolidToAbsolute(sl3, AbsoluteObjectVertices, TriangleIndices);
+                                    result = true;
                                 }
                                 break;
-                                /*
+
                                                             case "groupdifference":
                                                                 {
                                                                     result = modeller.GetDifference();
@@ -414,7 +418,18 @@ namespace Barnacle.Object3DLib
                                                                     result = modeller.GetIntersection();
                                                                 }
                                                                 break;
-                                                                */
+                        }
+                        if (result)
+                        {
+                            double nx = absoluteBounds.MidPoint().X;
+                            double ny = absoluteBounds.MidPoint().Y;
+                            double nz = absoluteBounds.MidPoint().Z;
+                            Position = new Point3D(nx, ny, nz);
+
+                            AbsoluteToRelative();
+                            SetMesh();
+                            modeller = null;
+                            GC.Collect();
                         }
                     }
                 }
@@ -422,6 +437,7 @@ namespace Barnacle.Object3DLib
 
             return result;
         }
+    */
 
         public override XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
@@ -520,6 +536,27 @@ namespace Barnacle.Object3DLib
             scale = groupScale;
         }
 
+        private int AddVertex(Point3DCollection av, double x, double y, double z)
+        {
+            int i = -1;
+            bool found = false;
+
+            for (i = 0; i < av.Count && found == false; i++)
+            {
+                if (PointUtils.equals(av[i], x, y, z))
+                {
+                    found = true;
+                }
+            }
+            if (!found)
+            {
+                i = av.Count;
+                av.Add(new Point3D(x, y, z));
+                absoluteBounds.Adjust(av[i]);
+            }
+            return i;
+        }
+
         private void GetScaleFromAbsoluteExtent()
         {
             // a quick function to convert the coordinates of an object read in, into a unit sized object
@@ -598,6 +635,7 @@ namespace Barnacle.Object3DLib
             return null;
         }
 
+        /*
         private TestCSGLib.Solid SolidFromPoints(Point3DCollection pnts, Int32Collection triangleIndices)
         {
             TestCSGLib.Solid res = new TestCSGLib.Solid();
@@ -608,13 +646,51 @@ namespace Barnacle.Object3DLib
             for (int i = 0; i < triangleIndices.Count; i += 3)
             {
                 TestCSGLib.Vertex[] verts = new TestCSGLib.Vertex[3];
-                verts[0] = new Vertex(new TestCSGLib.Vector3D(pnts[i].X, pnts[i].Y, pnts[i].Z), new Vector2D(0, 0));
-                verts[1] = new Vertex(new TestCSGLib.Vector3D(pnts[i + 1].X, pnts[i + 1].Y, pnts[i + 1].Z), new Vector2D(0, 0));
-                verts[2] = new Vertex(new TestCSGLib.Vector3D(pnts[i + 2].X, pnts[i + 2].Y, pnts[i + 2].Z), new Vector2D(0, 0));
+                int j = triangleIndices[i];
+                int k = triangleIndices[i + 1];
+                int l = triangleIndices[i + 2];
+                verts[0] = new TestCSGLib.Vertex(new TestCSGLib.Vector3D(pnts[j].X, pnts[j].Y, pnts[j].Z), new Vector2D(0, 0));
+                verts[1] = new TestCSGLib.Vertex(new TestCSGLib.Vector3D(pnts[k].X, pnts[k].Y, pnts[k].Z), new Vector2D(0, 0));
+                verts[2] = new TestCSGLib.Vertex(new TestCSGLib.Vector3D(pnts[l].X, pnts[l].Y, pnts[l].Z), new Vector2D(0, 0));
                 Polygon pl = new Polygon(verts);
                 res.Polygons.Add(pl);
             }
             return res;
         }
+
+        private void SolidToAbsolute(TestCSGLib.Solid sl3, Point3DCollection av, Int32Collection tri)
+        {
+            av.Clear();
+            tri.Clear();
+            absoluteBounds = new Bounds3D();
+            foreach (TestCSGLib.Polygon pl in sl3.Polygons)
+            {
+                if (pl.Vertices.Count == 3)
+                {
+                    int i0 = AddVertex(av, pl.Vertices[0].Pos.X, pl.Vertices[0].Pos.Y, pl.Vertices[0].Pos.Z);
+                    int i1 = AddVertex(av, pl.Vertices[1].Pos.X, pl.Vertices[1].Pos.Y, pl.Vertices[1].Pos.Z);
+                    int i2 = AddVertex(av, pl.Vertices[2].Pos.X, pl.Vertices[2].Pos.Y, pl.Vertices[2].Pos.Z);
+                    tri.Add(i0);
+                    tri.Add(i1);
+                    tri.Add(i2);
+                }
+                else
+                {
+                    int i0 = AddVertex(av, pl.Vertices[0].Pos.X, pl.Vertices[0].Pos.Y, pl.Vertices[0].Pos.Z);
+                    int i1 = AddVertex(av, pl.Vertices[1].Pos.X, pl.Vertices[1].Pos.Y, pl.Vertices[1].Pos.Z);
+                    int i2 = AddVertex(av, pl.Vertices[2].Pos.X, pl.Vertices[2].Pos.Y, pl.Vertices[2].Pos.Z);
+                    int i3 = AddVertex(av, pl.Vertices[3].Pos.X, pl.Vertices[3].Pos.Y, pl.Vertices[3].Pos.Z);
+
+                    tri.Add(i0);
+                    tri.Add(i1);
+                    tri.Add(i2);
+
+                    tri.Add(i0);
+                    tri.Add(i2);
+                    tri.Add(i3);
+                }
+            }
+        }
+        */
     }
 }

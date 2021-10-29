@@ -1487,8 +1487,8 @@ namespace Barnacle.ViewModels
                     }
                     grp.PrimType = s;
 
-                    // if (grp.Init())
-                    if (grp.TestInit())
+                    if (grp.Init())
+                    //if (grp.TestInit())
                     {
                         Document.ReplaceObjectsByGroup(grp);
                         //  RemoveDuplicateVertices(grp);

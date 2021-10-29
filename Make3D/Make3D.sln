@@ -34,7 +34,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Object3DLib", "Object3DLib\Object3DLib.csproj", "{5F92B002-B820-4A56-A2B1-482C252BA8BE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{8248F033-5DE9-46E4-BF7C-0B108F120577} = {8248F033-5DE9-46E4-BF7C-0B108F120577}
-		{9A27C5A5-3DF2-48E9-912F-785797B59594} = {9A27C5A5-3DF2-48E9-912F-785797B59594}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EditorParameterLib", "EditorParameterLib\EditorParameterLib.csproj", "{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}"
@@ -44,8 +43,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LineLib", "LineLib\LineLib.csproj", "{8248F033-5DE9-46E4-BF7C-0B108F120577}"
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "BarnacleSetup", "BarnacleSetup\BarnacleSetup.vdproj", "{2363C462-06BF-4AEC-B76F-E25D3C85C5AD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCSGLib", "TestCSGLib\TestCSGLib.csproj", "{9A27C5A5-3DF2-48E9-912F-785797B59594}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -123,10 +120,6 @@ Global
 		{8248F033-5DE9-46E4-BF7C-0B108F120577}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2363C462-06BF-4AEC-B76F-E25D3C85C5AD}.Debug|Any CPU.ActiveCfg = Debug
 		{2363C462-06BF-4AEC-B76F-E25D3C85C5AD}.Release|Any CPU.ActiveCfg = Release
-		{9A27C5A5-3DF2-48E9-912F-785797B59594}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A27C5A5-3DF2-48E9-912F-785797B59594}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A27C5A5-3DF2-48E9-912F-785797B59594}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A27C5A5-3DF2-48E9-912F-785797B59594}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
