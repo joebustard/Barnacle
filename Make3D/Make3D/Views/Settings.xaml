@@ -52,16 +52,15 @@
                     </Grid>
                     <TextBox x:Name="DescriptionBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Text="{Binding Description}" AcceptsReturn="True" />
 
-                    <Grid Grid.Row="3" Grid.Column="1">
+                    <Grid Grid.Row="4" Grid.Column="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" VerticalAlignment="Center">Tool Model Colour</Label>
                         <xctk:ColorPicker x:Name="_colorPicker"
-                                   VerticalAlignment="Bottom" Grid.Column="1"  IsOpen="False" SelectedColor="{Binding DefaultObjectColour}" Height="39" Margin="2,2,2,2" />
+                                   VerticalAlignment="Bottom" Grid.Column="1"  IsOpen="False" SelectedColor="{Binding DefaultObjectColour}" Height="20" Margin="2,0,2,2" />
                     </Grid>
                     <Grid Grid.Row="4" Grid.Column="1">
                         <Grid.ColumnDefinitions>
@@ -70,7 +69,6 @@
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
-                      
                 </Grid>
                 </Grid>
             </TabItem>
@@ -94,12 +92,11 @@
                     </Grid.RowDefinitions>
                     <Grid Grid.Column="1" Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" VerticalAlignment="Center">Base Scale</Label>
                     <ComboBox x:Name="ScaleBox" Grid.Column="1" Width="55" HorizontalAlignment="Left" VerticalAlignment="Center" SelectedItem="{Binding SelectedScale}" ItemsSource="{Binding Scales}" />
@@ -116,11 +113,10 @@
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="5*" />
-                            <ColumnDefinition Width="72*" />
+                            <ColumnDefinition Width="80*" />
                             <ColumnDefinition Width="77*" />
                             <ColumnDefinition Width="76*" />
                             <ColumnDefinition Width="76*" />
-                            <ColumnDefinition Width="77*" />
                         </Grid.ColumnDefinitions>
 
                         <CheckBox Grid.Row="0" Content="Swap Y-Z" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"
@@ -134,14 +130,14 @@ VerticalContentAlignment="Center" IsChecked="{Binding VersionExport}" Content="A
                         <CheckBox  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
 VerticalContentAlignment="Center" IsChecked="{Binding IgnoreEmpty}" Content="Don't export file if empty" />
 
-                        <Label Grid.Row="2" Grid.Column="0" VerticalContentAlignment="Center" Grid.ColumnSpan="2">Export Rotation</Label>
+                        <Label Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Grid.ColumnSpan="2">Export Rotation</Label>
                         <TextBox  Grid.Row="2" Grid.Column="2" Text="{Binding RotX}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
                         <TextBox  Grid.Row="2" Grid.Column="3" Text="{Binding RotY}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
                         <TextBox  Grid.Row="2" Grid.Column="4" Text="{Binding RotZ}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
                     </Grid>
                 </GroupBox>
     </Grid>
-            </TabItem >
+            </TabItem>
             <TabItem Header="Limpet">
                 <Grid>
                 <Grid.ColumnDefinitions>
@@ -160,14 +156,12 @@ VerticalContentAlignment="Center" IsChecked="{Binding IgnoreEmpty}" Content="Don
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" >
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                         <CheckBox IsChecked="{Binding AutoSaveScript}" >Autosave script on run.</CheckBox>
                     </StackPanel>
                     </Grid>
             </TabItem>
         </TabControl>
-
-        
 
         <Grid Grid.Row="6" Grid.Column="1">
             <Grid.ColumnDefinitions>

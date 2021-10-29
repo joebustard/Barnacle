@@ -361,6 +361,18 @@ program ""Script Name""
 
         internal void RunScript()
         {
+            if (filePath != "" && Project.SharedProjectSettings.AutoSaveScript == true)
+            {
+                try
+                {
+                    File.WriteAllText(filePath, Source);
+                    Dirty = false;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
             content.Clear();
             script.SetResultsContent(content);
             if (script.Execute())

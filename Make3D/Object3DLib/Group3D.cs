@@ -6,6 +6,9 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
+using TestCSGLib;
+using Vector3D = System.Windows.Media.Media3D.Vector3D;
+using Solid = CSGLib.Solid;
 
 namespace Barnacle.Object3DLib
 {
@@ -370,6 +373,56 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public bool TestInit()
+        {
+            bool result = false;
+            if (leftObject != null && rightObject != null)
+            {
+                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
+                {
+                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
+                    {
+                        Color = leftObject.Color;
+                        TestCSGLib.Solid[] slds = new TestCSGLib.Solid[1];
+
+                        TestCSGLib.Solid sl1 = SolidFromPoints(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices);
+                        slds[0] = SolidFromPoints(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices);
+
+                        TestCSGLib.Solid sl3 = null;
+                        switch (PrimType)
+                        {
+                            case "groupunion":
+                                {
+                                    sl3 = sl1.Union(slds);
+                                }
+                                break;
+                                /*
+                                                            case "groupdifference":
+                                                                {
+                                                                    result = modeller.GetDifference();
+                                                                }
+                                                                break;
+
+                                                            case "groupreversedifference":
+                                                                {
+                                                                    result = modeller.GetReverseDifference();
+                                                                }
+                                                                break;
+
+                                                            case "groupintersection":
+                                                                {
+                                                                    result = modeller.GetIntersection();
+                                                                }
+                                                                break;
+                                                                */
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
         public override XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
             XmlElement ele = null;
@@ -543,6 +596,25 @@ namespace Barnacle.Object3DLib
                 return obj;
             }
             return null;
+        }
+
+        private TestCSGLib.Solid SolidFromPoints(Point3DCollection pnts, Int32Collection triangleIndices)
+        {
+            TestCSGLib.Solid res = new TestCSGLib.Solid();
+            if (res.Polygons == null)
+            {
+                res.Polygons = new List<Polygon>();
+            }
+            for (int i = 0; i < triangleIndices.Count; i += 3)
+            {
+                TestCSGLib.Vertex[] verts = new TestCSGLib.Vertex[3];
+                verts[0] = new Vertex(new TestCSGLib.Vector3D(pnts[i].X, pnts[i].Y, pnts[i].Z), new Vector2D(0, 0));
+                verts[1] = new Vertex(new TestCSGLib.Vector3D(pnts[i + 1].X, pnts[i + 1].Y, pnts[i + 1].Z), new Vector2D(0, 0));
+                verts[2] = new Vertex(new TestCSGLib.Vector3D(pnts[i + 2].X, pnts[i + 2].Y, pnts[i + 2].Z), new Vector2D(0, 0));
+                Polygon pl = new Polygon(verts);
+                res.Polygons.Add(pl);
+            }
+            return res;
         }
     }
 }
