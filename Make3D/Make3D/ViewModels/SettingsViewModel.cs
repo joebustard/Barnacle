@@ -28,6 +28,7 @@ namespace Barnacle.ViewModels
 
         public SettingsViewModel()
         {
+            AutoSaveScript = Project.SharedProjectSettings.AutoSaveScript;
             Description = Project.SharedProjectSettings.Description;
             Scales = ModelScales.ScaleNames();
             SelectedScale = Project.SharedProjectSettings.BaseScale;
@@ -106,6 +107,22 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private bool autoSaveScript;
+        public bool AutoSaveScript
+        {
+            get
+            {
+                return autoSaveScript;
+            }
+            set
+            {
+                if (autoSaveScript != value)
+                {
+                    autoSaveScript = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public string RotX
         {
             get
