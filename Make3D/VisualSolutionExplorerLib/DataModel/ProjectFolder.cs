@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Xml;
+using VisualSolutionExplorerLib.Dialogs;
 
 namespace VisualSolutionExplorer
 {
@@ -92,13 +93,26 @@ namespace VisualSolutionExplorer
         public string CreateNewFile()
         {
             string fileName = GetNextFileName("New File", SupportedFileExtension);
-            ProjectFile fi = new ProjectFile(fileName);
-            fi.EditFile = EditFile;
-            fi.RunFile = RunFile;
-            _projectFiles.Add(fi);
-            _projectFiles.Sort();
-            fi.FilePath = FolderPath + "\\" + fileName;
-            return fi.FilePath;
+            ConfirmName dlg = new ConfirmName();
+            dlg.FileName = fileName;
+            dlg.FolderPath = Project.ProjectPathToAbsPath(FolderPath);
+            dlg.Extension = SupportedFileExtension;
+            if (dlg.ShowDialog() == true)
+            {
+                fileName = dlg.FileName;
+                ProjectFile fi = new ProjectFile(fileName);
+                fi.EditFile = EditFile;
+                fi.RunFile = RunFile;
+                _projectFiles.Add(fi);
+                _projectFiles.Sort();
+                fi.FilePath = FolderPath + "\\" + fileName;
+
+                return fi.FilePath;
+            }
+            else
+            {
+                return "";
+            }
         }
 
         public string CreateNewFolder()
@@ -373,7 +387,7 @@ namespace VisualSolutionExplorer
                     }
                 }
                 catch
-                { 
+                {
                 }
             }
 

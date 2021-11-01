@@ -941,6 +941,10 @@ namespace Barnacle.ViewModels
                 List<Object3D> obs = ScriptResults as List<Object3D>;
                 if (obs != null)
                 {
+                    if (obs.Count > 0 && ScriptClearBed)
+                    {
+                        document.Content.Clear();
+                    }
                     foreach (Object3D ob in obs)
                     {
                         if (ob != null)
@@ -952,6 +956,7 @@ namespace Barnacle.ViewModels
                             document.Content.Add(ob);
                         }
                     }
+                    document.Dirty = true;
                 }
             }
             ScriptResults = null;

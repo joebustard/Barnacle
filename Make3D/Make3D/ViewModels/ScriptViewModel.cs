@@ -85,6 +85,7 @@ program ""Script Name""
             modelItems = new Model3DCollection();
             searchIndex = 0;
             Log.Instance().UpdateText = UpdateText;
+            BaseViewModel.ScriptClearBed = false;
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
         }
@@ -495,12 +496,18 @@ program ""Script Name""
                 }
             }
             BaseViewModel.ScriptResults = null;
+            BaseViewModel.ScriptClearBed = false;
             if (content.Count > 0)
             {
                 MessageBoxResult res = MessageBox.Show("Objects have been created. Do you want to save them in the model?", "Warning", MessageBoxButton.YesNo);
                 if (res == MessageBoxResult.Yes)
                 {
                     BaseViewModel.ScriptResults = content;
+                    res = MessageBox.Show("Clear existing objects in the  model?", "Warning", MessageBoxButton.YesNo);
+                    if (res == MessageBoxResult.Yes)
+                    {
+                        BaseViewModel.ScriptClearBed = true;
+                    }
                 }
             }
         }

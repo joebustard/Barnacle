@@ -65,6 +65,7 @@ namespace Barnacle.ViewModels
             get { return recentlyUsedManager; }
         }
 
+        public static bool ScriptClearBed { get; protected set; }
         public static object ScriptResults { get; protected set; }
 
         public SolidColorBrush FillColor
