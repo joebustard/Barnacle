@@ -40,6 +40,8 @@ namespace Barnacle.Views
                     BaseViewModel.Project.SharedProjectSettings.ExportAxisSwap = vm.SwapAxis;
                     BaseViewModel.Project.SharedProjectSettings.FloorAll = vm.FloorAll;
                     BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
+
+                    BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport = vm.ClearPreviousVersionsOnExport;
                     BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour = vm.DefaultObjectColour;
                     BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;
                     //    BaseViewModel.Document.Dirty = true;

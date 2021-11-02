@@ -521,12 +521,27 @@ namespace Barnacle.Models
                     string expName = System.IO.Path.GetFileNameWithoutExtension(FilePath);
                     if (ProjectSettings.VersionExport)
                     {
-                        expName += "_V_" + revision.ToString();
+                        expName += "_V_";
+                        if (ProjectSettings.ClearPreviousVersionsOnExport)
+                        {
+                            string[] filesToDelete = System.IO.Directory.GetFiles(pth, expName + "*.stl");
+                            foreach (string f in filesToDelete)
+                            {
+                                try
+                                {
+                                    System.IO.File.Delete(f);
+                                }
+                                catch
+                                {
+                                }
+                            }
+                            expName += revision.ToString();
+                        }
+                        expName = expName + ".stl";
+                        expName = System.IO.Path.Combine(pth, expName);
+                        exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                        res = expName;
                     }
-                    expName = expName + ".stl";
-                    expName = System.IO.Path.Combine(pth, expName);
-                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                    res = expName;
                 }
             }
             else if (v == "STLParts")

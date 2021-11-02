@@ -2991,15 +2991,18 @@ namespace Barnacle.ViewModels
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[0];
-                selectedItems.Add(ob);
-                if (selectedObjectAdorner == null)
+                if (!selectedItems.Contains(ob))
                 {
-                    MakeSizeAdorner();
+                    selectedItems.Add(ob);
+                    if (selectedObjectAdorner == null)
+                    {
+                        MakeSizeAdorner();
+                    }
+                    selectedObjectAdorner.AdornObject(ob);
+                    SetSelectionColours();
+                    NotificationManager.Notify("ObjectSelected", ob);
+                    EnableTool(ob);
                 }
-                selectedObjectAdorner.AdornObject(ob);
-                SetSelectionColours();
-                NotificationManager.Notify("ObjectSelected", ob);
-                EnableTool(ob);
             }
             UpdateSelectionDisplay();
         }
@@ -3017,14 +3020,17 @@ namespace Barnacle.ViewModels
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D ob = Document.Content[Document.Content.Count - 1];
-                selectedItems.Add(ob);
-                if (selectedObjectAdorner == null)
+                if (!selectedItems.Contains(ob))
                 {
-                    MakeSizeAdorner();
+                    selectedItems.Add(ob);
+                    if (selectedObjectAdorner == null)
+                    {
+                        MakeSizeAdorner();
+                    }
+                    selectedObjectAdorner.AdornObject(ob);
+                    SetSelectionColours();
+                    NotificationManager.Notify("ObjectSelected", ob);
                 }
-                selectedObjectAdorner.AdornObject(ob);
-                SetSelectionColours();
-                NotificationManager.Notify("ObjectSelected", ob);
                 EnableTool(ob);
             }
             UpdateSelectionDisplay();
@@ -3032,11 +3038,11 @@ namespace Barnacle.ViewModels
 
         private void SelectNext()
         {
-            if (selectedItems.Count == 1)
+            if (selectedItems.Count > 0)
             {
                 //ResetSelectionColours();
                 NotificationManager.Notify("SetToolsVisibility", false);
-                Object3D sel = selectedItems[0];
+                Object3D sel = selectedItems[selectedItems.Count - 1];
 
                 Object3D nxt = null;
                 if (sel != null)
@@ -3062,15 +3068,19 @@ namespace Barnacle.ViewModels
                     ResetSelection();
                 }
 
-                selectedItems.Add(nxt);
-                if (selectedObjectAdorner == null)
+                if (!selectedItems.Contains(nxt))
                 {
-                    MakeSizeAdorner();
+                    selectedItems.Add(nxt);
+                    if (selectedObjectAdorner == null)
+                    {
+                        MakeSizeAdorner();
+                    }
+                    selectedObjectAdorner.AdornObject(nxt);
+
+                    SetSelectionColours();
+                    NotificationManager.Notify("ObjectSelected", nxt);
+                    EnableTool(nxt);
                 }
-                selectedObjectAdorner.AdornObject(nxt);
-                SetSelectionColours();
-                NotificationManager.Notify("ObjectSelected", nxt);
-                EnableTool(nxt);
                 UpdateSelectionDisplay();
             }
         }
@@ -3096,14 +3106,17 @@ namespace Barnacle.ViewModels
                     {
                         if (ob.Name == nm)
                         {
-                            selectedItems.Add(ob);
-                            if (selectedObjectAdorner == null)
+                            if (!selectedItems.Contains(ob))
                             {
-                                MakeSizeAdorner();
+                                selectedItems.Add(ob);
+                                if (selectedObjectAdorner == null)
+                                {
+                                    MakeSizeAdorner();
+                                }
+                                selectedObjectAdorner.AdornObject(ob);
+                                SetSelectionColours();
+                                NotificationManager.Notify("ObjectSelected", ob);
                             }
-                            selectedObjectAdorner.AdornObject(ob);
-                            SetSelectionColours();
-                            NotificationManager.Notify("ObjectSelected", ob);
                             EnableTool(ob);
                         }
                     }
@@ -3114,9 +3127,10 @@ namespace Barnacle.ViewModels
 
         private void SelectPrevious()
         {
-            if (selectedItems.Count == 1)
+            if (selectedItems.Count > 0)
             {
                 NotificationManager.Notify("SetToolsVisibility", false);
+                Object3D sel = selectedItems[0];
                 var v1 = (Keyboard.GetKeyStates(Key.LeftShift) & KeyStates.Down);
                 var v2 = (Keyboard.GetKeyStates(Key.RightShift) & KeyStates.Down);
                 if ((v1 == KeyStates.None) &&
@@ -3124,7 +3138,6 @@ namespace Barnacle.ViewModels
                 {
                     ResetSelection();
                 }
-                Object3D sel = selectedItems[0];
 
                 Object3D nxt = null;
                 if (sel != null)
@@ -3144,16 +3157,18 @@ namespace Barnacle.ViewModels
                         nxt = Document.Content[Document.Content.Count - 1];
                     }
                 }
-
-                selectedItems.Add(nxt);
-                if (selectedObjectAdorner == null)
+                if (!selectedItems.Contains(nxt))
                 {
-                    MakeSizeAdorner();
+                    selectedItems.Add(nxt);
+                    if (selectedObjectAdorner == null)
+                    {
+                        MakeSizeAdorner();
+                    }
+                    selectedObjectAdorner.AdornObject(nxt);
+                    SetSelectionColours();
+                    NotificationManager.Notify("ObjectSelected", nxt);
+                    EnableTool(nxt);
                 }
-                selectedObjectAdorner.AdornObject(nxt);
-                SetSelectionColours();
-                NotificationManager.Notify("ObjectSelected", nxt);
-                EnableTool(nxt);
                 UpdateSelectionDisplay();
             }
         }

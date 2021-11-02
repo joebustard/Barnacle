@@ -8,6 +8,9 @@ namespace Barnacle.ViewModels
 {
     internal class SettingsViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private bool autoSaveScript;
+        private bool clearPreviousVersionsOnExport;
+        private Color defaultObjectColour;
         private string description;
         private bool exportEmptyDocs;
         private string exportScale;
@@ -39,8 +42,57 @@ namespace Barnacle.ViewModels
             SwapAxis = Project.SharedProjectSettings.ExportAxisSwap;
             FloorAll = Project.SharedProjectSettings.FloorAll;
             VersionExport = Project.SharedProjectSettings.VersionExport;
+            ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
+        }
+
+        public bool AutoSaveScript
+        {
+            get
+            {
+                return autoSaveScript;
+            }
+            set
+            {
+                if (autoSaveScript != value)
+                {
+                    autoSaveScript = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool ClearPreviousVersionsOnExport
+        {
+            get
+            {
+                return clearPreviousVersionsOnExport;
+            }
+            set
+            {
+                if (clearPreviousVersionsOnExport != value)
+                {
+                    clearPreviousVersionsOnExport = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Color DefaultObjectColour
+        {
+            get
+            {
+                return defaultObjectColour;
+            }
+            set
+            {
+                if (defaultObjectColour != value)
+                {
+                    defaultObjectColour = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public String Description
@@ -107,22 +159,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private bool autoSaveScript;
-        public bool AutoSaveScript
-        {
-            get
-            {
-                return autoSaveScript;
-            }
-            set
-            {
-                if (autoSaveScript != value)
-                {
-                    autoSaveScript = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
         public string RotX
         {
             get
@@ -183,20 +219,6 @@ namespace Barnacle.ViewModels
                 if (scales != value)
                 {
                     scales = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        private Color defaultObjectColour;
-
-        public Color DefaultObjectColour
-        {
-            get { return defaultObjectColour; }
-            set
-            {
-                if (defaultObjectColour != value)
-                {
-                    defaultObjectColour = value;
                     NotifyPropertyChanged();
                 }
             }

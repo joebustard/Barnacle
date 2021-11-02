@@ -17,12 +17,16 @@ namespace VisualSolutionExplorer
             ExportAxisSwap = true;
             FloorAll = true;
             VersionExport = true;
+            ClearPreviousVersionsOnExport = true;
             ExportEmptyFiles = false;
             AutoSaveScript = true;
             DefaultObjectColour = Colors.CadetBlue;
         }
 
+        public bool AutoSaveScript { get; set; }
         public string BaseScale { get; set; }
+        public bool ClearPreviousVersionsOnExport { get; set; }
+        public Color DefaultObjectColour { get; set; }
         public string Description { get; set; }
         public bool ExportAxisSwap { get; set; }
         public bool ExportEmptyFiles { get; set; }
@@ -31,8 +35,7 @@ namespace VisualSolutionExplorer
         public string ExportScale { get; set; }
         public bool FloorAll { get; set; }
         public bool VersionExport { get; set; }
-        public Color  DefaultObjectColour { get; set; }
-        public bool AutoSaveScript { get; set; }
+
         internal void Read(XmlNode nd)
         {
             XmlElement ele = nd as XmlElement;
@@ -69,11 +72,16 @@ namespace VisualSolutionExplorer
                 string s = ele.GetAttribute("VersionExport");
                 VersionExport = Convert.ToBoolean(s);
             }
+            if (ele.HasAttribute("ClearPreviousVerionsOnExport"))
+            {
+                string s = ele.GetAttribute("ClearPreviousVerionsOnExport");
+                ClearPreviousVersionsOnExport = Convert.ToBoolean(s);
+            }
 
             if (ele.HasAttribute("DefaultObjectColour"))
             {
                 string s = ele.GetAttribute("DefaultObjectColour");
-                DefaultObjectColour = (Color)ColorConverter.ConvertFromString(s); 
+                DefaultObjectColour = (Color)ColorConverter.ConvertFromString(s);
             }
             XmlNode rt = nd.SelectSingleNode("Rotation");
             if (rt != null)
@@ -101,6 +109,8 @@ namespace VisualSolutionExplorer
             ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
             ele.SetAttribute("FloorAll", FloorAll.ToString());
             ele.SetAttribute("VersionExport", VersionExport.ToString());
+            ele.SetAttribute("ClearPreviousVerionsOnExport", VersionExport.ToString());
+
             ele.SetAttribute("AutoSaveScript", AutoSaveScript.ToString());
             ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());
             XmlElement rot = doc.CreateElement("Rotation");
