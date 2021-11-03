@@ -535,13 +535,15 @@ namespace Barnacle.Models
                                 {
                                 }
                             }
-                            expName += revision.ToString();
+
                         }
-                        expName = expName + ".stl";
-                        expName = System.IO.Path.Combine(pth, expName);
-                        exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                        res = expName;
+                        expName += revision.ToString();
                     }
+                    expName = expName + ".stl";
+                    expName = System.IO.Path.Combine(pth, expName);
+                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    res = expName;
+
                 }
             }
             else if (v == "STLParts")

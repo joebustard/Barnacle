@@ -72,9 +72,9 @@ namespace VisualSolutionExplorer
                 string s = ele.GetAttribute("VersionExport");
                 VersionExport = Convert.ToBoolean(s);
             }
-            if (ele.HasAttribute("ClearPreviousVerionsOnExport"))
+            if (ele.HasAttribute("ClearPreviousVersionsOnExport"))
             {
-                string s = ele.GetAttribute("ClearPreviousVerionsOnExport");
+                string s = ele.GetAttribute("ClearPreviousVersionsOnExport");
                 ClearPreviousVersionsOnExport = Convert.ToBoolean(s);
             }
 
@@ -109,7 +109,7 @@ namespace VisualSolutionExplorer
             ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
             ele.SetAttribute("FloorAll", FloorAll.ToString());
             ele.SetAttribute("VersionExport", VersionExport.ToString());
-            ele.SetAttribute("ClearPreviousVerionsOnExport", VersionExport.ToString());
+            ele.SetAttribute("ClearPreviousVersionsOnExport", ClearPreviousVersionsOnExport.ToString());
 
             ele.SetAttribute("AutoSaveScript", AutoSaveScript.ToString());
             ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());

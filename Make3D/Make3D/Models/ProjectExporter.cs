@@ -5,7 +5,7 @@ namespace Barnacle.Models
 {
     public class ProjectExporter
     {
-        public void Export(String[] filePaths, String exportPath, bool versionExport, bool exportEmptyFiles = true)
+        public void Export(String[] filePaths, String exportPath, bool versionExport, bool exportEmptyFiles = true, bool clearPrevious = true)
         {
             Document doc;
             foreach (String f in filePaths)
@@ -34,6 +34,21 @@ namespace Barnacle.Models
                         if (versionExport)
                         {
                             name += "_V_" + doc.Revision.ToString();
+                            if (clearPrevious)
+                            {
+                                string[] filesToDelete = System.IO.Directory.GetFiles(exportPath, name + "_V_*.stl");
+                                foreach (string fn in filesToDelete)
+                                {
+                                    try
+                                    {
+                                        System.IO.File.Delete(fn);
+                                    }
+                                    catch
+                                    {
+                                    }
+                                }
+
+                            }
                         }
                         name += ".stl";
                         name = exportPath + "\\" + name;

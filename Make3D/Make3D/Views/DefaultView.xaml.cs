@@ -184,6 +184,10 @@ namespace Barnacle.Views
             {
                 LoadFileLastOpenedInProject();
             }
+            if (BaseViewModel.Document != null)
+            {
+                BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
+            }
         }
 
         private void MainRibbon_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -182,6 +182,7 @@ namespace VisualSolutionExplorer
                 ProjectSettings prj = new ProjectSettings();
                 prj.Read(setNode);
                 SharedProjectSettings = prj;
+                
             }
             XmlNodeList fileNodes = ele.SelectNodes("File");
             foreach (XmlNode filn in fileNodes)

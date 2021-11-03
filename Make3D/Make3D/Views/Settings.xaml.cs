@@ -44,6 +44,7 @@ namespace Barnacle.Views
                     BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport = vm.ClearPreviousVersionsOnExport;
                     BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour = vm.DefaultObjectColour;
                     BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;
+                    BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
                     //    BaseViewModel.Document.Dirty = true;
                 }
                 catch (Exception)

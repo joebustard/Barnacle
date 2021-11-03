@@ -1196,7 +1196,7 @@ namespace Barnacle.ViewModels
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
-                pe.Export(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles);
+                pe.Export(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles, BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport);
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }
