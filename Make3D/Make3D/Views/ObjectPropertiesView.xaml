@@ -63,7 +63,7 @@
             <ColumnDefinition Width="25*" />
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}"  Grid.RowSpan="2">Object</Label>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="14" Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="14" Text="{Binding ObjectName}" />
 
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>

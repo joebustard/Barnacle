@@ -341,9 +341,9 @@ namespace Barnacle.Object3DLib
 
             for (int i = 0; i < count; i++)
             {
-                x = reader.ReadDouble();
-                y = reader.ReadDouble();
-                z = reader.ReadDouble();
+                x = reader.ReadSingle();
+                y = reader.ReadSingle();
+                z = reader.ReadSingle();
                 // RelativeObjectVertices.Add(new Point3D(x, y, z));
                 RelativeObjectVertices.Add(new P3D(x, y, z));
             }

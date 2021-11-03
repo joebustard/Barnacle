@@ -535,7 +535,6 @@ namespace Barnacle.Models
                                 {
                                 }
                             }
-
                         }
                         expName += revision.ToString();
                     }
@@ -543,7 +542,6 @@ namespace Barnacle.Models
                     expName = System.IO.Path.Combine(pth, expName);
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
                     res = expName;
-
                 }
             }
             else if (v == "STLParts")
@@ -1020,6 +1018,7 @@ namespace Barnacle.Models
                             {
                                 Object3D ob = new Object3D();
                                 ob.ReadBinary(reader);
+                                ob.Remesh();
                                 ob.SetMesh();
                                 if (ob.PrimType != "Mesh")
                                 {
@@ -1036,7 +1035,7 @@ namespace Barnacle.Models
                             {
                                 Group3D ob = new Group3D();
                                 ob.ReadBinary(reader);
-
+                                ob.Remesh();
                                 ob.SetMesh();
 
                                 if (!(double.IsNegativeInfinity(ob.Position.X)))
@@ -1050,7 +1049,7 @@ namespace Barnacle.Models
                             {
                                 ReferenceObject3D ob = new ReferenceObject3D();
                                 ob.ReadBinary(reader);
-
+                                ob.Remesh();
                                 // so we should have already read the referenced files by now
                                 // meaning there should already be a referenced object which matches.
                                 // if there is then update its position to whatever this object says
@@ -1075,6 +1074,7 @@ namespace Barnacle.Models
                             {
                                 ReferenceGroup3D ob = new ReferenceGroup3D();
                                 ob.ReadBinary(reader);
+                                ob.Remesh();
                                 ob.SetMesh();
 
                                 foreach (Object3D old in Content)

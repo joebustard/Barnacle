@@ -815,14 +815,14 @@ namespace Barnacle.Object3DLib
             // relativeObjectVertices = new Point3DCollection();
             relativeObjectVertices = new List<P3D>();
             int count = reader.ReadInt32();
-
+            float x1, y1, z1;
             for (int i = 0; i < count; i++)
             {
-                x = reader.ReadDouble();
-                y = reader.ReadDouble();
-                z = reader.ReadDouble();
+                x1 = reader.ReadSingle();
+                y1 = reader.ReadSingle();
+                z1 = reader.ReadSingle();
                 //  relativeObjectVertices.Add(new Point3D(x, y, z));
-                relativeObjectVertices.Add(new P3D(x, y, z));
+                relativeObjectVertices.Add(new P3D(x1, y1, z1));
             }
 
             count = reader.ReadInt32();
@@ -832,7 +832,7 @@ namespace Barnacle.Object3DLib
                 int index = reader.ReadInt32();
                 triangleIndices.Add(index);
             }
-            RelativeToAbsolute();
+            Remesh();
             SetMesh();
         }
 

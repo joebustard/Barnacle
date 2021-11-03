@@ -140,8 +140,12 @@ namespace Barnacle.ViewModels
             lastChangeWasNudge = false;
             if (Document != null)
             {
+                DateTime start = DateTime.Now;
                 string s = undoer.GetNextCheckPointName(Document.DocumentId.ToString());
-                Document.Write(s);
+                Document.Save(s);
+                DateTime end = DateTime.Now;
+                TimeSpan ts = end - start;
+                System.Diagnostics.Debug.WriteLine($"CHeckpoint took {ts.TotalMilliseconds} ms");
             }
         }
 
@@ -167,7 +171,7 @@ namespace Barnacle.ViewModels
             if (undoer.CanUndo(Document.DocumentId.ToString()))
             {
                 string s = undoer.GetLastCheckPointName(Document.DocumentId.ToString());
-                Document.Read(s, true);
+                Document.Load(s);
                 NotificationManager.Notify("Refresh", null);
             }
         }

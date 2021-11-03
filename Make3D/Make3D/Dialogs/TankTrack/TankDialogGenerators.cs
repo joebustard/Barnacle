@@ -190,32 +190,36 @@ namespace Barnacle.Dialogs
             double dist = TankTrackUtils.Distance(p1, p2);
             double sign = 1;
             // right down
-            if (dx > 0 && dy < 0)
+            if (dx > 0)
             {
-                sign = -1;
+                if (dy < 0)
+                {
+                    sign = -1.0;
+                }
+                else
+                {
+                    sign = 1;
+                }
             }
             else
-            if (dx > 0 && dy > 0)
+            if (dx < 0)
             {
-                sign = 1;
+                if (dy < 0)
+                {
+                    sign = -1.0;
+                }
+                else
+                {
+                    sign = 1;
+                }
             }
-            else
-            if (dx < 0 && dy < 0)
-            {
-                sign = -1;
-            }
-            else
-            if (dx < 0 && dy > 0)
-            {
-                sign = 1;
-            }
+
             foreach (Triangle rawtri in raw)
             {
                 Triangle rottri = new Triangle();
                 int i = 0;
                 foreach (PointF rawp in rawtri.Points)
                 {
-                    //  PointF o1 = TankTrackUtils.PerpendicularF(p1, p2, rawp.X + xo, sign * (rawp.Y + yo) * height);
                     rottri.Points[i] = TankTrackUtils.PerpendicularF(p1, p2, rawp.X + xo, sign * (rawp.Y + yo) * height); ;
                     i++;
                 }
