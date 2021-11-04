@@ -403,6 +403,7 @@ namespace ScriptLanguage
                 {
                     if (FetchToken(out token, out tokenType) == true)
                     {
+
                         if (tokenType == Tokeniser.TokenType.Addition)
                         {
                             ExpressionNode LeftNode = exp;
@@ -737,12 +738,17 @@ namespace ScriptLanguage
                 Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
                 if (FetchToken(out token, out tokenType) == true)
                 {
-                    if (tokenType != Tokeniser.TokenType.Assignment)
+                    if (tokenType != Tokeniser.TokenType.Assignment &&
+                    tokenType != Tokeniser.TokenType.PlusEqual &&
+                    tokenType != Tokeniser.TokenType.MinusEqual &&
+                    tokenType != Tokeniser.TokenType.TimesEqual &&
+                    tokenType != Tokeniser.TokenType.DivideEqual )
                     {
                         ReportSyntaxError("Expected =");
                     }
                     else
                     {
+                        string opcode = token;
                         ExpressionNode exp = ParseExpressionNode(parentName);
                         if (exp != null)
                         {
@@ -753,11 +759,23 @@ namespace ScriptLanguage
                             }
                             else
                             {
-                                AssignmentNode asn = new AssignmentNode();
-                                asn.VariableName = internalName;
-                                asn.ExternalName = externalName;
-                                asn.ExpressionNode = exp;
-                                parentNode.AddStatement(asn);
+                                if (opcode == "=")
+                                {
+                                    AssignmentNode asn = new AssignmentNode();
+                                    asn.VariableName = internalName;
+                                    asn.ExternalName = externalName;
+                                    asn.ExpressionNode = exp;
+                                    parentNode.AddStatement(asn);
+                                }
+                                else
+                                {
+                                    AssignOpNode asn = new AssignOpNode();
+                                    asn.VariableName = internalName;
+                                    asn.ExternalName = externalName;
+                                    asn.OpCode = opcode;
+                                    asn.ExpressionNode = exp;
+                                    parentNode.AddStatement(asn);
+                                }
                             }
                         }
                     }
