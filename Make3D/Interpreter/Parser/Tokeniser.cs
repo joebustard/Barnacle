@@ -75,7 +75,11 @@ namespace ScriptLanguage
             Not,
             UnknownChar,
             OpenSquare,
-            CloseSquare
+            CloseSquare,
+            PlusEqual,
+            MinusEqual,
+            TimesEqual,
+            DivideEqual
         };
 
         public String GetSourceUpToIndex()
@@ -235,6 +239,13 @@ namespace ScriptLanguage
                                             kType = TokenType.OpenBlockComment;
                                             GetBy();
                                         }
+                                        else
+                                            if (by == '=')
+                                        {
+                                            kToken = "/=";
+                                            kType = TokenType.DivideEqual;
+                                            GetBy();
+                                        }
                                         result = true;
                                     }
                                     break;
@@ -364,6 +375,12 @@ namespace ScriptLanguage
                                         kType = TokenType.Addition;
                                         kToken = "+";
                                         GetBy();
+                                        if ( by == '=')
+                                        {
+                                            kType = TokenType.PlusEqual;
+                                            kToken = "+=";
+                                            GetBy();
+                                        }
                                         result = true;
                                     }
                                     break;
@@ -382,6 +399,12 @@ namespace ScriptLanguage
                                         kType = TokenType.Subtraction;
                                         kToken = "-";
                                         GetBy();
+                                        if (by == '=')
+                                        {
+                                            kType = TokenType.MinusEqual;
+                                            kToken = "-=";
+                                            GetBy();
+                                        }
                                         result = true;
                                     }
                                     break;
@@ -396,6 +419,15 @@ namespace ScriptLanguage
                                             kToken = "*/";
                                             kType = TokenType.CloseBlockComment;
                                             GetBy();
+                                        }
+                                        else
+                                        {
+                                            if (by == '=')
+                                            {
+                                                kType = TokenType.TimesEqual;
+                                                kToken = "*=";
+                                                GetBy();
+                                            }
                                         }
                                         result = true;
                                     }
