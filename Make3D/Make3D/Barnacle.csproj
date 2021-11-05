@@ -139,6 +139,9 @@
     <Compile Include="Dialogs\Filet\Filet.xaml.cs">
       <DependentUpon>Filet.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\InfoWindow.xaml.cs">
+      <DependentUpon>InfoWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml.cs">
       <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
     </Compile>
@@ -376,6 +379,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Filet\Filet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\InfoWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

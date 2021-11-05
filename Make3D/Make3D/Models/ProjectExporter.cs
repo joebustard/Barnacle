@@ -1,4 +1,5 @@
-﻿using Barnacle.Object3DLib;
+﻿using Barnacle.Dialogs;
+using Barnacle.Object3DLib;
 using System;
 
 namespace Barnacle.Models
@@ -8,10 +9,13 @@ namespace Barnacle.Models
         public void Export(String[] filePaths, String exportPath, bool versionExport, bool exportEmptyFiles = true, bool clearPrevious = true)
         {
             Document doc;
+            InfoWindow.Instance().ShowInfo();
             foreach (String f in filePaths)
             {
                 try
                 {
+                    string rfn = System.IO.Path.GetFileName(f);
+                    InfoWindow.Instance().ShowText(rfn);
                     doc = new Document();
                     doc.Load(f);
                     Bounds3D allBounds = new Bounds3D();
@@ -21,7 +25,7 @@ namespace Barnacle.Models
                     {
                         if (ob.Exportable == true)
                         {
-                        hasContent =true;
+                            hasContent = true;
                         }
                     }
                     if (exportEmptyFiles || hasContent)
@@ -47,7 +51,6 @@ namespace Barnacle.Models
                                     {
                                     }
                                 }
-
                             }
                         }
                         name += ".stl";
@@ -59,6 +62,7 @@ namespace Barnacle.Models
                 {
                 }
             }
+            InfoWindow.Instance().CloseInfo();
         }
     }
 }
