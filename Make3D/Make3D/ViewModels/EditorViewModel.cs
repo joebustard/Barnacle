@@ -2159,9 +2159,12 @@ namespace Barnacle.ViewModels
                         {
                             string pth = dialog.SelectedPath;
                             string[] files = System.IO.Directory.GetFiles(pth, "*.stl");
+                            InfoWindow.Instance().ShowInfo();
                             foreach (string fpath in files)
                             {
+                                InfoWindow.Instance().ShowText(System.IO.Path.GetFileName(fpath));
                                 string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
+
                                 string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
                                 if (!File.Exists(targetPath))
                                 {
@@ -2200,6 +2203,7 @@ namespace Barnacle.ViewModels
                                 }
                             }
                         }
+                        InfoWindow.Instance().CloseInfo();
                         BaseViewModel.Project.Save();
                         NotificationManager.Notify("ImportRefresh", null);
                     }

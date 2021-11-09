@@ -335,6 +335,7 @@ namespace Barnacle.Object3DLib
             y = reader.ReadDouble();
             z = reader.ReadDouble();
             Scale = new Scale3D(x, y, z);
+            EditorParameters.ReadBinary(reader);
             //RelativeObjectVertices = new Point3DCollection();
             RelativeObjectVertices = new List<P3D>();
             int count = reader.ReadInt32();
@@ -355,12 +356,50 @@ namespace Barnacle.Object3DLib
                 int index = reader.ReadInt32();
                 TriangleIndices.Add(index);
             }
-            leftObject = new Object3D();
-            leftObject.ReadBinary(reader);
-            rightObject = new Object3D();
-            rightObject.ReadBinary(reader);
+            byte type = reader.ReadByte();
+            switch (type)
+            {
+                case 0:
+                    {
+                        Object3D ob = new Object3D();
+                        ob.ReadBinary(reader);
+                        leftObject = ob;                        
+                    }
+                    break;
 
-            RelativeToAbsolute();
+                case 1:
+                    {
+                        Group3D ob = new Group3D();
+                        ob.ReadBinary(reader);
+                        leftObject = ob;
+                    }
+                    break;
+
+            }
+            type = reader.ReadByte();
+            switch (type)
+            {
+                case 0:
+                    {
+                        Object3D ob = new Object3D();
+                        ob.ReadBinary(reader);
+                        rightObject = ob;
+                    }
+                    break;
+
+                case 1:
+                    {
+                        Group3D ob = new Group3D();
+                        ob.ReadBinary(reader);
+                        rightObject = ob;
+                    }
+                    break;
+
+            }
+
+
+
+            Remesh();
             SetMesh();
         }
 
