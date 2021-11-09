@@ -218,13 +218,20 @@ namespace Barnacle.LineLib
         {
             string coordPart;
             string segpart;
-            int index = s.IndexOf("|");
-            if (index > -1)
+            if (!s.StartsWith("M"))
             {
-                coordPart = s.Substring(0, index);
-                CoordsFromString(coordPart);
-                segpart = s.Substring(index + 1);
-                SegsFromString(segpart);
+                int index = s.IndexOf("|");
+                if (index > -1)
+                {
+                    coordPart = s.Substring(0, index);
+                    CoordsFromString(coordPart);
+                    segpart = s.Substring(index + 1);
+                    SegsFromString(segpart);
+                }
+            }
+            else
+            {
+                FromTextPath(s);
             }
         }
 
@@ -571,6 +578,20 @@ namespace Barnacle.LineLib
                 points[index].X = position.X;
                 points[index].Y = position.Y;
             }
+        }
+
+        public string ToPath()
+        {
+            double ox;
+            double oy;
+            ox = points[0].X;
+            oy = points[0].Y;
+            string result = "M 0,0 ";
+            foreach (FlexiSegment sq in segs)
+            {
+                result += sq.ToPath(points, ref ox, ref oy);
+            }
+            return result;
         }
 
         public override string ToString()

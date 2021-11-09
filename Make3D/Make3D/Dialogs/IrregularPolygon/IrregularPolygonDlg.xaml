@@ -124,13 +124,23 @@
             </Viewport3D>
         </Border>
         <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource ControlBorder}">
-            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
-                    <Canvas.LayoutTransform>
-                        <ScaleTransform x:Name="MainScale" />
-                    </Canvas.LayoutTransform>
-                </Canvas>
-            </ScrollViewer>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="25" />
+                </Grid.RowDefinitions>
+                <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Grid.Row="0">
+                    <Canvas x:Name="MainCanvas" Background="Transparent" MouseDown="MainCanvas_MouseDown" MouseMove="MainCanvas_MouseMove" MouseUp="MainCanvas_MouseUp">
+                        <Canvas.LayoutTransform>
+                            <ScaleTransform x:Name="MainScale" />
+                        </Canvas.LayoutTransform>
+                    </Canvas>
+                </ScrollViewer>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <Button VerticalAlignment="Center" Click="CopyPath_Click" ToolTip="Copy the path text to the clipboard.">Path</Button>
+                    <Label Margin="4,0,0,0" VerticalAlignment="Center" Content="{Binding PathText}" />
+                </StackPanel>
+            </Grid>
         </Border>
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
 

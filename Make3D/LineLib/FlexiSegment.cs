@@ -63,5 +63,10 @@ namespace Barnacle.LineLib
         {
             return -1;
         }
+
+        internal virtual string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)
+        {
+            return " ";
+        }
     }
 }

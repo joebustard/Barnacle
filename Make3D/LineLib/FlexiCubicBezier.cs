@@ -192,5 +192,15 @@ namespace Barnacle.LineLib
 
             return s;
         }
+
+        internal override string ToPath(ObservableCollection<FlexiPoint> points, ref double ox, ref double oy)
+        {
+            string res = "";
+
+            res = $"RC {points[P1].X - ox},{points[P1].Y - oy} {points[P2].X - ox},{points[P2].Y - oy} {points[P3].X - ox},{points[P3].Y - oy} ";
+            ox = points[P3].X;
+            oy = points[P3].Y;
+            return res;
+        }
     }
 }

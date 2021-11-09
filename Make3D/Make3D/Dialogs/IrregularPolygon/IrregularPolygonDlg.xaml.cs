@@ -30,6 +30,7 @@ namespace Barnacle.Dialogs
         private bool lineShape;
         private BitmapImage localImage;
         private bool moving;
+        private string pathText;
         private ObservableCollection<FlexiPoint> polyPoints;
         private double scale;
         private int selectedPoint;
@@ -123,6 +124,22 @@ namespace Barnacle.Dialogs
 
                     NotifyPropertyChanged();
                     UpdateDisplay();
+                }
+            }
+        }
+
+        public string PathText
+        {
+            get
+            {
+                return pathText;
+            }
+            set
+            {
+                if (pathText != value)
+                {
+                    pathText = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -337,6 +354,7 @@ namespace Barnacle.Dialogs
                     //                   CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 added = true;
+                PathText = flexiPath.ToPath();
             }
 
             return added;
@@ -405,6 +423,7 @@ namespace Barnacle.Dialogs
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 added = true;
+                PathText = flexiPath.ToPath();
             }
 
             return added;
@@ -434,6 +453,11 @@ namespace Barnacle.Dialogs
                     polyPoints[i].Visible = false;
                 }
             }
+        }
+
+        private void CopyPath_Click(object sender, RoutedEventArgs e)
+        {
+            PathText = flexiPath.ToPath();
         }
 
         private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
@@ -518,6 +542,7 @@ namespace Barnacle.Dialogs
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                 }
                 added = true;
+                PathText = flexiPath.ToPath();
             }
 
             return added;
@@ -998,16 +1023,19 @@ namespace Barnacle.Dialogs
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
         {
             flexiPath.ConvertLineCurveSegment(startIndex, position);
+            PathText = flexiPath.ToPath();
         }
 
         private void InsertLineSegment(int startIndex, System.Windows.Point position)
         {
             flexiPath.InsertLineSegment(startIndex, position);
+            PathText = flexiPath.ToPath();
         }
 
         private void InsertQuadCurveSegment(int startIndex, System.Windows.Point position)
         {
             flexiPath.ConvertLineQuadCurveSegment(startIndex, position);
+            PathText = flexiPath.ToPath();
         }
 
         private ContextMenu LineMenu()
@@ -1153,6 +1181,7 @@ namespace Barnacle.Dialogs
                 polyPoints[selectedPoint].X = position.X;
                 polyPoints[selectedPoint].Y = position.Y;
                 flexiPath.SetPointPos(selectedPoint, position);
+                PathText = flexiPath.ToPath();
                 GenerateFaces();
                 UpdateDisplay();
             }
@@ -1350,6 +1379,7 @@ namespace Barnacle.Dialogs
             MainScale.ScaleY = scale;
             GenerateFaces();
             UpdateDisplay();
+            PathText = flexiPath.ToPath();
         }
 
         private bool SelectLineFromPoint(MouseButtonEventArgs e)
@@ -1473,10 +1503,12 @@ namespace Barnacle.Dialogs
                 flexiPath.FromString(s);
                 //GetRawFlexiPoints();
             }
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             GenerateFaces();
             UpdateDisplay();
+            PathText = flexiPath.ToPath();
         }
     }
 }
