@@ -176,7 +176,7 @@ namespace Barnacle.LineLib
         {
             string res = "";
 
-            res = $"RQ {points[P1].X - ox},{points[P1].Y - oy} {points[P2].X - ox},{points[P2].Y - oy} ";
+            res = $"RQ {points[P1].X - ox:F03},{points[P1].Y - oy:F03} {points[P2].X - ox:F03},{points[P2].Y - oy:F03} ";
             ox = points[P2].X;
             oy = points[P2].Y;
             return res;

@@ -125,18 +125,18 @@ namespace Barnacle.LineLib
             if (points[P1].X == ox)
             {
                 // relative vertical
-                res = $"RV {points[P1].Y - oy} ";
+                res = $"RV {points[P1].Y - oy :F3} ";
             }
             else
             {
                 if (points[P1].Y == oy)
                 {
                     // relative horizontal
-                    res = $"RH {points[P1].X - ox} ";
+                    res = $"RH {points[P1].X - ox:F3} ";
                 }
                 else
                 {
-                    res = $"RL {points[P1].X - ox},{points[P1].Y - oy} ";
+                    res = $"RL {points[P1].X - ox:F03},{points[P1].Y - oy:F03} ";
                 }
             }
             ox = points[P1].X;

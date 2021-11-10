@@ -458,6 +458,7 @@ namespace Barnacle.Dialogs
         private void CopyPath_Click(object sender, RoutedEventArgs e)
         {
             PathText = flexiPath.ToPath();
+            Clipboard.SetText(PathText);
         }
 
         private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
