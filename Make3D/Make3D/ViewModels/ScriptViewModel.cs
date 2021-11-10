@@ -604,6 +604,12 @@ program ""Script Name""
                         */
                     }
                     break;
+
+                case "inssolidfunc":
+                    {
+                        NotificationManager.Notify("InsertIntoScript", "SolidFunction");
+                    }
+                    break;
             }
         }
 

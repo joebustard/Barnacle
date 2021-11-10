@@ -37,6 +37,7 @@ namespace Barnacle.Views
         {
             InitializeComponent();
             loaded = false;
+            NotificationManager.Subscribe("InsertIntoScript", InsertIntoScript);
         }
 
         public void HitTest(object sender, System.Windows.Input.MouseButtonEventArgs args)
@@ -141,6 +142,36 @@ namespace Barnacle.Views
         private void Grid_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             vm.MouseWheel(e);
+        }
+
+        private void InsertIntoScript(object param)
+        {
+            string what = param.ToString();
+            if (what != null)
+            {
+                String ins = "";
+                switch (what)
+                {
+                    case "SolidFunction":
+                        {
+                            ins =
+ @"
+// Name       :
+// Does       :
+// Parameters :
+Function Solid MyFunc( double px, double py, double pz, double l, double h, double w )
+{
+Solid result;
+return result;
+}";
+                        }
+                        break;
+                }
+                if (ins != "")
+                {
+                    ScriptBox.Selection.Text = ins;
+                }
+            }
         }
 
         private void OnUpdate(object param)

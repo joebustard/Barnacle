@@ -24,6 +24,7 @@
                         <RowDefinition  Height="25" />
                     </Grid.RowDefinitions>
                     <UniformGrid Grid.Row="0"  Columns="6" Rows="1">
+                        <!--
                         <Menu>
                             <MenuItem Header="_File">
                                 <MenuItem Header="_New" Command="{Binding ScriptCommand}" CommandParameter="New" />
@@ -31,6 +32,8 @@
                                 <MenuItem Header="_Save" Command="{Binding ScriptCommand}" CommandParameter="Save" />
                             </MenuItem>
                         </Menu>
+                            -->
+                        <Button x:Name="SaveBut" Content="Save" Command="{Binding ScriptCommand}" CommandParameter="Save" />
                         <StackPanel Orientation="Horizontal">
                             <TextBox x:Name="SearchBox" Width="100" Margin="2,2,0,2" Text="{Binding SearchText}" />
                             <Button x:Name="SearchBut" Content="Find" Command="{Binding FindCommand}" />
@@ -40,7 +43,17 @@
                         <Button  Margin="2,2,2,2" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" ToolTip="Clear results log" />
                     </UniformGrid>
                     <TextBox x:Name="ResultsBox" Text="{Binding ResultsText}" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" />
-                    <RichTextBox Grid.Row="2" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" FontSize="18" />
+                    <RichTextBox Grid.Row="2" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" FontSize="18">
+                        <RichTextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Cut" Command="ApplicationCommands.Cut" />
+                                <MenuItem Header="Copy" Command="ApplicationCommands.Copy" />
+                                <MenuItem Header="Paste" Command="ApplicationCommands.Paste" />
+                                <Separator />
+                                <MenuItem Header="Insert Solid Func" Command="{Binding ScriptCommand}" CommandParameter="InsSolidFunc" />
+                            </ContextMenu>
+                        </RichTextBox.ContextMenu>
+                    </RichTextBox>
                 </Grid>
             </TabItem>
             <TabItem Header="3D Output From Script">
