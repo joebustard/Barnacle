@@ -159,11 +159,37 @@ namespace Barnacle.Views
 // Name       :
 // Does       :
 // Parameters :
+// Returns    :
 Function Solid MyFunc( double px, double py, double pz, double l, double h, double w )
 {
 Solid result;
 return result;
 }";
+                        }
+                        break;
+
+                    case "Procedure":
+                        {
+                            ins =
+ @"
+// Name       :
+// Does       :
+// Parameters :
+Procedure MyProc( double px, double py, double pz, double l, double h, double w )
+{
+}";
+                        }
+                        break;
+
+                    case "FuncHead":
+                        {
+                            ins =
+ @"
+// Name       :
+// Does       :
+// Parameters :
+// Returns    :
+";
                         }
                         break;
                 }

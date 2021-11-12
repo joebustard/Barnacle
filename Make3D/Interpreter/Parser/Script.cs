@@ -69,7 +69,7 @@ namespace ScriptLanguage
             //
             // Rich Text document block
             //
-            String Result = @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}{\colortbl ;\red0\green128\blue0;\red0\green0\blue0;\red0\green128\blue128;\red128\green128\blue128;\red128\green0\blue0}\viewkind4\uc1\pard\f0\fs20 ";
+            String Result = @"{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fswiss\fcharset0 Arial;}}{\colortbl ;\red0\green128\blue0;\red0\green0\blue0;\red0\green128\blue128;\red128\green128\blue128;\red128\green0\blue0}\viewkind4\uc1\pard\f0\fs30 ";
 
             if (parseTree != null)
             {

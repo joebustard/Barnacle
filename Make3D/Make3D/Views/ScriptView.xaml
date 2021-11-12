@@ -42,8 +42,8 @@
                         <Button  Margin="2,2,2,2" Content="Check" Click="CheckClicked" ToolTip="Check the script for syntax errors but don't run it" />
                         <Button  Margin="2,2,2,2" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" ToolTip="Clear results log" />
                     </UniformGrid>
-                    <TextBox x:Name="ResultsBox" Text="{Binding ResultsText}" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" />
-                    <RichTextBox Grid.Row="2" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" FontSize="18">
+                    <TextBox x:Name="ResultsBox" Text="{Binding ResultsText}" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" FontSize="18" />
+                    <RichTextBox Grid.Row="2" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" FontSize="32">
                         <RichTextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Cut" Command="ApplicationCommands.Cut" />
@@ -51,6 +51,8 @@
                                 <MenuItem Header="Paste" Command="ApplicationCommands.Paste" />
                                 <Separator />
                                 <MenuItem Header="Insert Solid Func" Command="{Binding ScriptCommand}" CommandParameter="InsSolidFunc" />
+                                <MenuItem Header="Insert Procedure" Command="{Binding ScriptCommand}" CommandParameter="Procedure" />
+                                <MenuItem Header="Insert Func Header" Command="{Binding ScriptCommand}" CommandParameter="FuncHead" />
                             </ContextMenu>
                         </RichTextBox.ContextMenu>
                     </RichTextBox>
