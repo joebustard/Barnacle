@@ -70,6 +70,7 @@
     <Compile Include="SolidFunctions\MakeBicorn.cs" />
     <Compile Include="SolidFunctions\MakeHollow.cs" />
     <Compile Include="SolidFunctions\MakePath.cs" />
+    <Compile Include="SolidFunctions\MakeSquirkle.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
     <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTube.cs" />

@@ -73,6 +73,8 @@ namespace Barnacle.Object3DLib
                 PrimType = "";
                 editorParameters = new EditorParameters();
                 XmlType = "obj";
+                Name = "";
+                Description = "";
             }
             catch (Exception ex)
             {

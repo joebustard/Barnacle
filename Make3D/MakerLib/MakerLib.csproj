@@ -48,13 +48,20 @@
     <Compile Include="BicornMaker.cs" />
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="MakerBase.cs" />
+    <Compile Include="MakeSquirkle.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="StadiumMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TextHelper.cs" />
+    <Compile Include="TextMaker.cs" />
     <Compile Include="TorusMaker.cs" />
     <Compile Include="TubeMaker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\LineLib\LineLib.csproj">
+      <Project>{8248F033-5DE9-46E4-BF7C-0B108F120577}</Project>
+      <Name>LineLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
       <Project>{5f92b002-b820-4a56-a2b1-482c252ba8be}</Project>
       <Name>Object3DLib</Name>

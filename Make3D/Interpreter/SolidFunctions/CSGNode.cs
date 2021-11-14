@@ -69,7 +69,8 @@ namespace ScriptLanguage
                             grp.Remesh();
                             Script.ResultArtefacts.Add(grp);
                             ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-
+                            leftie.Remesh();
+                            rightie.Remesh();
                             result = true;
                         }
                         else

@@ -77,6 +77,7 @@ namespace ScriptLanguage
                 "makepath",
                 "makeplatelet",
                 "makestadium",
+                "makesquirkle",
                 "maketorus",
                 "maketube",
                 "now",
@@ -2435,7 +2436,11 @@ namespace ScriptLanguage
                                 exp = ParseMakeStadiumFunction(parentName);
                             }
                             break;
-
+                        case "makesquirkle":
+                            {
+                                exp = ParseMakeSquirkleFunction(parentName);
+                            }
+                            break;
                         case "maketorus":
                             {
                                 exp = ParseMakeTorusFunction(parentName);
@@ -2933,6 +2938,99 @@ namespace ScriptLanguage
             }
             return exp;
         }
+
+        private ExpressionNode ParseMakeSquirkleFunction(string parentName)
+        {
+            string label = "MakeSquirkle";
+            string error = "";
+            ExpressionNode exp = null;
+            error = "Top Left expression";
+            ExpressionNode tlExp = ParseExpressionNode(parentName);
+            if (tlExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    error ="expected ,";
+                }
+                else
+                {
+                    error = "Top Right expression";
+                    ExpressionNode trExp = ParseExpressionNode(parentName);
+                    if (trExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            error = "expected ,";
+                        }
+                        else
+                        {
+                            error = "Bottom Left expression";
+                            ExpressionNode blExp = ParseExpressionNode(parentName);
+                            if (blExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    error = "expected ,";
+                                }
+                                else
+                                {
+                                    error = "Bottom Right expression";
+                                    ExpressionNode brExp = ParseExpressionNode(parentName);
+                                    if (brExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            error = "expected ,";
+                                        }
+                                        else
+                                        {
+                                            error = "Length expression";
+                                            ExpressionNode lExp = ParseExpressionNode(parentName);
+                                            if (lExp != null)
+                                            {
+                                                if (CheckForComma() == false)
+                                                {
+                                                    error = "expected ,";
+                                                }
+                                                else
+                                                {
+                                                    error = "Height expression";
+                                                    ExpressionNode hExp = ParseExpressionNode(parentName);
+                                                    if (hExp != null)
+                                                    {
+                                                        if (CheckForComma() == false)
+                                                        {
+                                                            error = "expected ,";
+                                                        }
+                                                        else
+                                                        {
+                                                            error = "Width expression";
+                                                            ExpressionNode dExp = ParseExpressionNode(parentName);
+                                                            if (dExp != null)
+                                                            {
+                                                                MakeSquirkleNode mn = new MakeSquirkleNode(tlExp, trExp, blExp, brExp, lExp, hExp, dExp);
+                                                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                                exp = mn;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if ( exp == null && error != "")
+            {
+                ReportSyntaxError($"{label} error {error}");
+            }
+            return exp;
+        }
+
 
         private ExpressionNode ParseMakeTorusFunction(string parentName)
         {

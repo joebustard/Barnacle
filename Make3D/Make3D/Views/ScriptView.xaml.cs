@@ -160,7 +160,7 @@ namespace Barnacle.Views
 // Does       :
 // Parameters :
 // Returns    :
-Function Solid MyFunc( double px, double py, double pz, double l, double h, double w )
+Function Solid MyFunc( string Name, double px, double py, double pz, double l, double h, double w )
 {
 Solid result;
 return result;

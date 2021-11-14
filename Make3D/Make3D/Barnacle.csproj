@@ -206,6 +206,9 @@
     <Compile Include="Dialogs\TankTrack\LinkPart.cs" />
     <Compile Include="Dialogs\TankTrack\TankDialogGenerators.cs" />
     <Compile Include="Dialogs\TankTrack\TankTrackUtils.cs" />
+    <Compile Include="Dialogs\TextDlg\TextDlg.xaml.cs">
+      <DependentUpon>TextDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Thread\ThreadDlg.xaml.cs">
       <DependentUpon>ThreadDlg.xaml</DependentUpon>
     </Compile>
@@ -471,6 +474,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Star\Star.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\TextDlg\TextDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
