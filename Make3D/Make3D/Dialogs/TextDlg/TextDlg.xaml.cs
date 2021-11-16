@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MakerLib;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -10,6 +11,7 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TextDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private string text;
         private string warningText;
 
         public TextDlg()
@@ -18,6 +20,7 @@ namespace Barnacle.Dialogs
             ToolName = "TextDlg";
             DataContext = this;
             ModelGroup = MyModelGroup;
+            text = "A";
         }
 
         public override bool ShowAxies
@@ -54,6 +57,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public string Text
+        {
+            get
+            {
+                return text;
+            }
+            set
+            {
+                if (text != value)
+                {
+                    text = value;
+                    NotifyPropertyChanged();
+                    GenerateShape();
+                }
+            }
+        }
+
         public string WarningText
         {
             get
@@ -80,6 +100,11 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
+            if (text != null && text != "")
+            {
+                TextMaker mk = new TextMaker(text, "Tahoma", 32, 10);
+                string PathCode = mk.Generate(Vertices, Faces);
+            }
         }
 
         private void LoadEditorParameters()
