@@ -118,6 +118,109 @@ namespace Barnacle.Models
             normals.Clear();
             pnts.Clear();
             tris.Clear();
+            // we are trying to import a binary stl file but
+            // it might actually be a different format sneakily pretending to be stl
+            // Take a peek
+            String ft = CheckFileFormat(filename);
+            if (ft == "BinSTL")
+            {
+                ReadBinaryStl(filename, normals, pnts, tris);
+            }
+            else if (ft == "AsciiSTL")
+            {
+                ReadAsciiStl(filename, normals, pnts, tris);
+            }
+        }
+
+        private static int AddVertex(Point3DCollection verts, Point3D pn)
+        {
+            int res = -1;
+            for (int i = 0; i < verts.Count; i++)
+            {
+                if (PointUtils.equals(verts[i], pn.X, pn.Y, pn.Z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                verts.Add(pn);
+                res = verts.Count - 1;
+            }
+            return res;
+        }
+
+        private static Point3D GetVFromLine(string line)
+        {
+            Point3D result = new Point3D(0, 0, 0);
+            line = line.Trim();
+            line = line.Substring(7);
+            line = line.Trim();
+            string[] words = line.Split(' ');
+            try
+            {
+                double x = Convert.ToDouble(words[0]);
+                double y = Convert.ToDouble(words[1]);
+                double z = Convert.ToDouble(words[2]);
+                result = new Point3D(x, y, z);
+            }
+            catch
+            {
+            }
+            return result;
+        }
+
+        private static void ReadAsciiStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris)
+        {
+            //            facet normal ni nj nk
+            //                 outer loop
+            //                  vertex v1x v1y v1z
+            //                  vertex v2x v2y v2z
+            //                  vertex v3x v3y v3z
+            //                 endloop
+            //            endfacet
+            FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+
+            if (stream != null)
+            {
+                var reader = new StreamReader(stream);
+                string line = "";
+                while (!line.ToLower().StartsWith("endsolid") && !reader.EndOfStream)
+                {
+                    line = reader.ReadLine().ToLower().Trim();
+                    if (line.StartsWith("facet"))
+                    {
+                        // skip outer loop string
+                        line = reader.ReadLine().ToLower();
+
+                        // p0
+                        line = reader.ReadLine().ToLower();
+                        Point3D pnt = GetVFromLine(line);
+                        int p0 = AddVertex(pnts, pnt);
+
+                        // p1
+                        line = reader.ReadLine().ToLower();
+                        pnt = GetVFromLine(line);
+                        int p1 = AddVertex(pnts, pnt);
+
+                        // p2
+                        line = reader.ReadLine().ToLower();
+                        pnt = GetVFromLine(line);
+                        int p2 = AddVertex(pnts, pnt);
+
+                        tris.Add(p0);
+                        tris.Add(p1);
+                        tris.Add(p2);
+                    }
+                }
+                stream.Close();
+            }
+        }
+
+        private static void ReadBinaryStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris)
+        {
             FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
 
             if (stream != null)
@@ -152,6 +255,31 @@ namespace Barnacle.Models
                 }
                 stream.Close();
             }
+        }
+
+        private string CheckFileFormat(string filename)
+        {
+            String result = "BinSTL";
+            FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+
+            if (stream != null)
+            {
+                try
+                {
+                    StreamReader sr = new StreamReader(stream);
+
+                    string ln = sr.ReadLine();
+                    if (ln.ToLower().StartsWith("solid"))
+                    {
+                        result = "AsciiSTL";
+                    }
+                }
+                catch
+                {
+                }
+                stream.Close();
+            }
+            return result;
         }
     }
 }
