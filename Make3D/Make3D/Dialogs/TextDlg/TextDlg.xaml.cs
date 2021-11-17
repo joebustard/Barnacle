@@ -13,7 +13,19 @@ namespace Barnacle.Dialogs
     {
         private string text;
         private string warningText;
-
+        private string dataPath;
+        public String PathData
+        {
+            get { return dataPath; }
+            set
+            {
+                if (value != dataPath)
+                {
+                    dataPath = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public TextDlg()
         {
             InitializeComponent();
@@ -21,6 +33,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             text = "A";
+            dataPath = "f1M0,0";
         }
 
         public override bool ShowAxies
@@ -104,6 +117,7 @@ namespace Barnacle.Dialogs
             {
                 TextMaker mk = new TextMaker(text, "Tahoma", 32, 10);
                 string PathCode = mk.Generate(Vertices, Faces);
+                PathData = PathCode;
             }
         }
 

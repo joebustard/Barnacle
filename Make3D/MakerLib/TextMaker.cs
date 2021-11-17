@@ -31,15 +31,21 @@ namespace MakerLib
             Vertices = pnts;
             Faces = faces;
             PathGeometry p = TextHelper.PathFrom(text, "", true, fontName, fontsize);
-            //Assume each letter is a separate figure
-            foreach (PathFigure pf in p.Figures)
-            {
-                PathFigure flat = pf.GetFlattenedPathFigure();
+            System.Diagnostics.Debug.WriteLine(p.ToString());
+            string s = p.ToString();
 
-                string part = flat.ToString();
-                res += flat + " ";
+            string[] parts = s.Split('M');
+            string souttter = "M"+parts[parts.GetLength(0) - 1];
+            List<string> sinners = new List<string>();
+            if (parts.GetLength(0) > 2)
+            {
+                for (int i = 1; i < parts.GetLength(0) - 1; i++)
+                {
+                    sinners.Add("M" + parts[i]);
+                }
             }
-            return res;
+                res = s;
+                return res;
         }
     }
 }

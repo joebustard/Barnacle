@@ -28,7 +28,8 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
+                
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label>Text</Label>
@@ -37,10 +38,10 @@
             <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
-            <Rect Grid.Row="7" Orientation="Horizontal"></Rect>
+            <Path Stroke="Black" Fill="Black" Grid.Row="10" Data="{Binding PathData}"/>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
