@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EarClipperLib;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace MakerLib
         private double fontsize;
         private double height;
         private string text;
+        private double thickness;
 
         public TextMaker(string t, string fn, double fs, double h)
         {
@@ -22,6 +24,7 @@ namespace MakerLib
             fontName = fn;
             fontsize = fs;
             height = h;
+            thickness = 10;
         }
 
         public string Generate(Point3DCollection pnts, Int32Collection faces)
@@ -33,32 +36,87 @@ namespace MakerLib
             Faces = faces;
             PathGeometry p = TextHelper.PathFrom(text, "", true, fontName, fontsize);
             System.Diagnostics.Debug.WriteLine(p.ToString());
-            string s = p.ToString();
-            res = s;
+            res = p.ToString();
+            string s;
+            List<string> sfigures = new List<string>();
+            List<TextPolygon> pfigures = new List<TextPolygon>();
             foreach (PathFigure pf in p.Figures)
             {
                 var flatpf = pf.GetFlattenedPathFigure();
                 s = flatpf.ToString();
+
                 string[] parts = s.Split('M');
-
-                // get a list of pointfs defining the outter polygon
-                string soutter = "M" + parts[parts.GetLength(0) - 1];
-                List<System.Drawing.PointF> poutter = new List<System.Drawing.PointF>();
-                GetPathPoints(soutter, poutter);
-
-                List<string> sinners = new List<string>();
-                // does the shape have holes
-                if (parts.GetLength(0) > 2)
+                foreach (string ap in parts)
                 {
-                    //for each hole
-                    for (int i = 1; i < parts.GetLength(0) - 1; i++)
+                    if (ap != "")
                     {
-                        string sin = "M" + parts[i];
-                        sinners.Add(sin);
-                        // get a list of pointfs for the hole
-                        List<System.Drawing.PointF> pin = new List<System.Drawing.PointF>();
-                        GetPathPoints(sin, pin);
+                        TextPolygon tp = new TextPolygon();
+                        // get a list of pointfs defining the outter polygon
+                        tp.SPath = "M" + ap;
+                        List<System.Drawing.PointF> poutter = new List<System.Drawing.PointF>();
+                        GetPathPoints(tp.SPath, tp.Points);
+                        pfigures.Add(tp);
                     }
+                }
+            }
+            HuntForHoles(pfigures);
+            TriangulateFigureWalls(pfigures);
+            /*
+            // remove the holes
+            RemoveHoles(pfigures);
+            foreach (TextPolygon pf in pfigures)
+            {
+                TriangulatePerimiter(pf.Points, thickness);
+            }
+            */
+            foreach (TextPolygon pf in pfigures)
+            {
+                bool reverse = false;
+                for (float py = 0; py <= thickness; py += (float)thickness)
+                {
+                    EarClipping earClipping = new EarClipping();
+                    List<Vector3m> rootPoints = new List<Vector3m>();
+
+                    foreach (PointF rp in pf.Points)
+                    {
+                        rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
+                    }
+
+                    List<List<Vector3m>> holes = new List<List<Vector3m>>();
+                    foreach (TextPolygon hole in pf.Holes)
+                    {
+                        List<Vector3m> holePoints = new List<Vector3m>();
+
+                        foreach (PointF rp in hole.Points)
+                        {
+                            holePoints.Add(new Vector3m(rp.X, py, rp.Y));
+                        }
+
+                        holes.Add(holePoints);
+                    }
+
+                    earClipping.SetPoints(rootPoints, holes);
+                    earClipping.Triangulate();
+                    var surface = earClipping.Result;
+                    for (int i = 0; i < surface.Count; i += 3)
+                    {
+                        int v1 = AddVertice(surface[i].X, surface[i].Y, surface[i].Z);
+                        int v2 = AddVertice(surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
+                        int v3 = AddVertice(surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
+                        if (reverse)
+                        {
+                            Faces.Add(v1);
+                            Faces.Add(v3);
+                            Faces.Add(v2);
+                        }
+                        else
+                        {
+                            Faces.Add(v1);
+                            Faces.Add(v2);
+                            Faces.Add(v3);
+                        }
+                    }
+                    reverse = !reverse;
                 }
             }
             return res;
@@ -108,9 +166,9 @@ namespace MakerLib
             y = 0;
             txt = txt.Trim();
             string dummy = "";
-            while (txt.Length > 0 && txt[0] != ' ')
+            while (txt.Length > 0 && txt[0] != ' ' && txt[0] != 'L' && txt[0] != 'Z' && txt[0] != 'z')
             {
-                dummy += text[0];
+                dummy += txt[0];
 
                 txt = txt.Substring(1);
             }
@@ -127,6 +185,75 @@ namespace MakerLib
                 }
             }
             return txt;
+        }
+
+        private void HuntForHoles(List<TextPolygon> pfigures)
+        {
+            bool rescan = false;
+            while (!rescan)
+            {
+                rescan = true;
+
+                for (int i = 0; i < pfigures.Count && rescan; i++)
+                {
+                    for (int j = 0; j < pfigures.Count && rescan; j++)
+                    {
+                        if (i != j)
+                        {
+                            if (pfigures[i].ContainsPoly(pfigures[j]))
+                            {
+                                pfigures[i].Holes.Add(pfigures[j]);
+                                pfigures.RemoveAt(j);
+                                rescan = false;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MakeWall(List<PointF> points, double thickness, bool invert)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                int j = i + 1;
+                if (j == points.Count)
+                {
+                    j = 0;
+                }
+                int p0 = AddVertice(points[i].X, 0, points[i].Y);
+                int p1 = AddVertice(points[i].X, thickness, points[i].Y);
+                int p2 = AddVertice(points[j].X, thickness, points[j].Y);
+                int p3 = AddVertice(points[j].X, 0, points[j].Y);
+
+                Faces.Add(p0);
+                Faces.Add(p1);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p3);
+            }
+        }
+
+        private void RemoveHoles(List<TextPolygon> pfigures)
+        {
+            foreach (TextPolygon tp in pfigures)
+            {
+                tp.RemoveHoles();
+            }
+        }
+
+        private void TriangulateFigureWalls(List<TextPolygon> pfigures)
+        {
+            foreach (TextPolygon tp in pfigures)
+            {
+                MakeWall(tp.Points, thickness, false);
+                foreach (TextPolygon hole in tp.Holes)
+                {
+                    MakeWall(hole.Points, thickness, true);
+                }
+            }
         }
     }
 }

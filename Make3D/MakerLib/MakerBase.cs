@@ -352,5 +352,33 @@ namespace MakerLib
                 Faces.Add(c2);
             }
         }
+
+        protected void TriangulatePerimiter(List<System.Drawing.PointF> points, double thickness)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (System.Drawing.PointF p in points)
+            {
+                pf.Add(new System.Drawing.PointF(p.X, p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(t.Points[0].X, thickness, t.Points[0].Y);
+                int c1 = AddVertice(t.Points[1].X, thickness, t.Points[1].Y);
+                int c2 = AddVertice(t.Points[2].X, thickness, t.Points[2].Y);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+
+                c0 = AddVertice(t.Points[0].X, 0.0, t.Points[0].Y);
+                c1 = AddVertice(t.Points[1].X, 0.0, t.Points[1].Y);
+                c2 = AddVertice(t.Points[2].X, 0.0, t.Points[2].Y);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+            }
+        }
     }
 }
