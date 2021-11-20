@@ -54,10 +54,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextHelper.cs" />
     <Compile Include="TextMaker.cs" />
+    <Compile Include="TextPolygon.cs" />
     <Compile Include="TorusMaker.cs" />
     <Compile Include="TubeMaker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EarClipperLib\EarClipperLib.csproj">
+      <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>
+      <Name>EarClipperLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\LineLib\LineLib.csproj">
       <Project>{8248F033-5DE9-46E4-BF7C-0B108F120577}</Project>
       <Name>LineLib</Name>

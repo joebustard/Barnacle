@@ -11,21 +11,10 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TextDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private string dataPath;
         private string text;
         private string warningText;
-        private string dataPath;
-        public String PathData
-        {
-            get { return dataPath; }
-            set
-            {
-                if (value != dataPath)
-                {
-                    dataPath = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+
         public TextDlg()
         {
             InitializeComponent();
@@ -34,6 +23,22 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             text = "A";
             dataPath = "f1M0,0";
+        }
+
+        public String PathData
+        {
+            get
+            {
+                return dataPath;
+            }
+            set
+            {
+                if (value != dataPath)
+                {
+                    dataPath = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         public override bool ShowAxies
@@ -115,7 +120,7 @@ namespace Barnacle.Dialogs
             ClearShape();
             if (text != null && text != "")
             {
-                TextMaker mk = new TextMaker(text, "Tahoma", 32, 10);
+                TextMaker mk = new TextMaker(text, "Arial", 24, 10);
                 string PathCode = mk.Generate(Vertices, Faces);
                 PathData = PathCode;
             }
