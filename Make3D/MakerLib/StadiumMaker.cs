@@ -41,6 +41,21 @@ namespace MakerLib
                     }
                     break;
 
+                case "overflat5":
+                    {
+                        GenerateBasicShape(5);
+                    }
+                    break;
+                case "overflat10":
+                    {
+                        GenerateBasicShape(10);
+                    }
+                    break;
+                case "overflat20":
+                    {
+                        GenerateBasicShape(20);
+                    }
+                    break;
                 case "sausage":
                     {
                         GenerateSausageShape();
@@ -49,7 +64,7 @@ namespace MakerLib
             }
         }
 
-        private void GenerateBasicShape()
+        private void GenerateBasicShape(double over=0)
         {
             double dx = gap / 2.0;
             double cy1 = -dx - radius1;
@@ -60,10 +75,10 @@ namespace MakerLib
 
             double theta = 0;
             double dt = Math.PI / 20.0;
-
+            over = (Math.PI * over) / 180;
             List<Point> perimeter = new List<Point>();
-            theta = 0;
-            while (theta <= Math.PI)
+            theta = over;
+            while (theta <= Math.PI-over)
             {
                 double x = cx2 + radius2 * Math.Cos(theta);
                 double y = cy2 + radius2 * Math.Sin(theta);
@@ -72,7 +87,7 @@ namespace MakerLib
                 theta += dt;
             }
 
-            while (theta <= 2.0 * Math.PI)
+            while (theta <= 2.0 * Math.PI+over)
             {
                 double x = cx1 + radius1 * Math.Cos(theta);
                 double y = cy1 + radius1 * Math.Sin(theta);

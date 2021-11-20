@@ -59,7 +59,7 @@ namespace ScriptLanguage
                                 EvalExpression(gapExp, ref g, "Gap")
                                 )
                             {
-                                if (r1 > 0 && r2 > 0 && g > 0 && h > 0 && (shape.ToLower() == "flat" || (shape.ToLower() == "sausage")))
+                                if (r1 > 0 && r2 > 0  && h > 0 && (shape.ToLower() == "flat" || shape.ToLower().StartsWith("overflat")|| (shape.ToLower() == "sausage")))
                                 {
                                     result = true;
 

@@ -166,8 +166,9 @@ namespace Barnacle.Models
                 double z = Convert.ToDouble(words[2]);
                 result = new Point3D(x, y, z);
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.Message);
             }
             return result;
         }
