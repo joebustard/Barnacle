@@ -74,7 +74,7 @@ namespace MakerLib
             double cx2 = 0;
 
             double theta = 0;
-            double dt = Math.PI / 20.0;
+            double dt = Math.PI / 100.0;
             over = (Math.PI * over) / 180;
             List<Point> perimeter = new List<Point>();
             theta = over;

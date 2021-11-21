@@ -45,7 +45,7 @@ namespace ScriptLanguage
                 //
                 int i = 0;
                 while ((i < Statements.Count) &&
-                        (result == true) && !InBreakMode)
+                        (result == true) && !InBreakMode && ParseTreeNode.continueRunning)
                 {
                     result = Statements[i].Execute();
                     i++;

@@ -27,7 +27,8 @@ namespace ScriptLanguage
             //
             // returning false will terminate the application
             //
-            return false;
+            ParseTreeNode.continueRunning = false;
+            return true;
         }
 
         /// Returns a String representation of this node that can be used for

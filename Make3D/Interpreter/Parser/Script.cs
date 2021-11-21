@@ -32,6 +32,7 @@ namespace ScriptLanguage
             bool result = false;
             if (parseTree != null)
             {
+                ParseTreeNode.continueRunning = true;
                 result = parseTree.Execute();
             }
             GC.Collect();

@@ -11,7 +11,7 @@ namespace ScriptLanguage
     {
         public bool HighLight;
         protected ParseTreeNode Child;
-
+        public static bool continueRunning;
         // Instance constructor
         public ParseTreeNode()
         {
