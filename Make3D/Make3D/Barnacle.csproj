@@ -157,6 +157,9 @@
       <DependentUpon>NewProjectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
+    <Compile Include="Dialogs\PGramDlg\PGramDlg.xaml.cs">
+      <DependentUpon>PGramDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageEdge.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageMarker.xaml.cs" />
@@ -217,6 +220,9 @@
     </Compile>
     <Compile Include="Dialogs\TankTrack\TrackDialog.xaml.cs">
       <DependentUpon>TrackDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\TrapezoidDlg\TrapezoidDlg.xaml.cs">
+      <DependentUpon>TrapezoidDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Tube\TubeDlg.xaml.cs">
       <DependentUpon>TubeDlg.xaml</DependentUpon>
@@ -409,6 +415,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Dialogs\PGramDlg\PGramDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Dialogs\ProfileFuselage\ImageMarker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -490,6 +500,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\TankTrack\TrackDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\TrapezoidDlg\TrapezoidDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -49,6 +49,7 @@
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="MakerBase.cs" />
     <Compile Include="MakeSquirkle.cs" />
+    <Compile Include="PGramMaker.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="StadiumMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="TextMaker.cs" />
     <Compile Include="TextPolygon.cs" />
     <Compile Include="TorusMaker.cs" />
+    <Compile Include="TrapezoidMaker.cs" />
     <Compile Include="TubeMaker.cs" />
   </ItemGroup>
   <ItemGroup>

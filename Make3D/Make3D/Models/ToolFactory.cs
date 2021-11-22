@@ -45,6 +45,10 @@ namespace Barnacle.Models
                     res = new PlateletDlg();
                     break;
 
+                case "Parallelagram":
+                    res = new PGramDlg();
+                    break;
+
                 case "Torus":
                     res = new TorusDialog();
                     break;
@@ -75,6 +79,10 @@ namespace Barnacle.Models
 
                 case "TankTrack":
                     res = new TrackDialog();
+                    break;
+
+                case "Trapazoid":
+                    res = new TrapezoidDlg();
                     break;
 
                 case "BezierFuselage":

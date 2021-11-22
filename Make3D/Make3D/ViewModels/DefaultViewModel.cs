@@ -1038,12 +1038,16 @@ namespace Barnacle.ViewModels
             parametricToolsToShow = new List<ToolDef>();
             parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
             parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
+            parametricToolsToShow.Add(new ToolDef("Parallelagram", true, "Parallelagram", "Create a parallelagram."));
+
             parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
 
             parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
             parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
             parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
             parametricToolsToShow.Add(new ToolDef("Thread", true, "Thread", "Create a thread for a bolt or nut."));
+            parametricToolsToShow.Add(new ToolDef("Trapazoid", true, "Trapazoid", "Create a trapazoid."));
+
             parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
 
