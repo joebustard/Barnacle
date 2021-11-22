@@ -61,14 +61,15 @@ namespace MakerLib
             }
             HuntForHoles(pfigures);
             TriangulateFigureWalls(pfigures);
-            /*
+            
             // remove the holes
             RemoveHoles(pfigures);
             foreach (TextPolygon pf in pfigures)
             {
                 TriangulatePerimiter(pf.Points, thickness);
             }
-            */
+   /*         
+            
             foreach (TextPolygon pf in pfigures)
             {
                 bool reverse = false;
@@ -79,24 +80,26 @@ namespace MakerLib
 
                     foreach (PointF rp in pf.Points)
                     {
-                        rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
+                        rootPoints.Insert(0,new Vector3m(rp.X, py, rp.Y));
                     }
+                    
+                                        List<List<Vector3m>> holes = new List<List<Vector3m>>();
+                                        foreach (TextPolygon hole in pf.Holes)
+                                        {
+                                            List<Vector3m> holePoints = new List<Vector3m>();
 
-                    List<List<Vector3m>> holes = new List<List<Vector3m>>();
-                    foreach (TextPolygon hole in pf.Holes)
-                    {
-                        List<Vector3m> holePoints = new List<Vector3m>();
+                                            foreach (PointF rp in hole.Points)
+                                            {
+                                                holePoints.Insert(0,new Vector3m(rp.X, py, rp.Y));
+                                            }
 
-                        foreach (PointF rp in hole.Points)
-                        {
-                            holePoints.Add(new Vector3m(rp.X, py, rp.Y));
-                        }
+                                            holes.Add(holePoints);
+                                        }
 
-                        holes.Add(holePoints);
-                    }
-
-                    earClipping.SetPoints(rootPoints, holes);
-                    earClipping.Triangulate();
+                                        earClipping.SetPoints(rootPoints, holes);
+                      
+                                        //earClipping.SetPoints(rootPoints);
+                        earClipping.Triangulate();
                     var surface = earClipping.Result;
                     for (int i = 0; i < surface.Count; i += 3)
                     {
@@ -118,7 +121,9 @@ namespace MakerLib
                     }
                     reverse = !reverse;
                 }
+                
             }
+     */       
             return res;
         }
 

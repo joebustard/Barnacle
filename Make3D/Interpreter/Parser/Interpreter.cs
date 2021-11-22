@@ -62,6 +62,7 @@ namespace ScriptLanguage
                 "abs",
                 "atan",
                 "cos",
+                "copy",
                 "cutout",
                 "degrees",
                 "difference",
@@ -743,7 +744,7 @@ namespace ScriptLanguage
                     tokenType != Tokeniser.TokenType.PlusEqual &&
                     tokenType != Tokeniser.TokenType.MinusEqual &&
                     tokenType != Tokeniser.TokenType.TimesEqual &&
-                    tokenType != Tokeniser.TokenType.DivideEqual )
+                    tokenType != Tokeniser.TokenType.DivideEqual)
                     {
                         ReportSyntaxError("Expected =");
                     }
@@ -1314,6 +1315,20 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseCopyFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+
+                CopySolidNode mn = new CopySolidNode(leftSolid);
+                exp = mn;
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+
+            }
+            return exp;
+        }
         private bool ParseDeleteStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -2365,6 +2380,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "copy":
+                            {
+                                exp = ParseCopyFunction(parentName);
+                            }
+                            break;
+
                         case "degrees":
                             {
                                 exp = GetFunctionNode<DegreesNode>(parentName);
@@ -2950,7 +2971,7 @@ namespace ScriptLanguage
             {
                 if (CheckForComma() == false)
                 {
-                    error ="expected ,";
+                    error = "expected ,";
                 }
                 else
                 {
@@ -3024,7 +3045,7 @@ namespace ScriptLanguage
                     }
                 }
             }
-            if ( exp == null && error != "")
+            if (exp == null && error != "")
             {
                 ReportSyntaxError($"{label} error {error}");
             }

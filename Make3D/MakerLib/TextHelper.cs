@@ -48,7 +48,7 @@ namespace MakerLib
             var t = new FormattedText(text, ci, fd, tf, fontSize, System.Windows.Media.Brushes.Black);
             var g = t.BuildGeometry(new Point(0, 0));
 
-            var p = g.GetFlattenedPathGeometry();
+            var p = g.GetFlattenedPathGeometry(0.01,0);
 
             return p;
         }
