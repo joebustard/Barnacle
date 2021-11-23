@@ -21,7 +21,7 @@ namespace Barnacle.Dialogs
         public PGramDlg()
         {
             InitializeComponent();
-            ToolName = "PGramDlg";
+            ToolName = "PGram";
             DataContext = this;
             ModelGroup = MyModelGroup;
             shapeAngle = 45;
@@ -203,6 +203,8 @@ namespace Barnacle.Dialogs
             ClearShape();
             PGramMaker pgram = new PGramMaker(shapeLength, shapeHeight, shapeWidth, shapeAngle, shapeBevel);
             pgram.Generate(Vertices, Faces);
+            CentreVertices();
+            FloorVertices();
         }
 
         private void LoadEditorParameters()

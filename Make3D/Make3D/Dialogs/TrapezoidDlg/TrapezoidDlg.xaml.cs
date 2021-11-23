@@ -72,7 +72,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double ShapeLength1
+        public double ShapeTopLength
         {
             get
             {
@@ -89,7 +89,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double ShapeLength2
+        public double ShapeBottomLength
         {
             get
             {
@@ -199,16 +199,31 @@ namespace Barnacle.Dialogs
             ClearShape();
             TrapezoidMaker pgram = new TrapezoidMaker(shapeTopLength, shapeBottomLength, shapeHeight, shapeWidth, shapeBevel);
             pgram.Generate(Vertices, Faces);
+            CentreVertices();
+            FloorVertices();
         }
 
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters
+            string s = EditorParameters.Get("ShapeTopLength");
+            if (s != "")
+            {
+                shapeTopLength = EditorParameters.GetDouble("ShapeTopLength");
+                shapeBottomLength = EditorParameters.GetDouble("ShapeBottomLength");
+                shapeWidth = EditorParameters.GetDouble("ShapeWidth");
+                shapeHeight = EditorParameters.GetDouble("ShapeHeight");
+                
+                shapeBevel = EditorParameters.GetDouble("ShapeBevel");
+            }
         }
 
         private void SaveEditorParmeters()
         {
-            // save the parameters for the tool
+            EditorParameters.Set("ShapeTopLength", shapeTopLength.ToString());
+            EditorParameters.Set("ShapeHeight", shapeHeight.ToString());
+            EditorParameters.Set("ShapeWidth", shapeWidth.ToString());
+            EditorParameters.Set("ShapeBottomLength", shapeBottomLength.ToString());
+            EditorParameters.Set("ShapeBevel", shapeBevel.ToString());
         }
 
         private void UpdateDisplay()

@@ -1164,6 +1164,7 @@ namespace Barnacle.ViewModels
 
                 if (needToAdd)
                 {
+                    editingObj.MoveToFloor();
                     Document.Content.Add(editingObj);
                 }
                 Document.Dirty = true;

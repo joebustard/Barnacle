@@ -35,7 +35,7 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label Width="100">Top Length</Label>
-                <TextBox Margin="4,0,0,0" Width ="50" Text="{Binding ShapeLength1}" />
+                <TextBox Margin="4,0,0,0" Width ="50" Text="{Binding ShapeTopLength}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label Width="100">Height</Label>
@@ -43,7 +43,7 @@
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label Width="100">Bottom Length</Label>
-                <TextBox Margin="4,0,0,0" Width ="50" Text="{Binding ShapeLength2}" />
+                <TextBox Margin="4,0,0,0" Width ="50" Text="{Binding ShapeBottomLength}" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
                 <Label Width="100">Width</Label>
