@@ -76,10 +76,12 @@ namespace ScriptLanguage
                 "makebicorn",
                 "makehollow",
                 "makepath",
+                "makeparallelogram",
                 "makeplatelet",
                 "makestadium",
                 "makesquirkle",
                 "maketorus",
+                "maketrapezoid",
                 "maketube",
                 "now",
                 "pcname",
@@ -405,7 +407,6 @@ namespace ScriptLanguage
                 {
                     if (FetchToken(out token, out tokenType) == true)
                     {
-
                         if (tokenType == Tokeniser.TokenType.Addition)
                         {
                             ExpressionNode LeftNode = exp;
@@ -1291,6 +1292,19 @@ namespace ScriptLanguage
             return result;
         }
 
+        private ExpressionNode ParseCopyFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode leftSolid = ParseExpressionNode(parentName);
+            if (leftSolid != null)
+            {
+                CopySolidNode mn = new CopySolidNode(leftSolid);
+                exp = mn;
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseCutoutFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -1315,20 +1329,6 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private ExpressionNode ParseCopyFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            ExpressionNode leftSolid = ParseExpressionNode(parentName);
-            if (leftSolid != null)
-            {
-
-                CopySolidNode mn = new CopySolidNode(leftSolid);
-                exp = mn;
-                mn.IsInLibrary = tokeniser.InIncludeFile();
-
-            }
-            return exp;
-        }
         private bool ParseDeleteStatement(CompoundNode parentNode, String parentName)
         {
             bool result = false;
@@ -2446,6 +2446,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makeparallelogram":
+                            {
+                                exp = ParseMakeParallelogramFunction(parentName);
+                            }
+                            break;
+
                         case "makeplatelet":
                             {
                                 exp = ParseMakePlateletFunction(parentName);
@@ -2457,14 +2463,22 @@ namespace ScriptLanguage
                                 exp = ParseMakeStadiumFunction(parentName);
                             }
                             break;
+
                         case "makesquirkle":
                             {
                                 exp = ParseMakeSquirkleFunction(parentName);
                             }
                             break;
+
                         case "maketorus":
                             {
                                 exp = ParseMakeTorusFunction(parentName);
+                            }
+                            break;
+
+                        case "maketrapezoid":
+                            {
+                                exp = ParseMakeTrapezoidFunction(parentName);
                             }
                             break;
 
@@ -2855,6 +2869,64 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeParallelogramFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+
+            ExpressionNode lengthExp = ParseExpressionNode(parentName);
+            if (lengthExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakeParallelogram expected ,");
+                }
+                else
+                {
+                    ExpressionNode heightExp = ParseExpressionNode(parentName);
+                    if (heightExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("MakeParallelogram expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode widthExp = ParseExpressionNode(parentName);
+                            if (widthExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("MakeParallelogram expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode aExp = ParseExpressionNode(parentName);
+                                    if (aExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError("MakeParallelogram expected ,");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode bExp = ParseExpressionNode(parentName);
+                                            if (bExp != null)
+                                            {
+                                                MakeParallelogramNode mn = new MakeParallelogramNode(lengthExp, heightExp, widthExp, aExp, bExp);
+                                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                exp = mn;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseMakePathFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -2897,63 +2969,6 @@ namespace ScriptLanguage
                         MakePlateletNode mn = new MakePlateletNode(pointArrayExp, heightExp);
                         mn.IsInLibrary = tokeniser.InIncludeFile();
                         exp = mn;
-                    }
-                }
-            }
-            return exp;
-        }
-
-        private ExpressionNode ParseMakeStadiumFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            ExpressionNode shapeExp = ParseExpressionNode(parentName);
-            if (shapeExp != null)
-            {
-                if (CheckForComma() == false)
-                {
-                    ReportSyntaxError("MakeStadium expected ,");
-                }
-                else
-                {
-                    ExpressionNode r1Exp = ParseExpressionNode(parentName);
-                    if (r1Exp != null)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError("MakeStadium expected ,");
-                        }
-                        else
-                        {
-                            ExpressionNode r2Exp = ParseExpressionNode(parentName);
-                            if (r2Exp != null)
-                            {
-                                if (CheckForComma() == false)
-                                {
-                                    ReportSyntaxError("MakeStadium expected ,");
-                                }
-                                else
-                                {
-                                    ExpressionNode gexp = ParseExpressionNode(parentName);
-                                    if (gexp != null)
-                                    {
-                                        if (CheckForComma() == false)
-                                        {
-                                            ReportSyntaxError("MakeStadium expected ,");
-                                        }
-                                        else
-                                        {
-                                            ExpressionNode hExp = ParseExpressionNode(parentName);
-                                            if (hExp != null)
-                                            {
-                                                MakeStadiumNode mn = new MakeStadiumNode(shapeExp, r1Exp, r2Exp, gexp, hExp);
-                                                mn.IsInLibrary = tokeniser.InIncludeFile();
-                                                exp = mn;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -3052,6 +3067,62 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeStadiumFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode shapeExp = ParseExpressionNode(parentName);
+            if (shapeExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError("MakeStadium expected ,");
+                }
+                else
+                {
+                    ExpressionNode r1Exp = ParseExpressionNode(parentName);
+                    if (r1Exp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError("MakeStadium expected ,");
+                        }
+                        else
+                        {
+                            ExpressionNode r2Exp = ParseExpressionNode(parentName);
+                            if (r2Exp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError("MakeStadium expected ,");
+                                }
+                                else
+                                {
+                                    ExpressionNode gexp = ParseExpressionNode(parentName);
+                                    if (gexp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError("MakeStadium expected ,");
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode hExp = ParseExpressionNode(parentName);
+                                            if (hExp != null)
+                                            {
+                                                MakeStadiumNode mn = new MakeStadiumNode(shapeExp, r1Exp, r2Exp, gexp, hExp);
+                                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                exp = mn;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
 
         private ExpressionNode ParseMakeTorusFunction(string parentName)
         {
@@ -3108,6 +3179,64 @@ namespace ScriptLanguage
                                                         exp = mn;
                                                     }
                                                 }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeTrapezoidFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            string commaMess = "MakeTrapezoid expected ,";
+            ExpressionNode topLengthExp = ParseExpressionNode(parentName);
+            if (topLengthExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError(commaMess);
+                }
+                else
+                {
+                    ExpressionNode bottomLengthExp = ParseExpressionNode(parentName);
+                    if (bottomLengthExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaMess);
+                        }
+                        else
+                        {
+                            ExpressionNode heightExp = ParseExpressionNode(parentName);
+                            if (heightExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError(commaMess);
+                                }
+                                else
+                                {
+                                    ExpressionNode widthExp = ParseExpressionNode(parentName);
+                                    if (widthExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError(commaMess);
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode bExp = ParseExpressionNode(parentName);
+                                            if (bExp != null)
+                                            {
+                                                MakeTrapezoidNode mn = new MakeTrapezoidNode(topLengthExp, bottomLengthExp, heightExp, widthExp, bExp);
+                                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                exp = mn;
                                             }
                                         }
                                     }

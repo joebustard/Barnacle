@@ -51,6 +51,7 @@
     <Compile Include="MakeSquirkle.cs" />
     <Compile Include="PGramMaker.cs" />
     <Compile Include="PolyMaker.cs" />
+    <Compile Include="SquaredStadiumMaker.cs" />
     <Compile Include="StadiumMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextHelper.cs" />

@@ -181,6 +181,9 @@
     <Compile Include="Dialogs\Reorigin\ReoriginDlg.xaml.cs">
       <DependentUpon>ReoriginDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\SquaredStadium\SquaredStadiumDlg.xaml.cs">
+      <DependentUpon>SquaredStadiumDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Squirkle\CornerShape.xaml.cs">
       <DependentUpon>CornerShape.xaml</DependentUpon>
     </Compile>
@@ -448,6 +451,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Reorigin\ReoriginDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\SquaredStadium\SquaredStadiumDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

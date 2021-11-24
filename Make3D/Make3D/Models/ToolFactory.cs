@@ -13,6 +13,10 @@ namespace Barnacle.Models
                     res = new Wheel();
                     break;
 
+                case "SquaredStadium":
+                    res = new SquaredStadiumDlg();
+                    break;
+
                 case "Filet":
                     res = new FiletDlg();
                     break;
