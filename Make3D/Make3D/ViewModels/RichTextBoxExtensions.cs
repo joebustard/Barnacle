@@ -33,6 +33,27 @@ namespace Barnacle.ViewModels
             return index;
         }
 
+        public static int FindEx(this RichTextBox richTextBox, string text, int startIndex = 0)
+        {
+            var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
+            richTextBox.Selection.Select(textRange.Start, textRange.Start);     // clear previous select if there was one
+
+            textRange.ClearAllProperties();
+            var index = textRange.Text.IndexOf(text, startIndex, StringComparison.OrdinalIgnoreCase);
+            if (index > -1)
+            {
+                var textPointerStart = textRange.Start.GetPositionAtOffset(index);
+                var textPointerEnd = textRange.Start.GetPositionAtOffset(index + text.Length);
+
+                var textRangeSelection = new TextRange(textPointerStart, textPointerEnd);
+                textRangeSelection.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+                richTextBox.Selection.Select(textRangeSelection.Start, textRangeSelection.End);
+                richTextBox.Focus();
+            }
+
+            return index;
+        }
+
         private static TextPointer GetPoint(TextPointer start, int x)
         {
             var ret = start;

@@ -51,6 +51,7 @@ program ""Script Name""
         private Script script;
         private int searchIndex;
         private string searchText;
+        private int selectedTabIndex;
         private bool showAxies;
         private bool showFloor;
         private int totalFaces;
@@ -88,6 +89,7 @@ program ""Script Name""
             BaseViewModel.ScriptClearBed = false;
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
+            selectedTabIndex = 0;
         }
 
         private enum CameraModes
@@ -235,6 +237,22 @@ program ""Script Name""
             }
         }
 
+        public int SelectedTabIndex
+        {
+            get
+            {
+                return selectedTabIndex;
+            }
+            set
+            {
+                if (selectedTabIndex != value)
+                {
+                    selectedTabIndex = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public String Source
         {
             get;
@@ -267,6 +285,7 @@ program ""Script Name""
         public void ClearResults()
         {
             ResultsText = "";
+            Refresh(resultsBox);
         }
 
         public void RegenerateDisplayList()
@@ -303,8 +322,17 @@ program ""Script Name""
             NotifyPropertyChanged("ModelItems");
         }
 
+        public void SwitchTabs()
+        {
+            SelectedTabIndex = 1 - SelectedTabIndex;
+        }
+
         internal void KeyDown(Key key, bool v1, bool v2)
         {
+            if (key == Key.F3)
+            {
+                OnFind(null);
+            }
         }
 
         internal void KeyUp(Key key, bool v1, bool v2)
@@ -376,6 +404,8 @@ program ""Script Name""
             }
             content.Clear();
             script.SetResultsContent(content);
+            ClearResults();
+            Refresh(resultsBox);
             if (script.Execute())
             {
                 Log.Instance().AddEntry("Complete");

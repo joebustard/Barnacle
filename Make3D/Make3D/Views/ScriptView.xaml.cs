@@ -219,7 +219,7 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             return ok;
         }
 
-        private void RunClicked(object sender, RoutedEventArgs e)
+        private void Run()
         {
             vm.ClearResults();
             if (RefreshInterpreterSource())
@@ -228,9 +228,26 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             }
         }
 
+        private void RunClicked(object sender, RoutedEventArgs e)
+        {
+            Run();
+        }
+
         private void ScriptBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             DeferSyntaxCheck();
+            if (e.Key == Key.F3)
+            {
+                vm.FindCommand.Execute(null);
+            }
+            else if (e.Key == Key.F4)
+            {
+                vm.SwitchTabs();
+            }
+            else if (e.Key == Key.F5)
+            {
+                Run();
+            }
         }
 
         private void ScriptBox_TextChanged(object sender, TextChangedEventArgs e)
