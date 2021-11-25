@@ -31,7 +31,7 @@
  Colour Green;
  Colour Gray;
  Colour Brown;
-Colour Purple;
+ Colour Purple;
 
     Function Colour Argb( Int  a, Int  r, Int  g, Int  b ) 
     {
@@ -100,6 +100,59 @@ Function Solid CleanIntersection( solid s1, solid s2)
    delete s1;
    delete s2;
    return t;
+}
+
+procedure floormove( solid sl, double px, double pz)
+{
+move sl,px,0,pz;
+floor sl;
+}
+
+function solid HollowVertical( solid sl, double skinThickness)
+{
+    if ( skinThickness <= 0)
+	{
+		print "HollowVertical : invalid skinTickness value ",skinThickness;
+		exit;
+	}
+	else
+	{
+		// make a cutter and position it to match the solid
+		solid cutter = copy(sl);
+		stackabove sl,cutter;
+		alignbottom sl,cutter;
+
+		// shrink it by the skin thickness
+		double nl = length(sl) - (2 * skinthickness);
+		double nh = height(sl) *2;
+		double nw = width(sl) - (2 * skinthickness);
+		double dy = nh *0.25;
+		resize cutter,nl,nh,nw;
+
+		//move to ensure a good overlap
+		rmove cutter,0,-dy,0;
+
+		// add cut
+		sl = cleandifference(sl,cutter);
+	}
+	return sl;
+}
+
+function solid ClipLeft( solid sl, double l)
+{
+	if ( l <= 0 )
+	{
+		print "ClipLeft : invalid overlap value ",l;
+		exit;
+	}
+	else
+	{
+		solid cutter =Make("box",5000,5000,5000);
+		stackleft sl,cutter;
+		rmove l-0.1,0,0;
+		sl = cleandifference(sl,cutter);
+	}
+	return sl;
 }
 
  procedure InitialiseLimpLib()
