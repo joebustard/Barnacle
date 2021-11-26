@@ -79,6 +79,7 @@ namespace ScriptLanguage
                 "makeparallelogram",
                 "makeplatelet",
                 "makestadium",
+                "makesquaredstadium",
                 "makesquirkle",
                 "maketorus",
                 "maketrapezoid",
@@ -2464,6 +2465,13 @@ namespace ScriptLanguage
                             }
                             break;
 
+
+                        case "makesquaredstadium":
+                            {
+                                exp = ParseMakeSquaredStadiumFunction(parentName);
+                            }
+                            break;
+
                         case "makesquirkle":
                             {
                                 exp = ParseMakeSquirkleFunction(parentName);
@@ -3124,6 +3132,64 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakeSquaredStadiumFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            string commaerr = "MakeSquaredStadium expected ,";
+            ExpressionNode radiusExp = ParseExpressionNode(parentName);
+            if (radiusExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError(commaerr);
+                }
+                else
+                {
+                    ExpressionNode gapExp = ParseExpressionNode(parentName);
+                    if (gapExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaerr);
+                        }
+                        else
+                        {
+                            ExpressionNode elExp = ParseExpressionNode(parentName);
+                            if (elExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError(commaerr);
+                                }
+                                else
+                                {
+                                    ExpressionNode hExp = ParseExpressionNode(parentName);
+                                    if (hExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError(commaerr);
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode oExp = ParseExpressionNode(parentName);
+                                            if (oExp != null)
+                                            {
+                                                MakeSquaredStadiumNode mn = new MakeSquaredStadiumNode(radiusExp, gapExp, elExp, hExp, oExp);
+                                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                exp = mn;
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
         private ExpressionNode ParseMakeTorusFunction(string parentName)
         {
             ExpressionNode exp = null;
