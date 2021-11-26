@@ -1,3 +1,4 @@
+Include "libs\limplib.txt" ;
 
    // Cut a grid of square holes out of a plate to form a grill
    // pl is the solid to cut into
@@ -90,5 +91,36 @@ return rv;
            py = py + dy ;
            pz = pz + dz ;
        }
+       Return result ;
+   }
+
+   // Name          : LeafHinge
+   // Does           : makes a simple leafhinge shape. Note it does not move
+   // Parameters :
+   // Returns       :
+   Function Solid Leafhinge( String  name, Double  px, Double  pz, Double  leafbase, Double  leaffront, Double  leaflength, Double  leafthickness, Double  barrelradius, Double  butlength, Double  butheight, Double  butwidth )
+   {
+       Solid result ;
+
+       // leaf
+       Solid leaf = MakeTrapezoid ( leafbase, leaffront, leaflength, leafthickness, 0 ) ;
+       Rotate leaf, -90, 0, 0 ;
+       Floormove( leaf, px, pz ) ;
+
+       // barrel
+       Double bd = barrelradius * 2 ;
+       Solid bar = Make ( "cylinder", 0, 0, 0, bd, leafbase, bd ) ;
+       Rotate bar, 0, 0, 90 ;
+       StackBehind leaf, bar ;
+       RMove bar, 0, 0, barrelradius * 0.5 ;
+
+       // but
+       Solid but = Make ( "box", 0, 0, 0, butlength, butheight, butwidth ) ;
+       StackBehind bar, but ;
+       RMove but, 0, 0, barrelradius ;
+       result = Cleanunion( leaf, bar)  ;
+       result = Cleanunion( result, but)  ;
+       SetName result, name ;
+       Floormove( result, px, pz ) ;
        Return result ;
    }

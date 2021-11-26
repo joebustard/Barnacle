@@ -49,7 +49,7 @@ namespace Barnacle.Models
                     res = new PlateletDlg();
                     break;
 
-                case "Parallelagram":
+                case "Parallelogram":
                     res = new PGramDlg();
                     break;
 

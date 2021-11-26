@@ -25,12 +25,11 @@ namespace Barnacle.Views
     public partial class ScriptView : UserControl
     {
         private DispatcherTimer dispatcherTimer;
-
         private GeometryModel3D lastHitModel;
         private Point3D lastHitPoint;
         private Point lastMousePos;
         private bool loaded;
-
+        private DispatcherTimer refocusTimer;
         private ScriptViewModel vm;
 
         public ScriptView()
@@ -200,9 +199,24 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             }
         }
 
+        private void OnEditTabSelected(object sender, RoutedEventArgs e)
+        {
+            refocusTimer = new DispatcherTimer();
+            refocusTimer.Interval = new TimeSpan(0, 0, 0, 0, 5);
+            refocusTimer.Tick += RefocusTimer_Tick;
+            refocusTimer.Start();
+        }
+
         private void OnUpdate(object param)
         {
             SetDisplayRtf();
+        }
+
+        private void RefocusTimer_Tick(object sender, EventArgs e)
+        {
+            refocusTimer.Stop();
+            ScriptBox.Focus();
+            ScriptBox.RestoreCurrentPosition();
         }
 
         private bool RefreshInterpreterSource()
@@ -219,7 +233,7 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             return ok;
         }
 
-        private void RunClicked(object sender, RoutedEventArgs e)
+        private void Run()
         {
             vm.ClearResults();
             if (RefreshInterpreterSource())
@@ -228,9 +242,30 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             }
         }
 
+        private void RunClicked(object sender, RoutedEventArgs e)
+        {
+            Run();
+        }
+
         private void ScriptBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             DeferSyntaxCheck();
+
+            if (e.Key == Key.F3)
+            {
+                vm.FindCommand.Execute(null);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F4)
+            {
+                vm.SwitchTabs();
+                e.Handled = true;
+            }
+            else if (e.Key == Key.F5)
+            {
+                e.Handled = true;
+                Run();
+            }
         }
 
         private void ScriptBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -257,6 +292,7 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             NotificationManager.Subscribe("Script", "UpdateScript", OnUpdate);
             vm.ScriptBox = ScriptBox;
             vm.SetResultsBox(ResultsBox);
+            ScriptBox.Focusable = true;
             loaded = true;
         }
 

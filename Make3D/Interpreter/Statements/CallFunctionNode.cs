@@ -79,6 +79,7 @@ namespace ScriptLanguage
             {
                 result = _FunctionName;
                 result += "( ";
+
                 result += _Expressions.ToString();
                 result += ") ";
             }

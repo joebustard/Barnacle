@@ -38,24 +38,30 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            //
-            // Need to double up the slashes to stop rtf treating them as escape chars
-            //
-            String localPath = path.Replace(@"\", @"\\");
-
-            String result = Indentor.Indentation() + RichTextFormatter.KeyWord("Include ") + RichTextFormatter.Normal(localPath + " ;");
-            if (HighLight)
+            String result = "";
+            if (!isInLibrary)
             {
-                result = RichTextFormatter.Highlight(result);
-            }
+                //
+                // Need to double up the slashes to stop rtf treating them as escape chars
+                //
+                String localPath = path.Replace(@"\", @"\\");
 
+                result = Indentor.Indentation() + RichTextFormatter.KeyWord("Include ") + RichTextFormatter.Normal(localPath + " ;");
+                if (HighLight)
+                {
+                    result = RichTextFormatter.Highlight(result);
+                }
+            }
             return result;
         }
 
         public override String ToString()
         {
-            String result = Indentor.Indentation() + "Include " + path + " ;";
-
+            String result = "";
+            if (!isInLibrary)
+            {
+                result = Indentor.Indentation() + "Include " + path + " ;";
+            }
             return result;
         }
     }

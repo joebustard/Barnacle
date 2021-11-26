@@ -13,8 +13,8 @@
         <ViewModels:ScriptViewModel />
     </UserControl.DataContext>
     <Grid>
-        <TabControl>
-            <TabItem Header="Script">
+        <TabControl SelectedIndex="{Binding SelectedTabIndex}">
+            <TabItem Header="Script" PreviewKeyDown="ScriptBox_PreviewKeyDown" Selector.Selected="OnEditTabSelected" x:Name="EditTab">
                 <Grid x:Name="ScriptGrid">
 
                     <Grid.RowDefinitions>
@@ -42,7 +42,7 @@
                         <Button  Margin="2,2,2,2" Content="Check" Click="CheckClicked" ToolTip="Check the script for syntax errors but don't run it" />
                         <Button  Margin="2,2,2,2" Content="Clear" Command="{Binding ScriptCommand}" CommandParameter="Clear" ToolTip="Clear results log" />
                     </UniformGrid>
-                    <TextBox x:Name="ResultsBox" Text="{Binding ResultsText}" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" FontSize="18" />
+                    <TextBox x:Name="ResultsBox" Text="{Binding ResultsText}" Grid.Row="1"  Background="Black" Foreground="AntiqueWhite" FontSize="18" PreviewKeyDown="ScriptBox_PreviewKeyDown" />
                     <RichTextBox Grid.Row="2" x:Name="ScriptBox" Block.LineHeight="2" TextChanged="ScriptBox_TextChanged" PreviewKeyDown="ScriptBox_PreviewKeyDown" HorizontalAlignment="Stretch" VerticalScrollBarVisibility="Visible" MaxHeight="600" FontSize="32">
                         <RichTextBox.ContextMenu>
                             <ContextMenu>
@@ -58,7 +58,7 @@
                     </RichTextBox>
                 </Grid>
             </TabItem>
-            <TabItem Header="3D Output From Script">
+            <TabItem Header="3D Output From Script" PreviewKeyDown="ScriptBox_PreviewKeyDown">
                 <Grid MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseDown="Grid_MouseDown" MouseWheel="Grid_MouseWheel" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
                     <Viewport3D Name="viewport3D1" KeyUp="UserControl_KeyUp" KeyDown="UserControl_KeyDown">
 
