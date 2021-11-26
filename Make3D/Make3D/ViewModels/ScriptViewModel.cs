@@ -324,6 +324,10 @@ program ""Script Name""
 
         public void SwitchTabs()
         {
+            if (SelectedTabIndex == 0)
+            {
+                richTextBox.RecordCurrentPosition();
+            }
             SelectedTabIndex = 1 - SelectedTabIndex;
         }
 

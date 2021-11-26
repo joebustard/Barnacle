@@ -8,14 +8,14 @@ namespace ScriptLanguage
         public bool InBreakMode;
         public bool IsTestBody;
         public List<StatementNode> Statements;
-        protected List<StatementNode> UseStatements;
+        protected List<StatementNode> IncludeLibStatements;
         private int CurrentSingleStepStatement;
 
         // Instance constructor
         public CompoundNode()
         {
             Statements = new List<StatementNode>();
-            UseStatements = new List<StatementNode>();
+            IncludeLibStatements = new List<StatementNode>();
             IsTestBody = false;
             InBreakMode = false;
             CurrentSingleStepStatement = 0;
@@ -122,7 +122,7 @@ namespace ScriptLanguage
 
             if (IsTestBody)
             {
-                foreach (StatementNode ust in UseStatements)
+                foreach (StatementNode ust in IncludeLibStatements)
                 {
                     result += ust.ToRichText();
                     result += @"\par";
@@ -162,7 +162,7 @@ namespace ScriptLanguage
 
             if (IsTestBody)
             {
-                foreach (StatementNode ust in UseStatements)
+                foreach (StatementNode ust in IncludeLibStatements)
                 {
                     result += ust.ToString();
                     result += "\n";
@@ -210,9 +210,9 @@ namespace ScriptLanguage
         // Base version does nothing
         internal void AddUseStatement(IncludeNode node)
         {
-            if (UseStatements != null)
+            if (IncludeLibStatements != null)
             {
-                UseStatements.Add(node);
+                IncludeLibStatements.Add(node);
             }
         }
 

@@ -104,8 +104,8 @@ Function Solid CleanIntersection( solid s1, solid s2)
 
 procedure floormove( solid sl, double px, double pz)
 {
-move sl,px,0,pz;
-floor sl;
+    move sl,px,0,pz;
+    floor sl;
 }
 
 function solid HollowVertical( solid sl, double skinThickness)
@@ -147,9 +147,9 @@ function solid ClipLeft( solid sl, double l)
 	}
 	else
 	{
-		solid cutter =Make("box",5000,5000,5000);
+		solid cutter =Make("box",0,0,0,5000,5000,5000);
 		stackleft sl,cutter;
-		rmove l-0.1,0,0;
+		rmove cutter, l-0.1,0,0;
 		sl = cleandifference(sl,cutter);
 	}
 	return sl;

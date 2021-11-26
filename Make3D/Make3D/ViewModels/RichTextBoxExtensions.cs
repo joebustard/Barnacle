@@ -11,6 +11,9 @@ namespace Barnacle.ViewModels
 {
     public static class RichTextBoxExtensions
     {
+        private static TextPointer oldposend = null;
+        private static TextPointer oldposstart = null;
+
         public static int Find(this RichTextBox richTextBox, string text, int startIndex = 0)
         {
             var textRange = new TextRange(richTextBox.Document.ContentStart, richTextBox.Document.ContentEnd);
@@ -52,6 +55,21 @@ namespace Barnacle.ViewModels
             }
 
             return index;
+        }
+
+        public static void RecordCurrentPosition(this RichTextBox richTextBox)
+        {
+            oldposstart = richTextBox.CaretPosition;
+            //  oldposend = richTextBox.Selection.End;
+        }
+
+        public static void RestoreCurrentPosition(this RichTextBox richTextBox)
+        {
+            if (oldposstart != null)
+            {
+                richTextBox.CaretPosition = oldposstart;
+                richTextBox.Focus();
+            }
         }
 
         private static TextPointer GetPoint(TextPointer start, int x)

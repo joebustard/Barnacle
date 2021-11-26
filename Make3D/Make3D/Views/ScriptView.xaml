@@ -14,7 +14,7 @@
     </UserControl.DataContext>
     <Grid>
         <TabControl SelectedIndex="{Binding SelectedTabIndex}">
-            <TabItem Header="Script" PreviewKeyDown="ScriptBox_PreviewKeyDown">
+            <TabItem Header="Script" PreviewKeyDown="ScriptBox_PreviewKeyDown" Selector.Selected="OnEditTabSelected" x:Name="EditTab">
                 <Grid x:Name="ScriptGrid">
 
                     <Grid.RowDefinitions>
