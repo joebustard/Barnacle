@@ -461,86 +461,94 @@ namespace ScriptLanguage
                     {
                         if (tokenType == Tokeniser.TokenType.Identifier)
                         {
-                            //
-                            // To avoid local variable names clashing with other variables
-                            // we prefix them with the parent [procedures name
-                            //
-                            String strVarName = token;
-                            token = parentName + token;
-                            if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                            string id = token.ToLower();
+                            if (IsIntrinsicFunction(id) || IsKeyword(id) || IsUserFunction(id))
                             {
-                                ReportSyntaxError("Duplicate variable name");
+                                ReportSyntaxError("can't use keyword/function {token} in declaration");
                             }
                             else
                             {
-                                Symbol sym = parentNode.AddArraySymbol(token, arrayType);
-
-                                ArrayDeclarationNode node = new ArrayDeclarationNode();
-                                node.VarName = strVarName;
-                                node.ItemType = arrayType;
-                                node.Dimensions = exp;
-                                node.ActualSymbol = sym;
-                                node.IsInLibrary = tokeniser.InIncludeFile();
-                                parentNode.AddStatement(node);
-                                if (FetchToken(out token, out tokenType) == true)
+                                //
+                                // To avoid local variable names clashing with other variables
+                                // we prefix them with the parent [procedures name
+                                //
+                                String strVarName = token;
+                                token = parentName + token;
+                                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                                 {
-                                    if (token == "=")
-                                    {
-                                        if (FetchToken(out token, out tokenType) == true)
-                                        {
-                                            if (token == "{")
-                                            {
-                                                bool bDone = false;
-                                                do
-                                                {
-                                                    //
-                                                    // See if it there is a nice expression
-                                                    //
-                                                    ExpressionNode iexp = ParseExpressionNode(parentName);
-                                                    if (iexp != null)
-                                                    {
-                                                        node.AddInitialiserExpression(iexp);
+                                    ReportSyntaxError("Duplicate variable name");
+                                }
+                                else
+                                {
+                                    Symbol sym = parentNode.AddArraySymbol(token, arrayType);
 
+                                    ArrayDeclarationNode node = new ArrayDeclarationNode();
+                                    node.VarName = strVarName;
+                                    node.ItemType = arrayType;
+                                    node.Dimensions = exp;
+                                    node.ActualSymbol = sym;
+                                    node.IsInLibrary = tokeniser.InIncludeFile();
+                                    parentNode.AddStatement(node);
+                                    if (FetchToken(out token, out tokenType) == true)
+                                    {
+                                        if (token == "=")
+                                        {
+                                            if (FetchToken(out token, out tokenType) == true)
+                                            {
+                                                if (token == "{")
+                                                {
+                                                    bool bDone = false;
+                                                    do
+                                                    {
                                                         //
-                                                        // If there is a comma there should another expression
+                                                        // See if it there is a nice expression
                                                         //
-                                                        if (FetchToken(out token, out tokenType) == true)
+                                                        ExpressionNode iexp = ParseExpressionNode(parentName);
+                                                        if (iexp != null)
                                                         {
-                                                            if (tokenType == Tokeniser.TokenType.Comma)
+                                                            node.AddInitialiserExpression(iexp);
+
+                                                            //
+                                                            // If there is a comma there should another expression
+                                                            //
+                                                            if (FetchToken(out token, out tokenType) == true)
                                                             {
-                                                                bDone = false;
-                                                            }
-                                                            else if (tokenType == Tokeniser.TokenType.CloseCurly)
-                                                            {
-                                                                bDone = true;
+                                                                if (tokenType == Tokeniser.TokenType.Comma)
+                                                                {
+                                                                    bDone = false;
+                                                                }
+                                                                else if (tokenType == Tokeniser.TokenType.CloseCurly)
+                                                                {
+                                                                    bDone = true;
+                                                                }
+                                                                else
+                                                                {
+                                                                    ReportSyntaxError("Unexpected token processing array initialiser Expected ) found " + token);
+                                                                }
                                                             }
                                                             else
                                                             {
-                                                                ReportSyntaxError("Unexpected token processing array initialiser Expected ) found " + token);
+                                                                ReportSyntaxError("Unexpected end of file ");
                                                             }
                                                         }
                                                         else
                                                         {
-                                                            ReportSyntaxError("Unexpected end of file ");
+                                                            bDone = true;
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        bDone = true;
-                                                    }
-                                                } while (bDone == false);
+                                                    } while (bDone == false);
+                                                }
                                             }
                                         }
-                                    }
-                                    else
-                                    {
-                                        tokeniser.PutTokenBack();
-                                    }
+                                        else
+                                        {
+                                            tokeniser.PutTokenBack();
+                                        }
 
-                                    result = CheckForSemiColon();
-                                    if (!result)
-                                    {
-                                        ReportSyntaxError("Expected ;");
+                                        result = CheckForSemiColon();
+                                        if (!result)
+                                        {
+                                            ReportSyntaxError("Expected ;");
+                                        }
                                     }
                                 }
                             }
@@ -1852,66 +1860,74 @@ namespace ScriptLanguage
                             {
                                 if (tokenType == Tokeniser.TokenType.Identifier)
                                 {
-                                    String FunctionName = token;
-                                    //
-                                    // Should be an open bracket
-                                    //
-                                    if (FetchToken(out token, out tokenType) == true)
+                                    string id = token.ToLower();
+                                    if (IsKeyword(id) || IsIntrinsicFunction(id))
                                     {
-                                        if (tokenType == Tokeniser.TokenType.OpenBracket)
+                                        ReportSyntaxError("cant use keyword/function {token} in declaration");
+                                    }
+                                    else
+                                    {
+                                        String FunctionName = token;
+                                        //
+                                        // Should be an open bracket
+                                        //
+                                        if (FetchToken(out token, out tokenType) == true)
                                         {
-                                            CFunctionNode proc = new CFunctionNode();
-                                            if (ParseProcedureParameters(proc, FunctionName))
+                                            if (tokenType == Tokeniser.TokenType.OpenBracket)
                                             {
-                                                if (FetchToken(out token, out tokenType) == true)
+                                                CFunctionNode proc = new CFunctionNode();
+                                                if (ParseProcedureParameters(proc, FunctionName))
                                                 {
-                                                    if (tokenType == Tokeniser.TokenType.CloseBracket)
+                                                    if (FetchToken(out token, out tokenType) == true)
                                                     {
-                                                        if (FetchToken(out token, out tokenType) == true)
+                                                        if (tokenType == Tokeniser.TokenType.CloseBracket)
                                                         {
-                                                            if (tokenType == Tokeniser.TokenType.OpenCurly)
+                                                            if (FetchToken(out token, out tokenType) == true)
                                                             {
-                                                                //
-                                                                // Try parsing the body
-                                                                //
-                                                                FunctionBodyNode cmp = new FunctionBodyNode();
-                                                                if (ParseCompoundNode(cmp, FunctionName, false))
+                                                                if (tokenType == Tokeniser.TokenType.OpenCurly)
                                                                 {
-                                                                    proc.Name = FunctionName;
-                                                                    proc.Body = cmp;
-                                                                    proc.ReturnType = FunctionType;
-                                                                    proc.ReturnTypeName = returnTypeName;
-                                                                    proc.IsInLibrary = bInLibrary;
-
-                                                                    // It goes in a separate procedures list
                                                                     //
-                                                                    FunctionCache.Instance().AddFunction(proc);
-
-                                                                    parentNode.AddStatement(proc);
+                                                                    // Try parsing the body
                                                                     //
-                                                                    // add a reference to the symbol table
-                                                                    //
-                                                                    SymbolTable.Instance().AddSymbol(FunctionName, SymbolTable.SymbolType.functionname);
+                                                                    FunctionBodyNode cmp = new FunctionBodyNode();
+                                                                    if (ParseCompoundNode(cmp, FunctionName, false))
+                                                                    {
+                                                                        proc.Name = FunctionName;
+                                                                        proc.Body = cmp;
+                                                                        proc.ReturnType = FunctionType;
+                                                                        proc.ReturnTypeName = returnTypeName;
+                                                                        proc.IsInLibrary = bInLibrary;
 
-                                                                    result = true;
+                                                                        // It goes in a separate procedures list
+                                                                        //
+                                                                        FunctionCache.Instance().AddFunction(proc);
+
+                                                                        parentNode.AddStatement(proc);
+                                                                        //
+                                                                        // add a reference to the symbol table
+                                                                        //
+                                                                        SymbolTable.Instance().AddSymbol(FunctionName, SymbolTable.SymbolType.functionname);
+
+                                                                        result = true;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    ReportSyntaxError("Function declaration expected { but found " + token);
                                                                 }
                                                             }
-                                                            else
-                                                            {
-                                                                ReportSyntaxError("Function declaration expected { but found " + token);
-                                                            }
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        ReportSyntaxError("Function declaration expected ) but found " + token);
+                                                        else
+                                                        {
+                                                            ReportSyntaxError("Function declaration expected ) but found " + token);
+                                                        }
                                                     }
                                                 }
                                             }
-                                        }
-                                        else
-                                        {
-                                            ReportSyntaxError("Function declaration expected ( but found " + token);
+                                            else
+                                            {
+                                                ReportSyntaxError("Function declaration expected ( but found " + token);
+                                            }
                                         }
                                     }
                                 }
@@ -4104,32 +4120,41 @@ namespace ScriptLanguage
             bool result = false;
             if (tokenType == Tokeniser.TokenType.Identifier)
             {
-                //
-                // To avoid local variable names clashing with other variables
-                // we prefix them with the parent [procedures name
-                //
-                String strVarName = token;
-                token = parentName + token;
-                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
+                // cant use keywords or function names as variables
+                string id = token.ToLower();
+                if (IsIntrinsicFunction(id) || IsKeyword(id) || IsUserFunction(id))
                 {
-                    ReportSyntaxError($"{label} Duplicate variable name");
+                    ReportSyntaxError($"{label} can't use keyword/function {token} in declaration");
                 }
                 else
                 {
-                    Symbol sym = parentNode.AddSymbol(token, st);
-
-                    node.VarName = strVarName;
-                    node.IsInLibrary = tokeniser.InIncludeFile();
-                    node.Name = token;
-                    node.Symbol = sym;
-                    parentNode.AddStatement(node);
-
-                    if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
+                    //
+                    // To avoid local variable names clashing with other variables
+                    // we prefix them with the parent [procedures name
+                    //
+                    String strVarName = token;
+                    token = parentName + token;
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                     {
-                        result = CheckForSemiColon();
-                        if (!result)
+                        ReportSyntaxError($"{label} Duplicate variable name");
+                    }
+                    else
+                    {
+                        Symbol sym = parentNode.AddSymbol(token, st);
+
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        node.Name = token;
+                        node.Symbol = sym;
+                        parentNode.AddStatement(node);
+
+                        if (CheckForInitialiser(parentNode, parentName, token, strVarName, node))
                         {
-                            ReportSyntaxError($"{label} expected ;");
+                            result = CheckForSemiColon();
+                            if (!result)
+                            {
+                                ReportSyntaxError($"{label} expected ;");
+                            }
                         }
                     }
                 }
@@ -4149,33 +4174,41 @@ namespace ScriptLanguage
             tokeniser.GetToken(out token, out tokenType);
             if (tokenType == Tokeniser.TokenType.Identifier)
             {
+                string id = token.ToLower();
+                if ( IsKeyword(id) || IsIntrinsicFunction(id) || IsUserFunction(id))
+                {
+                    ReportSyntaxError($" can't use keyword/function {token} in declaration");
+                }
+                else
+                { 
                 String strVarName = token;
                 token = parentName + token;
 
-                if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
-                {
-                    ReportSyntaxError("Duplicate variable name");
-                }
-                else
-                {
-                    StructSymbol sym = new StructSymbol();
-                    sym.Name = token;
-                    sym.SymbolType = SymbolTable.SymbolType.structname;
-                    sym.Definition = def;
-                    sym.SetFields();
-
-                    SymbolTable.Instance().AddStructSymbol(sym);
-
-                    StructVarDeclarationNode node = new StructVarDeclarationNode();
-                    node.VarName = strVarName;
-                    node.IsInLibrary = tokeniser.InIncludeFile();
-                    node.DeclarationType = def.StructName;
-                    parentNode.AddStatement(node);
-
-                    result = CheckForSemiColon();
-                    if (!result)
+                    if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                     {
-                        ReportSyntaxError(" expected ;");
+                        ReportSyntaxError("Duplicate variable name");
+                    }
+                    else
+                    {
+                        StructSymbol sym = new StructSymbol();
+                        sym.Name = token;
+                        sym.SymbolType = SymbolTable.SymbolType.structname;
+                        sym.Definition = def;
+                        sym.SetFields();
+
+                        SymbolTable.Instance().AddStructSymbol(sym);
+
+                        StructVarDeclarationNode node = new StructVarDeclarationNode();
+                        node.VarName = strVarName;
+                        node.IsInLibrary = tokeniser.InIncludeFile();
+                        node.DeclarationType = def.StructName;
+                        parentNode.AddStatement(node);
+
+                        result = CheckForSemiColon();
+                        if (!result)
+                        {
+                            ReportSyntaxError(" expected ;");
+                        }
                     }
                 }
             }

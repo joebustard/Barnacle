@@ -10,9 +10,9 @@
  // size
  Struct Size
  {
-   double length;
-   double height;
-   double width;
+   double l;
+   double h;
+   double w;
  }
 
  Struct Colour
@@ -72,9 +72,9 @@ procedure ColourSolid(Solid sl, Colour cl)
 Function Size GetSolidSize( Solid sl)
 {
     Size result;
-    result.length = Length(sl);
-    result.height = Height( sl);
-    result.width = Width(sl);
+    result.l = Length(sl);
+    result.h = Height( sl);
+    result.w = Width(sl);
     return result;
 }
 
