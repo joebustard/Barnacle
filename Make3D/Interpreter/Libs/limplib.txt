@@ -155,6 +155,23 @@ function solid ClipLeft( solid sl, double l)
 	return sl;
 }
 
+function solid ClipRight( solid sl, double l)
+{
+	if ( l <= 0 )
+	{
+		print "ClipRight : invalid overlap value ",l;
+		exit;
+	}
+	else
+	{
+		solid cutter =Make("box",0,0,0,5000,5000,5000);
+		stackleft sl,cutter;
+		rmove cutter, 0.1-l,0,0;
+		sl = cleandifference(sl,cutter);
+	}
+	return sl;
+}
+
  procedure InitialiseLimpLib()
  {
    SetDefaultColours();
