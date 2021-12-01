@@ -52,14 +52,13 @@ namespace ScriptLanguage
                             double g = 0;
                             double h = 0;
 
-                            if (EvalExpression(radius1Exp, ref r1, "Radius1") &&
-                                EvalExpression(radius2Exp, ref r2, "Radius2") &&
-                                EvalExpression(heightExp, ref h, "Height") &&
-
-                                EvalExpression(gapExp, ref g, "Gap")
+                            if (EvalExpression(radius1Exp, ref r1, "Radius1", "MakeStadium") &&
+                                EvalExpression(radius2Exp, ref r2, "Radius2", "MakeStadium") &&
+                                EvalExpression(heightExp, ref h, "Height", "MakeStadium") &&
+                                EvalExpression(gapExp, ref g, "Gap", "MakeStadium")
                                 )
                             {
-                                if (r1 > 0 && r2 > 0  && h > 0 && (shape.ToLower() == "flat" || shape.ToLower().StartsWith("overflat")|| (shape.ToLower() == "sausage")))
+                                if (r1 > 0 && r2 > 0 && h > 0 && (shape.ToLower() == "flat" || shape.ToLower().StartsWith("overflat") || (shape.ToLower() == "sausage")))
                                 {
                                     result = true;
 
@@ -120,34 +119,6 @@ namespace ScriptLanguage
             result += gapExp.ToString() + ", ";
             result += heightExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeStadium : " + v + " expression error");
-            }
             return result;
         }
     }

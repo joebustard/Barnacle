@@ -18,29 +18,11 @@ namespace ScriptLanguage
             bool result = false;
             if (parameterExpression != null)
             {
-                if (parameterExpression.Execute())
+                double d = 0;
+                if (EvalExpression(parameterExpression, ref d, "Value", "Abs"))
                 {
-                    StackItem sti = ExecutionStack.Instance().Pull();
-                    if (sti != null)
-                    {
-                        if (sti.MyType == StackItem.ItemType.dval)
-                        {
-                            double d = sti.DoubleValue;
-                            ExecutionStack.Instance().Push(Math.Abs(d));
-                            result = true;
-                        }
-                        else
-                             if (sti.MyType == StackItem.ItemType.ival)
-                        {
-                            double d = (double)sti.IntValue;
-                            ExecutionStack.Instance().Push(Math.Abs(d));
-                            result = true;
-                        }
-                        else
-                        {
-                            Log.Instance().AddEntry("Run Time Error : Abs expected double");
-                        }
-                    }
+                    ExecutionStack.Instance().Push(Math.Abs(d));
+                    result = true;
                 }
             }
             return result;

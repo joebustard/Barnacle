@@ -86,12 +86,12 @@ namespace ScriptLanguage
                                 double sx = 0;
                                 double sy = 0;
                                 double sz = 0;
-                                if (EvalExpression(xExp, ref x, "X") &&
-                                    EvalExpression(yExp, ref y, "Y") &&
-                                    EvalExpression(zExp, ref z, "Z") &&
-                                    EvalExpression(xSize, ref sx, "Size X") &&
-                                    EvalExpression(ySize, ref sy, "Size Y") &&
-                                    EvalExpression(zSize, ref sz, "Size Z")
+                                if (EvalExpression(xExp, ref x, "X", "Make") &&
+                                    EvalExpression(yExp, ref y, "Y", "Make") &&
+                                    EvalExpression(zExp, ref z, "Z", "Make") &&
+                                    EvalExpression(xSize, ref sx, "Size X", "Make") &&
+                                    EvalExpression(ySize, ref sy, "Size Y", "Make") &&
+                                    EvalExpression(zSize, ref sz, "Size Z", "Make")
                                     )
                                 {
                                     result = true;
@@ -170,34 +170,6 @@ namespace ScriptLanguage
             result += zSize.ToString();
 
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("Make : " + v + " expression error");
-            }
             return result;
         }
 

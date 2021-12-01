@@ -34,8 +34,8 @@ namespace ScriptLanguage
             string pathText = "";
             double h = 0;
 
-            if (EvalExpression(heightExp, ref h, "Height") &&
-                 EvalExpression(pathTextExp, ref pathText, "PathText"))
+            if (EvalExpression(heightExp, ref h, "Height", "MakePath") &&
+                 EvalExpression(pathTextExp, ref pathText, "PathText", "MakePath"))
             {
                 if (pathText != "")
                 {
@@ -101,57 +101,6 @@ namespace ScriptLanguage
             result += pathTextExp.ToString() + ", ";
             result += heightExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry($"{label} : " + v + " expression error");
-            }
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref string x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.sval)
-                    {
-                        x = sti.StringValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry($"{label} : " + v + " expression error");
-            }
             return result;
         }
     }

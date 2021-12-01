@@ -47,12 +47,12 @@ namespace ScriptLanguage
             double knobs = 0;
             double h = 0;
 
-            if (EvalExpression(mainRadiusExp, ref mr, "Radius") &&
-                EvalExpression(ringRadiusExp, ref hr, "RingRadius") &&
-                EvalExpression(vRadiusExp, ref vr, "VerticalRadius") &&
-                 EvalExpression(curveExp, ref curve, "Curve") &&
-                  EvalExpression(knobExp, ref knobs, "Knobs") &&
-                  EvalExpression(heightExp, ref h, "Height")
+            if (EvalExpression(mainRadiusExp, ref mr, "Radius", "MakeTorus") &&
+                EvalExpression(ringRadiusExp, ref hr, "RingRadius", "MakeTorus") &&
+                EvalExpression(vRadiusExp, ref vr, "VerticalRadius", "MakeTorus") &&
+                 EvalExpression(curveExp, ref curve, "Curve", "MakeTorus") &&
+                  EvalExpression(knobExp, ref knobs, "Knobs", "MakeTorus") &&
+                  EvalExpression(heightExp, ref h, "Height", "MakeTorus")
                 )
             {
                 if (mr > 0 && h > 0 && hr >= 0 && vr >= 0 && curve >= 0 && curve < 4)
@@ -112,62 +112,6 @@ namespace ScriptLanguage
             result += knobExp.ToString() + ", ";
             result += heightExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeTorus : " + v + " expression error");
-            }
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref int x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = (int)sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeTorus : " + v + " expression error");
-            }
             return result;
         }
     }

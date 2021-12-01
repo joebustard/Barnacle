@@ -146,6 +146,30 @@ public <pType> <PName>
 
 ";
 
+        private static string rchkh = @"
+            if (val<pName> > <pMax> )
+            {
+                Log.Instance().AddEntry(""Make<ToolName> : <pName> value > max (<pMax>)"");
+                inRange= false;
+            }
+";
+
+        private static string rchkl = @"
+            if (val<pName> < <pMin> )
+            {
+                Log.Instance().AddEntry(""Make<ToolName> : <pName> value < min (<pMin>)"");
+                inRange= false;
+            }
+";
+
+        private static string rchklh = @"
+            if (val<pName> < <pMin> || val<pName> > <pMax> )
+            {
+                Log.Instance().AddEntry(""Make<ToolName> : <pName> value out of range (<pMin>..<pMax>)"");
+                inRange= false;
+            }
+";
+
         private string dialogName;
         private string exportPath;
         private String makerName;
@@ -716,7 +740,7 @@ public <pType> <PName>
 
         private string AddParam(string res, string name)
         {
-            if (name != null &&name != "")
+            if (name != null && name != "")
             {
                 if (res != "")
                 {
@@ -799,6 +823,47 @@ public <pType> <PName>
             }
         }
 
+        private void CreateInterpreterNode(string templateRoot, string targetFolder)
+        {
+            string[] files = System.IO.Directory.GetFiles(templateRoot, "Node*.*");
+            string constructorParams = GetAllNodeConstructorParams();
+            string nodeFields = GetAllNodeFields();
+            string copyFields = GetAllNodeCopyFields();
+            string exeValueFields = GetExeValueFields();
+            string evalExpressions = GetEvalExpressions();
+            string makerParams = GetMakerNodeParams();
+            string richTextParams = GetRichTextParams();
+            string plainTextParams = GetPlainTextParams();
+            string rangeChecks = GetRangeChecks();
+            foreach (string fn in files)
+            {
+                string targetName = fn.Replace(templateRoot, targetFolder);
+                targetName = targetName.Replace("Node", "Make" + ToolName + "Node");
+                StreamReader fin = new StreamReader(fn);
+                if (fin != null)
+                {
+                    StreamWriter fout = new StreamWriter(targetName);
+                    while (!fin.EndOfStream)
+                    {
+                        String l = fin.ReadLine();
+                        l = l.Replace("<TOOLNAME>", ToolName);
+                        l = l.Replace(@"//CONSTRUCTORPARAMETERS", constructorParams);
+                        l = l.Replace(@"//NODEFIELDS", nodeFields);
+                        l = l.Replace(@"//COPYFIELDS", copyFields);
+                        l = l.Replace(@"//EXECUTIONVALUEDECLARATIONS", exeValueFields);
+                        l = l.Replace(@"//EVALEXPRESSIONS", evalExpressions);
+                        l = l.Replace(@"//MAKERPARAMS", makerParams);
+                        l = l.Replace(@"//EXPRESSIONTORICHTEXT", richTextParams);
+                        l = l.Replace(@"//EXPRESSIONTOSTRING", plainTextParams);
+                        l = l.Replace(@"//RANGECHECKS", rangeChecks);
+                        fout.WriteLine(l);
+                    }
+                    fin.Close();
+                    fout.Close();
+                }
+            }
+        }
+
         private void CreateMaker(string templateRoot, string targetFolder)
         {
             System.IO.Directory.CreateDirectory(targetFolder);
@@ -843,51 +908,13 @@ public <pType> <PName>
                     CreateDialog(templateRoot, targetFolder);
                     CreateMaker(templateRoot, targetFolder);
                     CreateInterpreterNode(templateRoot, targetFolder);
+                    System.Windows.MessageBox.Show("Done");
                 }
                 catch (Exception ex)
                 {
                     System.Windows.MessageBox.Show(ex.Message);
                 }
             }
-        }
-
-        private void CreateInterpreterNode(string templateRoot, string targetFolder)
-        {
-            string[] files = System.IO.Directory.GetFiles(templateRoot, "Node*.*");
-            string constructorParams = GetAllNodeConstructorParams();
-            string nodeFields = GetAllNodeFields();
-            string copyFields = GetAllNodeCopyFields();
-            string exeValueFields = GetExeValueFields();
-            foreach (string fn in files)
-            {
-                string targetName = fn.Replace(templateRoot, targetFolder);
-                targetName = targetName.Replace("Node", "Make"+ToolName+"Node");
-                StreamReader fin = new StreamReader(fn);
-                if (fin != null)
-                {
-                    StreamWriter fout = new StreamWriter(targetName);
-                    while (!fin.EndOfStream)
-                    {
-                        String l = fin.ReadLine();
-                        l = l.Replace("<TOOLNAME>", ToolName);
-                        l = l.Replace("<CONSTRUCTORPARAMETERS>", constructorParams);
-                        l = l.Replace("<NODEFIELDS>", nodeFields);
-                        l = l.Replace("<COPYFIELDS>", copyFields);
-                        l = l.Replace("<EXECUTIONVALUEDECLARATIONS>", exeValueFields);
-         
-                        fout.WriteLine(l);
-                    }
-                    fin.Close();
-                    fout.Close();
-                }
-            }
-        }
-
-        private string GetExeValueFields()
-        {
-            string res = "";
-
-            return res;
         }
 
         private string GetAllConstructorParams()
@@ -902,61 +929,6 @@ public <pType> <PName>
             return res;
         }
 
-        private string GetAllNodeConstructorParams()
-        {
-            string res = "";
-            res = GetNodeContructorParam(res, p1Name, p1Type);
-            res = GetNodeContructorParam(res, p2Name, p2Type);
-            res = GetNodeContructorParam(res, p3Name, p3Type);
-            res = GetNodeContructorParam(res, p4Name, p4Type);
-            res = GetNodeContructorParam(res, p5Name, p5Type);
-            res = GetNodeContructorParam(res, p6Name, p6Type);
-            return res;
-        }
-
-
-        private string GetAllNodeFields()
-        {
-            string res = "";
-            res += GetNodeField( p1Name);
-            res += GetNodeField(p2Name);
-            res += GetNodeField( p3Name);
-            res += GetNodeField( p4Name);
-            res += GetNodeField( p5Name);
-            res += GetNodeField( p6Name);
-            return res;
-        }
-        private string GetAllNodeCopyFields()
-        {
-            string res = "";
-            res += GetNodeCopyField(p1Name);
-            res += GetNodeCopyField(p2Name);
-            res += GetNodeCopyField(p3Name);
-            res += GetNodeCopyField(p4Name);
-            res += GetNodeCopyField(p5Name);
-            res += GetNodeCopyField(p6Name);
-            return res;
-        }
-
-        private string GetNodeField(string p1Name)
-        {
-            string res = "";
-            if (p1Name != null && p1Name != "")
-            {
-            res = "private ExpressionNode " + LowName(p1Name) + "Exp ;\n";
-            }
-            return res;
-        }
-
-        private string GetNodeCopyField(string p1Name)
-        {
-            string res = "";
-            if (p1Name != null && p1Name != "")
-            {
-                res = "          this." + LowName(p1Name) + "Exp = " + LowName(p1Name)+" ;\n";
-            }
-            return res;
-        }
         private string GetAllFieldCopies()
         {
             string res = "";
@@ -982,10 +954,46 @@ public <pType> <PName>
             return res;
         }
 
+        private string GetAllNodeConstructorParams()
+        {
+            string res = "";
+            res = GetNodeContructorParam(res, p1Name, p1Type);
+            res = GetNodeContructorParam(res, p2Name, p2Type);
+            res = GetNodeContructorParam(res, p3Name, p3Type);
+            res = GetNodeContructorParam(res, p4Name, p4Type);
+            res = GetNodeContructorParam(res, p5Name, p5Type);
+            res = GetNodeContructorParam(res, p6Name, p6Type);
+            return res;
+        }
+
+        private string GetAllNodeCopyFields()
+        {
+            string res = "";
+            res += GetNodeCopyField(p1Name);
+            res += GetNodeCopyField(p2Name);
+            res += GetNodeCopyField(p3Name);
+            res += GetNodeCopyField(p4Name);
+            res += GetNodeCopyField(p5Name);
+            res += GetNodeCopyField(p6Name);
+            return res;
+        }
+
+        private string GetAllNodeFields()
+        {
+            string res = "";
+            res += GetNodeField(p1Name);
+            res += GetNodeField(p2Name);
+            res += GetNodeField(p3Name);
+            res += GetNodeField(p4Name);
+            res += GetNodeField(p5Name);
+            res += GetNodeField(p6Name);
+            return res;
+        }
+
         private string GetControls(string name)
         {
             string res = "";
-            if (name != null && name  != "")
+            if (name != null && name != "")
             {
                 name = name.ToUpper().Substring(0, 1) + name.Substring(1);
                 res = ctrString.Replace("<pName>", name);
@@ -1005,18 +1013,54 @@ public <pType> <PName>
             }
             return res;
         }
-        private string GetNodeContructorParam(string res, string name, string t)
+
+        private string GetEvalExpression(string res, string name)
         {
             if (name != null && name != "")
             {
                 if (res != "")
                 {
-                    res += ", ";
+                    res += " &&";
                 }
-                res += "ExpressionNode " + LowName(name);
+                res += "\n               EvalExpression(" + LowName(name) + "Exp, ref val" + name + @", """ + name + @""", """ + ToolName + @""") ";
             }
             return res;
         }
+
+        private string GetEvalExpressions()
+        {
+            string res = "";
+            res = GetEvalExpression(res, P1Name);
+            res = GetEvalExpression(res, P2Name);
+            res = GetEvalExpression(res, P3Name);
+            res = GetEvalExpression(res, P4Name);
+            res = GetEvalExpression(res, P5Name);
+            res = GetEvalExpression(res, P6Name);
+            return res;
+        }
+
+        private string GetExeValueField(string n, string t)
+        {
+            string res = "";
+            if (n != null && n != "")
+            {
+                res = "                " + t + " val" + n + ";\n";
+            }
+            return res;
+        }
+
+        private string GetExeValueFields()
+        {
+            string res = "";
+            res += GetExeValueField(p1Name, p1Type);
+            res += GetExeValueField(p2Name, p2Type);
+            res += GetExeValueField(p3Name, p3Type);
+            res += GetExeValueField(p4Name, p4Type);
+            res += GetExeValueField(p5Name, p5Type);
+            res += GetExeValueField(p6Name, p6Type);
+            return res;
+        }
+
         private string GetField(string name, string t)
         {
             string res = "";
@@ -1061,6 +1105,31 @@ public <pType> <PName>
             return res;
         }
 
+        private string GetMakerNodeParam(string res, string name)
+        {
+            if (name != null && name != "")
+            {
+                if (res != "")
+                {
+                    res += ", ";
+                }
+                res += "val" + name;
+            }
+            return res;
+        }
+
+        private string GetMakerNodeParams()
+        {
+            string res = "";
+            res = GetMakerNodeParam(res, P1Name);
+            res = GetMakerNodeParam(res, P2Name);
+            res = GetMakerNodeParam(res, P3Name);
+            res = GetMakerNodeParam(res, P4Name);
+            res = GetMakerNodeParam(res, P5Name);
+            res = GetMakerNodeParam(res, P6Name);
+            return res;
+        }
+
         private string GetMakerParams()
         {
             String res = "";
@@ -1070,6 +1139,137 @@ public <pType> <PName>
             res = AddParam(res, P4Name);
             res = AddParam(res, P5Name);
             res = AddParam(res, P6Name);
+            return res;
+        }
+
+        private string GetNodeContructorParam(string res, string name, string t)
+        {
+            if (name != null && name != "")
+            {
+                if (res != "")
+                {
+                    res += ", ";
+                }
+                res += "ExpressionNode " + LowName(name);
+            }
+            return res;
+        }
+
+        private string GetNodeCopyField(string p1Name)
+        {
+            string res = "";
+            if (p1Name != null && p1Name != "")
+            {
+                res = "          this." + LowName(p1Name) + "Exp = " + LowName(p1Name) + " ;\n";
+            }
+            return res;
+        }
+
+        private string GetNodeField(string p1Name)
+        {
+            string res = "";
+            if (p1Name != null && p1Name != "")
+            {
+                res = "        private ExpressionNode " + LowName(p1Name) + "Exp ;\n";
+            }
+            return res;
+        }
+
+        private string GetPlainTextParam(string res, string name)
+        {
+            if (name != null && name != "")
+            {
+                res += "\n        result += " + LowName(name) + @"Exp.ToString()+"", "";";
+            }
+            return res;
+        }
+
+        private string GetPlainTextParams()
+        {
+            string res = "";
+            res = GetPlainTextParam(res, P1Name);
+            res = GetPlainTextParam(res, P2Name);
+            res = GetPlainTextParam(res, P3Name);
+            res = GetPlainTextParam(res, P4Name);
+            res = GetPlainTextParam(res, P5Name);
+            res = GetPlainTextParam(res, P6Name);
+            int index = res.LastIndexOf(@"+"", """);
+            if (index > -1)
+            {
+                res = res.Substring(0, index);
+                res += ";";
+            }
+            return res;
+        }
+
+        private string GetRangeCheck(string n, string l, string m)
+        {
+            string res = "";
+            if (n != null && n != "")
+            {
+                if (l != null && l != "")
+                {
+                    if (m != null && m != "")
+                    {
+                        res = rchklh;
+                        res = res.Replace("<pMin>", l);
+                        res = res.Replace("<pMax>", m);
+                    }
+                    else
+                    {
+                        res = rchkl;
+                        res = res.Replace("<pMin>", l);
+                    }
+                }
+                else
+                {
+                    if (m != null && m != "")
+                    {
+                        res = rchkh;
+                        res = res.Replace("<pMax>", m);
+                    }
+                }
+            }
+            res = res.Replace("<pName>", n);
+            return res;
+        }
+
+        private string GetRangeChecks()
+        {
+            string res = "";
+            res += GetRangeCheck(P1Name, p1Min, p1Max);
+            res += GetRangeCheck(P2Name, p2Min, p2Max);
+            res += GetRangeCheck(P3Name, p3Min, p3Max);
+            res += GetRangeCheck(P4Name, p4Min, p4Max);
+            res += GetRangeCheck(P5Name, p5Min, p5Max);
+            res += GetRangeCheck(P6Name, p6Min, p6Max);
+            return res;
+        }
+
+        private string GetRichTextParam(string res, string name)
+        {
+            if (name != null && name != "")
+            {
+                res += "\n        result += " + LowName(name) + @"Exp.ToRichText()+"", "";";
+            }
+            return res;
+        }
+
+        private string GetRichTextParams()
+        {
+            string res = "";
+            res = GetRichTextParam(res, P1Name);
+            res = GetRichTextParam(res, P2Name);
+            res = GetRichTextParam(res, P3Name);
+            res = GetRichTextParam(res, P4Name);
+            res = GetRichTextParam(res, P5Name);
+            res = GetRichTextParam(res, P6Name);
+            int index = res.LastIndexOf(@"+"", """);
+            if (index > -1)
+            {
+                res = res.Substring(0, index);
+                res += ";";
+            }
             return res;
         }
 
@@ -1098,7 +1298,6 @@ EditorParameters.Save(""" + s + @"""," + s + ".ToString());";
 
         private string LowName(string name)
         {
-
             string res = "";
             if (name != null && name != "")
             {
@@ -1115,25 +1314,40 @@ EditorParameters.Save(""" + s + @"""," + s + ".ToString());";
             parameterTypes.Add("int");
             parameterTypes.Add("bool");
             NotifyPropertyChanged("ParameterTypes");
+            P1Name = "";
             P1Max = "10";
             P1Min = "0";
             P1Type = "double";
+
+            P2Name = "";
             P2Max = "10";
             P2Min = "0";
             P2Type = "double";
+
+            P3Name = "";
             P3Max = "10";
             P3Min = "0";
             P3Type = "double";
+
+            P4Name = "";
             P4Max = "10";
             P4Min = "0";
             P4Type = "double";
+
+            P5Name = "";
             P5Max = "10";
             P5Min = "0";
             P5Type = "double";
+
+            P6Name = "";
             P6Max = "10";
             P6Min = "0";
             P6Type = "double";
             ExportPath = Properties.Settings.Default.lastExportPath;
+            if (exportPath.Trim() == "")
+            {
+                ExportPath = "C:\\tmp";
+            }
         }
     }
 }

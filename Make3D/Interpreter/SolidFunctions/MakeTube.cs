@@ -44,12 +44,12 @@ namespace ScriptLanguage
             double sweep = 0;
             double h = 0;
 
-            if (EvalExpression(radiusExp, ref r, "Radius") &&
-                EvalExpression(thicknessExp, ref th, "Thickness") &&
-                EvalExpression(heightExp, ref h, "Height") &&
-                 EvalExpression(upperBevelExp, ref upper, "UpperBevel") &&
-                  EvalExpression(lowerBevelExp, ref lower, "LowerBevel") &&
-                  EvalExpression(sweepExp, ref sweep, "SweepAngle")
+            if (EvalExpression(radiusExp, ref r, "Radius", "MakeTube") &&
+                EvalExpression(thicknessExp, ref th, "Thickness", "MakeTube") &&
+                EvalExpression(heightExp, ref h, "Height", "MakeTube") &&
+                 EvalExpression(upperBevelExp, ref upper, "UpperBevel", "MakeTube") &&
+                  EvalExpression(lowerBevelExp, ref lower, "LowerBevel", "MakeTube") &&
+                  EvalExpression(sweepExp, ref sweep, "SweepAngle", "MakeTube")
                 )
             {
                 if (r > 0 && th > 0 && upper >= 0 && lower >= 0 && h > 0 && upper + lower <= h)
@@ -108,34 +108,6 @@ namespace ScriptLanguage
             result += heightExp.ToString() + ", ";
             result += sweepExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeTube : " + v + " expression error");
-            }
             return result;
         }
     }

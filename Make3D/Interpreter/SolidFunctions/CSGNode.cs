@@ -35,8 +35,8 @@ namespace ScriptLanguage
             int ls = -1;
             int rs = -1;
 
-            if (EvalExpression(leftSolid, ref ls, "LeftSolid") &&
-                EvalExpression(rightSolid, ref rs, "RightSolid"))
+            if (EvalExpression(leftSolid, ref ls, "LeftSolid", Id()) &&
+                EvalExpression(rightSolid, ref rs, "RightSolid", Id()))
             {
                 if (ls >= 0 && ls < Script.ResultArtefacts.Count && rs >= 0 && rs < Script.ResultArtefacts.Count)
                 {
@@ -111,34 +111,6 @@ namespace ScriptLanguage
             result += leftSolid.ToString() + ", ";
             result += rightSolid.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref int x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    if (sti.MyType == StackItem.ItemType.sldval)
-                    {
-                        x = sti.SolidValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry(Id() + " : " + v + " expression error");
-            }
             return result;
         }
 

@@ -9,11 +9,11 @@ namespace ScriptLanguage
 {
     internal class MakeSquaredStadiumNode : ExpressionNode
     {
+        private ExpressionNode endLength;
         private ExpressionNode gapExp;
         private ExpressionNode heightExp;
-        private ExpressionNode radiusExp;
-        private ExpressionNode endLength;
         private ExpressionNode overRunExp;
+        private ExpressionNode radiusExp;
 
         public MakeSquaredStadiumNode()
         {
@@ -42,16 +42,15 @@ namespace ScriptLanguage
             double g = 0;
             double h = 0;
 
-            if (EvalExpression(radiusExp, ref r, "Radius") &&
-                EvalExpression(endLength, ref el, "EndSize") &&
-                EvalExpression(heightExp, ref h, "Height") &&
-                EvalExpression(overRunExp, ref ov, "OverRun") &&
-                EvalExpression(gapExp, ref g, "Gap")
+            if (EvalExpression(radiusExp, ref r, "Radius", "MakeSquaredStadium") &&
+                EvalExpression(endLength, ref el, "EndSize", "MakeSquaredStadium") &&
+                EvalExpression(heightExp, ref h, "Height", "MakeSquaredStadium") &&
+                EvalExpression(overRunExp, ref ov, "OverRun", "MakeSquaredStadium") &&
+                EvalExpression(gapExp, ref g, "Gap", "MakeSquaredStadium")
                 )
             {
                 if (r > 0 && h > 0 && el > 0 && g >= 0 && ov >= 0)
-                { 
-                                
+                {
                     result = true;
 
                     Object3D obj = new Object3D();
@@ -61,7 +60,7 @@ namespace ScriptLanguage
                     obj.Scale = new Scale3D(20, 20, 20);
 
                     obj.Position = new Point3D(0, 0, 0);
-                    SquaredStadiumMaker stadiumMaker = new SquaredStadiumMaker(r,g,el,h,ov);
+                    SquaredStadiumMaker stadiumMaker = new SquaredStadiumMaker(r, g, el, h, ov);
                     Point3DCollection tmp = new Point3DCollection(); ;
                     stadiumMaker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -104,34 +103,6 @@ namespace ScriptLanguage
             result += heightExp.ToString() + ", ";
             result += overRunExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeSquaredStadium : " + v + " expression error");
-            }
             return result;
         }
     }

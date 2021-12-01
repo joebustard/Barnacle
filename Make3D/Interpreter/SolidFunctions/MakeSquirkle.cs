@@ -9,14 +9,13 @@ namespace ScriptLanguage
 {
     internal class MakeSquirkleNode : ExpressionNode
     {
-        private ExpressionNode lengthExp;
-        private ExpressionNode heightExp;
-        private ExpressionNode depthExp;
-
-        private ExpressionNode tlExp;
-        private ExpressionNode trExp;
         private ExpressionNode blExp;
         private ExpressionNode brExp;
+        private ExpressionNode depthExp;
+        private ExpressionNode heightExp;
+        private ExpressionNode lengthExp;
+        private ExpressionNode tlExp;
+        private ExpressionNode trExp;
 
         public MakeSquirkleNode()
         {
@@ -50,20 +49,20 @@ namespace ScriptLanguage
             double height = 0;
             double depth = 0;
 
-            if (EvalExpression(tlExp, ref tlc, "Topleft") &&
-                EvalExpression(trExp, ref trc, "Topright") &&
-                EvalExpression(blExp, ref blc, "Bottomleft") &&
-                EvalExpression(brExp, ref brc, "BottomRight") &&
+            if (EvalExpression(tlExp, ref tlc, "Topleft", "MakeSquirkle") &&
+                EvalExpression(trExp, ref trc, "Topright", "MakeSquirkle") &&
+                EvalExpression(blExp, ref blc, "Bottomleft", "MakeSquirkle") &&
+                EvalExpression(brExp, ref brc, "BottomRight", "MakeSquirkle") &&
 
-                EvalExpression(heightExp, ref length, "Length") &&
-                EvalExpression(lengthExp, ref height, "Height") &&
-                EvalExpression(depthExp, ref depth, "Width")
+                EvalExpression(heightExp, ref length, "Length", "MakeSquirkle") &&
+                EvalExpression(lengthExp, ref height, "Height", "MakeSquirkle") &&
+                EvalExpression(depthExp, ref depth, "Width", "MakeSquirkle")
                 )
             {
-                if ( CheckCode(tlc, "Topleft") &&
+                if (CheckCode(tlc, "Topleft") &&
                    CheckCode(trc, "Topright") &&
                    CheckCode(blc, "Bottomleft") &&
-                   CheckCode(brc, "BottomRight")  && length > 0 && height > 0 && depth > 0)
+                   CheckCode(brc, "BottomRight") && length > 0 && height > 0 && depth > 0)
                 {
                     result = true;
 
@@ -75,7 +74,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    SquirkleMaker maker = new SquirkleMaker(tlc, trc, blc, brc,  length, height, depth);
+                    SquirkleMaker maker = new SquirkleMaker(tlc, trc, blc, brc, length, height, depth);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -92,17 +91,6 @@ namespace ScriptLanguage
             }
 
             return result;
-        }
-
-        private bool CheckCode(int c, string v)
-        {
-            bool res = true;
-            if ( c<0 || c>2)
-            {
-                res = false;
-                Log.Instance().AddEntry("MakeSquirkle : Illegal corner value :"+v+" should be 0,1 or 2");
-            }
-            return res;
         }
 
         /// Returns a String representation of this node that can be used for
@@ -133,90 +121,21 @@ namespace ScriptLanguage
             result += blExp.ToString() + ", ";
             result += brExp.ToString() + ", ";
             result += lengthExp.ToString() + ", ";
-            result += heightExp.ToString()+", ";
+            result += heightExp.ToString() + ", ";
             result += depthExp.ToString();
             result += " )";
             return result;
         }
 
-        private bool EvalExpression(ExpressionNode exp, ref int x, string v)
+        private bool CheckCode(int c, string v)
         {
-            bool result = exp.Execute();
-            if (result)
+            bool res = true;
+            if (c < 0 || c > 2)
             {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = (int) sti.DoubleValue;
-                        result = true;
-                    }
-                }
+                res = false;
+                Log.Instance().AddEntry("MakeSquirkle : Illegal corner value :" + v + " should be 0,1 or 2");
             }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeSquirkle : " + v + " expression error");
-            }
-            return result;
-        }
-
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeSquirkle : " + v + " expression error");
-            }
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref bool x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.bval)
-                    {
-                        x = sti.BooleanValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeSquirkle : " + v + " expression error");
-            }
-            return result;
+            return res;
         }
     }
 }

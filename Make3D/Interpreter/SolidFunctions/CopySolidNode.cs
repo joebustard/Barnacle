@@ -18,11 +18,7 @@ namespace ScriptLanguage
         public CopySolidNode(ExpressionNode ls) : base(ls)
         {
             this.solid = ls;
-
-            
         }
-
- 
 
         /// Execute this node
         /// returning false terminates the application
@@ -33,7 +29,7 @@ namespace ScriptLanguage
 
             int ls = -1;
 
-            if (EvalExpression(solid, ref ls))
+            if (EvalExpression(solid, ref ls, "Solid Id", "Copy"))
             {
                 Object3D src = Script.ResultArtefacts[ls];
 
@@ -43,9 +39,9 @@ namespace ScriptLanguage
                     Object3D clone = src.Clone();
                     clone.CalcScale(false);
                     clone.Remesh();
-                    
+
                     Script.ResultArtefacts.Add(clone);
-                    ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count-1);
+                    ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
                     result = true;
                 }
             }
@@ -72,35 +68,5 @@ namespace ScriptLanguage
             result += " )";
             return result;
         }
-
-        private bool EvalExpression(ExpressionNode exp, ref int x)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    if (sti.MyType == StackItem.ItemType.sldval)
-                    {
-                        x = sti.SolidValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry(" Copy :  expression error");
-            }
-            return result;
-        }
-
-      
     }
 }

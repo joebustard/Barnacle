@@ -42,11 +42,11 @@ namespace ScriptLanguage
             double lb = 0;
             double b = 0;
 
-            if (EvalExpression(bottomLengthExp, ref lb, "BottomLength") &&
-                EvalExpression(bevelExp, ref b, "Bevel") &&
-                EvalExpression(heightExp, ref h, "Height") &&
-                EvalExpression(widthExp, ref w, "Width") &&
-                EvalExpression(topLengthExp, ref lt, "TopLength")
+            if (EvalExpression(bottomLengthExp, ref lb, "BottomLength", "MakeTrapezoid") &&
+                EvalExpression(bevelExp, ref b, "Bevel", "MakeTrapezoid") &&
+                EvalExpression(heightExp, ref h, "Height", "MakeTrapezoid") &&
+                EvalExpression(widthExp, ref w, "Width", "MakeTrapezoid") &&
+                EvalExpression(topLengthExp, ref lt, "TopLength", "MakeTrapezoid")
                 )
             {
                 if (lt > 0 && w > 0 && h > 0 && lb > 0 && b >= 0)
@@ -108,57 +108,6 @@ namespace ScriptLanguage
 
             result += bevelExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeTrapezoid : " + v + " expression error");
-            }
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref bool x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.bval)
-                    {
-                        x = sti.BooleanValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeTrapezoid : " + v + " expression error");
-            }
             return result;
         }
     }

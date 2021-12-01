@@ -35,9 +35,9 @@ namespace ScriptLanguage
             double[] coords = null;
             double h = 0;
             double wt = 0;
-            if (EvalExpression(heightExp, ref h, "Height") &&
-                EvalExpression(wallThicknessExp, ref wt, "WallThickness") &&
-                 EvalExpression(pointArrayExp, ref coords, "PointArray"))
+            if (EvalExpression(heightExp, ref h, "Height", label) &&
+                EvalExpression(wallThicknessExp, ref wt, "WallThickness", label) &&
+                 EvalExpression(pointArrayExp, ref coords, "PointArray", label))
             {
                 if (coords != null && coords.GetLength(0) >= 6 && h > 0)
                 {
@@ -94,66 +94,6 @@ namespace ScriptLanguage
             result += wallThicknessExp.ToString();
             result += " )";
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry($"{label} : " + v + " expression error");
-            }
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double[] x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.arrayval)
-                    {
-                        if ((sti.ObjectValue as ArraySymbol).SymbolType == SymbolTable.SymbolType.doublearrayvariable)
-                        {
-                            object[] tmp = (sti.ObjectValue as ArraySymbol).Array.GetAll();
-                            x = new double[tmp.Length];
-                            for (int i = 0; i < tmp.Length; i++)
-                            {
-                                x[i] = (double)tmp[i];
-                            }
-                            result = true;
-                        }
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeTube : " + v + " expression error");
-            }
             return result;
         }
     }

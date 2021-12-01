@@ -42,11 +42,11 @@ namespace ScriptLanguage
             double a = 0;
             double b = 0;
 
-            if (EvalExpression(angleExp, ref a, "Angle") &&
-                EvalExpression(bevelExp, ref b, "Bevel") &&
-                EvalExpression(heightExp, ref h, "Height") &&
-                EvalExpression(widthExp, ref w, "Width") &&
-                EvalExpression(lengthExp, ref l, "Length")
+            if (EvalExpression(angleExp, ref a, "Angle", "MakeParallelogram") &&
+                EvalExpression(bevelExp, ref b, "Bevel", "MakeParallelogram") &&
+                EvalExpression(heightExp, ref h, "Height", "MakeParallelogram") &&
+                EvalExpression(widthExp, ref w, "Width", "MakeParallelogram") &&
+                EvalExpression(lengthExp, ref l, "Length", "MakeParallelogram")
                 )
             {
                 if (l > 0 && w > 0 && h > 0 && a > 0 && a < 90 && b >= 0)
@@ -106,57 +106,6 @@ namespace ScriptLanguage
             result += angleExp.ToString() + ", ";
             result += bevelExp.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref double x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    else if (sti.MyType == StackItem.ItemType.dval)
-                    {
-                        x = sti.DoubleValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeParallelogram : " + v + " expression error");
-            }
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref bool x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.bval)
-                    {
-                        x = sti.BooleanValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry("MakeParallelogram : " + v + " expression error");
-            }
             return result;
         }
     }

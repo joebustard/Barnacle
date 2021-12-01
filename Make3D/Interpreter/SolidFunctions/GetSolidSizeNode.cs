@@ -33,7 +33,7 @@ namespace ScriptLanguage
 
             int ls = -1;
 
-            if (EvalExpression(solid, ref ls, "Solid") && PrimType != null && PrimType != "")
+            if (EvalExpression(solid, ref ls, "Solid", Id()) && PrimType != null && PrimType != "")
             {
                 Object3D leftie = Script.ResultArtefacts[ls];
 
@@ -72,34 +72,6 @@ namespace ScriptLanguage
             String result = Id() + "( ";
             result += solid.ToString();
             result += " )";
-            return result;
-        }
-
-        private bool EvalExpression(ExpressionNode exp, ref int x, string v)
-        {
-            bool result = exp.Execute();
-            if (result)
-            {
-                result = false;
-                StackItem sti = ExecutionStack.Instance().Pull();
-                if (sti != null)
-                {
-                    if (sti.MyType == StackItem.ItemType.ival)
-                    {
-                        x = sti.IntValue;
-                        result = true;
-                    }
-                    if (sti.MyType == StackItem.ItemType.sldval)
-                    {
-                        x = sti.SolidValue;
-                        result = true;
-                    }
-                }
-            }
-            if (!result)
-            {
-                Log.Instance().AddEntry(Id() + " : " + v + " expression error");
-            }
             return result;
         }
 
