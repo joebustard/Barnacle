@@ -120,6 +120,10 @@ namespace Barnacle.Models
                 case "BezierSurface":
                     res = new BezierSurfaceDlg();
                     break;
+
+                case "Pulley":
+                    res = new PulleyDlg();
+                    break;
             }
             return res;
         }

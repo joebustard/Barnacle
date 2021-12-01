@@ -30,10 +30,30 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="1" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="120">Main Radius</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding MainRadius}" Width="150" />
+            </StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="120">Main Thickness</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding MainThickness}" Width="150" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="120">Extra Rim Radius</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding ExtraRimRadius}" Width="150" />
+            </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="120">Extra Rim Thickness</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding ExtraRimThickness}" Width="150" />
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="120">Groove Depth</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding GrooveDepth}" Width="150" />
+            </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="120">Axle Bore Radius</Label>
+                <TextBox Margin="8,2,0,0" Text="{Binding AxleBoreRadius}" Width="150" />
+            </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>

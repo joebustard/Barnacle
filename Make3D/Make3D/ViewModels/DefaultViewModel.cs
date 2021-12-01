@@ -1069,6 +1069,7 @@ namespace Barnacle.ViewModels
             vehicleToolsToShow = new List<ToolDef>();
             vehicleToolsToShow.Add(new ToolDef("Tank Track", true, "TankTrack", "Create a tank track by drawing overan external image."));
             vehicleToolsToShow.Add(new ToolDef("Wheel", true, "Wheel", "Create a variety of wheel designs."));
+            vehicleToolsToShow.Add(new ToolDef("Pulley", true, "Pulley", "Create a basic pulley wheel."));
             NotifyPropertyChanged("VehicleToolsToShow");
         }
 

@@ -781,9 +781,18 @@ public <pType> <PName>
             string saveParams = "";
             saveParams += GetSaveParams(p1Name);
             saveParams += GetSaveParams(p2Name);
+            saveParams += GetSaveParams(p3Name);
+            saveParams += GetSaveParams(p4Name);
+            saveParams += GetSaveParams(p5Name);
+            saveParams += GetSaveParams(p6Name);
+
             string loadParams = "";
             loadParams += GetLoadParams(p1Name, p1Type);
             loadParams += GetLoadParams(p2Name, p2Type);
+            loadParams += GetLoadParams(p2Name, p3Type);
+            loadParams += GetLoadParams(p2Name, p4Type);
+            loadParams += GetLoadParams(p2Name, p5Type);
+            loadParams += GetLoadParams(p2Name, p6Type);
             string p1Controls = GetControls(P1Name);
             string p2Controls = GetControls(P2Name);
             string p3Controls = GetControls(P3Name);
@@ -1022,7 +1031,7 @@ public <pType> <PName>
                 {
                     res += " &&";
                 }
-                res += "\n               EvalExpression(" + LowName(name) + "Exp, ref val" + name + @", """ + name + @""", """ + ToolName + @""") ";
+                res += "\n               EvalExpression(" + LowName(name) + "Exp, ref val" + name + @", """ + name + @""", ""Make" + ToolName + @""") ";
             }
             return res;
         }
@@ -1044,7 +1053,15 @@ public <pType> <PName>
             string res = "";
             if (n != null && n != "")
             {
-                res = "                " + t + " val" + n + ";\n";
+                res = "                " + t + " val" + n;
+                if (t == "double" || t == "int")
+                {
+                    res += "= 0;";
+                }
+                if (t == "bool")
+                {
+                    res += "= false;";
+                }
             }
             return res;
         }
@@ -1277,7 +1294,7 @@ public <pType> <PName>
         {
             string res;
             res = @"
-EditorParameters.Save(""" + s + @"""," + s + ".ToString());";
+EditorParameters.Set(""" + s + @"""," + s + ".ToString());";
             return res;
         }
 

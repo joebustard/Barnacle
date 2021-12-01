@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MakerLib;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -82,19 +83,19 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-	    MakeBlank(<MAKEPARAMETERS>,Vertices,Faces);
-        }
+            MakeBlank maker = MakeBlank(< MAKEPARAMETERS >);
+            maker.Generate(Vertices, Faces};
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-<LOADPARMETERS>
+< LOADPARMETERS >
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-<SAVEPARMETERS>
+< SAVEPARMETERS >
         }
 
         private void UpdateDisplay()

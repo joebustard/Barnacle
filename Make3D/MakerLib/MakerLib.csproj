@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
     <Compile Include="HollowPolyMaker.cs" />
+    <Compile Include="MakePulley.cs" />
     <Compile Include="MakerBase.cs" />
     <Compile Include="MakeSquirkle.cs" />
     <Compile Include="PGramMaker.cs" />
