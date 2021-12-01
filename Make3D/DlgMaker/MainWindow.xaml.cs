@@ -684,7 +684,7 @@ public <pType> <PName>
         private static string GenProp(string s, string t, string l, string h)
         {
             string res1 = "";
-            if (s != "")
+            if (s != null && s != "")
             {
                 string pName = s.ToLower().Substring(0, 1) + s.Substring(1);
                 string PName = s.ToUpper().Substring(0, 1) + s.Substring(1);
@@ -716,7 +716,7 @@ public <pType> <PName>
 
         private string AddParam(string res, string name)
         {
-            if (name != "")
+            if (name != null &&name != "")
             {
                 if (res != "")
                 {
@@ -842,12 +842,52 @@ public <pType> <PName>
 
                     CreateDialog(templateRoot, targetFolder);
                     CreateMaker(templateRoot, targetFolder);
+                    CreateInterpreterNode(templateRoot, targetFolder);
                 }
                 catch (Exception ex)
                 {
                     System.Windows.MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        private void CreateInterpreterNode(string templateRoot, string targetFolder)
+        {
+            string[] files = System.IO.Directory.GetFiles(templateRoot, "Node*.*");
+            string constructorParams = GetAllNodeConstructorParams();
+            string nodeFields = GetAllNodeFields();
+            string copyFields = GetAllNodeCopyFields();
+            string exeValueFields = GetExeValueFields();
+            foreach (string fn in files)
+            {
+                string targetName = fn.Replace(templateRoot, targetFolder);
+                targetName = targetName.Replace("Node", "Make"+ToolName+"Node");
+                StreamReader fin = new StreamReader(fn);
+                if (fin != null)
+                {
+                    StreamWriter fout = new StreamWriter(targetName);
+                    while (!fin.EndOfStream)
+                    {
+                        String l = fin.ReadLine();
+                        l = l.Replace("<TOOLNAME>", ToolName);
+                        l = l.Replace("<CONSTRUCTORPARAMETERS>", constructorParams);
+                        l = l.Replace("<NODEFIELDS>", nodeFields);
+                        l = l.Replace("<COPYFIELDS>", copyFields);
+                        l = l.Replace("<EXECUTIONVALUEDECLARATIONS>", exeValueFields);
+         
+                        fout.WriteLine(l);
+                    }
+                    fin.Close();
+                    fout.Close();
+                }
+            }
+        }
+
+        private string GetExeValueFields()
+        {
+            string res = "";
+
+            return res;
         }
 
         private string GetAllConstructorParams()
@@ -862,6 +902,61 @@ public <pType> <PName>
             return res;
         }
 
+        private string GetAllNodeConstructorParams()
+        {
+            string res = "";
+            res = GetNodeContructorParam(res, p1Name, p1Type);
+            res = GetNodeContructorParam(res, p2Name, p2Type);
+            res = GetNodeContructorParam(res, p3Name, p3Type);
+            res = GetNodeContructorParam(res, p4Name, p4Type);
+            res = GetNodeContructorParam(res, p5Name, p5Type);
+            res = GetNodeContructorParam(res, p6Name, p6Type);
+            return res;
+        }
+
+
+        private string GetAllNodeFields()
+        {
+            string res = "";
+            res += GetNodeField( p1Name);
+            res += GetNodeField(p2Name);
+            res += GetNodeField( p3Name);
+            res += GetNodeField( p4Name);
+            res += GetNodeField( p5Name);
+            res += GetNodeField( p6Name);
+            return res;
+        }
+        private string GetAllNodeCopyFields()
+        {
+            string res = "";
+            res += GetNodeCopyField(p1Name);
+            res += GetNodeCopyField(p2Name);
+            res += GetNodeCopyField(p3Name);
+            res += GetNodeCopyField(p4Name);
+            res += GetNodeCopyField(p5Name);
+            res += GetNodeCopyField(p6Name);
+            return res;
+        }
+
+        private string GetNodeField(string p1Name)
+        {
+            string res = "";
+            if (p1Name != null && p1Name != "")
+            {
+            res = "private ExpressionNode " + LowName(p1Name) + "Exp ;\n";
+            }
+            return res;
+        }
+
+        private string GetNodeCopyField(string p1Name)
+        {
+            string res = "";
+            if (p1Name != null && p1Name != "")
+            {
+                res = "          this." + LowName(p1Name) + "Exp = " + LowName(p1Name)+" ;\n";
+            }
+            return res;
+        }
         private string GetAllFieldCopies()
         {
             string res = "";
@@ -890,7 +985,7 @@ public <pType> <PName>
         private string GetControls(string name)
         {
             string res = "";
-            if (name != "")
+            if (name != null && name  != "")
             {
                 name = name.ToUpper().Substring(0, 1) + name.Substring(1);
                 res = ctrString.Replace("<pName>", name);
@@ -910,7 +1005,18 @@ public <pType> <PName>
             }
             return res;
         }
-
+        private string GetNodeContructorParam(string res, string name, string t)
+        {
+            if (name != null && name != "")
+            {
+                if (res != "")
+                {
+                    res += ", ";
+                }
+                res += "ExpressionNode " + LowName(name);
+            }
+            return res;
+        }
         private string GetField(string name, string t)
         {
             string res = "";
@@ -992,7 +1098,12 @@ EditorParameters.Save(""" + s + @"""," + s + ".ToString());";
 
         private string LowName(string name)
         {
-            string res = name.ToLower().Substring(0, 1) + name.Substring(1);
+
+            string res = "";
+            if (name != null && name != "")
+            {
+                res = name.ToLower().Substring(0, 1) + name.Substring(1);
+            }
             return res;
         }
 
