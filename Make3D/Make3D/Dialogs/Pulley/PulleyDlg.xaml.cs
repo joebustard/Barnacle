@@ -209,6 +209,7 @@ namespace Barnacle.Dialogs
             ClearShape();
             PulleyMaker maker = new PulleyMaker(mainRadius, mainThickness, extraRimRadius, extraRimThickness, grooveDepth, axleBoreRadius);
             maker.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -225,24 +226,24 @@ namespace Barnacle.Dialogs
                 MainThickness = EditorParameters.GetDouble("MainThickness");
             }
 
-            if (EditorParameters.Get("MainThickness") != "")
+            if (EditorParameters.Get("ExtraRimRadius") != "")
             {
-                MainThickness = EditorParameters.GetDouble("MainThickness");
+                MainThickness = EditorParameters.GetDouble("ExtraRimRadius");
             }
 
-            if (EditorParameters.Get("MainThickness") != "")
+            if (EditorParameters.Get("ExtraRimThickness") != "")
             {
-                MainThickness = EditorParameters.GetDouble("MainThickness");
+                MainThickness = EditorParameters.GetDouble("ExtraRimThickness");
             }
 
-            if (EditorParameters.Get("MainThickness") != "")
+            if (EditorParameters.Get("AxleBoreRadius") != "")
             {
-                MainThickness = EditorParameters.GetDouble("MainThickness");
+                MainThickness = EditorParameters.GetDouble("AxleBoreRadius");
             }
 
-            if (EditorParameters.Get("MainThickness") != "")
+            if (EditorParameters.Get("GrooveDepth") != "")
             {
-                MainThickness = EditorParameters.GetDouble("MainThickness");
+                MainThickness = EditorParameters.GetDouble("GrooveDepth");
             }
         }
 
@@ -266,6 +267,13 @@ namespace Barnacle.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            MainRadius = 10;
+            MainThickness = 4;
+            ExtraRimRadius = 2;
+            ExtraRimThickness = 1;
+            AxleBoreRadius = 2;
+            GrooveDepth = 2;
+
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();

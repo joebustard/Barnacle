@@ -789,10 +789,10 @@ public <pType> <PName>
             string loadParams = "";
             loadParams += GetLoadParams(p1Name, p1Type);
             loadParams += GetLoadParams(p2Name, p2Type);
-            loadParams += GetLoadParams(p2Name, p3Type);
-            loadParams += GetLoadParams(p2Name, p4Type);
-            loadParams += GetLoadParams(p2Name, p5Type);
-            loadParams += GetLoadParams(p2Name, p6Type);
+            loadParams += GetLoadParams(p3Name, p3Type);
+            loadParams += GetLoadParams(p4Name, p4Type);
+            loadParams += GetLoadParams(p5Name, p5Type);
+            loadParams += GetLoadParams(p6Name, p6Type);
             string p1Controls = GetControls(P1Name);
             string p2Controls = GetControls(P2Name);
             string p3Controls = GetControls(P3Name);
