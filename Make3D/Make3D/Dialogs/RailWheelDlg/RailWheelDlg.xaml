@@ -1,11 +1,11 @@
-﻿<local:BaseModellerDialog x:Class="Barnacle.Dialogs.BlankDlg"
+<local:BaseModellerDialog x:Class="Barnacle.Dialogs.RailWheelDlg"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="Blank" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Rail Wheel" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -31,28 +31,32 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <P1CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">MainRadius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding MainRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <P2CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">MainThickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding MainThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <P3CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">FlangeRadius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding FlangeRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <P4CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">FlangeThickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding FlangeThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <P5CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">HubRadius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding HubRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <P6CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">HubThickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding HubThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <P7CONTROLS>
-            </StackPanel>
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
-                <P8CONTROLS>
+                <Label VerticalAlignment="Center" Width="100">Axle Bore</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding AxleBoreRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />

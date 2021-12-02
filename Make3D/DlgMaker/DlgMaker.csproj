@@ -56,6 +56,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <None Include="templates\Parser.cs" />
     <None Include="templates\Node.cs" />
     <None Include="templates\Maker.cs" />
     <None Include="templates\Blank.xaml.cs" />

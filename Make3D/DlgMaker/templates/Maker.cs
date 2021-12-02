@@ -6,21 +6,21 @@ using System.Windows.Media.Media3D;
 
 namespace MakerLib
 {
-    public class <TOOL>Maker : MakerBase
+    public class //TOOLNAMEMaker : MakerBase
     {
-        <FIELDS>
+        //FIELDS
 
-        public <TOOL>Maker(<CONSTRUCTORPARAMS>)
+        public //TOOLNAMEMaker(//CONSTRUCTORPARAMS)
     {
-            < FIELDCOPY >
+            //FIELDCOPY
         }
 
-    public void Generate(Point3DCollection pnts, Int32Collection faces)
-    {
-        pnts.Clear();
-        faces.Clear();
-        Vertices = pnts;
-        Faces = faces;
-    }
+public void Generate(Point3DCollection pnts, Int32Collection faces)
+{
+    pnts.Clear();
+    faces.Clear();
+    Vertices = pnts;
+    Faces = faces;
+}
 }
 }

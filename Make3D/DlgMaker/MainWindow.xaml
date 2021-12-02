@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DlgMaker"
         mc:Ignorable="d"
-        Title="Tool Dialog Maker" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="Tool Dialog Maker" Height="500" Width="800" Loaded="Window_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
@@ -15,6 +15,8 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="10" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="1*" />
@@ -92,7 +94,28 @@
             <Label Width="40" Margin="8,0,0,0">Max</Label>
             <TextBox Text="{Binding P6Max}" Width="100" Margin="8,0,0,0" />
         </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="11" Grid.Column="1"  Grid.ColumnSpan="2">
+            <TextBox Text="{Binding P7Name}" Width="150" Margin="8,0,0,0" />
+            <ComboBox SelectedItem="{Binding P7Type}" ItemsSource="{Binding ParameterTypes}" Width="150" />
+            <Label Width="40" Margin="8,0,0,0">Min</Label>
+            <TextBox Text="{Binding P7Min}" Width="100" Margin="8,0,0,0" />
+            <Label Width="40" Margin="8,0,0,0">Max</Label>
+            <TextBox Text="{Binding P7Max}" Width="100" Margin="8,0,0,0" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Grid.Row="12" Grid.Column="1"  Grid.ColumnSpan="2">
+            <TextBox Text="{Binding P8Name}" Width="150" Margin="8,0,0,0" />
+            <ComboBox SelectedItem="{Binding P8Type}" ItemsSource="{Binding ParameterTypes}" Width="150" />
+            <Label Width="40" Margin="8,0,0,0">Min</Label>
+            <TextBox Text="{Binding P8Min}" Width="100" Margin="8,0,0,0" />
+            <Label Width="40" Margin="8,0,0,0">Max</Label>
+            <TextBox Text="{Binding P8Max}" Width="100" Margin="8,0,0,0" />
+        </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2">
+            <Label Width="80" VerticalAlignment="Center">Export To</Label>
+            <TextBox Width="250" Text="{Binding ExportPath}" />
+            <Button Width="30" Click="Button_Click">...</Button>
+        </StackPanel>
+           <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="2">
             <Label Width="80" VerticalAlignment="Center">Export To</Label>
             <TextBox Width="250" Text="{Binding ExportPath}" />
             <Button Width="30" Click="Button_Click">...</Button>
@@ -104,7 +127,7 @@
         <StackPanel Orientation="Horizontal" Grid.Row="4" Grid.Column="2">
         </StackPanel>
 
-        <UniformGrid Grid.Row="12" Grid.Column="2" Columns="2">
+        <UniformGrid Grid.Row="14" Grid.Column="2" Columns="2">
             <Button Content="Generate" Click="GenerateClicked" Width="80" />
             <Button Content="Close" Click="CloseClicked" Width="80" />
         </UniformGrid>

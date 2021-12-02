@@ -48,8 +48,10 @@
     <Compile Include="BicornMaker.cs" />
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="MakePulley.cs" />
+    <Compile Include="MakeRailWheel.cs" />
     <Compile Include="MakerBase.cs" />
     <Compile Include="MakeSquirkle.cs" />
+    <Compile Include="MakeWagonWheel.cs" />
     <Compile Include="PGramMaker.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="SquaredStadiumMaker.cs" />

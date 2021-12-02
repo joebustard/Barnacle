@@ -178,6 +178,9 @@
     <Compile Include="Dialogs\Pulley\PulleyDlg.xaml.cs">
       <DependentUpon>PulleyDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\RailWheelDlg\RailWheelDlg.xaml.cs">
+      <DependentUpon>RailWheelDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RefernceModel.xaml.cs">
       <DependentUpon>RefernceModel.xaml</DependentUpon>
     </Compile>
@@ -235,6 +238,9 @@
     </Compile>
     <Compile Include="Dialogs\Turbofan\TurboFan.xaml.cs">
       <DependentUpon>TurboFan.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\WagonWheelDlg\WagonWheelDlg.xaml.cs">
+      <DependentUpon>WagonWheelDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Wheel\Wheel.xaml.cs">
       <DependentUpon>Wheel.xaml</DependentUpon>
@@ -453,6 +459,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\RailWheelDlg\RailWheelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\RefernceModel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -528,6 +538,10 @@
     <Page Include="Dialogs\Turbofan\TurboFan.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\WagonWheelDlg\WagonWheelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Wheel\Wheel.xaml">
       <SubType>Designer</SubType>

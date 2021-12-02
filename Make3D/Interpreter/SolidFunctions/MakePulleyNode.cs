@@ -26,6 +26,19 @@ namespace ScriptLanguage
             this.axleBoreRadiusExp = axleBoreRadius;
         }
 
+        public MakePulleyNode(ExpressionCollection exprs)
+        {
+            if (exprs != null && exprs.Count() == 6)
+            {
+                this.mainRadiusExp = exprs.Get(0);
+                this.mainThicknessExp = exprs.Get(1);
+                this.extraRimRadiusExp = exprs.Get(2);
+                this.extraRimThicknessExp = exprs.Get(3);
+                this.grooveDepthExp = exprs.Get(4);
+                this.axleBoreRadiusExp = exprs.Get(5);
+            }
+        }
+
         /// Execute this node
         /// returning false terminates the application
         ///

@@ -7,13 +7,18 @@ using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
-    internal class Make<TOOLNAME>Node : ExpressionNode
+    internal class Make//TOOLNAMENode : ExpressionNode
     {
-//NODEFIELDS
+        //NODEFIELDS
 
         public Make//TOOLNAMENode(//CONSTRUCTORPARAMETERS)
     {
         //COPYFIELDS
+    }
+
+    public Make//TOOLNAMENode(ExpressionCollection coll)
+    {
+        //COPYCOLLFIELDS
     }
 
 /// Execute this node
@@ -44,7 +49,7 @@ public override bool Execute()
 
             obj.Position = new Point3D(0, 0, 0);
             Point3DCollection tmp = new Point3DCollection();
-            Maker<TOOLNAME> maker = new Maker<TOOLNAME>(//MAKERPARAMS);
+            //TOOLNAMEMaker maker = new //TOOLNAMEMaker(//MAKERPARAMS);
 
             maker.Generate(tmp, obj.TriangleIndices);
             PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

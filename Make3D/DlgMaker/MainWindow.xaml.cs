@@ -149,7 +149,7 @@ public <pType> <PName>
         private static string rchkh = @"
             if (val<pName> > <pMax> )
             {
-                Log.Instance().AddEntry(""Make<ToolName> : <pName> value > max (<pMax>)"");
+                Log.Instance().AddEntry(""Make//ToolName : <pName> value > max (<pMax>)"");
                 inRange= false;
             }
 ";
@@ -157,7 +157,7 @@ public <pType> <PName>
         private static string rchkl = @"
             if (val<pName> < <pMin> )
             {
-                Log.Instance().AddEntry(""Make<ToolName> : <pName> value < min (<pMin>)"");
+                Log.Instance().AddEntry(""Make//TOOLNAME: <pName> value < min (<pMin>)"");
                 inRange= false;
             }
 ";
@@ -165,7 +165,7 @@ public <pType> <PName>
         private static string rchklh = @"
             if (val<pName> < <pMin> || val<pName> > <pMax> )
             {
-                Log.Instance().AddEntry(""Make<ToolName> : <pName> value out of range (<pMin>..<pMax>)"");
+                Log.Instance().AddEntry(""Make//TOOLNAME : <pName> value out of range (<pMin>..<pMax>)"");
                 inRange= false;
             }
 ";
@@ -212,6 +212,20 @@ public <pType> <PName>
         private String p6Min;
         private String p6Name;
         private String p6Type;
+
+        //
+        private String p7Max;
+
+        private String p7Min;
+        private String p7Name;
+        private String p7Type;
+
+        //
+        private String p8Max;
+
+        private String p8Min;
+        private String p8Name;
+        private String p8Type;
 
         //
         private List<String> parameterTypes;
@@ -663,6 +677,134 @@ public <pType> <PName>
         }
 
         //
+        public String P7Max
+        {
+            get
+            {
+                return p7Max;
+            }
+            set
+            {
+                if (p7Max != value)
+                {
+                    p7Max = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P7Min
+        {
+            get
+            {
+                return p7Min;
+            }
+            set
+            {
+                if (p7Min != value)
+                {
+                    p7Min = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P7Name
+        {
+            get
+            {
+                return p7Name;
+            }
+            set
+            {
+                if (p7Name != value)
+                {
+                    p7Name = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P7Type
+        {
+            get
+            {
+                return p7Type;
+            }
+            set
+            {
+                if (p7Type != value)
+                {
+                    p7Type = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P8Max
+        {
+            get
+            {
+                return p8Max;
+            }
+            set
+            {
+                if (p8Max != value)
+                {
+                    p8Max = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P8Min
+        {
+            get
+            {
+                return p8Min;
+            }
+            set
+            {
+                if (p8Min != value)
+                {
+                    p8Min = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P8Name
+        {
+            get
+            {
+                return p8Name;
+            }
+            set
+            {
+                if (p8Name != value)
+                {
+                    p8Name = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P8Type
+        {
+            get
+            {
+                return p8Type;
+            }
+            set
+            {
+                if (p8Type != value)
+                {
+                    p8Type = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public List<String> ParameterTypes
         {
             get
@@ -785,6 +927,8 @@ public <pType> <PName>
             saveParams += GetSaveParams(p4Name);
             saveParams += GetSaveParams(p5Name);
             saveParams += GetSaveParams(p6Name);
+            saveParams += GetSaveParams(p7Name);
+            saveParams += GetSaveParams(p8Name);
 
             string loadParams = "";
             loadParams += GetLoadParams(p1Name, p1Type);
@@ -793,12 +937,16 @@ public <pType> <PName>
             loadParams += GetLoadParams(p4Name, p4Type);
             loadParams += GetLoadParams(p5Name, p5Type);
             loadParams += GetLoadParams(p6Name, p6Type);
+            loadParams += GetLoadParams(p7Name, p7Type);
+            loadParams += GetLoadParams(p8Name, p8Type);
             string p1Controls = GetControls(P1Name);
             string p2Controls = GetControls(P2Name);
             string p3Controls = GetControls(P3Name);
             string p4Controls = GetControls(P4Name);
             string p5Controls = GetControls(P5Name);
             string p6Controls = GetControls(P6Name);
+            string p7Controls = GetControls(P7Name);
+            string p8Controls = GetControls(P8Name);
 
             System.IO.Directory.CreateDirectory(targetFolder);
             string[] files = System.IO.Directory.GetFiles(templateRoot, "Blank*.*");
@@ -814,16 +962,18 @@ public <pType> <PName>
                     {
                         String l = fin.ReadLine();
                         l = l.Replace("Blank", ToolName);
-                        l = l.Replace("<TOOLPROPS>", toolProps);
-                        l = l.Replace("<MAKEPARAMETERS>", makerParams);
+                        l = l.Replace("//TOOLPROPS", toolProps);
+                        l = l.Replace("//MAKEPARAMETERS", makerParams);
                         l = l.Replace("<P1CONTROLS>", p1Controls);
                         l = l.Replace("<P2CONTROLS>", p2Controls);
                         l = l.Replace("<P3CONTROLS>", p3Controls);
                         l = l.Replace("<P4CONTROLS>", p4Controls);
                         l = l.Replace("<P5CONTROLS>", p5Controls);
                         l = l.Replace("<P6CONTROLS>", p6Controls);
-                        l = l.Replace("<LOADPARMETERS>", loadParams);
-                        l = l.Replace("<SAVEPARMETERS>", saveParams);
+                        l = l.Replace("<P7CONTROLS>", p7Controls);
+                        l = l.Replace("<P8CONTROLS>", p8Controls);
+                        l = l.Replace("//LOADPARMETERS", loadParams);
+                        l = l.Replace("//SAVEPARMETERS", saveParams);
                         fout.WriteLine(l);
                     }
                     fin.Close();
@@ -838,6 +988,7 @@ public <pType> <PName>
             string constructorParams = GetAllNodeConstructorParams();
             string nodeFields = GetAllNodeFields();
             string copyFields = GetAllNodeCopyFields();
+            string copyCollFields = GetAllCollectionFields();
             string exeValueFields = GetExeValueFields();
             string evalExpressions = GetEvalExpressions();
             string makerParams = GetMakerNodeParams();
@@ -855,7 +1006,7 @@ public <pType> <PName>
                     while (!fin.EndOfStream)
                     {
                         String l = fin.ReadLine();
-                        l = l.Replace("<TOOLNAME>", ToolName);
+                        l = l.Replace(@"//TOOLNAME", ToolName);
                         l = l.Replace(@"//CONSTRUCTORPARAMETERS", constructorParams);
                         l = l.Replace(@"//NODEFIELDS", nodeFields);
                         l = l.Replace(@"//COPYFIELDS", copyFields);
@@ -865,6 +1016,7 @@ public <pType> <PName>
                         l = l.Replace(@"//EXPRESSIONTORICHTEXT", richTextParams);
                         l = l.Replace(@"//EXPRESSIONTOSTRING", plainTextParams);
                         l = l.Replace(@"//RANGECHECKS", rangeChecks);
+                        l = l.Replace(@"//COPYCOLLFIELDS", copyCollFields);
                         fout.WriteLine(l);
                     }
                     fin.Close();
@@ -892,10 +1044,37 @@ public <pType> <PName>
                     while (!fin.EndOfStream)
                     {
                         String l = fin.ReadLine();
-                        l = l.Replace("<TOOL>", ToolName);
-                        l = l.Replace("<FIELDS>", fields);
-                        l = l.Replace("<CONSTRUCTORPARAMS>", constructorParams);
-                        l = l.Replace("<FIELDCOPY>", fieldCopy);
+                        l = l.Replace(@"//TOOLNAME", ToolName);
+                        l = l.Replace(@"//FIELDS", fields);
+                        l = l.Replace(@"//CONSTRUCTORPARAMS", constructorParams);
+                        l = l.Replace(@"//FIELDCOPY", fieldCopy);
+
+                        fout.WriteLine(l);
+                    }
+                    fin.Close();
+                    fout.Close();
+                }
+            }
+        }
+
+        private void CreateParser(string templateRoot, string targetFolder)
+        {
+            string[] files = System.IO.Directory.GetFiles(templateRoot, "Parser*.*");
+            string paramCount = GetParamCount();
+
+            foreach (string fn in files)
+            {
+                string targetName = fn.Replace(templateRoot, targetFolder);
+                targetName = targetName.Replace("Parser", "Parse" + ToolName + "Node");
+                StreamReader fin = new StreamReader(fn);
+                if (fin != null)
+                {
+                    StreamWriter fout = new StreamWriter(targetName);
+                    while (!fin.EndOfStream)
+                    {
+                        String l = fin.ReadLine();
+                        l = l.Replace("//TOOLNAME", ToolName);
+                        l = l.Replace(@"//PARAMCOUNT", paramCount);
 
                         fout.WriteLine(l);
                     }
@@ -917,6 +1096,7 @@ public <pType> <PName>
                     CreateDialog(templateRoot, targetFolder);
                     CreateMaker(templateRoot, targetFolder);
                     CreateInterpreterNode(templateRoot, targetFolder);
+                    CreateParser(templateRoot, targetFolder);
                     System.Windows.MessageBox.Show("Done");
                 }
                 catch (Exception ex)
@@ -924,6 +1104,21 @@ public <pType> <PName>
                     System.Windows.MessageBox.Show(ex.Message);
                 }
             }
+        }
+
+        private string GetAllCollectionFields()
+        {
+            string res = "";
+            int i = 0;
+            res = GetCollField(res, ref i, P1Name);
+            res = GetCollField(res, ref i, P2Name);
+            res = GetCollField(res, ref i, P3Name);
+            res = GetCollField(res, ref i, P4Name);
+            res = GetCollField(res, ref i, P5Name);
+            res = GetCollField(res, ref i, P6Name);
+            res = GetCollField(res, ref i, P7Name);
+            res = GetCollField(res, ref i, P8Name);
+            return res;
         }
 
         private string GetAllConstructorParams()
@@ -935,6 +1130,8 @@ public <pType> <PName>
             res = GetContructorParam(res, p4Name, p4Type);
             res = GetContructorParam(res, p5Name, p5Type);
             res = GetContructorParam(res, p6Name, p6Type);
+            res = GetContructorParam(res, p7Name, p7Type);
+            res = GetContructorParam(res, p8Name, p8Type);
             return res;
         }
 
@@ -947,6 +1144,8 @@ public <pType> <PName>
             res += GetFieldCopy(p4Name);
             res += GetFieldCopy(p5Name);
             res += GetFieldCopy(p6Name);
+            res += GetFieldCopy(p7Name);
+            res += GetFieldCopy(p8Name);
             return res;
         }
 
@@ -959,6 +1158,8 @@ public <pType> <PName>
             res += GetField(p4Name, p4Type);
             res += GetField(p5Name, p5Type);
             res += GetField(p6Name, p6Type);
+            res += GetField(p7Name, p7Type);
+            res += GetField(p8Name, p8Type);
 
             return res;
         }
@@ -972,6 +1173,8 @@ public <pType> <PName>
             res = GetNodeContructorParam(res, p4Name, p4Type);
             res = GetNodeContructorParam(res, p5Name, p5Type);
             res = GetNodeContructorParam(res, p6Name, p6Type);
+            res = GetNodeContructorParam(res, p7Name, p7Type);
+            res = GetNodeContructorParam(res, p8Name, p8Type);
             return res;
         }
 
@@ -984,6 +1187,8 @@ public <pType> <PName>
             res += GetNodeCopyField(p4Name);
             res += GetNodeCopyField(p5Name);
             res += GetNodeCopyField(p6Name);
+            res += GetNodeCopyField(p7Name);
+            res += GetNodeCopyField(p8Name);
             return res;
         }
 
@@ -996,6 +1201,18 @@ public <pType> <PName>
             res += GetNodeField(p4Name);
             res += GetNodeField(p5Name);
             res += GetNodeField(p6Name);
+            res += GetNodeField(p7Name);
+            res += GetNodeField(p8Name);
+            return res;
+        }
+
+        private string GetCollField(string res, ref int i, string name)
+        {
+            if (name != null && name != "")
+            {
+                res += "                this." + LowName(name) + "Exp = coll.Get(" + i.ToString() + ");\n";
+                i++;
+            }
             return res;
         }
 
@@ -1045,6 +1262,8 @@ public <pType> <PName>
             res = GetEvalExpression(res, P4Name);
             res = GetEvalExpression(res, P5Name);
             res = GetEvalExpression(res, P6Name);
+            res = GetEvalExpression(res, P7Name);
+            res = GetEvalExpression(res, P8Name);
             return res;
         }
 
@@ -1075,6 +1294,8 @@ public <pType> <PName>
             res += GetExeValueField(p4Name, p4Type);
             res += GetExeValueField(p5Name, p5Type);
             res += GetExeValueField(p6Name, p6Type);
+            res += GetExeValueField(p7Name, p7Type);
+            res += GetExeValueField(p8Name, p8Type);
             return res;
         }
 
@@ -1144,6 +1365,8 @@ public <pType> <PName>
             res = GetMakerNodeParam(res, P4Name);
             res = GetMakerNodeParam(res, P5Name);
             res = GetMakerNodeParam(res, P6Name);
+            res = GetMakerNodeParam(res, P7Name);
+            res = GetMakerNodeParam(res, P8Name);
             return res;
         }
 
@@ -1156,6 +1379,8 @@ public <pType> <PName>
             res = AddParam(res, P4Name);
             res = AddParam(res, P5Name);
             res = AddParam(res, P6Name);
+            res = AddParam(res, P7Name);
+            res = AddParam(res, P8Name);
             return res;
         }
 
@@ -1172,12 +1397,12 @@ public <pType> <PName>
             return res;
         }
 
-        private string GetNodeCopyField(string p1Name)
+        private string GetNodeCopyField(string name)
         {
             string res = "";
-            if (p1Name != null && p1Name != "")
+            if (name != null && name != "")
             {
-                res = "          this." + LowName(p1Name) + "Exp = " + LowName(p1Name) + " ;\n";
+                res = "          this." + LowName(name) + "Exp = " + LowName(name) + " ;\n";
             }
             return res;
         }
@@ -1190,6 +1415,44 @@ public <pType> <PName>
                 res = "        private ExpressionNode " + LowName(p1Name) + "Exp ;\n";
             }
             return res;
+        }
+
+        private string GetParamCount()
+        {
+            int i = 0;
+            if (P1Name != "")
+            {
+                i++;
+            }
+            if (P2Name != "")
+            {
+                i++;
+            }
+            if (P3Name != "")
+            {
+                i++;
+            }
+            if (P4Name != "")
+            {
+                i++;
+            }
+            if (P5Name != "")
+            {
+                i++;
+            }
+            if (P6Name != "")
+            {
+                i++;
+            }
+            if (P7Name != "")
+            {
+                i++;
+            }
+            if (P8Name != "")
+            {
+                i++;
+            }
+            return i.ToString();
         }
 
         private string GetPlainTextParam(string res, string name)
@@ -1210,6 +1473,8 @@ public <pType> <PName>
             res = GetPlainTextParam(res, P4Name);
             res = GetPlainTextParam(res, P5Name);
             res = GetPlainTextParam(res, P6Name);
+            res = GetPlainTextParam(res, P7Name);
+            res = GetPlainTextParam(res, P8Name);
             int index = res.LastIndexOf(@"+"", """);
             if (index > -1)
             {
@@ -1248,6 +1513,7 @@ public <pType> <PName>
                 }
             }
             res = res.Replace("<pName>", n);
+            res = res.Replace(@"//TOOLNAME", ToolName);
             return res;
         }
 
@@ -1260,6 +1526,8 @@ public <pType> <PName>
             res += GetRangeCheck(P4Name, p4Min, p4Max);
             res += GetRangeCheck(P5Name, p5Min, p5Max);
             res += GetRangeCheck(P6Name, p6Min, p6Max);
+            res += GetRangeCheck(P7Name, p7Min, p7Max);
+            res += GetRangeCheck(P8Name, p8Min, p8Max);
             return res;
         }
 
@@ -1281,6 +1549,8 @@ public <pType> <PName>
             res = GetRichTextParam(res, P4Name);
             res = GetRichTextParam(res, P5Name);
             res = GetRichTextParam(res, P6Name);
+            res = GetRichTextParam(res, P7Name);
+            res = GetRichTextParam(res, P8Name);
             int index = res.LastIndexOf(@"+"", """);
             if (index > -1)
             {
@@ -1292,9 +1562,12 @@ public <pType> <PName>
 
         private string GetSaveParams(String s)
         {
-            string res;
-            res = @"
-EditorParameters.Set(""" + s + @"""," + s + ".ToString());";
+            string res = "";
+            if (s != null && s != "")
+            {
+                res = @"
+            EditorParameters.Set(""" + s + @"""," + s + ".ToString());";
+            }
             return res;
         }
 
@@ -1309,7 +1582,8 @@ EditorParameters.Set(""" + s + @"""," + s + ".ToString());";
             result += GenProp(p4Name, p4Type, p4Min, p4Max);
             result += GenProp(p5Name, p5Type, p5Min, p5Max);
             result += GenProp(p6Name, p6Type, p6Min, p6Max);
-
+            result += GenProp(p7Name, p7Type, p7Min, p7Max);
+            result += GenProp(p8Name, p8Type, p8Min, p8Max);
             return result;
         }
 
@@ -1360,6 +1634,15 @@ EditorParameters.Set(""" + s + @"""," + s + ".ToString());";
             P6Max = "10";
             P6Min = "0";
             P6Type = "double";
+            P7Name = "";
+            P7Max = "10";
+            P7Min = "0";
+            P7Type = "double";
+
+            P8Name = "";
+            P8Max = "10";
+            P8Min = "0";
+            P8Type = "double";
             ExportPath = Properties.Settings.Default.lastExportPath;
             if (exportPath.Trim() == "")
             {

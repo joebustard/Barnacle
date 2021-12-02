@@ -13,7 +13,7 @@ namespace Barnacle.Dialogs
     {
         private string warningText;
 
-<TOOLPROPS>
+        //TOOLPROPS
 
         public BlankDlg()
         {
@@ -83,19 +83,20 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            MakeBlank maker = MakeBlank(< MAKEPARAMETERS >);
-            maker.Generate(Vertices, Faces};
+            BlankMaker maker = new BlankMaker(//MAKEPARAMETERS);
+            maker.Generate(Vertices, Faces);
+        }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-< LOADPARMETERS >
+            //LOADPARMETERS
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-< SAVEPARMETERS >
+            //SAVEPARMETERS
         }
 
         private void UpdateDisplay()

@@ -1,11 +1,11 @@
-﻿<local:BaseModellerDialog x:Class="Barnacle.Dialogs.BlankDlg"
+<local:BaseModellerDialog x:Class="Barnacle.Dialogs.WagonWheelDlg"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="Blank" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="WagonWheel" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -31,28 +31,36 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <P1CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Hub Radius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding HubRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <P2CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Hub Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding HubThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <P3CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Rim Inner Radius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding RimInnerRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <P4CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Rim Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding RimThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <P5CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Rim Depth</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding RimDepth}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <P6CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Number Of Spokes</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding NumberOfSpokes}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <P7CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Spoke Radius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding SpokeRadius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">
-                <P8CONTROLS>
+                <Label VerticalAlignment="Center" Width="150">Axle Bore Radius</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding AxleBore}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />

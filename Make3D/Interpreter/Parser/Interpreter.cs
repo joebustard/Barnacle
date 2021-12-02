@@ -75,15 +75,18 @@ namespace ScriptLanguage
                 "make",
                 "makebicorn",
                 "makehollow",
+                "makerailwheel",
                 "makepath",
                 "makeparallelogram",
                 "makeplatelet",
+                "makepulley",
                 "makestadium",
                 "makesquaredstadium",
                 "makesquirkle",
                 "maketorus",
                 "maketrapezoid",
                 "maketube",
+                "makewagonwheel",
                 "now",
                 "pcname",
                 "rad",
@@ -2457,6 +2460,18 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makerailwheel":
+                            {
+                                exp = ParseMakeRailWheelFunction(parentName);
+                            }
+                            break;
+
+                        case "makewagonwheel":
+                            {
+                                exp = ParseMakeWagonWheelFunction(parentName);
+                            }
+                            break;
+
                         case "makepath":
                             {
                                 exp = ParseMakePathFunction(parentName);
@@ -2475,12 +2490,17 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makepulley":
+                            {
+                                exp = ParseMakePulleyFunction(parentName);
+                            }
+                            break;
+
                         case "makestadium":
                             {
                                 exp = ParseMakeStadiumFunction(parentName);
                             }
                             break;
-
 
                         case "makesquaredstadium":
                             {
@@ -2999,6 +3019,146 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseMakePulleyFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePulley";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 6;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePulleyNode mn = new MakePulleyNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeRailWheelFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeRailWheel";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 7;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeRailWheelNode mn = new MakeRailWheelNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeSquaredStadiumFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            string commaerr = "MakeSquaredStadium expected ,";
+            ExpressionNode radiusExp = ParseExpressionNode(parentName);
+            if (radiusExp != null)
+            {
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError(commaerr);
+                }
+                else
+                {
+                    ExpressionNode gapExp = ParseExpressionNode(parentName);
+                    if (gapExp != null)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaerr);
+                        }
+                        else
+                        {
+                            ExpressionNode elExp = ParseExpressionNode(parentName);
+                            if (elExp != null)
+                            {
+                                if (CheckForComma() == false)
+                                {
+                                    ReportSyntaxError(commaerr);
+                                }
+                                else
+                                {
+                                    ExpressionNode hExp = ParseExpressionNode(parentName);
+                                    if (hExp != null)
+                                    {
+                                        if (CheckForComma() == false)
+                                        {
+                                            ReportSyntaxError(commaerr);
+                                        }
+                                        else
+                                        {
+                                            ExpressionNode oExp = ParseExpressionNode(parentName);
+                                            if (oExp != null)
+                                            {
+                                                MakeSquaredStadiumNode mn = new MakeSquaredStadiumNode(radiusExp, gapExp, elExp, hExp, oExp);
+                                                mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                exp = mn;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseMakeSquirkleFunction(string parentName)
         {
             string label = "MakeSquirkle";
@@ -3148,64 +3308,6 @@ namespace ScriptLanguage
             return exp;
         }
 
-        private ExpressionNode ParseMakeSquaredStadiumFunction(string parentName)
-        {
-            ExpressionNode exp = null;
-            string commaerr = "MakeSquaredStadium expected ,";
-            ExpressionNode radiusExp = ParseExpressionNode(parentName);
-            if (radiusExp != null)
-            {
-                if (CheckForComma() == false)
-                {
-                    ReportSyntaxError(commaerr);
-                }
-                else
-                {
-                    ExpressionNode gapExp = ParseExpressionNode(parentName);
-                    if (gapExp != null)
-                    {
-                        if (CheckForComma() == false)
-                        {
-                            ReportSyntaxError(commaerr);
-                        }
-                        else
-                        {
-                            ExpressionNode elExp = ParseExpressionNode(parentName);
-                            if (elExp != null)
-                            {
-                                if (CheckForComma() == false)
-                                {
-                                    ReportSyntaxError(commaerr);
-                                }
-                                else
-                                {
-                                    ExpressionNode hExp = ParseExpressionNode(parentName);
-                                    if (hExp != null)
-                                    {
-                                        if (CheckForComma() == false)
-                                        {
-                                            ReportSyntaxError(commaerr);
-                                        }
-                                        else
-                                        {
-                                            ExpressionNode oExp = ParseExpressionNode(parentName);
-                                            if (oExp != null)
-                                            {
-                                                MakeSquaredStadiumNode mn = new MakeSquaredStadiumNode(radiusExp, gapExp, elExp, hExp, oExp);
-                                                mn.IsInLibrary = tokeniser.InIncludeFile();
-                                                exp = mn;
-                                            }
-
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            return exp;
-        }
         private ExpressionNode ParseMakeTorusFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -3395,6 +3497,47 @@ namespace ScriptLanguage
                     }
                 }
             }
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeWagonWheelFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeWagonWheel";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeWagonWheelNode mn = new MakeWagonWheelNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
             return exp;
         }
 
@@ -4175,14 +4318,14 @@ namespace ScriptLanguage
             if (tokenType == Tokeniser.TokenType.Identifier)
             {
                 string id = token.ToLower();
-                if ( IsKeyword(id) || IsIntrinsicFunction(id) || IsUserFunction(id))
+                if (IsKeyword(id) || IsIntrinsicFunction(id) || IsUserFunction(id))
                 {
                     ReportSyntaxError($" can't use keyword/function {token} in declaration");
                 }
                 else
-                { 
-                String strVarName = token;
-                token = parentName + token;
+                {
+                    String strVarName = token;
+                    token = parentName + token;
 
                     if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                     {
