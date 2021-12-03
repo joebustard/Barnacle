@@ -1,7 +1,10 @@
 ﻿using MakerLib;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
@@ -11,18 +14,85 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TextDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private ObservableCollection<FontFamily> _systemFonts = new ObservableCollection<FontFamily>();
         private string dataPath;
+        private bool fontBold;
+        private bool fontItalic;
+        private double fontSize;
+        private bool loaded;
+        private String selectedFont;
         private string text;
+        private double thickness;
         private string warningText;
 
         public TextDlg()
         {
             InitializeComponent();
+            loaded = false;
             ToolName = "TextDlg";
             DataContext = this;
             ModelGroup = MyModelGroup;
             text = "A";
             dataPath = "f1M0,0";
+        }
+
+        public bool FontBold
+        {
+            get
+            {
+                return fontBold;
+            }
+            set
+            {
+                if (fontBold != value)
+                {
+                    fontBold = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool FontItalic
+        {
+            get
+            {
+                return fontItalic;
+            }
+            set
+            {
+                if (fontItalic != value)
+                {
+                    fontItalic = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double FontSizeText
+        {
+            get
+            {
+                return fontSize;
+            }
+            set
+            {
+                if (fontSize != value)
+                {
+                    if (value >= 4)
+                    {
+                        fontSize = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                        WarningText = "";
+                    }
+                    else
+                    {
+                        WarningText = "Minimum FontSize is 4";
+                    }
+                }
+            }
         }
 
         public String PathData
@@ -37,6 +107,23 @@ namespace Barnacle.Dialogs
                 {
                     dataPath = value;
                     NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String SelectedFont
+        {
+            get
+            {
+                return selectedFont;
+            }
+            set
+            {
+                if (selectedFont != value)
+                {
+                    selectedFont = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
@@ -75,6 +162,11 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public ObservableCollection<FontFamily> SystemFonts
+        {
+            get { return _systemFonts; }
+        }
+
         public string Text
         {
             get
@@ -87,7 +179,32 @@ namespace Barnacle.Dialogs
                 {
                     text = value;
                     NotifyPropertyChanged();
-                    GenerateShape();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double Thickness
+        {
+            get
+            {
+                return thickness;
+            }
+            set
+            {
+                if (thickness != value)
+                {
+                    if (value > 0)
+                    {
+                        thickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                        WarningText = "";
+                    }
+                    else
+                    {
+                        WarningText = "Thickness must be > 0";
+                    }
                 }
             }
         }
@@ -108,6 +225,16 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public void LoadSystemFonts()
+        {
+            _systemFonts.Clear();
+
+            var fonts = Fonts.SystemFontFamilies.OrderBy(f => f.ToString());
+
+            foreach (var f in fonts)
+                _systemFonts.Add(f);
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -115,15 +242,16 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private void GenerateShape()
+        private void GenerateShape(bool final = false)
         {
             ClearShape();
             if (text != null && text != "")
             {
-                TextMaker mk = new TextMaker(text, "Arial", 24, 10);
+                TextMaker mk = new TextMaker(text, selectedFont, fontSize, thickness, final, fontBold, fontItalic);
                 string PathCode = mk.Generate(Vertices, Faces);
                 PathData = PathCode;
             }
+            CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -138,18 +266,32 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            // building shapes is time consuming,dont do until all
+            // the default parameters are set
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LoadSystemFonts();
+            SelectedFont = "Segoe UI";
+            FontSizeText = 24.0;
+            FontBold = false;
+            FontItalic = false;
+            Text = "Sample Text";
+            Thickness = 10;
             LoadEditorParameters();
-            GenerateShape();
+            loaded = true;
+            warningText = "";
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
-            warningText = "";
-            Redisplay();
+
+            UpdateDisplay();
         }
     }
 }

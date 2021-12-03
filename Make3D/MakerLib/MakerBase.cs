@@ -300,6 +300,26 @@ namespace MakerLib
             return res;
         }
 
+        protected int AddVertice(Point3DCollection pnts, double x, double y, double z)
+        {
+            int res = -1;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if (PointUtils.equals(pnts[i], x, y, z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                pnts.Add(new Point3D(x, y, z));
+                res = pnts.Count - 1;
+            }
+            return res;
+        }
+
         protected int AddVertice(Point3D v)
         {
             int res = -1;

@@ -1,4 +1,5 @@
-﻿using EarClipperLib;
+﻿using Barnacle.Object3DLib;
+using EarClipperLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,19 +13,25 @@ namespace MakerLib
 {
     public class TextMaker : MakerBase
     {
+        private bool bold;
         private string fontName;
         private double fontsize;
         private double height;
+        private double holeOverlap = 5;
+        private bool italic;
+        private bool superSmooth;
         private string text;
         private double thickness;
 
-        public TextMaker(string t, string fn, double fs, double h)
+        public TextMaker(string t, string fn, double fs, double h, bool ss, bool bold, bool italic)
         {
             text = t;
             fontName = fn;
             fontsize = fs;
-            height = h;
-            thickness = 10;
+            thickness = h;
+            superSmooth = ss;
+            this.bold = bold;
+            this.italic = italic;
         }
 
         public string Generate(Point3DCollection pnts, Int32Collection faces)
@@ -34,7 +41,7 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
-            PathGeometry p = TextHelper.PathFrom(text, "", true, fontName, fontsize);
+            PathGeometry p = TextHelper.PathFrom(text, "", true, fontName, fontsize, superSmooth, bold, italic);
             System.Diagnostics.Debug.WriteLine(p.ToString());
             res = p.ToString();
             string s;
@@ -60,19 +67,18 @@ namespace MakerLib
                 }
             }
             HuntForHoles(pfigures);
-            TriangulateFigureWalls(pfigures);
-            
-            // remove the holes
-            RemoveHoles(pfigures);
+
+            Object3D bodyShape = new Object3D();
+            bodyShape.Position = new Point3D(0, 0, 0);
+            Object3D holeShape = new Object3D();
+            holeShape.Position = new Point3D(0, 0, 0);
+            TriangulateFigureWallsBody(pfigures, bodyShape.AbsoluteObjectVertices, bodyShape.TriangleIndices);
+            TriangulateFigureWallsHoles(pfigures, holeShape.AbsoluteObjectVertices, holeShape.TriangleIndices);
+
+            //add front and back of body
             foreach (TextPolygon pf in pfigures)
             {
-                TriangulatePerimiter(pf.Points, thickness);
-            }
-   /*         
-            
-            foreach (TextPolygon pf in pfigures)
-            {
-                bool reverse = false;
+                bool reverse = true;
                 for (float py = 0; py <= thickness; py += (float)thickness)
                 {
                     EarClipping earClipping = new EarClipping();
@@ -80,51 +86,130 @@ namespace MakerLib
 
                     foreach (PointF rp in pf.Points)
                     {
-                        rootPoints.Insert(0,new Vector3m(rp.X, py, rp.Y));
+                        rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
                     }
-                    
-                                        List<List<Vector3m>> holes = new List<List<Vector3m>>();
-                                        foreach (TextPolygon hole in pf.Holes)
-                                        {
-                                            List<Vector3m> holePoints = new List<Vector3m>();
 
-                                            foreach (PointF rp in hole.Points)
-                                            {
-                                                holePoints.Insert(0,new Vector3m(rp.X, py, rp.Y));
-                                            }
+                    earClipping.SetPoints(rootPoints);
 
-                                            holes.Add(holePoints);
-                                        }
-
-                                        earClipping.SetPoints(rootPoints, holes);
-                      
-                                        //earClipping.SetPoints(rootPoints);
-                        earClipping.Triangulate();
+                    earClipping.Triangulate();
                     var surface = earClipping.Result;
                     for (int i = 0; i < surface.Count; i += 3)
                     {
-                        int v1 = AddVertice(surface[i].X, surface[i].Y, surface[i].Z);
-                        int v2 = AddVertice(surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
-                        int v3 = AddVertice(surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
+                        int v1 = AddVertice(bodyShape.AbsoluteObjectVertices, surface[i].X, surface[i].Y, surface[i].Z);
+                        int v2 = AddVertice(bodyShape.AbsoluteObjectVertices, surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
+                        int v3 = AddVertice(bodyShape.AbsoluteObjectVertices, surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
                         if (reverse)
                         {
-                            Faces.Add(v1);
-                            Faces.Add(v3);
-                            Faces.Add(v2);
+                            bodyShape.TriangleIndices.Add(v1);
+                            bodyShape.TriangleIndices.Add(v3);
+                            bodyShape.TriangleIndices.Add(v2);
                         }
                         else
                         {
-                            Faces.Add(v1);
-                            Faces.Add(v2);
-                            Faces.Add(v3);
+                            bodyShape.TriangleIndices.Add(v1);
+                            bodyShape.TriangleIndices.Add(v2);
+                            bodyShape.TriangleIndices.Add(v3);
                         }
                     }
                     reverse = !reverse;
                 }
-                
             }
-     */       
+            bool holesAdded = false;
+            // add front and back of holes
+            foreach (TextPolygon pf in pfigures)
+            {
+                bool reverse = true;
+                for (float py = (float)-holeOverlap / 2; py <= (float)(thickness + holeOverlap / 2); py += (float)(thickness + holeOverlap))
+                {
+                    EarClipping earClipping = new EarClipping();
+                    bool first = true;
+                    foreach (TextPolygon hole in pf.Holes)
+                    {
+                        holesAdded = true;
+                        List<Vector3m> rootPoints = new List<Vector3m>();
+                        if (pf.Holes.Count == 1)
+                        {
+                            foreach (PointF rp in hole.Points)
+                            {
+                                rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
+                            }
+                        }
+                        else
+                        {
+                            if (first)
+                            {
+                                foreach (PointF rp in hole.Points)
+                                {
+                                    rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
+                                }
+                                first = false;
+                            }
+                            else
+                            {
+                                foreach (PointF rp in hole.Points)
+                                {
+                                    rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
+                                }
+                            }
+                        }
+
+                        earClipping.SetPoints(rootPoints);
+
+                        earClipping.Triangulate();
+                        var surface = earClipping.Result;
+                        for (int i = 0; i < surface.Count; i += 3)
+                        {
+                            int v1 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i].X, surface[i].Y, surface[i].Z);
+                            int v2 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
+                            int v3 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
+                            if (reverse)
+                            {
+                                holeShape.TriangleIndices.Add(v1);
+                                holeShape.TriangleIndices.Add(v3);
+                                holeShape.TriangleIndices.Add(v2);
+                            }
+                            else
+                            {
+                                holeShape.TriangleIndices.Add(v1);
+                                holeShape.TriangleIndices.Add(v2);
+                                holeShape.TriangleIndices.Add(v3);
+                            }
+                        }
+                        reverse = !reverse;
+                    }
+                }
+            }
+            if (holesAdded)
+            {
+                bodyShape.AbsoluteToRelative();
+                holeShape.AbsoluteToRelative();
+                Group3D merged = new Group3D();
+
+                merged.LeftObject = bodyShape;
+                merged.RightObject = holeShape;
+                merged.Position = new Point3D(0, 0, 0);
+                merged.PrimType = "groupdifference";
+                merged.Init();
+                merged.Remesh();
+                CopyShape(merged, pnts, faces);
+            }
+            else
+            {
+                CopyShape(bodyShape, pnts, faces);
+            }
             return res;
+        }
+
+        private void CopyShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
+        {
+            foreach (Point3D ps in bs.AbsoluteObjectVertices)
+            {
+                pnts.Add(new Point3D(ps.X, ps.Y, ps.Z));
+            }
+            foreach (int i in bs.TriangleIndices)
+            {
+                faces.Add(i);
+            }
         }
 
         private void GetPathPoints(string txt, List<PointF> pnts)
@@ -217,7 +302,7 @@ namespace MakerLib
             }
         }
 
-        private void MakeWall(List<PointF> points, double thickness, bool invert)
+        private void MakeWall(List<PointF> points, double thickness, bool invert, double offset = 0)
         {
             for (int i = 0; i < points.Count; i++)
             {
@@ -226,10 +311,10 @@ namespace MakerLib
                 {
                     j = 0;
                 }
-                int p0 = AddVertice(points[i].X, 0, points[i].Y);
-                int p1 = AddVertice(points[i].X, thickness, points[i].Y);
-                int p2 = AddVertice(points[j].X, thickness, points[j].Y);
-                int p3 = AddVertice(points[j].X, 0, points[j].Y);
+                int p0 = AddVertice(points[i].X, -offset, points[i].Y);
+                int p1 = AddVertice(points[i].X, thickness - offset, points[i].Y);
+                int p2 = AddVertice(points[j].X, thickness - offset, points[j].Y);
+                int p3 = AddVertice(points[j].X, -offset, points[j].Y);
 
                 Faces.Add(p0);
                 Faces.Add(p1);
@@ -238,6 +323,43 @@ namespace MakerLib
                 Faces.Add(p0);
                 Faces.Add(p2);
                 Faces.Add(p3);
+            }
+        }
+
+        private void MakeWall(List<PointF> points, double thickness, bool invert, Point3DCollection pnts, Int32Collection tris, double offset = 0)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                int j = i + 1;
+                if (j == points.Count)
+                {
+                    j = 0;
+                }
+                int p0 = AddVertice(pnts, points[i].X, -offset, points[i].Y);
+                int p1 = AddVertice(pnts, points[i].X, thickness - offset, points[i].Y);
+                int p2 = AddVertice(pnts, points[j].X, thickness - offset, points[j].Y);
+                int p3 = AddVertice(pnts, points[j].X, -offset, points[j].Y);
+
+                if (!invert)
+                {
+                    tris.Add(p0);
+                    tris.Add(p1);
+                    tris.Add(p2);
+
+                    tris.Add(p0);
+                    tris.Add(p2);
+                    tris.Add(p3);
+                }
+                else
+                {
+                    tris.Add(p0);
+                    tris.Add(p2);
+                    tris.Add(p1);
+
+                    tris.Add(p0);
+                    tris.Add(p3);
+                    tris.Add(p2);
+                }
             }
         }
 
@@ -257,6 +379,25 @@ namespace MakerLib
                 foreach (TextPolygon hole in tp.Holes)
                 {
                     MakeWall(hole.Points, thickness, true);
+                }
+            }
+        }
+
+        private void TriangulateFigureWallsBody(List<TextPolygon> pfigures, Point3DCollection pnts, Int32Collection tris)
+        {
+            foreach (TextPolygon tp in pfigures)
+            {
+                MakeWall(tp.Points, thickness, false, pnts, tris);
+            }
+        }
+
+        private void TriangulateFigureWallsHoles(List<TextPolygon> pfigures, Point3DCollection pnts, Int32Collection tris)
+        {
+            foreach (TextPolygon tp in pfigures)
+            {
+                foreach (TextPolygon hole in tp.Holes)
+                {
+                    MakeWall(hole.Points, thickness + holeOverlap, true, pnts, tris, holeOverlap / 2);
                 }
             }
         }

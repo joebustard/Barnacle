@@ -256,6 +256,27 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
+        public void AbsoluteToRelative()
+        {
+            if (absoluteObjectVertices != null)
+            {
+                relativeObjectVertices.Clear();
+                relativeObjectVertices = new List<P3D>(absoluteObjectVertices.Count);
+                absoluteBounds = new Bounds3D();
+                foreach (Point3D cp in absoluteObjectVertices)
+
+                {
+                    AdjustBounds(cp);
+                    P3D ap = new P3D();
+                    ap.X = (float)(cp.X - Position.X);
+                    ap.Y = (float)(cp.Y - Position.Y);
+                    ap.Z = (float)(cp.Z - Position.Z);
+
+                    relativeObjectVertices.Add(ap);
+                }
+            }
+        }
+
         public bool BuildPrimitive(string obType)
         {
             bool built = false;

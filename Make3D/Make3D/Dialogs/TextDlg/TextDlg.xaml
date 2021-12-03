@@ -28,20 +28,33 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
-                
+
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <Label>Text</Label>
-                <TextBox Text="{Binding Text}" />
+                <Label VerticalAlignment="Center" Width="100">Text</Label>
+                <TextBox Margin="8,2,0,0" Width="200"  Text="{Binding Text}" />
             </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Label VerticalAlignment="Center"  Width="100">Font</Label>
+                <ComboBox Margin="8,2,0,0" Width="200"  ItemsSource="{Binding SystemFonts}" SelectedItem="{Binding SelectedFont}" />
+            </StackPanel>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label VerticalAlignment="Center"  Width="100">Font Size</Label>
+                <TextBox Margin="8,2,0,0" Width="50"  Text="{Binding FontSizeText}" />
+            </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <CheckBox VerticalAlignment="Center" Margin="108,2,0,0" IsChecked="{Binding FontBold}" Content="Bold" />
+                <CheckBox VerticalAlignment="Center" Margin="8,2,0,0" IsChecked="{Binding FontItalic}" Content="Italic" />
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label VerticalAlignment="Center"  Width="100">Thickness</Label>
+                <TextBox Margin="8,2,0,0" Width="50"  Text="{Binding Thickness}" />
+            </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
-            <Path Stroke="Black" Fill="Black" Grid.Row="10" Data="{Binding PathData}"/>
+            <Path Stroke="Black" Fill="Black" Grid.Row="10" Data="{Binding PathData}" />
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
