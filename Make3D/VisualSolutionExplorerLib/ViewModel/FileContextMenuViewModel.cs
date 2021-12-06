@@ -8,35 +8,43 @@ namespace VisualSolutionExplorer
     {
         private ObservableCollection<ContextMenuAction> contextMenuActions;
 
-        public FileContextMenuViewModel(bool addEdit = false, bool addRun = false)
+        public FileContextMenuViewModel(bool addEdit = false, bool addRun = false, bool isReadOnly = false)
         {
             contextMenuActions = new ObservableCollection<ContextMenuAction>();
-            ICommand renameFile = new RelayCommand(OnRenFile);
-            contextMenuActions.Add(new ContextMenuAction("Rename", renameFile, "Rename the file"));
-
-            ICommand deleteFile = new RelayCommand(HandleDeleteFile);
-            contextMenuActions.Add(new ContextMenuAction("Delete", deleteFile, "Delete the file from disk and remove it from the project"));
-
-            ICommand copyFile = new RelayCommand(HandleCopyFile);
-            contextMenuActions.Add(new ContextMenuAction("Copy", copyFile, "Make a copy of the file"));
-
-            ICommand removeFile = new RelayCommand(HandleRemoveFile);
-            contextMenuActions.Add(new ContextMenuAction("Remove", removeFile, "Remove the file from the project but do not delete it"));
-
-            if (addEdit || addRun)
+            if (isReadOnly)
             {
-                contextMenuActions.Add(new ContextMenuSeparator());
+                ICommand insertFile = new RelayCommand(HandleInsertFile);
+                contextMenuActions.Add(new ContextMenuAction("Insert", insertFile, "Insert the file"));
             }
-            if (addEdit)
+            else
             {
-                ICommand editFile = new RelayCommand(HandleEditFile);
-                contextMenuActions.Add(new ContextMenuAction("Edit", editFile, "Open the script in the editor"));
-            }
+                ICommand renameFile = new RelayCommand(OnRenFile);
+                contextMenuActions.Add(new ContextMenuAction("Rename", renameFile, "Rename the file"));
 
-            if (addRun)
-            {
-                ICommand runFile = new RelayCommand(HandleRunFile);
-                contextMenuActions.Add(new ContextMenuAction("Run", runFile, "Run the script"));
+                ICommand deleteFile = new RelayCommand(HandleDeleteFile);
+                contextMenuActions.Add(new ContextMenuAction("Delete", deleteFile, "Delete the file from disk and remove it from the project"));
+
+                ICommand copyFile = new RelayCommand(HandleCopyFile);
+                contextMenuActions.Add(new ContextMenuAction("Copy", copyFile, "Make a copy of the file"));
+
+                ICommand removeFile = new RelayCommand(HandleRemoveFile);
+                contextMenuActions.Add(new ContextMenuAction("Remove", removeFile, "Remove the file from the project but do not delete it"));
+
+                if (addEdit || addRun)
+                {
+                    contextMenuActions.Add(new ContextMenuSeparator());
+                }
+                if (addEdit)
+                {
+                    ICommand editFile = new RelayCommand(HandleEditFile);
+                    contextMenuActions.Add(new ContextMenuAction("Edit", editFile, "Open the script in the editor"));
+                }
+
+                if (addRun)
+                {
+                    ICommand runFile = new RelayCommand(HandleRunFile);
+                    contextMenuActions.Add(new ContextMenuAction("Run", runFile, "Run the script"));
+                }
             }
         }
 
@@ -45,6 +53,8 @@ namespace VisualSolutionExplorer
         public delegate void DeleteFile();
 
         public delegate void EditFile();
+
+        public delegate void InsertFile();
 
         public delegate void RemoveFile();
 
@@ -73,6 +83,7 @@ namespace VisualSolutionExplorer
         public DeleteFile OnCopyFile { get; set; }
         public DeleteFile OnDeleteFile { get; set; }
         public EditFile OnEditFile { get; set; }
+        public InsertFile OnInsertFile { get; set; }
         public RemoveFile OnRemoveFile { get; set; }
         public RenameFile OnRenameFile { get; set; }
         public RunFile OnRunFile { get; set; }
@@ -104,6 +115,14 @@ namespace VisualSolutionExplorer
             if (OnEditFile != null)
             {
                 OnEditFile();
+            }
+        }
+
+        private void HandleInsertFile(object obj)
+        {
+            if (OnInsertFile != null)
+            {
+                OnInsertFile();
             }
         }
 

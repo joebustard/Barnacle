@@ -14,7 +14,7 @@ namespace VisualSolutionExplorer
 
         private ObservableCollection<ContextMenuAction> contextMenuActions;
 
-        public FolderContextMenuViewModel(bool addFolder, bool addFile)
+        public FolderContextMenuViewModel(bool addFolder, bool addFile, bool renFolder, bool offerExplorer)
         {
             contextMenuActions = new ObservableCollection<ContextMenuAction>();
             if (addFolder)
@@ -22,15 +22,20 @@ namespace VisualSolutionExplorer
                 ICommand addFolderCommand = new RelayCommand(HandleAddFolder);
                 contextMenuActions.Add(new ContextMenuAction("New Folder", addFolderCommand, "Add a new folder inside this one"));
             }
-            ICommand renameFolderCommand = new RelayCommand(HandleRenameFolder);
-            contextMenuActions.Add(new ContextMenuAction("Rename", renameFolderCommand, "Rename the folder"));
-
-            ICommand exploreFolderCommand = new RelayCommand(HandleExploreFolder);
-            contextMenuActions.Add(new ContextMenuAction("Explore", exploreFolderCommand, "Open the folder in explorer"));
-            contextMenuActions.Add(new ContextMenuSeparator());
+            if (renFolder)
+            {
+                ICommand renameFolderCommand = new RelayCommand(HandleRenameFolder);
+                contextMenuActions.Add(new ContextMenuAction("Rename", renameFolderCommand, "Rename the folder"));
+            }
+            if (offerExplorer)
+            {
+                ICommand exploreFolderCommand = new RelayCommand(HandleExploreFolder);
+                contextMenuActions.Add(new ContextMenuAction("Explore", exploreFolderCommand, "Open the folder in explorer"));
+            }
 
             if (addFile)
             {
+                contextMenuActions.Add(new ContextMenuSeparator());
                 ICommand addFileCommand = new RelayCommand(HandleAddFile);
                 contextMenuActions.Add(new ContextMenuAction("New File", addFileCommand, "Add a new file to the project"));
                 ICommand addExistingFileCommand = new RelayCommand(HandleAddExistingFile);

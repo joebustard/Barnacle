@@ -13,6 +13,7 @@ namespace Barnacle.ViewModels
     {
         private bool canScale;
 
+        private String description;
         private bool exportable;
         private Color objectColour;
 
@@ -66,6 +67,28 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public String Description
+        {
+            get
+            {
+                return description;
+            }
+            set
+            {
+                if (description != value)
+                {
+                    description = value;
+                    if (selectedObject != null)
+                    {
+                        CheckPoint();
+                        selectedObject.Description = value;
+                        Document.Dirty = true;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public bool Exportable
         {
             get
@@ -80,7 +103,7 @@ namespace Barnacle.ViewModels
                     if (selectedObject != null)
                     {
                         CheckPoint();
-                        selectedObject.Exportable = exportable;
+                        Exportable = exportable;
                         Document.Dirty = true;
                     }
                     NotifyPropertyChanged();
@@ -552,6 +575,7 @@ namespace Barnacle.ViewModels
                 objectColour = Colors.White;
                 objectName = "";
                 exportable = false;
+                description = "";
             }
             else
             {
@@ -559,6 +583,7 @@ namespace Barnacle.ViewModels
                 objectName = selectedObject.Name;
                 CanScale = selectedObject.IsSizable();
                 exportable = selectedObject.Exportable;
+                description = selectedObject.Description;
             }
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");
@@ -574,6 +599,7 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ObjectColour");
             NotifyPropertyChanged("ObjectName");
             NotifyPropertyChanged("Exportable");
+            NotifyPropertyChanged("Description");
         }
 
         private void OnPositionUpdated(object param)

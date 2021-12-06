@@ -1,17 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
-namespace VisualSolutionExplorer
+namespace LibraryExplorer
 {
-    public class ProjectFile : IComparable<ProjectFile>
+    internal class LibraryFile : IComparable<LibraryFile>
     {
-        public ProjectFile(string fileName)
+        public LibraryFile(string fileName)
         {
             this.FileName = fileName;
         }
 
-        public ProjectFile()
+        public LibraryFile()
         {
             FileName = String.Empty;
             Source = String.Empty;
@@ -63,9 +66,6 @@ namespace VisualSolutionExplorer
             }
         }
 
-        // should the menu for this file show "Edit"
-        public bool IsLibraryFile { get; set; }
-
         public string OldName { get; set; }
 
         public bool OutOfDate { get; set; }
@@ -75,7 +75,7 @@ namespace VisualSolutionExplorer
 
         public String Source { get; set; }
 
-        public int CompareTo(ProjectFile comparePart)
+        public int CompareTo(LibraryFile comparePart)
         {
             // A null value means that this object is greater.
             if (comparePart == null)
@@ -110,10 +110,6 @@ namespace VisualSolutionExplorer
                 {
                     RunFile = Convert.ToBoolean(ele.GetAttribute("Run"));
                 }
-                if (ele.HasAttribute("IsLibraryFile"))
-                {
-                    IsLibraryFile = Convert.ToBoolean(ele.GetAttribute("IsLibraryFile"));
-                }
             }
         }
 
@@ -131,10 +127,6 @@ namespace VisualSolutionExplorer
             if (RunFile)
             {
                 fe.SetAttribute("Run", "True");
-            }
-            if (IsLibraryFile)
-            {
-                fe.SetAttribute("IsLibraryFile", "True");
             }
             root.AppendChild(fe);
         }

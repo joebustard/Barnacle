@@ -287,6 +287,8 @@
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
+                    <TabItem Header="Library">
+                    </TabItem>
                 </TabControl>
                 <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
                     <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
