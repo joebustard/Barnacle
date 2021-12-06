@@ -16,16 +16,18 @@ namespace Barnacle.Dialogs
         private System.Windows.Point[] m1LinkConnectorCoords =
     {
          new System.Windows.Point(0.6,-0.05),
-         new System.Windows.Point(0.65,-0.9),
+         new System.Windows.Point(0.7,-0.9),
          new System.Windows.Point(1.15,-0.9),
-        new System.Windows.Point(1.2,-0.05),
-         new System.Windows.Point(1.2,0.05),
-         new System.Windows.Point(1.15,0.9),
-         new System.Windows.Point(1,0.9),
-         new System.Windows.Point(0.93,3),
-         new System.Windows.Point(0.86,3),
+        new System.Windows.Point(1.3,-0.05),
+         new System.Windows.Point(1.3,0.05),
+         new System.Windows.Point(1.2,0.9),
+         new System.Windows.Point(1.1,0.9),
+         new System.Windows.Point(1.0,3),
+         new System.Windows.Point(0.9,3),
          new System.Windows.Point(0.8,0.9),
-         new System.Windows.Point(0.65,0.9),
+
+         new System.Windows.Point(0.7,0.9),
+         
 
          new System.Windows.Point(0.6,0.05),
      };

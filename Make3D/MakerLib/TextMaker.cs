@@ -200,17 +200,7 @@ namespace MakerLib
             return res;
         }
 
-        private void CopyShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
-        {
-            foreach (Point3D ps in bs.AbsoluteObjectVertices)
-            {
-                pnts.Add(new Point3D(ps.X, ps.Y, ps.Z));
-            }
-            foreach (int i in bs.TriangleIndices)
-            {
-                faces.Add(i);
-            }
-        }
+      
 
         private void GetPathPoints(string txt, List<PointF> pnts)
         {

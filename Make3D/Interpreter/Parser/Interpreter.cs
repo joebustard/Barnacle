@@ -3642,6 +3642,8 @@ namespace ScriptLanguage
                 {
                     ReportSyntaxError("Invalid double constant");
                 }
+
+
             }
             else
             {

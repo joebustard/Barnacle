@@ -12,6 +12,7 @@ namespace Barnacle.Dialogs
     public partial class BlankDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
+        private bool loaded ;
 
         //TOOLPROPS
 
@@ -21,6 +22,7 @@ namespace Barnacle.Dialogs
             ToolName = "Blank";
             DataContext = this;
             ModelGroup = MyModelGroup;
+            loaded = false;
         }
 
         public override bool ShowAxies
@@ -101,18 +103,22 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            WarningText = "";
             LoadEditorParameters();
-            GenerateShape();
+            
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
-            warningText = "";
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }

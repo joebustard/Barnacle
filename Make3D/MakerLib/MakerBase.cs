@@ -400,5 +400,32 @@ namespace MakerLib
                 Faces.Add(c2);
             }
         }
+        protected void CopyShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
+        {
+            foreach (Point3D ps in bs.AbsoluteObjectVertices)
+            {
+                pnts.Add(new Point3D(ps.X, ps.Y, ps.Z));
+            }
+            foreach (int i in bs.TriangleIndices)
+            {
+                faces.Add(i);
+            }
+        }
+        protected void AppendShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
+        {
+            Int32Collection altFaces = new Int32Collection();
+            foreach( int org in bs.TriangleIndices)
+            {
+                Point3D p = bs.AbsoluteObjectVertices[org];
+                int apped = AddVertice(pnts, p.X, p.Y, p.Z);
+                altFaces.Add(apped);
+            }
+
+           
+            foreach (int i in altFaces)
+            {
+                faces.Add(i);
+            }
+        }
     }
 }

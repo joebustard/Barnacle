@@ -38,6 +38,7 @@ namespace MakerLib
             GenerateHub();
             GenerateRim();
             GenerateSpokes();
+
         }
 
         private void AddProfilePnt(List<PolarCoordinate> polarProfile, double x, double z)
@@ -86,12 +87,26 @@ namespace MakerLib
                 {
                     Object3D spoke = new Object3D();
                     spoke.BuildPrimitive("cylinder");
-                    // Scale the cylinder
-                    // rotate to floor
-                    // move to calculated position
-                    // rotate to correct orientation
+
+
+                   
                     double theta = i * dspoke;
+                    // move to calculated position
+                    double px = mp * Math.Sin(theta);
+                    double pz = mp * Math.Cos(theta);
+                                spoke.Position = new Point3D(px, 0, pz);
+                    // rotate to the floor
+                    spoke.RotateRad(new Point3D(0, 0, Math.PI / 2.0));
+                    
+                    // Scale the cylinder
+                    spoke.ScaleMesh(spokeLength,spokeRadius, spokeRadius );
+                    
+                    // rotate to correct orientation
+                    spoke.RotateRad(new Point3D(0, theta + (Math.PI / 2.0), 0));
+                    spoke.Remesh();
+
                     // merge the points and faces from the object into the wheel
+                    AppendShape(spoke, Vertices, Faces);
                 }
             }
         }

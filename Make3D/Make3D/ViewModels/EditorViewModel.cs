@@ -2730,9 +2730,12 @@ namespace Barnacle.ViewModels
             Arranger arr = new Arranger();
             foreach (Object3D ob in Document.Content)
             {
-                arr.AddComponent(ob,
-                                 new Point(ob.AbsoluteBounds.Lower.X, ob.AbsoluteBounds.Lower.Z),
-                                 new Point(ob.AbsoluteBounds.Upper.X, ob.AbsoluteBounds.Upper.Z));
+                if (ob.Exportable)
+                {
+                    arr.AddComponent(ob,
+                                     new Point(ob.AbsoluteBounds.Lower.X, ob.AbsoluteBounds.Lower.Z),
+                                     new Point(ob.AbsoluteBounds.Upper.X, ob.AbsoluteBounds.Upper.Z));
+                }
             }
             arr.Clearance = 3;
             arr.Width = 200;

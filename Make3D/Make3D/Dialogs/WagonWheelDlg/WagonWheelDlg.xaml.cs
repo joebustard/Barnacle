@@ -27,6 +27,7 @@ namespace Barnacle.Dialogs
             ToolName = "WagonWheel";
             DataContext = this;
             ModelGroup = MyModelGroup;
+            loaded = false;
         }
 
         public double AxleBore
@@ -245,13 +246,15 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
-
+        private bool loaded;
         private void GenerateShape()
         {
-            ClearShape();
-            WagonWheelMaker maker = new WagonWheelMaker(hubRadius, hubThickness, rimInnerRadius, rimThickness, rimDepth, numberOfSpokes, spokeRadius, axleBore);
-            maker.Generate(Vertices, Faces);
-            CentreVertices();
+           
+                ClearShape();
+                WagonWheelMaker maker = new WagonWheelMaker(hubRadius, hubThickness, rimInnerRadius, rimThickness, rimDepth, numberOfSpokes, spokeRadius, axleBore);
+                maker.Generate(Vertices, Faces);
+                CentreVertices();
+            
         }
 
         private void LoadEditorParameters()
@@ -315,8 +318,11 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -330,11 +336,11 @@ namespace Barnacle.Dialogs
             SpokeRadius = 2;
             AxleBore = 2;
             LoadEditorParameters();
-            GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             warningText = "";
-            Redisplay();
+            loaded = true;
+            UpdateDisplay();
         }
     }
 }
