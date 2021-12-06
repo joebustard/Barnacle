@@ -32,13 +32,13 @@ namespace Barnacle.Dialogs
 
         private System.Windows.Point[] m1MainPolyCoords =
     {
-            new System.Windows.Point(0.0,-0.05),
-            new System.Windows.Point(0.05,-0.25),
+         new System.Windows.Point(0.0,-0.05),
+         new System.Windows.Point(0.05,-0.25),
          new System.Windows.Point(0.1,-1.0),
-         new System.Windows.Point(0.8,-1.0),
-          new System.Windows.Point(0.98,-0.1),
-         new System.Windows.Point(0.98,0.1),
-         new System.Windows.Point(0.8,1.0),
+         new System.Windows.Point(0.9,-1.0),
+         new System.Windows.Point(1.0,-0.1),
+         new System.Windows.Point(1.0,0.1),
+         new System.Windows.Point(0.9,1.0),
          new System.Windows.Point(0.1,1.0),
          new System.Windows.Point(0.05,0.25),
          new System.Windows.Point(0.0,0.05),
