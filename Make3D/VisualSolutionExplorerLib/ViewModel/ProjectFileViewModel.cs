@@ -17,13 +17,14 @@ namespace VisualSolutionExplorer
             : base(parent, true)
         {
             _projectFile = projfile;
-            contextMenu = new FileContextMenuViewModel(projfile.EditFile, projfile.RunFile);
+            contextMenu = new FileContextMenuViewModel(projfile.EditFile, projfile.RunFile, projfile.IsLibraryFile);
             contextMenu.OnRenameFile = RenameFile;
             contextMenu.OnRemoveFile = RemoveFile;
             contextMenu.OnDeleteFile = DeleteFile;
             contextMenu.OnCopyFile = CopyFile;
             contextMenu.OnEditFile = EditFile;
             contextMenu.OnRunFile = RunFile;
+            contextMenu.OnInsertFile = InsertFile;
             FileClickCommand = new RelayCommand(OnFileClickCommand);
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
@@ -46,7 +47,8 @@ namespace VisualSolutionExplorer
             ImageIcon,
             StlIcon,
             PrinterIcon,
-            ScriptIcon
+            ScriptIcon,
+            CmdIcon
         }
 
         public FileContextMenuViewModel ContextMenu
@@ -177,6 +179,12 @@ namespace VisualSolutionExplorer
             return new Uri(@"pack://application:,,,/VisualSolutionExplorerLib;component/Images/" + p);
         }
 
+        private void InsertFile()
+        {
+            // insert yourself, have to ask the containing folder to do it
+            NotifySolutionChanged("InsertFile", _projectFile.FileName, _projectFile.FilePath);
+        }
+
         private void OnFileClickCommand(object obj)
         {
             NotifySolutionChanged("SelectFile", _projectFile.FilePath, "");
@@ -252,6 +260,12 @@ namespace VisualSolutionExplorer
                     }
                     break;
 
+                case IconType.CmdIcon:
+                    {
+                        icon = new BitmapImage(ImageUri("cmd.png"));
+                    }
+                    break;
+
                 default:
                     {
                         icon = new BitmapImage(ImageUri("File.png"));
@@ -272,6 +286,13 @@ namespace VisualSolutionExplorer
                     case ".stl":
                         {
                             IconToShow = IconType.StlIcon;
+                        }
+                        break;
+
+                    case ".cmd":
+                    case ".bat":
+                        {
+                            IconToShow = IconType.CmdIcon;
                         }
                         break;
 

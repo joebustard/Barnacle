@@ -19,7 +19,10 @@ namespace VisualSolutionExplorer
         {
             _folder = folder;
 
-            contextMenu = new FolderContextMenuViewModel(folder.SupportsSubFolders, folder.SupportsFiles);
+            contextMenu = new FolderContextMenuViewModel(folder.SupportsSubFolders,
+                                                            folder.SupportsFiles,
+                                                            folder.CanBeRenamed,
+                                                            folder.Explorer);
             contextMenu.OnCreateFolder = CreateNewFolder;
             contextMenu.OnCreateFile = CreateNewFile;
             contextMenu.OnRenameFolder = RenameFolder;
