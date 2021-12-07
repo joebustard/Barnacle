@@ -20,6 +20,7 @@ namespace VisualSolutionExplorer
             EditFile = false;
             RunFile = false;
             OutOfDate = false;
+            IsLibraryFile = false;
         }
 
         // should this file be added to the backup when a backup command is issued
