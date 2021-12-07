@@ -287,7 +287,14 @@
                             </Grid>
                         </ScrollViewer>
                     </TabItem>
-                    <TabItem Header="Library">
+                    <TabItem Header="Library" Visibility="{Binding LibraryVisibility}">
+                        <StackPanel>
+                            <Border BorderThickness="2" Width="64" Height="64">
+                            </Border>
+                            <ScrollViewer>
+                                <vsx1:SolutionExplorerControl x:Name="LibraryExplorer" MinHeight="200" />
+                            </ScrollViewer>
+                        </StackPanel>
                     </TabItem>
                 </TabControl>
                 <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

@@ -140,6 +140,15 @@ namespace VisualSolutionExplorer
             root.AppendChild(fe);
         }
 
+        internal void MarkAsReadOnly()
+        {
+            Backup = false;
+            Export = false;
+            EditFile = false;
+            RunFile = false;
+            IsLibraryFile = true;
+        }
+
         internal void RecordOldName()
         {
             OldName = FileName;

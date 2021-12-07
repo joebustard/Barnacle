@@ -82,5 +82,21 @@ namespace Barnacle.Properties {
                 this["ShowMarker"] = value;
             }
         }
+        
+        /// <summary>
+        /// Location of the parts library project
+        /// </summary>
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Location of the parts library project")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string PartLibraryPath {
+            get {
+                return ((string)(this["PartLibraryPath"]));
+            }
+            set {
+                this["PartLibraryPath"] = value;
+            }
+        }
     }
 }

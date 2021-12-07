@@ -182,7 +182,6 @@ namespace VisualSolutionExplorer
                 ProjectSettings prj = new ProjectSettings();
                 prj.Read(setNode);
                 SharedProjectSettings = prj;
-                
             }
             XmlNodeList fileNodes = ele.SelectNodes("File");
             foreach (XmlNode filn in fileNodes)
@@ -209,6 +208,15 @@ namespace VisualSolutionExplorer
                 }
             }
             pfo.RepathSubFolders("");
+        }
+
+        public void MarkAsReadOnly()
+        {
+            ProjectFolders[0].MarkAsReadOnly();
+            foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
+            {
+                fld.MarkAsReadOnly();
+            }
         }
 
         public bool Open(string projectPath)

@@ -9,8 +9,6 @@ namespace VisualSolutionExplorer
 {
     public partial class SolutionExplorerControl : UserControl
     {
-       
-
         private List<ProjectFolder> folders;
         private Point startPoint;
         private ProjectViewModel viewModel;
@@ -63,15 +61,23 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public void ProjectChanged(Project prj)
+        public void ProjectChanged(Project prj, bool showRefreshButton = true)
         {
             viewModel.Project = prj;
-            List<ProjectFolder> fldrs = prj.ProjectFolders;
-            if (fldrs != null)
+            if (prj != null)
             {
-                Folders = fldrs;
-                viewModel.SetContent(Folders);
-                ProjectViewModel.ProjectFilePath = Project.BaseFolder;
+                if (prj.ProjectFolders != null)
+                {
+                    List<ProjectFolder> fldrs = prj.ProjectFolders;
+
+                    Folders = fldrs;
+                    viewModel.SetContent(Folders);
+                    ProjectViewModel.ProjectFilePath = Project.BaseFolder;
+                    if (!showRefreshButton)
+                    {
+                        viewModel.RefreshVisibility = Visibility.Hidden;
+                    }
+                }
             }
         }
 

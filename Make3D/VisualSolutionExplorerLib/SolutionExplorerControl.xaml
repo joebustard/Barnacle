@@ -51,7 +51,7 @@
                 <Button  ToolTip="Expand Tree" Command="{Binding ExpandTree}">
                     <Image Width="24" Height="24" Source="Images\Plus.png" />
                 </Button>
-                <Button ToolTip="Refresh" Command="{Binding RefreshTree}">
+                <Button ToolTip="Refresh" Command="{Binding RefreshTree}" Visibility="{Binding RefreshVisibility}">
                     <Image Width="24" Height="24" Source="Images\Refresh.png" />
                 </Button>
             </ToolBar>
@@ -60,8 +60,7 @@
        PreviewMouseMove="Tree_MouseMove"
        Drop="DropTree_Drop"
       DragEnter="DropTree_DragEnter"
-      AllowDrop="True"
-       >
+      AllowDrop="True">
 
             <TreeView.ItemContainerStyle>
                 <!--
@@ -77,7 +76,6 @@
                             <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
                     </Style.Triggers>
-
                 </Style>
             </TreeView.ItemContainerStyle>
 

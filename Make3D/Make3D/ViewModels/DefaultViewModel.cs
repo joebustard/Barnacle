@@ -42,6 +42,7 @@ namespace Barnacle.ViewModels
         private bool irregularEnabled;
         private bool italicChecked;
         private bool leftTextAlignment;
+        private Visibility libraryVisibility;
         private bool linearEnabled;
         private Ribbon MainRibbon;
         private bool profileFuselageEnabled;
@@ -173,6 +174,7 @@ namespace Barnacle.ViewModels
              }
              */
             LoadShowSettings();
+            LoadPartLibrary();
         }
 
         public ICommand AboutCommand { get; set; }
@@ -419,6 +421,22 @@ namespace Barnacle.ViewModels
                 if (value != leftTextAlignment)
                 {
                     leftTextAlignment = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility LibraryVisibility
+        {
+            get
+            {
+                return libraryVisibility;
+            }
+            set
+            {
+                if (libraryVisibility != value)
+                {
+                    libraryVisibility = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -1113,6 +1131,26 @@ namespace Barnacle.ViewModels
 
         private void LoadingNewFile(object param)
         {
+        }
+
+        private void LoadPartLibrary()
+        {
+            String pth = Properties.Settings.Default.PartLibraryPath;
+            if (pth == "")
+            {
+                pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                pth += "//Barnacle//BarnaclePartsLibrary//BarnaclePartsLibrary.bmf";
+            }
+
+            // hide the parts library tab incase we fail to load it
+            LibraryVisibility = Visibility.Hidden;
+            if (File.Exists(pth))
+            {
+                PartLibraryProject = new VisualSolutionExplorer.Project();
+                PartLibraryProject.Open(pth);
+                PartLibraryProject.MarkAsReadOnly();
+                LibraryVisibility = Visibility.Visible;
+            }
         }
 
         private void LoadShowSettings()

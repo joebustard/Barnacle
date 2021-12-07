@@ -10,6 +10,7 @@ namespace VisualSolutionExplorer
     {
         public static string ProjectFilePath;
         private ObservableCollection<ProjectFolderViewModel> folders;
+        private System.Windows.Visibility refreshVisibility;
 
         public ProjectViewModel()
         {
@@ -18,6 +19,7 @@ namespace VisualSolutionExplorer
             CollapseTree = new RelayCommand(OnCollapseTree);
             ExpandTree = new RelayCommand(OnExpandTree);
             RefreshTree = new RelayCommand(OnRefreshTree);
+            RefreshVisibility = System.Windows.Visibility.Visible;
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -25,6 +27,7 @@ namespace VisualSolutionExplorer
         public event PropertyChangedEventHandler PropertyChanged;
 
         public ICommand CollapseTree { get; set; }
+
         public ICommand ExpandTree { get; set; }
 
         public ObservableCollection<ProjectFolderViewModel> Folders
@@ -44,7 +47,24 @@ namespace VisualSolutionExplorer
         }
 
         public Project Project { get; set; }
+
         public ICommand RefreshTree { get; set; }
+
+        public System.Windows.Visibility RefreshVisibility
+        {
+            get
+            {
+                return refreshVisibility;
+            }
+            set
+            {
+                if (refreshVisibility != value)
+                {
+                    refreshVisibility = value;
+                    NotifyPropertyChanged("RefreshVisibility");
+                }
+            }
+        }
 
         public SolutionChangedDelegate SolutionChanged { get; set; }
 
@@ -94,6 +114,12 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal void RemoveFileFromFolder(ProjectFileViewModel fileViewModel)
+        {
+            ProjectFolderViewModel pfm = fileViewModel.Parent as ProjectFolderViewModel;
+            pfm.RemoveFileFromFolder(fileViewModel.ProjectFile);
+        }
+
         protected void NotifyPropertyChanged(string propertyName)
         {
             if (this.PropertyChanged != null)
@@ -126,13 +152,6 @@ namespace VisualSolutionExplorer
                 pfm.Sort();
             }
             NotifyPropertyChanged("Folders");
-        }
-
-        internal void RemoveFileFromFolder(ProjectFileViewModel fileViewModel)
-        {
-
-            ProjectFolderViewModel pfm = fileViewModel.Parent as  ProjectFolderViewModel;
-            pfm.RemoveFileFromFolder(fileViewModel.ProjectFile);
         }
     }
 }

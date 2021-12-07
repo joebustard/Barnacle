@@ -365,6 +365,26 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal void MarkAsReadOnly()
+        {
+            foreach (ProjectFile pfi in ProjectFiles)
+            {
+                pfi.MarkAsReadOnly();
+            }
+            foreach (ProjectFolder pfo in ProjectFolders)
+            {
+                pfo.MarkAsReadOnly();
+            }
+            SupportsSubFolders = false;
+            SupportsFiles = false;
+            Clean = false;
+            Explorer = false;
+            Export = false;
+            RunFile = false;
+            EditFile = false;
+            CanBeRenamed = false;
+        }
+
         internal void RecordOldName()
         {
             OldName = FolderName;

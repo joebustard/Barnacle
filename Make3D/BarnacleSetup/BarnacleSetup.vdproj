@@ -112,7 +112,19 @@
         "Entry"
         {
         "MsmKey" = "8:_6D84AF172E07D691353C49427B6EAFB1"
+        "OwnerKey" = "8:_74B8189F9A02D55735DC097059DEDA11"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6D84AF172E07D691353C49427B6EAFB1"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6D84AF172E07D691353C49427B6EAFB1"
+        "OwnerKey" = "8:_BAA09B1AEF4FDC664E017ECF39A952AD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -251,6 +263,12 @@
         {
         "MsmKey" = "8:_BC50A230FB333DA4B8FAC5D5E22D9A35"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BC50A230FB333DA4B8FAC5D5E22D9A35"
+        "OwnerKey" = "8:_BAA09B1AEF4FDC664E017ECF39A952AD"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -418,12 +436,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_6D84AF172E07D691353C49427B6EAFB1"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_74B8189F9A02D55735DC097059DEDA11"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -443,6 +455,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_C7BA4C78340FD203257D55F20C9EB64B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_6D84AF172E07D691353C49427B6EAFB1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -574,6 +592,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
             }
         }
     }
@@ -596,7 +622,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:v4.7.2"
+                "FrameworkVersion" = "8:v4.7.2 "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=863262"
                 }
@@ -704,11 +730,6 @@
             "AssemblyAsmDisplayName" = "8:Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_252F3434CC126DD44C61A588EFEFEF60"
-                    {
-                    "Name" = "8:Microsoft.Xaml.Behaviors.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Microsoft.Xaml.Behaviors.dll"
             "TargetName" = "8:"
@@ -735,11 +756,6 @@
             "AssemblyAsmDisplayName" = "8:ClassLibrary1, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_41A72FF9ACA4138AAD9965101EF4AFB2"
-                    {
-                    "Name" = "8:ClassLibrary1.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ClassLibrary1.dll"
             "TargetName" = "8:"
@@ -797,11 +813,6 @@
             "AssemblyAsmDisplayName" = "8:System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_4F475015BCC3C97E98B15CAFD726CFA6"
-                    {
-                    "Name" = "8:System.Threading.Tasks.Extensions.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Threading.Tasks.Extensions.dll"
             "TargetName" = "8:"
@@ -859,11 +870,6 @@
             "AssemblyAsmDisplayName" = "8:CSGLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_5849D70BABB9B4FAD43E1A061FD715AC"
-                    {
-                    "Name" = "8:CSGLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:CSGLib.dll"
             "TargetName" = "8:"
@@ -890,11 +896,6 @@
             "AssemblyAsmDisplayName" = "8:EditorParameterLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_62EA85DE5811B8D3E870CA8367774193"
-                    {
-                    "Name" = "8:EditorParameterLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:EditorParameterLib.dll"
             "TargetName" = "8:"
@@ -921,11 +922,6 @@
             "AssemblyAsmDisplayName" = "8:Workflow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_63598880C017D756DC0ED2B89EA3A2A7"
-                    {
-                    "Name" = "8:Workflow.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Workflow.dll"
             "TargetName" = "8:"
@@ -952,11 +948,6 @@
             "AssemblyAsmDisplayName" = "8:LineLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_6D84AF172E07D691353C49427B6EAFB1"
-                    {
-                    "Name" = "8:LineLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:LineLib.dll"
             "TargetName" = "8:"
@@ -983,11 +974,6 @@
             "AssemblyAsmDisplayName" = "8:VisualSolutionExplorerLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_6DD8A511F63D4E5958B7E100BB52993C"
-                    {
-                    "Name" = "8:VisualSolutionExplorerLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:VisualSolutionExplorerLib.dll"
             "TargetName" = "8:"
@@ -1014,11 +1000,6 @@
             "AssemblyAsmDisplayName" = "8:TemplateLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_6EAC8FB2AC8605632F074D5ABD7D0B94"
-                    {
-                    "Name" = "8:TemplateLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:TemplateLib.dll"
             "TargetName" = "8:"
@@ -1045,11 +1026,6 @@
             "AssemblyAsmDisplayName" = "8:PlacementLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_73E75AF92B3590B89380BBB9190C53C8"
-                    {
-                    "Name" = "8:PlacementLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:PlacementLib.dll"
             "TargetName" = "8:"
@@ -1076,11 +1052,6 @@
             "AssemblyAsmDisplayName" = "8:InterpreterLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_74B8189F9A02D55735DC097059DEDA11"
-                    {
-                    "Name" = "8:InterpreterLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:InterpreterLib.dll"
             "TargetName" = "8:"
@@ -1138,11 +1109,6 @@
             "AssemblyAsmDisplayName" = "8:System.Reactive, Version=5.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_7F2D08AE6543BB98B41C1B7FB3BB32A6"
-                    {
-                    "Name" = "8:System.Reactive.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Reactive.dll"
             "TargetName" = "8:"
@@ -1324,11 +1290,6 @@
             "AssemblyAsmDisplayName" = "8:PolygonTriangulationLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_9FD6C6653DE50D31C1564326B2D5862C"
-                    {
-                    "Name" = "8:PolygonTriangulationLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:PolygonTriangulationLib.dll"
             "TargetName" = "8:"
@@ -1355,11 +1316,6 @@
             "AssemblyAsmDisplayName" = "8:ManifoldLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_A284D73F964FDCCD7F6DB65E4EFFDB8E"
-                    {
-                    "Name" = "8:ManifoldLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:ManifoldLib.dll"
             "TargetName" = "8:"
@@ -1386,11 +1342,6 @@
             "AssemblyAsmDisplayName" = "8:MakerLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_BAA09B1AEF4FDC664E017ECF39A952AD"
-                    {
-                    "Name" = "8:MakerLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MakerLib.dll"
             "TargetName" = "8:"
@@ -1417,11 +1368,6 @@
             "AssemblyAsmDisplayName" = "8:EarClipperLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_BC50A230FB333DA4B8FAC5D5E22D9A35"
-                    {
-                    "Name" = "8:EarClipperLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:EarClipperLib.dll"
             "TargetName" = "8:"
@@ -1448,11 +1394,6 @@
             "AssemblyAsmDisplayName" = "8:Object3DLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_C7BA4C78340FD203257D55F20C9EB64B"
-                    {
-                    "Name" = "8:Object3DLib.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:Object3DLib.dll"
             "TargetName" = "8:"
@@ -1479,11 +1420,6 @@
             "AssemblyAsmDisplayName" = "8:System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_D5F359677F504C052F5BC34AB95D366E"
-                    {
-                    "Name" = "8:System.Runtime.CompilerServices.Unsafe.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:System.Runtime.CompilerServices.Unsafe.dll"
             "TargetName" = "8:"
@@ -1510,11 +1446,6 @@
             "AssemblyAsmDisplayName" = "8:netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_E44636EBB66336CD5D0F59E66F60AD70"
-                    {
-                    "Name" = "8:netstandard.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:netstandard.dll"
             "TargetName" = "8:"
@@ -1541,11 +1472,6 @@
             "AssemblyAsmDisplayName" = "8:MeshDecimator, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_ECB214592D29D3061568BB0772FCCEBD"
-                    {
-                    "Name" = "8:MeshDecimator.dll"
-                    "Attributes" = "3:512"
-                    }
                 }
             "SourcePath" = "8:MeshDecimator.dll"
             "TargetName" = "8:"
@@ -1642,6 +1568,39 @@
             "Property" = "8:DesktopFolder"
                 "Folders"
                 {
+                }
+            }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_B589EBEEFA974D5AAFE959B6074ECDE7"
+            {
+            "Name" = "8:#1915"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:AppDataFolder"
+                "Folders"
+                {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_0BC5E60F78D64F8B8E3BB291196C066A"
+                    {
+                    "Name" = "8:Barnacle"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_EBBFD7EE13784917937E8DBD1BC23A0C"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_373A306FADC1477C8B4E442A10417C5C"
+                            {
+                            "Name" = "8:BarnaclePartsLibrary"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_5EC18CA82DB64CA6A11D81E68C409214"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
                 }
             }
             "{1525181F-901A-416C-8A58-119130FE478E}:_B65D83B27BE84AA8B37A4CFA9C48249A"
@@ -2205,7 +2164,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_F724F1B883214A6CB6B6165DF2BECF27"
             {
-            "SourcePath" = "8:..\\Make3D\\obj\\Debug\\Make3D.exe"
+            "SourcePath" = "8:..\\Make3D\\obj\\Debug\\Barnacle.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"

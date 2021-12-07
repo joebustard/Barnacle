@@ -717,6 +717,8 @@ namespace Barnacle.Views
         {
             SolutionExplorer.SolutionChanged = SolutionChangeRequest;
             SolutionExplorer.ProjectChanged(BaseViewModel.Project);
+
+            LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
         }
     }
 }

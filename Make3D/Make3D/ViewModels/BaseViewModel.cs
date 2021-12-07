@@ -14,8 +14,8 @@ namespace Barnacle.ViewModels
         // only one document shared between all the views
         protected static Document document;
 
+        protected static Project partLibraryProject;
         protected static Project project;
-
         protected static MostRecentlyUsedManager recentlyUsedManager;
 
         protected bool lastChangeWasNudge;
@@ -53,6 +53,12 @@ namespace Barnacle.ViewModels
         public static Document Document
         {
             get { return document; }
+        }
+
+        public static Project PartLibraryProject
+        {
+            get { return partLibraryProject; }
+            set { partLibraryProject = value; }
         }
 
         public static Project Project
