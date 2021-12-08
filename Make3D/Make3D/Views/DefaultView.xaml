@@ -280,7 +280,7 @@
                         </Grid>
                     </TabItem>
 
-                    <TabItem Header="Object" x:Name="ObjectPanel">
+                    <TabItem Header="Object" x:Name="ObjectPanel" Height="22" Margin="-2,-2,-2.4,0" VerticalAlignment="Bottom">
                         <ScrollViewer>
                             <Grid HorizontalAlignment="Stretch">
                                 <Views:ObjectPropertiesView HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
@@ -289,7 +289,8 @@
                     </TabItem>
                     <TabItem Header="Library" Visibility="{Binding LibraryVisibility}">
                         <StackPanel>
-                            <Border BorderThickness="2" Width="64" Height="64">
+                            <Border BorderThickness="4" Width="128" Height="128" Style="{StaticResource ControlBorder}">
+                                <Image Source="{Binding LibraryImageSource}" />
                             </Border>
                             <ScrollViewer>
                                 <vsx1:SolutionExplorerControl x:Name="LibraryExplorer" MinHeight="200" />

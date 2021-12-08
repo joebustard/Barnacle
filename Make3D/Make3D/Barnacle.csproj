@@ -865,6 +865,7 @@
     <Resource Include="Images\Buttons\BottomRight2.png" />
     <Resource Include="Images\Buttons\TopLeft2.png" />
     <Resource Include="Images\Buttons\TopRight2.png" />
+    <Resource Include="Images\NoImage.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

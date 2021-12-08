@@ -230,7 +230,7 @@ namespace VisualSolutionExplorer
             }
             foreach (ProjectFolder fld in _projectFolders)
             {
-                fld.Save(solutionDoc, root);
+                fld.Save(solutionDoc, el);
             }
         }
 

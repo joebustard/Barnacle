@@ -42,6 +42,7 @@ namespace Barnacle.ViewModels
         private bool irregularEnabled;
         private bool italicChecked;
         private bool leftTextAlignment;
+        private ImageSource libraryImageSource;
         private Visibility libraryVisibility;
         private bool linearEnabled;
         private Ribbon MainRibbon;
@@ -421,6 +422,22 @@ namespace Barnacle.ViewModels
                 if (value != leftTextAlignment)
                 {
                     leftTextAlignment = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public ImageSource LibraryImageSource
+        {
+            get
+            {
+                return libraryImageSource;
+            }
+            set
+            {
+                if (libraryImageSource != value)
+                {
+                    libraryImageSource = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -991,6 +1008,17 @@ namespace Barnacle.ViewModels
 
         public ICommand ZoomOutCommand { get; set; }
 
+        public string GetPartsLibraryPath()
+        {
+            String pth = Properties.Settings.Default.PartLibraryPath;
+            if (pth == "")
+            {
+                pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                pth += "//Barnacle//BarnaclePartsLibrary";
+            }
+            return pth;
+        }
+
         public void LoadSystemFonts()
         {
             _systemFonts.Clear();
@@ -1135,12 +1163,7 @@ namespace Barnacle.ViewModels
 
         private void LoadPartLibrary()
         {
-            String pth = Properties.Settings.Default.PartLibraryPath;
-            if (pth == "")
-            {
-                pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                pth += "//Barnacle//BarnaclePartsLibrary//BarnaclePartsLibrary.bmf";
-            }
+            string pth = GetPartsLibraryPath() + "//BarnaclePartsLibrary.bmf";
 
             // hide the parts library tab incase we fail to load it
             LibraryVisibility = Visibility.Hidden;

@@ -187,7 +187,14 @@ namespace VisualSolutionExplorer
 
         private void OnFileClickCommand(object obj)
         {
-            NotifySolutionChanged("SelectFile", _projectFile.FilePath, "");
+            if (_projectFile.IsLibraryFile)
+            {
+                NotifySolutionChanged("SelectLibraryFile", _projectFile.FilePath, "");
+            }
+            else
+            {
+                NotifySolutionChanged("SelectFile", _projectFile.FilePath, "");
+            }
         }
 
         private void OnStopEditing(object obj)

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using VisualSolutionExplorer;
 
 namespace Barnacle.Views
@@ -360,6 +361,20 @@ namespace Barnacle.Views
             }
         }
 
+        private void SetLibraryImageSource(string p)
+        {
+            BitmapImage bim = null;
+            if (File.Exists(p))
+            {
+                bim = new BitmapImage(new Uri(p));
+            }
+            else
+            {
+                bim = new BitmapImage(new Uri(@"pack://application:,,,/Images/NoImage.png", UriKind.Absolute));
+            }
+            vm.LibraryImageSource = bim;
+        }
+
         private void SolutionChangeRequest(string changeEvent, string parameter1, string parameter2)
         {
             switch (changeEvent)
@@ -382,30 +397,28 @@ namespace Barnacle.Views
                             vm.SwitchToView("Script");
                             NotificationManager.Notify("LimpetLoaded", p);
                         }
-                       
                     }
                     break;
+
                 case "InsertFile":
                     {
-                        string fName = parameter1;
+                        string fName = parameter2;
                         //Wrong
-                        string p = Project.BaseFolder;
+                        string p = vm.GetPartsLibraryPath();
                         p = System.IO.Path.GetDirectoryName(p);
+                        //p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
                         // is it a model file.
                         string ext = System.IO.Path.GetExtension(p);
                         ext = ext.ToLower();
 
-                        // Is it a limpet script file
-                        // if so change view and load it
-                        if (ext == ".txt")
+                        if (ext == ".txt" && File.Exists(p))
                         {
                             CheckPoint();
                             BaseViewModel.Document.InsertFile(p);
                             NotificationManager.Notify("Refresh", null);
                         }
-
                     }
                     break;
 
@@ -424,13 +437,32 @@ namespace Barnacle.Views
                         // if so change view and load it
                         if (ext == ".lmp")
                         {
-                            // runimpet script without switching view
-                            //vm.SwitchToView("Script");
-                            //NotificationManager.Notify("LimpetLoaded", p);
                             if (RunScript(p))
                             {
                                 NotificationManager.Notify("Refresh", null);
                             }
+                        }
+                    }
+                    break;
+
+                case "SelectLibraryFile":
+                    {
+                        string fName = parameter1;
+
+                        string p = vm.GetPartsLibraryPath();
+                        p = System.IO.Path.GetDirectoryName(p);
+                        //p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+
+                        // is it a model file.
+                        string ext = System.IO.Path.GetExtension(p);
+                        ext = ext.ToLower();
+                        if (ext == ".txt" && File.Exists(p))
+                        {
+                            p = System.IO.Path.ChangeExtension(p, ".png");
+
+                            SetLibraryImageSource(p);
+                            NotificationManager.Notify("LibraryImageSource", null);
                         }
                     }
                     break;
@@ -459,7 +491,6 @@ namespace Barnacle.Views
                                     NotificationManager.Notify("Refresh", null);
                                     BaseViewModel.Project.FirstFile = fName;
                                     NotificationManager.Notify("ObjectSelected", null);
-                                    //  UndoManager.Clear();
                                 }
                             }
                         }
@@ -545,7 +576,6 @@ namespace Barnacle.Views
                                     BaseViewModel.Document.Load(p);
                                     NotificationManager.Notify("Refresh", null);
                                     NotificationManager.Notify("ObjectSelected", null);
-                                    //  UndoManager.Clear();
                                 }
                             }
                         }
@@ -650,7 +680,6 @@ namespace Barnacle.Views
                                         BaseViewModel.Document.Load(open);
                                         NotificationManager.Notify("Refresh", null);
                                         NotificationManager.Notify("ObjectSelected", null);
-                                        //  UndoManager.Clear();
                                     }
                                 }
                             }
@@ -731,7 +760,6 @@ namespace Barnacle.Views
 
             LibraryExplorer.SolutionChanged = SolutionChangeRequest;
             LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
-
         }
     }
 }
