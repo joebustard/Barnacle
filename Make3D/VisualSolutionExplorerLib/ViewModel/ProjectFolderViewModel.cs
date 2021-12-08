@@ -23,6 +23,8 @@ namespace VisualSolutionExplorer
                                                             folder.SupportsFiles,
                                                             folder.CanBeRenamed,
                                                             folder.Explorer);
+            
+                                                          
             contextMenu.OnCreateFolder = CreateNewFolder;
             contextMenu.OnCreateFile = CreateNewFile;
             contextMenu.OnRenameFolder = RenameFolder;

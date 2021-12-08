@@ -382,19 +382,30 @@ namespace Barnacle.Views
                             vm.SwitchToView("Script");
                             NotificationManager.Notify("LimpetLoaded", p);
                         }
-                        /*
-                        else
-                         // throw the file at the operating system
-                         // if its a batch or command file, use environment variables
-                         if (ext == ".cmd" || ext == ".bat")
+                       
+                    }
+                    break;
+                case "InsertFile":
+                    {
+                        string fName = parameter1;
+                        //Wrong
+                        string p = Project.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+
+                        // is it a model file.
+                        string ext = System.IO.Path.GetExtension(p);
+                        ext = ext.ToLower();
+
+                        // Is it a limpet script file
+                        // if so change view and load it
+                        if (ext == ".txt")
                         {
-                            LaunchCmdOrBat(p);
+                            CheckPoint();
+                            BaseViewModel.Document.InsertFile(p);
+                            NotificationManager.Notify("Refresh", null);
                         }
-                        else
-                        {
-                            OpenFileUsingOS(p);
-                        }
-                    */
+
                     }
                     break;
 
@@ -718,7 +729,9 @@ namespace Barnacle.Views
             SolutionExplorer.SolutionChanged = SolutionChangeRequest;
             SolutionExplorer.ProjectChanged(BaseViewModel.Project);
 
+            LibraryExplorer.SolutionChanged = SolutionChangeRequest;
             LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
+
         }
     }
 }

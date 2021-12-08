@@ -16,21 +16,25 @@ namespace VisualSolutionExplorer
 
         public FolderContextMenuViewModel(bool addFolder, bool addFile, bool renFolder, bool offerExplorer)
         {
+            Valid = false;
             contextMenuActions = new ObservableCollection<ContextMenuAction>();
             if (addFolder)
             {
                 ICommand addFolderCommand = new RelayCommand(HandleAddFolder);
                 contextMenuActions.Add(new ContextMenuAction("New Folder", addFolderCommand, "Add a new folder inside this one"));
+                Valid = true;
             }
             if (renFolder)
             {
                 ICommand renameFolderCommand = new RelayCommand(HandleRenameFolder);
                 contextMenuActions.Add(new ContextMenuAction("Rename", renameFolderCommand, "Rename the folder"));
+                Valid = true;
             }
             if (offerExplorer)
             {
                 ICommand exploreFolderCommand = new RelayCommand(HandleExploreFolder);
                 contextMenuActions.Add(new ContextMenuAction("Explore", exploreFolderCommand, "Open the folder in explorer"));
+                Valid = true;
             }
 
             if (addFile)
@@ -40,6 +44,7 @@ namespace VisualSolutionExplorer
                 contextMenuActions.Add(new ContextMenuAction("New File", addFileCommand, "Add a new file to the project"));
                 ICommand addExistingFileCommand = new RelayCommand(HandleAddExistingFile);
                 contextMenuActions.Add(new ContextMenuAction("Add Existing File", addExistingFileCommand, "Add an existing file to the project"));
+                Valid = true;
             }
         }
 
@@ -122,6 +127,16 @@ namespace VisualSolutionExplorer
             if (OnRenameFolder != null)
             {
                 OnRenameFolder();
+            }
+        }
+        private bool valid;
+
+        public bool Valid
+        {
+            get { return valid; }
+            set { valid = value;
+                NotifyPropertyChanged("Valid");
+
             }
         }
     }

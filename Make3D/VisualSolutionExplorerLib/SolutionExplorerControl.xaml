@@ -95,7 +95,7 @@
                             </TextBlock.Style>
                             <TextBlock.ContextMenu>
 
-                                <ContextMenu ItemsSource="{Binding ContextMenu.ContextMenuActions}">
+                                <ContextMenu IsEnabled="{Binding Valid}" ItemsSource="{Binding ContextMenu.ContextMenuActions}">
                                     <ContextMenu.ItemContainerStyle>
                                         <Style BasedOn="{StaticResource ContextMenuItem}" TargetType="{x:Type MenuItem}" />
                                     </ContextMenu.ItemContainerStyle>
