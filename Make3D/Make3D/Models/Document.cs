@@ -894,8 +894,12 @@ namespace Barnacle.Models
         internal void SplitGroup(Group3D grp)
         {
             Content.Remove(grp);
+            grp.LeftObject.Remesh();
             Content.Add(grp.LeftObject);
+
+            grp.RightObject.Remesh();
             Content.Add(grp.RightObject);
+
             grp.LeftObject.CalcScale(false);
             grp.RightObject.CalcScale(false);
             Dirty = true;

@@ -139,8 +139,8 @@
                         <Image Width="16" Height="16" Margin="3,0" Source="{Binding Icon}" Grid.Column="0" />
                         <TextBlock Text="{Binding FileName}" Grid.Column="1" ToolTip="{Binding FileToolTip}">
                             <TextBlock.InputBindings>
-                                <MouseBinding Gesture="LeftDoubleClick" Command ="{Binding FileClickCommand}" CommandParameter="{Binding }">
-                                </MouseBinding>
+                                <MouseBinding Gesture="LeftDoubleClick" Command ="{Binding FileDoubleClickCommand}" CommandParameter="{Binding }" />
+                                <MouseBinding Gesture="LeftClick" Command ="{Binding FileClickCommand}" CommandParameter="{Binding }" />
                             </TextBlock.InputBindings>
 
                             <TextBlock.ContextMenu>

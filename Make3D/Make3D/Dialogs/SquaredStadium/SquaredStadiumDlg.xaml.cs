@@ -17,13 +17,14 @@ namespace Barnacle.Dialogs
         private double shapeLength;
         private String shapeOverRun;
         private double shapeRadius;
+
         private double squaredEndSize;
         private string warningText;
 
         public SquaredStadiumDlg()
         {
             InitializeComponent();
-            ToolName = "SquaredStadiumDlg";
+            ToolName = "SquaredStadium";
             DataContext = this;
             ModelGroup = MyModelGroup;
             shapeLength = 5;
@@ -198,12 +199,23 @@ namespace Barnacle.Dialogs
 
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters
+            if (EditorParameters.Get("ShapeHeight") != "")
+            {
+                ShapeHeight = EditorParameters.GetDouble("ShapeHeight");
+                ShapeLength = EditorParameters.GetDouble("ShapeLength");
+                ShapeOverRun = EditorParameters.Get("ShapeOverRun");
+                ShapeRadius = EditorParameters.GetDouble("ShapeRadius");
+                SquaredEndSize = EditorParameters.GetDouble("SquaredEndSize");
+            }
         }
 
         private void SaveEditorParmeters()
         {
-            // save the parameters for the tool
+            EditorParameters.Set("ShapeHeight", ShapeHeight.ToString());
+            EditorParameters.Set("ShapeLength", ShapeLength.ToString());
+            EditorParameters.Set("ShapeOverRun", ShapeOverRun);
+            EditorParameters.Set("ShapeRadius", ShapeRadius.ToString());
+            EditorParameters.Set("SquaredEndSize", SquaredEndSize.ToString());
         }
 
         private void UpdateDisplay()

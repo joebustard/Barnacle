@@ -866,6 +866,12 @@
     <Resource Include="Images\Buttons\TopLeft2.png" />
     <Resource Include="Images\Buttons\TopRight2.png" />
     <Resource Include="Images\NoImage.png" />
+    <Resource Include="Images\Buttons\AlignBottom.png" />
+    <Resource Include="Images\Buttons\AlignLeft.png" />
+    <Resource Include="Images\Buttons\AlignRight.Png" />
+    <Resource Include="Images\Buttons\AlignTop.png" />
+    <Resource Include="Images\Buttons\AlignBack.png" />
+    <Resource Include="Images\Buttons\AlignFront.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

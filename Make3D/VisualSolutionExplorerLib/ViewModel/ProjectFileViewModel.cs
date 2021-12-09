@@ -25,6 +25,7 @@ namespace VisualSolutionExplorer
             contextMenu.OnEditFile = EditFile;
             contextMenu.OnRunFile = RunFile;
             contextMenu.OnInsertFile = InsertFile;
+            FileDoubleClickCommand = new RelayCommand(OnFileDoubleClickCommand);
             FileClickCommand = new RelayCommand(OnFileClickCommand);
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
@@ -68,6 +69,7 @@ namespace VisualSolutionExplorer
         }
 
         public ICommand FileClickCommand { get; set; }
+        public ICommand FileDoubleClickCommand { get; set; }
 
         public string FileName
         {
@@ -186,6 +188,16 @@ namespace VisualSolutionExplorer
         }
 
         private void OnFileClickCommand(object obj)
+        {
+            // single click in the library can trigger changing image
+            // but double click is required to do an open
+            if (_projectFile.IsLibraryFile)
+            {
+                NotifySolutionChanged("SelectLibraryFile", _projectFile.FilePath, "");
+            }
+        }
+
+        private void OnFileDoubleClickCommand(object obj)
         {
             if (_projectFile.IsLibraryFile)
             {

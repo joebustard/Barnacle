@@ -285,8 +285,8 @@ namespace Barnacle.Object3DLib
                 TriangleIndices.Add(Convert.ToInt32(words[1]));
                 TriangleIndices.Add(Convert.ToInt32(words[2]));
             }
-            RelativeToAbsolute();
-            SetMesh();
+
+            Remesh();
             XmlNodeList nodes = nd.ChildNodes;
             bool left = true;
             foreach (XmlNode sub in nodes)
@@ -363,7 +363,7 @@ namespace Barnacle.Object3DLib
                     {
                         Object3D ob = new Object3D();
                         ob.ReadBinary(reader);
-                        leftObject = ob;                        
+                        leftObject = ob;
                     }
                     break;
 
@@ -374,7 +374,6 @@ namespace Barnacle.Object3DLib
                         leftObject = ob;
                     }
                     break;
-
             }
             type = reader.ReadByte();
             switch (type)
@@ -394,10 +393,7 @@ namespace Barnacle.Object3DLib
                         rightObject = ob;
                     }
                     break;
-
             }
-
-
 
             Remesh();
             SetMesh();
@@ -412,71 +408,6 @@ namespace Barnacle.Object3DLib
                 SetMesh();
             }
         }
-
-        /*
-        public bool TestInit()
-        {
-            bool result = false;
-            if (leftObject != null && rightObject != null)
-            {
-                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
-                {
-                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
-                    {
-                        Color = leftObject.Color;
-                        TestCSGLib.Solid[] slds = new TestCSGLib.Solid[1];
-
-                        TestCSGLib.Solid sl1 = SolidFromPoints(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices);
-                        slds[0] = SolidFromPoints(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices);
-
-                        TestCSGLib.Solid sl3 = null;
-                        switch (PrimType)
-                        {
-                            case "groupunion":
-                                {
-                                    sl3 = sl1.Union(slds);
-                                    SolidToAbsolute(sl3, AbsoluteObjectVertices, TriangleIndices);
-                                    result = true;
-                                }
-                                break;
-
-                                                            case "groupdifference":
-                                                                {
-                                                                    result = modeller.GetDifference();
-                                                                }
-                                                                break;
-
-                                                            case "groupreversedifference":
-                                                                {
-                                                                    result = modeller.GetReverseDifference();
-                                                                }
-                                                                break;
-
-                                                            case "groupintersection":
-                                                                {
-                                                                    result = modeller.GetIntersection();
-                                                                }
-                                                                break;
-                        }
-                        if (result)
-                        {
-                            double nx = absoluteBounds.MidPoint().X;
-                            double ny = absoluteBounds.MidPoint().Y;
-                            double nz = absoluteBounds.MidPoint().Z;
-                            Position = new Point3D(nx, ny, nz);
-
-                            AbsoluteToRelative();
-                            SetMesh();
-                            modeller = null;
-                            GC.Collect();
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }
-    */
 
         public override XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
