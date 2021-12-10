@@ -50,6 +50,7 @@
     <Compile Include="MakePulley.cs" />
     <Compile Include="MakeRailWheel.cs" />
     <Compile Include="MakerBase.cs" />
+    <Compile Include="MakeReuleaux.cs" />
     <Compile Include="MakeSquirkle.cs" />
     <Compile Include="MakeWagonWheel.cs" />
     <Compile Include="PGramMaker.cs" />

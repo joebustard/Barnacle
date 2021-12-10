@@ -74,6 +74,7 @@
     <Compile Include="SolidFunctions\MakePath.cs" />
     <Compile Include="SolidFunctions\MakePulleyNode.cs" />
     <Compile Include="SolidFunctions\MakeRailWheelNode.cs" />
+    <Compile Include="SolidFunctions\MakeReuleauxNode.cs" />
     <Compile Include="SolidFunctions\MakeSquaredStadium.cs" />
     <Compile Include="SolidFunctions\MakeSquirkle.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />

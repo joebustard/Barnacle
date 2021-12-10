@@ -13,6 +13,10 @@ namespace Barnacle.Models
                     res = new WagonWheelDlg();
                     break;
 
+                case "Reuleaux":
+                    res = new ReuleauxDlg();
+                    break;
+
                 case "RailWheel":
                     res = new RailWheelDlg();
                     break;
