@@ -28,6 +28,7 @@
     <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+      <File Name="CopyLatestToPrint3D.cmd" Source="templates/CopyLatestToPrint3D.cmd" />
       <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
       <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
 	<File Name="ExtractThingiverseFiles.cmd" Source="templates/ExtractThingiverseFiles.cmd" />
@@ -98,6 +99,7 @@
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="CopyLatestToPrint3D.cmd" Source="templates/CopyLatestToPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
 <File Name="ExtractThingiverseFiles.cmd" Source="templates/ExtractThingiverseFiles.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
@@ -157,6 +159,7 @@
     <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
+      <File Name="CopyLatestToPrint3D.cmd" Source="templates/CopyLatestToPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
 <File Name="ExtractThingiverseFiles.cmd" Source="templates/ExtractThingiverseFiles.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
@@ -217,6 +220,7 @@
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
+      <File Name="CopyLatestToPrint3D.cmd" Source="templates/CopyLatestToPrint3D.cmd" />
 <File Name="ExtractThingiverseFiles.cmd" Source="templates/ExtractThingiverseFiles.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
       <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
@@ -224,43 +228,5 @@
     <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
   </ProjectDefinition>
-  <ProjectDefinition Name="Blank">
-    <Description>
-      Creates a basic folder structure without models.
 
-      The folders are
-      /export
-      A place to save any STL files exported from the project
-      /Printer
-      A place to save 3D Printer files created by the external slicer.
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
-      /scripts
-      A place to save any limpet scripts
-
-      These folders are simply placeholders.
-      Nothing is created in them.
-    </Description>
-    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
-    </Folder>
-    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="True" Clean="False" Export="False" />
-    <Folder Name="Images" Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True" AutoLoad="True" />
-
-    <Folder Name="Export" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-      <File Name="ClearPrint3D.cmd" Source="templates/ClearPrint3D.cmd" />
-      <File Name="CopyToPrint3D.cmd" Source="templates/CopyToPrint3D.cmd" />
-<File Name="ExtractThingiverseFiles.cmd" Source="templates/ExtractThingiverseFiles.cmd" />
-      <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/OpenAllExportSTLsInCura.cmd" />
-      <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
-    </Folder>
-    <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-    </Folder>
-    <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True"  AddFiles="True" AutoLoad="True">
-    </Folder>
-  </ProjectDefinition>
 </Defs>
