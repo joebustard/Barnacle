@@ -15,6 +15,7 @@ namespace VisualSolutionExplorer
             Description = "A 3D project created by Barnacle";
             ExportRotation = new Point3D(0, 0, 0);
             ExportAxisSwap = true;
+            ImportAxisSwap = true;
             FloorAll = true;
             VersionExport = true;
             ClearPreviousVersionsOnExport = true;
@@ -34,6 +35,7 @@ namespace VisualSolutionExplorer
         public Point3D ExportRotation { get; set; }
         public string ExportScale { get; set; }
         public bool FloorAll { get; set; }
+        public bool ImportAxisSwap { get; set; }
         public bool VersionExport { get; set; }
 
         internal void Read(XmlNode nd)
@@ -60,6 +62,11 @@ namespace VisualSolutionExplorer
             {
                 string s = ele.GetAttribute("SwapAxis");
                 ExportAxisSwap = Convert.ToBoolean(s);
+            }
+            if (ele.HasAttribute("ImportSwapAxis"))
+            {
+                string s = ele.GetAttribute("ImportSwapAxis");
+                ImportAxisSwap = Convert.ToBoolean(s);
             }
             if (ele.HasAttribute("FloorAll"))
             {
@@ -107,6 +114,7 @@ namespace VisualSolutionExplorer
             ele.SetAttribute("BaseScale", BaseScale);
             ele.SetAttribute("ExportScale", ExportScale);
             ele.SetAttribute("SwapAxis", ExportAxisSwap.ToString());
+            ele.SetAttribute("ImportSwapAxis", ImportAxisSwap.ToString());
             ele.SetAttribute("FloorAll", FloorAll.ToString());
             ele.SetAttribute("VersionExport", VersionExport.ToString());
             ele.SetAttribute("ClearPreviousVersionsOnExport", ClearPreviousVersionsOnExport.ToString());

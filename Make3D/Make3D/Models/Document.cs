@@ -819,7 +819,7 @@ namespace Barnacle.Models
             }
         }
 
-        internal void ImportStl(string fileName)
+        internal void ImportStl(string fileName, bool swapYZ)
         {
             STLExporter exp = new STLExporter();
             Vector3DCollection normals = new Vector3DCollection();
@@ -827,7 +827,7 @@ namespace Barnacle.Models
 
             Int32Collection tris = new Int32Collection();
             Object3D ob = new Object3D();
-            exp.Import(fileName, ref normals, ref pnts, ref tris);
+            exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
             ob.Normals = normals;
             List<P3D> coords = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, coords);

@@ -113,7 +113,7 @@ namespace Barnacle.Models
             }
         }
 
-        public void Import(string filename, ref Vector3DCollection normals, ref Point3DCollection pnts, ref Int32Collection tris)
+        public void Import(string filename, ref Vector3DCollection normals, ref Point3DCollection pnts, ref Int32Collection tris, bool swapYZ)
         {
             normals.Clear();
             pnts.Clear();
@@ -124,11 +124,11 @@ namespace Barnacle.Models
             String ft = CheckFileFormat(filename);
             if (ft == "BinSTL")
             {
-                ReadBinaryStl(filename, normals, pnts, tris);
+                ReadBinaryStl(filename, normals, pnts, tris, swapYZ);
             }
             else if (ft == "AsciiSTL")
             {
-                ReadAsciiStl(filename, normals, pnts, tris);
+                ReadAsciiStl(filename, normals, pnts, tris, swapYZ);
             }
         }
 
@@ -152,7 +152,7 @@ namespace Barnacle.Models
             return res;
         }
 
-        private static Point3D GetVFromLine(string line)
+        private static Point3D GetVFromLine(string line, bool swap)
         {
             Point3D result = new Point3D(0, 0, 0);
             line = line.Trim();
@@ -164,7 +164,14 @@ namespace Barnacle.Models
                 double x = Convert.ToDouble(words[0]);
                 double y = Convert.ToDouble(words[1]);
                 double z = Convert.ToDouble(words[2]);
-                result = new Point3D(x, y, z);
+                if (swap)
+                {
+                    result = new Point3D(x, z, y);
+                }
+                else
+                {
+                    result = new Point3D(x, y, z);
+                }
             }
             catch (Exception ex)
             {
@@ -173,7 +180,7 @@ namespace Barnacle.Models
             return result;
         }
 
-        private static void ReadAsciiStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris)
+        private static void ReadAsciiStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris, bool swap)
         {
             //            facet normal ni nj nk
             //                 outer loop
@@ -198,17 +205,17 @@ namespace Barnacle.Models
 
                         // p0
                         line = reader.ReadLine().ToLower();
-                        Point3D pnt = GetVFromLine(line);
+                        Point3D pnt = GetVFromLine(line, swap);
                         int p0 = AddVertex(pnts, pnt);
 
                         // p1
                         line = reader.ReadLine().ToLower();
-                        pnt = GetVFromLine(line);
+                        pnt = GetVFromLine(line, swap);
                         int p1 = AddVertex(pnts, pnt);
 
                         // p2
                         line = reader.ReadLine().ToLower();
-                        pnt = GetVFromLine(line);
+                        pnt = GetVFromLine(line, swap);
                         int p2 = AddVertex(pnts, pnt);
 
                         tris.Add(p0);
@@ -220,7 +227,7 @@ namespace Barnacle.Models
             }
         }
 
-        private static void ReadBinaryStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris)
+        private static void ReadBinaryStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris, bool swap)
         {
             FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
 
@@ -236,21 +243,49 @@ namespace Barnacle.Models
                     x = reader.ReadSingle();
                     y = reader.ReadSingle();
                     z = reader.ReadSingle();
-                    normals.Add(new Vector3D(x, z, y));
+                    if (swap)
+                    {
+                        normals.Add(new Vector3D(x, z, y));
+                    }
+                    else
+                    {
+                        normals.Add(new Vector3D(x, y, z));
+                    }
                     x = reader.ReadSingle();
                     y = reader.ReadSingle();
                     z = reader.ReadSingle();
-                    pnts.Add(new Point3D(x, z, y));
+                    if (swap)
+                    {
+                        pnts.Add(new Point3D(x, z, y));
+                    }
+                    else
+                    {
+                        pnts.Add(new Point3D(x, y, z));
+                    }
                     tris.Add(pnts.Count - 1);
                     x = reader.ReadSingle();
                     y = reader.ReadSingle();
                     z = reader.ReadSingle();
-                    pnts.Add(new Point3D(x, z, y));
+                    if (swap)
+                    {
+                        pnts.Add(new Point3D(x, z, y));
+                    }
+                    else
+                    {
+                        pnts.Add(new Point3D(x, y, z));
+                    }
                     tris.Add(pnts.Count - 1);
                     x = reader.ReadSingle();
                     y = reader.ReadSingle();
                     z = reader.ReadSingle();
-                    pnts.Add(new Point3D(x, z, y));
+                    if (swap)
+                    {
+                        pnts.Add(new Point3D(x, z, y));
+                    }
+                    else
+                    {
+                        pnts.Add(new Point3D(x, y, z));
+                    }
                     tris.Add(pnts.Count - 1);
                     ushort dummy = reader.ReadUInt16();
                 }

@@ -453,6 +453,12 @@ namespace Barnacle.ViewModels
                     }
                     break;
 
+                case Key.E:
+                    {
+                        CheckEditSelection();
+                    }
+                    break;
+
                 case Key.V:
                     {
                         if (ctrl)
@@ -932,6 +938,22 @@ namespace Barnacle.ViewModels
             printerPlate.Height = bp.Height;
             printerPlate.BorderThickness = bp.BorderThickness;
             RegenerateDisplayList();
+        }
+
+        private void CheckEditSelection()
+        {
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.SelectedObjects.Count == 1)
+                {
+                    Object3D obj = selectedObjectAdorner.SelectedObjects[0];
+                    string toolName = obj.EditorParameters.ToolName;
+                    if (toolName != "")
+                    {
+                        NotificationManager.Notify("Tool", toolName);
+                    }
+                }
+            }
         }
 
         private void CheckForScriptResults()
@@ -2144,7 +2166,7 @@ namespace Barnacle.ViewModels
                         {
                             if (File.Exists(dlg.FileName))
                             {
-                                Document.ImportStl(dlg.FileName);
+                                Document.ImportStl(dlg.FileName, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
 
                                 RegenerateDisplayList();
                             }
@@ -2172,7 +2194,7 @@ namespace Barnacle.ViewModels
                                     try
                                     {
                                         Document localDoc = new Document();
-                                        localDoc.ImportStl(fpath);
+                                        localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
                                         int numObs = 0;
                                         foreach (Object3D ob in localDoc.Content)
                                         {

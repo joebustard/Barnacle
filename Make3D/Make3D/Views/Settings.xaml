@@ -72,7 +72,7 @@
                     </Grid>
                 </Grid>
             </TabItem>
-            <TabItem Header="Export">
+            <TabItem Header="Import/Export">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -85,10 +85,7 @@
 
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="5*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="5*" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Column="1" Grid.Row="1">
                         <Grid.ColumnDefinitions>
@@ -137,6 +134,26 @@ VerticalContentAlignment="Center" IsChecked="{Binding IgnoreEmpty}" Content="Don
                             <TextBox  Grid.Row="3" Grid.Column="2" Text="{Binding RotX}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
                             <TextBox  Grid.Row="3" Grid.Column="3" Text="{Binding RotY}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
                             <TextBox  Grid.Row="3" Grid.Column="4" Text="{Binding RotZ}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                        </Grid>
+                    </GroupBox>
+                    <GroupBox Grid.Row="4" Grid.Column="1" Header="On Import" BorderThickness="3" Padding="8,8,8,8">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="5*" />
+                                <ColumnDefinition Width="80*" />
+                                <ColumnDefinition Width="77*" />
+                                <ColumnDefinition Width="76*" />
+                                <ColumnDefinition Width="76*" />
+                            </Grid.ColumnDefinitions>
+
+                            <CheckBox Grid.Row="0" Content="Swap Y-Z" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"
+VerticalContentAlignment="Center" IsChecked="{Binding ImportSwapAxis}" Grid.ColumnSpan="2" />
                         </Grid>
                     </GroupBox>
                 </Grid>

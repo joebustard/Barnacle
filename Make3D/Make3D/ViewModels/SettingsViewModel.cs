@@ -15,6 +15,7 @@ namespace Barnacle.ViewModels
         private bool exportEmptyDocs;
         private string exportScale;
         private bool floorAll;
+        private bool importSwapAxis;
         private string rotX;
 
         private string rotY;
@@ -40,6 +41,7 @@ namespace Barnacle.ViewModels
             RotY = Project.SharedProjectSettings.ExportRotation.Y.ToString("F3");
             RotZ = Project.SharedProjectSettings.ExportRotation.Z.ToString("F3");
             SwapAxis = Project.SharedProjectSettings.ExportAxisSwap;
+            ImportSwapAxis = Project.SharedProjectSettings.ImportAxisSwap;
             FloorAll = Project.SharedProjectSettings.FloorAll;
             VersionExport = Project.SharedProjectSettings.VersionExport;
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
@@ -154,6 +156,22 @@ namespace Barnacle.ViewModels
                 if (exportEmptyDocs != value)
                 {
                     exportEmptyDocs = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool ImportSwapAxis
+        {
+            get
+            {
+                return importSwapAxis;
+            }
+            set
+            {
+                if (importSwapAxis != value)
+                {
+                    importSwapAxis = value;
                     NotifyPropertyChanged();
                 }
             }

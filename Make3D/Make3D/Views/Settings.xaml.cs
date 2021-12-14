@@ -38,6 +38,7 @@ namespace Barnacle.Views
                     double z = Convert.ToDouble(vm.RotZ);
                     BaseViewModel.Project.SharedProjectSettings.ExportRotation = new Point3D(x, y, z);
                     BaseViewModel.Project.SharedProjectSettings.ExportAxisSwap = vm.SwapAxis;
+                    BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap = vm.ImportSwapAxis;
                     BaseViewModel.Project.SharedProjectSettings.FloorAll = vm.FloorAll;
                     BaseViewModel.Project.SharedProjectSettings.VersionExport = vm.VersionExport;
 
