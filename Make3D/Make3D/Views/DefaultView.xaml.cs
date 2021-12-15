@@ -120,12 +120,6 @@ namespace Barnacle.Views
 
         private void EnableEditorControls(bool b)
         {
-            /*
-            ShowAxis.IsEnabled = b;
-            ShowBuildPlate.IsEnabled = b;
-            ShowFloor.IsEnabled = b;
-            ShowMarker.IsEnabled = b;
-            */
             ShowGroup.IsEnabled = b;
             SelectionGroup.IsEnabled = b;
             MeshGroup.IsEnabled = b;

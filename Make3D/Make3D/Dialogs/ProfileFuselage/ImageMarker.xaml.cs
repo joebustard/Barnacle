@@ -273,7 +273,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        internal void DeleteMarker(RibControl rc)
+        internal void DeleteMarker(RibPathControl rc)
         {
             UpdateDisplay();
         }

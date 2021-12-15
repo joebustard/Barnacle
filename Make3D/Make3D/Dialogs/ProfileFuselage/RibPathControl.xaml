@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="Barnacle.Dialogs.RibPathControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:Barnacle.Dialogs"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Border Style="{StaticResource ControlBorder}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="48" />
+                <RowDefinition Height="48" />
+                <RowDefinition />
+                <RowDefinition Height="34" />
+            </Grid.RowDefinitions>
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="0">
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="200" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="60" />
+                    </Grid.ColumnDefinitions>
+                    <Label x:Name="HeaderLabel" Grid.Column="0"  FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding Header}" />
+                    <Label x:Name="FNameLabel" Grid.Column="1"   FontSize="12" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding FName}" />
+
+                    <Button x:Name="ZoomOut" Margin="2,1,0,1" Grid.Column="2" Click="ZoomOut_Click">-</Button>
+                    <Button x:Name="ZoomReset" Margin="2,1,0,1" Grid.Column="3" Click="ZoomReset_Click">.</Button>
+                    <Button x:Name="ZoomIn" Margin="2,1,0,1" Grid.Column="4" Click="ZoomIn_Click">+</Button>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,2">
+                <UniformGrid Columns="5">
+                    <Border x:Name="PickBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="PickButton" Click="PickButton_Click" Style="{StaticResource SmallButton }" ToolTip="Select a segment or point">
+                            <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddSegBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddSegButton"  Style="{StaticResource SmallButton}" Click="AddSegButton_Click" ToolTip="Insert a straight segment">
+                            <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddBezierButton"  Click="AddBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a cubic spline">
+                            <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="AddQuadBezierBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="AddQuadBezierButton"  Click="AddQuadBezierButton_Click" Style="{StaticResource SmallButton}" ToolTip="Convert a straight segment to a quadratic spline">
+                            <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="DelSegBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="DelSegButton"  Click="DelSegButton_Click" Style="{StaticResource SmallButton}" ToolTip="Delete a segment">
+                            <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
+                        </Button>
+                    </Border>
+                </UniformGrid>
+            </Border>
+            <ScrollViewer Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Padding="5,5,5,5">
+
+                <Canvas x:Name="RibCanvas"  Width="800" Height="800" MouseMove="RibCanvas_MouseMove"  MouseUp="RibCanvas_MouseUp" Margin="20,20">
+                    <Canvas.LayoutTransform>
+                        <ScaleTransform x:Name="RibScale" />
+                    </Canvas.LayoutTransform>
+                    <Image x:Name="RibImage" />
+                </Canvas>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

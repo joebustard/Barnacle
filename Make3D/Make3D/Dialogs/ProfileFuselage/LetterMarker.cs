@@ -12,6 +12,6 @@ namespace Barnacle.Dialogs
 
         public string Letter { get; set; }
         public Point Position { get; set; }
-        public RibControl Rib { get; set; }
+        public RibPathControl Rib { get; set; }
     }
 }

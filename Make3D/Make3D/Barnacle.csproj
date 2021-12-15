@@ -172,6 +172,9 @@
     </Compile>
     <Compile Include="Dialogs\ProfileFuselage\RibControl.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
+    <Compile Include="Dialogs\ProfileFuselage\RibPathControl.xaml.cs">
+      <DependentUpon>RibPathControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Propeller\Propeller.xaml.cs">
       <DependentUpon>Propeller.xaml</DependentUpon>
     </Compile>
@@ -453,6 +456,10 @@
     <Page Include="Dialogs\ProfileFuselage\RibManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ProfileFuselage\RibPathControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Propeller\Propeller.xaml">
       <SubType>Designer</SubType>
