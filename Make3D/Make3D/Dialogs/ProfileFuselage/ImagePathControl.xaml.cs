@@ -21,7 +21,7 @@ namespace Barnacle.Dialogs
     /// <summary>
     /// Interaction logic for RibControl.xaml
     /// </summary>
-    public partial class RibPathControl : UserControl, INotifyPropertyChanged
+    public partial class ImagePathControl : UserControl, INotifyPropertyChanged
     {
         public ForceRibReload OnForceReload;
         private double divisionLength;
@@ -43,6 +43,7 @@ namespace Barnacle.Dialogs
 
         private bool lineShape;
 
+        private bool loaded;
         private BitmapImage localImage;
 
         private double middleX;
@@ -57,8 +58,10 @@ namespace Barnacle.Dialogs
 
         private List<PointF> profilePoints;
 
+        private System.Windows.Controls.Image RibImage;
         private double scale;
-
+        private double scrollX;
+        private double scrollY;
         private int selectedPoint;
 
         private SelectionModeType selectionMode;
@@ -79,20 +82,29 @@ namespace Barnacle.Dialogs
 
         private System.Drawing.Bitmap workingImage;
 
-        public RibPathControl()
+        public ImagePathControl()
         {
             InitializeComponent();
-            Width = 400;
-            Height = 400;
+
             Header = "";
             //edgePoints = null;
             NumDivisions = 80;
             ProfilePoints = new List<PointF>();
             scale = 1;
             SetRibScale();
+            selectedPoint = -1;
+            selectionMode = SelectionModeType.SelectPoint;
             imageEdge = new ImageEdge();
             isValid = false;
             DataContext = this;
+            RibImage = new System.Windows.Controls.Image();
+            flexiPath = new FlexiPath();
+
+            InitialisePoints();
+            polyPoints = flexiPath.FlexiPoints;
+            scrollX = 0;
+            scrollY = 0;
+            loaded = false;
         }
 
         public delegate void ForceRibReload(string pth);
@@ -119,6 +131,28 @@ namespace Barnacle.Dialogs
                 else
                 {
                     return 0;
+                }
+            }
+        }
+
+        public string EdgePath
+        {
+            get
+            {
+                if (flexiPath != null)
+                {
+                    return flexiPath.ToPath(true);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            set
+            {
+                if (flexiPath != null)
+                {
+                    flexiPath.FromTextPath(value);
                 }
             }
         }
@@ -225,6 +259,55 @@ namespace Barnacle.Dialogs
                 if (profilePoints != value)
                 {
                     profilePoints = value;
+                }
+            }
+        }
+
+        public double Scale
+        {
+            get
+            {
+                return scale;
+            }
+            set
+            {
+                if (scale != value)
+                {
+                    scale = value;
+                    SetRibScale();
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double ScrollX
+        {
+            get
+            {
+                return scrollX;
+            }
+            set
+            {
+                if (scrollX != value)
+                {
+                    scrollX = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double ScrollY
+        {
+            get
+            {
+                return scrollY;
+            }
+            set
+            {
+                if (scrollY != value)
+                {
+                    scrollY = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -478,9 +561,9 @@ namespace Barnacle.Dialogs
             FNameLabel.Content = FName;
         }
 
-        internal RibPathControl Clone()
+        internal ImagePathControl Clone()
         {
-            RibPathControl cl = new RibPathControl();
+            ImagePathControl cl = new ImagePathControl();
             cl.Header = Header;
             cl.NumDivisions = NumDivisions;
             cl.imageEdge = imageEdge.Clone();
@@ -511,17 +594,13 @@ namespace Barnacle.Dialogs
             ele.SetAttribute("Header", Header);
             ele.SetAttribute("Path", imagePath);
             ele.SetAttribute("Position", pos.ToString());
+            ele.SetAttribute("Scale", scale.ToString());
+            ele.SetAttribute("ScrollX", ScrollX.ToString());
+            ele.SetAttribute("ScrollY", ScrollY.ToString());
             docNode.AppendChild(ele);
             XmlElement pnts = doc.CreateElement("Edge");
-            pnts.SetAttribute("EdgeLength", EdgeLength.ToString());
-
-            foreach (PointF p in profilePoints)
-            {
-                XmlElement v = doc.CreateElement("V");
-                v.SetAttribute("X", p.X.ToString());
-                v.SetAttribute("Y", p.Y.ToString());
-                pnts.AppendChild(v);
-            }
+            // make sure we get the points with absolute coordinates
+            pnts.InnerText = flexiPath.ToPath(true);
             ele.AppendChild(pnts);
         }
 
@@ -606,7 +685,7 @@ namespace Barnacle.Dialogs
                     return;
                 }
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(70, 255, 255, 5));
             Line ln = new Line();
             ln.Stroke = br;
             ln.StrokeThickness = 6;
@@ -973,16 +1052,6 @@ namespace Barnacle.Dialogs
         {
             flexiPath.ConvertLineQuadCurveSegment(startIndex, position);
             PathText = flexiPath.ToPath();
-        }
-
-        private ContextMenu LineMenu()
-        {
-            ContextMenu mn = new ContextMenu();
-            MenuItem mni = new MenuItem();
-            mni.Header = "Add Point";
-            mni.Click += AddPointClicked;
-            mn.Items.Add(mni);
-            return mn;
         }
 
         private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -1352,6 +1421,15 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (loaded)
+            {
+                scrollX = e.HorizontalOffset;
+                scrollY = e.VerticalOffset;
+            }
+        }
+
         private bool SelectLineFromPoint(MouseButtonEventArgs e)
         {
             bool found;
@@ -1514,13 +1592,18 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
+            RibCanvas.Children.Clear();
+            RibCanvas.Children.Add(RibImage);
             DisplayLines();
             DisplayPoints();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            InitialisePoints();
+            ScrollView.ScrollToHorizontalOffset(scrollX);
+            ScrollView.ScrollToVerticalOffset(scrollY);
+            UpdateDisplay();
+            loaded = true;
         }
 
         private void ZoomIn_Click(object sender, RoutedEventArgs e)

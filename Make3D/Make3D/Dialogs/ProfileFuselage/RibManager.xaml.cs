@@ -20,14 +20,14 @@ namespace Barnacle.Dialogs
         private bool controlsEnabled;
 
         private int modelType;
-        private ObservableCollection<RibPathControl> ribs;
+        private ObservableCollection<ImagePathControl> ribs;
 
-        private RibPathControl selectedRib;
+        private ImagePathControl selectedRib;
 
         public RibManager()
         {
             InitializeComponent();
-            ribs = new ObservableCollection<RibPathControl>();
+            ribs = new ObservableCollection<ImagePathControl>();
             DataContext = this;
             NextNameLetter = 'A';
             NextNameNumber = 0;
@@ -38,11 +38,11 @@ namespace Barnacle.Dialogs
 
         public delegate void CommandHandler(string command);
 
-        public delegate void RibAdded(string ribName, RibPathControl rc);
+        public delegate void RibAdded(string ribName, ImagePathControl rc);
 
-        public delegate void RibDeleted(RibPathControl rc);
+        public delegate void RibDeleted(ImagePathControl rc);
 
-        public delegate void RibInserted(string ribName, RibPathControl rc, RibPathControl after);
+        public delegate void RibInserted(string ribName, ImagePathControl rc, ImagePathControl after);
 
         public delegate void RibsRenamed(List<NameRec> newNames);
 
@@ -95,7 +95,7 @@ namespace Barnacle.Dialogs
                 if (value != numberOfProfilePoints)
                 {
                     numberOfProfilePoints = value;
-                    foreach (RibPathControl rc in ribs)
+                    foreach (ImagePathControl rc in ribs)
                     {
                         rc.NumDivisions = numberOfProfilePoints;
                     }
@@ -112,7 +112,7 @@ namespace Barnacle.Dialogs
 
         public RibsRenamed OnRibsRenamed { get; set; }
 
-        public ObservableCollection<RibPathControl> Ribs
+        public ObservableCollection<ImagePathControl> Ribs
         {
             get
             {
@@ -127,7 +127,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public RibPathControl SelectedRib
+        public ImagePathControl SelectedRib
         {
             get
             {
@@ -154,8 +154,8 @@ namespace Barnacle.Dialogs
         internal void CopyARib(string name)
         {
             selectedRib = null;
-            RibPathControl src = null;
-            foreach (RibPathControl rc in Ribs)
+            ImagePathControl src = null;
+            foreach (ImagePathControl rc in Ribs)
             {
                 if (rc.Header == name)
                 {
@@ -171,16 +171,13 @@ namespace Barnacle.Dialogs
 
         internal void OnForceRibReload(string s)
         {
-            foreach (RibPathControl rc in Ribs)
+            foreach (ImagePathControl rc in Ribs)
             {
                 if (rc.ImagePath == s)
                 {
                     rc.FetchImage(true);
                     if (rc.IsValid)
                     {
-                        // rc.ClearSinglePixels();
-                        //rc.FindEdge();
-                        //rc.GenerateProfilePoints(0);
                         rc.SetImageSource();
                     }
                 }
@@ -195,16 +192,12 @@ namespace Barnacle.Dialogs
             {
                 try
                 {
-                    RibPathControl rc = new RibPathControl();
+                    ImagePathControl rc = new ImagePathControl();
 
                     rc.ImagePath = dlg.FileName;
                     rc.FetchImage();
                     if (rc.IsValid)
                     {
-                        // rc.ClearSinglePixels();
-                        // rc.FindEdge();
-                        //rc.GenerateProfilePoints(0);
-                        //rc.SetImageSource();
                         rc.OnForceReload = OnForceRibReload;
                         string name = "" + NextNameLetter;
                         if (NextNameNumber > 0)
@@ -218,6 +211,8 @@ namespace Barnacle.Dialogs
                             NextNameNumber++;
                         }
                         rc.Header = name;
+                        rc.Width = 400;
+                        rc.Height = 400;
                         Ribs.Add(rc);
                         NotifyPropertyChanged("Ribs");
                         if (OnRibAdded != null)
@@ -233,12 +228,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void Copy(RibPathControl src)
+        private void Copy(ImagePathControl src)
         {
-            RibPathControl clone = src.Clone();
+            ImagePathControl clone = src.Clone();
             string nameStart = clone.Header.Substring(0, 1);
             int subName = 0;
-            foreach (RibPathControl rc in Ribs)
+            foreach (ImagePathControl rc in Ribs)
             {
                 if (rc.Header.StartsWith(nameStart))
                 {
@@ -296,7 +291,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateProfiles()
         {
-            foreach (RibPathControl rc in ribs)
+            foreach (ImagePathControl rc in ribs)
             {
                 // rc.GenerateProfilePoints(modelType);
             }

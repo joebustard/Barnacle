@@ -170,10 +170,12 @@
     <Compile Include="Dialogs\ProfileFuselage\ProfileFuselageDlg.xaml.cs">
       <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ProfileFuselage\RibControl.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\RibPathControl.xaml.cs">
-      <DependentUpon>RibPathControl.xaml</DependentUpon>
+    <Compile Include="Dialogs\ProfileFuselage\ImagePathControl.xaml.cs">
+      <DependentUpon>ImagePathControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\ProfileFuselage\ViewManager.xaml.cs">
+      <DependentUpon>ViewManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Propeller\Propeller.xaml.cs">
       <DependentUpon>Propeller.xaml</DependentUpon>
@@ -449,15 +451,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\ProfileFuselage\RibControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Dialogs\ProfileFuselage\RibManager.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\ProfileFuselage\RibPathControl.xaml">
+    <Page Include="Dialogs\ProfileFuselage\ImagePathControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ProfileFuselage\ViewManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

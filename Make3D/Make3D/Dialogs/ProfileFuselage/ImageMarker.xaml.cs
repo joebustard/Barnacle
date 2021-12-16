@@ -34,7 +34,6 @@ namespace Barnacle.Dialogs
 
         private List<Dimension> dimensions;
 
-        // private WriteableBitmap wbx;
         private List<UIElement> elements;
 
         private int gapBelowLetter = 5;
@@ -273,7 +272,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        internal void DeleteMarker(RibPathControl rc)
+        internal void DeleteMarker(ImagePathControl rc)
         {
             UpdateDisplay();
         }
@@ -698,7 +697,6 @@ namespace Barnacle.Dialogs
         private void Ply_MouseUp(object sender, MouseButtonEventArgs e)
         {
             pinSelected = false;
-            //            selectedMarker = null;
         }
 
         private void UpdateCanvas()

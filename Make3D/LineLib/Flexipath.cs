@@ -580,13 +580,21 @@ namespace Barnacle.LineLib
             }
         }
 
-        public string ToPath()
+        public string ToPath(bool absolute = false)
         {
             double ox;
             double oy;
             ox = points[0].X;
             oy = points[0].Y;
-            string result = "M 0,0 ";
+            string result;
+            if (absolute)
+            {
+                result = $"M {ox:F3},{oy:F3} "; ;
+            }
+            else
+            {
+                result = "M 0,0 ";
+            }
             foreach (FlexiSegment sq in segs)
             {
                 result += sq.ToPath(points, ref ox, ref oy);
