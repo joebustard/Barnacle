@@ -26,6 +26,19 @@
                     <local:RibManager x:Name="RibManager" Grid.ColumnSpan="3" />
                 </Grid>
             </TabItem>
+            <TabItem Header="Side View">
+                <Grid>
+
+                    <local:ViewManager x:Name="SideViewManager" />
+                </Grid>
+            </TabItem>
+            <TabItem Header="Top View">
+                <Grid>
+
+                    <local:ViewManager x:Name="TopViewManager" />
+                </Grid>
+            </TabItem>
+
             <TabItem Header="Position">
                 <Grid>
                     <Grid.ColumnDefinitions>
