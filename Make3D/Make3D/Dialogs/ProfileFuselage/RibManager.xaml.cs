@@ -211,8 +211,8 @@ namespace Barnacle.Dialogs
                             NextNameNumber++;
                         }
                         rc.Header = name;
-                        rc.Width = 400;
-                        rc.Height = 400;
+                        rc.Width = 600;
+                        rc.Height = 600;
                         Ribs.Add(rc);
                         NotifyPropertyChanged("Ribs");
                         if (OnRibAdded != null)
@@ -293,7 +293,7 @@ namespace Barnacle.Dialogs
         {
             foreach (ImagePathControl rc in ribs)
             {
-                // rc.GenerateProfilePoints(modelType);
+                rc.GenerateProfilePoints(modelType);
             }
         }
 

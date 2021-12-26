@@ -208,7 +208,7 @@ namespace Barnacle.Dialogs
             OpenFileDialog opDlg = new OpenFileDialog();
             switch (com)
             {
-                case "LoadTop":
+                case "Load Top":
                     {
                         opDlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.png) | *.jpg; *.jpeg; *.jpe; *.png";
                         if (opDlg.ShowDialog() == true)
@@ -216,6 +216,8 @@ namespace Barnacle.Dialogs
                             try
                             {
                                 topViewFilename = opDlg.FileName;
+                                TopViewManager.ImageFilePath = topViewFilename;
+                                /*
                                 TopView.ImageFilePath = topViewFilename;
                                 if (TopView.IsValid)
                                 {
@@ -223,6 +225,7 @@ namespace Barnacle.Dialogs
                                     UpdateLimits();
                                     dirty = true;
                                 }
+                                */
                             }
                             catch
                             {
@@ -231,7 +234,7 @@ namespace Barnacle.Dialogs
                     }
                     break;
 
-                case "LoadSide":
+                case "Load Side":
                     {
                         opDlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.png) | *.jpg; *.jpeg; *.jpe; *.png";
                         if (opDlg.ShowDialog() == true)
@@ -239,12 +242,14 @@ namespace Barnacle.Dialogs
                             try
                             {
                                 sideViewFilename = opDlg.FileName;
-                                SideView.ImageFilePath = sideViewFilename;
+                                SideViewManager.ImageFilePath = sideViewFilename;
+                                /*
                                 if (SideView.IsValid)
                                 {
                                     SideView.UpdateLayout();
                                     UpdateLimits();
                                 }
+                                */
                                 dirty = true;
                             }
                             catch
@@ -582,8 +587,8 @@ namespace Barnacle.Dialogs
                 ImagePathControl rc = new ImagePathControl();
                 rc.ImagePath = pth;
                 rc.Header = nme;
-                rc.Width = 400;
-                rc.Height = 400;
+                rc.Width = 600;
+                rc.Height = 600;
                 rc.Scale = viewScale;
                 rc.EdgePath = edgePath;
                 rc.ScrollX = scx;
@@ -667,12 +672,15 @@ namespace Barnacle.Dialogs
             RibManager.NextNameLetter = s[0];
             s = ele.GetAttribute("NextNumber");
             RibManager.NextNameNumber = Convert.ToInt32(s);
-            XmlElement topNode = docNode.SelectSingleNode("Top") as XmlElement;
-            TopView.ImageFilePath = topNode.GetAttribute("Path");
-            TopView.UpdateDisplay();
-            XmlElement sideNode = docNode.SelectSingleNode("Side") as XmlElement;
-            SideView.ImageFilePath = sideNode.GetAttribute("Path");
-            SideView.UpdateDisplay();
+            XmlElement topNode = docNode.SelectSingleNode("TopView") as XmlElement;
+            TopViewManager.PathControl.Read(topNode);
+            TopViewManager.PathControl.FetchImage();
+            TopViewManager.PathControl.UpdateDisplay();
+
+            XmlElement sideNode = docNode.SelectSingleNode("SideView") as XmlElement;
+            SideViewManager.PathControl.Read(sideNode);
+            SideViewManager.PathControl.FetchImage();
+            SideViewManager.PathControl.UpdateDisplay();
 
             RibManager.Ribs.Clear();
             Markers.Clear();
@@ -681,27 +689,23 @@ namespace Barnacle.Dialogs
             foreach (XmlNode nd in nodes)
             {
                 XmlElement el = nd as XmlElement;
-                string pth = el.GetAttribute("Path");
                 string nme = el.GetAttribute("Header");
-                Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
-                noteWindow.Message = "Loading Rib " + nme;
-                // noteWindow.Activate();
-                noteWindow.Refresh();
-                Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.ContextIdle, null);
-                System.Drawing.Point ribPos;
-                int position = Convert.ToInt16(el.GetAttribute("Position"));
-                double scale = Convert.ToDouble(el.GetAttribute("Scale"));
-                double scrollX = Convert.ToDouble(el.GetAttribute("ScrollX"));
-                double scrollY = Convert.ToDouble(el.GetAttribute("ScrollY"));
-                ribPos = new System.Drawing.Point(position, nextY);
-                XmlNode edgn = nd.SelectSingleNode("Edge");
-                if (edgn != null)
+                int pos = Convert.ToInt16(el.GetAttribute("Position"));
+                Dispatcher.Invoke(new Action(() => { noteWindow.Message = "Loading Rib " + nme; }), DispatcherPriority.ContextIdle, null);
+                XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
+                ImagePathControl rc = new ImagePathControl();
+                rc.Read(el);
+                rc.Width = 600;
+                rc.Height = 600;
+                rc.FetchImage();
+                if (rc.IsValid)
                 {
-                    string edgePath = edgn.InnerText;
-                    LoadRib(el, pth, nme, ribPos, scale, edgePath, scrollX, scrollY);
-
-                    nextY = 40 - nextY;
+                    rc.SetImageSource();
+                    rc.OnForceReload = RibManager.OnForceRibReload;
+                    CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
+                    RibManager.Ribs.Add(rc);
                 }
+                nextY = 10 - nextY;
             }
 
             SortRibs();
@@ -896,6 +900,10 @@ namespace Barnacle.Dialogs
             RibManager.OnCommandHandler = OnCommand;
             RibManager.OnRibsRenamed = OnRibsRenamed;
             RibManager.OnRibDeleted = OnRibDeleted;
+            SideViewManager.OnCommandHandler = OnCommand;
+            SideViewManager.CommandText = "Load Side";
+            TopViewManager.OnCommandHandler = OnCommand;
+            TopViewManager.CommandText = "Load Top";
             UpdateCameraPos();
             LoadEditorParameters();
             MyModelGroup.Children.Clear();
@@ -910,19 +918,29 @@ namespace Barnacle.Dialogs
             XmlElement docNode = doc.CreateElement("Spars");
             docNode.SetAttribute("NextLetter", RibManager.NextNameLetter.ToString());
             docNode.SetAttribute("NextNumber", RibManager.NextNameNumber.ToString());
-            XmlElement topNode = doc.CreateElement("Top");
-            topNode.SetAttribute("Path", TopView.ImageFilePath);
+            XmlElement topNode = doc.CreateElement("TopView");
+            TopViewManager.PathControl.Write(doc, topNode);
+            //topNode.SetAttribute("Path", TopViewManager.ImageFilePath);
+
             docNode.AppendChild(topNode);
-            XmlElement sideNode = doc.CreateElement("Side");
-            sideNode.SetAttribute("Path", SideView.ImageFilePath);
+            XmlElement sideNode = doc.CreateElement("SideView");
+            SideViewManager.PathControl.Write(doc, sideNode);
+            sideNode.SetAttribute("Path", SideViewManager.ImageFilePath);
             docNode.AppendChild(sideNode);
             foreach (ImagePathControl ob in RibManager.Ribs)
             {
+
+
                 foreach (LetterMarker mk in markers)
                 {
                     if (mk.Letter == ob.Header)
                     {
-                        ob.Write(doc, docNode, mk.Position.X, mk.Letter);
+                        // ob.Write(doc, docNode, mk.Position.X, mk.Letter);
+                        XmlElement ribNode = doc.CreateElement("Rib");
+                        ribNode.SetAttribute("Header", ob.Header);
+                        ribNode.SetAttribute("Position", mk.Position.X.ToString());
+                        docNode.AppendChild(ribNode);
+                        ob.Write(doc, ribNode);
                         break;
                     }
                 }
@@ -950,6 +968,22 @@ namespace Barnacle.Dialogs
             zoomLevel = 1;
             TopView.SetScale(zoomLevel);
             SideView.SetScale(zoomLevel);
+        }
+
+
+        private void OnPositionTabSelected(object sender, RoutedEventArgs e)
+        {
+            int tlx;
+            int tly;
+            int brx;
+            int bry;
+            Bitmap bmp=null;
+            //get the flexipath from  the side and render the path onto an image
+            SideViewManager.RenderFlexipath(ref bmp ,out tlx, out tly, out brx, out bry);
+            SideView.WorkingImage = bmp;
+            SideView.SetupImage(bmp,tlx, tly, brx, bry);
+            SideView.UpdateDisplay();
+
         }
     }
 }

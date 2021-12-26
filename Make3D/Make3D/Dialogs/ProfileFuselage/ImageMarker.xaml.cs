@@ -76,7 +76,19 @@ namespace Barnacle.Dialogs
         private Point upperPoint;
 
         private System.Drawing.Bitmap workingImage;
+        public System.Drawing.Bitmap WorkingImage
+        {
+            get { return workingImage; }
+            set
+            {
+                if (workingImage != null)
+                {
+                    workingImage = value;
+                    NotifyPropertyChanged();
 
+                }
+            }
+        }
         public ImageMarker()
         {
             InitializeComponent();
@@ -631,10 +643,7 @@ namespace Barnacle.Dialogs
                     tlx = 1;
                     bry -= tly;
                     tly = 1;
-                    im = new Image();
-                    im.Source = loadBitmap(workingImage);
-                    leftLimit = tlx;
-                    rightLimit = brx;
+                    SetupImage(workingImage,tlx,tly,brx,bry);
                     isValid = true;
                 }
                 UpdateDisplay();
@@ -642,6 +651,17 @@ namespace Barnacle.Dialogs
             else
             {
                 MessageBox.Show($"Can't find image file {imageFilePath}");
+            }
+        }
+
+        public void SetupImage(System.Drawing.Bitmap bmp, int tlx, int tly, int brx, int bry)
+        {
+            if (bmp != null)
+            {
+                im = new Image();
+                im.Source = loadBitmap(bmp);
+                leftLimit = tlx;
+                rightLimit = brx;
             }
         }
 

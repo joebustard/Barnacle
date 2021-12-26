@@ -82,6 +82,8 @@ namespace Barnacle.Dialogs
 
         private System.Drawing.Bitmap workingImage;
 
+
+
         public ImagePathControl()
         {
             InitializeComponent();
@@ -93,7 +95,7 @@ namespace Barnacle.Dialogs
             scale = 1;
             SetRibScale();
             selectedPoint = -1;
-            selectionMode = SelectionModeType.SelectPoint;
+            SelectionMode = SelectionModeType.SelectPoint;
             imageEdge = new ImageEdge();
             isValid = false;
             DataContext = this;
@@ -107,6 +109,69 @@ namespace Barnacle.Dialogs
             loaded = false;
         }
 
+        internal void RenderFlexipath(ref Bitmap bmp,out int tlx, out int tly, out int brx, out int bry)
+        {
+
+            tlx = int.MaxValue;
+            tly = int.MaxValue;
+            brx = int.MinValue;
+            bry = int.MinValue;
+
+            List<PointF> pnts = flexiPath.DisplayPointsF();
+            if (bmp == null && pnts.Count > 0 && workingImage != null)
+            {
+                bmp = new Bitmap(workingImage.Width, workingImage.Height);
+            }
+            if (bmp != null)
+            {
+
+
+                for (int i = 0; i < pnts.Count; i++)
+                {
+                    if (pnts[i].X < tlx)
+                    {
+                       tlx = (int)pnts[i].X;
+                    }
+
+
+                    if (pnts[i].Y < tly)
+                    {
+                        tly = (int)pnts[i].Y;
+                    }
+
+                    if (pnts[i].X > brx)
+                    {
+                        brx = (int)pnts[i].X;
+                    }
+
+                    if (pnts[i].Y > bry)
+                    {
+                        bry = (int)pnts[i].Y;
+                    }
+                }
+                using (var gfx = Graphics.FromImage(bmp))
+                using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
+                {
+                    // draw one thousand random white lines on a dark blue background
+                    gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+                    gfx.Clear(System.Drawing.Color.White);
+                    for (int i = 0; i < pnts.Count; i++)
+                    {
+                        int j = i + 1;
+                        if (j >= pnts.Count)
+                        {
+                            j = 0;
+                        }
+                        var pt1 = new System.Drawing.Point((int)(pnts[i].X) - (int)tlx, (int)(pnts[i].Y) - (int)tly);
+                        var pt2 = new System.Drawing.Point((int)(pnts[j].X) - (int)tlx, (int)(pnts[j].Y) - (int)tly);
+                        gfx.DrawLine(pen, pt1, pt2);
+
+                    }
+
+                }
+            }
+        }
+
         public delegate void ForceRibReload(string pth);
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -117,7 +182,8 @@ namespace Barnacle.Dialogs
             AddLine,
             AddBezier,
             DeleteSegment,
-            AddQuadBezier
+            AddQuadBezier,
+            MovePath
         };
 
         public double EdgeLength
@@ -388,7 +454,7 @@ namespace Barnacle.Dialogs
         {
             LoadImage(imagePath, forceReload);
         }
-
+        /*
         public void FindEdge()
         {
             imageEdge.Clear();
@@ -442,7 +508,7 @@ namespace Barnacle.Dialogs
 
             ShowEdge();
         }
-
+        
         public void GenerateProfilePoints(int modelType)
         {
             System.Diagnostics.Debug.WriteLine("=================================== GenerateProfilePoints ================================");
@@ -536,6 +602,95 @@ namespace Barnacle.Dialogs
                 System.Diagnostics.Debug.WriteLine("ERROR incorrect number of profile divisions");
             }
         }
+        */
+        public void GenerateProfilePoints(int modelType)
+        {
+            profilePoints = new List<PointF>();
+            List<PointF> pnts = flexiPath.DisplayPointsF();
+            double tlx = double.MaxValue;
+            double tly = double.MaxValue;
+            double brx = double.MinValue;
+            double bry = double.MinValue;
+
+            double pathLength = 0;
+            for (int i = 0; i < pnts.Count - 1; i++)
+            {
+
+                pathLength += Distance(pnts[i], pnts[i + 1]);
+                if (pnts[i].X < tlx)
+                {
+                    tlx = pnts[i].X;
+                }
+
+                if (pnts[i].Y < tly)
+                {
+                    tly = pnts[i].Y;
+                }
+
+                if (pnts[i].X > brx)
+                {
+                    brx = pnts[i].X;
+                }
+
+                if (pnts[i].Y > tlx)
+                {
+                    bry = pnts[i].Y;
+                }
+            }
+            divisionLength = EdgeLength / (NumDivisions - 1);
+            middleX = tlx + (brx - tlx) / 2.0;
+            middleY = tly + (bry - tly) / 2.0;
+            for (int i = 0; i < NumDivisions; i++)
+            {
+                double targetDistance = i * divisionLength;
+                double runningDistance = 0;
+                int cp = 1;
+                bool found = false;
+                while (!found && cp < pnts.Count)
+                {
+                    PointF p0 = pnts[cp - 1];
+                    PointF p1 = pnts[cp];
+                    double d = Distance(p0, p1);
+                    if ((runningDistance <= targetDistance) &&
+                         (runningDistance + d >= targetDistance))
+                    {
+                        found = true;
+                        double overhang = targetDistance - runningDistance;
+                        if (overhang < 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Distance error creating profile");
+                        }
+                        if (overhang != 0.0)
+                        {
+                            double delta = overhang / d;
+                            double nx = p0.X + (p1.X - p0.X) * delta;
+                            double ny = p0.Y + (p1.Y - p0.Y) * delta;
+
+                            nx = nx / middleX;
+                            ny = ny / middleY;
+                            profilePoints.Add(new PointF((float)nx, (float)ny));
+                        }
+                        else
+                        {
+                            double nx = p0.X;
+                            double ny = p0.Y;
+
+                            nx = nx / middleX;
+                            ny = ny / middleY;
+                            profilePoints.Add(new PointF((float)nx, (float)ny));
+                        }
+                    }
+                    runningDistance += d;
+                    cp++;
+                }
+            }
+            if (profilePoints.Count != NumDivisions)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR incorrect number of profile divisions");
+            }
+
+        }
+
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -588,16 +743,15 @@ namespace Barnacle.Dialogs
             return cl;
         }
 
-        internal void Write(XmlDocument doc, XmlElement docNode, int pos, string name)
+        public void Write(XmlDocument doc, XmlElement parentNode)
         {
-            XmlElement ele = doc.CreateElement("Rib");
-            ele.SetAttribute("Header", Header);
+            XmlElement ele = doc.CreateElement("ImagePath");
+
             ele.SetAttribute("Path", imagePath);
-            ele.SetAttribute("Position", pos.ToString());
             ele.SetAttribute("Scale", scale.ToString());
             ele.SetAttribute("ScrollX", ScrollX.ToString());
             ele.SetAttribute("ScrollY", ScrollY.ToString());
-            docNode.AppendChild(ele);
+            parentNode.AppendChild(ele);
             XmlElement pnts = doc.CreateElement("Edge");
             // make sure we get the points with absolute coordinates
             pnts.InnerText = flexiPath.ToPath(true);
@@ -685,7 +839,7 @@ namespace Barnacle.Dialogs
                     return;
                 }
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(70, 255, 255, 5));
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
             Line ln = new Line();
             ln.Stroke = br;
             ln.StrokeThickness = 6;
@@ -771,7 +925,7 @@ namespace Barnacle.Dialogs
                 {
                     workingImage.SetPixel(px, py, System.Drawing.Color.White);
                     c = src.GetPixel(px, py);
-                    if (c.R < 128 || c.G < 128 || c.B < 128)
+                    if (c.R < 200 || c.G < 200 || c.B < 200)
                     {
                         if (px < tlx)
                         {
@@ -790,18 +944,38 @@ namespace Barnacle.Dialogs
                 for (int py = tly; py < src.Height; py++)
                 {
                     c = src.GetPixel(px, py);
-                    if (c.R < 128 || c.G < 128 || c.B < 128)
+                    // if (c.R < 200 || c.G < 200 || c.B < 200)
                     {
                         int tx = px - tlx + 1;
                         int ty = py - tly + 1;
                         if ((tx < workingImage.Width - 1) &&
                              (ty < workingImage.Height - 1))
                         {
-                            workingImage.SetPixel(tx, ty, System.Drawing.Color.Black);
+                            //workingImage.SetPixel(tx, ty, System.Drawing.Color.Black);
+                            workingImage.SetPixel(tx, ty, c);
                         }
                     }
                 }
             }
+        }
+
+        internal void Read(XmlElement parentNode)
+        {
+            XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
+            ImagePath = ele.GetAttribute("Path");
+            //  LoadImage(imagePath,false);
+            scale = Convert.ToDouble(ele.GetAttribute("Scale"));
+            scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
+            scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
+            XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
+            string p = edgeNode.InnerText;
+            flexiPath.FromTextPath(p);
+            loaded = false;
+            ScrollView.ScrollToHorizontalOffset(scrollX);
+            ScrollView.ScrollToVerticalOffset(scrollY);
+            UpdateDisplay();
+            loaded = true;
+            NotifyPropertyChanged("Scale");
         }
 
         private void DashLine(double x1, double y1, double x2, double y2)
@@ -861,6 +1035,10 @@ namespace Barnacle.Dialogs
             SelectionMode = SelectionModeType.DeleteSegment;
         }
 
+        private void MovePathButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.MovePath;
+        }
         private void DisplayLines()
         {
             if (flexiPath != null)
@@ -1095,6 +1273,8 @@ namespace Barnacle.Dialogs
                             SelectionMode = SelectionModeType.SelectPoint;
                         }
                         break;
+
+
                 }
                 if (found)
                 {
@@ -1144,7 +1324,7 @@ namespace Barnacle.Dialogs
             }
             else
             {
-                MessageBox.Show($"Cant find rib image {imagePath}");
+                MessageBox.Show($"Cant find image {imagePath}");
             }
         }
 
@@ -1279,7 +1459,7 @@ namespace Barnacle.Dialogs
 
         private void PickButton_Click(object sender, RoutedEventArgs e)
         {
-            selectionMode = SelectionModeType.SelectPoint;
+            SelectionMode = SelectionModeType.SelectPoint;
         }
 
         private ContextMenu PointMenu(object tag)
@@ -1315,35 +1495,44 @@ namespace Barnacle.Dialogs
                 SelectedPoint = -1;
 
                 System.Windows.Point position = e.GetPosition(RibCanvas);
-
-                double rad = 3;
-
-                for (int i = 0; i < polyPoints.Count; i++)
+                // do this test here because the othe modes only trigger ifn you click a line
+                if (selectionMode == SelectionModeType.MovePath)
                 {
-                    System.Windows.Point p = polyPoints[i].ToPoint();
-                    if (position.X >= p.X - rad && position.X <= p.X + rad)
-                    {
-                        if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
-                        {
-                            SelectedPoint = i;
-                            Points[i].Selected = true;
-                            moving = true;
-                            break;
-                        }
-                    }
-                }
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
+                    MoveWholePath(position);
+                    SelectionMode = SelectionModeType.SelectPoint;
                     UpdateDisplay();
                 }
                 else
-                if (e.RightButton == MouseButtonState.Pressed)
                 {
-                    if (sender is Ellipse)
+                    double rad = 3;
+
+                    for (int i = 0; i < polyPoints.Count; i++)
                     {
-                        Ellipse el = sender as Ellipse;
-                        if (polyPoints.Count > 3)
+                        System.Windows.Point p = polyPoints[i].ToPoint();
+                        if (position.X >= p.X - rad && position.X <= p.X + rad)
                         {
+                            if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
+                            {
+                                SelectedPoint = i;
+                                Points[i].Selected = true;
+                                moving = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        UpdateDisplay();
+                    }
+                    else
+                    if (e.RightButton == MouseButtonState.Pressed)
+                    {
+                        if (sender is Ellipse)
+                        {
+                            Ellipse el = sender as Ellipse;
+                            if (polyPoints.Count > 3)
+                            {
+                            }
                         }
                     }
                 }
@@ -1351,6 +1540,11 @@ namespace Barnacle.Dialogs
             catch (Exception ex)
             {
             }
+        }
+
+        private void MoveWholePath(System.Windows.Point position)
+        {
+            flexiPath.MoveTo(position);
         }
 
         private void RibCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -1457,6 +1651,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1467,6 +1662,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1477,6 +1673,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1487,6 +1684,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1497,8 +1695,21 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
+
+                case SelectionModeType.MovePath:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                    }
+                    break;
+
             }
         }
 
@@ -1590,7 +1801,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private void UpdateDisplay()
+        public void UpdateDisplay()
         {
             RibCanvas.Children.Clear();
             RibCanvas.Children.Add(RibImage);
@@ -1600,6 +1811,7 @@ namespace Barnacle.Dialogs
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
             ScrollView.ScrollToHorizontalOffset(scrollX);
             ScrollView.ScrollToVerticalOffset(scrollY);
             UpdateDisplay();

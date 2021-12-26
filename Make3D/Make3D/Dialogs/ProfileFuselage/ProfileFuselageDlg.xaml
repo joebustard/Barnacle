@@ -15,7 +15,7 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <TabControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+        <TabControl x:Name="MainTab" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" >
             <TabItem Header="Spars">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -39,7 +39,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="Position">
+            <TabItem x:Name="PositionTab" Header="Position" Selector.Selected="OnPositionTabSelected">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" MinWidth="150" />

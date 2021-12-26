@@ -751,5 +751,26 @@ namespace Barnacle.LineLib
                 }
             }
         }
+
+        public void MoveTo(Point position)
+        {
+            double cx = 0;
+            double cy = 0;
+            foreach( FlexiPoint p in points)
+            {
+                cx += p.X;
+                cy += p.Y;
+            }
+            cx /= points.Count;
+            cy /= points.Count;
+            double dx = position.X - cx;
+            double dy = position.Y - cy;
+            foreach (FlexiPoint p in points)
+            {
+                p.X += dx;
+                p.Y += dy;
+            }
+
+        }
     }
 }

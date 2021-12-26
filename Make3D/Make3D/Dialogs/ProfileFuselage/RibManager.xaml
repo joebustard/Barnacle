@@ -27,24 +27,23 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-            <Label Grid.Row="1" Style="{StaticResource InverseLabel}"  FontSize="14">Images</Label>
+            
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-                <Button x:Name="LoadTop" Grid.Column="0" Click="LoadTop_Click" Content="Top image" IsEnabled="{Binding ControlsEnabled}" />
-                <Button x:Name="LoadSide" Grid.Column="1" Click="LoadSide_Click" Content="Side image" IsEnabled="{Binding ControlsEnabled}" />
+                
             </Grid>
-            <Label Grid.Row="4" Style="{StaticResource InverseLabel}"   FontSize="14">Ribs</Label>
-            <Button x:Name="AddRib" Grid.Row="5" Click="AddRib_Click" Content="Append" ToolTip="Add a new rib at the end" IsEnabled="{Binding ControlsEnabled}" />
-            <Button x:Name="CopyRib" Grid.Row="6" Click="CopyRib_Click" Content="Copy" ToolTip="Copy the selected rib and insert a copy immediatey after it" IsEnabled="{Binding ControlsEnabled}" />
+            <Label Grid.Row="1" Style="{StaticResource InverseLabel}"   FontSize="14">Ribs</Label>
+            <Button x:Name="AddRib" Grid.Row="2" Click="AddRib_Click" Content="Append" ToolTip="Add a new rib at the end" IsEnabled="{Binding ControlsEnabled}" />
+            <Button x:Name="CopyRib" Grid.Row="3" Click="CopyRib_Click" Content="Copy" ToolTip="Copy the selected rib and insert a copy immediatey after it" IsEnabled="{Binding ControlsEnabled}" />
 
-            <Button x:Name="DeleteRib" Grid.Row="7" Click="DeleteRib_Click" Content="Delete" ToolTip="Delete the selected rib" IsEnabled="{Binding ControlsEnabled}" />
+            <Button x:Name="DeleteRib" Grid.Row="4" Click="DeleteRib_Click" Content="Delete" ToolTip="Delete the selected rib" IsEnabled="{Binding ControlsEnabled}" />
 
-            <Label Grid.Row="9" Style="{StaticResource InverseLabel}"  FontSize="14">Rib Files</Label>
-            <Button x:Name="LoadRibs" Grid.Row="10" Click="LoadRibs_Click" Content="Load" ToolTip="Load a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
-            <Button x:Name="SaveRibs" Grid.Row="11" Click="SaveRibs_Click" Content="Save" ToolTip="Save a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
+            <Label Grid.Row="6" Style="{StaticResource InverseLabel}"  FontSize="14">Rib Files</Label>
+            <Button x:Name="LoadRibs" Grid.Row="7" Click="LoadRibs_Click" Content="Load" ToolTip="Load a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
+            <Button x:Name="SaveRibs" Grid.Row="8" Click="SaveRibs_Click" Content="Save" ToolTip="Save a ribs definition file" IsEnabled="{Binding ControlsEnabled}" />
         </Grid>
         <Border Style="{StaticResource ControlBorder}" Grid.Column="1">
             <ListView ItemsSource="{Binding Ribs}" SelectedItem="{Binding SelectedRib}">
