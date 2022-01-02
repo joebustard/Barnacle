@@ -889,6 +889,7 @@
     <Resource Include="Images\Buttons\AlignBack.png" />
     <Resource Include="Images\Buttons\AlignFront.png" />
     <Resource Include="Images\Buttons\MovePath.png" />
+    <Resource Include="Images\Buttons\ResetPath.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

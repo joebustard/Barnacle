@@ -52,7 +52,7 @@ namespace Barnacle.Dialogs
             dirty = false;
             filePath = "";
             noteWindow = new NoteWindow();
-            numberOfDivisions = 80;
+            numberOfDivisions = 13;
             ModelGroup = MyModelGroup;
         }
 
@@ -424,8 +424,11 @@ namespace Barnacle.Dialogs
                 Vertices.Clear();
 
                 // do we have enough data to construct the model
-                if (RibManager.Ribs.Count > 1 && TopView.IsValid && SideView.IsValid)
+                if (RibManager.Ribs.Count > 1)
                 {
+                    RibManager.Ribs[0].GenerateProfilePoints();
+                    int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
+                    int[,] ribvertices = new int[RibManager.Ribs.Count, facesPerRib];
                     // there should be a marker and hence a dimension for every rib.
                     // If ther isn't then somethins wrong
                     if (RibManager.Ribs.Count != TopView.Dimensions.Count)
@@ -434,44 +437,57 @@ namespace Barnacle.Dialogs
                     }
                     else
                     {
+
                         // work out the range of faces we are going to do based upon whether we
                         // are doing the whole model or just fron or back
-                        int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
+
 
                         // assume its whole model
                         int start = 0;
-                        int end = RibManager.Ribs[0].ProfilePoints.Count;
+                        int end = facesPerRib;
 
                         double x = TopView.GetXmm(markers[0].Position.X);
                         List<PointF> leftEdge = new List<PointF>();
                         double leftx = x;
                         List<PointF> rightEdge = new List<PointF>();
                         double rightx = x;
+                        int vert = 0;
+                        int vindex = 0;
                         for (int i = 0; i < RibManager.Ribs.Count; i++)
                         {
-                            System.Diagnostics.Debug.WriteLine($"Rib {i}");
+                            if (i != 0)
+                            {
+                                RibManager.Ribs[i].GenerateProfilePoints();
+                            }
+                            System.Diagnostics.Debug.WriteLine($"Rib {i} pnts {RibManager.Ribs[i].ProfilePoints.Count}");
                             x = TopView.GetXmm(markers[i].Position.X);
                             if (i == RibManager.Ribs.Count - 1)
                             {
                                 rightx = x;
                             }
 
+                            vindex = 0;
                             for (int proind = start; proind < end; proind++)
                             {
                                 if (proind < RibManager.Ribs[i].ProfilePoints.Count)
                                 {
                                     PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
                                     System.Diagnostics.Debug.WriteLine($"proind {proind} {pnt.X},{pnt.Y}");
-                                    double v = pnt.X * TopView.Dimensions[i].Height / 2;
-                                    double z = TopView.GetYmm(v + TopView.Dimensions[i].Mid.Y);
+                                    
+                                    double v = (double)pnt.X * (double)TopView.Dimensions[i].Height;
+                                    double z = TopView.GetYmm(v + (double)TopView.Dimensions[i].P1.Y);
 
-                                    v = pnt.Y * SideView.Dimensions[i].Height / 2;
-                                    double y = -SideView.GetYmm((v + SideView.Dimensions[i].Mid.Y));
 
-                                    AddVertice(x, y, z);
+                                    v = (double)pnt.Y * (double)SideView.Dimensions[i].Height;
+                                    double y = -SideView.GetYmm(v + SideView.Dimensions[i].P1.Y);
+
+                                    vert = AddVertice(x, y, z);
+                                    ribvertices[i, vindex] = vert;
+                                    vindex++;
                                     if (i == 0)
                                     {
                                         leftEdge.Add(new PointF((float)y, (float)z));
+
                                     }
                                     if (i == RibManager.Ribs.Count - 1)
                                     {
@@ -485,43 +501,29 @@ namespace Barnacle.Dialogs
                             }
                         }
                         facesPerRib = leftEdge.Count;
-
-                        int first = 0;
-                        int g = 0;
-                        int h = 0;
-
-                        System.Diagnostics.Debug.WriteLine("Starting faces");
-                        for (int blk = 0; blk < RibManager.Ribs.Count - 1; blk++)
+                        for (int ribIndex = 0; ribIndex < RibManager.Ribs.Count - 1; ribIndex++)
                         {
-                            first = (blk * facesPerRib);
-
-                            for (int index = 0; index < facesPerRib; index++)
+                            for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
                             {
-                                g = first + index;
-                                h = g + 1;
-                                if (index == facesPerRib - 1)
+                                int ind2 = pIndex + 1;
+                                if (ind2 >= facesPerRib)
                                 {
-                                    h = first;
+                                    ind2 = 0;
                                 }
-                                Faces.Add(g);
+                                int v1 = ribvertices[ribIndex, pIndex];
+                                int v2 = ribvertices[ribIndex, ind2];
+                                int v3 = ribvertices[ribIndex + 1, pIndex];
+                                int v4 = ribvertices[ribIndex + 1, ind2];
+                                Faces.Add(v1);
+                                Faces.Add(v2);
+                                Faces.Add(v3);
 
-                                Faces.Add(g + facesPerRib);
-                                Faces.Add(h + facesPerRib);
-
-                                Faces.Add(g);
-                                Faces.Add(h + facesPerRib);
-                                Faces.Add(h);
+                                Faces.Add(v3);
+                                Faces.Add(v2);
+                                Faces.Add(v4);
                             }
-
-                            Faces.Add(first);
-                            Faces.Add(first + facesPerRib);
-                            Faces.Add(first + facesPerRib);
-
-                            Faces.Add(first);
-                            Faces.Add(first + facesPerRib);
-                            Faces.Add(first);
                         }
-
+                       
                         TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
                         TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
                         CentreVertices();
@@ -681,7 +683,7 @@ namespace Barnacle.Dialogs
             SideViewManager.PathControl.Read(sideNode);
             SideViewManager.PathControl.FetchImage();
             SideViewManager.PathControl.UpdateDisplay();
-
+            CopyPathsToViews();
             RibManager.Ribs.Clear();
             Markers.Clear();
             XmlNodeList nodes = docNode.SelectNodes("Rib");
@@ -692,9 +694,11 @@ namespace Barnacle.Dialogs
                 string nme = el.GetAttribute("Header");
                 int pos = Convert.ToInt16(el.GetAttribute("Position"));
                 Dispatcher.Invoke(new Action(() => { noteWindow.Message = "Loading Rib " + nme; }), DispatcherPriority.ContextIdle, null);
+
                 XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
                 ImagePathControl rc = new ImagePathControl();
                 rc.Read(el);
+                rc.Header = nme;
                 rc.Width = 600;
                 rc.Height = 600;
                 rc.FetchImage();
@@ -704,6 +708,7 @@ namespace Barnacle.Dialogs
                     rc.OnForceReload = RibManager.OnForceRibReload;
                     CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
                     RibManager.Ribs.Add(rc);
+                    rc.GenerateProfilePoints();
                 }
                 nextY = 10 - nextY;
             }
@@ -973,17 +978,41 @@ namespace Barnacle.Dialogs
 
         private void OnPositionTabSelected(object sender, RoutedEventArgs e)
         {
-            int tlx;
-            int tly;
-            int brx;
-            int bry;
-            Bitmap bmp=null;
-            //get the flexipath from  the side and render the path onto an image
-            SideViewManager.RenderFlexipath(ref bmp ,out tlx, out tly, out brx, out bry);
-            SideView.WorkingImage = bmp;
-            SideView.SetupImage(bmp,tlx, tly, brx, bry);
-            SideView.UpdateDisplay();
+            CopyPathsToViews();
+        }
 
+        private void CopyPathsToViews()
+        {
+            CopyPathToSideView();
+            CopyPathToFrontView();
+        }
+
+        private void CopyPathToFrontView()
+        {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            Bitmap bmp = null;
+            //get the flexipath from  the top and render the path onto an image
+            TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            TopView.WorkingImage = bmp;
+            TopView.SetupImage(bmp, tlx, tly, brx, bry);
+            TopView.UpdateDisplay();
+        }
+
+        private void CopyPathToSideView()
+        {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            //get the flexipath from  the side and render the path onto an image
+            Bitmap bmp = null;
+            SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            SideView.WorkingImage = bmp;
+            SideView.SetupImage(bmp, tlx, tly, brx, bry);
+            SideView.UpdateDisplay();
         }
     }
 }

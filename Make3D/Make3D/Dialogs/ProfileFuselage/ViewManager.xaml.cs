@@ -80,7 +80,7 @@ namespace Barnacle.Dialogs
             OnCommandHandler?.Invoke(CommandText);
         }
 
-        internal void RenderFlexipath(ref Bitmap bmp, out int tlx, out int tly, out int brx, out int bry)
+        internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
         {
             PathControl.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
         }

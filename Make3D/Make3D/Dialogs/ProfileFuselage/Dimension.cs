@@ -23,27 +23,27 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public int Width
+        public double Width
         {
             get
             {
-                int res = 0;
+                double res = 0;
                 if (P1 != null && P2 != null)
                 {
-                    res = (int)(P2.X - P1.X);
+                    res = (P2.X - P1.X);
                 }
                 return res;
             }
         }
 
-        public int Height
+        public double Height
         {
             get
             {
-                int res = 0;
+                double res = 0;
                 if (P1 != null && P2 != null)
                 {
-                    res = (int)(P2.Y - P1.Y);
+                    res = (P2.Y - P1.Y);
                 }
                 return res;
             }

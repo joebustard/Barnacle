@@ -139,7 +139,7 @@ namespace VisualSolutionExplorer
                     if (treeView == null || treeViewItem == null)
                         return;
 
-                    var fileViewModel = treeView.SelectedItem as ProjectFileViewModel;
+                    var fileViewModel = treeViewItem.DataContext as ProjectFileViewModel;
                     if (fileViewModel == null)
                         return;
 

@@ -123,6 +123,7 @@ namespace Barnacle.Dialogs
                 if (ribs != value)
                 {
                     ribs = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
