@@ -73,7 +73,8 @@ namespace Barnacle.Dialogs
             AddLine,
             AddBezier,
             DeleteSegment,
-            AddQuadBezier
+            AddQuadBezier,
+            MovePath
         };
 
         public bool HollowShape
@@ -349,9 +350,16 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    //                   flexiPath.AddLine(position);
-                    //                   PointGrid.ItemsSource = Points;
-                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                    // trying to convert last segment into a bezier
+                    // We actually need to append a new one
+                    if (cubic)
+                    {
+                        flexiPath.AppendClosingCurveSegment();
+                    }
+                    else
+                    {
+                        flexiPath.AppendClosingQuadCurveSegment();
+                    }
                 }
                 added = true;
                 PathText = flexiPath.ToPath();
@@ -1127,44 +1135,35 @@ namespace Barnacle.Dialogs
                 SelectedPoint = -1;
 
                 System.Windows.Point position = e.GetPosition(MainCanvas);
-
-                double rad = 3;
-
-                for (int i = 0; i < polyPoints.Count; i++)
+                // do this test here because the othe modes only trigger ifn you click a line
+                if (selectionMode == SelectionModeType.MovePath)
                 {
-                    System.Windows.Point p = polyPoints[i].ToPoint();
-                    if (position.X >= p.X - rad && position.X <= p.X + rad)
-                    {
-                        if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
-                        {
-                            SelectedPoint = i;
-                            Points[i].Selected = true;
-                            moving = true;
-                            break;
-                        }
-                    }
-                }
-                if (e.LeftButton == MouseButtonState.Pressed)
-                {
+                    MoveWholePath(position);
+                    SelectionMode = SelectionModeType.SelectPoint;
                     UpdateDisplay();
                 }
                 else
-                if (e.RightButton == MouseButtonState.Pressed)
                 {
-                    if (sender is Ellipse)
+                    double rad = 3;
+
+                    for (int i = 0; i < polyPoints.Count; i++)
                     {
-                        Ellipse el = sender as Ellipse;
-                        if (polyPoints.Count > 3)
+                        System.Windows.Point p = polyPoints[i].ToPoint();
+                        if (position.X >= p.X - rad && position.X <= p.X + rad)
                         {
-                            /*
-                            MessageBoxResult res = MessageBox.Show("Delete the point", "Edit", MessageBoxButton.YesNo);
-                            if (res == MessageBoxResult.Yes)
+                            if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
                             {
-                                polyPoints.RemoveAt(selectedPoint);
-                                UpdateDisplay();
+                                SelectedPoint = i;
+                                Points[i].Selected = true;
+                                moving = true;
+                                break;
                             }
-                            */
                         }
+                    }
+
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        UpdateDisplay();
                     }
                 }
             }
@@ -1303,6 +1302,17 @@ namespace Barnacle.Dialogs
             return p;
         }
 
+        private void MovePathButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.MovePath;
+        }
+
+        private void MoveWholePath(System.Windows.Point position)
+        {
+            flexiPath.MoveTo(position);
+            GenerateFaces();
+        }
+
         private void OutButton_Click(object sender, RoutedEventArgs e)
         {
             scale *= 0.9;
@@ -1383,6 +1393,16 @@ namespace Barnacle.Dialogs
             PathText = flexiPath.ToPath();
         }
 
+        private void ResetPathButton_Click(object sender, RoutedEventArgs e)
+        {
+            InitialisePoints();
+            scale = 1;
+
+            selectedPoint = -1;
+            UpdateDisplay();
+            PathText = flexiPath.ToPath();
+        }
+
         private bool SelectLineFromPoint(MouseButtonEventArgs e)
         {
             bool found;
@@ -1411,6 +1431,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1421,6 +1442,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1431,6 +1453,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1441,6 +1464,7 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                     }
                     break;
 
@@ -1451,6 +1475,18 @@ namespace Barnacle.Dialogs
                         AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
                         DelSegBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                    }
+                    break;
+
+                case SelectionModeType.MovePath:
+                    {
+                        PickBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        AddQuadBezierBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        DelSegBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+                        MovePathBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                     }
                     break;
             }

@@ -14,6 +14,7 @@ namespace Barnacle.Dialogs
         private double axleBore;
         private double hubRadius;
         private double hubThickness;
+        private bool loaded;
         private double numberOfSpokes;
         private double rimDepth;
         private double rimInnerRadius;
@@ -100,7 +101,7 @@ namespace Barnacle.Dialogs
             {
                 if (numberOfSpokes != value)
                 {
-                    if (value >= 4 && value <= 10)
+                    if (value >= 4 && value <= 20)
                     {
                         numberOfSpokes = value;
                         NotifyPropertyChanged();
@@ -246,15 +247,13 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
-        private bool loaded;
+
         private void GenerateShape()
         {
-           
-                ClearShape();
-                WagonWheelMaker maker = new WagonWheelMaker(hubRadius, hubThickness, rimInnerRadius, rimThickness, rimDepth, numberOfSpokes, spokeRadius, axleBore);
-                maker.Generate(Vertices, Faces);
-                CentreVertices();
-            
+            ClearShape();
+            WagonWheelMaker maker = new WagonWheelMaker(hubRadius, hubThickness, rimInnerRadius, rimThickness, rimDepth, numberOfSpokes, spokeRadius, axleBore);
+            maker.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void LoadEditorParameters()

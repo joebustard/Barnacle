@@ -41,7 +41,7 @@
                 </UniformGrid>
             </Border>
             <Border Style="{StaticResource ControlBorder}" Grid.Row="1" Grid.Column="0" Padding="2,2,2,10">
-                <UniformGrid Columns="5">
+                <UniformGrid Columns="7">
                     <Border x:Name="PickBorder" BorderThickness="4"  CornerRadius="2">
                         <Button x:Name="PickButton" Click="PickButton_Click" Style="{StaticResource SmallButton }" ToolTip="Select a segment or point">
                             <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
@@ -65,6 +65,16 @@
                     <Border x:Name="DelSegBorder" BorderThickness="4"  CornerRadius="2">
                         <Button x:Name="DelSegButton"  Click="DelSegButton_Click" Style="{StaticResource SmallButton}" ToolTip="Delete a segment">
                             <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="MovePathBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="MovePathButton"  Click="MovePathButton_Click" Style="{StaticResource SmallButton}" ToolTip="Move entire path to clicked point">
+                            <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
+                        </Button>
+                    </Border>
+                    <Border x:Name="ResetPathBorder" BorderThickness="4"  CornerRadius="2">
+                        <Button x:Name="ResetPathButton"  Click="ResetPathButton_Click" Style="{StaticResource SmallButton}" ToolTip="Reset the entire path">
+                            <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
                         </Button>
                     </Border>
                 </UniformGrid>

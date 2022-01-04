@@ -7,7 +7,6 @@ using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
 
-//using TestCSGLib;
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 using Solid = CSGLib.Solid;
 
@@ -63,6 +62,19 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public override void AbsoluteToRelative()
+        {
+            GetScaleFromAbsoluteExtent();
+
+            RelativeObjectVertices = new List<P3D>();
+            foreach (Point3D pnt in AbsoluteObjectVertices)
+            {
+                P3D p = new P3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
+                RelativeObjectVertices.Add(p);
+            }
+            scale = groupScale;
+        }
+
         public override Object3D Clone()
         {
             Group3D res = new Group3D();
@@ -76,12 +88,11 @@ namespace Barnacle.Object3DLib
             res.Color = this.Color;
             res.leftObject = this.leftObject.Clone();
             res.rightObject = this.rightObject.Clone();
-            // res.RelativeObjectVertices = new Point3DCollection();
+
             res.RelativeObjectVertices = new List<P3D>();
-            //  foreach (Point3D po in this.RelativeObjectVertices)
+
             foreach (P3D po in this.RelativeObjectVertices)
             {
-                //Point3D pn = new Point3D(po.X, po.Y, po.Z);
                 P3D pn = new P3D(po.X, po.Y, po.Z);
                 res.RelativeObjectVertices.Add(po);
             }
@@ -112,9 +123,6 @@ namespace Barnacle.Object3DLib
             neo.Scale = new Scale3D(Scale.X, Scale.Y, Scale.Z);
 
             neo.Position = new Point3D(Position.X, Position.Y, Position.Z);
-            // var hullMaker = new ConvexHullCalculator();
-
-            //  hullMaker.GeneratePoint3DHull(RelativeObjectVertices, TriangleIndices);
             neo.RelativeObjectVertices = RelativeObjectVertices;
             RelativeObjectVertices = null;
             neo.TriangleIndices = TriangleIndices;
@@ -123,7 +131,7 @@ namespace Barnacle.Object3DLib
             AbsoluteObjectVertices = null;
             neo.AbsoluteBounds = AbsoluteBounds;
             AbsoluteBounds = null;
-            //neo.Unitise();
+
             return neo;
         }
 
@@ -260,13 +268,13 @@ namespace Barnacle.Object3DLib
             sc.Y = GetDouble(sn, "Y");
             sc.Z = GetDouble(sn, "Z");
             Scale = sc;
-            //RelativeObjectVertices = new Point3DCollection();
+
             RelativeObjectVertices = new List<P3D>();
             XmlNodeList vtl = nd.SelectNodes("v");
             foreach (XmlNode vn in vtl)
             {
                 XmlElement el = vn as XmlElement;
-                // Point3D pv = new Point3D();
+
                 P3D pv = new P3D();
                 pv.X = (float)GetDouble(el, "X");
                 pv.Y = (float)GetDouble(el, "Y");
@@ -305,7 +313,6 @@ namespace Barnacle.Object3DLib
                 }
             }
 
-            //   Init();
             Position = p;
             Scale = sc;
             RelativeToAbsolute();
@@ -336,7 +343,7 @@ namespace Barnacle.Object3DLib
             z = reader.ReadDouble();
             Scale = new Scale3D(x, y, z);
             EditorParameters.ReadBinary(reader);
-            //RelativeObjectVertices = new Point3DCollection();
+
             RelativeObjectVertices = new List<P3D>();
             int count = reader.ReadInt32();
 
@@ -345,7 +352,7 @@ namespace Barnacle.Object3DLib
                 x = reader.ReadSingle();
                 y = reader.ReadSingle();
                 z = reader.ReadSingle();
-                // RelativeObjectVertices.Add(new Point3D(x, y, z));
+
                 RelativeObjectVertices.Add(new P3D(x, y, z));
             }
 
@@ -404,7 +411,6 @@ namespace Barnacle.Object3DLib
             if (RelativeObjectVertices != null && RelativeObjectVertices.Count > 0)
             {
                 RelativeToAbsolute();
-
                 SetMesh();
             }
         }
@@ -432,7 +438,7 @@ namespace Barnacle.Object3DLib
                 scl.SetAttribute("Y", Scale.Y.ToString());
                 scl.SetAttribute("Z", Scale.Z.ToString());
                 ele.AppendChild(scl);
-                //  foreach (Point3D v in RelativeObjectVertices)
+
                 foreach (P3D v in RelativeObjectVertices)
                 {
                     XmlElement vertEle = doc.CreateElement("v");
@@ -474,7 +480,7 @@ namespace Barnacle.Object3DLib
             writer.Write(Scale.Z);
             EditorParameters.WriteBinary(writer);
             writer.Write(RelativeObjectVertices.Count);
-            // foreach (Point3D v in RelativeObjectVertices)
+
             foreach (P3D v in RelativeObjectVertices)
             {
                 writer.Write(v.X);
@@ -489,21 +495,6 @@ namespace Barnacle.Object3DLib
             }
             leftObject.WriteBinary(writer);
             rightObject.WriteBinary(writer);
-        }
-
-        private void AbsoluteToRelative()
-        {
-            GetScaleFromAbsoluteExtent();
-
-            //RelativeObjectVertices = new Point3DCollection();
-            RelativeObjectVertices = new List<P3D>();
-            foreach (Point3D pnt in AbsoluteObjectVertices)
-            {
-                // Point3D p = new Point3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
-                P3D p = new P3D((pnt.X - Position.X), (pnt.Y - Position.Y), (pnt.Z - Position.Z));
-                RelativeObjectVertices.Add(p);
-            }
-            scale = groupScale;
         }
 
         private int AddVertex(Point3DCollection av, double x, double y, double z)
@@ -590,7 +581,6 @@ namespace Barnacle.Object3DLib
             {
                 Object3D obj = new Object3D();
                 obj.Read(nd);
-
                 obj.SetMesh();
                 return obj;
             }

@@ -256,7 +256,7 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
-        public void AbsoluteToRelative()
+        public virtual void AbsoluteToRelative()
         {
             if (absoluteObjectVertices != null)
             {
@@ -530,14 +530,6 @@ namespace Barnacle.Object3DLib
         {
             if (PrimType == "Mesh")
             {
-                /*
-                Point3DCollection tmp = new Point3DCollection();
-                foreach (Point3D v in relativeObjectVertices)
-                {
-                    Point3D pn = new Point3D(v.X, -v.Y, v.Z);
-                    tmp.Add(pn);
-                }
-                */
                 List<P3D> tmp = new List<P3D>();
                 foreach (P3D v in relativeObjectVertices)
                 {
@@ -553,14 +545,6 @@ namespace Barnacle.Object3DLib
         {
             if (PrimType == "Mesh")
             {
-                /*
-                Point3DCollection tmp = new Point3DCollection();
-                foreach (Point3D v in relativeObjectVertices)
-                {
-                    Point3D pn = new Point3D(v.X, v.Y, -v.Z);
-                    tmp.Add(pn);
-                }
-                */
                 List<P3D> tmp = new List<P3D>();
                 foreach (P3D v in relativeObjectVertices)
                 {
@@ -835,7 +819,7 @@ namespace Barnacle.Object3DLib
             Scale = new Scale3D(x, y, z);
 
             editorParameters.ReadBinary(reader);
-            // relativeObjectVertices = new Point3DCollection();
+
             relativeObjectVertices = new List<P3D>();
             int count = reader.ReadInt32();
             float x1, y1, z1;
@@ -844,7 +828,7 @@ namespace Barnacle.Object3DLib
                 x1 = reader.ReadSingle();
                 y1 = reader.ReadSingle();
                 z1 = reader.ReadSingle();
-                //  relativeObjectVertices.Add(new Point3D(x, y, z));
+
                 relativeObjectVertices.Add(new P3D(x1, y1, z1));
             }
 
@@ -866,7 +850,6 @@ namespace Barnacle.Object3DLib
                 absoluteObjectVertices.Clear();
                 absoluteObjectVertices = new Point3DCollection(relativeObjectVertices.Count);
 
-                //Point3DCollection tmp;
                 List<P3D> tmp;
                 if (Rotation != null && (Rotation.X != 0 || Rotation.Y != 0 || Rotation.Z != 0))
                 {
@@ -878,7 +861,7 @@ namespace Barnacle.Object3DLib
                 }
 
                 absoluteBounds = new Bounds3D();
-                // foreach (Point3D cp in tmp)
+
                 foreach (P3D cp in tmp)
                 {
                     Point3D ap = new Point3D();
@@ -948,15 +931,12 @@ namespace Barnacle.Object3DLib
         {
             List<P3D> tmp = new List<P3D>();
             foreach (P3D cp in relativeObjectVertices)
-            //      Point3DCollection tmp = new Point3DCollection();
-            //   foreach (Point3D cp in relativeObjectVertices)
             {
-                //Point3D ap = new Point3D();
                 P3D ap = new P3D();
                 ap.X = (float)sx * cp.X;
                 ap.Y = (float)sy * cp.Y;
                 ap.Z = (float)sz * cp.Z;
-                //AdjustBounds(ap);
+
                 tmp.Add(ap);
             }
             relativeObjectVertices = tmp;
@@ -974,9 +954,9 @@ namespace Barnacle.Object3DLib
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
             Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue); ;
             PointUtils.MinMax(relativeObjectVertices, ref min, ref max);
-            //List<Point3D> tmp = new List<Point3D>();
+
             List<P3D> tmp = new List<P3D>();
-            // foreach (Point3D p in relativeObjectVertices)
+
             foreach (P3D p in relativeObjectVertices)
             {
                 switch (moveSide)
@@ -1056,14 +1036,6 @@ namespace Barnacle.Object3DLib
 
         public void SwapYZAxies()
         {
-            /*
-            Point3DCollection tmp = new Point3DCollection();
-            foreach (Point3D pn in relativeObjectVertices)
-            {
-                tmp.Add(new Point3D(pn.X, pn.Z, pn.Y));
-            }
-            relativeObjectVertices = tmp;
-            */
             List<P3D> tmp = new List<P3D>();
             foreach (P3D pn in relativeObjectVertices)
             {
@@ -1171,7 +1143,6 @@ namespace Barnacle.Object3DLib
                 EditorParameters.Write(doc, ele);
             }
 
-            // foreach (Point3D v in relativeObjectVertices)
             foreach (P3D v in relativeObjectVertices)
             {
                 XmlElement vertEle = doc.CreateElement("v");
@@ -1183,11 +1154,6 @@ namespace Barnacle.Object3DLib
             for (int i = 0; i < triangleIndices.Count; i += 3)
             {
                 XmlElement faceEle = doc.CreateElement("f");
-                /*
-                 *faceEle.SetAttribute("v", triangleIndices[i].ToString() + "," +
-                                            triangleIndices[i + 1].ToString() + "," +
-                                            triangleIndices[i + 2].ToString());
-                                            */
 
                 faceEle.SetAttribute("v", $"{triangleIndices[i]},{triangleIndices[i + 1]},{triangleIndices[i + 2]}");
                 ele.AppendChild(faceEle);
@@ -1216,7 +1182,6 @@ namespace Barnacle.Object3DLib
             editorParameters.WriteBinary(writer);
             writer.Write(relativeObjectVertices.Count);
 
-            // foreach (Point3D v in relativeObjectVertices)
             foreach (P3D v in relativeObjectVertices)
             {
                 writer.Write(v.X);
@@ -1247,7 +1212,7 @@ namespace Barnacle.Object3DLib
         {
             List<P3D> tmp = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, tmp);
-            //RelativeObjectVertices = pnts;
+
             RelativeObjectVertices = tmp;
             TriangleIndices = indices;
             Normals = normals;

@@ -88,6 +88,29 @@ namespace Barnacle.LineLib
             segs.Add(bl);
         }
 
+        public void AppendClosingCurveSegment()
+        {
+            // get current last point
+            FlexiPoint lp = points[points.Count - 1];
+            FlexiPoint fp = points[0];
+            double cx1 = lp.X + 0.25 * (fp.X - lp.X);
+            double cy1 = lp.Y + 0.25 * (fp.Y - lp.Y);
+            double cx2 = lp.X + 0.75 * (fp.X - lp.X);
+            double cy2 = lp.Y + 0.75 * (fp.Y - lp.Y);
+            AddCurve(new Point(cx1, cy1), new Point(cx2, cy2), fp.ToPoint());
+        }
+
+        public void AppendClosingQuadCurveSegment()
+        {
+            // get current last point
+            FlexiPoint lp = points[points.Count - 1];
+            FlexiPoint fp = points[0];
+            double cx1 = lp.X + 0.5 * (fp.X - lp.X);
+            double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
+
+            AddQCurve(new Point(cx1, cy1), fp.ToPoint());
+        }
+
         public void Clear()
         {
             segs.Clear();
@@ -528,6 +551,26 @@ namespace Barnacle.LineLib
             }
         }
 
+        public void MoveTo(Point position)
+        {
+            double cx = 0;
+            double cy = 0;
+            foreach (FlexiPoint p in points)
+            {
+                cx += p.X;
+                cy += p.Y;
+            }
+            cx /= points.Count;
+            cy /= points.Count;
+            double dx = position.X - cx;
+            double dy = position.Y - cy;
+            foreach (FlexiPoint p in points)
+            {
+                p.X += dx;
+                p.Y += dy;
+            }
+        }
+
         public bool SelectAtPoint(Point position)
         {
             bool found = false;
@@ -750,27 +793,6 @@ namespace Barnacle.LineLib
                     }
                 }
             }
-        }
-
-        public void MoveTo(Point position)
-        {
-            double cx = 0;
-            double cy = 0;
-            foreach( FlexiPoint p in points)
-            {
-                cx += p.X;
-                cy += p.Y;
-            }
-            cx /= points.Count;
-            cy /= points.Count;
-            double dx = position.X - cx;
-            double dy = position.Y - cy;
-            foreach (FlexiPoint p in points)
-            {
-                p.X += dx;
-                p.Y += dy;
-            }
-
         }
     }
 }
