@@ -91,24 +91,7 @@ namespace Barnacle.Dialogs
         {
             InitializeComponent();
 
-            Header = "";
-            //edgePoints = null;
-            NumDivisions = 80;
-            ProfilePoints = new List<PointF>();
-            scale = 1;
-            SetRibScale();
-            selectedPoint = -1;
-            SelectionMode = SelectionModeType.SelectPoint;
-            //imageEdge = new ImageEdge();
-            isValid = false;
-            DataContext = this;
-            RibImage = new System.Windows.Controls.Image();
-            flexiPath = new FlexiPath();
-
-            InitialisePoints();
-            polyPoints = flexiPath.FlexiPoints;
-            scrollX = 0;
-            scrollY = 0;
+            Clear();
             loaded = false;
         }
 
@@ -763,7 +746,30 @@ namespace Barnacle.Dialogs
             profilePoints = tmp;
         }
 
+        public void Clear()
+        {
+            Header = "";
+            FName = "";
+            NumDivisions = 80;
+            ProfilePoints = new List<PointF>();
+            scale = 1;
+            SetRibScale();
+            selectedPoint = -1;
+            SelectionMode = SelectionModeType.SelectPoint;
 
+            isValid = false;
+            DataContext = this;
+            imagePath = "";
+            workingImage = null;
+            src = null;
+            RibImage = new System.Windows.Controls.Image();
+            flexiPath = new FlexiPath();
+
+            InitialisePoints();
+            polyPoints = flexiPath.FlexiPoints;
+            scrollX = 0;
+            scrollY = 0;
+        }
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)

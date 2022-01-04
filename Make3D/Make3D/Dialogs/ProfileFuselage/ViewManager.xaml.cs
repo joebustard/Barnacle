@@ -74,7 +74,11 @@ namespace Barnacle.Dialogs
             CommandText = "Load It";
             DataContext = this;
         }
-
+        public void Clear()
+        {
+            imageFilePath = "";
+            PathControl.Clear();
+        }
         private void LoadClicked(object sender, RoutedEventArgs e)
         {
             OnCommandHandler?.Invoke(CommandText);

@@ -664,7 +664,12 @@ namespace Barnacle.Dialogs
         private async Task Read(string fileName)
         {
             this.Cursor = Cursors.Wait;
-
+            RibManager.Ribs.Clear();
+            Markers.Clear();
+            TopViewManager.Clear();
+            SideViewManager.Clear();
+            TopView.Clear();
+            SideView.Clear();
             XmlDocument doc = new XmlDocument();
             doc.XmlResolver = null;
             doc.Load(fileName);
@@ -684,8 +689,7 @@ namespace Barnacle.Dialogs
             SideViewManager.PathControl.FetchImage();
             SideViewManager.PathControl.UpdateDisplay();
             CopyPathsToViews();
-            RibManager.Ribs.Clear();
-            Markers.Clear();
+
             XmlNodeList nodes = docNode.SelectNodes("Rib");
             int nextY = 10;
             foreach (XmlNode nd in nodes)

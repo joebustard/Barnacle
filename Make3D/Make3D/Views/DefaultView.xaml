@@ -263,7 +263,7 @@
             <DockPanel LastChildFill="True">
                 <TabControl Width="160" HorizontalContentAlignment="Left" x:Name="SolutionPanel">
                     <TabItem Header="Solution">
-                        <vsx1:SolutionExplorerControl x:Name="SolutionExplorer" />
+                        <vsx1:SolutionExplorerControl x:Name="SolutionExplorer"  VerticalAlignment="Stretch" MinHeight="500"/>
                     </TabItem>
                     <TabItem Header="Edit" x:Name="EditPanel">
 

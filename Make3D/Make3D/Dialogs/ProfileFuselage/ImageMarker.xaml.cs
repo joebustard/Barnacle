@@ -93,17 +93,7 @@ namespace Barnacle.Dialogs
         {
             InitializeComponent();
             DataContext = this;
-            elements = new List<UIElement>();
-
-            totalTopMargin = pinMargin + letterMargin + gapBelowLetter;
-            markerTop = pinMargin + (letterMargin / 2) + 1;
-            selectedMarker = null;
-            pinSelected = false;
-            dimensions = new List<Dimension>();
-            isValid = false;
-            notifyMoved = false;
-            leftLimit = double.MaxValue;
-            rightLimit = double.MinValue;
+            Clear();
         }
 
         public delegate void CopyLetter(string name);
@@ -709,7 +699,21 @@ namespace Barnacle.Dialogs
             pinSelected = true;
             selectedMarker = null;
         }
+        public void Clear()
+        {
+            elements = new List<UIElement>();
 
+            totalTopMargin = pinMargin + letterMargin + gapBelowLetter;
+            markerTop = pinMargin + (letterMargin / 2) + 1;
+            selectedMarker = null;
+            pinSelected = false;
+            dimensions = new List<Dimension>();
+            isValid = false;
+            notifyMoved = false;
+            leftLimit = double.MaxValue;
+            rightLimit = double.MinValue;
+            workingImage = null;
+        }
         private void Ply_MouseMove(object sender, MouseEventArgs e)
         {
             if (pinSelected)
