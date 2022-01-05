@@ -439,9 +439,16 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    //                   flexiPath.AddLine(position);
-                    //                   PointGrid.ItemsSource = Points;
-                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                    // trying to convert last segment into a bezier
+                    // We actually need to append a new one
+                    if (cubic)
+                    {
+                        flexiPath.AppendClosingCurveSegment();
+                    }
+                    else
+                    {
+                        flexiPath.AppendClosingQuadCurveSegment();
+                    }
                 }
                 added = true;
             }

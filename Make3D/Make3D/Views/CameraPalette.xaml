@@ -12,10 +12,10 @@
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="{Binding ButtonAreaHeight}" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Camera</Label>
+        <Label Grid.Row="0"   HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}">Camera</Label>
         <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top" MinHeight="{Binding ButtonAreaHeight}">
 
             <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraHome" ToolTip="Move the camera to the default front position and point it at the centre of the world.">

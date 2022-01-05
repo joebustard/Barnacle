@@ -2044,13 +2044,14 @@ namespace Barnacle.ViewModels
                         }
                     }
                     string exportedPath = "";
+                    String exportFolderPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
                     if (all)
                     {
-                        exportedPath = Document.ExportAll(param.ToString(), allBounds);
+                        exportedPath = Document.ExportAll(param.ToString(), allBounds, exportFolderPath);
                     }
                     else
                     {
-                        exportedPath = Document.ExportSelectedParts(param.ToString(), allBounds, selectedObjectAdorner.SelectedObjects);
+                        exportedPath = Document.ExportSelectedParts(param.ToString(), allBounds, selectedObjectAdorner.SelectedObjects, exportFolderPath);
                     }
 
                     STLExportedConfirmation dlg = new STLExportedConfirmation();
@@ -2064,7 +2065,8 @@ namespace Barnacle.ViewModels
 
         private void OnExportParts(object param)
         {
-            string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds);
+            String exportFolderPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+            string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds, exportFolderPath);
 
             STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
             dlg.ExportPath = exportedPath;
@@ -2261,8 +2263,7 @@ namespace Barnacle.ViewModels
                 {
                     ManifoldChecker checker = new ManifoldChecker();
                     PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
-                    //     checker.Points = ob.RelativeObjectVertices;
-                    // checker.Points = ob.RelativeObjectVertices;
+
                     checker.Indices = ob.TriangleIndices;
                     checker.Check();
                     if (checker.IsManifold)
@@ -2338,7 +2339,7 @@ namespace Barnacle.ViewModels
 
                 editingObj.EditorParameters = dlg.EditorParameters;
                 PointUtils.PointCollectionToP3D(dlg.Vertices, editingObj.RelativeObjectVertices);
-                //editingObj.RelativeObjectVertices = dlg.Vertices;
+
                 editingObj.TriangleIndices = dlg.Faces;
 
                 RecalculateAllBounds();
@@ -2666,12 +2667,13 @@ namespace Barnacle.ViewModels
                 string modelPath = Document.FilePath;
                 string modelName = Path.GetFileNameWithoutExtension(modelPath);
                 modelPath = Path.GetDirectoryName(modelPath);
-                string exportPath = Path.Combine(modelPath, "export");
+                String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
                 if (!Directory.Exists(exportPath))
                 {
                     Directory.CreateDirectory(exportPath);
                 }
-                exportPath = Path.Combine(exportPath, modelName + ".stl");
+                string exportedPath = Document.ExportAll("STL", allBounds, exportPath);
+                exportedPath = Path.Combine(exportPath, modelName + ".stl");
 
                 string gcodePath = Path.Combine(modelPath, "gcode");
                 if (!Directory.Exists(gcodePath))
@@ -2682,8 +2684,7 @@ namespace Barnacle.ViewModels
 
                 string logPath = Path.Combine(modelPath, "slicelog.log");
 
-                string exportedPath = Document.ExportAll("STL", allBounds);
-                SlicerInterface.Slice(exportPath, gcodePath, logPath, "Print3D");
+                SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
             }
         }
 
@@ -2843,7 +2844,6 @@ namespace Barnacle.ViewModels
             {
                 // remove the current visible elements of the adorner
                 RemoveObjectAdorner();
-                // selectedObjectAdorner.Clear();
             }
 
             MakeSizeAdorner();
@@ -3070,7 +3070,6 @@ namespace Barnacle.ViewModels
         {
             if (selectedItems.Count > 0)
             {
-                //ResetSelectionColours();
                 NotificationManager.Notify("SetToolsVisibility", false);
                 Object3D sel = selectedItems[selectedItems.Count - 1];
 

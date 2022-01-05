@@ -24,6 +24,8 @@ namespace Barnacle.Dialogs
     public partial class ImagePathControl : UserControl, INotifyPropertyChanged
     {
         public ForceRibReload OnForceReload;
+        private double brx = double.MinValue;
+        private double bry = double.MinValue;
         private double divisionLength;
         private FlexiPath flexiPath;
         private string fName;
@@ -32,7 +34,6 @@ namespace Barnacle.Dialogs
         private double height = 10;
 
         private bool hollowShape;
-
 
         private ImageEdge imageEdge;
 
@@ -52,8 +53,10 @@ namespace Barnacle.Dialogs
 
         private bool moving;
 
+        private double pathHeight = 0;
         private string pathText;
 
+        private double pathWidth = 0;
         private ObservableCollection<FlexiPoint> polyPoints;
 
         private List<PointF> profilePoints;
@@ -68,6 +71,7 @@ namespace Barnacle.Dialogs
 
         private bool showOrtho;
 
+        private bool showProfilePoints;
         private Visibility showWidth;
 
         private bool solidShape;
@@ -77,15 +81,9 @@ namespace Barnacle.Dialogs
         private double tlx = double.MaxValue;
 
         private double tly = double.MaxValue;
-        private double brx = double.MinValue;
-
-        private double bry = double.MinValue;
-
         private int wallWidth;
 
         private System.Drawing.Bitmap workingImage;
-
-
 
         public ImagePathControl()
         {
@@ -93,73 +91,6 @@ namespace Barnacle.Dialogs
 
             Clear();
             loaded = false;
-        }
-
-        internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
-        {
-
-            tlx = double.MaxValue;
-            tly = double.MaxValue;
-            brx = double.MinValue;
-            bry = double.MinValue;
-            int offset = 4;
-            List<PointF> pnts = flexiPath.DisplayPointsF();
-            if (bmp == null && pnts.Count > 0 && workingImage != null)
-            {
-                bmp = new Bitmap(workingImage.Width, workingImage.Height);
-            }
-            if (bmp != null)
-            {
-
-                for (int i = 0; i < pnts.Count; i++)
-                {
-                    if (pnts[i].X < tlx)
-                    {
-                        tlx = (double)pnts[i].X;
-                    }
-
-                    if (pnts[i].Y < tly)
-                    {
-                        tly = (double)pnts[i].Y;
-                    }
-
-                    if (pnts[i].X > brx)
-                    {
-                        brx = (double)pnts[i].X;
-                    }
-
-                    if (pnts[i].Y > bry)
-                    {
-                        bry = (double)pnts[i].Y;
-                    }
-                }
-
-                using (var gfx = Graphics.FromImage(bmp))
-                using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
-                {
-                    // draw one thousand random white lines on a dark blue background
-                    gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
-                    gfx.Clear(System.Drawing.Color.White);
-                    for (int i = 0; i < pnts.Count; i++)
-                    {
-                        int j = i + 1;
-                        if (j >= pnts.Count)
-                        {
-                            j = 0;
-                        }
-                        var pt1 = new System.Drawing.Point((int)(pnts[i].X) - (int)tlx + offset, (int)(pnts[i].Y) - (int)tly + offset);
-                        var pt2 = new System.Drawing.Point((int)(pnts[j].X) - (int)tlx + offset, (int)(pnts[j].Y) - (int)tly + offset);
-                        gfx.DrawLine(pen, pt1, pt2);
-
-                    }
-
-                }
-            }
-            brx = brx - tlx + offset;
-            bry = bry - tly + offset;
-            tlx = offset;
-            tly = offset;
-
         }
 
         public delegate void ForceRibReload(string pth);
@@ -175,22 +106,7 @@ namespace Barnacle.Dialogs
             AddQuadBezier,
             MovePath
         };
-        /*
-                public double EdgeLength
-                {
-                    get
-                    {
-                        if (imageEdge != null)
-                        {
-                            return imageEdge.Length;
-                        }
-                        else
-                        {
-                            return 0;
-                        }
-                    }
-                }
-        */
+
         public string EdgePath
         {
             get
@@ -410,6 +326,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool ShowProfilePoints
+        {
+            get
+            {
+                return showProfilePoints;
+            }
+            set
+            {
+                if (value != showProfilePoints)
+                {
+                    showProfilePoints = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public System.Drawing.Bitmap WorkingImage
         {
             get
@@ -440,175 +373,36 @@ namespace Barnacle.Dialogs
             return bs;
         }
 
+        public void Clear()
+        {
+            Header = "";
+            FName = "";
+            NumDivisions = 80;
+            ProfilePoints = new List<PointF>();
+            scale = 1;
+            SetRibScale();
+            selectedPoint = -1;
+            SelectionMode = SelectionModeType.SelectPoint;
+
+            isValid = false;
+            DataContext = this;
+            imagePath = "";
+            workingImage = null;
+            src = null;
+            RibImage = new System.Windows.Controls.Image();
+            flexiPath = new FlexiPath();
+
+            InitialisePoints();
+            polyPoints = flexiPath.FlexiPoints;
+            scrollX = 0;
+            scrollY = 0;
+        }
+
         public void FetchImage(bool forceReload = false)
         {
             LoadImage(imagePath, forceReload);
         }
-        /*
-        public void FindEdge()
-        {
-            imageEdge.Clear();
 
-            // left side
-            double px = 0;
-            double py = 0;
-            while (py < workingImage.Height)
-            {
-                px = 0;
-                bool found = false;
-                while (px < workingImage.Width && !found)
-                {
-                    System.Drawing.Color c = workingImage.GetPixel((int)px, (int)py);
-                    if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
-                    {
-                        found = true;
-                        imageEdge.Add(px, py); ;
-                    }
-                    else
-                    {
-                        px++;
-                    }
-                }
-                py++;
-            }
-
-            // right side
-            py = workingImage.Height - 1;
-            while (py >= 0)
-            {
-                px = workingImage.Width - 1;
-                bool found = false;
-                while (px >= 0 && !found)
-                {
-                    System.Drawing.Color c = workingImage.GetPixel((int)px, (int)py);
-                    if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
-                    {
-                        found = true;
-                        imageEdge.Add(px, py);
-                    }
-                    else
-                    {
-                        px--;
-                    }
-                }
-                py--;
-            }
-
-            imageEdge.Analyse();
-
-            ShowEdge();
-        }
-        
-        public void GenerateProfilePoints(int modelType)
-        {
-            System.Diagnostics.Debug.WriteLine("=================================== GenerateProfilePoints ================================");
-            System.Diagnostics.Debug.WriteLine($"{imagePath}");
-
-            divisionLength = EdgeLength / (NumDivisions - 1);
-
-            middleX = imageEdge.MiddleX;
-            middleY = imageEdge.MiddleY;
-            System.Diagnostics.Debug.WriteLine($"MiddleX {middleX} middleY {middleY} ");
-            profilePoints = new List<PointF>();
-
-            List<PointF> tmp = new List<PointF>();
-            int startP = -1;
-            int endP = -1;
-            if (modelType == 0)
-            {
-                startP = imageEdge.WholeStart;
-                endP = imageEdge.WholeEnd;
-                divisionLength = imageEdge.Length / (NumDivisions - 1);
-                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
-            }
-            if (modelType == 1)
-            {
-                startP = imageEdge.BackStart;
-                endP = imageEdge.BackEnd;
-                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
-                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
-            }
-            if (modelType == 2)
-            {
-                startP = imageEdge.FrontStart;
-                endP = imageEdge.FrontEnd;
-                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
-                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
-            }
-
-            for (int i = startP; i < endP; i++)
-            {
-                tmp.Add(new PointF((float)(imageEdge.EdgePoints[i].X - middleX), (float)(imageEdge.EdgePoints[i].Y - middleY)));
-            }
-            // for convenience add the first point onto the end again
-            tmp.Add(new PointF(tmp[0].X, tmp[0].Y));
-
-            for (int i = 0; i < NumDivisions; i++)
-            {
-                double targetDistance = i * divisionLength;
-                double runningDistance = 0;
-                int cp = 1;
-                bool found = false;
-                while (!found && cp < tmp.Count)
-                {
-                    PointF p0 = tmp[cp - 1];
-                    PointF p1 = tmp[cp];
-                    double d = Distance(p0, p1);
-                    if ((runningDistance <= targetDistance) &&
-                         (runningDistance + d >= targetDistance))
-                    {
-                        found = true;
-                        double overhang = targetDistance - runningDistance;
-                        if (overhang < 0)
-                        {
-                            System.Diagnostics.Debug.WriteLine("Distance error creating profile");
-                        }
-                        if (overhang != 0.0)
-                        {
-                            double delta = overhang / d;
-                            double nx = p0.X + (p1.X - p0.X) * delta;
-                            double ny = p0.Y + (p1.Y - p0.Y) * delta;
-
-                            nx = nx / middleX;
-                            ny = ny / middleY;
-                            profilePoints.Add(new PointF((float)nx, (float)ny));
-                        }
-                        else
-                        {
-                            double nx = p0.X;
-                            double ny = p0.Y;
-
-                            nx = nx / middleX;
-                            ny = ny / middleY;
-                            profilePoints.Add(new PointF((float)nx, (float)ny));
-                        }
-                    }
-                    runningDistance += d;
-                    cp++;
-                }
-            }
-            if (profilePoints.Count != NumDivisions)
-            {
-                System.Diagnostics.Debug.WriteLine("ERROR incorrect number of profile divisions");
-            }
-        }
-        */
-        private bool showProfilePoints;
-        public bool ShowProfilePoints
-        {
-            get { return showProfilePoints; }
-            set
-            {
-                if (value != showProfilePoints)
-                {
-                    showProfilePoints = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-        double pathWidth = 0;
-        double pathHeight = 0;
         public void GenerateProfilePoints(int modelType = 0)
         {
             profilePoints = new List<PointF>();
@@ -746,30 +540,6 @@ namespace Barnacle.Dialogs
             profilePoints = tmp;
         }
 
-        public void Clear()
-        {
-            Header = "";
-            FName = "";
-            NumDivisions = 80;
-            ProfilePoints = new List<PointF>();
-            scale = 1;
-            SetRibScale();
-            selectedPoint = -1;
-            SelectionMode = SelectionModeType.SelectPoint;
-
-            isValid = false;
-            DataContext = this;
-            imagePath = "";
-            workingImage = null;
-            src = null;
-            RibImage = new System.Windows.Controls.Image();
-            flexiPath = new FlexiPath();
-
-            InitialisePoints();
-            polyPoints = flexiPath.FlexiPoints;
-            scrollX = 0;
-            scrollY = 0;
-        }
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -788,10 +558,37 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public void UpdateDisplay()
+        {
+            RibCanvas.Children.Clear();
+            RibCanvas.Children.Add(RibImage);
+            DisplayLines();
+            DisplayPoints();
+            if (showProfilePoints)
+            {
+                ShowProfile();
+            }
+        }
+
         public void UpdateHeaderLabel()
         {
             HeaderLabel.Content = Header;
             FNameLabel.Content = FName;
+        }
+
+        public void Write(XmlDocument doc, XmlElement parentNode)
+        {
+            XmlElement ele = doc.CreateElement("ImagePath");
+
+            ele.SetAttribute("Path", imagePath);
+            ele.SetAttribute("Scale", scale.ToString());
+            ele.SetAttribute("ScrollX", ScrollX.ToString());
+            ele.SetAttribute("ScrollY", ScrollY.ToString());
+            parentNode.AppendChild(ele);
+            XmlElement pnts = doc.CreateElement("Edge");
+            // make sure we get the points with absolute coordinates
+            pnts.InnerText = flexiPath.ToPath(true);
+            ele.AppendChild(pnts);
         }
 
         internal ImagePathControl Clone()
@@ -822,20 +619,252 @@ namespace Barnacle.Dialogs
             return cl;
         }
 
-        public void Write(XmlDocument doc, XmlElement parentNode)
+        internal void Read(XmlElement parentNode)
         {
-            XmlElement ele = doc.CreateElement("ImagePath");
-
-            ele.SetAttribute("Path", imagePath);
-            ele.SetAttribute("Scale", scale.ToString());
-            ele.SetAttribute("ScrollX", ScrollX.ToString());
-            ele.SetAttribute("ScrollY", ScrollY.ToString());
-            parentNode.AppendChild(ele);
-            XmlElement pnts = doc.CreateElement("Edge");
-            // make sure we get the points with absolute coordinates
-            pnts.InnerText = flexiPath.ToPath(true);
-            ele.AppendChild(pnts);
+            XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
+            ImagePath = ele.GetAttribute("Path");
+            //  LoadImage(imagePath,false);
+            scale = Convert.ToDouble(ele.GetAttribute("Scale"));
+            scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
+            scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
+            XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
+            string p = edgeNode.InnerText;
+            flexiPath.FromTextPath(p);
+            loaded = false;
+            ScrollView.ScrollToHorizontalOffset(scrollX);
+            ScrollView.ScrollToVerticalOffset(scrollY);
+            UpdateDisplay();
+            loaded = true;
+            NotifyPropertyChanged("Scale");
         }
+
+        internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
+        {
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+            int offset = 4;
+            List<PointF> pnts = flexiPath.DisplayPointsF();
+            if (bmp == null && pnts.Count > 0 && workingImage != null)
+            {
+                bmp = new Bitmap(workingImage.Width, workingImage.Height);
+            }
+            if (bmp != null)
+            {
+                for (int i = 0; i < pnts.Count; i++)
+                {
+                    if (pnts[i].X < tlx)
+                    {
+                        tlx = (double)pnts[i].X;
+                    }
+
+                    if (pnts[i].Y < tly)
+                    {
+                        tly = (double)pnts[i].Y;
+                    }
+
+                    if (pnts[i].X > brx)
+                    {
+                        brx = (double)pnts[i].X;
+                    }
+
+                    if (pnts[i].Y > bry)
+                    {
+                        bry = (double)pnts[i].Y;
+                    }
+                }
+
+                using (var gfx = Graphics.FromImage(bmp))
+                using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
+                {
+                    // draw one thousand random white lines on a dark blue background
+                    gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+                    gfx.Clear(System.Drawing.Color.White);
+                    for (int i = 0; i < pnts.Count; i++)
+                    {
+                        int j = i + 1;
+                        if (j >= pnts.Count)
+                        {
+                            j = 0;
+                        }
+                        var pt1 = new System.Drawing.Point((int)(pnts[i].X) - (int)tlx + offset, (int)(pnts[i].Y) - (int)tly + offset);
+                        var pt2 = new System.Drawing.Point((int)(pnts[j].X) - (int)tlx + offset, (int)(pnts[j].Y) - (int)tly + offset);
+                        gfx.DrawLine(pen, pt1, pt2);
+                    }
+                }
+            }
+            brx = brx - tlx + offset;
+            bry = bry - tly + offset;
+            tlx = offset;
+            tly = offset;
+        }
+
+        /*
+                public double EdgeLength
+                {
+                    get
+                    {
+                        if (imageEdge != null)
+                        {
+                            return imageEdge.Length;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+        */
+        /*
+        public void FindEdge()
+        {
+            imageEdge.Clear();
+
+            // left side
+            double px = 0;
+            double py = 0;
+            while (py < workingImage.Height)
+            {
+                px = 0;
+                bool found = false;
+                while (px < workingImage.Width && !found)
+                {
+                    System.Drawing.Color c = workingImage.GetPixel((int)px, (int)py);
+                    if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
+                    {
+                        found = true;
+                        imageEdge.Add(px, py); ;
+                    }
+                    else
+                    {
+                        px++;
+                    }
+                }
+                py++;
+            }
+
+            // right side
+            py = workingImage.Height - 1;
+            while (py >= 0)
+            {
+                px = workingImage.Width - 1;
+                bool found = false;
+                while (px >= 0 && !found)
+                {
+                    System.Drawing.Color c = workingImage.GetPixel((int)px, (int)py);
+                    if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
+                    {
+                        found = true;
+                        imageEdge.Add(px, py);
+                    }
+                    else
+                    {
+                        px--;
+                    }
+                }
+                py--;
+            }
+
+            imageEdge.Analyse();
+
+            ShowEdge();
+        }
+
+        public void GenerateProfilePoints(int modelType)
+        {
+            System.Diagnostics.Debug.WriteLine("=================================== GenerateProfilePoints ================================");
+            System.Diagnostics.Debug.WriteLine($"{imagePath}");
+
+            divisionLength = EdgeLength / (NumDivisions - 1);
+
+            middleX = imageEdge.MiddleX;
+            middleY = imageEdge.MiddleY;
+            System.Diagnostics.Debug.WriteLine($"MiddleX {middleX} middleY {middleY} ");
+            profilePoints = new List<PointF>();
+
+            List<PointF> tmp = new List<PointF>();
+            int startP = -1;
+            int endP = -1;
+            if (modelType == 0)
+            {
+                startP = imageEdge.WholeStart;
+                endP = imageEdge.WholeEnd;
+                divisionLength = imageEdge.Length / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
+            }
+            if (modelType == 1)
+            {
+                startP = imageEdge.BackStart;
+                endP = imageEdge.BackEnd;
+                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
+            }
+            if (modelType == 2)
+            {
+                startP = imageEdge.FrontStart;
+                endP = imageEdge.FrontEnd;
+                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
+            }
+
+            for (int i = startP; i < endP; i++)
+            {
+                tmp.Add(new PointF((float)(imageEdge.EdgePoints[i].X - middleX), (float)(imageEdge.EdgePoints[i].Y - middleY)));
+            }
+            // for convenience add the first point onto the end again
+            tmp.Add(new PointF(tmp[0].X, tmp[0].Y));
+
+            for (int i = 0; i < NumDivisions; i++)
+            {
+                double targetDistance = i * divisionLength;
+                double runningDistance = 0;
+                int cp = 1;
+                bool found = false;
+                while (!found && cp < tmp.Count)
+                {
+                    PointF p0 = tmp[cp - 1];
+                    PointF p1 = tmp[cp];
+                    double d = Distance(p0, p1);
+                    if ((runningDistance <= targetDistance) &&
+                         (runningDistance + d >= targetDistance))
+                    {
+                        found = true;
+                        double overhang = targetDistance - runningDistance;
+                        if (overhang < 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Distance error creating profile");
+                        }
+                        if (overhang != 0.0)
+                        {
+                            double delta = overhang / d;
+                            double nx = p0.X + (p1.X - p0.X) * delta;
+                            double ny = p0.Y + (p1.Y - p0.Y) * delta;
+
+                            nx = nx / middleX;
+                            ny = ny / middleY;
+                            profilePoints.Add(new PointF((float)nx, (float)ny));
+                        }
+                        else
+                        {
+                            double nx = p0.X;
+                            double ny = p0.Y;
+
+                            nx = nx / middleX;
+                            ny = ny / middleY;
+                            profilePoints.Add(new PointF((float)nx, (float)ny));
+                        }
+                    }
+                    runningDistance += d;
+                    cp++;
+                }
+            }
+            if (profilePoints.Count != NumDivisions)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR incorrect number of profile divisions");
+            }
+        }
+        */
 
         private static void AdjustBounds(ref double tlx, ref double tly, ref double brx, ref double bry, double px, double py)
         {
@@ -894,9 +923,16 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    //                   flexiPath.AddLine(position);
-                    //                   PointGrid.ItemsSource = Points;
-                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                    // trying to convert last segment into a bezier
+                    // We actually need to append a new one
+                    if (cubic)
+                    {
+                        flexiPath.AppendClosingCurveSegment();
+                    }
+                    else
+                    {
+                        flexiPath.AppendClosingQuadCurveSegment();
+                    }
                 }
                 added = true;
                 PathText = flexiPath.ToPath();
@@ -1038,25 +1074,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        internal void Read(XmlElement parentNode)
-        {
-            XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
-            ImagePath = ele.GetAttribute("Path");
-            //  LoadImage(imagePath,false);
-            scale = Convert.ToDouble(ele.GetAttribute("Scale"));
-            scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
-            scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
-            XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
-            string p = edgeNode.InnerText;
-            flexiPath.FromTextPath(p);
-            loaded = false;
-            ScrollView.ScrollToHorizontalOffset(scrollX);
-            ScrollView.ScrollToVerticalOffset(scrollY);
-            UpdateDisplay();
-            loaded = true;
-            NotifyPropertyChanged("Scale");
-        }
-
         private void DashLine(double x1, double y1, double x2, double y2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -1114,10 +1131,6 @@ namespace Barnacle.Dialogs
             SelectionMode = SelectionModeType.DeleteSegment;
         }
 
-        private void MovePathButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectionMode = SelectionModeType.MovePath;
-        }
         private void DisplayLines()
         {
             if (flexiPath != null)
@@ -1352,8 +1365,6 @@ namespace Barnacle.Dialogs
                             SelectionMode = SelectionModeType.SelectPoint;
                         }
                         break;
-
-
                 }
                 if (found)
                 {
@@ -1470,7 +1481,6 @@ namespace Barnacle.Dialogs
 
         private void Mark(int x, int y, System.Drawing.Color c)
         {
-
             int size = 1;
             for (int i = -size; i <= size; i++)
             {
@@ -1482,7 +1492,17 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
+        }
 
+        private void MovePathButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.MovePath;
+        }
+
+        private void MoveWholePath(System.Windows.Point position)
+        {
+            flexiPath.MoveTo(position);
+            GenerateProfilePoints();
         }
 
         private void OutButton_Click(object sender, RoutedEventArgs e)
@@ -1621,12 +1641,6 @@ namespace Barnacle.Dialogs
             catch (Exception ex)
             {
             }
-        }
-
-        private void MoveWholePath(System.Windows.Point position)
-        {
-            flexiPath.MoveTo(position);
-            GenerateProfilePoints();
         }
 
         private void RibCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -1792,7 +1806,6 @@ namespace Barnacle.Dialogs
                         MovePathBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
                     }
                     break;
-
             }
         }
 
@@ -1850,7 +1863,6 @@ namespace Barnacle.Dialogs
 
         private void ShowProfile()
         {
-
             if (profilePoints == null || profilePoints.Count == 0)
             {
                 GenerateProfilePoints();
@@ -1863,7 +1875,6 @@ namespace Barnacle.Dialogs
                 MakeRect(3, br, p);
                 br = System.Windows.Media.Brushes.Red;
             }
-
         }
 
         private void ShowProfile_Click(object sender, RoutedEventArgs e)
@@ -1890,20 +1901,6 @@ namespace Barnacle.Dialogs
             }
             return res;
         }
-
-        public void UpdateDisplay()
-        {
-            RibCanvas.Children.Clear();
-            RibCanvas.Children.Add(RibImage);
-            DisplayLines();
-            DisplayPoints();
-            if (showProfilePoints)
-            {
-                ShowProfile();
-            }
-        }
-
-
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
