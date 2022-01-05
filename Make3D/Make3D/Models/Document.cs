@@ -398,10 +398,6 @@ namespace Barnacle.Models
             }
         }
 
-        internal void Add(Object3D leftObject)
-        {
-        }
-
         internal void AutoExport(string name, Bounds3D bnds)
         {
             double scalefactor = 1.0;
@@ -475,10 +471,11 @@ namespace Barnacle.Models
             Dirty = true;
         }
 
-        internal string ExportAll(string v, Bounds3D bnds)
+        internal string ExportAll(string v, Bounds3D bnds, string exportFolderPath)
         {
             string res = "";
             double scalefactor = 1.0;
+
             if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
             {
                 scalefactor = ModelScales.ConversionFactor(ProjectSettings.BaseScale, ProjectSettings.ExportScale);
@@ -512,8 +509,7 @@ namespace Barnacle.Models
                 }
                 else
                 {
-                    String pth = System.IO.Path.GetDirectoryName(FilePath);
-                    pth = System.IO.Path.Combine(pth, "export");
+                    String pth = exportFolderPath;
                     if (!Directory.Exists(pth))
                     {
                         Directory.CreateDirectory(pth);
@@ -550,12 +546,12 @@ namespace Barnacle.Models
 
                 if (FileName == "")
                 {
-                    MessageBox.Show("Save the document first. So there is an export path");
+                    MessageBox.Show("Save the document first. So there is an export name");
                 }
                 else
                 {
-                    String pth = System.IO.Path.GetDirectoryName(FilePath);
-                    pth = System.IO.Path.Combine(pth, "export");
+                    String pth = exportFolderPath;
+
                     if (!Directory.Exists(pth))
                     {
                         Directory.CreateDirectory(pth);
@@ -573,10 +569,9 @@ namespace Barnacle.Models
             return res;
         }
 
-        internal string ExportAllPartsSeperately(string v, Bounds3D bnds)
+        internal string ExportAllPartsSeperately(string v, Bounds3D bnds, string exportFolderPath)
         {
-            String pth = System.IO.Path.GetDirectoryName(FilePath);
-            pth = System.IO.Path.Combine(pth, "export");
+            String pth = exportFolderPath;
             if (!Directory.Exists(pth))
             {
                 Directory.CreateDirectory(pth);
@@ -590,39 +585,33 @@ namespace Barnacle.Models
 
             STLExporter exp = new STLExporter();
 
-            if (FileName == "")
+            List<Object3D> exportList = new List<Object3D>();
+            foreach (Object3D ob in Content)
             {
-                MessageBox.Show("Save the document first. So there is an export path");
-            }
-            else
-            {
-                List<Object3D> exportList = new List<Object3D>();
-                foreach (Object3D ob in Content)
+                if (ob.Exportable)
                 {
-                    if (ob.Exportable)
+                    Object3D clone = ob.Clone();
+                    if (scalefactor != 1.0)
                     {
-                        Object3D clone = ob.Clone();
-                        if (scalefactor != 1.0)
-                        {
-                            clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
-                            clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
-                        }
-                        if (ProjectSettings.FloorAll)
-                        {
-                            clone.MoveToFloor();
-                        }
-                        exportList.Add(clone);
-                        string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
-                        exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                        exportList.Clear();
+                        clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
+                        clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
                     }
+                    if (ProjectSettings.FloorAll)
+                    {
+                        clone.MoveToFloor();
+                    }
+                    exportList.Add(clone);
+                    string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
+                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    exportList.Clear();
                 }
-                res = pth;
             }
+            res = pth;
+
             return res;
         }
 
-        internal string ExportSelectedParts(string v, Bounds3D bnds, List<Object3D> parts)
+        internal string ExportSelectedParts(string v, Bounds3D bnds, List<Object3D> parts, string exportFolderPath)
         {
             double scalefactor = 1.0;
             if (ProjectSettings.BaseScale != ProjectSettings.ExportScale)
@@ -653,8 +642,7 @@ namespace Barnacle.Models
                     }
                 }
 
-                String pth = System.IO.Path.GetDirectoryName(FilePath);
-                pth = System.IO.Path.Combine(pth, "export");
+                String pth = exportFolderPath;
                 if (!Directory.Exists(pth))
                 {
                     Directory.CreateDirectory(pth);
@@ -746,7 +734,7 @@ namespace Barnacle.Models
                                 double x = Convert.ToDouble(words[1]);
                                 double y = Convert.ToDouble(words[2]);
                                 double z = Convert.ToDouble(words[3]);
-                                //Point3D p = new Point3D(x, y, z);
+
                                 P3D p = new P3D(x, y, z);
                                 ob.RelativeObjectVertices.Add(p);
                             }
@@ -792,7 +780,7 @@ namespace Barnacle.Models
                                     cx = cx / indices.Count;
                                     cy = cy / indices.Count;
                                     cz = cz / indices.Count;
-                                    //ob.RelativeObjectVertices.Add(new Point3D(cx, cy, cz));
+
                                     ob.RelativeObjectVertices.Add(new P3D(cx, cy, cz));
                                     int id = ob.RelativeObjectVertices.Count - 1;
                                     for (int j = 0; j < indices.Count - 1; j++)
@@ -807,13 +795,6 @@ namespace Barnacle.Models
                     }
                 }
                 ob.PrimType = "Mesh";
-
-                /*
-                ob.Mesh.Positions = ob.AbsoluteObjectVertices;
-                ob.Mesh.TriangleIndices = ob.TriangleIndices;
-                ob.Mesh.Normals = ob.Normals;
-                ob.Rotate(new Point3D(-90, 0, 0));
-                */
                 ob.Remesh();
                 ob.MoveToFloor();
             }

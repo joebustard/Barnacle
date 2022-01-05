@@ -16,7 +16,7 @@
             <RowDefinition Height="20" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" HorizontalContentAlignment="Center" FontSize="9" Background="Blue" Foreground="AliceBlue">Primitives</Label>
+        <Label Grid.Row="0"   HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}">Primitive Objects</Label>
 
         <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top" MinHeight="160">
 

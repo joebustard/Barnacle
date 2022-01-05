@@ -439,9 +439,16 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    //                   flexiPath.AddLine(position);
-                    //                   PointGrid.ItemsSource = Points;
-                    //                   CollectionViewSource.GetDefaultView(Points).Refresh();
+                    // trying to convert last segment into a bezier
+                    // We actually need to append a new one
+                    if (cubic)
+                    {
+                        flexiPath.AppendClosingCurveSegment();
+                    }
+                    else
+                    {
+                        flexiPath.AppendClosingQuadCurveSegment();
+                    }
                 }
                 added = true;
             }
@@ -481,7 +488,7 @@ namespace Barnacle.Dialogs
                     return;
                 }
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
             Line ln = new Line();
             ln.Stroke = br;
             ln.StrokeThickness = 6;
