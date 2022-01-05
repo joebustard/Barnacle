@@ -1472,7 +1472,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
-                                exp = ParseArrayVariableNode(internalName, parentName);
+                                exp = ParseArrayVariableNode(externalName, parentName);
                             }
                         }
                     }
