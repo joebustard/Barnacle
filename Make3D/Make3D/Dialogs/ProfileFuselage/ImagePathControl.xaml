@@ -23,7 +23,8 @@
                         <ColumnDefinition Width="40" />
                         <ColumnDefinition Width="40" />
                         <ColumnDefinition Width="40" />
-                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <Label x:Name="HeaderLabel" Grid.Column="0"  FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding Header}" />
                     <Label x:Name="FNameLabel" Grid.Column="1"   FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center" Content="{Binding FName}" />
@@ -31,6 +32,7 @@
                     <Button x:Name="ZoomOut" Style="{StaticResource SmallButton}" FontSize="16" Margin="2,0,0,0" Grid.Column="3" Click="ZoomOut_Click" >-</Button>
                     <Button x:Name="ZoomReset" Style="{StaticResource SmallButton}" FontSize="16" Margin="2,0,0,0" Grid.Column="4" Click="ZoomReset_Click">.</Button>
                     <Button x:Name="ZoomIn" Style="{StaticResource SmallButton}" FontSize="16" Margin="2,0,0,0" Grid.Column="5" Click="ZoomIn_Click">+</Button>
+                    <CheckBox x:Name="ShowOrthoBox" Margin="2,0,0,0" VerticalAlignment="Center" IsChecked="{Binding ShowOrtho}" Grid.Column="6" >Show Ortho</CheckBox>
                 </Grid>
             </Border>
 
@@ -75,9 +77,9 @@
             </Border>
             <ScrollViewer x:Name="ScrollView" Grid.Row="2" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" Padding="5,5,5,5" ScrollChanged="ScrollViewer_ScrollChanged" Margin="0,5,0,28.6" Grid.RowSpan="2">
 
-                <Canvas x:Name="RibCanvas"  Width="800" Height="800" Background="Transparent" MouseDown="RibCanvas_MouseDown" MouseMove="RibCanvas_MouseMove" MouseUp="RibCanvas_MouseUp" Margin="2,2">
+                <Canvas x:Name="FlexiPathCanvas"  Width="800" Height="800" Background="Transparent" MouseDown="FlexiPathCanvas_MouseDown" MouseMove="FlexiPathCanvas_MouseMove" MouseUp="FlexiPathCanvas_MouseUp" Margin="2,2">
                     <Canvas.LayoutTransform>
-                        <ScaleTransform x:Name="RibScale" />
+                        <ScaleTransform x:Name="PathCanvasScale" />
                     </Canvas.LayoutTransform>
                     <!--
                     <Image x:Name="RibImage" />

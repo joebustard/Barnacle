@@ -381,7 +381,7 @@ namespace Barnacle.Dialogs
                     return;
                 }
             }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(50, 32, 32, 255));
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
             Line ln = new Line();
             ln.Stroke = br;
             ln.StrokeThickness = 6;

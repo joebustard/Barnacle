@@ -19,11 +19,11 @@ using System.Xml;
 namespace Barnacle.Dialogs
 {
     /// <summary>
-    /// Interaction logic for RibControl.xaml
+    /// Interaction logic for ImagePathControl.xaml
     /// </summary>
     public partial class ImagePathControl : UserControl, INotifyPropertyChanged
     {
-        public ForceRibReload OnForceReload;
+        public ForceReload OnForceReload;
         private double brx = double.MinValue;
         private double bry = double.MinValue;
         private double divisionLength;
@@ -53,6 +53,7 @@ namespace Barnacle.Dialogs
 
         private bool moving;
 
+        private System.Windows.Controls.Image PathBackgroundImage;
         private double pathHeight = 0;
         private string pathText;
 
@@ -60,8 +61,6 @@ namespace Barnacle.Dialogs
         private ObservableCollection<FlexiPoint> polyPoints;
 
         private List<PointF> profilePoints;
-
-        private System.Windows.Controls.Image RibImage;
         private double scale;
         private double scrollX;
         private double scrollY;
@@ -93,7 +92,7 @@ namespace Barnacle.Dialogs
             loaded = false;
         }
 
-        public delegate void ForceRibReload(string pth);
+        public delegate void ForceReload(string pth);
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -246,7 +245,7 @@ namespace Barnacle.Dialogs
                 if (scale != value)
                 {
                     scale = value;
-                    SetRibScale();
+                    SetFlexiPathScale();
                     NotifyPropertyChanged();
                 }
             }
@@ -326,6 +325,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool ShowOrtho
+        {
+            get
+            {
+                return showOrtho;
+            }
+            set
+            {
+                if (showOrtho != value)
+                {
+                    showOrtho = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public bool ShowProfilePoints
         {
             get
@@ -380,7 +396,7 @@ namespace Barnacle.Dialogs
             NumDivisions = 80;
             ProfilePoints = new List<PointF>();
             scale = 1;
-            SetRibScale();
+            SetFlexiPathScale();
             selectedPoint = -1;
             SelectionMode = SelectionModeType.SelectPoint;
 
@@ -389,7 +405,7 @@ namespace Barnacle.Dialogs
             imagePath = "";
             workingImage = null;
             src = null;
-            RibImage = new System.Windows.Controls.Image();
+            PathBackgroundImage = new System.Windows.Controls.Image();
             flexiPath = new FlexiPath();
 
             InitialisePoints();
@@ -552,16 +568,16 @@ namespace Barnacle.Dialogs
         {
             if (workingImage != null)
             {
-                RibImage.Source = loadBitmap(workingImage);
-                RibCanvas.Width = workingImage.Width;
-                RibCanvas.Height = workingImage.Height;
+                PathBackgroundImage.Source = loadBitmap(workingImage);
+                FlexiPathCanvas.Width = workingImage.Width;
+                FlexiPathCanvas.Height = workingImage.Height;
             }
         }
 
         public void UpdateDisplay()
         {
-            RibCanvas.Children.Clear();
-            RibCanvas.Children.Add(RibImage);
+            FlexiPathCanvas.Children.Clear();
+            FlexiPathCanvas.Children.Add(PathBackgroundImage);
             DisplayLines();
             DisplayPoints();
             if (showProfilePoints)
@@ -899,7 +915,7 @@ namespace Barnacle.Dialogs
         {
             int found = -1;
             bool added = false;
-            System.Windows.Point position = e.GetPosition(RibCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             for (int i = 0; i < polyPoints.Count; i++)
             {
                 if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
@@ -965,14 +981,14 @@ namespace Barnacle.Dialogs
             ln.Y2 = points[v].Y;
             ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
             ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
-            RibCanvas.Children.Add(ln);
+            FlexiPathCanvas.Children.Add(ln);
         }
 
         private bool AddLineFromPoint(MouseButtonEventArgs e, Line ln)
         {
             int found = -1;
             bool added = false;
-            System.Windows.Point position = e.GetPosition(RibCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             for (int i = 0; i < polyPoints.Count; i++)
             {
                 if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
@@ -1089,7 +1105,7 @@ namespace Barnacle.Dialogs
             ln.X2 = x2;
             ln.Y2 = y2;
 
-            RibCanvas.Children.Add(ln);
+            FlexiPathCanvas.Children.Add(ln);
         }
 
         private void DeletePointClicked(object sender, RoutedEventArgs e)
@@ -1100,7 +1116,7 @@ namespace Barnacle.Dialogs
         {
             int found = -1;
             bool added = false;
-            System.Windows.Point position = e.GetPosition(RibCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             for (int i = 0; i < polyPoints.Count; i++)
             {
                 if (Math.Abs(polyPoints[i].X - ln.X1) < 0.0001 && Math.Abs(polyPoints[i].Y - ln.Y1) < 0.0001)
@@ -1204,8 +1220,8 @@ namespace Barnacle.Dialogs
 
                         if (selectedPoint == i && showOrtho)
                         {
-                            DashLine(p.X, 0, p.X, RibCanvas.ActualHeight - 1);
-                            DashLine(0, p.Y, RibCanvas.ActualWidth - 1, p.Y);
+                            DashLine(p.X, 0, p.X, FlexiPathCanvas.ActualHeight - 1);
+                            DashLine(0, p.Y, FlexiPathCanvas.ActualWidth - 1, p.Y);
                         }
                     }
                 }
@@ -1263,7 +1279,134 @@ namespace Barnacle.Dialogs
             ln.X2 = p2.X;
             ln.Y2 = p2.Y;
 
-            RibCanvas.Children.Add(ln);
+            FlexiPathCanvas.Children.Add(ln);
+        }
+
+        private void FlexiPathCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (selectedPoint >= 0)
+                {
+                    Points[selectedPoint].Selected = false;
+                }
+                SelectedPoint = -1;
+
+                System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
+                // do this test here because the othe modes only trigger ifn you click a line
+                if (selectionMode == SelectionModeType.MovePath)
+                {
+                    MoveWholePath(position);
+                    SelectionMode = SelectionModeType.SelectPoint;
+                    UpdateDisplay();
+                }
+                else
+                {
+                    double rad = 3;
+
+                    for (int i = 0; i < polyPoints.Count; i++)
+                    {
+                        System.Windows.Point p = polyPoints[i].ToPoint();
+                        if (position.X >= p.X - rad && position.X <= p.X + rad)
+                        {
+                            if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
+                            {
+                                SelectedPoint = i;
+                                Points[i].Selected = true;
+                                moving = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (e.LeftButton == MouseButtonState.Pressed)
+                    {
+                        UpdateDisplay();
+                    }
+                    else
+                    if (e.RightButton == MouseButtonState.Pressed)
+                    {
+                        if (sender is Ellipse)
+                        {
+                            Ellipse el = sender as Ellipse;
+                            if (polyPoints.Count > 3)
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private void FlexiPathCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
+            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed && moving)
+            {
+                polyPoints[selectedPoint].X = position.X;
+                polyPoints[selectedPoint].Y = position.Y;
+                flexiPath.SetPointPos(selectedPoint, position);
+                PathText = flexiPath.ToPath();
+                GenerateProfilePoints();
+                UpdateDisplay();
+            }
+            else
+            {
+                moving = false;
+            }
+        }
+
+        private void FlexiPathCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            GenerateProfilePoints();
+            moving = false;
+        }
+
+        private void FlexiPathCanvas_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (selectedPoint != -1)
+            {
+                bool shift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
+                double d = 1;
+                if (shift)
+                {
+                    d = 0.1;
+                }
+                switch (e.Key)
+                {
+                    case Key.Left:
+                    case Key.L:
+                        {
+                            polyPoints[selectedPoint].X -= d;
+                        }
+                        break;
+
+                    case Key.Right:
+                    case Key.R:
+                        {
+                            polyPoints[selectedPoint].X += d;
+                        }
+                        break;
+
+                    case Key.U:
+                    case Key.Up:
+                        {
+                            polyPoints[selectedPoint].Y -= d;
+                        }
+                        break;
+
+                    case Key.D:
+                    case Key.Down:
+                        {
+                            polyPoints[selectedPoint].Y += d;
+                        }
+                        break;
+                }
+
+                UpdateDisplay();
+            }
         }
 
         private void GeneratePointParams()
@@ -1293,8 +1436,8 @@ namespace Barnacle.Dialogs
         private void InButton_Click(object sender, RoutedEventArgs e)
         {
             scale *= 1.1;
-            RibScale.ScaleX = scale;
-            RibScale.ScaleY = scale;
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
         }
 
         private void InitialisePoints()
@@ -1395,8 +1538,8 @@ namespace Barnacle.Dialogs
             //    localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             //EditorParameters.Set("ImagePath", f);
-            RibCanvas.Width = localImage.Width;
-            RibCanvas.Height = localImage.Height;
+            FlexiPathCanvas.Width = localImage.Width;
+            FlexiPathCanvas.Height = localImage.Height;
             UpdateDisplay();
         }
 
@@ -1428,10 +1571,10 @@ namespace Barnacle.Dialogs
             el.Height = 2 * rad;
             el.Stroke = br;
             el.Fill = br;
-            el.MouseDown += RibCanvas_MouseDown;
-            el.MouseMove += RibCanvas_MouseMove;
+            el.MouseDown += FlexiPathCanvas_MouseDown;
+            el.MouseMove += FlexiPathCanvas_MouseMove;
             el.ContextMenu = PointMenu(el);
-            RibCanvas.Children.Add(el);
+            FlexiPathCanvas.Children.Add(el);
             return p;
         }
 
@@ -1445,10 +1588,10 @@ namespace Barnacle.Dialogs
             el.Height = 2 * rad;
             el.Stroke = br;
             el.Fill = br;
-            el.MouseDown += RibCanvas_MouseDown;
-            el.MouseMove += RibCanvas_MouseMove;
+            el.MouseDown += FlexiPathCanvas_MouseDown;
+            el.MouseMove += FlexiPathCanvas_MouseMove;
             el.ContextMenu = PointMenu(el);
-            RibCanvas.Children.Add(el);
+            FlexiPathCanvas.Children.Add(el);
             return p;
         }
 
@@ -1472,10 +1615,10 @@ namespace Barnacle.Dialogs
             myPolygon.Height = 2 * rad;
             myPolygon.Stroke = br;
             myPolygon.Fill = br;
-            myPolygon.MouseDown += RibCanvas_MouseDown;
-            myPolygon.MouseMove += RibCanvas_MouseMove;
+            myPolygon.MouseDown += FlexiPathCanvas_MouseDown;
+            myPolygon.MouseMove += FlexiPathCanvas_MouseMove;
             myPolygon.ContextMenu = PointMenu(myPolygon);
-            RibCanvas.Children.Add(myPolygon);
+            FlexiPathCanvas.Children.Add(myPolygon);
             return p;
         }
 
@@ -1508,8 +1651,8 @@ namespace Barnacle.Dialogs
         private void OutButton_Click(object sender, RoutedEventArgs e)
         {
             scale *= 0.9;
-            RibScale.ScaleX = scale;
-            RibScale.ScaleY = scale;
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
         }
 
         private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
@@ -1578,138 +1721,11 @@ namespace Barnacle.Dialogs
         {
             InitialisePoints();
             scale = 1;
-            RibScale.ScaleX = scale;
-            RibScale.ScaleY = scale;
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
             selectedPoint = -1;
             UpdateDisplay();
             PathText = flexiPath.ToPath();
-        }
-
-        private void RibCanvas_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            try
-            {
-                if (selectedPoint >= 0)
-                {
-                    Points[selectedPoint].Selected = false;
-                }
-                SelectedPoint = -1;
-
-                System.Windows.Point position = e.GetPosition(RibCanvas);
-                // do this test here because the othe modes only trigger ifn you click a line
-                if (selectionMode == SelectionModeType.MovePath)
-                {
-                    MoveWholePath(position);
-                    SelectionMode = SelectionModeType.SelectPoint;
-                    UpdateDisplay();
-                }
-                else
-                {
-                    double rad = 3;
-
-                    for (int i = 0; i < polyPoints.Count; i++)
-                    {
-                        System.Windows.Point p = polyPoints[i].ToPoint();
-                        if (position.X >= p.X - rad && position.X <= p.X + rad)
-                        {
-                            if (position.Y >= p.Y - rad && position.Y <= p.Y + rad)
-                            {
-                                SelectedPoint = i;
-                                Points[i].Selected = true;
-                                moving = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (e.LeftButton == MouseButtonState.Pressed)
-                    {
-                        UpdateDisplay();
-                    }
-                    else
-                    if (e.RightButton == MouseButtonState.Pressed)
-                    {
-                        if (sender is Ellipse)
-                        {
-                            Ellipse el = sender as Ellipse;
-                            if (polyPoints.Count > 3)
-                            {
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-            }
-        }
-
-        private void RibCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            System.Windows.Point position = e.GetPosition(RibCanvas);
-            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed && moving)
-            {
-                polyPoints[selectedPoint].X = position.X;
-                polyPoints[selectedPoint].Y = position.Y;
-                flexiPath.SetPointPos(selectedPoint, position);
-                PathText = flexiPath.ToPath();
-                GenerateProfilePoints();
-                UpdateDisplay();
-            }
-            else
-            {
-                moving = false;
-            }
-        }
-
-        private void RibCanvas_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            GenerateProfilePoints();
-            moving = false;
-        }
-
-        private void RibCanvas_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (selectedPoint != -1)
-            {
-                bool shift = e.KeyboardDevice.IsKeyDown(Key.LeftShift) || e.KeyboardDevice.IsKeyDown(Key.RightShift);
-                double d = 1;
-                if (shift)
-                {
-                    d = 0.1;
-                }
-                switch (e.Key)
-                {
-                    case Key.Left:
-                    case Key.L:
-                        {
-                            polyPoints[selectedPoint].X -= d;
-                        }
-                        break;
-
-                    case Key.Right:
-                    case Key.R:
-                        {
-                            polyPoints[selectedPoint].X += d;
-                        }
-                        break;
-
-                    case Key.U:
-                    case Key.Up:
-                        {
-                            polyPoints[selectedPoint].Y -= d;
-                        }
-                        break;
-
-                    case Key.D:
-                    case Key.Down:
-                        {
-                            polyPoints[selectedPoint].Y += d;
-                        }
-                        break;
-                }
-
-                UpdateDisplay();
-            }
         }
 
         private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
@@ -1724,7 +1740,7 @@ namespace Barnacle.Dialogs
         private bool SelectLineFromPoint(MouseButtonEventArgs e)
         {
             bool found;
-            System.Windows.Point position = e.GetPosition(RibCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             found = flexiPath.SelectAtPoint(position);
 
             if (found)
@@ -1809,18 +1825,18 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void SetFlexiPathScale()
+        {
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
+        }
+
         private void SetPointIds()
         {
             for (int i = 0; i < polyPoints.Count; i++)
             {
                 polyPoints[i].Id = i + 1;
             }
-        }
-
-        private void SetRibScale()
-        {
-            RibScale.ScaleX = scale;
-            RibScale.ScaleY = scale;
         }
 
         private void ShowCenters()
@@ -1914,19 +1930,19 @@ namespace Barnacle.Dialogs
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
             scale = 1.1 * scale;
-            SetRibScale();
+            SetFlexiPathScale();
         }
 
         private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             scale = 0.9 * scale;
-            SetRibScale();
+            SetFlexiPathScale();
         }
 
         private void ZoomReset_Click(object sender, RoutedEventArgs e)
         {
             scale = 1.0;
-            SetRibScale();
+            SetFlexiPathScale();
         }
     }
 }
