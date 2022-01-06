@@ -261,9 +261,15 @@
         </Custom:Ribbon>
         <Grid x:Name="MyGrid" Grid.Row="1" SizeChanged="Grid_SizeChanged">
             <DockPanel LastChildFill="True">
-                <TabControl Width="160" HorizontalContentAlignment="Left" x:Name="SolutionPanel">
+                <TabControl Width="180" HorizontalContentAlignment="Left" x:Name="SolutionPanel">
+
                     <TabItem Header="Solution">
-                        <vsx1:SolutionExplorerControl x:Name="SolutionExplorer"  VerticalAlignment="Stretch" MinHeight="500"/>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <vsx1:SolutionExplorerControl x:Name="SolutionExplorer"  VerticalAlignment="Stretch" Grid.Column="0" />
+                        </Grid>
                     </TabItem>
                     <TabItem Header="Edit" x:Name="EditPanel">
 
@@ -288,13 +294,17 @@
                         </ScrollViewer>
                     </TabItem>
                     <TabItem Header="Library" Visibility="{Binding LibraryVisibility}">
-                        <StackPanel>
-                            <Border BorderThickness="4" Width="128" Height="128" Style="{StaticResource ControlBorder}">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="128" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <Border BorderThickness="4" Width="128" Height="128" Style="{StaticResource ControlBorder}" Grid.Row="0">
                                 <Image Source="{Binding LibraryImageSource}" />
                             </Border>
 
-                            <vsx1:SolutionExplorerControl x:Name="LibraryExplorer" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" />
-                        </StackPanel>
+                            <vsx1:SolutionExplorerControl x:Name="LibraryExplorer" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch"  Margin="0,0,0.4,0" Grid.Row="1" />
+                        </Grid>
                     </TabItem>
                 </TabControl>
                 <ScrollViewer x:Name="Scroller" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">

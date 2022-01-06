@@ -23,8 +23,7 @@ namespace VisualSolutionExplorer
                                                             folder.SupportsFiles,
                                                             folder.CanBeRenamed,
                                                             folder.Explorer);
-            
-                                                          
+
             contextMenu.OnCreateFolder = CreateNewFolder;
             contextMenu.OnCreateFile = CreateNewFile;
             contextMenu.OnRenameFolder = RenameFolder;
@@ -159,7 +158,6 @@ namespace VisualSolutionExplorer
 
         public void ExploreFolder()
         {
-            // NotifySolutionChanged("ExploreFolder", _folder.FolderPath, "");
             string root = Path.GetDirectoryName(ProjectViewModel.ProjectFilePath);
             string pth = root + _folder.FolderPath;
             if (!pth.EndsWith(Path.DirectorySeparatorChar.ToString()))
@@ -219,6 +217,13 @@ namespace VisualSolutionExplorer
             {
                 ti.IsExpanded = false;
             }
+            if (_folders != null)
+            {
+                foreach (ProjectFolderViewModel pfm in _folders)
+                {
+                    pfm.Collapse();
+                }
+            }
         }
 
         internal void Expand()
@@ -228,6 +233,14 @@ namespace VisualSolutionExplorer
             foreach (TreeViewItemViewModel ti in base.Children)
             {
                 ti.IsExpanded = true;
+                foreach (TreeViewItemViewModel sub in ti.Children)
+                {
+                    sub.IsExpanded = true;
+                    if (sub is ProjectFolderViewModel)
+                    {
+                        (sub as ProjectFolderViewModel).Expand();
+                    }
+                }
             }
         }
 
@@ -256,6 +269,7 @@ namespace VisualSolutionExplorer
                 ProjectFolderViewModel pfo = new ProjectFolderViewModel(fld);
                 pfo.SolutionChanged = NotifySolutionChanged;
                 base.Children.Add(pfo);
+                pfo.LoadChildren();
             }
             foreach (ProjectFile file in _folder.ProjectFiles)
             {

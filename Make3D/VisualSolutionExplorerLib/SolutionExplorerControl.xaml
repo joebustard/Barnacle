@@ -3,7 +3,7 @@
   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-  xmlns:local="clr-namespace:VisualSolutionExplorer" Height="300">
+  xmlns:local="clr-namespace:VisualSolutionExplorer">
     <UserControl.Resources>
         <Style x:Key="ContextMenuItem" TargetType="{x:Type MenuItem}">
 
@@ -42,25 +42,31 @@
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
-    <DockPanel>
-        <ToolBarTray DockPanel.Dock="Top">
-            <ToolBar>
-                <Button  ToolTip="Collapse Tree" Command="{Binding CollapseTree}">
-                    <Image Width="24" Height="24" Source="Images\Minus.png" />
-                </Button>
-                <Button  ToolTip="Expand Tree" Command="{Binding ExpandTree}">
-                    <Image Width="24" Height="24" Source="Images\Plus.png" />
-                </Button>
-                <Button ToolTip="Refresh" Command="{Binding RefreshTree}" Visibility="{Binding RefreshVisibility}">
-                    <Image Width="24" Height="24" Source="Images\Refresh.png" />
-                </Button>
-            </ToolBar>
-        </ToolBarTray>
+    <Grid VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" x:Name="MainDocPanel">
+            <ToolBarTray DockPanel.Dock="Top">
+                <ToolBar>
+                    <Button  ToolTip="Collapse Tree" Command="{Binding CollapseTree}">
+                        <Image Width="24" Height="24" Source="Images\Minus.png" />
+                    </Button>
+                    <Button  ToolTip="Expand Tree" Command="{Binding ExpandTree}">
+                        <Image Width="24" Height="24" Source="Images\Plus.png" />
+                    </Button>
+                    <Button ToolTip="Refresh" Command="{Binding RefreshTree}" Visibility="{Binding RefreshVisibility}">
+                        <Image Width="24" Height="24" Source="Images\Refresh.png" />
+                    </Button>
+                </ToolBar>
+            </ToolBarTray>
+        </DockPanel>
         <TreeView x:Name="SolutionTreeView" ItemsSource="{Binding Folders}" SelectedItemChanged="TreeView_SelectedItemChanged" PreviewMouseLeftButtonDown="Tree_PreviewMouseLeftButtonDown"
        PreviewMouseMove="Tree_MouseMove"
        Drop="DropTree_Drop"
       DragEnter="DropTree_DragEnter"
-      AllowDrop="True">
+      AllowDrop="True" Grid.Row="1" VerticalAlignment="Stretch">
 
             <TreeView.ItemContainerStyle>
                 <!--
@@ -174,5 +180,5 @@
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
         </TreeView>
-    </DockPanel>
+    </Grid>
 </UserControl>
