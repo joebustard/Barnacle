@@ -23,11 +23,6 @@ namespace MakerLib
                               .ToList();
         }
 
-        public static IEnumerable GetDirections()
-        {
-            return new[] { "Left to right", "Right to left" };
-        }
-
         public static IEnumerable GetFonts()
         {
             return new InstalledFontCollection().Families.Select(font => font.Name).ToList();

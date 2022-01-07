@@ -72,6 +72,7 @@ namespace Barnacle.ViewModels
         }
 
         public static bool ScriptClearBed { get; protected set; }
+
         public static object ScriptResults { get; protected set; }
 
         public SolidColorBrush FillColor
@@ -162,6 +163,17 @@ namespace Barnacle.ViewModels
                 CheckPoint();
             }
             lastChangeWasNudge = true;
+        }
+
+        public string GetPartsLibraryPath()
+        {
+            String pth = Properties.Settings.Default.PartLibraryPath;
+            if (pth == "")
+            {
+                pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+                pth += "//Barnacle//BarnaclePartsLibrary";
+            }
+            return pth;
         }
 
         public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")

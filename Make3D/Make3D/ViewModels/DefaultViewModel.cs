@@ -1008,17 +1008,6 @@ namespace Barnacle.ViewModels
 
         public ICommand ZoomOutCommand { get; set; }
 
-        public string GetPartsLibraryPath()
-        {
-            String pth = Properties.Settings.Default.PartLibraryPath;
-            if (pth == "")
-            {
-                pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                pth += "//Barnacle//BarnaclePartsLibrary";
-            }
-            return pth;
-        }
-
         public void LoadSystemFonts()
         {
             _systemFonts.Clear();

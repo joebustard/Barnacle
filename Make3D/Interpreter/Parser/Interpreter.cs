@@ -69,6 +69,7 @@ namespace ScriptLanguage
                 "dim",
                 "height",
                 "inputstring",
+                "insertpart",
                 "intersection",
                 "len",
                 "length",
@@ -1298,7 +1299,7 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                    ReportSyntaxError("Unexpected end of file processing compound statement " + parentName);
+                    ReportSyntaxError("Unexpected end of file processing compound statement " + parentName + " Missing }?");
                     result = false;
                 }
             } while ((!bDone) && (tokenType != Tokeniser.TokenType.None) && (result == true));
@@ -2336,6 +2337,19 @@ namespace ScriptLanguage
             return exp;
         }
 
+        private ExpressionNode ParseInsertPartFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            ExpressionNode param = ParseExpressionNode(parentName);
+            if (param != null)
+            {
+                InsertPartNode mn = new InsertPartNode(param);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+            return exp;
+        }
+
         private ExpressionNode ParseIntersectionFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -2428,6 +2442,12 @@ namespace ScriptLanguage
                         case "inputstring":
                             {
                                 exp = ParseInputStringFunction(parentName);
+                            }
+                            break;
+
+                        case "insertpart":
+                            {
+                                exp = ParseInsertPartFunction(parentName);
                             }
                             break;
 

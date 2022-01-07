@@ -68,6 +68,7 @@
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />
     <Compile Include="SolidFunctions\CopySolidNode.cs" />
+    <Compile Include="SolidFunctions\InsertPartNode.cs" />
     <Compile Include="SolidFunctions\MakeBicorn.cs" />
     <Compile Include="SolidFunctions\MakeHollow.cs" />
     <Compile Include="SolidFunctions\MakeParallelogram.cs" />

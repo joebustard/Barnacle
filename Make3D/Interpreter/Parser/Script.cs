@@ -6,6 +6,7 @@ namespace ScriptLanguage
 {
     public class Script
     {
+        public static string PartsLibraryPath = "";
         private ParseTreeNode parseTree;
         //   public static MdiChildForm theForm;
 
@@ -43,6 +44,11 @@ namespace ScriptLanguage
         {
             parseTree.HighLight = true;
             return parseTree;
+        }
+
+        public void SetPartsLibraryRoot(string v)
+        {
+            PartsLibraryPath = v;
         }
 
         public void SetResultsContent(List<Object3D> content)

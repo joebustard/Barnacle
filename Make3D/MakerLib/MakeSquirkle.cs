@@ -11,26 +11,23 @@ namespace MakerLib
 {
     public class SquirkleMaker : MakerBase
     {
-        private double length;
-        private double squirkleheight;
-        private double depth;
-        private int tlc;
-        private int trc;
         private int blc;
         private int brc;
+        private double depth;
+        private double length;
+        private double squirkleheight;
+        private int tlc;
+        private int trc;
 
-        public SquirkleMaker(int tl,int tr, int bl, int br, double l, double h, double w)
+        public SquirkleMaker(int tl, int tr, int bl, int br, double l, double h, double w)
         {
             tlc = tl;
             trc = tr;
             blc = bl;
             brc = br;
-            //length = l;
-            //squirkleheight = h;
             length = h;
             squirkleheight = l;
             depth = w;
-
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -116,8 +113,8 @@ namespace MakerLib
             pathtext += "RV -" + xseg + " ";
 
             GenerateFromPath(pathtext);
-
         }
+
         private void CreateSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
         {
             int v = i + 1;
@@ -139,6 +136,7 @@ namespace MakerLib
             Faces.Add(c3);
             Faces.Add(c2);
         }
+
         private void GenerateFromPath(string pathtext)
         {
             FlexiPath flexiPath = new FlexiPath();
@@ -179,8 +177,6 @@ namespace MakerLib
                 Faces.Add(c1);
                 Faces.Add(c2);
             }
-            
         }
-
     }
 }

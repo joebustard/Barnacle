@@ -407,6 +407,7 @@ program ""Script Name""
                 }
             }
             content.Clear();
+            script.SetPartsLibraryRoot(GetPartsLibraryPath());
             script.SetResultsContent(content);
             ClearResults();
             Refresh(resultsBox);

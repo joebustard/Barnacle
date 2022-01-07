@@ -200,8 +200,6 @@ namespace MakerLib
             return res;
         }
 
-      
-
         private void GetPathPoints(string txt, List<PointF> pnts)
         {
             float x = 0;
@@ -350,14 +348,6 @@ namespace MakerLib
                     tris.Add(p3);
                     tris.Add(p2);
                 }
-            }
-        }
-
-        private void RemoveHoles(List<TextPolygon> pfigures)
-        {
-            foreach (TextPolygon tp in pfigures)
-            {
-                tp.RemoveHoles();
             }
         }
 
