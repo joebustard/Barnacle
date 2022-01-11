@@ -5,16 +5,21 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Barnacle.ViewModels
 {
     internal class StartupViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private String appIdentity;
+        private Visibility browseProjectVisible;
+        private Visibility loadingVisible;
+        private Visibility newProjectVisible;
         private Visibility openVisible;
         private List<RecentProjectViewModel> recentProjects;
 
         private RecentProjectViewModel selectedProject;
+        private DispatcherTimer updateTimer;
 
         public StartupViewModel()
         {
@@ -41,6 +46,13 @@ namespace Barnacle.ViewModels
 
             NotifyPropertyChanged("RecentProjects");
             OpenVisible = Visibility.Hidden;
+            LoadingVisible = Visibility.Hidden;
+            NewProjectVisible = Visibility.Visible;
+            BrowseProjectVisible = Visibility.Visible;
+            TimeSpan updateDelay = new TimeSpan(0, 0, 1);
+            updateTimer = new DispatcherTimer();
+            updateTimer.Interval = updateDelay;
+            updateTimer.Tick += UpdateTimer_Tick;
         }
 
         public String AppIdentity
@@ -60,7 +72,57 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand BrowseProjectCommand { get; set; }
+
+        public Visibility BrowseProjectVisible
+        {
+            get
+            {
+                return browseProjectVisible;
+            }
+            set
+            {
+                if (browseProjectVisible != value)
+                {
+                    browseProjectVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility LoadingVisible
+        {
+            get
+            {
+                return loadingVisible;
+            }
+            set
+            {
+                if (loadingVisible != value)
+                {
+                    loadingVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand NewProjectCommand { get; set; }
+
+        public Visibility NewProjectVisible
+        {
+            get
+            {
+                return newProjectVisible;
+            }
+            set
+            {
+                if (newProjectVisible != value)
+                {
+                    newProjectVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand OpenProjectCommand { get; set; }
 
         public Visibility OpenVisible
@@ -71,8 +133,12 @@ namespace Barnacle.ViewModels
             }
             set
             {
-                openVisible = value;
-                NotifyPropertyChanged();
+                if (openVisible != value)
+                {
+                    openVisible = value;
+
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -116,6 +182,18 @@ namespace Barnacle.ViewModels
             }
         }
 
+        internal void SelectionDoubleClick()
+        {
+            if (selectedProject != null)
+            {
+                LoadingVisible = Visibility.Visible;
+                OpenVisible = Visibility.Hidden;
+                BrowseProjectVisible = Visibility.Hidden;
+                NewProjectVisible = Visibility.Hidden;
+                updateTimer.Start();
+            }
+        }
+
         private void OnBrowseProjectCommand(object obj)
         {
             string projectRoot = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -136,6 +214,16 @@ namespace Barnacle.ViewModels
 
         private void OnOpenProjectCommand(object obj)
         {
+            LoadingVisible = Visibility.Visible;
+            OpenVisible = Visibility.Hidden;
+            BrowseProjectVisible = Visibility.Hidden;
+            NewProjectVisible = Visibility.Hidden;
+            updateTimer.Start();
+        }
+
+        private void UpdateTimer_Tick(object sender, EventArgs e)
+        {
+            updateTimer.Stop();
             NotificationManager.Notify("StartWithOldProject", selectedProject.Path);
         }
     }

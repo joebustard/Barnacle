@@ -31,15 +31,21 @@
             <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" Content="{Binding AppIdentity}" FontSize="25"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
-        <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource LargeButton}" Command="{Binding NewProjectCommand}">New Project</Button>
-        <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource LargeButton}"  Command="{Binding BrowseProjectCommand}"  >Browse</Button>
-        <Button Grid.Row="6" Grid.Column="1" Style="{StaticResource LargeButton}"  Command="{Binding OpenProjectCommand}"   Visibility="{Binding OpenVisible}">Open Project</Button>
+        <Button Grid.Row="2" Grid.Column="2" Style="{StaticResource LargeButton}" Command="{Binding NewProjectCommand}" Visibility="{Binding NewProjectVisible}">New Project</Button>
+        <Button Grid.Row="4" Grid.Column="2" Style="{StaticResource LargeButton}"  Command="{Binding BrowseProjectCommand}"  Visibility="{Binding BrowseProjectVisible}">Browse</Button>
+        <!-- button and brder are on the same row but only one is viaiblw at a time -->
+        <Button Grid.Row="6"  Grid.Column="1" Style="{StaticResource LargeButton}"  Command="{Binding OpenProjectCommand}"   Visibility="{Binding OpenVisible}">Open Project</Button>
+
+        <Border Grid.Row="6" Grid.Column="1" Style="{StaticResource ControlBorder}"  Background="White"  BorderThickness="4" Visibility="{Binding LoadingVisible}">
+            <Label  HorizontalAlignment="Center" VerticalAlignment="Center"  Content="Loading" FontSize="18"   HorizontalContentAlignment="Center" VerticalContentAlignment="Stretch" />
+        </Border>
+
         <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource ControlBorder}"  Background="White"  BorderThickness="4">
             <Label  HorizontalAlignment="Center"  HorizontalContentAlignment ="Center"
  VerticalContentAlignment="Center" FontSize="18"  Height="34"  >Recent Projects</Label>
         </Border>
         <Border Grid.Row="2" Grid.Column="1" Grid.RowSpan="4" Style="{StaticResource ControlBorder}" Background="White">
-            <ListView  ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}">
+            <ListView  ItemsSource="{Binding RecentProjects}" SelectedItem="{Binding SelectedProject}" MouseDoubleClick="ListView_MouseDoubleClick">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel ItemWidth="160" MaxWidth="500" />
