@@ -33,7 +33,8 @@ namespace Barnacle.Object3DLib
         }
     }
 
-    public class Object3D
+    public class 
+    Object3D
     {
         public Point3D rotation;
         protected Bounds3D absoluteBounds;
