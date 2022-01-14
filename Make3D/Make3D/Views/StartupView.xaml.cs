@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barnacle.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,15 @@ namespace Barnacle.Views
         public StartupView()
         {
             InitializeComponent();
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                (this.DataContext as StartupViewModel).SelectionDoubleClick();
+                e.Handled = true;
+            }
         }
     }
 }
