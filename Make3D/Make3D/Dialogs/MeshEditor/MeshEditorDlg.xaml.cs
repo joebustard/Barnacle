@@ -101,7 +101,7 @@ namespace Barnacle.Dialogs
         {
             // this is not the normal cube.
             // it has a lot of sub triangles to allow editing
-            double numDiv = 10;
+            double numDiv = 20;
             double div = width / numDiv;
             List<Point3D> perimeter = new List<Point3D>();
             pnts.Clear();
@@ -352,6 +352,36 @@ namespace Barnacle.Dialogs
             mesh.Clear();
             DialogResult = true;
             Close();
+        }
+
+        protected override void Redisplay()
+        {
+            if (MyModelGroup != null)
+            {
+                MyModelGroup.Children.Clear();
+
+                if (floor != null && ShowFloor)
+                {
+                    MyModelGroup.Children.Add(floor.FloorMesh);
+                    foreach (GeometryModel3D m in grid.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+
+                if (axies != null && ShowAxies)
+                {
+                    foreach (GeometryModel3D m in axies.Group.Children)
+                    {
+                        MyModelGroup.Children.Add(m);
+                    }
+                }
+                MyModelGroup.Children.Add(mesh.GetModels());
+                if (lastSelectedPoint != -1)
+                {
+                    MyModelGroup.Children.Add(mesh.Vertices[lastSelectedPoint].Model);
+                }
+            }
         }
 
         private int AddPoint(Point3DCollection positions, Point3D v)
@@ -709,36 +739,6 @@ namespace Barnacle.Dialogs
                         MoveBox(0, 0, v);
                     }
                     break;
-            }
-        }
-
-        protected override void Redisplay()
-        {
-            if (MyModelGroup != null)
-            {
-                MyModelGroup.Children.Clear();
-
-                if (floor != null && ShowFloor)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-
-                if (axies != null && ShowAxies)
-                {
-                    foreach (GeometryModel3D m in axies.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                MyModelGroup.Children.Add(mesh.GetModels());
-                if (lastSelectedPoint != -1)
-                {
-                    MyModelGroup.Children.Add(mesh.Vertices[lastSelectedPoint].Model);
-                }
             }
         }
 
