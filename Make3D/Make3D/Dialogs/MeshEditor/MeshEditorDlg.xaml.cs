@@ -28,6 +28,7 @@ namespace Barnacle.Dialogs
         private int lastSelectedPoint;
         private MeshTriangle lastSelectedTriangle;
         private Mesh mesh;
+        private OctTree octTree;
         private Point3D offsetOrigin;
         private Int32Collection selectedPointIndices;
         private bool showWireFrame;
@@ -235,6 +236,10 @@ namespace Barnacle.Dialogs
                     indices.Add(v3);
                 }
             }
+            Bounds3D bnds = GetBounds3D(pnts);
+
+            octTree = new OctTree(pnts, bnds.Lower, bnds.Upper, 16);
+            OctNode nd = octTree.FindNodeAround(pnts[4]);
         }
 
         internal void KeyDown(Key key, bool shift, bool ctrl)

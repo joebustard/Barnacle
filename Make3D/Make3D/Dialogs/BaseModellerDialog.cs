@@ -704,6 +704,16 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected Bounds3D GetBounds3D(Point3DCollection pnts)
+        {
+            Bounds3D bnds = new Bounds3D();
+            foreach (Point3D p in pnts)
+            {
+                bnds.Adjust(p);
+            }
+            return bnds;
+        }
+
         protected GeometryModel3D GetModel()
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
