@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Barnacle.Models;
+using Barnacle.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -8,7 +10,9 @@ namespace Barnacle.Dialogs.MeshEditor
     public class Mesh
     {
         private DiffuseMaterial backMaterial;
+        private Bounds3D bounds;
         private Model3DGroup modelGroup;
+        private MeshOctTree octTree;
         private DiffuseMaterial partSelectedFaceMaterial;
         private DiffuseMaterial selectedFaceMaterial;
         private DiffuseMaterial selectedPointMaterial;
@@ -22,6 +26,7 @@ namespace Barnacle.Dialogs.MeshEditor
             CreateMaterials();
             modelGroup = null;
             ShowAllPoints = false;
+            bounds = new Bounds3D();
         }
 
         public List<MeshTriangle> Faces { get; set; }
@@ -32,6 +37,7 @@ namespace Barnacle.Dialogs.MeshEditor
         {
             Faces.Clear();
             Vertices.Clear();
+            bounds = new Bounds3D();
         }
 
         internal void AddFace(int v1, int v2, int v3)
@@ -59,6 +65,7 @@ namespace Barnacle.Dialogs.MeshEditor
             vx.UnselectedMaterial = unselectedPointMaterial;
             Vertices.Add(vx);
             vx.CreateModel();
+            bounds.Adjust(point3D);
             return Vertices.Count - 1;
         }
 
@@ -452,8 +459,25 @@ namespace Barnacle.Dialogs.MeshEditor
                 {
                     modelGroup.Children.Add(vx.Model);
                 }
+
+                // diagnostics test
+                foreach (MeshVertex vx in Vertices)
+                {
+                    if (vx.Selected)
+                    {
+                        modelGroup.Children.Add(vx.Model);
+                    }
+                }
             }
             return modelGroup;
+        }
+
+        internal void Initialise()
+        {
+            FindNeighbours();
+
+            octTree = new MeshOctTree(Vertices, bounds.Lower, bounds.Upper, 6);
+            // OctNode nd = octTree.FindNodeAround(pnts[4]);
         }
 
         internal void MovePoint(int pindex, Point3D positionChange)
@@ -552,6 +576,20 @@ namespace Barnacle.Dialogs.MeshEditor
             }
         }
 
+        internal Int32Collection SelectToolPoints(double radius, Point3D pos)
+        {
+            Int32Collection pointsInRadius = new Int32Collection();
+            octTree.FindPointsInRadius(radius, pos, pointsInRadius);
+
+            // diagnostic, just select all the found points
+            DeselectAll();
+            foreach (int ind in pointsInRadius)
+            {
+                Vertices[ind].Selected = true;
+            }
+            return pointsInRadius;
+        }
+
         private void AddPoint(Int32Collection s, int v)
         {
             if (!s.Contains(v))
@@ -584,6 +622,10 @@ namespace Barnacle.Dialogs.MeshEditor
             {
                 f.SelectionWeight = 0;
                 f.Selected = false;
+            }
+            foreach (MeshVertex mv in Vertices)
+            {
+                mv.Selected = false;
             }
         }
 

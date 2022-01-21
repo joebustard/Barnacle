@@ -151,8 +151,11 @@
     <Compile Include="Dialogs\MeshEditor\MeshEditorDlg.xaml.cs">
       <DependentUpon>MeshEditorDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\MeshEditor\MeshOctNode.cs" />
+    <Compile Include="Dialogs\MeshEditor\MeshOctTree.cs" />
     <Compile Include="Dialogs\MeshEditor\MeshTriangle.cs" />
     <Compile Include="Dialogs\MeshEditor\MeshVertex.cs" />
+    <Compile Include="Dialogs\MeshEditor\SculptingTool.cs" />
     <Compile Include="Dialogs\NewProjectDlg.xaml.cs">
       <DependentUpon>NewProjectDlg.xaml</DependentUpon>
     </Compile>

@@ -28,8 +28,9 @@ namespace Barnacle.Dialogs
         private int lastSelectedPoint;
         private MeshTriangle lastSelectedTriangle;
         private Mesh mesh;
-        private OctTree octTree;
+
         private Point3D offsetOrigin;
+        private SculptingTool sculptingTool;
         private Int32Collection selectedPointIndices;
         private bool showWireFrame;
 
@@ -46,6 +47,7 @@ namespace Barnacle.Dialogs
             lastSelectedPoint = -1;
             lastSelectedTriangle = null;
             ModelGroup = MyModelGroup;
+            sculptingTool = new SculptingTool();
         }
 
         public override bool ShowAxies
@@ -236,10 +238,6 @@ namespace Barnacle.Dialogs
                     indices.Add(v3);
                 }
             }
-            Bounds3D bnds = GetBounds3D(pnts);
-
-            octTree = new OctTree(pnts, bnds.Lower, bnds.Upper, 16);
-            OctNode nd = octTree.FindNodeAround(pnts[4]);
         }
 
         internal void KeyDown(Key key, bool shift, bool ctrl)
@@ -424,7 +422,8 @@ namespace Barnacle.Dialogs
             {
                 mesh.AddFace(editingFaceIndices[i], editingFaceIndices[i + 1], editingFaceIndices[i + 2]);
             }
-            mesh.FindNeighbours();
+
+            mesh.Initialise();
         }
 
         private void CreateWireFrame()
@@ -458,11 +457,17 @@ namespace Barnacle.Dialogs
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {
-                if (mesh.CheckHit(lastHitModel, shift, ref lastSelectedPoint, ref lastSelectedTriangle))
+                if (sculptingTool != null)
                 {
+                    mesh.SelectToolPoints(sculptingTool.Radius, lastHitPoint);
                     Redisplay();
                 }
-
+                /*
+                 if (mesh.CheckHit(lastHitModel, shift, ref lastSelectedPoint, ref lastSelectedTriangle))
+                 {
+                     Redisplay();
+                 }
+                 */
                 base.Viewport_MouseDown(viewport3D1, e);
             }
         }
