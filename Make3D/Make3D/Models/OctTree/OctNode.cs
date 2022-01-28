@@ -113,6 +113,15 @@ namespace Barnacle.Models
             }
         }
 
+        internal void AddPoint(int index, Point3D position)
+        {
+            OctNode targ = FindNodeAround(position);
+            if (targ != null)
+            {
+                targ.PointsInOctNode.Add(index);
+            }
+        }
+
         internal OctNode FindNodeAround(Point3D pnt)
         {
             OctNode res = null;

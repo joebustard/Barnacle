@@ -113,6 +113,15 @@ namespace Barnacle.Dialogs.MeshEditor
             }
         }
 
+        internal void AddPoint(int index, Point3D position)
+        {
+            MeshOctNode targ = FindNodeAround(position);
+            if (targ != null)
+            {
+                targ.PointsInOctNode.Add(index);
+            }
+        }
+
         internal MeshOctNode FindNodeAround(Point3D pnt)
         {
             MeshOctNode res = null;

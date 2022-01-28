@@ -227,9 +227,56 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void HitTest(Viewport3D viewport3D1, object sender, System.Windows.Input.MouseButtonEventArgs args)
+        public static Point3D SpherePoint(Point3D center, double r, double theta, double phi)
         {
-            Point mouseposition = args.GetPosition(viewport3D1);
+            double y = r * Math.Cos(phi);
+            double h = r * Math.Sin(phi);
+            double x = h * Math.Sin(theta);
+            double z = h * Math.Cos(theta);
+            return center + new Vector3D(x, y, z);
+        }
+
+        public void GenerateSphere(Point3DCollection verts, Int32Collection faces, Point3D center, double radius, int numTheta, int numPhi)
+        {
+            // Generate the points.
+            double dtheta = 2 * Math.PI / numTheta;
+            double dphi = Math.PI / numPhi;
+            double theta = 0;
+            for (int t = 0; t < numTheta; t++)
+            {
+                double phi = 0;
+                for (int p = 0; p < numPhi; p++)
+                {
+                    // Find this piece's points.
+                    Point3D[] points =
+                    {
+                        SpherePoint(center, radius, theta, phi),
+                        SpherePoint(center, radius, theta, phi + dphi),
+                        SpherePoint(center, radius, theta + dtheta, phi + dphi),
+                        SpherePoint(center, radius, theta + dtheta, phi),
+                    };
+
+                    int c0 = AddVertice(verts, points[0].X, points[0].Y, points[0].Z);
+                    int c1 = AddVertice(verts, points[1].X, points[1].Y, points[1].Z);
+                    int c2 = AddVertice(verts, points[2].X, points[2].Y, points[2].Z);
+                    int c3 = AddVertice(verts, points[3].X, points[3].Y, points[3].Z);
+
+                    faces.Add(c0);
+                    faces.Add(c1);
+                    faces.Add(c2);
+
+                    faces.Add(c0);
+                    faces.Add(c2);
+                    faces.Add(c3);
+
+                    phi += dphi;
+                }
+                theta += dtheta;
+            }
+        }
+
+        public void HitTest(Viewport3D viewport3D1, Point mouseposition)
+        {
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
             Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
             PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
@@ -295,6 +342,166 @@ namespace Barnacle.Dialogs
             double dy = p2.Y - p1.Y;
             double dz = p2.Z - p1.Z;
             return Math.Sqrt((dx * dx) + (dy * dy) + (dz * dz));
+        }
+
+        internal int AddPoint(Point3DCollection positions, Point3D v)
+        {
+            int res = -1;
+            for (int i = 0; i < positions.Count; i++)
+            {
+                if (PointUtils.equals(positions[i], v.X, v.Y, v.Z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                positions.Add(new Point3D(v.X, v.Y, v.Z));
+                res = positions.Count - 1;
+            }
+            return res;
+        }
+
+        internal void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, double width)
+        {
+            // this is not the normal cube.
+            // it has a lot of sub triangles to allow editing
+            double numDiv = 20;
+            double div = width / numDiv;
+            List<Point3D> perimeter = new List<Point3D>();
+            pnts.Clear();
+            indices.Clear();
+            width = width / 2;
+            double x;
+            double y;
+            double z;
+            // 4 sides of perimeter
+            for (int i = 0; i < numDiv; i++)
+            {
+                x = -width + (i * div);
+                y = 0;
+                z = width;
+                perimeter.Add(new Point3D(x, y, z));
+            }
+            for (int i = 0; i < numDiv; i++)
+            {
+                x = width;
+                y = 0;
+                z = width - (i * div);
+                perimeter.Add(new Point3D(x, y, z));
+            }
+            for (int i = 0; i < numDiv; i++)
+            {
+                x = width - (i * div);
+                y = 0;
+                z = -width;
+                perimeter.Add(new Point3D(x, y, z));
+            }
+            for (int i = 0; i < numDiv; i++)
+            {
+                x = -width;
+                y = 0;
+                z = -width + (i * div);
+                perimeter.Add(new Point3D(x, y, z));
+            }
+
+            // loft
+            for (int i = 0; i < numDiv; i++)
+            {
+                for (int j = 0; j < perimeter.Count; j++)
+                {
+                    int k = j + 1;
+                    if (k >= perimeter.Count)
+                    {
+                        k = 0;
+                    }
+                    Point3D p0 = new Point3D(perimeter[j].X, i * div, perimeter[j].Z);
+                    Point3D p1 = new Point3D(perimeter[j].X, (i + 1) * div, perimeter[j].Z);
+                    Point3D p2 = new Point3D(perimeter[k].X, (i + 1) * div, perimeter[k].Z);
+                    Point3D p3 = new Point3D(perimeter[k].X, i * div, perimeter[k].Z);
+
+                    int v0 = AddPoint(pnts, p0);
+                    int v1 = AddPoint(pnts, p1);
+                    int v2 = AddPoint(pnts, p2);
+                    int v3 = AddPoint(pnts, p3);
+
+                    indices.Add(v0);
+                    indices.Add(v2);
+                    indices.Add(v1);
+
+                    indices.Add(v0);
+                    indices.Add(v3);
+                    indices.Add(v2);
+                    // indices.Add(v1);
+                }
+            }
+
+            // bottom
+            double x2;
+            double z2;
+            for (int i = 0; i < numDiv; i++)
+            {
+                x = -width + (i * div);
+                x2 = x + div;
+                for (int j = 0; j < numDiv; j++)
+                {
+                    y = 0;
+                    z = -width + (j * div);
+                    z2 = z + div;
+
+                    Point3D p0 = new Point3D(x, y, z);
+                    Point3D p1 = new Point3D(x, y, z2);
+                    Point3D p2 = new Point3D(x2, y, z2);
+                    Point3D p3 = new Point3D(x2, y, z);
+
+                    int v0 = AddPoint(pnts, p0);
+                    int v1 = AddPoint(pnts, p1);
+                    int v2 = AddPoint(pnts, p2);
+                    int v3 = AddPoint(pnts, p3);
+
+                    indices.Add(v0);
+                    indices.Add(v2);
+                    indices.Add(v1);
+
+                    indices.Add(v0);
+                    indices.Add(v3);
+                    indices.Add(v2);
+                }
+            }
+
+            // top
+
+            for (int i = 0; i < numDiv; i++)
+            {
+                x = -width + (i * div);
+                x2 = x + div;
+                for (int j = 0; j < numDiv; j++)
+                {
+                    y = 2 * width;
+                    z = -width + (j * div);
+                    z2 = z + div;
+
+                    Point3D p0 = new Point3D(x, y, z);
+                    Point3D p1 = new Point3D(x, y, z2);
+                    Point3D p2 = new Point3D(x2, y, z2);
+                    Point3D p3 = new Point3D(x2, y, z);
+
+                    int v0 = AddPoint(pnts, p0);
+                    int v1 = AddPoint(pnts, p1);
+                    int v2 = AddPoint(pnts, p2);
+                    int v3 = AddPoint(pnts, p3);
+
+                    indices.Add(v0);
+                    indices.Add(v1);
+                    indices.Add(v2);
+
+                    indices.Add(v0);
+                    indices.Add(v2);
+                    indices.Add(v3);
+                }
+            }
         }
 
         internal void SweepPolarProfilePhi(List<PolarCoordinate> polarProfile, double cx, double cy, double sweepRange, int numSegs, bool clear = true)

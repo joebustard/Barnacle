@@ -29,6 +29,7 @@ namespace Barnacle.Dialogs
         private MeshTriangle lastSelectedTriangle;
         private Mesh mesh;
 
+        private Vector3D moveVector;
         private Point3D offsetOrigin;
         private SculptingTool sculptingTool;
         private Int32Collection selectedPointIndices;
@@ -48,6 +49,7 @@ namespace Barnacle.Dialogs
             lastSelectedTriangle = null;
             ModelGroup = MyModelGroup;
             sculptingTool = new SculptingTool();
+            moveVector = new Vector3D(0, 0, 0);
         }
 
         public override bool ShowAxies
@@ -96,146 +98,6 @@ namespace Barnacle.Dialogs
                 {
                     showWireFrame = value;
                     NotifyPropertyChanged();
-                }
-            }
-        }
-
-        internal void GenerateCube(ref Point3DCollection pnts, ref Int32Collection indices, double width)
-        {
-            // this is not the normal cube.
-            // it has a lot of sub triangles to allow editing
-            double numDiv = 20;
-            double div = width / numDiv;
-            List<Point3D> perimeter = new List<Point3D>();
-            pnts.Clear();
-            indices.Clear();
-            width = width / 2;
-            double x;
-            double y;
-            double z;
-            // 4 sides of perimeter
-            for (int i = 0; i < numDiv; i++)
-            {
-                x = -width + (i * div);
-                y = 0;
-                z = width;
-                perimeter.Add(new Point3D(x, y, z));
-            }
-            for (int i = 0; i < numDiv; i++)
-            {
-                x = width;
-                y = 0;
-                z = width - (i * div);
-                perimeter.Add(new Point3D(x, y, z));
-            }
-            for (int i = 0; i < numDiv; i++)
-            {
-                x = width - (i * div);
-                y = 0;
-                z = -width;
-                perimeter.Add(new Point3D(x, y, z));
-            }
-            for (int i = 0; i < numDiv; i++)
-            {
-                x = -width;
-                y = 0;
-                z = -width + (i * div);
-                perimeter.Add(new Point3D(x, y, z));
-            }
-
-            // loft
-            for (int i = 0; i < numDiv; i++)
-            {
-                for (int j = 0; j < perimeter.Count; j++)
-                {
-                    int k = j + 1;
-                    if (k >= perimeter.Count)
-                    {
-                        k = 0;
-                    }
-                    Point3D p0 = new Point3D(perimeter[j].X, i * div, perimeter[j].Z);
-                    Point3D p1 = new Point3D(perimeter[j].X, (i + 1) * div, perimeter[j].Z);
-                    Point3D p2 = new Point3D(perimeter[k].X, (i + 1) * div, perimeter[k].Z);
-                    Point3D p3 = new Point3D(perimeter[k].X, i * div, perimeter[k].Z);
-
-                    int v0 = AddPoint(pnts, p0);
-                    int v1 = AddPoint(pnts, p1);
-                    int v2 = AddPoint(pnts, p2);
-                    int v3 = AddPoint(pnts, p3);
-
-                    indices.Add(v0);
-                    indices.Add(v2);
-                    indices.Add(v1);
-
-                    indices.Add(v0);
-                    indices.Add(v3);
-                    indices.Add(v2);
-                    // indices.Add(v1);
-                }
-            }
-
-            // bottom
-            double x2;
-            double z2;
-            for (int i = 0; i < numDiv; i++)
-            {
-                x = -width + (i * div);
-                x2 = x + div;
-                for (int j = 0; j < numDiv; j++)
-                {
-                    y = 0;
-                    z = -width + (j * div);
-                    z2 = z + div;
-
-                    Point3D p0 = new Point3D(x, y, z);
-                    Point3D p1 = new Point3D(x, y, z2);
-                    Point3D p2 = new Point3D(x2, y, z2);
-                    Point3D p3 = new Point3D(x2, y, z);
-
-                    int v0 = AddPoint(pnts, p0);
-                    int v1 = AddPoint(pnts, p1);
-                    int v2 = AddPoint(pnts, p2);
-                    int v3 = AddPoint(pnts, p3);
-
-                    indices.Add(v0);
-                    indices.Add(v2);
-                    indices.Add(v1);
-
-                    indices.Add(v0);
-                    indices.Add(v3);
-                    indices.Add(v2);
-                }
-            }
-
-            // top
-
-            for (int i = 0; i < numDiv; i++)
-            {
-                x = -width + (i * div);
-                x2 = x + div;
-                for (int j = 0; j < numDiv; j++)
-                {
-                    y = 2 * width;
-                    z = -width + (j * div);
-                    z2 = z + div;
-
-                    Point3D p0 = new Point3D(x, y, z);
-                    Point3D p1 = new Point3D(x, y, z2);
-                    Point3D p2 = new Point3D(x2, y, z2);
-                    Point3D p3 = new Point3D(x2, y, z);
-
-                    int v0 = AddPoint(pnts, p0);
-                    int v1 = AddPoint(pnts, p1);
-                    int v2 = AddPoint(pnts, p2);
-                    int v3 = AddPoint(pnts, p3);
-
-                    indices.Add(v0);
-                    indices.Add(v1);
-                    indices.Add(v2);
-
-                    indices.Add(v0);
-                    indices.Add(v2);
-                    indices.Add(v3);
                 }
             }
         }
@@ -387,26 +249,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private int AddPoint(Point3DCollection positions, Point3D v)
-        {
-            int res = -1;
-            for (int i = 0; i < positions.Count; i++)
-            {
-                if (PointUtils.equals(positions[i], v.X, v.Y, v.Z))
-                {
-                    res = i;
-                    break;
-                }
-            }
-
-            if (res == -1)
-            {
-                positions.Add(new Point3D(v.X, v.Y, v.Z));
-                res = positions.Count - 1;
-            }
-            return res;
-        }
-
         private void ClearSelection_Click(object sender, RoutedEventArgs e)
         {
             mesh.SelectAll(false);
@@ -433,7 +275,7 @@ namespace Barnacle.Dialogs
         private void Divide_Click(object sender, RoutedEventArgs e)
         {
             mesh.DivideSelectedFaces();
-            //     GenerateSuperMesh();
+
             Redisplay();
         }
 
@@ -453,59 +295,55 @@ namespace Barnacle.Dialogs
             }
             lastHitModel = null;
             lastHitPoint = new Point3D(0, 0, 0);
-            HitTest(viewport3D1, sender, e);
+            HitTest(viewport3D1, e.GetPosition(viewport3D1));
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {
                 if (sculptingTool != null)
                 {
-                    mesh.SelectToolPoints(sculptingTool.Radius, lastHitPoint);
-                    Redisplay();
+                    if (mesh.SelectToolPoints(sculptingTool, lastHitPoint))
+                    {
+                        Redisplay();
+                    }
                 }
-                /*
-                 if (mesh.CheckHit(lastHitModel, shift, ref lastSelectedPoint, ref lastSelectedTriangle))
-                 {
-                     Redisplay();
-                 }
-                 */
+
                 base.Viewport_MouseDown(viewport3D1, e);
             }
         }
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
+            Point newPos = e.GetPosition(viewport3D1);
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                Point newPos = e.GetPosition(viewport3D1);
-                bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                if (lastSelectedPoint != -1)
+                if (Math.Abs(newPos.X - lastMousePos.X) > 2 || Math.Abs(newPos.Y - lastMousePos.Y) > 2)
                 {
-                    MouseMoveControlPoint(lastSelectedPoint, lastMousePos, newPos, ctrlDown);
-                    lastMousePos = newPos;
-                    e.Handled = true;
-                }
-                else if (lastSelectedTriangle != null)
-                {
-                    // although we are using lastSelectedTriangle to see if a triangle is selected
-                    // in practice we move all selected triangles at the same time
-
-                    MouseMoveSelectedTriangle(lastMousePos, newPos, ctrlDown);
-
-                    lastMousePos = newPos;
-                    e.Handled = true;
-                }
-                else
-                {
-                    base.Viewport_MouseMove(viewport3D1, e);
-                    lastMousePos = newPos;
+                    mesh.MoveControlPoints();
+                    lastHitModel = null;
+                    lastHitPoint = new Point3D(0, 0, 0);
+                    HitTest(viewport3D1, newPos);
+                    if (lastHitModel != null)
+                    {
+                        if (mesh.SelectToolPoints(sculptingTool, lastHitPoint))
+                        {
+                            Redisplay();
+                        }
+                        else
+                        {
+                            base.Viewport_MouseMove(viewport3D1, e);
+                        }
+                    }
                 }
             }
+            else
+            {
+                base.Viewport_MouseMove(viewport3D1, e);
+            }
+            lastMousePos = newPos;
         }
 
         private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            // lastSelectedPoint = -1;
-            lastSelectedTriangle = null;
             e.Handled = true;
         }
 
@@ -765,7 +603,9 @@ namespace Barnacle.Dialogs
             // If not create base one
             if (editingPoints.Count == 0)
             {
-                GenerateCube(ref editingPoints, ref editingFaceIndices, 50);
+                double radius = 30;
+                //GenerateCube(ref editingPoints, ref editingFaceIndices, 50);
+                GenerateSphere(editingPoints, editingFaceIndices, new Point3D(0, radius, 0), radius, 50, 50);
             }
             CreateInitialMesh();
 

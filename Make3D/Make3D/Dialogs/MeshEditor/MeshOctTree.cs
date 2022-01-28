@@ -38,9 +38,16 @@ namespace Barnacle.Dialogs.MeshEditor
             return res;
         }
 
-        internal void FindPointsInRadius(double radius, Point3D pos, Int32Collection pointsInRadius)
+        internal void AddPoint(int index, Point3D position)
+        {
+            root.AddPoint(index, position);
+        }
+
+        internal void FindPointsInRadius(double radius, Point3D pos, Int32Collection pointsInRadius, List<double> distances)
         {
             List<MeshOctNode> relevantBoxes = new List<MeshOctNode>();
+            pointsInRadius.Clear();
+            distances.Clear();
             FindRelevantBoxes(pos, radius, relevantBoxes);
             if (relevantBoxes.Count > 0)
             {
@@ -57,6 +64,7 @@ namespace Barnacle.Dialogs.MeshEditor
                         if (dd < radrad)
                         {
                             pointsInRadius.Add(ip);
+                            distances.Add(Math.Sqrt(dd));
                         }
                     }
                 }

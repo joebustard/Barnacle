@@ -1,17 +1,55 @@
 ﻿using Barnacle.Models;
 using Barnacle.Object3DLib;
+using System;
+using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.MeshEditor
 {
     public class MeshVertex
     {
-        public Point3D Position { get; set; }
+        private GeometryModel3D model;
         private bool selected;
+
+        public MeshVertex()
+        {
+            Selected = false;
+            Model = null;
+            SelectedMaterial = null;
+            UnselectedMaterial = null;
+            BackMaterial = null;
+            UsedInTriangles = new List<MeshTriangle>();
+        }
+
+        public DiffuseMaterial BackMaterial
+        {
+            get;
+            set;
+        }
+
+        public GeometryModel3D Model
+        {
+            get
+            {
+                return model;
+            }
+            set
+            {
+                if (model != value)
+                {
+                    model = value;
+                }
+            }
+        }
+
+        public Point3D Position { get; set; }
 
         public bool Selected
         {
-            get { return selected; }
+            get
+            {
+                return selected;
+            }
 
             set
             {
@@ -32,69 +70,22 @@ namespace Barnacle.Dialogs.MeshEditor
             set;
         }
 
-        public DiffuseMaterial BackMaterial
-        {
-            get;
-            set;
-        }
+        public List<MeshTriangle> UsedInTriangles { get; set; }
 
-        private GeometryModel3D model;
-
-        public GeometryModel3D Model
+        internal bool CheckHit(GeometryModel3D m, bool shift)
         {
-            get { return model; }
-            set
+            bool res = false;
+            if (m == model)
             {
-                if (model != value)
+                if (shift == true)
                 {
-                    model = value;
-                }
-            }
-        }
-
-        private void SetModelMaterials()
-        {
-            // don't try to update model materials if one of them isn't
-            // defined yet
-            if (model != null && SelectedMaterial != null)
-            {
-                if (selected)
-                {
-                    model.Material = SelectedMaterial;
+                    Selected = true;
                 }
                 else
                 {
-                    model.Material = UnselectedMaterial;
+                    Selected = !Selected;
                 }
-                model.BackMaterial = BackMaterial;
-            }
-        }
-
-        public MeshVertex()
-        {
-            Selected = false;
-            Model = null;
-            SelectedMaterial = null;
-            UnselectedMaterial = null;
-            BackMaterial = null;
-        }
-
-        private int AddPoint(Point3DCollection positions, Point3D v)
-        {
-            int res = -1;
-            for (int i = 0; i < positions.Count; i++)
-            {
-                if (PointUtils.equals(positions[i], v.X, v.Y, v.Z))
-                {
-                    res = i;
-                    break;
-                }
-            }
-
-            if (res == -1)
-            {
-                positions.Add(new Point3D(v.X, v.Y, v.Z));
-                res = positions.Count - 1;
+                res = true;
             }
             return res;
         }
@@ -143,24 +134,6 @@ namespace Barnacle.Dialogs.MeshEditor
             model.Material = UnselectedMaterial;
         }
 
-        internal bool CheckHit(GeometryModel3D m, bool shift)
-        {
-            bool res = false;
-            if (m == model)
-            {
-                if (shift == true)
-                {
-                    Selected = true;
-                }
-                else
-                {
-                    Selected = !Selected;
-                }
-                res = true;
-            }
-            return res;
-        }
-
         internal void MovePosition(Point3D positionChange)
         {
             Position = new Point3D(
@@ -177,6 +150,60 @@ namespace Barnacle.Dialogs.MeshEditor
             int v2 = AddPoint(faces.Positions, new Point3D(p.X + si, p.Y, p.Z - si));
             int v3 = AddPoint(faces.Positions, new Point3D(p.X, p.Y, p.Z + si));
             int v4 = AddPoint(faces.Positions, new Point3D(p.X, p.Y - si, p.Z));
+        }
+
+        internal void NotUsedInTri(MeshTriangle meshTriangle)
+        {
+            if (UsedInTriangles.Contains(meshTriangle))
+            {
+                UsedInTriangles.Remove(meshTriangle);
+            }
+        }
+
+        internal void UsedInTri(MeshTriangle meshTriangle)
+        {
+            if (!UsedInTriangles.Contains(meshTriangle))
+            {
+                UsedInTriangles.Add(meshTriangle);
+            }
+        }
+
+        private int AddPoint(Point3DCollection positions, Point3D v)
+        {
+            int res = -1;
+            for (int i = 0; i < positions.Count; i++)
+            {
+                if (PointUtils.equals(positions[i], v.X, v.Y, v.Z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                positions.Add(new Point3D(v.X, v.Y, v.Z));
+                res = positions.Count - 1;
+            }
+            return res;
+        }
+
+        private void SetModelMaterials()
+        {
+            // don't try to update model materials if one of them isn't
+            // defined yet
+            if (model != null && SelectedMaterial != null)
+            {
+                if (selected)
+                {
+                    model.Material = SelectedMaterial;
+                }
+                else
+                {
+                    model.Material = UnselectedMaterial;
+                }
+                model.BackMaterial = BackMaterial;
+            }
         }
     }
 }

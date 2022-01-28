@@ -978,7 +978,7 @@ namespace Barnacle.Dialogs
             lastHitModel = null;
             lastHitPoint = new Point3D(0, 0, 0);
 
-            HitTest(viewport3D1, sender, e);
+            HitTest(viewport3D1, e.GetPosition(viewport3D1));
             bool shift = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             if (lastHitModel != null)
             {

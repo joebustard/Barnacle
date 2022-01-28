@@ -17,8 +17,8 @@ namespace Barnacle.Models
         public OctTree(Point3DCollection pnts, Point3D minPnt, Point3D maxPnt, int maxTreeDepth)
         {
             root = new OctNode();
-            minPnt += new Vector3D(-1, -1, -1);
-            maxPnt += new Vector3D(1, 1, 1);
+            minPnt += new Vector3D(-10, -10, -10);
+            maxPnt += new Vector3D(10, 10, 10);
 
             OctNode.MaxTreeDepth = maxTreeDepth;
             OctNode.AllPoints = pnts;
@@ -37,6 +37,11 @@ namespace Barnacle.Models
             OctNode res = root?.FindNodeAround(pnt);
 
             return res;
+        }
+
+        internal void AddPoint(int index, Point3D position)
+        {
+            root.AddPoint(index, position);
         }
     }
 }

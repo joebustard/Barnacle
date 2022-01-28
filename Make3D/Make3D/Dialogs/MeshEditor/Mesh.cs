@@ -15,7 +15,9 @@ namespace Barnacle.Dialogs.MeshEditor
         private MeshOctTree octTree;
         private DiffuseMaterial partSelectedFaceMaterial;
         private DiffuseMaterial selectedFaceMaterial;
+        private List<double> selectedForces;
         private DiffuseMaterial selectedPointMaterial;
+        private Int32Collection selectedPoints;
         private DiffuseMaterial unselectedFaceMaterial;
         private DiffuseMaterial unselectedPointMaterial;
 
@@ -27,6 +29,8 @@ namespace Barnacle.Dialogs.MeshEditor
             modelGroup = null;
             ShowAllPoints = false;
             bounds = new Bounds3D();
+            selectedPoints = new Int32Collection();
+            selectedForces = new List<double>();
         }
 
         public List<MeshTriangle> Faces { get; set; }
@@ -475,9 +479,41 @@ namespace Barnacle.Dialogs.MeshEditor
         internal void Initialise()
         {
             FindNeighbours();
-
+            LinkPointsToTriangles();
             octTree = new MeshOctTree(Vertices, bounds.Lower, bounds.Upper, 6);
             // OctNode nd = octTree.FindNodeAround(pnts[4]);
+        }
+
+        internal void LinkPointsToTriangles()
+        {
+            for (int i = 0; i < Faces.Count; i++)
+
+            {
+                MeshTriangle tri = Faces[i];
+                tri.SetNormal(Vertices);
+                tri.MakeVerticesReferToThis(Vertices);
+                // while you are at it calculate the midpoint
+                tri.CalculateMidPoint(Vertices);
+            }
+        }
+
+        internal void MoveControlPoints()
+        {
+            List<MeshTriangle> trisToMove = new List<MeshTriangle>();
+            for (int i = 0; i < selectedPoints.Count; i++)
+            {
+                foreach (MeshTriangle tri in Vertices[selectedPoints[i]].UsedInTriangles)
+                {
+                    if (!trisToMove.Contains(tri))
+                    {
+                        trisToMove.Add(tri);
+                        int pIndex = selectedPoints[i];
+                        double f = selectedForces[i];
+                        MovePoint(pIndex, new Point3D(tri.Normal.X * f, tri.Normal.Y * f, tri.Normal.Z * f));
+                    }
+                }
+            }
+            SmoothTriangles(trisToMove);
         }
 
         internal void MovePoint(int pindex, Point3D positionChange)
@@ -576,18 +612,22 @@ namespace Barnacle.Dialogs.MeshEditor
             }
         }
 
-        internal Int32Collection SelectToolPoints(double radius, Point3D pos)
+        internal bool SelectToolPoints(SculptingTool tool, Point3D pos)
         {
-            Int32Collection pointsInRadius = new Int32Collection();
-            octTree.FindPointsInRadius(radius, pos, pointsInRadius);
+            double radius = tool.Radius;
+            DeselectAll();
+            octTree.FindPointsInRadius(radius, pos, selectedPoints, selectedForces);
 
             // diagnostic, just select all the found points
-            DeselectAll();
-            foreach (int ind in pointsInRadius)
+
+            for (int i = 0; i < selectedPoints.Count; i++)
             {
+                int ind = selectedPoints[i];
                 Vertices[ind].Selected = true;
+                // forces are currently just distance from tool centre
+                selectedForces[i] = tool.Force(selectedForces[i]);
             }
-            return pointsInRadius;
+            return selectedPoints.Count > 0;
         }
 
         private void AddPoint(Int32Collection s, int v)
@@ -627,6 +667,8 @@ namespace Barnacle.Dialogs.MeshEditor
             {
                 mv.Selected = false;
             }
+            selectedForces.Clear();
+            selectedPoints.Clear();
         }
 
         private double Dist3D(Point3D p0, Point3D p1)
@@ -702,6 +744,62 @@ namespace Barnacle.Dialogs.MeshEditor
             nt.BackMaterial = backMaterial;
             nt.PartSelectedFrontMaterial = partSelectedFaceMaterial;
             nt.Selected = false;
+        }
+
+        private void SmoothTriangles(List<MeshTriangle> trisToSmooth)
+        {
+            foreach (MeshTriangle mt in Faces)
+            {
+                if (trisToSmooth.Contains(mt))
+                {
+                    mt.Selected = true;
+                }
+                else
+                {
+                    mt.Selected = false;
+                }
+            }
+            // recalculate the mid points but only for the ones we are going to smooth
+            // Others keep the same midpoints they had last time
+            // Cant calculate the edge split points until then
+            foreach (MeshTriangle mt in trisToSmooth)
+            {
+                mt.CalculateMidPoint(Vertices);
+            }
+            List<MeshTriangle> needModels = new List<MeshTriangle>();
+
+            foreach (MeshTriangle mt in trisToSmooth)
+            {
+                mt.CalculateEdgeSplitPoints(Vertices);
+            }
+            foreach (MeshTriangle mt in trisToSmooth)
+            {
+                // Split this face into four new
+                mt.Subdivide(Vertices, Faces, octTree, needModels);
+
+                // remove the original, first stop any Vertices pointing at this face
+                mt.DereferencePoints(Vertices);
+
+                // remove face from main list
+                Faces.Remove(mt);
+            }
+            foreach (MeshTriangle mt in needModels)
+            {
+                mt.Selected = false;
+                SetupNewFace(mt);
+                if (mt.NeighbourP0P1 == null)
+                {
+                    mt.NeighbourP0P1 = FindNeighbourTriangle(mt, mt.P0, mt.P1);
+                }
+                if (mt.NeighbourP1P2 == null)
+                {
+                    mt.NeighbourP1P2 = FindNeighbourTriangle(mt, mt.P1, mt.P2);
+                }
+                if (mt.NeighbourP2P0 == null)
+                {
+                    mt.NeighbourP2P0 = FindNeighbourTriangle(mt, mt.P2, mt.P0);
+                }
+            }
         }
     }
 }
