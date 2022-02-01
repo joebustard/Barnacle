@@ -1190,6 +1190,7 @@ namespace Barnacle.ViewModels
         private void OnAbout(object obj)
         {
             AboutBoxDlg dlg = new AboutBoxDlg();
+            dlg.Owner = Application.Current.MainWindow;
             dlg.ShowDialog();
         }
 

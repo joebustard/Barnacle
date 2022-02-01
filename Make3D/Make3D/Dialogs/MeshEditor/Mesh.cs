@@ -499,20 +499,35 @@ namespace Barnacle.Dialogs.MeshEditor
 
         internal void MoveControlPoints()
         {
+            Log($"Move ControlPoints Starting with ${Vertices.Count} vertices");
             List<MeshTriangle> trisToMove = new List<MeshTriangle>();
             for (int i = 0; i < selectedPoints.Count; i++)
             {
-                foreach (MeshTriangle tri in Vertices[selectedPoints[i]].UsedInTriangles)
+                // create a normal for the point that is the average
+                // of all the normals of triangles that refer to it
+                Vector3D pointNormal = new Vector3D(0, 0, 0);
+                int pIndex = selectedPoints[i];
+                Log($"Move Control Point {pIndex}");
+                // look at every triangle that we think refers to this point
+                foreach (MeshTriangle tri in Vertices[pIndex].UsedInTriangles)
                 {
                     if (!trisToMove.Contains(tri))
                     {
                         trisToMove.Add(tri);
-                        int pIndex = selectedPoints[i];
-                        double f = selectedForces[i];
-                        MovePoint(pIndex, new Point3D(tri.Normal.X * f, tri.Normal.Y * f, tri.Normal.Z * f));
+                        pointNormal += tri.Normal;
                     }
                 }
+                double len = pointNormal.Length;
+                if (len > 0)
+                {
+                    pointNormal.X /= len;
+                    pointNormal.Y /= len;
+                    pointNormal.Z /= len;
+                    double f = selectedForces[i];
+                    MovePoint(pIndex, new Point3D(pointNormal.X * f, pointNormal.Y * f, pointNormal.Z * f));
+                }
             }
+            Log($"Smoothing {trisToMove.Count} triangles");
             SmoothTriangles(trisToMove);
         }
 
@@ -722,9 +737,14 @@ namespace Barnacle.Dialogs.MeshEditor
             }
             if (res == null)
             {
-                System.Diagnostics.Debug.WriteLine("NOT FOUND");
+                System.Diagnostics.Debug.WriteLine($"Cant find neighbour of side {p0} to {p1}");
             }
             return res;
+        }
+
+        private void Log(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
         }
 
         private Point3D Midpoint(Point3D p0, Point3D p1)
@@ -783,22 +803,21 @@ namespace Barnacle.Dialogs.MeshEditor
                 // remove face from main list
                 Faces.Remove(mt);
             }
+            foreach (MeshTriangle tri in Faces)
+            {
+                tri.NeighbourP0P1 = null;
+                tri.NeighbourP1P2 = null;
+                tri.NeighbourP2P0 = null;
+            }
+            FindNeighbours();
+
             foreach (MeshTriangle mt in needModels)
             {
                 mt.Selected = false;
                 SetupNewFace(mt);
-                if (mt.NeighbourP0P1 == null)
-                {
-                    mt.NeighbourP0P1 = FindNeighbourTriangle(mt, mt.P0, mt.P1);
-                }
-                if (mt.NeighbourP1P2 == null)
-                {
-                    mt.NeighbourP1P2 = FindNeighbourTriangle(mt, mt.P1, mt.P2);
-                }
-                if (mt.NeighbourP2P0 == null)
-                {
-                    mt.NeighbourP2P0 = FindNeighbourTriangle(mt, mt.P2, mt.P0);
-                }
+                // mt.NeighbourP0P1 = FindNeighbourTriangle(mt, mt.P0, mt.P1);
+                //  mt.NeighbourP1P2 = FindNeighbourTriangle(mt, mt.P1, mt.P2);
+                //mt.NeighbourP2P0 = FindNeighbourTriangle(mt, mt.P2, mt.P0);
             }
         }
     }

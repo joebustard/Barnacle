@@ -301,6 +301,7 @@ namespace Barnacle.Dialogs
             {
                 if (sculptingTool != null)
                 {
+                    lastHitPoint = new Point3D(1.66, 24.34, 29.13);
                     if (mesh.SelectToolPoints(sculptingTool, lastHitPoint))
                     {
                         Redisplay();
@@ -350,120 +351,6 @@ namespace Barnacle.Dialogs
         private void MeshGrid_KeyDown(object sender, KeyEventArgs e)
         {
             KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
-        }
-
-        private void MouseMoveControlPoint(int pindex, Point lastPos, Point newPos, bool ctrlDown)
-        {
-            double dr = Math.Sqrt(Camera.Distance);
-            double deltaX = (newPos.X - lastPos.X) / dr;
-
-            double deltaY;
-            double deltaZ;
-
-            if (!ctrlDown)
-            {
-                deltaY = -(newPos.Y - lastPos.Y) / dr;
-                deltaZ = 0;
-            }
-            else
-            {
-                deltaY = 0;
-                deltaZ = -(newPos.Y - lastPos.Y) / dr;
-            }
-
-            MovePoint(pindex, deltaX, deltaY, deltaZ);
-
-            //Redisplay();
-        }
-
-        private void MouseMoveSelectedTriangle(Point lastPos, Point newPos, bool ctrlDown)
-        {
-            double dr = Math.Sqrt(Camera.Distance);
-            double deltaX = (newPos.X - lastPos.X) / dr;
-
-            double deltaY;
-            double deltaZ;
-
-            if (!ctrlDown)
-            {
-                deltaY = -(newPos.Y - lastPos.Y) / dr;
-                deltaZ = 0;
-            }
-            else
-            {
-                deltaY = 0;
-                deltaZ = -(newPos.Y - lastPos.Y) / dr;
-            }
-
-            Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
-            switch (ori)
-            {
-                case PolarCamera.Orientations.Front:
-                    {
-                        positionChange = new Point3D(1 * deltaX, 1 * deltaY, -1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Back:
-                    {
-                        positionChange = new Point3D(-1 * deltaX, 1 * deltaY, 1 * deltaZ);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Left:
-                    {
-                        positionChange = new Point3D(1 * deltaZ, 1 * deltaY, 1 * deltaX);
-                    }
-                    break;
-
-                case PolarCamera.Orientations.Right:
-                    {
-                        positionChange = new Point3D(-1 * deltaZ, 1 * deltaY, -1 * deltaX);
-                    }
-                    break;
-            }
-
-            if (positionChange != null)
-            {
-                mesh.MoveSelectedTriangles(positionChange);
-            }
-            Redisplay();
-        }
-
-        private void MouseMoveTriangle(MeshTriangle tri, Point lastPos, Point newPos, bool ctrlDown)
-        {
-            Int32Collection movingPnts = new Int32Collection();
-            movingPnts.Add(tri.P0);
-            movingPnts.Add(tri.P1);
-            movingPnts.Add(tri.P2);
-            MouseMoveTrianglePoints(movingPnts, lastPos, newPos, ctrlDown);
-        }
-
-        private void MouseMoveTrianglePoints(Int32Collection movingPnts, Point lastPos, Point newPos, bool ctrlDown)
-        {
-            double dr = Math.Sqrt(Camera.Distance);
-            double deltaX = (newPos.X - lastPos.X) / dr;
-
-            double deltaY;
-            double deltaZ;
-
-            if (!ctrlDown)
-            {
-                deltaY = -(newPos.Y - lastPos.Y) / dr;
-                deltaZ = 0;
-            }
-            else
-            {
-                deltaY = 0;
-                deltaZ = -(newPos.Y - lastPos.Y) / dr;
-            }
-            foreach (int pindex in movingPnts)
-            {
-                MovePoint(pindex, deltaX, deltaY, deltaZ);
-            }
-
-            Redisplay();
         }
 
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
@@ -605,7 +492,7 @@ namespace Barnacle.Dialogs
             {
                 double radius = 30;
                 //GenerateCube(ref editingPoints, ref editingFaceIndices, 50);
-                GenerateSphere(editingPoints, editingFaceIndices, new Point3D(0, radius, 0), radius, 50, 50);
+                GenerateSphere(editingPoints, editingFaceIndices, new Point3D(0, radius, 0), radius, 20, 20);
             }
             CreateInitialMesh();
 

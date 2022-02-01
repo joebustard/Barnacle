@@ -1776,6 +1776,7 @@ namespace Barnacle.ViewModels
         private void OnCircularPaste(object param)
         {
             CircularPasteDlg dlg = new CircularPasteDlg();
+            dlg.Owner = Application.Current.MainWindow;
             if (dlg.ShowDialog() == true)
             {
                 if (ObjectClipboard.HasItems())
@@ -2037,6 +2038,7 @@ namespace Barnacle.ViewModels
                     if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count > 0)
                     {
                         ExportSelectedDialog seldlg = new ExportSelectedDialog();
+                        seldlg.Owner = Application.Current.MainWindow;
                         seldlg.ShowDialog();
                         if (seldlg.Result == ExportSelectedDialog.ExportChoice.Selected)
                         {
@@ -2055,6 +2057,7 @@ namespace Barnacle.ViewModels
                     }
 
                     STLExportedConfirmation dlg = new STLExportedConfirmation();
+                    dlg.Owner = Application.Current.MainWindow;
                     dlg.ExportPath = exportedPath;
                     if (dlg.ShowDialog() == true)
                     {
@@ -2069,6 +2072,7 @@ namespace Barnacle.ViewModels
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds, exportFolderPath);
 
             STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();
+            dlg.Owner = Application.Current.MainWindow;
             dlg.ExportPath = exportedPath;
             dlg.ShowDialog();
             NotificationManager.Notify("ExportRefresh", null);
@@ -2090,6 +2094,7 @@ namespace Barnacle.ViewModels
         private void OnFuselage(object param)
         {
             FuselageLoftDialog dlg = new FuselageLoftDialog();
+            dlg.Owner = Application.Current.MainWindow;
             DisplayModeller(dlg);
         }
 
@@ -2143,6 +2148,7 @@ namespace Barnacle.ViewModels
                 selectedObjectAdorner.Clear();
             }
             OpenFileDialog dlg = new OpenFileDialog();
+
             string s = param.ToString();
             switch (s.ToLower())
             {
@@ -2302,6 +2308,7 @@ namespace Barnacle.ViewModels
         private void OnMeshEdit(object param)
         {
             MeshEditorDlg dlg = new MeshEditorDlg();
+            dlg.Owner = Application.Current.MainWindow;
             CheckPoint();
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;
@@ -2732,6 +2739,7 @@ namespace Barnacle.ViewModels
         {
             String toolName = param.ToString();
             BaseModellerDialog dlg = ToolFactory.MakeTool(toolName);
+
             if (dlg != null)
             {
                 DisplayModeller(dlg);

@@ -1,4 +1,5 @@
 ﻿using Barnacle.Dialogs;
+using System.Windows;
 
 namespace Barnacle.Models
 {
@@ -136,6 +137,10 @@ namespace Barnacle.Models
                 case "Pulley":
                     res = new PulleyDlg();
                     break;
+            }
+            if (res != null)
+            {
+                res.Owner = Application.Current.MainWindow;
             }
             return res;
         }
