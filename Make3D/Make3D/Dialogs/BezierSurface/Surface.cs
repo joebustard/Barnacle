@@ -33,12 +33,12 @@ namespace Barnacle.Dialogs.BezierSurface
                 {
                     thickness = value;
                 }
-
             }
         }
 
-        public void GenerateSurface(Point3DCollection vertices, Int32Collection tris, double numDivs = 5)
+        public void GenerateSurface(Point3DCollection vertices, Int32Collection tris, double numDivs = 4)
         {
+            DateTime startTime = DateTime.Now;
             double delta = 1.0 / numDivs;
             vertices.Clear();
             tris.Clear();
@@ -49,6 +49,9 @@ namespace Barnacle.Dialogs.BezierSurface
                 CloseLeftAndRight(vertices, tris, delta, off);
                 CloseFrontAndBack(vertices, tris, delta, off);
             }
+            DateTime endTime = DateTime.Now;
+            TimeSpan duration = endTime - startTime;
+            System.Diagnostics.Debug.WriteLine($"Surface generation took {duration.Milliseconds} ms");
         }
 
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)

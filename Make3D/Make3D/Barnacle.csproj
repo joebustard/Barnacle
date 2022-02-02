@@ -895,6 +895,9 @@
     <Resource Include="Images\Buttons\AlignFront.png" />
     <Resource Include="Images\Buttons\MovePath.png" />
     <Resource Include="Images\Buttons\ResetPath.png" />
+    <Resource Include="Images\Buttons\multistl.png" />
+    <Resource Include="Images\Buttons\stl.png" />
+    <Resource Include="Images\Buttons\exportproject.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -1,42 +1,70 @@
-﻿<Window x:Class="Barnacle.Dialogs.STLExportedConfirmation"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Views"
+<Window Background="{StaticResource WindowBackBrush }"
+        Loaded="Window_Loaded"
         mc:Ignorable="d"
-        Title="STL Exported Confirmation" Height="200" Width="800" ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
+        ShowInTaskbar="True"
+        Title="STL Exported Confirmation"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        x:Class="Barnacle.Dialogs.STLExportedConfirmation"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Barnacle.Views"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="800"
+        Height="200">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
         </Grid.ColumnDefinitions>
-        <Label x:Name="ExportLabel" Grid.Row="0" FontSize="16" HorizontalAlignment="Center">Model has been exported to</Label>
-        <Label x:Name="PathLabel" Grid.Row="1" FontSize="16" HorizontalAlignment="Center" />
+        <Label FontSize="16"
+               Grid.Row="0"
+               HorizontalAlignment="Center"
+               x:Name="ExportLabel">
+        </Label>
+        <Label FontSize="16"
+               Grid.Row="1"
+               HorizontalAlignment="Center"
+               x:Name="PathLabel"/>
+
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" x:Name="OpenFileButton" Content="Open File" Click="OpenFileClick" Margin="2,2,4,8" />
-            <Button Grid.Column="3" Content="Open Folder" Click="OpenFolderClick" Margin="2,2,4,8" />
+            <Button Click="OpenFileClick"
+                    Content="Open File"
+                    Grid.Column="1"
+                    Margin="2,2,4,8"
+                    x:Name="OpenFileButton"/>
+
+            <Button Click="OpenFolderClick"
+                    Content="Open Folder"
+                    Grid.Column="3"
+                    Margin="2,2,4,8"/>
+
         </Grid>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="2" Content="Ok" Click="CloseClick" Margin="4,2,4,8" />
+            <Button Click="CloseClick"
+                    Content="Ok"
+                    Grid.Column="2"
+                    Margin="4,2,4,8"/>
+
         </Grid>
     </Grid>
 </Window>

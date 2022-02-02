@@ -1,14 +1,17 @@
-﻿<UserControl x:Class="Barnacle.Dialogs.CornerShape"
+<UserControl d:DesignHeight="100"
+             d:DesignWidth="100"
+             mc:Ignorable="d"
+             x:Class="Barnacle.Dialogs.CornerShape"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.Dialogs"
-             mc:Ignorable="d"
-             d:DesignHeight="100" d:DesignWidth="100">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
-        <Button Click="Button_Click" Style="{StaticResource LargeImageButton}">
-            <Image Source="{Binding CurrentImage}" />
+        <Button Click="Button_Click"
+                Style="{StaticResource LargeImageButton}">
+            <Image Source="{Binding CurrentImage}"/>
+
         </Button>
     </Grid>
 </UserControl>

@@ -1,17 +1,25 @@
-﻿<Window x:Class="Barnacle.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle"
+<Window KeyUp="Window_KeyUp"
+        Loaded="Window_Loaded"
         mc:Ignorable="d"
-        xmlns:Views="clr-namespace:Barnacle.Views"
+        PreviewKeyDown="Window_KeyDown"
+        Title="{Binding Caption}"
+        x:Class="Barnacle.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Barnacle"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-        Title="{Binding Caption}" Height="450" Width="800" KeyUp="Window_KeyUp" PreviewKeyDown="Window_KeyDown" Loaded="Window_Loaded">
+        xmlns:Views="clr-namespace:Barnacle.Views"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="800"
+        Height="450">
     <Window.DataContext>
         <ViewModels:MainWindowViewModel />
     </Window.DataContext>
     <Grid>
-        <ContentControl x:Name="SubViewControl" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Content="{Binding SubView}" />
+        <ContentControl Content="{Binding SubView}"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        x:Name="SubViewControl"/>
     </Grid>
 </Window>

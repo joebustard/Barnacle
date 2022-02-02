@@ -1,38 +1,50 @@
-﻿<local:BaseModellerDialog x:Class="Barnacle.Dialogs.FuselageLoftDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-        Title="Fuselage Loft" Height="450" Width="800" Loaded="Window_Loaded"  Background="{StaticResource WindowBackBrush }" WindowStartupLocation="CenterOwner">
+<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
+                          Loaded="Window_Loaded"
+                          mc:Ignorable="d"
+                          Title="Fuselage Loft"
+                          WindowStartupLocation="CenterOwner"
+                          x:Class="Barnacle.Dialogs.FuselageLoftDialog"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:local="clr-namespace:Barnacle.Dialogs"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          Width="800"
+                          Height="450">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*" />
             <RowDefinition Height="3*" />
             <RowDefinition Height="30" />
         </Grid.RowDefinitions>
-
-        <Border Grid.Row="0" Background="AliceBlue" BorderThickness="4">
-            <Viewport3D Name="viewport3D1"  Grid.Row ="0" MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-
+        <Border Background="AliceBlue"
+                BorderThickness="4"
+                Grid.Row="0">
+            <Viewport3D Name="viewport3D1"
+                        Grid.Row="0"
+                        HorizontalAlignment="Stretch"
+                        MouseDown="Viewport_MouseDown"
+                        MouseMove="Viewport_MouseMove"
+                        MouseWheel="Viewport_MouseWheel"
+                        VerticalAlignment="Stretch">
                 <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
+                                       Position="{Binding CameraPosition}"
+                                       x:Name="camMain">
                     </PerspectiveCamera>
                 </Viewport3D.Camera>
-
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
                             <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                            <DirectionalLight Color="White"
+                                              Direction="-1,-1,-1"
+                                              x:Name="dirLightMain">
                             </DirectionalLight>
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-
-                <ModelVisual3D x:Name = "MyModel">
+                <ModelVisual3D x:Name="MyModel">
                     <ModelVisual3D.Content>
                         <Model3DGroup x:Name="MyModelGroup">
                         </Model3DGroup>
@@ -40,7 +52,6 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="160" />
@@ -56,24 +67,62 @@
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
-                <Button Grid.Row="0" Width="140" Content="Prepend Bulkhead" x:Name="PrependBulkhead" Click="PrependBulkhead_Click" Margin="2,2,2,2" ToolTip="Insert a new bulkhead before the first one" />
-                <Button Grid.Row="1" Width="140" Content="Insert Bulkhead" x:Name="InsertBulkhead" Click="InsertBulkhead_Click" Margin="2,2,2,2" ToolTip="insert a new bulkhead after the current one" />
-                <Button Grid.Row="2" Width="140" Content="Append Bulkhead" x:Name="AddBulkhead" Click="AddBulkhead_Click" Margin="2,2,2,2" ToolTip="Add a new bulkhead after the last one" />
+                <Button Click="PrependBulkhead_Click"
+                        Content="Prepend Bulkhead"
+                        Grid.Row="0"
+                        Margin="2,2,2,2"
+                        ToolTip="Insert a new bulkhead before the first one"
+                        x:Name="PrependBulkhead"
+                        Width="140" />
 
-                <Button Grid.Row="3" Width="140" Content="Level Bulkhead Tops" x:Name="TopBulkhead" Click="TopBulkhead_Click" Margin="2,2,2,2" ToolTip="Level bulkhead tops" />
+                <Button Click="InsertBulkhead_Click"
+                        Content="Insert Bulkhead"
+                        Grid.Row="1"
+                        Margin="2,2,2,2"
+                        ToolTip="Insert a new bulkhead after the current one"
+                        x:Name="InsertBulkhead"
+                        Width="140" />
 
-                <Button Grid.Row="5" Content="Load" x:Name="LoadBulkhead" Click="LoadBulkhead_Click" Margin="2,2,2,2" ToolTip="Load fuselage definition from file" />
-                <Button Grid.Row="6" Content="Save" x:Name="SaveBulkhead" Click="SaveBulkhead_Click" Margin="2,2,2,2" ToolTip="Save fuselage definition in file" />
+                <Button Click="AddBulkhead_Click"
+                        Content="Append Bulkhead"
+                        Grid.Row="2"
+                        Margin="2,2,2,2"
+                        ToolTip="Add a new bulkhead after the last one"
+                        x:Name="AddBulkhead"
+                        Width="140" />
+
+                <Button Click="TopBulkhead_Click"
+                        Content="Level Bulkhead Tops"
+                        Grid.Row="3"
+                        Margin="2,2,2,2"
+                        ToolTip="Level bulkhead tops"
+                        x:Name="TopBulkhead"
+                        Width="140" />
+
+                <Button Click="LoadBulkhead_Click"
+                        Content="Load"
+                        Grid.Row="5"
+                        Margin="2,2,2,2"
+                        ToolTip="Load fuselage definition from file"
+                        x:Name="LoadBulkhead" />
+
+                <Button Click="SaveBulkhead_Click"
+                        Content="Save"
+                        Grid.Row="6"
+                        Margin="2,2,2,2"
+                        ToolTip="Save fuselage definition in file"
+                        x:Name="SaveBulkhead" />
             </Grid>
-            <ListView Grid.Column="1" ItemsSource="{Binding BulkHeads}">
+            <ListView Grid.Column="1"
+                      ItemsSource="{Binding BulkHeads}">
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"></StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                        </StackPanel>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
         </Grid>
-
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
@@ -86,9 +135,15 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <CheckBox Content="Floor" Grid.Column="1" IsChecked="{Binding ShowFloor}" />
-                <CheckBox Content="Axies" Grid.Column="2" IsChecked="{Binding ShowAxies}" />
-                <Button Content="Home" Grid.Column="3" Click="Home_Click" />
+                <CheckBox Content="Floor"
+                          Grid.Column="1"
+                          IsChecked="{Binding ShowFloor}" />
+                <CheckBox Content="Axies"
+                          Grid.Column="2"
+                          IsChecked="{Binding ShowAxies}" />
+                <Button Click="Home_Click"
+                        Content="Home"
+                        Grid.Column="3" />
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
@@ -97,8 +152,17 @@
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition Width="10" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="1" x:Name="CancelButton" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-                <Button x:Name="OkButton" Content="Ok" Grid.Column="2" Click="Ok_Click" Margin="2,2,2,2" />
+                <Button Click="Cancel_Click"
+                        Content="Cancel"
+                        Grid.Column="1"
+                        Margin="2,2,2,2"
+                        x:Name="CancelButton" />
+
+                <Button Click="Ok_Click"
+                        Content="Ok"
+                        Grid.Column="2"
+                        Margin="2,2,2,2"
+                        x:Name="OkButton" />
             </Grid>
         </Grid>
     </Grid>

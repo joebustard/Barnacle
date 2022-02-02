@@ -1,37 +1,54 @@
-﻿<Window x:Class="Barnacle.Dialogs.ExportSelectedDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
+<Window Background="{StaticResource WindowBackBrush }"
         mc:Ignorable="d"
-        Title="Model Or Selection" Height="130" Width="290" WindowStyle="SingleBorderWindow"  ShowInTaskbar="True" WindowStartupLocation="CenterScreen" WindowState="Normal" Background="{StaticResource WindowBackBrush }">
+        ShowInTaskbar="True"
+        Title="Model Or Selection"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Normal"
+        WindowStyle="SingleBorderWindow"
+        x:Class="Barnacle.Dialogs.ExportSelectedDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Barnacle.Dialogs"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="290"
+        Height="130">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" HorizontalContentAlignment="Center">
+        <Label Grid.Row="0"
+               HorizontalContentAlignment="Center">
             <TextBlock>
-            Export the selection or the whole model?
             </TextBlock>
             <Label.Resources>
                 <Style TargetType="TextBlock">
-                    <Setter Property="TextWrapping" Value="Wrap" />
-                    <Setter Property="TextAlignment" Value="Center" />
+                    <Setter Property="TextWrapping"
+                            Value="Wrap"/>
+                    <Setter Property="TextAlignment"
+                            Value="Center"/>
                 </Style>
             </Label.Resources>
         </Label>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Selected" Margin="2,6,2,6" Click="Button_Click" />
-            <Button Grid.Column="3" Content="All" Margin="2,6,2,6" Click="Button_Click_1" />
+            <Button Click="Button_Click"
+                    Content="Selected"
+                    Grid.Column="1"
+                    Margin="2,6,2,6"/>
+
+            <Button Click="Button_Click_1"
+                    Content="All"
+                    Grid.Column="3"
+                    Margin="2,6,2,6"/>
+
         </Grid>
     </Grid>
 </Window>
