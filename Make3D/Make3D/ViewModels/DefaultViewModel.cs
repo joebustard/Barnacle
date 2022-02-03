@@ -107,6 +107,7 @@ namespace Barnacle.ViewModels
             ExportPartsCommand = new RelayCommand(OnExportParts);
             SliceCommand = new RelayCommand(OnSlice);
             SplitCommand = new RelayCommand(OnSplit);
+            BendCommand = new RelayCommand(OnBend);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
             ToolCommand = new RelayCommand(OnTool);
@@ -201,6 +202,8 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand AlignCommand { get; set; }
+
+        public ICommand BendCommand { get; set; }
 
         public bool BezierRingEnabled
         {
@@ -507,7 +510,6 @@ namespace Barnacle.ViewModels
         public ICommand MultiPasteCommand { get; set; }
 
         public ICommand NewCommand { get; set; }
-
         public ICommand NewProjectCommand { get; set; }
 
         public ObservableCollection<string> ObjectNames
@@ -1205,6 +1207,11 @@ namespace Barnacle.ViewModels
         {
             string s = obj.ToString();
             NotificationManager.Notify("Alignment", s);
+        }
+
+        private void OnBend(object obj)
+        {
+            NotificationManager.Notify("Bend", obj);
         }
 
         private void OnCircularPaste(object obj)

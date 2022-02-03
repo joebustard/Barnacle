@@ -10,6 +10,9 @@
              xmlns:local="clr-namespace:Barnacle.Dialogs"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!--
+            <TextBox x:Name="NumberOfPointsBox" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" TextChanged="NumberOfPointsBox_TextChanged" />
+            -->
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
@@ -27,9 +30,6 @@
                Style="{StaticResource InverseLabel}"
                x:Name="HeaderLabel">
         </Label>
-    <!--
-            <TextBox x:Name="NumberOfPointsBox" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" TextChanged="NumberOfPointsBox_TextChanged" />
-            -->
         <Grid Grid.Column="1"
               Grid.Row="1">
             <Grid.ColumnDefinitions>

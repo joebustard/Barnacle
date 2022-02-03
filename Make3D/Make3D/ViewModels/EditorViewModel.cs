@@ -106,6 +106,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ExportParts", OnExportParts);
             NotificationManager.Subscribe("Editor", "Slice", OnSlice);
             NotificationManager.Subscribe("Editor", "Split", OnSplit);
+            NotificationManager.Subscribe("Editor", "Bend", OnBend);
             NotificationManager.Subscribe("Editor", "Import", OnImport);
             NotificationManager.Subscribe("Editor", "MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("Editor", "MoveObjectToCentre", OnMoveObjectToCentre);
@@ -902,6 +903,122 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
+        private void BendObjectInHalf(Object3D ob, string ori)
+        {
+            double smallObjectsLimit = 1000;
+            double bendAngle = 10 * Math.PI / 180.0;
+            if (ob != null)
+            {
+                // objects with a small number of vertices dont bend well
+                if (ob.RelativeObjectVertices.Count < smallObjectsLimit)
+                {
+                    LoopSmoother cms = new LoopSmoother();
+
+                    Point3DCollection p3col = new Point3DCollection();
+                    PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
+                    Int32Collection icol = ob.TriangleIndices;
+                    while (p3col.Count < smallObjectsLimit)
+                    {
+                        cms.Subdivide(ref p3col, ref icol);
+                    }
+                    PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
+                    ob.TriangleIndices = icol;
+                    ob.Remesh();
+                }
+                // calculate the bend forces that will applied to the points
+                int numForces = 100;
+                double limit = numForces * numForces;
+                double[] forces = new double[numForces];
+
+                for (int i = 0; i < numForces; i++)
+                {
+                    // forces[i] = Math.Cos(theta)* Math.Cos(theta);
+                    forces[i] = (double)(i * i) / limit;
+                }
+                //
+                switch (ori)
+                {
+                    case "X":
+                        {
+                            double halfWidth = ob.Scale.Z / 2.0;
+                            for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
+                            {
+                                double relDist = Math.Abs(ob.RelativeObjectVertices[i].Z / halfWidth);
+                                int forcesIndex = (int)(relDist * (numForces - 1));
+                                if (forcesIndex >= 0 && forcesIndex < numForces)
+                                {
+                                    double sn = -Math.Sign(ob.RelativeObjectVertices[i].Z);
+                                    double y = ob.RelativeObjectVertices[i].Y;
+                                    double z = ob.RelativeObjectVertices[i].Z;
+                                    double dtheta = forces[forcesIndex] * bendAngle;
+                                    double theta = Math.Atan2(ob.RelativeObjectVertices[i].Y, ob.RelativeObjectVertices[i].Z);
+                                    double r = Math.Sqrt(y * y + z * z);
+                                    double nz = Math.Cos(theta + (sn * dtheta)) * r;
+                                    double ny = Math.Sin(theta + (sn * dtheta)) * r;
+                                    ob.RelativeObjectVertices[i] = new P3D(ob.RelativeObjectVertices[i].X, ny, nz);
+                                }
+                            }
+                            ob.Remesh();
+                            document.Dirty = true;
+                        }
+                        break;
+
+                    case "Y":
+                        {
+                            double halfWidth = ob.Scale.X / 2.0;
+                            for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
+                            {
+                                double relDist = Math.Abs(ob.RelativeObjectVertices[i].X / halfWidth);
+                                int forcesIndex = (int)(relDist * (numForces - 1));
+                                if (forcesIndex >= 0 && forcesIndex < numForces)
+                                {
+                                    double sn = -Math.Sign(ob.RelativeObjectVertices[i].X);
+                                    double z = ob.RelativeObjectVertices[i].Z;
+                                    double x = ob.RelativeObjectVertices[i].X;
+                                    double dtheta = forces[forcesIndex] * bendAngle;
+                                    double theta = Math.Atan2(ob.RelativeObjectVertices[i].Z, ob.RelativeObjectVertices[i].X);
+                                    double r = Math.Sqrt(z * z + x * x);
+                                    double nx = Math.Cos(theta + (sn * dtheta)) * r;
+                                    double nz = Math.Sin(theta + (sn * dtheta)) * r;
+                                    ob.RelativeObjectVertices[i] = new P3D(nx, ob.RelativeObjectVertices[i].Y, nz);
+                                }
+                            }
+                            ob.Remesh();
+                            document.Dirty = true;
+                        }
+                        break;
+
+                    case "Z":
+                        {
+                            double halfWidth = ob.Scale.X / 2.0;
+                            for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
+                            {
+                                double relDist = Math.Abs(ob.RelativeObjectVertices[i].X / halfWidth);
+                                int forcesIndex = (int)(relDist * (numForces - 1));
+                                if (forcesIndex >= 0 && forcesIndex < numForces)
+                                {
+                                    double sn = -Math.Sign(ob.RelativeObjectVertices[i].X);
+                                    double y = ob.RelativeObjectVertices[i].Y;
+                                    double x = ob.RelativeObjectVertices[i].X;
+                                    double dtheta = forces[forcesIndex] * bendAngle;
+                                    double theta = Math.Atan2(ob.RelativeObjectVertices[i].Y, ob.RelativeObjectVertices[i].X);
+                                    double r = Math.Sqrt(y * y + x * x);
+                                    double nx = Math.Cos(theta + (sn * dtheta)) * r;
+                                    double ny = Math.Sin(theta + (sn * dtheta)) * r;
+                                    ob.RelativeObjectVertices[i] = new P3D(nx, ny, ob.RelativeObjectVertices[i].Z);
+                                }
+                            }
+                            ob.Remesh();
+                            document.Dirty = true;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
         private void BottomCamera()
         {
             ResetSelection();
@@ -1689,6 +1806,46 @@ namespace Barnacle.ViewModels
                 AlignSelectedObjects(s);
                 selectedObjectAdorner.Refresh();
                 RegenerateDisplayList();
+            }
+        }
+
+        private void OnBend(object param)
+        {
+            bool warning = true;
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+                {
+                    bool confirmed = true;
+                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                    if (ob is Group3D)
+                    {
+                        MessageBoxResult res = MessageBox.Show("Some objects will have to be converted to meshes first. Convert now.", "Warning", MessageBoxButton.OKCancel);
+                        confirmed = res == MessageBoxResult.OK;
+                        if (confirmed)
+                        {
+                            Document.Content.Remove(ob);
+
+                            Object3D it = ob.ConvertToMesh();
+                            it.Remesh();
+                            Document.Content.Add(it);
+                            Document.Dirty = true;
+                            ob = it;
+                        }
+                    }
+                    if (confirmed)
+                    {
+                        CheckPoint();
+                        string ori = param.ToString();
+                        BendObjectInHalf(ob, ori);
+                    }
+                    warning = false;
+                }
+            }
+
+            if (warning)
+            {
+                MessageBox.Show("Bend requires a single object to be selected", "Warning");
             }
         }
 

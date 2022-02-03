@@ -21,6 +21,7 @@ namespace Barnacle.Dialogs
         private Point3DCollection helix4;
         private Point3DCollection helix5;
         private double length;
+        private bool loaded;
         private double majorRadius;
         private double minorRadius;
         private double pitch;
@@ -32,7 +33,7 @@ namespace Barnacle.Dialogs
         public ThreadDlg()
         {
             InitializeComponent();
-            ToolName = "ThreadDlg";
+            ToolName = "Thread";
             DataContext = this;
             ModelGroup = MyModelGroup;
             minorRadius = 12.5;
@@ -49,6 +50,7 @@ namespace Barnacle.Dialogs
             helix5 = new Point3DCollection();
             startDisk = new Point3DCollection();
             endDisk = new Point3DCollection();
+            loaded = false;
         }
 
         public double Angle
@@ -344,7 +346,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private async void GenerateShape()
+        private void GenerateShape()
         {
             ClearShape();
             WarningText = "";
@@ -361,7 +363,7 @@ namespace Barnacle.Dialogs
                 else
                 {
                     Cursor = System.Windows.Input.Cursors.Wait;
-                   GenerateThread();
+                    GenerateThread();
                     Cursor = System.Windows.Input.Cursors.Arrow;
                 }
             }
@@ -413,17 +415,33 @@ namespace Barnacle.Dialogs
             TriangulateDisk(endDisk, new Point3D(0, 0, helix4Pnt.Z + pitch / 2));
             // attach to helix
             ExpandDisk(endDisk, -pitch, true);
-            return ;
+            return;
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            string s = EditorParameters.Get("MinorRadius");
+            if (s != "")
+            {
+                MinorRadius = EditorParameters.GetDouble("MinorRadius");
+                MajorRadius = EditorParameters.GetDouble("MajorRadius");
+                Pitch = EditorParameters.GetDouble("Pitch");
+                Root = EditorParameters.GetDouble("Root");
+                Crest = EditorParameters.GetDouble("Crest");
+                Length = EditorParameters.GetDouble("Length");
+            }
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
+            EditorParameters.Set("MinorRadius", minorRadius);
+            EditorParameters.Set("MajorRadius", majorRadius);
+            EditorParameters.Set("Pitch", pitch);
+            EditorParameters.Set("Root", root);
+            EditorParameters.Set("Crest", crest);
+            EditorParameters.Set("Length", length);
         }
 
         private void TriangulateDisk(Point3DCollection disk, Point3D centre, bool invert = false)
@@ -475,13 +493,17 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            GenerateShape();
-            Redisplay();
+            if (loaded)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             LoadEditorParameters();
+            loaded = true;
             GenerateShape();
             UpdateCameraPos();
             MyModelGroup.Children.Clear();

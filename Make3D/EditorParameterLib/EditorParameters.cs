@@ -140,6 +140,11 @@ namespace Barnacle.EditorParameterLib
             }
         }
 
+        public void Set(string key, double val)
+        {
+            Set(key, val.ToString());
+        }
+
         public void Write(XmlDocument doc, XmlElement ele)
         {
             XmlElement prms = doc.CreateElement("EditorParameters");

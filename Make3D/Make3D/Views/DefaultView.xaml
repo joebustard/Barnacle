@@ -35,6 +35,12 @@
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
+        <!---
+                <Custom:RibbonGroup Name="ViewGroup" Header="View">
+                    <Custom:RibbonButton x:Name="EditorButton" Label="Editor" Command="{Binding ViewCommand}" CommandParameter="Editor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                    <Custom:RibbonButton x:Name="ScriptButton" Label="Script" Command="{Binding ViewCommand}" CommandParameter="Script" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
+                </Custom:RibbonGroup>
+                -->
         <Custom:Ribbon Background="{StaticResource WindowBackBrush}"
                        FontSize="14"
                        Foreground="{StaticResource TextBrush}"
@@ -134,6 +140,11 @@
                                                       ImageSource="/images/buttons/exit.png" />
                 </Custom:RibbonApplicationMenu>
             </Custom:Ribbon.ApplicationMenu>
+            <!--
+                    <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
+                        <Custom:RibbonButton x:Name="Slicer" Label="Sl3cer" Command="{Binding SliceCommand}" CommandParameter="SliceAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice ( and copy to sdcard if present)" />
+                    </Custom:RibbonMenuButton>
+                    -->
             <Custom:RibbonTab Name="HomeTab1"
                               Header="Home">
                 <Custom:RibbonGroup Name="ClipboardGroup"
@@ -237,11 +248,6 @@
                               VerticalAlignment="Top"
                               x:Name="SelectObjectNames" />
                 </Custom:RibbonGroup>
-                <!--
-                    <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
-                        <Custom:RibbonButton x:Name="Slicer" Label="Sl3cer" Command="{Binding SliceCommand}" CommandParameter="SliceAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice ( and copy to sdcard if present)" />
-                    </Custom:RibbonMenuButton>
-                    -->
                 <Custom:RibbonGroup Name="ProjectGroup"
                                     Header="Project"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/Project.png">
@@ -317,6 +323,11 @@
                                              x:Name="Clean" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
+                <!--
+                        <Custom:RibbonSeparator />
+
+                        <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
+                        -->
                 <Custom:RibbonGroup Name="DataGroup"
                                     Header="Objects"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/objects.png">
@@ -555,14 +566,9 @@
                                              VerticalAlignment="Top"
                                              x:Name="SameBoth" />
                     </Custom:RibbonMenuButton>
-                    <!--
-                        <Custom:RibbonSeparator />
-
-                        <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
-                        -->
                     <Custom:RibbonMenuButton Label="Group"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/group.png"
-                                             x:Name="Group">
+                                             x:Name="GroupButton">
                         <Custom:RibbonButton Command="{Binding GroupCommand}"
                                              CommandParameter="GroupUnion"
                                              HorizontalAlignment="Stretch"
@@ -644,6 +650,34 @@
                                              VerticalAlignment="Top"
                                              x:Name="SplitZ" />
                     </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton Label="Bend"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/split.png"
+                                             x:Name="Bend">
+                        <Custom:RibbonButton Command="{Binding BendCommand}"
+                                             CommandParameter="X"
+                                             HorizontalAlignment="Stretch"
+                                             Label="X"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SplitX.png"
+                                             ToolTip="Bend selected object in half along X axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="BendX" />
+                        <Custom:RibbonButton Command="{Binding BendCommand}"
+                                             CommandParameter="Y"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Y"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SplitY.png"
+                                             ToolTip="Bend selected object in half along Y axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="BendY" />
+                        <Custom:RibbonButton Command="{Binding BendCommand}"
+                                             CommandParameter="Z"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Z"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SplitZ.png"
+                                             ToolTip="Bend selected object in half along Z axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="BendZ" />
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup"
                                     Header="Shapes"
@@ -674,12 +708,12 @@
                                              x:Name="DecorativeTools">
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
+                <!--
+                        <Custom:RibbonButton x:Name="MeshRecenterButton" Label="Re-Origin" Command="{Binding MeshReoriginCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
+                    -->
                 <Custom:RibbonGroup Name="MeshGroup"
                                     Header="Mesh"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/BigGear.png">
-                    <!--
-                        <Custom:RibbonButton x:Name="MeshRecenterButton" Label="Re-Origin" Command="{Binding MeshReoriginCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
-                    -->
                     <Custom:RibbonMenuButton Label="Edit">
                         <Custom:RibbonButton Command="{Binding MeshEditCommand}"
                                              HorizontalAlignment="Stretch"
@@ -745,12 +779,6 @@
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
-            <!---
-                <Custom:RibbonGroup Name="ViewGroup" Header="View">
-                    <Custom:RibbonButton x:Name="EditorButton" Label="Editor" Command="{Binding ViewCommand}" CommandParameter="Editor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="ScriptButton" Label="Script" Command="{Binding ViewCommand}" CommandParameter="Script" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
-                </Custom:RibbonGroup>
-                -->
             <Custom:RibbonTab Name="ViewTab1"
                               Header="View">
                 <Custom:RibbonGroup Name="ZoomGroup"
@@ -825,11 +853,11 @@
                                                           x:Name="SolutionExplorer" />
                         </Grid>
                     </TabItem>
-                    <TabItem Header="Edit"
-                             x:Name="EditPanel">
-                        <!--
+                    <!--
                                 <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch" />
                            -->
+                    <TabItem Header="Edit"
+                             x:Name="EditPanel">
                         <Grid HorizontalAlignment="Stretch">
                             <ScrollViewer>
                                 <StackPanel HorizontalAlignment="Left"

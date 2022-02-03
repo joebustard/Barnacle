@@ -1,31 +1,42 @@
-﻿<Window x:Class="Barnacle.Views.ColourDialog"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Views"
-              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+<Window Background="{StaticResource WindowBackBrush }"
         mc:Ignorable="d"
-        Title="Pick Colour" Height="450" Width="800" Background="{StaticResource WindowBackBrush }">
+        Title="Pick Colour"
+        x:Class="Barnacle.Views.ColourDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Barnacle.Views"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Width="800"
+        Height="450">
     <Grid>
         <Grid.ColumnDefinitions>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition Height="30" />
+            <RowDefinition Height="30"/>
         </Grid.RowDefinitions>
-        <xctk:ColorPicker x:Name="_colorPicker"
-                                   VerticalAlignment="Top" Grid.Row="0" IsOpen="True" />
+        <xctk:ColorPicker Grid.Row="0"
+                          IsOpen="True"
+                          VerticalAlignment="Top"
+                          x:Name="_colorPicker"/>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Clicked" />
-            <Button Grid.Column="3" Content="Ok" Click="OK_Clicked" />
+            <Button Click="Cancel_Clicked"
+                    Content="Cancel"
+                    Grid.Column="1"/>
+
+            <Button Click="OK_Clicked"
+                    Content="Ok"
+                    Grid.Column="3"/>
+
         </Grid>
     </Grid>
 </Window>

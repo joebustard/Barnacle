@@ -1,73 +1,97 @@
-﻿<Window x:Class="Barnacle.Views.Settings"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Views"
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-          xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
+<Window Background="{StaticResource WindowBackBrush }"
         mc:Ignorable="d"
-         Title="Project Settings" Height="500" Width="500" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="ToolWindow" Background="{StaticResource WindowBackBrush }">
+        ResizeMode="NoResize"
+        ShowInTaskbar="False"
+        Title="Project Settings"
+        WindowStartupLocation="CenterOwner"
+        WindowStyle="ToolWindow"
+        x:Class="Barnacle.Views.Settings"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:Barnacle.Views"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Width="500"
+        Height="500">
     <Window.DataContext>
         <ViewModels:SettingsViewModel />
     </Window.DataContext>
     <Grid>
-
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="20*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="20*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="20*" />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="20*"/>
+            <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
-        <TabControl Grid.Column="1" Grid.Row="1">
+        <TabControl Grid.Column="1"
+                    Grid.Row="1">
             <TabItem Header="Project">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="10*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="5*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="5*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-
-                    <Grid Grid.Row="0" Grid.Column="1">
+                    <Grid Grid.Column="1"
+                          Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0">Description</Label>
+                        <Label Grid.Column="0">
+                        Description
+                        </Label>
                     </Grid>
-                    <TextBox x:Name="DescriptionBox" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.RowSpan="2" Text="{Binding Description}" AcceptsReturn="True" />
-
-                    <Grid Grid.Row="4" Grid.Column="1">
+                    <TextBox AcceptsReturn="True"
+                             Grid.Column="1"
+                             Grid.Row="1"
+                             Grid.RowSpan="2"
+                             HorizontalAlignment="Stretch"
+                             Text="{Binding Description}"
+                             VerticalAlignment="Stretch"
+                             x:Name="DescriptionBox"/>
+                    <Grid Grid.Column="1"
+                          Grid.Row="4">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" VerticalAlignment="Center">Tool Model Colour</Label>
-                        <xctk:ColorPicker x:Name="_colorPicker"
-                                   VerticalAlignment="Bottom" Grid.Column="1"  IsOpen="False" SelectedColor="{Binding DefaultObjectColour}" Height="20" Margin="2,0,2,2" />
+                        <Label Grid.Column="0"
+                               VerticalAlignment="Center">
+                        Tool Model Colour
+                        </Label>
+                        <xctk:ColorPicker Grid.Column="1"
+                                          IsOpen="False"
+                                          Margin="2,0,2,2"
+                                          SelectedColor="{Binding DefaultObjectColour}"
+                                          VerticalAlignment="Bottom"
+                                          x:Name="_colorPicker"
+                                          Height="20"/>
                     </Grid>
-                    <Grid Grid.Row="4" Grid.Column="1">
+                    <Grid Grid.Column="1"
+                          Grid.Row="4">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
                 </Grid>
@@ -75,85 +99,157 @@
             <TabItem Header="Import/Export">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="12*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="12*"/>
+                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="5*" />
-                        <RowDefinition Height="5*" />
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="5*"/>
+                        <RowDefinition Height="5*"/>
                     </Grid.RowDefinitions>
-                    <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid Grid.Column="1"
+                          Grid.Row="1">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0" VerticalAlignment="Center">Base Scale</Label>
-                        <ComboBox x:Name="ScaleBox" Grid.Column="1" Width="55" HorizontalAlignment="Left" VerticalAlignment="Center" SelectedItem="{Binding SelectedScale}" ItemsSource="{Binding Scales}" />
-                        <Label Grid.Column="3" VerticalAlignment="Center">Export Scale</Label>
-                        <ComboBox x:Name="ExportScaleBox" Grid.Column="4" Width="55" HorizontalAlignment="Left" VerticalAlignment="Center" SelectedItem="{Binding ExportScale}" ItemsSource="{Binding Scales}" />
+                        <Label Grid.Column="0"
+                               VerticalAlignment="Center">
+                        Base Scale
+                        </Label>
+                        <ComboBox Grid.Column="1"
+                                  HorizontalAlignment="Left"
+                                  ItemsSource="{Binding Scales}"
+                                  SelectedItem="{Binding SelectedScale}"
+                                  VerticalAlignment="Center"
+                                  x:Name="ScaleBox"
+                                  Width="55"/>
+                        <Label Grid.Column="3"
+                               VerticalAlignment="Center">
+                        Export Scale
+                        </Label>
+                        <ComboBox Grid.Column="4"
+                                  HorizontalAlignment="Left"
+                                  ItemsSource="{Binding Scales}"
+                                  SelectedItem="{Binding ExportScale}"
+                                  VerticalAlignment="Center"
+                                  x:Name="ExportScaleBox"
+                                  Width="55"/>
                     </Grid>
-                    <GroupBox Grid.Row="3" Grid.Column="1" Header="On Export" BorderThickness="3" Padding="8,8,8,8">
+                    <GroupBox BorderThickness="3"
+                              Grid.Column="1"
+                              Grid.Row="3"
+                              Header="On Export"
+                              Padding="8,8,8,8">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" />
-                                <ColumnDefinition Width="80*" />
-                                <ColumnDefinition Width="77*" />
-                                <ColumnDefinition Width="76*" />
-                                <ColumnDefinition Width="76*" />
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="80*"/>
+                                <ColumnDefinition Width="77*"/>
+                                <ColumnDefinition Width="76*"/>
+                                <ColumnDefinition Width="76*"/>
                             </Grid.ColumnDefinitions>
-
-                            <CheckBox Grid.Row="0" Content="Swap Y-Z" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding SwapAxis}" Grid.ColumnSpan="2" />
-
-                            <CheckBox  Grid.Row="0" Grid.Column="2"  HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding FloorAll}" Content="Floor All" />
-
-                            <CheckBox  Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding VersionExport}" Content="Add version to stl name" />
-                            <CheckBox  Grid.Row="1" Grid.Column="3" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding ClearPreviousVersionsOnExport}" Content="Clear previous stl versions" />
-
-                            <CheckBox  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding IgnoreEmpty}" Content="Don't export file if empty" />
-
-                            <Label Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Grid.ColumnSpan="2">Export Rotation</Label>
-                            <TextBox  Grid.Row="3" Grid.Column="2" Text="{Binding RotX}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
-                            <TextBox  Grid.Row="3" Grid.Column="3" Text="{Binding RotY}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
-                            <TextBox  Grid.Row="3" Grid.Column="4" Text="{Binding RotZ}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                            <CheckBox Content="Swap Y-Z"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="0"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding SwapAxis}"
+                                      VerticalAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
+                            <CheckBox Content="Floor All"
+                                      Grid.Column="2"
+                                      Grid.Row="0"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding FloorAll}"
+                                      VerticalAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
+                            <CheckBox Content="Add version to stl name"
+                                      Grid.Column="1"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="1"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding VersionExport}"
+                                      VerticalAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
+                            <CheckBox Content="Clear previous stl versions"
+                                      Grid.Column="3"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="1"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding ClearPreviousVersionsOnExport}"
+                                      VerticalAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
+                            <CheckBox Content="Don't export file if empty"
+                                      Grid.Column="1"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="2"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding IgnoreEmpty}"
+                                      VerticalAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
+                            <Label Grid.Column="0"
+                                   Grid.ColumnSpan="2"
+                                   Grid.Row="3"
+                                   VerticalAlignment="Center">
+                            Export Rotation
+                            </Label>
+                            <TextBox Grid.Column="2"
+                                     Grid.Row="3"
+                                     HorizontalAlignment="Stretch"
+                                     Text="{Binding RotX}"
+                                     VerticalContentAlignment="Center"/>
+                            <TextBox Grid.Column="3"
+                                     Grid.Row="3"
+                                     HorizontalAlignment="Stretch"
+                                     Text="{Binding RotY}"
+                                     VerticalContentAlignment="Center"/>
+                            <TextBox Grid.Column="4"
+                                     Grid.Row="3"
+                                     HorizontalAlignment="Stretch"
+                                     Text="{Binding RotZ}"
+                                     VerticalContentAlignment="Center"/>
                         </Grid>
                     </GroupBox>
-                    <GroupBox Grid.Row="4" Grid.Column="1" Header="On Import" BorderThickness="3" Padding="8,8,8,8">
+                    <GroupBox BorderThickness="3"
+                              Grid.Column="1"
+                              Grid.Row="4"
+                              Header="On Import"
+                              Padding="8,8,8,8">
                         <Grid>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
-                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
+                                <RowDefinition Height="1*"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="5*" />
-                                <ColumnDefinition Width="80*" />
-                                <ColumnDefinition Width="77*" />
-                                <ColumnDefinition Width="76*" />
-                                <ColumnDefinition Width="76*" />
+                                <ColumnDefinition Width="5*"/>
+                                <ColumnDefinition Width="80*"/>
+                                <ColumnDefinition Width="77*"/>
+                                <ColumnDefinition Width="76*"/>
+                                <ColumnDefinition Width="76*"/>
                             </Grid.ColumnDefinitions>
-
-                            <CheckBox Grid.Row="0" Content="Swap Y-Z" Grid.Column="0"  HorizontalAlignment="Left" VerticalAlignment="Center"
-VerticalContentAlignment="Center" IsChecked="{Binding ImportSwapAxis}" Grid.ColumnSpan="2" />
+                            <CheckBox Content="Swap Y-Z"
+                                      Grid.Column="0"
+                                      Grid.ColumnSpan="2"
+                                      Grid.Row="0"
+                                      HorizontalAlignment="Left"
+                                      IsChecked="{Binding ImportSwapAxis}"
+                                      VerticalAlignment="Center"
+                                      VerticalContentAlignment="Center"/>
                         </Grid>
                     </GroupBox>
                 </Grid>
@@ -161,35 +257,46 @@ VerticalContentAlignment="Center" IsChecked="{Binding ImportSwapAxis}" Grid.Colu
             <TabItem Header="Limpet">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="10*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="5*" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="5*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                        <CheckBox IsChecked="{Binding AutoSaveScript}" >Autosave script on run.</CheckBox>
+                    <StackPanel Grid.Column="1"
+                                Orientation="Horizontal"
+                                VerticalAlignment="Center">
+                        <CheckBox IsChecked="{Binding AutoSaveScript}">
+                        Autosave script on run.
+                        </CheckBox>
                     </StackPanel>
                 </Grid>
             </TabItem>
         </TabControl>
-
-        <Grid Grid.Row="6" Grid.Column="1">
+        <Grid Grid.Column="1"
+              Grid.Row="6">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Margin="10,4,10,4" Click="CancelButtonClicked">Cancel</Button>
-            <Button Grid.Column="1" Margin="10,4,10,4" Click="OkButtonClicked">Ok</Button>
+            <Button Click="CancelButtonClicked"
+                    Grid.Column="0"
+                    Margin="10,4,10,4">
+            Cancel
+            </Button>
+            <Button Click="OkButtonClicked"
+                    Grid.Column="1"
+                    Margin="10,4,10,4">
+            Ok
+            </Button>
         </Grid>
     </Grid>
 </Window>

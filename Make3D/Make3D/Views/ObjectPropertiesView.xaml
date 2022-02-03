@@ -1,168 +1,427 @@
-﻿<UserControl x:Class="Barnacle.Views.ObjectPropertiesView"
+<UserControl d:DesignHeight="600"
+             d:DesignWidth="160"
+             mc:Ignorable="d"
+             x:Class="Barnacle.Views.ObjectPropertiesView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-             mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="160">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit">
     <UserControl.DataContext>
         <ViewModels:ObjectPropertiesViewModel />
     </UserControl.DataContext>
     <Grid>
+    <!-- Position 3 -->
+    <!-- X -->
+    <!-- Y -->
+    <!-- Z -->
+    <!-- Buttons 10 -->
+    <!-- Size  11 -->
+    <!-- Percent 15 -->
+    <!-- Rotation 18-->
+    <!-- X -->
+    <!-- Y -->
+    <!-- Z -->
+    <!-- reset rotation -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
-            <RowDefinition Height="25" />
-            <RowDefinition Height="25" />
-
-            <!-- Position 3 -->
-            <RowDefinition Height="20" />
-            <!-- X -->
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- Y -->
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- Z -->
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- Buttons 10 -->
-            <RowDefinition Height="20" />
-
-            <!-- Size  11 -->
-            <RowDefinition Height="20" />
-
-            <RowDefinition Height="20" />
-            <RowDefinition Height="20" />
-            <RowDefinition Height="20" />
-
-            <!-- Percent 15 -->
-            <RowDefinition Height="20" />
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- Rotation 18-->
-            <RowDefinition Height="20" />
-            <!-- X -->
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- Y -->
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- Z -->
-            <RowDefinition Height="18" />
-            <RowDefinition Height="18" />
-            <!-- reset rotation -->
-            <RowDefinition Height="22" />
-            <RowDefinition Height="18" />
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="22"/>
+            <RowDefinition Height="18"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*" />
-            <ColumnDefinition Width="55*" />
-            <ColumnDefinition Width="25*" />
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="55*"/>
+            <ColumnDefinition Width="25*"/>
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}"  Grid.RowSpan="2">Object</Label>
-        <TextBox Grid.Row="1" Grid.ColumnSpan="3" FontSize="14" Text="{Binding ObjectName}" />
-
-        <Grid Grid.Row="2" Grid.ColumnSpan="3">
+        <Label Grid.ColumnSpan="3"
+               Grid.Row="0"
+               Grid.RowSpan="2"
+               HorizontalContentAlignment="Center"
+               Style="{StaticResource InverseLabel}">
+        Object
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.ColumnSpan="3"
+                 Grid.Row="1"
+                 Text="{Binding ObjectName}"/>
+        <Grid Grid.ColumnSpan="3"
+              Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-
-            <xctk:ColorPicker x:Name="_colorPicker" Grid.Column="0"
-                                   VerticalAlignment="Stretch"  IsOpen="False" SelectedColor="{Binding ObjectColour}" />
-            <CheckBox Content="Export" Grid.Column="1" Margin="4,0,0,0" ToolTip="This object should be included in exports and references" VerticalAlignment="Center" IsChecked="{Binding Exportable}" />
+            <xctk:ColorPicker Grid.Column="0"
+                              IsOpen="False"
+                              SelectedColor="{Binding ObjectColour}"
+                              VerticalAlignment="Stretch"
+                              x:Name="_colorPicker"/>
+            <CheckBox Content="Export"
+                      Grid.Column="1"
+                      IsChecked="{Binding Exportable}"
+                      Margin="4,0,0,0"
+                      ToolTip="This object should be included in exports and references"
+                      VerticalAlignment="Center"/>
         </Grid>
-        <Label Grid.Row="3"  Grid.ColumnSpan="3" Style="{StaticResource InverseLabel}"  >Position</Label>
+        <Label Grid.ColumnSpan="3"
+               Grid.Row="3"
+               Style="{StaticResource InverseLabel}">
+        Position
+        </Label>
+        <Label FontSize="12"
+               Foreground="Red"
+               Grid.Row="4"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center"
+               VerticalContentAlignment="Center">
+        X
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.Row="4"
+                 Grid.RowSpan="2"
+                 Text="{Binding PositionX}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="4"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding NudgeCommand}"
+                    CommandParameter="X+"
+                    Content="+"
+                    FontSize="9"/>
 
-        <Label Grid.Row="4"  VerticalContentAlignment="Center" HorizontalAlignment="Center" FontSize="12"  Foreground="Red"  Grid.RowSpan="2">X</Label>
-        <TextBox Grid.Row="4" Grid.Column="1" FontSize="14" Text="{Binding PositionX}"   Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="4" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  FontSize="9" Content="+" Command="{Binding NudgeCommand}" CommandParameter="X+" />
-            <Button  FontSize="9" Content="-" Command="{Binding NudgeCommand}" CommandParameter="X-" />
+            <Button Command="{Binding NudgeCommand}"
+                    CommandParameter="X-"
+                    Content="-"
+                    FontSize="9"/>
+
         </UniformGrid>
+        <Label FontSize="12"
+               Foreground="Green"
+               Grid.Row="6"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center"
+               VerticalContentAlignment="Center">
+        Y
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.Row="6"
+                 Grid.RowSpan="2"
+                 Text="{Binding PositionY}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="6"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding NudgeCommand}"
+                    CommandParameter="Y+"
+                    Content="+"
+                    Style="{StaticResource SmallButton}"/>
 
-        <Label Grid.Row="6"  VerticalContentAlignment="Center"   HorizontalAlignment="Center" FontSize="12"  Foreground="Green"   Grid.RowSpan="2">Y</Label>
-        <TextBox Grid.Row="6" Grid.Column="1" FontSize="14" Text="{Binding PositionY}" Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="6" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button   Style="{StaticResource SmallButton}" Content="+" Command="{Binding NudgeCommand}" CommandParameter="Y+" />
-            <Button  Style="{StaticResource SmallButton}" Content="-" Command="{Binding NudgeCommand}" CommandParameter="Y-" />
+            <Button Command="{Binding NudgeCommand}"
+                    CommandParameter="Y-"
+                    Content="-"
+                    Style="{StaticResource SmallButton}"/>
+
         </UniformGrid>
-        <Label Grid.Row="8"  VerticalContentAlignment="Center"   HorizontalAlignment="Center" FontSize="12"  Foreground="Blue"   Grid.RowSpan="2">Z</Label>
-        <TextBox Grid.Row="8" Grid.Column="1" FontSize="14" Text="{Binding PositionZ}"  Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="8" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  Style="{StaticResource SmallButton}" Content="+" Command="{Binding NudgeCommand}" CommandParameter="Z+" />
-            <Button  Style="{StaticResource SmallButton}" Content="-" Command="{Binding NudgeCommand}" CommandParameter="Z-" />
+        <Label FontSize="12"
+               Foreground="Blue"
+               Grid.Row="8"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center"
+               VerticalContentAlignment="Center">
+        Z
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.Row="8"
+                 Grid.RowSpan="2"
+                 Text="{Binding PositionZ}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="8"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding NudgeCommand}"
+                    CommandParameter="Z+"
+                    Content="+"
+                    Style="{StaticResource SmallButton}"/>
+
+            <Button Command="{Binding NudgeCommand}"
+                    CommandParameter="Z-"
+                    Content="-"
+                    Style="{StaticResource SmallButton}"/>
+
         </UniformGrid>
-        <UniformGrid Grid.Row="10" Grid.ColumnSpan="3" VerticalAlignment="Stretch" Rows="1">
-            <Button x:Name="SetFloor" Content="Floor" Style="{StaticResource SmallButton}" FontSize="10" Command="{Binding MoveToFloorCommand}" ToolTip="Set object on the floor" />
-            <Button x:Name="SetCentre" Content="Centre" Style="{StaticResource SmallButton}" FontSize="10" Command="{Binding MoveToCentreCommand}" ToolTip="Move object to centre of the floor" />
-            <Button x:Name="SetZero" Content="Zero" Style="{StaticResource SmallButton}" FontSize="10" Command="{Binding MoveToZeroCommand}" ToolTip="Move object to centre of the floor" />
+        <UniformGrid Grid.ColumnSpan="3"
+                     Grid.Row="10"
+                     Rows="1"
+                     VerticalAlignment="Stretch">
+            <Button Command="{Binding MoveToFloorCommand}"
+                    Content="Floor"
+                    FontSize="10"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Set object on the floor"
+                    x:Name="SetFloor"/>
+
+            <Button Command="{Binding MoveToCentreCommand}"
+                    Content="Centre"
+                    FontSize="10"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Move object to centre of the floor"
+                    x:Name="SetCentre"/>
+
+            <Button Command="{Binding MoveToZeroCommand}"
+                    Content="Zero"
+                    FontSize="10"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Move object to centre of the floor"
+                    x:Name="SetZero"/>
+
         </UniformGrid>
-        <Label Grid.Row="11"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}" >Size</Label>
-        <Label Grid.Row="12"   HorizontalAlignment="Center" FontSize="12"  Foreground="Red" Grid.RowSpan="3" >L(X)</Label>
-        <TextBox Grid.Row="12" Grid.Column="1" FontSize="14" Text="{Binding ScaleX }"  IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
+        <Label Grid.ColumnSpan="3"
+               Grid.Row="11"
+               HorizontalContentAlignment="Center"
+               Style="{StaticResource InverseLabel}">
+        Size
+        </Label>
+        <Label FontSize="12"
+               Foreground="Red"
+               Grid.Row="12"
+               Grid.RowSpan="3"
+               HorizontalAlignment="Center">
+        L ( X )
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Grid.Row="12"
+                 IsEnabled="{Binding CanScale}"
+                 Text="{Binding ScaleX }"/>
+        <Label FontSize="12"
+               Foreground="Green"
+               Grid.Row="13"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center">
+        H ( Y )
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Grid.Row="13"
+                 IsEnabled="{Binding CanScale}"
+                 Text="{Binding ScaleY }"/>
+        <Label FontSize="12"
+               Foreground="Blue"
+               Grid.Row="14"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center">
+        W ( Z )
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Grid.Row="14"
+                 IsEnabled="{Binding CanScale}"
+                 Text="{Binding ScaleZ }"/>
+        <Label Grid.ColumnSpan="3"
+               Grid.Row="15"
+               HorizontalContentAlignment="Center"
+               Style="{StaticResource InverseLabel}">
+        Percent
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Grid.Row="16"
+                 Grid.RowSpan="2"
+                 IsEnabled="{Binding CanScale}"
+                 Text="{Binding PercentScale}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="16"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding ScaleByPercentCommand}"
+                    CommandParameter="+"
+                    Content="+"
+                    IsEnabled="{Binding CanScale}"
+                    Style="{StaticResource SmallButton}"/>
 
-        <Label Grid.Row="13"   HorizontalAlignment="Center" FontSize="12"  Foreground="Green"   Grid.RowSpan="2">H(Y)</Label>
-        <TextBox Grid.Row="13" Grid.Column="1" FontSize="14" Text="{Binding ScaleY }" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
+            <Button Command="{Binding ScaleByPercentCommand}"
+                    CommandParameter="-"
+                    Content="-"
+                    IsEnabled="{Binding CanScale}"
+                    Style="{StaticResource SmallButton}"/>
 
-        <Label Grid.Row="14"   HorizontalAlignment="Center" FontSize="12"  Foreground="Blue"  Grid.RowSpan="2">W(Z)</Label>
-        <TextBox Grid.Row="14" Grid.Column="1" FontSize="14" Text="{Binding ScaleZ }" IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2" />
-
-        <Label Grid.Row="15"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}"  >Percent</Label>
-        <TextBox Grid.Row="16" Grid.Column="1" FontSize="14" Text="{Binding PercentScale}"  IsEnabled="{Binding CanScale}" Grid.ColumnSpan="2"  Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="16" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  Style="{StaticResource SmallButton}" Content="+" Command="{Binding ScaleByPercentCommand}" CommandParameter="+"  IsEnabled="{Binding CanScale}" />
-            <Button  Style="{StaticResource SmallButton}" Content="-" Command="{Binding ScaleByPercentCommand}" CommandParameter="-"  IsEnabled="{Binding CanScale}" />
         </UniformGrid>
+        <Label Grid.ColumnSpan="3"
+               Grid.Row="18"
+               Grid.RowSpan="1"
+               HorizontalContentAlignment="Center"
+               Style="{StaticResource InverseLabel}">
+        Rotation
+        </Label>
+        <Label FontSize="12"
+               Foreground="Red"
+               Grid.Row="19"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center"
+               Margin="0,12"
+               VerticalAlignment="Center"
+               Height="14">
+        X
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.Row="19"
+                 Grid.RowSpan="2"
+                 Text="{Binding RotationX}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="19"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding RotateXCommand}"
+                    CommandParameter="+"
+                    Style="{StaticResource SmallButton}">
+                <Image Source="/images/buttons/X1.png"/>
 
-        <Label Grid.Row="18"  Grid.ColumnSpan="3" HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}" Grid.RowSpan="1">Rotation</Label>
-
-        <Label Grid.Row="19"   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12"  Foreground="Red"   Grid.RowSpan="2" Margin="0,12" Height="14">X</Label>
-        <TextBox Grid.Row="19" Grid.Column="1" FontSize="14" Text="{Binding RotationX}"  Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="19" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  Style="{StaticResource SmallButton}" Command="{Binding RotateXCommand}" CommandParameter="+">
-                <Image Source="/images/buttons/X1.png" />
             </Button>
-            <Button  Style="{StaticResource SmallButton}"  Command="{Binding RotateXCommand}" CommandParameter="-">
-                <Image Source="/images/buttons/X2.png" />
-            </Button>
-        </UniformGrid>
+            <Button Command="{Binding RotateXCommand}"
+                    CommandParameter="-"
+                    Style="{StaticResource SmallButton}">
+                <Image Source="/images/buttons/X2.png"/>
 
-        <Label Grid.Row="21"   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12"  Foreground="Green"   Grid.RowSpan="2" Margin="0,12" Height="14">Y</Label>
-        <TextBox Grid.Row="21" Grid.Column="1" FontSize="14" Text="{Binding RotationY}"   Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="21" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button Style="{StaticResource SmallButton}" Command="{Binding RotateYCommand}" CommandParameter="+">
-                <Image Source="/images/buttons/Y1.png" />
-            </Button>
-            <Button Style="{StaticResource SmallButton}"  Command="{Binding RotateYCommand}" CommandParameter="-">
-                <Image Source="/images/buttons/Y2.png" />
             </Button>
         </UniformGrid>
-        <Label Grid.Row="23"   HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="12"  Foreground="Blue"  Grid.RowSpan="2" Margin="0,12" Height="14">Z</Label>
-        <TextBox Grid.Row="23" Grid.Column="1" FontSize="14" Text="{Binding RotationZ}"  Grid.RowSpan="2" />
-        <UniformGrid Grid.Row="23" Grid.Column="2" Columns="1"  Grid.RowSpan="2">
-            <Button  Style="{StaticResource SmallButton}" Command="{Binding RotateZCommand}" CommandParameter="+">
-                <Image Source="/images/buttons/Z1.png" />
+        <Label FontSize="12"
+               Foreground="Green"
+               Grid.Row="21"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center"
+               Margin="0,12"
+               VerticalAlignment="Center"
+               Height="14">
+        Y
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.Row="21"
+                 Grid.RowSpan="2"
+                 Text="{Binding RotationY}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="21"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding RotateYCommand}"
+                    CommandParameter="+"
+                    Style="{StaticResource SmallButton}">
+                <Image Source="/images/buttons/Y1.png"/>
+
             </Button>
-            <Button  Style="{StaticResource SmallButton}" Command="{Binding RotateZCommand}" CommandParameter="-">
-                <Image Source="/images/buttons/Z2.png" />
+            <Button Command="{Binding RotateYCommand}"
+                    CommandParameter="-"
+                    Style="{StaticResource SmallButton}">
+                <Image Source="/images/buttons/Y2.png"/>
+
             </Button>
         </UniformGrid>
-        <Grid Grid.Row="25" Grid.ColumnSpan="3">
+        <Label FontSize="12"
+               Foreground="Blue"
+               Grid.Row="23"
+               Grid.RowSpan="2"
+               HorizontalAlignment="Center"
+               Margin="0,12"
+               VerticalAlignment="Center"
+               Height="14">
+        Z
+        </Label>
+        <TextBox FontSize="14"
+                 Grid.Column="1"
+                 Grid.Row="23"
+                 Grid.RowSpan="2"
+                 Text="{Binding RotationZ}"/>
+        <UniformGrid Columns="1"
+                     Grid.Column="2"
+                     Grid.Row="23"
+                     Grid.RowSpan="2">
+            <Button Command="{Binding RotateZCommand}"
+                    CommandParameter="+"
+                    Style="{StaticResource SmallButton}">
+                <Image Source="/images/buttons/Z1.png"/>
+
+            </Button>
+            <Button Command="{Binding RotateZCommand}"
+                    CommandParameter="-"
+                    Style="{StaticResource SmallButton}">
+                <Image Source="/images/buttons/Z2.png"/>
+
+            </Button>
+        </UniformGrid>
+        <Grid Grid.ColumnSpan="3"
+              Grid.Row="25">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="1" Command="{Binding SetRotationCommand}" CommandParameter="1" ToolTip="Set rotation parameters to 1" Style="{StaticResource SmallButton}" />
-            <Button Grid.Column="1" Content="22.5" Command="{Binding SetRotationCommand}" CommandParameter="22.5" ToolTip="Set rotation parameters to 22.5" Style="{StaticResource SmallButton}" />
-            <Button Grid.Column="2" Content="45" Command="{Binding SetRotationCommand}" CommandParameter="45" ToolTip="Set rotation parameters to 45" Style="{StaticResource SmallButton}" />
-            <Button Grid.Column="3" Content="90" Command="{Binding SetRotationCommand}" CommandParameter="90" ToolTip="Set rotation parameters to 90" Style="{StaticResource SmallButton}" />
+            <Button Command="{Binding SetRotationCommand}"
+                    CommandParameter="1"
+                    Content="1"
+                    Grid.Column="0"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Set rotation parameters to 1"/>
+
+            <Button Command="{Binding SetRotationCommand}"
+                    CommandParameter="22.5"
+                    Content="22.5"
+                    Grid.Column="1"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Set rotation parameters to 22.5"/>
+
+            <Button Command="{Binding SetRotationCommand}"
+                    CommandParameter="45"
+                    Content="45"
+                    Grid.Column="2"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Set rotation parameters to 45"/>
+
+            <Button Command="{Binding SetRotationCommand}"
+                    CommandParameter="90"
+                    Content="90"
+                    Grid.Column="3"
+                    Style="{StaticResource SmallButton}"
+                    ToolTip="Set rotation parameters to 90"/>
+
         </Grid>
-        <TextBox Grid.Row="26" Text="{Binding Description}" AcceptsReturn="True" Grid.ColumnSpan="3" VerticalAlignment="Stretch" />
+        <TextBox AcceptsReturn="True"
+                 Grid.ColumnSpan="3"
+                 Grid.Row="26"
+                 Text="{Binding Description}"
+                 VerticalAlignment="Stretch"/>
     </Grid>
 </UserControl>

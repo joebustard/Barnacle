@@ -1,14 +1,22 @@
-﻿<UserControl x:Class="Barnacle.UserControls.TriggerInterfaceControl"
+<UserControl d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d"
+             x:Class="Barnacle.UserControls.TriggerInterfaceControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.UserControls"
-             mc:Ignorable="d"
-             d:DesignHeight="450" d:DesignWidth="800">
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid Background="Transparent">
-        <Polyline Stroke="Black" StrokeThickness="4" Points="{Binding Points}">
+        <Polyline Points="{Binding Points}"
+                  Stroke="Black"
+                  StrokeThickness="4">
         </Polyline>
-        <TextBox x:Name="TriggerText" Text="{Binding TriggerName}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Height="30" />
+        <TextBox HorizontalAlignment="Center"
+                 Text="{Binding TriggerName}"
+                 TextAlignment="Center"
+                 VerticalAlignment="Center"
+                 x:Name="TriggerText"
+                 Height="30"/>
     </Grid>
 </UserControl>

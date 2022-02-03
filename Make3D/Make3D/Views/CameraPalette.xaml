@@ -1,50 +1,93 @@
-﻿<UserControl x:Class="Barnacle.Views.CameraPalette"
+<UserControl Background="{StaticResource WindowBackBrush }"
+             d:DesignHeight="430"
+             d:DesignWidth="160"
+             mc:Ignorable="d"
+             x:Class="Barnacle.Views.CameraPalette"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-             mc:Ignorable="d"
-             d:DesignHeight="430" d:DesignWidth="160" Background="{StaticResource WindowBackBrush }">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.DataContext>
         <ViewModels:CameraViewModel />
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
-            <RowDefinition Height="{Binding ButtonAreaHeight}" />
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="{Binding ButtonAreaHeight}"/>
         </Grid.RowDefinitions>
-        <Label Grid.Row="0"   HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}">Camera</Label>
-        <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top" MinHeight="{Binding ButtonAreaHeight}">
+        <Label Grid.Row="0"
+               HorizontalContentAlignment="Center"
+               Style="{StaticResource InverseLabel}">
+        Camera
+        </Label>
+        <UniformGrid Columns="4"
+                     Grid.Row="1"
+                     MinHeight="{Binding ButtonAreaHeight}"
+                     VerticalAlignment="Top">
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraHome"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default front position and point it at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/FrontEye.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraHome" ToolTip="Move the camera to the default front position and point it at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/FrontEye.png" />
             </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraBack" ToolTip="Move the camera to the default back position and point it at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/BackEye.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraLeft" ToolTip="Move the camera to the default right position and point it at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/RightEye.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraRight" ToolTip="Move the camera to the default left position and point it at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/LeftEye.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraTop" ToolTip="Move the camera to the default top position and point it at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/TopEye.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraBottom" ToolTip="Move the camera to the default bottom position and point it at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/BottomEye.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraLookCenter" ToolTip="Point the camera at the centre of the world.">
-                <Image Source="/Barnacle;component/Images/Buttons/CenterEye.png" />
-            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraBack"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default back position and point it at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/BackEye.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraLookObject" ToolTip="Point the camera at the selected object">
-                <Image Source="/Barnacle;component/Images/Buttons/ObjectEye.png" />
             </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding CameraCommand}" CommandParameter="CameraMove" ToolTip="Pan the camera without changing the look direction">
-                <Image Source="/Barnacle;component/Images/Buttons/PanEye.png" />
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraLeft"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default right position and point it at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/RightEye.png"/>
+
+            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraRight"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default left position and point it at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/LeftEye.png"/>
+
+            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraTop"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default top position and point it at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/TopEye.png"/>
+
+            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraBottom"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Move the camera to the default bottom position and point it at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/BottomEye.png"/>
+
+            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraLookCenter"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Point the camera at the centre of the world.">
+                <Image Source="/Barnacle;component/Images/Buttons/CenterEye.png"/>
+
+            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraLookObject"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Point the camera at the selected object">
+                <Image Source="/Barnacle;component/Images/Buttons/ObjectEye.png"/>
+
+            </Button>
+            <Button Command="{Binding CameraCommand}"
+                    CommandParameter="CameraMove"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Pan the camera without changing the look direction">
+                <Image Source="/Barnacle;component/Images/Buttons/PanEye.png"/>
+
             </Button>
         </UniformGrid>
     </Grid>

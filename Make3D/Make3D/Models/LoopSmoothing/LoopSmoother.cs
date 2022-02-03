@@ -9,13 +9,14 @@ using System.Windows.Media.Media3D;
 
 namespace Barnacle.Models.LoopSmoothing
 {
-    class LoopSmoother
+    internal class LoopSmoother
     {
-        List<LoopPoint> loopPoints;
-        List<LoopEdge> loopEdges;
-        List<LoopFace> loopFaces;
-        Int32Collection faces;
-        Point3DCollection vertices;
+        private Int32Collection faces;
+        private List<LoopEdge> loopEdges;
+        private List<LoopFace> loopFaces;
+        private List<LoopPoint> loopPoints;
+        private Point3DCollection vertices;
+
         public LoopSmoother()
         {
             loopPoints = new List<LoopPoint>();
@@ -36,43 +37,19 @@ namespace Barnacle.Models.LoopSmoothing
             GenerateNewFaces();
             p3col = vertices;
             icol = faces;
-
         }
 
-        private void GenerateNewFaces()
+        internal void Subdivide(ref Point3DCollection p3col, ref Int32Collection icol)
         {
+            InitialiseData(p3col, icol);
 
+            //  GenerateNewFacePoints();
+            GenerateNewUnweightedEdgePoints();
+            CalculateNewUnweightedPoints();
 
-            foreach (LoopFace fc in loopFaces)
-            {
-
-                // make new centre face
-                MakeFace(loopEdges[fc.E1].Ep, loopEdges[fc.E2].Ep, loopEdges[fc.E3].Ep);
-
-
-                // make face from p1
-                MakeFace(loopPoints[fc.P1].UpdatedPosition, loopEdges[fc.E1].Ep, loopEdges[fc.E3].Ep);
-
-                // make face from p2
-                MakeFace(loopPoints[fc.P2].UpdatedPosition, loopEdges[fc.E2].Ep, loopEdges[fc.E1].Ep);
-
-
-                // make face from p3
-                MakeFace(loopPoints[fc.P3].UpdatedPosition, loopEdges[fc.E3].Ep, loopEdges[fc.E2].Ep);
-
-            }
-        }
-
-        private void MakeFace(LoopCoord ep1, LoopCoord ep2, LoopCoord ep3)
-        {
-
-
-            int v1 = AddVertice(ep1.X, ep1.Y, ep1.Z);
-            int v2 = AddVertice(ep2.X, ep2.Y, ep2.Z);
-            int v3 = AddVertice(ep3.X, ep3.Y, ep3.Z);
-            faces.Add(v1);
-            faces.Add(v2);
-            faces.Add(v3);
+            GenerateNewFaces();
+            p3col = vertices;
+            icol = faces;
         }
 
         protected int AddVertice(double x, double y, double z)
@@ -94,6 +71,7 @@ namespace Barnacle.Models.LoopSmoothing
             }
             return res;
         }
+
         private void CalculateNewPoints()
         {
             int n;
@@ -105,11 +83,11 @@ namespace Barnacle.Models.LoopSmoothing
                 lc.Y = 0;
                 lc.Z = 0;
                 LoopPoint p = loopPoints[i];
-                foreach(  int index in p.Edges)
+                foreach (int index in p.Edges)
                 {
                     LoopEdge ed = loopEdges[index];
-                    
-                    if (ed.Start == i )
+
+                    if (ed.Start == i)
                     {
                         n++;
                         /*
@@ -145,8 +123,62 @@ namespace Barnacle.Models.LoopSmoothing
                 p.UpdatedPosition.Y = (p.Y * ob) + (lc.Y * beta);
                 p.UpdatedPosition.Z = (p.Z * ob) + (lc.Z * beta);
 
-              //  Log($"P{i} n={n} beta={beta} lc.X={lc.X}  lc.Y={lc.Y}  lc.Z={lc.Z} => { p.UpdatedPosition.X}, { p.UpdatedPosition.Y}, { p.UpdatedPosition.Z}");
+                //  Log($"P{i} n={n} beta={beta} lc.X={lc.X}  lc.Y={lc.Y}  lc.Z={lc.Z} => { p.UpdatedPosition.X}, { p.UpdatedPosition.Y}, { p.UpdatedPosition.Z}");
             }
+        }
+
+        private void CalculateNewUnweightedPoints()
+        {
+            for (int i = 0; i < loopPoints.Count; i++)
+            {
+                LoopPoint p = loopPoints[i];
+                p.UpdatedPosition = new LoopCoord();
+                p.UpdatedPosition.X = p.X;
+                p.UpdatedPosition.Y = p.Y;
+                p.UpdatedPosition.Z = p.Z;
+            }
+        }
+
+        private void Dump()
+        {
+            for (int i = 0; i < loopPoints.Count; i++)
+            {
+                LoopPoint p = loopPoints[i];
+                Log($"P{i}  {p.X}, {p.Y}, {p.Z} ");
+            }
+
+            for (int i = 0; i < loopFaces.Count; i++)
+            {
+                LoopFace p = loopFaces[i];
+                Log($"F{i}  P1 {p.P1}, P2 {p.P2}, P3  {p.P3}  E1 {p.E1} E2 {p.E2} E3 {p.E3}");
+            }
+
+            for (int i = 0; i < loopEdges.Count; i++)
+            {
+                LoopEdge e = loopEdges[i];
+                Log($"E{i}  {e.Start}, {e.End}  F1 {e.F1}  F2 {e.F2} ");
+            }
+        }
+
+        private int FindEdge(int p1, int p2)
+        {
+            int e = -1;
+            int i = 0;
+            foreach (LoopEdge ce in loopEdges)
+            {
+                if (ce.Start == p1 && ce.End == p2)
+                {
+                    e = i;
+                    break;
+                }
+                if (ce.Start == p2 && ce.End == p1)
+                {
+                    e = i;
+                    break;
+                }
+                i++;
+            }
+            return e;
         }
 
         private void GenerateNewEdgePoints()
@@ -154,11 +186,34 @@ namespace Barnacle.Models.LoopSmoothing
             foreach (LoopEdge ce in loopEdges)
             {
                 ce.MakeEdgePoint(loopFaces, loopPoints);
-
             }
         }
 
+        private void GenerateNewFaces()
+        {
+            foreach (LoopFace fc in loopFaces)
+            {
+                // make new centre face
+                MakeFace(loopEdges[fc.E1].Ep, loopEdges[fc.E2].Ep, loopEdges[fc.E3].Ep);
 
+                // make face from p1
+                MakeFace(loopPoints[fc.P1].UpdatedPosition, loopEdges[fc.E1].Ep, loopEdges[fc.E3].Ep);
+
+                // make face from p2
+                MakeFace(loopPoints[fc.P2].UpdatedPosition, loopEdges[fc.E2].Ep, loopEdges[fc.E1].Ep);
+
+                // make face from p3
+                MakeFace(loopPoints[fc.P3].UpdatedPosition, loopEdges[fc.E3].Ep, loopEdges[fc.E2].Ep);
+            }
+        }
+
+        private void GenerateNewUnweightedEdgePoints()
+        {
+            foreach (LoopEdge ce in loopEdges)
+            {
+                ce.MakeUnweightedEdgePoint(loopFaces, loopPoints);
+            }
+        }
 
         private void InitialiseData(Point3DCollection p3col, Int32Collection icol)
         {
@@ -168,7 +223,6 @@ namespace Barnacle.Models.LoopSmoothing
 
             foreach (Point3D p in p3col)
             {
-
                 LoopPoint cp = new LoopPoint(p);
                 loopPoints.Add(cp);
             }
@@ -194,7 +248,6 @@ namespace Barnacle.Models.LoopSmoothing
                     loopPoints[f.P2].Edges.Add(loopEdges.Count);
                     ei = loopEdges.Count;
                     loopEdges.Add(e1);
-
                 }
                 else
                 {
@@ -244,58 +297,23 @@ namespace Barnacle.Models.LoopSmoothing
                     loopEdges[ei].OppositePoint2 = f.P2;
                 }
                 f.E3 = ei;
-
             }
-         //   Dump();
-
+            //   Dump();
         }
 
-        void Log(String s)
+        private void Log(String s)
         {
             System.Diagnostics.Debug.WriteLine(s);
         }
 
-        private void Dump()
+        private void MakeFace(LoopCoord ep1, LoopCoord ep2, LoopCoord ep3)
         {
-            for (int i = 0; i < loopPoints.Count; i++)
-            {
-                LoopPoint p = loopPoints[i];
-                Log($"P{i}  {p.X}, {p.Y}, {p.Z} ");
-            }
-
-            for (int i = 0; i < loopFaces.Count; i++)
-            {
-                LoopFace p = loopFaces[i];
-                Log($"F{i}  P1 {p.P1}, P2 {p.P2}, P3  {p.P3}  E1 {p.E1} E2 {p.E2} E3 {p.E3}");
-            }
-
-            for (int i = 0; i < loopEdges.Count; i++)
-            {
-                LoopEdge e = loopEdges[i];
-                Log($"E{i}  {e.Start}, {e.End}  F1 {e.F1}  F2 {e.F2} ");
-            }
-
-        }
-
-        private int FindEdge(int p1, int p2)
-        {
-            int e = -1;
-            int i = 0;
-            foreach (LoopEdge ce in loopEdges)
-            {
-                if (ce.Start == p1 && ce.End == p2)
-                {
-                    e = i;
-                    break;
-                }
-                if (ce.Start == p2 && ce.End == p1)
-                {
-                    e = i;
-                    break;
-                }
-                i++;
-            }
-            return e;
+            int v1 = AddVertice(ep1.X, ep1.Y, ep1.Z);
+            int v2 = AddVertice(ep2.X, ep2.Y, ep2.Z);
+            int v3 = AddVertice(ep3.X, ep3.Y, ep3.Z);
+            faces.Add(v1);
+            faces.Add(v2);
+            faces.Add(v3);
         }
     }
 }

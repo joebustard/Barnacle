@@ -1,71 +1,128 @@
-﻿<UserControl x:Class="Barnacle.Views.ObjectPalette"
+<UserControl Background="{StaticResource WindowBackBrush }"
+             d:DesignHeight="300"
+             d:DesignWidth="800"
+             mc:Ignorable="d"
+             x:Class="Barnacle.Views.ObjectPalette"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.Views"
-
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
-             mc:Ignorable="d"
-             d:DesignHeight="300" d:DesignWidth="800" Background="{StaticResource WindowBackBrush }">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <UserControl.DataContext>
         <ViewModels:ObjectPaletteViewModel />
     </UserControl.DataContext>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="20" />
+            <RowDefinition Height="20"/>
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0"   HorizontalContentAlignment="Center" Style="{StaticResource InverseLabel}">Primitive Objects</Label>
+        <Label Grid.Row="0"
+               HorizontalContentAlignment="Center"
+               Style="{StaticResource InverseLabel}">
+        Primitive Objects
+        </Label>
+        <UniformGrid Columns="4"
+                     Grid.Row="1"
+                     MinHeight="160"
+                     VerticalAlignment="Top">
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Box"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a box object">
+                <Image Source="/Barnacle;component/Images/Buttons/Square.png"/>
 
-        <UniformGrid Grid.Row="1" Columns="4" VerticalAlignment="Top" MinHeight="160">
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Sphere"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a sphere object">
+                <Image Source="/Barnacle;component/Images/Buttons/Circle.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Box" ToolTip="Add a box object">
-                <Image Source="/Barnacle;component/Images/Buttons/Square.png" />
             </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Sphere" ToolTip="Add a sphere object">
-                <Image Source="/Barnacle;component/Images/Buttons/Circle.png" />
-            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Cylinder"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a cylinder object">
+                <Image Source="/Barnacle;component/Images/Buttons/Cylinder.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cylinder" ToolTip="Add a cylinder object">
-                <Image Source="/Barnacle;component/Images/Buttons/Cylinder.png" />
             </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Roof"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a roof object">
+                <Image Source="/Barnacle;component/Images/Buttons/Roof.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Roof" ToolTip="Add a roof object">
-                <Image Source="/Barnacle;component/Images/Buttons/Roof.png" />
             </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cone" ToolTip="Add a cone object">
-                <Image Source="/Barnacle;component/Images/Buttons/Cone.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid" ToolTip="Add a pyramid with a square base">
-                <Image Source="/Barnacle;component/Images/Buttons/Pyramid.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RoundRoof" ToolTip="Add a round roof object">
-                <Image Source="/Barnacle;component/Images/Buttons/RoundRoof.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Torus" ToolTip="Add a torus object">
-                <Image Source="/Barnacle;component/Images/Buttons/Torus.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Cap" ToolTip="Add a cap object">
-                <Image Source="/Barnacle;component/Images/Buttons/Cap.png" />
-            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Cone"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a cone object">
+                <Image Source="/Barnacle;component/Images/Buttons/Cone.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Polygon" ToolTip="Add a polygon object">
-                <Image Source="/Barnacle;component/Images/Buttons/Polygon.png" />
             </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Tube" ToolTip="Add a tube object">
-                <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
-            </Button>
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="RightAngle" ToolTip="Add a right angle object">
-                <Image Source="/Barnacle;component/Images/Buttons/RightAngle.png" />
-            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Pyramid"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a pyramid with a square base">
+                <Image Source="/Barnacle;component/Images/Buttons/Pyramid.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pointy" ToolTip="Add a  pointy object">
-                <Image Source="/Barnacle;component/Images/Buttons/Pointy.png" />
             </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="RoundRoof"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a round roof object">
+                <Image Source="/Barnacle;component/Images/Buttons/RoundRoof.png"/>
 
-            <Button Style="{StaticResource ImageButton}" Command="{Binding AddCommand}" CommandParameter="Pyramid2" ToolTip="Add a pyramid with a triangular base">
-                <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png" />
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Torus"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a torus object">
+                <Image Source="/Barnacle;component/Images/Buttons/Torus.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Cap"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a cap object">
+                <Image Source="/Barnacle;component/Images/Buttons/Cap.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Polygon"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a polygon object">
+                <Image Source="/Barnacle;component/Images/Buttons/Polygon.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Tube"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a tube object">
+                <Image Source="/Barnacle;component/Images/Buttons/Tube.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="RightAngle"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a right angle object">
+                <Image Source="/Barnacle;component/Images/Buttons/RightAngle.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Pointy"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a  pointy object">
+                <Image Source="/Barnacle;component/Images/Buttons/Pointy.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Pyramid2"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a pyramid with a triangular base">
+                <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png"/>
+
             </Button>
         </UniformGrid>
     </Grid>

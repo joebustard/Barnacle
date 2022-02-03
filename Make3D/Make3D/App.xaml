@@ -3,6 +3,7 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:local="clr-namespace:Barnacle"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- <Setter Property="MaxWidth" Value="120" /> -->
     <Application.Resources>
         <SolidColorBrush Color="#770000"
                          x:Key="TextBrush"/>
@@ -90,7 +91,6 @@
             <Setter Property="CornerRadius"
                     Value="6,0,6,0"/>
         </Style>
-    <!-- <Setter Property="MaxWidth" Value="120" /> -->
         <Style BasedOn="{StaticResource RoundedButton}"
                TargetType="Button">
             <Setter Property="Foreground"

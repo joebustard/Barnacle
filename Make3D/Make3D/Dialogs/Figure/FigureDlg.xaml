@@ -1,141 +1,291 @@
-﻿<local:BaseModellerDialog x:Class="Barnacle.Dialogs.FigureDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-        Title="Figure" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
-
-    <Grid VerticalAlignment="Stretch" MouseDown="Grid_MouseDown" MouseUp="Grid_MouseUp">
+<local:BaseModellerDialog Background="{StaticResource WindowBackBrush }"
+                          Loaded="Window_Loaded"
+                          mc:Ignorable="d"
+                          Title="Figure"
+                          WindowStartupLocation="CenterOwner"
+                          x:Class="Barnacle.Dialogs.FigureDlg"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:local="clr-namespace:Barnacle.Dialogs"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          Width="800"
+                          Height="450">
+    <Grid MouseDown="Grid_MouseDown"
+          MouseUp="Grid_MouseUp"
+          VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
-            <RowDefinition Height="25" />
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Grid Grid.Column="1"
+              Grid.Row="0">
             <TabControl SelectedIndex="{Binding SelectedTabItem}">
                 <TabItem Header="Figure">
                     <Grid>
-
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
                             <RowDefinition />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="1" FontSize="16" HorizontalAlignment="Center">Models</Label>
-
-                        <ListView Grid.Row="2" ItemsSource="{Binding AllModelAssignments}">
+                        <Label FontSize="16"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center">
+                        Models
+                        </Label>
+                        <ListView Grid.Row="2"
+                                  ItemsSource="{Binding AllModelAssignments}">
                         </ListView>
-
-                        <StackPanel Grid.Row="5" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="7" Orientation="Horizontal"></StackPanel>
-                        <StackPanel Grid.Row="9" Orientation="Horizontal"></StackPanel>
+                        <StackPanel Grid.Row="5"
+                                    Orientation="Horizontal">
+                        </StackPanel>
+                        <StackPanel Grid.Row="7"
+                                    Orientation="Horizontal">
+                        </StackPanel>
+                        <StackPanel Grid.Row="9"
+                                    Orientation="Horizontal">
+                        </StackPanel>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Skeleton">
                     <Grid>
-
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
-                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25"/>
                         </Grid.RowDefinitions>
-                        <Label Grid.Row="0" Style="{StaticResource InverseLabel}">Skeleton</Label>
-                        <StackPanel Grid.Row="2" Orientation="Horizontal">
-                            <Label Width="40">Bone</Label>
-                            <ComboBox Width="200" SelectedItem="{Binding SelectedBoneName}" ItemsSource="{Binding AllBoneNames}" />
+                        <Label Grid.Row="0"
+                               Style="{StaticResource InverseLabel}">
+                        Skeleton
+                        </Label>
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Horizontal">
+                            <Label Width="40">
+                            Bone
+                            </Label>
+                            <ComboBox ItemsSource="{Binding AllBoneNames}"
+                                      SelectedItem="{Binding SelectedBoneName}"
+                                      Width="200"/>
                         </StackPanel>
-                        <StackPanel Grid.Row="3" Orientation="Horizontal">
-                            <Label Width="40" HorizontalContentAlignment="Right">Xr</Label>
-                            <TextBox Width="60" Text="{Binding SelectedXRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
-                            <Button Width="20" Style="{StaticResource SmallButton}" Content="-" Click="XrMinus" />
-                            <Button Width="20" Style="{StaticResource SmallButton}" Content="+" Click="XrPlus" />
-                            <Label Margin="10,0" Width="40" HorizontalContentAlignment="Right">Yr</Label>
-                            <TextBox Width="60" Text="{Binding SelectedYRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
-                            <Button Width="20" Style="{StaticResource SmallButton}" Content="-" Click="YrMinus" />
-                            <Button Width="20" Style="{StaticResource SmallButton}" Content="+" Click="YrPlus" />
-                            <Label Width="40" HorizontalContentAlignment="Right">Zr</Label>
-                            <TextBox Width="60" Text="{Binding SelectedZRot}" Margin="0,2,2,2" />
-                            <Button Width="20" Style="{StaticResource SmallButton}" Content="-" Click="ZrMinus" />
-                            <Button Width="20" Style="{StaticResource SmallButton}" Content="+" Click="ZrPlus" />
+                        <StackPanel Grid.Row="3"
+                                    Orientation="Horizontal">
+                            <Label HorizontalContentAlignment="Right"
+                                   Width="40">
+                            Xr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding SelectedXRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="60"/>
+                            <Button Click="XrMinus"
+                                    Content="-"
+                                    Style="{StaticResource SmallButton}"
+                                    Width="20"/>
+
+                            <Button Click="XrPlus"
+                                    Content="+"
+                                    Style="{StaticResource SmallButton}"
+                                    Width="20"/>
+
+                            <Label HorizontalContentAlignment="Right"
+                                   Margin="10,0"
+                                   Width="40">
+                            Yr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding SelectedYRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="60"/>
+                            <Button Click="YrMinus"
+                                    Content="-"
+                                    Style="{StaticResource SmallButton}"
+                                    Width="20"/>
+
+                            <Button Click="YrPlus"
+                                    Content="+"
+                                    Style="{StaticResource SmallButton}"
+                                    Width="20"/>
+
+                            <Label HorizontalContentAlignment="Right"
+                                   Width="40">
+                            Zr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding SelectedZRot}"
+                                     Width="60"/>
+                            <Button Click="ZrMinus"
+                                    Content="-"
+                                    Style="{StaticResource SmallButton}"
+                                    Width="20"/>
+
+                            <Button Click="ZrPlus"
+                                    Content="+"
+                                    Style="{StaticResource SmallButton}"
+                                    Width="20"/>
+
                         </StackPanel>
-                        <StackPanel Grid.Row="4" Orientation="Horizontal">
-                            <Label Width="40" HorizontalContentAlignment="Right">L</Label>
-                            <TextBox Width="60" Text="{Binding SelectedLength, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
-                            <Label Width="40" HorizontalContentAlignment="Right">W</Label>
-                            <TextBox Width="60" Text="{Binding SelectedWidth, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
-                            <Label Width="40" HorizontalContentAlignment="Right">H</Label>
-                            <TextBox Width="60" Text="{Binding SelectedHeight, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" />
+                        <StackPanel Grid.Row="4"
+                                    Orientation="Horizontal">
+                            <Label HorizontalContentAlignment="Right"
+                                   Width="40">
+                            L
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding SelectedLength, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="60"/>
+                            <Label HorizontalContentAlignment="Right"
+                                   Width="40">
+                            W
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding SelectedWidth, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="60"/>
+                            <Label HorizontalContentAlignment="Right"
+                                   Width="40">
+                            H
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding SelectedHeight, UpdateSourceTrigger=PropertyChanged}"
+                                     Width="60"/>
                         </StackPanel>
-                        <StackPanel Grid.Row="5" Orientation="Horizontal">
-                            <CheckBox VerticalAlignment="Center" IsChecked="{Binding EditLimits}">Edit Limits</CheckBox>
+                        <StackPanel Grid.Row="5"
+                                    Orientation="Horizontal">
+                            <CheckBox IsChecked="{Binding EditLimits}"
+                                      VerticalAlignment="Center">
+                            Edit Limits
+                            </CheckBox>
                         </StackPanel>
-                        <StackPanel Grid.Row="6" Orientation="Horizontal">
-                            <Label Width="40" HorizontalContentAlignment="Right" Visibility="{Binding LimitsVisible}">Min Xr</Label>
-                            <TextBox Width="60" Text="{Binding MinimumXRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
-                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Min Yr</Label>
-                            <TextBox Width="60" Text="{Binding MinimumYRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
-                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Min Zr</Label>
-                            <TextBox Width="60" Text="{Binding MinimumZRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
+                        <StackPanel Grid.Row="6"
+                                    Orientation="Horizontal">
+                            <Label HorizontalContentAlignment="Right"
+                                   Visibility="{Binding LimitsVisible}"
+                                   Width="40">
+                            Min Xr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding MinimumXRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Visibility="{Binding LimitsVisible}"
+                                     Width="60"/>
+                            <Label HorizontalContentAlignment="Right"
+                                   Visibility="{Binding LimitsVisible}"
+                                   Width="40">
+                            Min Yr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding MinimumYRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Visibility="{Binding LimitsVisible}"
+                                     Width="60"/>
+                            <Label HorizontalContentAlignment="Right"
+                                   Visibility="{Binding LimitsVisible}"
+                                   Width="40">
+                            Min Zr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding MinimumZRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Visibility="{Binding LimitsVisible}"
+                                     Width="60"/>
                         </StackPanel>
-                        <StackPanel Grid.Row="7" Orientation="Horizontal">
-                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Max Xr</Label>
-                            <TextBox Width="60" Text="{Binding MaximumXRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
-                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Max Yr</Label>
-                            <TextBox Width="60" Text="{Binding MaxiumYRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2"  Visibility="{Binding LimitsVisible}" />
-                            <Label Width="40" HorizontalContentAlignment="Right"  Visibility="{Binding LimitsVisible}">Max Zr</Label>
-                            <TextBox Width="60" Text="{Binding MaximumZRot, UpdateSourceTrigger=PropertyChanged}" Margin="0,2,2,2" Visibility="{Binding LimitsVisible}" />
+                        <StackPanel Grid.Row="7"
+                                    Orientation="Horizontal">
+                            <Label HorizontalContentAlignment="Right"
+                                   Visibility="{Binding LimitsVisible}"
+                                   Width="40">
+                            Max Xr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding MaximumXRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Visibility="{Binding LimitsVisible}"
+                                     Width="60"/>
+                            <Label HorizontalContentAlignment="Right"
+                                   Visibility="{Binding LimitsVisible}"
+                                   Width="40">
+                            Max Yr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding MaxiumYRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Visibility="{Binding LimitsVisible}"
+                                     Width="60"/>
+                            <Label HorizontalContentAlignment="Right"
+                                   Visibility="{Binding LimitsVisible}"
+                                   Width="40">
+                            Max Zr
+                            </Label>
+                            <TextBox Margin="0,2,2,2"
+                                     Text="{Binding MaximumZRot, UpdateSourceTrigger=PropertyChanged}"
+                                     Visibility="{Binding LimitsVisible}"
+                                     Width="60"/>
                         </StackPanel>
-                        <Label Grid.Row="9" Style="{StaticResource InverseLabel}">Pose</Label>
-                        <StackPanel Grid.Row="10" Orientation="Horizontal">
-                            <Button Margin="2,2,2,2" ToolTip="Reset the skeleton to its default pose" Click="ResetPoseClicked">Reset</Button>
-                            <Button Margin="2,2,2,2" ToolTip="Save the current pose"  Click="SavePoseClicked">Save</Button>
-                            <Button Margin="2,2,2,2" ToolTip="Load a pose" Click="LoadPoseClicked">Load</Button>
+                        <Label Grid.Row="9"
+                               Style="{StaticResource InverseLabel}">
+                        Pose
+                        </Label>
+                        <StackPanel Grid.Row="10"
+                                    Orientation="Horizontal">
+                            <Button Click="ResetPoseClicked"
+                                    Margin="2,2,2,2"
+                                    ToolTip="Reset the skeleton to its default pose">
+                            Reset
+                            </Button>
+                            <Button Click="SavePoseClicked"
+                                    Margin="2,2,2,2"
+                                    ToolTip="Save the current pose">
+                            Save
+                            </Button>
+                            <Button Click="LoadPoseClicked"
+                                    Margin="2,2,2,2"
+                                    ToolTip="Load a pose">
+                            Load
+                            </Button>
                         </StackPanel>
-                        <StackPanel Grid.Row="11" Orientation="Horizontal"></StackPanel>
+                        <StackPanel Grid.Row="11"
+                                    Orientation="Horizontal">
+                        </StackPanel>
                     </Grid>
                 </TabItem>
             </TabControl>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
-
+        <Border Grid.Column="2"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
+            <Viewport3D Name="viewport3D1"
+                        MouseDown="Viewport_MouseDown"
+                        MouseMove="Viewport_MouseMove"
+                        MouseWheel="Viewport_MouseWheel">
                 <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                    <PerspectiveCamera LookDirection="{Binding LookDirection}"
+                                       Position="{Binding CameraPosition}"
+                                       x:Name="camMain">
                     </PerspectiveCamera>
                 </Viewport3D.Camera>
-
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                            <AmbientLight Color="#FF808080"/>
+                            <DirectionalLight Color="White"
+                                              Direction="-1,-1,-1"
+                                              x:Name="dirLightMain">
                             </DirectionalLight>
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
-
-                <ModelVisual3D x:Name = "MyModel">
+                <ModelVisual3D x:Name="MyModel">
                     <ModelVisual3D.Content>
                         <Model3DGroup x:Name="MyModelGroup">
                         </Model3DGroup>
@@ -145,30 +295,45 @@
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Column="1"
+              Grid.Row="1">
             <Grid.ColumnDefinitions>
-
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <CheckBox Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Grid.Column="2" Click="Home_Click" />
+            <CheckBox Content="Floor"
+                      Grid.Column="0"
+                      IsChecked="{Binding ShowFloor}"/>
+            <CheckBox Content="Axies"
+                      Grid.Column="1"
+                      IsChecked="{Binding ShowAxies}"/>
+            <Button Click="Home_Click"
+                    Content="Home"
+                    Grid.Column="2"/>
+
         </Grid>
-
-        <Grid Grid.Column="2" Grid.Row="1">
+        <Grid Grid.Column="2"
+              Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="80" />
-                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80"/>
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
+            <Button Click="Cancel_Click"
+                    Content="Cancel"
+                    Grid.Column="1"
+                    Margin="2,2,2,2"/>
+
+            <Button Click="Ok_Click"
+                    Content="Ok"
+                    Grid.Column="2"
+                    Margin="2,2,2,2"/>
+
         </Grid>
     </Grid>
 </local:BaseModellerDialog>
