@@ -22,7 +22,7 @@ namespace Barnacle.Views
         public EditorView()
         {
             InitializeComponent();
-            NotificationManager.Subscribe("Editor","UpdateDisplay", UpdateDisplay);
+            NotificationManager.Subscribe("Editor", "UpdateDisplay", UpdateDisplay);
             NotificationManager.Subscribe("Editor", "MultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("Editor", "KeyUp", OnKeyUp);
             NotificationManager.Subscribe("Editor", "KeyDown", OnKeyDown);
@@ -155,8 +155,9 @@ namespace Barnacle.Views
                     }
                     NotificationManager.Notify("DoMultiPaste", cfg);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    MessageBox.Show(ex.Message);
                 }
             }
         }

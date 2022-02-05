@@ -938,7 +938,8 @@ namespace Barnacle.ViewModels
                 //
                 switch (ori)
                 {
-                    case "X":
+                    case "XDown":
+                    case "XUp":
                         {
                             double halfWidth = ob.Scale.Z / 2.0;
                             for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
@@ -953,8 +954,18 @@ namespace Barnacle.ViewModels
                                     double dtheta = forces[forcesIndex] * bendAngle;
                                     double theta = Math.Atan2(ob.RelativeObjectVertices[i].Y, ob.RelativeObjectVertices[i].Z);
                                     double r = Math.Sqrt(y * y + z * z);
-                                    double nz = Math.Cos(theta + (sn * dtheta)) * r;
-                                    double ny = Math.Sin(theta + (sn * dtheta)) * r;
+                                    double nz;
+                                    double ny;
+                                    if (ori == "XDown")
+                                    {
+                                        nz = Math.Cos(theta + (sn * dtheta)) * r;
+                                        ny = Math.Sin(theta + (sn * dtheta)) * r;
+                                    }
+                                    else
+                                    {
+                                        nz = Math.Cos(theta - (sn * dtheta)) * r;
+                                        ny = Math.Sin(theta - (sn * dtheta)) * r;
+                                    }
                                     ob.RelativeObjectVertices[i] = new P3D(ob.RelativeObjectVertices[i].X, ny, nz);
                                 }
                             }
@@ -963,7 +974,8 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
-                    case "Y":
+                    case "YDown":
+                    case "YUp":
                         {
                             double halfWidth = ob.Scale.X / 2.0;
                             for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
@@ -973,6 +985,10 @@ namespace Barnacle.ViewModels
                                 if (forcesIndex >= 0 && forcesIndex < numForces)
                                 {
                                     double sn = -Math.Sign(ob.RelativeObjectVertices[i].X);
+                                    if (ori == "YUp")
+                                    {
+                                        sn = -sn;
+                                    }
                                     double z = ob.RelativeObjectVertices[i].Z;
                                     double x = ob.RelativeObjectVertices[i].X;
                                     double dtheta = forces[forcesIndex] * bendAngle;
@@ -988,7 +1004,8 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
-                    case "Z":
+                    case "ZUp":
+                    case "ZDown":
                         {
                             double halfWidth = ob.Scale.X / 2.0;
                             for (int i = 0; i < ob.RelativeObjectVertices.Count; i++)
@@ -998,6 +1015,10 @@ namespace Barnacle.ViewModels
                                 if (forcesIndex >= 0 && forcesIndex < numForces)
                                 {
                                     double sn = -Math.Sign(ob.RelativeObjectVertices[i].X);
+                                    if (ori == "ZUp")
+                                    {
+                                        sn = -sn;
+                                    }
                                     double y = ob.RelativeObjectVertices[i].Y;
                                     double x = ob.RelativeObjectVertices[i].X;
                                     double dtheta = forces[forcesIndex] * bendAngle;
