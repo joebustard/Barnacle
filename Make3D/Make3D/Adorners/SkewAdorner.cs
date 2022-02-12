@@ -124,7 +124,7 @@ namespace Barnacle.Models.Adorners
                 if (box.Mesh == geo.Geometry)
                 {
                     handled = true;
-                    //boxSelected = true;
+                   
                 }
                 else
                 {
@@ -159,7 +159,7 @@ namespace Barnacle.Models.Adorners
             box.Normals = normals;
             box.Position = position;
             box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
-            //box.Scale.Adjust(1.1, 1.1, 1.1);
+            
             box.Color = Color.FromArgb(150, 64, 64, 64);
             box.RelativeToAbsolute();
             box.SetMesh();
@@ -188,7 +188,7 @@ namespace Barnacle.Models.Adorners
             thumb.Name = name;
             List<P3D> tmp = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, tmp);
-            //thumb.RelativeObjectVertices = pnts;
+            
             thumb.RelativeObjectVertices = tmp;
             thumb.TriangleIndices = indices;
             thumb.Normals = normals;

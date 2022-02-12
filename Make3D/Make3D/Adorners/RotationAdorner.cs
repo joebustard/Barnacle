@@ -133,7 +133,7 @@ namespace Barnacle.Models.Adorners
             sphere.Normals = normals;
             sphere.Position = position;
             sphere.ScaleMesh(size.X * 2, size.Y * 2, size.Z * 2);
-            //box.Scale.Adjust(1.1, 1.1, 1.1);
+            
             sphere.Color = Color.FromArgb(150, 64, 64, 64);
             sphere.RelativeToAbsolute();
             sphere.SetMesh();
@@ -151,7 +151,7 @@ namespace Barnacle.Models.Adorners
             rect.Name = name;
             List<P3D> tmp = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, tmp);
-            //  rect.RelativeObjectVertices = pnts;
+            
             rect.RelativeObjectVertices = tmp;
             rect.TriangleIndices = indices;
             rect.Normals = normals;

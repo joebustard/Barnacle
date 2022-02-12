@@ -206,13 +206,13 @@ namespace Barnacle.Models.Adorners
             PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
             List<P3D> tmp = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, tmp);
-            //box.RelativeObjectVertices = pnts;
+            
             box.RelativeObjectVertices = tmp;
             box.TriangleIndices = indices;
             box.Normals = normals;
             box.Position = position;
             box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
-            //box.Scale.Adjust(1.1, 1.1, 1.1);
+            
             box.Color = Color.FromArgb(150, 64, 64, 64);
             box.Remesh();
             Adornments.Add(GetMesh(box));
@@ -241,7 +241,7 @@ namespace Barnacle.Models.Adorners
             thumb.Name = name;
             List<P3D> tmp = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, tmp);
-            //thumb.RelativeObjectVertices = pnts;
+            
             thumb.RelativeObjectVertices = tmp;
             thumb.TriangleIndices = indices;
             thumb.Normals = normals;
@@ -528,7 +528,7 @@ namespace Barnacle.Models.Adorners
             MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
             MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
             MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
-            // LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
+            
             LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
             NotificationManager.Notify("DocDirty", null);
             NotificationManager.Notify("ScaleUpdated", null);

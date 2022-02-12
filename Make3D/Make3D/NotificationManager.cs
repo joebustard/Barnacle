@@ -56,15 +56,10 @@ namespace Barnacle
 
         public static void Subscribe(string name, RXMessage fnc)
         {
-            ObserverDef df = new ObserverDef();
-            df.subscriberName = "";
-            df.messageName = name;
-            df.observer = fnc;
-            df.alive = true;
-            observers.Add(df);
+            Subscribe("", name, fnc);
         }
 
-        public static void Subscribe(string subscriberName,string eventName, RXMessage fnc)
+        public static void Subscribe(string subscriberName, string eventName, RXMessage fnc)
         {
             ObserverDef df = new ObserverDef();
             df.subscriberName = subscriberName;
@@ -73,6 +68,7 @@ namespace Barnacle
             df.alive = true;
             observers.Add(df);
         }
+
         public static void Unsubscribe(String s)
         {
             List<ObserverDef> obs = new List<ObserverDef>();
@@ -100,6 +96,7 @@ namespace Barnacle
             }
             observers = obs;
         }
+
         private struct ObserverDef
         {
             public bool alive;
