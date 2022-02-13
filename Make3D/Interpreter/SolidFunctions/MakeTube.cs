@@ -20,7 +20,7 @@ namespace ScriptLanguage
         {
         }
 
-        public MakeTubeNode(ExpressionNode r1, ExpressionNode th, ExpressionNode up, ExpressionNode low, ExpressionNode h, ExpressionNode swp) : base(r1)
+        public MakeTubeNode(ExpressionNode r1, ExpressionNode th, ExpressionNode low, ExpressionNode up, ExpressionNode h, ExpressionNode swp) : base(r1)
         {
             this.radiusExp = r1;
             this.thicknessExp = th;

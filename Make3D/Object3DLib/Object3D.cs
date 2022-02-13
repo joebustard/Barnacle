@@ -31,6 +31,13 @@ namespace Barnacle.Object3DLib
             Y = (float)y;
             Z = (float)z;
         }
+
+        public P3D(Point3D pn)
+        {
+            X = (float)pn.X;
+            Y = (float)pn.Y;
+            Z = (float)pn.Z;
+        }
     }
 
     public class Object3D
@@ -691,11 +698,13 @@ namespace Barnacle.Object3DLib
             List<P3D> pn = new List<P3D>();
             for (int i = 0; i < RelativeObjectVertices.Count; i++)
             {
-                // pn.Add(new Point3D(RelativeObjectVertices[i].X + dx,
+                
                 pn.Add(new P3D((float)RelativeObjectVertices[i].X + (float)dx,
                (float)RelativeObjectVertices[i].Y + (float)dy,
                (float)RelativeObjectVertices[i].Z + (float)dz));
             }
+            RelativeObjectVertices.Clear();
+            
             RelativeObjectVertices = pn;
             Position = new Point3D(0, 0, 0);
             Remesh();

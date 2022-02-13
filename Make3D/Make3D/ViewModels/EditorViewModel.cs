@@ -2396,8 +2396,11 @@ namespace Barnacle.ViewModels
                                             numObs++;
                                         }
                                         localDoc.Save(targetPath);
+                                        
                                         string fldr = System.IO.Path.GetDirectoryName(targetPath);
                                         BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+
+                                        localDoc.Clear();
                                         localDoc = null;
                                         GC.Collect();
                                     }
@@ -2408,7 +2411,7 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
-                                    System.Windows.MessageBox.Show("File already exists:" + targetPath, "Error");
+                                    System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
                                 }
                             }
                         }

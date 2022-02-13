@@ -132,6 +132,28 @@ namespace Barnacle.Models
             }
         }
 
+        public void Import(string filename, ref Vector3DCollection normals, ref List<P3D> pnts, ref Int32Collection tris, bool swapYZ)
+        {
+            normals.Clear();
+            pnts.Clear();
+            tris.Clear();
+            // we are trying to import a binary stl file but
+            // it might actually be a different format sneakily pretending to be stl
+            // Take a peek
+            String ft = CheckFileFormat(filename);
+            if (ft == "BinSTL")
+            {
+                //ReadBinaryStl(filename, normals, pnts, tris, swapYZ);
+                ReadBinaryStl(filename,  normals, pnts, tris, swapYZ);
+            }
+            else if (ft == "AsciiSTL")
+            {
+                //ReadAsciiStl(filename, normals, pnts, tris, swapYZ);
+                ReadAsciiStl(filename, normals, pnts, tris, swapYZ);
+            }
+        }
+
+
         private static int AddVertex(Point3DCollection verts, Point3D pn)
         {
             int res = -1;
@@ -147,6 +169,26 @@ namespace Barnacle.Models
             if (res == -1)
             {
                 verts.Add(pn);
+                res = verts.Count - 1;
+            }
+            return res;
+        }
+
+        private static int AddVertex(List<P3D> verts, Point3D pn)
+        {
+            int res = -1;
+            for (int i = 0; i < verts.Count; i++)
+            {
+                if (PointUtils.equals(verts[i], pn.X, pn.Y, pn.Z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                verts.Add(new P3D(pn));
                 res = verts.Count - 1;
             }
             return res;
@@ -181,6 +223,52 @@ namespace Barnacle.Models
         }
 
         private static void ReadAsciiStl(string filename, Vector3DCollection normals, Point3DCollection pnts, Int32Collection tris, bool swap)
+        {
+            //            facet normal ni nj nk
+            //                 outer loop
+            //                  vertex v1x v1y v1z
+            //                  vertex v2x v2y v2z
+            //                  vertex v3x v3y v3z
+            //                 endloop
+            //            endfacet
+            FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+
+            if (stream != null)
+            {
+                var reader = new StreamReader(stream);
+                string line = "";
+                while (!line.ToLower().StartsWith("endsolid") && !reader.EndOfStream)
+                {
+                    line = reader.ReadLine().ToLower().Trim();
+                    if (line.StartsWith("facet"))
+                    {
+                        // skip outer loop string
+                        line = reader.ReadLine().ToLower();
+
+                        // p0
+                        line = reader.ReadLine().ToLower();
+                        Point3D pnt = GetVFromLine(line, swap);
+                        int p0 = AddVertex(pnts, pnt);
+
+                        // p1
+                        line = reader.ReadLine().ToLower();
+                        pnt = GetVFromLine(line, swap);
+                        int p1 = AddVertex(pnts, pnt);
+
+                        // p2
+                        line = reader.ReadLine().ToLower();
+                        pnt = GetVFromLine(line, swap);
+                        int p2 = AddVertex(pnts, pnt);
+
+                        tris.Add(p0);
+                        tris.Add(p1);
+                        tris.Add(p2);
+                    }
+                }
+                stream.Close();
+            }
+        }
+        private static void ReadAsciiStl(string filename, Vector3DCollection normals, List<P3D> pnts, Int32Collection tris, bool swap)
         {
             //            facet normal ni nj nk
             //                 outer loop
@@ -285,6 +373,72 @@ namespace Barnacle.Models
                     else
                     {
                         pnts.Add(new Point3D(x, y, z));
+                    }
+                    tris.Add(pnts.Count - 1);
+                    ushort dummy = reader.ReadUInt16();
+                }
+                stream.Close();
+            }
+        }
+
+        private static void ReadBinaryStl(string filename, Vector3DCollection normals, List<P3D> pnts, Int32Collection tris, bool swap)
+        {
+            FileStream stream = new FileStream(filename, FileMode.Open, FileAccess.Read);
+
+            if (stream != null)
+            {
+                var reader = new BinaryReader(stream);
+                var header = new byte[80]; // can be a garbage value
+                reader.Read(header, 0, 80);
+                uint totalTriangles = reader.ReadUInt32();
+                float x, y, z;
+                for (int i = 0; i < totalTriangles; i++)
+                {
+                    x = reader.ReadSingle();
+                    y = reader.ReadSingle();
+                    z = reader.ReadSingle();
+                    if (swap)
+                    {
+                        normals.Add(new Vector3D(x, z, y));
+                    }
+                    else
+                    {
+                        normals.Add(new Vector3D(x, y, z));
+                    }
+                    x = reader.ReadSingle();
+                    y = reader.ReadSingle();
+                    z = reader.ReadSingle();
+                    if (swap)
+                    {
+                        pnts.Add(new P3D(x, z, y));
+                    }
+                    else
+                    {
+                        pnts.Add(new P3D(x, y, z));
+                    }
+                    tris.Add(pnts.Count - 1);
+                    x = reader.ReadSingle();
+                    y = reader.ReadSingle();
+                    z = reader.ReadSingle();
+                    if (swap)
+                    {
+                        pnts.Add(new P3D(x, z, y));
+                    }
+                    else
+                    {
+                        pnts.Add(new P3D(x, y, z));
+                    }
+                    tris.Add(pnts.Count - 1);
+                    x = reader.ReadSingle();
+                    y = reader.ReadSingle();
+                    z = reader.ReadSingle();
+                    if (swap)
+                    {
+                        pnts.Add(new P3D(x, z, y));
+                    }
+                    else
+                    {
+                        pnts.Add(new P3D(x, y, z));
                     }
                     tris.Add(pnts.Count - 1);
                     ushort dummy = reader.ReadUInt16();

@@ -443,6 +443,11 @@ namespace Barnacle.Models
             FileName = "Untitled";
             Extension = ".txt";
             Caption = "untitled";
+            if ( Content != null )
+            {
+                Content.Clear();
+                
+            }
             Content = new List<Object3D>();
             ProjectSettings = new ProjectSettings();
             nextId = 0;
@@ -799,7 +804,7 @@ namespace Barnacle.Models
                 ob.MoveToFloor();
             }
         }
-
+        /*
         internal void ImportStl(string fileName, bool swapYZ)
         {
             STLExporter exp = new STLExporter();
@@ -809,6 +814,7 @@ namespace Barnacle.Models
             Int32Collection tris = new Int32Collection();
             Object3D ob = new Object3D();
             exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
+
             ob.Normals = normals;
             List<P3D> coords = new List<P3D>();
             PointUtils.PointCollectionToP3D(pnts, coords);
@@ -828,7 +834,32 @@ namespace Barnacle.Models
             ob.Name = "Object_" + Content.Count.ToString();
             Dirty = true;
         }
+        */
+        internal void ImportStl(string fileName, bool swapYZ)
+        {
+            STLExporter exp = new STLExporter();
+          
+            Object3D ob = new Object3D();
+            Vector3DCollection normals = ob.Normals;
+            List<P3D> pnts = ob.RelativeObjectVertices;
 
+            Int32Collection tris = ob.TriangleIndices;
+            exp.Import(fileName, ref normals,ref pnts,ref tris, swapYZ);
+
+            ob.PrimType = "Mesh";
+            ob.CalcScale();
+            ob.RelativeToAbsolute();
+
+            ob.Mesh.Positions = ob.AbsoluteObjectVertices;
+            ob.Mesh.TriangleIndices = ob.TriangleIndices;
+            ob.Mesh.Normals = ob.Normals;
+            ob.Rotate(new Point3D(-90, 0, 0));
+            ob.MoveToFloor();
+            ob.Remesh();
+            Content.Add(ob);
+            ob.Name = "Object_" + Content.Count.ToString();
+            Dirty = true;
+        }
         internal void InsertFile(string fileName)
         {
             Read(fileName, false);
