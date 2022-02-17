@@ -7,7 +7,7 @@ namespace ScriptLanguage
         private String[] functionNames;
         private String[] keywords;
         private Tokeniser tokeniser;
-
+        private string lastError;
         // Instance constructor
         public Interpreter()
         {
@@ -112,7 +112,7 @@ namespace ScriptLanguage
         public bool Load(Script script, string FilePath)
         {
             bool result = false;
-
+            lastError = "";
             if (script != null)
             {
                 if (FilePath != "")
@@ -132,6 +132,7 @@ namespace ScriptLanguage
         public bool LoadFromText(Script script, string text, string originalfilePath)
         {
             bool result = false;
+            lastError = "";
             SymbolTable.Instance().Clear();
             ExecutionStack.Instance().Clear();
             CProcedureCache.Instance().Clear();
@@ -481,7 +482,7 @@ namespace ScriptLanguage
                                 token = parentName + token;
                                 if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                                 {
-                                    ReportSyntaxError("Duplicate variable name");
+                                    ReportSyntaxError("Duplicate variable name "+strVarName);
                                 }
                                 else
                                 {
@@ -559,8 +560,12 @@ namespace ScriptLanguage
                             }
                         }
                         else
-                            ReportSyntaxError("Expected variable name");
+                            ReportSyntaxError("Expected variable name , found "+token);
                     }
+                }
+                else
+                {
+                    ReportSyntaxError("Expected ], found "+token);
                 }
             }
             else
@@ -637,7 +642,7 @@ namespace ScriptLanguage
                     }
                     else
                     {
-                        ReportSyntaxError("Expected parameter name");
+                        ReportSyntaxError("Expected parameter name, found "+ token);
                     }
                 }
                 else
@@ -670,7 +675,7 @@ namespace ScriptLanguage
                 {
                     if (token != "]")
                     {
-                        ReportSyntaxError("Expected ]");
+                        ReportSyntaxError("Expected ], found "+token);
                     }
                     else
                     {
@@ -761,7 +766,7 @@ namespace ScriptLanguage
                     tokenType != Tokeniser.TokenType.TimesEqual &&
                     tokenType != Tokeniser.TokenType.DivideEqual)
                     {
-                        ReportSyntaxError("Expected =");
+                        ReportSyntaxError("Expected = or += or -= or *= or /=, found "+token);
                     }
                     else
                     {
@@ -835,7 +840,7 @@ namespace ScriptLanguage
                 {
                     if (token != "[")
                     {
-                        ReportSyntaxError("Expected [");
+                        ReportSyntaxError("Expected [, found "+token);
                     }
                     else
                     {
@@ -846,7 +851,7 @@ namespace ScriptLanguage
                             {
                                 if (token != "]")
                                 {
-                                    ReportSyntaxError("Expected ]");
+                                    ReportSyntaxError("Expected ], found "+token);
                                 }
                                 else
                                 {
@@ -964,7 +969,7 @@ namespace ScriptLanguage
                 {
                     if (token != "[")
                     {
-                        ReportSyntaxError("Expected [");
+                        ReportSyntaxError("Expected [, found " + token);
                     }
                     else
                     {
@@ -975,7 +980,7 @@ namespace ScriptLanguage
                             {
                                 if (token != "]")
                                 {
-                                    ReportSyntaxError("Expected ]");
+                                    ReportSyntaxError("Expected ], found "+token );
                                 }
                                 else
                                 {
@@ -983,7 +988,7 @@ namespace ScriptLanguage
                                     {
                                         if (tokenType != Tokeniser.TokenType.Assignment)
                                         {
-                                            ReportSyntaxError("Expected =");
+                                            ReportSyntaxError("Expected =, found "+token);
                                         }
                                         else
                                         {
@@ -1857,7 +1862,7 @@ namespace ScriptLanguage
 
                         if (FunctionType == SymbolTable.SymbolType.unknown)
                         {
-                            ReportSyntaxError("Function declaration expected return type");
+                            ReportSyntaxError("Function declaration expected return type, found "+typeId);
                         }
                         else
                         {
@@ -1868,7 +1873,7 @@ namespace ScriptLanguage
                                     string id = token.ToLower();
                                     if (IsKeyword(id) || IsIntrinsicFunction(id))
                                     {
-                                        ReportSyntaxError("cant use keyword/function {token} in declaration");
+                                        ReportSyntaxError($"cant use keyword/function {token} in declaration");
                                     }
                                     else
                                     {
@@ -2684,7 +2689,10 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            ReportSyntaxError("Function " + functionName + " Expected )");
+                            if (lastError == "")
+                            {
+                                ReportSyntaxError("Function " + functionName + " Expected )");
+                            }
                         }
                     }
                 }
@@ -3986,7 +3994,7 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             bool bDone = false;
 
-            while (!bDone)
+            while (!bDone && result )
             {
                 bDone = true;
                 if (FetchToken(out token, out tokenType) == true)
@@ -5476,8 +5484,12 @@ namespace ScriptLanguage
 
         private void ReportSyntaxError(string p)
         {
-            Log.Instance().AddEntry(tokeniser.GetSourceUpToIndex());
+            if (lastError == "")
+            {
+                Log.Instance().AddEntry(tokeniser.GetSourceUpToIndex());
+            }
             Log.Instance().AddEntry(p);
+            lastError = p;
         }
 
         private string TitleCase(string str)
