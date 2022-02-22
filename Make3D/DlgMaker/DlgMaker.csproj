@@ -56,10 +56,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <None Include="templates\Parser.cs" />
-    <None Include="templates\Node.cs" />
-    <None Include="templates\Maker.cs" />
-    <None Include="templates\Blank.xaml.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -72,10 +68,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <None Include="templates\Blank.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -99,6 +91,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="templates\Blank.xaml">
+      <SubType>Designer</SubType>
+      <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </None>
+    <None Include="templates\Blank.xaml.cs" />
+    <None Include="templates\Maker.cs" />
+    <None Include="templates\Node.cs" />
+    <None Include="templates\Parser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
