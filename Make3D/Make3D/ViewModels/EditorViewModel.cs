@@ -107,6 +107,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Slice", OnSlice);
             NotificationManager.Subscribe("Editor", "Split", OnSplit);
             NotificationManager.Subscribe("Editor", "Bend", OnBend);
+            NotificationManager.Subscribe("Editor", "Fold", OnFold);
             NotificationManager.Subscribe("Editor", "Import", OnImport);
             NotificationManager.Subscribe("Editor", "MoveObjectToFloor", OnMoveObjectToFloor);
             NotificationManager.Subscribe("Editor", "MoveObjectToCentre", OnMoveObjectToCentre);
@@ -903,7 +904,7 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
-        private void BendObjectInHalf(Object3D ob, string ori)
+        private void BendObjectInHalf(Object3D ob, string ori,bool fold = false)
         {
             double smallObjectsLimit = 1000;
             double bendAngle = 10 * Math.PI / 180.0;
@@ -933,7 +934,14 @@ namespace Barnacle.ViewModels
                 for (int i = 0; i < numForces; i++)
                 {
                     // forces[i] = Math.Cos(theta)* Math.Cos(theta);
-                    forces[i] = (double)(i * i) / limit;
+                    if (fold)
+                    {
+                        forces[i] = 1.0;
+                    }
+                    else
+                    {
+                        forces[i] = (double)(i * i) / limit;
+                    }
                 }
                 //
                 switch (ori)
@@ -1832,7 +1840,16 @@ namespace Barnacle.ViewModels
 
         private void OnBend(object param)
         {
+            BendOver(param,false);
+        }
+        private void OnFold(object param)
+        {
+            BendOver(param, true);
+        }
+        private void BendOver(object param,bool fold)
+        {
             bool warning = true;
+            
             if (selectedObjectAdorner != null)
             {
                 if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
@@ -1858,7 +1875,7 @@ namespace Barnacle.ViewModels
                     {
                         CheckPoint();
                         string ori = param.ToString();
-                        BendObjectInHalf(ob, ori);
+                        BendObjectInHalf(ob, ori, fold);
                     }
                     warning = false;
                 }
@@ -1866,7 +1883,7 @@ namespace Barnacle.ViewModels
 
             if (warning)
             {
-                MessageBox.Show("Bend requires a single object to be selected", "Warning");
+                MessageBox.Show("Requires a single object to be selected", "Warning");
             }
         }
 

@@ -31,62 +31,68 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            int ls = -1;
-            int rs = -1;
-
-            if (EvalExpression(leftSolid, ref ls, "LeftSolid", Id()) &&
-                EvalExpression(rightSolid, ref rs, "RightSolid", Id()))
+            try
             {
-                if (ls >= 0 && ls < Script.ResultArtefacts.Count && rs >= 0 && rs < Script.ResultArtefacts.Count)
+                int ls = -1;
+                int rs = -1;
+
+                if (EvalExpression(leftSolid, ref ls, "LeftSolid", Id()) &&
+                    EvalExpression(rightSolid, ref rs, "RightSolid", Id()))
                 {
-                    Object3D leftie = Script.ResultArtefacts[ls];
-                    Object3D rightie = Script.ResultArtefacts[rs];
-                    if (leftie != null && rightie != null)
+                    if (ls >= 0 && ls < Script.ResultArtefacts.Count && rs >= 0 && rs < Script.ResultArtefacts.Count)
                     {
-                        leftie.CalcScale(false);
-
-                        rightie.CalcScale(false);
-                        Group3D grp = new Group3D();
-                        grp.Name = leftie.Name;
-                        grp.Description = leftie.Description;
-                        grp.LeftObject = leftie;
-                        if (PrimType == "groupcut")
+                        Object3D leftie = Script.ResultArtefacts[ls];
+                        Object3D rightie = Script.ResultArtefacts[rs];
+                        if (leftie != null && rightie != null)
                         {
-                            grp.RightObject = rightie.Clone();
+                            leftie.CalcScale(false);
 
-                            grp.RightObject.CalcScale(false);
-                            grp.PrimType = "groupdifference";
+                            rightie.CalcScale(false);
+                            Group3D grp = new Group3D();
+                            grp.Name = leftie.Name;
+                            grp.Description = leftie.Description;
+                            grp.LeftObject = leftie;
+                            if (PrimType == "groupcut")
+                            {
+                                grp.RightObject = rightie.Clone();
+
+                                grp.RightObject.CalcScale(false);
+                                grp.PrimType = "groupdifference";
+                            }
+                            else
+                            {
+                                grp.RightObject = rightie;
+                                grp.PrimType = PrimType;
+                            }
+                            if (grp.Init())
+                            {
+                                grp.CalcScale(false);
+                                grp.Remesh();
+                                Script.ResultArtefacts.Add(grp);
+                                ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                                leftie.Remesh();
+                                rightie.Remesh();
+                                result = true;
+                            }
+                            else
+                            {
+                                Log.Instance().AddEntry(Id() + $" : Operation Failed");
+                            }
                         }
                         else
                         {
-                            grp.RightObject = rightie;
-                            grp.PrimType = PrimType;
-                        }
-                        if (grp.Init())
-                        {
-                            grp.CalcScale(false);
-                            grp.Remesh();
-                            Script.ResultArtefacts.Add(grp);
-                            ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                            leftie.Remesh();
-                            rightie.Remesh();
-                            result = true;
-                        }
-                        else
-                        {
-                            Log.Instance().AddEntry(Id() + $" : Operation Failed");
+                            Log.Instance().AddEntry(Id() + $" : One of the solids is null (has it been deleted?) Failed");
                         }
                     }
                     else
                     {
-                        Log.Instance().AddEntry(Id() + $" : One of the solids is null (has it been deleted?) Failed");
+                        Log.Instance().AddEntry(Id() + $" : Solid doesn't exist. Have you deleted it?");
                     }
                 }
-                else
-                {
-                    Log.Instance().AddEntry(Id() + $" : Solid doesn't exist. Have you deleted it?");
-                }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"{Id()} : {ex.Message}");
             }
             return result;
         }

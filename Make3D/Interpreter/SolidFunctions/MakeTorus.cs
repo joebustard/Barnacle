@@ -39,7 +39,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
+            try
+            { 
             double mr = 0;
             double hr = 0;
             double vr = 0;
@@ -80,6 +81,11 @@ namespace ScriptLanguage
                 {
                     Log.Instance().AddEntry("MakeTorus : Illegal value");
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeTorus : {ex.Message}");
             }
             return result;
         }

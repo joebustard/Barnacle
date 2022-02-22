@@ -34,6 +34,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            try
+            { 
 
             double lt = 0;
             double h = 0;
@@ -76,7 +78,11 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeTrapezoid : Illegal value");
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeTrapezoid : {ex.Message}");
+            }
             return result;
         }
 

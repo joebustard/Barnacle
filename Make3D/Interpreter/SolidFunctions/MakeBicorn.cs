@@ -33,46 +33,51 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            double r1 = 0;
-            double r2 = 0;
-            bool g = false;
-            double h = 0;
-
-            if (EvalExpression(radius1Exp, ref r1, "Radius1") &&
-                EvalExpression(radius2Exp, ref r2, "Radius2") &&
-                EvalExpression(heightExp, ref h, "Height") &&
-                EvalExpression(doubleupExp, ref g, "DoubleUp")
-                )
+            try
             {
-                if (r1 > 0 && r2 > 0 && h > 0)
+                double r1 = 0;
+                double r2 = 0;
+                bool g = false;
+                double h = 0;
+
+                if (EvalExpression(radius1Exp, ref r1, "Radius1") &&
+                    EvalExpression(radius2Exp, ref r2, "Radius2") &&
+                    EvalExpression(heightExp, ref h, "Height") &&
+                    EvalExpression(doubleupExp, ref g, "DoubleUp")
+                    )
                 {
-                    result = true;
+                    if (r1 > 0 && r2 > 0 && h > 0)
+                    {
+                        result = true;
 
-                    Object3D obj = new Object3D();
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "Bicorn";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "Bicorn";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    BicornMaker BicornMaker = new BicornMaker(r1, r2, h, g);
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        BicornMaker BicornMaker = new BicornMaker(r1, r2, h, g);
 
-                    BicornMaker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        BicornMaker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                }
-                else
-                {
-                    Log.Instance().AddEntry("MakeBicorn : Illegal value");
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeBicorn : Illegal value");
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeBicorn : {ex.Message}");
+            }
             return result;
         }
 

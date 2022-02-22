@@ -108,6 +108,7 @@ namespace Barnacle.ViewModels
             SliceCommand = new RelayCommand(OnSlice);
             SplitCommand = new RelayCommand(OnSplit);
             BendCommand = new RelayCommand(OnBend);
+            FoldCommand = new RelayCommand(OnFold);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
             ToolCommand = new RelayCommand(OnTool);
@@ -552,6 +553,7 @@ namespace Barnacle.ViewModels
         public ICommand PasteAtCommand { get; set; }
 
         public ICommand PasteCommand { get; set; }
+        public ICommand FoldCommand { get; set; }
 
         public ICommand PrintCommand { get; set; }
 
@@ -1076,8 +1078,8 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
             parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
+            parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
-
             parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
 
             parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
@@ -1212,6 +1214,10 @@ namespace Barnacle.ViewModels
         private void OnBend(object obj)
         {
             NotificationManager.Notify("Bend", obj);
+        }
+        private void OnFold(object obj)
+        {
+            NotificationManager.Notify("Fold", obj);
         }
 
         private void OnCircularPaste(object obj)

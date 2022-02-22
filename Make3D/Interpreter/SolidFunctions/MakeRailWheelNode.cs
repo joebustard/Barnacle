@@ -45,7 +45,9 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
+            try
+            {
+                        
             double valMainRadius = 0;
             double valMainThickness = 0;
             double valFlangeRadius = 0;
@@ -134,7 +136,11 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeRailWheel : Illegal value");
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeRailWheel : {ex.Message}");
+            }
             return result;
         }
 

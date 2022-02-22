@@ -33,7 +33,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
+            try
+            { 
             int valNumberOfSides = 0; double valRadius = 0; double valThickness = 0;
 
             if (
@@ -91,7 +92,11 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeReuleaux : Illegal value");
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeReuleaux : {ex.Message}");
+            }
             return result;
         }
 

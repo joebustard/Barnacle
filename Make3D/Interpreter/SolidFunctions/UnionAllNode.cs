@@ -24,55 +24,61 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            if (Script.ResultArtefacts.Count > 1)
+            try
             {
-                result = true;
-                bool grpOk = true;
-                Object3D leftie = Script.ResultArtefacts[0];
-                leftie.Remesh();
-                for (int i = 1; i < Script.ResultArtefacts.Count && grpOk; i++)
+
+                if (Script.ResultArtefacts.Count > 1)
                 {
-                    Object3D rightie = Script.ResultArtefacts[i];
-                    rightie.Remesh();
-                    if (leftie != null && rightie != null)
-                    {
-                        leftie.CalcScale(false);
-
-                        rightie.CalcScale(false);
-                        Group3D grp = new Group3D();
-                        grp.Name = leftie.Name;
-                        grp.Description = leftie.Description;
-                        grp.LeftObject = leftie;
-
-                        grp.RightObject = rightie;
-                        grp.PrimType = "groupunion";
-
-                        if (grp.Init())
-                        {
-                            grp.CalcScale(false);
-                            grp.Remesh();
-                            leftie = grp.ConvertToMesh();
-                        }
-                        else
-                        {
-                            Log.Instance().AddEntry("UnionAll : Failed to union two objects");
-                        }
-                    }
+                    result = true;
+                    bool grpOk = true;
+                    Object3D leftie = Script.ResultArtefacts[0];
                     leftie.Remesh();
+                    for (int i = 1; i < Script.ResultArtefacts.Count && grpOk; i++)
+                    {
+                        Object3D rightie = Script.ResultArtefacts[i];
+                        rightie.Remesh();
+                        if (leftie != null && rightie != null)
+                        {
+                            leftie.CalcScale(false);
+
+                            rightie.CalcScale(false);
+                            Group3D grp = new Group3D();
+                            grp.Name = leftie.Name;
+                            grp.Description = leftie.Description;
+                            grp.LeftObject = leftie;
+
+                            grp.RightObject = rightie;
+                            grp.PrimType = "groupunion";
+
+                            if (grp.Init())
+                            {
+                                grp.CalcScale(false);
+                                grp.Remesh();
+                                leftie = grp.ConvertToMesh();
+                            }
+                            else
+                            {
+                                Log.Instance().AddEntry("UnionAll : Failed to union two objects");
+                            }
+                        }
+                        leftie.Remesh();
+                    }
+
+                    Script.ResultArtefacts.Clear();
+                    Script.ResultArtefacts.Add(leftie);
+                    leftie.CalcScale(false);
+                    leftie.Remesh();
+                    ExecutionStack.Instance().PushSolid(0);
                 }
-
-                Script.ResultArtefacts.Clear();
-                Script.ResultArtefacts.Add(leftie);
-                leftie.CalcScale(false);
-                leftie.Remesh();
-                ExecutionStack.Instance().PushSolid(0);
+                else
+                {
+                    Log.Instance().AddEntry("UnionAll : At least two objects required");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Log.Instance().AddEntry("UnionAll : At least two objects required");
+                Log.Instance().AddEntry($"UnionAll : {ex.Message}");
             }
-
             return result;
         }
 

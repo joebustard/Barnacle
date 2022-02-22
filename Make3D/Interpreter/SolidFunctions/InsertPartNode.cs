@@ -27,7 +27,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
+            try
+            { 
             string partName = "";
 
             if (EvalExpression(solid, ref partName, "PartName", "InsertPart"))
@@ -63,6 +64,11 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("InsertPart : expected part name");
                 }
             }
+        }
+            catch(Exception ex)
+            {
+                Log.Instance().AddEntry($"InsertPart : {ex.Message}");
+    }
             return result;
         }
 

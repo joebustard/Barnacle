@@ -590,6 +590,7 @@ program ""Script Name""
                     {
                         Log.Instance().Clear();
                         content.Clear();
+                        ClearResults();
                     }
                     break;
 

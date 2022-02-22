@@ -160,6 +160,7 @@
       <DependentUpon>NewProjectDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\NUDBox.xaml.cs" />
+    <Compile Include="Dialogs\ParabolicDishDlg\ParabolicDishDlg.xaml.cs" />
     <Compile Include="Dialogs\PGramDlg\PGramDlg.xaml.cs">
       <DependentUpon>PGramDlg.xaml</DependentUpon>
     </Compile>
@@ -437,6 +438,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\NUDBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ParabolicDishDlg\ParabolicDishDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -78,6 +78,18 @@ Function Size GetSolidSize( Solid sl)
     return result;
 }
 
+Procedure SetSolidSize( Solid sl, Size sz)
+{
+  Resize sl,sz.l,sz.h,sz.w;
+}
+
+Procedure MakeSameSize( Solid sl1, Solid sl2)
+{
+  Size sz;
+  sz = GetSolidSize( sl1 );
+  SetSolidSize( sl2,sz);
+}
+
 Function Solid CleanUnion( solid s1, solid s2)
 {
    solid t = union(s1,s2);

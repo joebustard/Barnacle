@@ -36,7 +36,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
+            try
+            { 
             double r = 0;
             double th = 0;
             double upper = 0;
@@ -76,6 +77,11 @@ namespace ScriptLanguage
                 {
                     Log.Instance().AddEntry("MakeTube : Illegal value");
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"Copy : {ex.Message}");
             }
             return result;
         }

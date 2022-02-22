@@ -31,6 +31,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            try
+            { 
             string pathText = "";
             double h = 0;
 
@@ -78,6 +80,11 @@ namespace ScriptLanguage
                 {
                     Log.Instance().AddEntry($"{label} : Illegal value");
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"{label} : {ex.Message}");
             }
             return result;
         }

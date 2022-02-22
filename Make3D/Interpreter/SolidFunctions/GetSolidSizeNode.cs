@@ -30,26 +30,32 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            int ls = -1;
-
-            if (EvalExpression(solid, ref ls, "Solid", Id()) && PrimType != null && PrimType != "")
+            try
             {
-                Object3D leftie = Script.ResultArtefacts[ls];
+                int ls = -1;
 
-                if (leftie != null)
+                if (EvalExpression(solid, ref ls, "Solid", Id()) && PrimType != null && PrimType != "")
                 {
-                    leftie.CalcScale(false);
-                    double d = 0;
-                    switch (PrimType.ToLower())
+                    Object3D leftie = Script.ResultArtefacts[ls];
+
+                    if (leftie != null)
                     {
-                        case "length": d = leftie.Scale.X; break;
-                        case "height": d = leftie.Scale.Y; break;
-                        case "width": d = leftie.Scale.Z; break;
+                        leftie.CalcScale(false);
+                        double d = 0;
+                        switch (PrimType.ToLower())
+                        {
+                            case "length": d = leftie.Scale.X; break;
+                            case "height": d = leftie.Scale.Y; break;
+                            case "width": d = leftie.Scale.Z; break;
+                        }
+                        ExecutionStack.Instance().Push(d);
+                        result = true;
                     }
-                    ExecutionStack.Instance().Push(d);
-                    result = true;
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"GetSolidSize : {ex.Message}");
             }
             return result;
         }

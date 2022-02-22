@@ -17,6 +17,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
+            try
+            { 
             if (expressions != null)
             {
                 result = expressions.Execute();
@@ -50,6 +52,11 @@ namespace ScriptLanguage
                         }
                     }
                 }
+            }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"{label}: {ex.Message}");
             }
             return result;
         }

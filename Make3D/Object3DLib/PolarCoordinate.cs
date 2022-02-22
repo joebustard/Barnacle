@@ -76,7 +76,14 @@ namespace Barnacle.Object3DLib
             double x = Rho * Math.Sin(Phi) * Math.Cos(Theta);
             double z = Rho * Math.Sin(Phi) * Math.Sin(Theta);
             double y = Rho * Math.Cos(Phi);
-            return (new Point3D(x, y, z));
+            if (Double.IsNaN(x))
+            {
+                return (new Point3D(0, 0, 0));
+            }
+            else
+            {
+                return (new Point3D(x, y, z));
+            }
         }
 
         public void SetPoint3D(Point3D p)

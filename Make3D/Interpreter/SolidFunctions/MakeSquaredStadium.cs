@@ -36,6 +36,8 @@ namespace ScriptLanguage
         {
             bool result = false;
 
+            try
+            { 
             double ov = 0;
             double r = 0;
             double el = 0;
@@ -71,10 +73,14 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                    Log.Instance().AddEntry("MakeStadium : Illegal value");
+                    Log.Instance().AddEntry("MakeSquaredStadium : Illegal value");
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeSquaredStadium : {ex.Message}");
+            }
             return result;
         }
 

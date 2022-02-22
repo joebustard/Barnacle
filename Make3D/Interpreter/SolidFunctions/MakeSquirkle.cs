@@ -40,7 +40,8 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
+try
+{ 
             int tlc = 0;
             int trc = 0;
             int blc = 0;
@@ -89,7 +90,11 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeSquirkle : Illegal value");
                 }
             }
-
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeSquirkle : {ex.Message}");
+            }
             return result;
         }
 

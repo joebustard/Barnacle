@@ -26,24 +26,30 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            int ls = -1;
-
-            if (EvalExpression(solid, ref ls, "Solid Id", "Copy"))
+            try
             {
-                Object3D src = Script.ResultArtefacts[ls];
+                int ls = -1;
 
-                if (src != null)
+                if (EvalExpression(solid, ref ls, "Solid Id", "Copy"))
                 {
-                    src.CalcScale(false);
-                    Object3D clone = src.Clone();
-                    clone.CalcScale(false);
-                    clone.Remesh();
+                    Object3D src = Script.ResultArtefacts[ls];
 
-                    Script.ResultArtefacts.Add(clone);
-                    ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
-                    result = true;
+                    if (src != null)
+                    {
+                        src.CalcScale(false);
+                        Object3D clone = src.Clone();
+                        clone.CalcScale(false);
+                        clone.Remesh();
+
+                        Script.ResultArtefacts.Add(clone);
+                        ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
+                        result = true;
+                    }
                 }
+            }
+            catch( Exception ex)
+            {
+                Log.Instance().AddEntry($"Copy : {ex.Message}");
             }
             return result;
         }

@@ -34,49 +34,54 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            double l = 0;
-            double h = 0;
-
-            double w = 0;
-            double a = 0;
-            double b = 0;
-
-            if (EvalExpression(angleExp, ref a, "Angle", "MakeParallelogram") &&
-                EvalExpression(bevelExp, ref b, "Bevel", "MakeParallelogram") &&
-                EvalExpression(heightExp, ref h, "Height", "MakeParallelogram") &&
-                EvalExpression(widthExp, ref w, "Width", "MakeParallelogram") &&
-                EvalExpression(lengthExp, ref l, "Length", "MakeParallelogram")
-                )
+            try
             {
-                if (l > 0 && w > 0 && h > 0 && a > 0 && a < 90 && b >= 0)
+                double l = 0;
+                double h = 0;
+
+                double w = 0;
+                double a = 0;
+                double b = 0;
+
+                if (EvalExpression(angleExp, ref a, "Angle", "MakeParallelogram") &&
+                    EvalExpression(bevelExp, ref b, "Bevel", "MakeParallelogram") &&
+                    EvalExpression(heightExp, ref h, "Height", "MakeParallelogram") &&
+                    EvalExpression(widthExp, ref w, "Width", "MakeParallelogram") &&
+                    EvalExpression(lengthExp, ref l, "Length", "MakeParallelogram")
+                    )
                 {
-                    result = true;
-                    a = 90 - a;
-                    Object3D obj = new Object3D();
+                    if (l > 0 && w > 0 && h > 0 && a > 0 && a < 90 && b >= 0)
+                    {
+                        result = true;
+                        a = 90 - a;
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "Parallelogram";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "Parallelogram";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    PGramMaker maker = new PGramMaker(l, h, w, a, b);
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        PGramMaker maker = new PGramMaker(l, h, w, a, b);
 
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                }
-                else
-                {
-                    Log.Instance().AddEntry("MakeParallelogram : Illegal value");
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeParallelogram : Illegal value");
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakeParallelogram : {ex.Message}");
+            }
             return result;
         }
 

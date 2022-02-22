@@ -45,90 +45,95 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-
-            double valMainRadius = 0;
-            double valMainThickness = 0;
-            double valExtraRimRadius = 0;
-            double valExtraRimThickness = 0;
-            double valGrooveDepth = 0;
-            double valAxleBoreRadius = 0;
-
-            if (
-                   EvalExpression(mainRadiusExp, ref valMainRadius, "MainRadius", "MakePulley") &&
-                   EvalExpression(mainThicknessExp, ref valMainThickness, "MainThickness", "MakePulley") &&
-                   EvalExpression(extraRimRadiusExp, ref valExtraRimRadius, "ExtraRimRadius", "MakePulley") &&
-                   EvalExpression(extraRimThicknessExp, ref valExtraRimThickness, "ExtraRimThickness", "MakePulley") &&
-                   EvalExpression(grooveDepthExp, ref valGrooveDepth, "GrooveDepth", "MakePulley") &&
-                   EvalExpression(axleBoreRadiusExp, ref valAxleBoreRadius, "AxleBoreRadius", "MakePulley")
-               )
+            try
             {
-                // add range check
-                bool inRange = true;
+                double valMainRadius = 0;
+                double valMainThickness = 0;
+                double valExtraRimRadius = 0;
+                double valExtraRimThickness = 0;
+                double valGrooveDepth = 0;
+                double valAxleBoreRadius = 0;
 
-                if (valMainRadius < 1 || valMainRadius > 200)
+                if (
+                       EvalExpression(mainRadiusExp, ref valMainRadius, "MainRadius", "MakePulley") &&
+                       EvalExpression(mainThicknessExp, ref valMainThickness, "MainThickness", "MakePulley") &&
+                       EvalExpression(extraRimRadiusExp, ref valExtraRimRadius, "ExtraRimRadius", "MakePulley") &&
+                       EvalExpression(extraRimThicknessExp, ref valExtraRimThickness, "ExtraRimThickness", "MakePulley") &&
+                       EvalExpression(grooveDepthExp, ref valGrooveDepth, "GrooveDepth", "MakePulley") &&
+                       EvalExpression(axleBoreRadiusExp, ref valAxleBoreRadius, "AxleBoreRadius", "MakePulley")
+                   )
                 {
-                    Log.Instance().AddEntry("MakePulley : MainRadius value out of range (1..200)");
-                    inRange = false;
-                }
+                    // add range check
+                    bool inRange = true;
 
-                if (valMainThickness < 1 || valMainThickness > 100)
-                {
-                    Log.Instance().AddEntry("MakePulley : MainThickness value out of range (1..100)");
-                    inRange = false;
-                }
+                    if (valMainRadius < 1 || valMainRadius > 200)
+                    {
+                        Log.Instance().AddEntry("MakePulley : MainRadius value out of range (1..200)");
+                        inRange = false;
+                    }
 
-                if (valExtraRimRadius < 0 || valExtraRimRadius > 20)
-                {
-                    Log.Instance().AddEntry("MakePulley : ExtraRimRadius value out of range (0..20)");
-                    inRange = false;
-                }
+                    if (valMainThickness < 1 || valMainThickness > 100)
+                    {
+                        Log.Instance().AddEntry("MakePulley : MainThickness value out of range (1..100)");
+                        inRange = false;
+                    }
 
-                if (valExtraRimThickness < 0 || valExtraRimThickness > 20)
-                {
-                    Log.Instance().AddEntry("MakePulley : ExtraRimThickness value out of range (0..20)");
-                    inRange = false;
-                }
+                    if (valExtraRimRadius < 0 || valExtraRimRadius > 20)
+                    {
+                        Log.Instance().AddEntry("MakePulley : ExtraRimRadius value out of range (0..20)");
+                        inRange = false;
+                    }
 
-                if (valGrooveDepth < 1 || valGrooveDepth > 50)
-                {
-                    Log.Instance().AddEntry("MakePulley : GrooveDepth value out of range (1..50)");
-                    inRange = false;
-                }
+                    if (valExtraRimThickness < 0 || valExtraRimThickness > 20)
+                    {
+                        Log.Instance().AddEntry("MakePulley : ExtraRimThickness value out of range (0..20)");
+                        inRange = false;
+                    }
 
-                if (valAxleBoreRadius < 0 || valAxleBoreRadius > 100)
-                {
-                    Log.Instance().AddEntry("MakePulley : AxleBoreRadius value out of range (0..100)");
-                    inRange = false;
-                }
+                    if (valGrooveDepth < 1 || valGrooveDepth > 50)
+                    {
+                        Log.Instance().AddEntry("MakePulley : GrooveDepth value out of range (1..50)");
+                        inRange = false;
+                    }
 
-                if (inRange)
-                {
-                    result = true;
+                    if (valAxleBoreRadius < 0 || valAxleBoreRadius > 100)
+                    {
+                        Log.Instance().AddEntry("MakePulley : AxleBoreRadius value out of range (0..100)");
+                        inRange = false;
+                    }
 
-                    Object3D obj = new Object3D();
+                    if (inRange)
+                    {
+                        result = true;
 
-                    obj.Name = "Pulley";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        Object3D obj = new Object3D();
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    PulleyMaker maker = new PulleyMaker(valMainRadius, valMainThickness, valExtraRimRadius, valExtraRimThickness, valGrooveDepth, valAxleBoreRadius);
+                        obj.Name = "Pulley";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        PulleyMaker maker = new PulleyMaker(valMainRadius, valMainThickness, valExtraRimRadius, valExtraRimThickness, valGrooveDepth, valAxleBoreRadius);
 
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                }
-                else
-                {
-                    Log.Instance().AddEntry("MakePulley : Illegal value");
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakePulley : Illegal value");
+                    }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"MakePulley : {ex.Message}");
+            }
             return result;
         }
 

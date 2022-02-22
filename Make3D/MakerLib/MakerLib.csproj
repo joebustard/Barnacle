@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
     <Compile Include="HollowPolyMaker.cs" />
+    <Compile Include="MakeParabolicDish.cs" />
     <Compile Include="MakePulley.cs" />
     <Compile Include="MakeRailWheel.cs" />
     <Compile Include="MakerBase.cs" />

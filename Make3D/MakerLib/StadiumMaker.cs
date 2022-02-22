@@ -67,8 +67,11 @@ namespace MakerLib
         private void GenerateBasicShape(double over=0)
         {
             double dx = gap / 2.0;
-            double cy1 = -dx - radius1;
-            double cy2 = dx + radius2;
+            //double cy1 = -dx - radius1;
+            //double cy2 = dx + radius2;
+
+            double cy1 = -dx;
+            double cy2 = dx ;
 
             double cx1 = 0;
             double cx2 = 0;

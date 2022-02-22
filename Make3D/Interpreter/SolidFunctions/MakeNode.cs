@@ -56,85 +56,92 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-            if (typeExp != null)
+            try
             {
-                result = typeExp.Execute();
-                if (result)
+                if (typeExp != null)
                 {
-                    result = false;
-                    StackItem sti = ExecutionStack.Instance().Pull();
-                    if (sti != null)
+                    result = typeExp.Execute();
+                    if (result)
                     {
-                        if (sti.MyType == StackItem.ItemType.sval)
+                        result = false;
+                        StackItem sti = ExecutionStack.Instance().Pull();
+                        if (sti != null)
                         {
-                            string shape = sti.StringValue.ToLower();
-                            if (ValidShape(shape))
+                            if (sti.MyType == StackItem.ItemType.sval)
                             {
-                                bool isSwapper = false;
-                                for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
+                                string shape = sti.StringValue.ToLower();
+                                if (ValidShape(shape))
                                 {
-                                    if (rotatedPrimitives[i] == shape)
+                                    bool isSwapper = false;
+                                    for (int i = 0; i < rotatedPrimitives.GetLength(0); i++)
                                     {
-                                        isSwapper = true;
+                                        if (rotatedPrimitives[i] == shape)
+                                        {
+                                            isSwapper = true;
 
-                                        break;
+                                            break;
+                                        }
+                                    }
+                                    double x = 0;
+                                    double y = 0;
+                                    double z = 0;
+                                    double sx = 0;
+                                    double sy = 0;
+                                    double sz = 0;
+                                    if (EvalExpression(xExp, ref x, "X", "Make") &&
+                                        EvalExpression(yExp, ref y, "Y", "Make") &&
+                                        EvalExpression(zExp, ref z, "Z", "Make") &&
+                                        EvalExpression(xSize, ref sx, "Size X", "Make") &&
+                                        EvalExpression(ySize, ref sy, "Size Y", "Make") &&
+                                        EvalExpression(zSize, ref sz, "Size Z", "Make")
+                                        )
+                                    {
+                                        result = true;
+                                        Color color = Colors.Beige;
+                                        Object3D obj = new Object3D();
+
+                                        obj.Name = "Solid";
+
+                                        obj.Scale = new Scale3D(20, 20, 20);
+
+                                        obj.Position = new Point3D(x, y, z);
+
+                                        obj.BuildPrimitive(shape);
+                                        obj.PrimType = "Mesh";
+                                        if (!isSwapper)
+                                        {
+                                            obj.ScaleMesh(sx, sy, sz);
+                                        }
+                                        else
+                                        {
+                                            obj.ScaleMesh(sx, sz, sy);
+
+                                            obj.SwapYZAxies();
+                                        }
+
+                                        obj.CalcScale(false);
+                                        obj.Remesh();
+                                        Script.ResultArtefacts.Add(obj);
+                                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
                                     }
                                 }
-                                double x = 0;
-                                double y = 0;
-                                double z = 0;
-                                double sx = 0;
-                                double sy = 0;
-                                double sz = 0;
-                                if (EvalExpression(xExp, ref x, "X", "Make") &&
-                                    EvalExpression(yExp, ref y, "Y", "Make") &&
-                                    EvalExpression(zExp, ref z, "Z", "Make") &&
-                                    EvalExpression(xSize, ref sx, "Size X", "Make") &&
-                                    EvalExpression(ySize, ref sy, "Size Y", "Make") &&
-                                    EvalExpression(zSize, ref sz, "Size Z", "Make")
-                                    )
+                                else
                                 {
-                                    result = true;
-                                    Color color = Colors.Beige;
-                                    Object3D obj = new Object3D();
-
-                                    obj.Name = "Solid";
-
-                                    obj.Scale = new Scale3D(20, 20, 20);
-
-                                    obj.Position = new Point3D(x, y, z);
-
-                                    obj.BuildPrimitive(shape);
-                                    obj.PrimType = "Mesh";
-                                    if (!isSwapper)
-                                    {
-                                        obj.ScaleMesh(sx, sy, sz);
-                                    }
-                                    else
-                                    {
-                                        obj.ScaleMesh(sx, sz, sy);
-
-                                        obj.SwapYZAxies();
-                                    }
-
-                                    obj.CalcScale(false);
-                                    obj.Remesh();
-                                    Script.ResultArtefacts.Add(obj);
-                                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                                    Log.Instance().AddEntry($"Make : solid shape {shape} not recognised");
+                                    Log.Instance().AddEntry("Make : valid shapes are : box, sphere, cylinder, roof, roundroof, cone, pyramid, pyramid2, torus, cap, polygon, tube, rightangle, pointy");
                                 }
                             }
                             else
                             {
-                                Log.Instance().AddEntry($"Make : solid shape {shape} not recognised");
-                                Log.Instance().AddEntry("Make : valid shapes are : box, sphere, cylinder, roof, roundroof, cone, pyramid, pyramid2, torus, cap, polygon, tube, rightangle, pointy");
+                                Log.Instance().AddEntry("Make : string expected text as solidtype");
                             }
-                        }
-                        else
-                        {
-                            Log.Instance().AddEntry("Make : string expected text as solidtype");
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Log.Instance().AddEntry($"Make : {ex.Message}");
             }
             return result;
         }

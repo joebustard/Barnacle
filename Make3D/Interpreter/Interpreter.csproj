@@ -71,6 +71,7 @@
     <Compile Include="SolidFunctions\InsertPartNode.cs" />
     <Compile Include="SolidFunctions\MakeBicorn.cs" />
     <Compile Include="SolidFunctions\MakeHollow.cs" />
+    <Compile Include="SolidFunctions\MakeParabolicDishNode.cs" />
     <Compile Include="SolidFunctions\MakeParallelogram.cs" />
     <Compile Include="SolidFunctions\MakePath.cs" />
     <Compile Include="SolidFunctions\MakePulleyNode.cs" />

@@ -714,6 +714,70 @@
                                              x:Name="BendZDown" />
                         </Custom:RibbonMenuButton>
                     </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton Label="Fold"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Bend.png"
+                                             x:Name="Fold">
+                        <Custom:RibbonMenuButton Label="X"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendX1.png"
+                                             x:Name="FoldX">
+                            <Custom:RibbonButton Command="{Binding FoldCommand}"
+                                             CommandParameter="XUp"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Up"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendX1.png"
+                                             ToolTip="Fold selected object in half upwards along X axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="FoldXUp" />
+                            <Custom:RibbonButton Command="{Binding FoldCommand}"
+                                             CommandParameter="XDown"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Down"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendX2.png"
+                                             ToolTip="Fold selected object in half downwards along X axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="FoldXDown" />
+                        </Custom:RibbonMenuButton>
+                        <Custom:RibbonMenuButton Label="Y"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendY1.png"
+                                             x:Name="FoldY">
+                            <Custom:RibbonButton Command="{Binding FoldCommand}"
+                                             CommandParameter="YUp"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Forward"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendY1.png"
+                                             ToolTip="Fold selected object in half forwards around Y axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="FoldYUp" />
+                            <Custom:RibbonButton Command="{Binding FoldCommand}"
+                                             CommandParameter="YDown"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Back"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendY2.png"
+                                             ToolTip="Fold selected object in half backwards along Y axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="FoldYDown" />
+                        </Custom:RibbonMenuButton>
+                        <Custom:RibbonMenuButton Label="Z"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendZ1.png"
+                                             x:Name="FoldZ">
+                            <Custom:RibbonButton Command="{Binding FoldCommand}"
+                                             CommandParameter="ZUp"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Z"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendZ1.png"
+                                             ToolTip="Fold selected object in half right around Z axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="FoldZUp" />
+                            <Custom:RibbonButton Command="{Binding FoldCommand}"
+                                             CommandParameter="ZDown"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Z"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/BendZ2.png"
+                                             ToolTip="Fold selected object in half left around Z axis"
+                                             VerticalAlignment="Top"
+                                             x:Name="FoldZDown" />
+                        </Custom:RibbonMenuButton>
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup"
                                     Header="Shapes"

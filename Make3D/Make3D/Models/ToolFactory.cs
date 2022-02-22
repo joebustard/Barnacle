@@ -66,6 +66,10 @@ namespace Barnacle.Models
                     res = new PGramDlg();
                     break;
 
+                case "ParabolicDish":
+                    res = new ParabolicDishDlg();
+                    break;
+
                 case "Torus":
                     res = new TorusDialog();
                     break;
