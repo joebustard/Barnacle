@@ -300,6 +300,7 @@ namespace Barnacle.ViewModels
                 {
                     rotationX = value;
                     NotifyPropertyChanged();
+                    NotificationManager.Notify("ObjectXRotationChange", rotationX);
                 }
             }
         }
@@ -317,6 +318,7 @@ namespace Barnacle.ViewModels
                 {
                     rotationY = value;
                     NotifyPropertyChanged();
+                    NotificationManager.Notify("ObjectYRotationChange", rotationY);
                 }
             }
         }
@@ -334,6 +336,7 @@ namespace Barnacle.ViewModels
                 {
                     rotationZ = value;
                     NotifyPropertyChanged();
+                    NotificationManager.Notify("ObjectZRotationChange", rotationZ);
                 }
             }
         }
@@ -700,6 +703,9 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("RotationX");
             NotifyPropertyChanged("RotationY");
             NotifyPropertyChanged("RotationZ");
+            NotificationManager.Notify("ObjectXRotationChange", rotationX);
+            NotificationManager.Notify("ObjectYRotationChange", rotationY);
+            NotificationManager.Notify("ObjectZRotationChange", rotationZ);
         }
 
         private void RotateSelected(Point3D p2)

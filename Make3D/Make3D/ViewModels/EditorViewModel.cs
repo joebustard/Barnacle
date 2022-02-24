@@ -34,7 +34,16 @@ namespace Barnacle.ViewModels
         {
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
         };
-
+        private enum KeyboardRotation
+        {
+            None,
+            x1,
+            x2,
+            y1,
+            y2,
+            z1,
+            z2
+        }
         private Bounds3D allBounds;
         private Axies axies;
         private PolarCamera camera;
@@ -63,7 +72,9 @@ namespace Barnacle.ViewModels
         private bool showFloorMarker;
         private int totalFaces;
         private double zoomPercent = 100;
-
+        private double keyrotationx = 90;
+        private double keyrotationy = 90;
+        private double keyrotationz = 90;
         public EditorViewModel()
         {
             floor = new Floor();
@@ -140,6 +151,10 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Loading", LoadingNewFile);
 
             NotificationManager.Subscribe("Editor", "BuildPlate", BuildPlateChanged);
+
+            NotificationManager.Subscribe("Editor", "ObjectXRotationChange", XRotationChanged);
+            NotificationManager.Subscribe("Editor", "ObjectYRotationChange", YRotationChanged);
+            NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -152,6 +167,24 @@ namespace Barnacle.ViewModels
             showBuildPlate = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void XRotationChanged(object param)
+        {
+            double d = (double)param;
+            keyrotationx = d;
+        }
+
+        private void YRotationChanged(object param)
+        {
+            double d = (double)param;
+            keyrotationy = d;
+        }
+
+        private void ZRotationChanged(object param)
+        {
+            double d = (double)param;
+            keyrotationz = d;
         }
 
         private enum CameraModes
@@ -349,7 +382,9 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                               
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                                    
                                 }
                             }
                             else
@@ -360,7 +395,17 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                    // If R is down treat as rotate
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        KeyboardRotation rd = GetRotationDirection(Key.Up);
+                                        OnKeyRotate(rd);
+
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                    }
                                 }
                             }
                         }
@@ -380,7 +425,7 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);                           
                                 }
                             }
                             else
@@ -391,7 +436,16 @@ namespace Barnacle.ViewModels
                                 }
                                 else
                                 {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                    // If R is down treat as rotate
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        KeyboardRotation rd = GetRotationDirection(Key.Down);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                    }
                                 }
                             }
                         }
@@ -409,7 +463,18 @@ namespace Barnacle.ViewModels
                             }
                             else
                             {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                                // If R is down treat as rotate
+                                if (Keyboard.IsKeyDown(Key.R))
+                                {
+                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                    KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
+                                    OnKeyRotate(rd);
+                                    
+                                }
+                                else
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                                }
                             }
                         }
                     }
@@ -426,7 +491,17 @@ namespace Barnacle.ViewModels
                             }
                             else
                             {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                                if(Keyboard.IsKeyDown(Key.R))
+                                {
+                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                    KeyboardRotation rd = GetRotationDirection(Key.Right,ctrlDown);
+                                    OnKeyRotate(rd);
+
+                                }
+                                else
+{
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                                }
                             }
                         }
                     }
@@ -522,6 +597,119 @@ namespace Barnacle.ViewModels
                     }
                     break;
             }
+        }
+
+        private void OnKeyRotate(KeyboardRotation rd)
+        {
+            if ( selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+            {
+                double x = 0;
+                double y = 0;
+                double z = 0;
+                switch ( rd)
+                {
+                    case KeyboardRotation.z1:
+                        {
+                            z = keyrotationz;
+                        }
+                        break;
+                    case KeyboardRotation.z2:
+                        {
+                            z = -keyrotationz;
+                        }
+                        break;
+                    case KeyboardRotation.x1:
+                        {
+                            x = -keyrotationx;
+                        }
+                        break;
+                    case KeyboardRotation.x2:
+                        {
+                            x = keyrotationx;
+                        }
+                        break;
+                    case KeyboardRotation.y1:
+                        {
+                            y = -keyrotationy;
+                        }
+                        break;
+                    case KeyboardRotation.y2:
+                        {
+                            y = keyrotationz;
+                        }
+                        break;
+                }
+                Point3D pr = new Point3D(x, y, z);
+                RotateSelected(selectedObjectAdorner.SelectedObjects[0], pr);
+            }
+        }
+        private void RotateSelected(Object3D obj, Point3D pr)
+        {
+            if (obj != null)
+            {
+                CheckPoint();
+                obj.Rotate(pr);
+                obj.Remesh();
+
+                NotifyPropertyChanged();
+                NotificationManager.Notify("ScaleRefresh", obj);
+                NotificationManager.Notify("RefreshAdorners", null);
+                Document.Dirty = true;
+            }
+        }
+        private KeyboardRotation GetRotationDirection(Key k, bool ctrlDown =false)
+        {
+            KeyboardRotation result = KeyboardRotation.z1;
+            result = GetRotationDirectionFromKey(k, ctrlDown);
+           
+            return result;
+        }
+
+        private KeyboardRotation GetRotationDirectionFromKey(Key k, bool ctrlDown)
+        {
+            KeyboardRotation res = KeyboardRotation.None;
+            switch ( k)
+            {
+                case Key.Left:
+                    {
+                        if (ctrlDown)
+                        {
+                            res = KeyboardRotation.y1;
+                        }
+                        else
+                        {
+                            res = KeyboardRotation.z1;
+                        }
+                    }
+                    break;
+                case Key.Right:
+                    {
+                        if (ctrlDown)
+                        {
+                            res = KeyboardRotation.y2;
+                        }
+                        else
+                        {
+                            res = KeyboardRotation.z2;
+                        }
+                    }
+                    break;
+                case Key.Up:
+                    {
+                        
+                            res = KeyboardRotation.x1;
+                        
+                    }
+                    break;
+                case Key.Down:
+                    {
+                        
+                            res = KeyboardRotation.x2;
+                        
+                    }
+                    break;
+            }
+            return res;
         }
 
         internal void KeyUp(Key key, bool shift, bool ctrl)
