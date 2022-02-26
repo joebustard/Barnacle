@@ -103,7 +103,7 @@ namespace Barnacle.ViewModels
                     if (selectedObject != null)
                     {
                         CheckPoint();
-                        Exportable = exportable;
+                       selectedObject.Exportable = exportable;
                         Document.Dirty = true;
                     }
                     NotifyPropertyChanged();

@@ -373,7 +373,7 @@ namespace Barnacle.Dialogs
         {
             // Helix1 is the spiral for the main diameter
             CreateHelix(helix1, majorRadius, angle, length);
-
+            
             // helix2 is helix1 offset by the crest
             helix2.Clear();
             foreach (Point3D p in helix1)
@@ -383,7 +383,7 @@ namespace Barnacle.Dialogs
 
             // add the crest
             TriangulateHelixPair(helix1, helix2);
-
+           
             // Helix3 is the spiral for the minor diameter
             CreateHelix(helix3, minorRadius, angle, length, pitch / 2);
 

@@ -3179,7 +3179,7 @@ namespace ScriptLanguage
                                     ExpressionNode hExp = ParseExpressionNode(parentName);
                                     if (hExp != null)
                                     {
-                                        if (CheckForComma(label) == false)
+                                        if (CheckForComma(label))
                                         {
                                       
                                             ExpressionNode oExp = ParseExpressionNode(parentName);
