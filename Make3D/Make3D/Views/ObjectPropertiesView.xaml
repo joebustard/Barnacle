@@ -76,11 +76,13 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
+            <!--
             <xctk:ColorPicker Grid.Column="0"
                               IsOpen="False"
                               SelectedColor="{Binding ObjectColour}"
                               VerticalAlignment="Stretch"
                               x:Name="_colorPicker"/>
+            -->
             <CheckBox Content="Export"
                       Grid.Column="1"
                       IsChecked="{Binding Exportable}"

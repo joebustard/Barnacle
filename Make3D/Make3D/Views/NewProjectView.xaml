@@ -1,4 +1,4 @@
-<UserControl Background="{StaticResource WindowBackBrush }"
+<UserControl 
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d"
@@ -15,6 +15,9 @@
     <Grid HorizontalAlignment="Center"
           MaxHeight="450"
           Width="800">
+        <Grid.Background>
+            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2*"/>
@@ -63,14 +66,19 @@
                   Margin="0,0.2"
                   SelectedItem="{Binding SelectedTemplate}"
                   x:Name="TemplateBox"/>
-        <Label FontSize="18"
-               Grid.Column="2"
+        <Border Background="White"
+                BorderThickness="4"
+ Grid.Column="2"
                Grid.ColumnSpan="2"
                Grid.Row="4"
                Grid.RowSpan="2"
+                Style="{StaticResource ControlBorder}">
+            <Label FontSize="18"
+              
                HorizontalAlignment="Center">
-        Description
-        </Label>
+                Description
+            </Label>
+        </Border>
         <TextBox AcceptsReturn="True"
                  BorderThickness="4"
                  Grid.Column="1"
