@@ -22,6 +22,7 @@ namespace VisualSolutionExplorer
             ExportEmptyFiles = false;
             AutoSaveScript = true;
             DefaultObjectColour = Colors.CadetBlue;
+            SlicerPath = @"C:\Program Files\Ultimaker Cura 4.13.1\cura.exe";
         }
 
         public bool AutoSaveScript { get; set; }
@@ -37,6 +38,7 @@ namespace VisualSolutionExplorer
         public bool FloorAll { get; set; }
         public bool ImportAxisSwap { get; set; }
         public bool VersionExport { get; set; }
+        public string SlicerPath { get; set; }
 
         internal void Read(XmlNode nd)
         {
@@ -104,6 +106,7 @@ namespace VisualSolutionExplorer
             {
                 Description = des.InnerText;
             }
+           
         }
 
         internal void Write(XmlDocument doc, XmlElement docNode)

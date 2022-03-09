@@ -443,17 +443,37 @@ namespace Barnacle.Models
             FileName = "Untitled";
             Extension = ".txt";
             Caption = "untitled";
-            if ( Content != null )
+            if (Content != null)
             {
                 Content.Clear();
-                
+
             }
             Content = new List<Object3D>();
             ProjectSettings = new ProjectSettings();
+            LoadGlobalSettings();
             nextId = 0;
             revision = 0;
             Dirty = false;
             referencedFiles = new List<string>();
+        }
+
+        public void LoadGlobalSettings()
+        {
+            Properties.Settings.Default.Reload();
+            if (Properties.Settings.Default.SlicerPath != null && Properties.Settings.Default.SlicerPath != "")
+            {
+                ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
+            }
+        }
+
+
+        public void SaveGlobalSettings()
+        {
+            if (Properties.Settings.Default.SlicerPath != null && Properties.Settings.Default.SlicerPath != "")
+            {
+                ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
+            }
+            Properties.Settings.Default.Save();
         }
 
         internal bool ContainsName(string name)

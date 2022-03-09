@@ -168,6 +168,7 @@ namespace Barnacle.Views
             if (dlg.ShowDialog() == true)
             {
                 BaseViewModel.Project.Save();
+                BaseViewModel.Document.SaveGlobalSettings();
             }
         }
 

@@ -262,8 +262,8 @@ namespace CSGLib
         *
         * @param status new status to be set
         */
-
-        public void Mark(Status status)
+        const int depthLimit =10;
+        public void Mark(Status status, int depth = 0)
         {
             //mark vertex
             _Status = status;
@@ -274,9 +274,12 @@ namespace CSGLib
             {
                 v.Status = status;
             }
-            foreach (Vertex v in adjacentVerts)
+            if (depth < depthLimit)
             {
-                v.Mark(status);
+                foreach (Vertex v in adjacentVerts)
+                {
+                    v.Mark(status, depth + 1);
+                }
             }
         }
     }

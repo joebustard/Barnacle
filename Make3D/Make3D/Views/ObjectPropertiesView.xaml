@@ -12,7 +12,7 @@
     <UserControl.DataContext>
         <ViewModels:ObjectPropertiesViewModel />
     </UserControl.DataContext>
-    <Grid>
+    <Grid IsEnabled="{Binding ControlsEnabled}">
     <!-- Position 3 -->
     <!-- X -->
     <!-- Y -->
@@ -76,13 +76,16 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <!--
-            <xctk:ColorPicker Grid.Column="0"
-                              IsOpen="False"
-                              SelectedColor="{Binding ObjectColour}"
-                              VerticalAlignment="Stretch"
-                              x:Name="_colorPicker"/>
-            -->
+            <ComboBox Name="cmbColors" Grid.Column="0" ItemsSource="{Binding AvailableColours}" SelectedItem="{Binding ObjectColour}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <Rectangle Fill="{Binding Name}" Width="16" Height="16" Margin="0,2,5,2" />
+                            <TextBlock Text="{Binding Title}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
             <CheckBox Content="Export"
                       Grid.Column="1"
                       IsChecked="{Binding Exportable}"

@@ -2622,6 +2622,7 @@ namespace Barnacle.ViewModels
                         }
                         InfoWindow.Instance().CloseInfo();
                         BaseViewModel.Project.Save();
+                        BaseViewModel.Document.SaveGlobalSettings();
                         NotificationManager.Notify("ImportRefresh", null);
                     }
                     break;

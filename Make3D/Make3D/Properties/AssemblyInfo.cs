@@ -1,9 +1,4 @@
 ﻿
-
-
-
-
-
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -19,8 +14,8 @@ using System.Resources;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("1.0.0.948")]
-[assembly: AssemblyFileVersion("1.0.0.948")]
-
+// Version informationr(
+[assembly: AssemblyVersion("1.0.0.972")]
+[assembly: AssemblyFileVersion("1.0.0.972")]
 [assembly: NeutralResourcesLanguageAttribute( "en-US" )]
 

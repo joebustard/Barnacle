@@ -1,7 +1,9 @@
 ﻿using Barnacle.Models;
 using Barnacle.Object3DLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -15,7 +17,7 @@ namespace Barnacle.ViewModels
 
         private String description;
         private bool exportable;
-        private Color objectColour;
+        private AvailableColour objectColour;
 
         private string objectName;
 
@@ -28,6 +30,7 @@ namespace Barnacle.ViewModels
         private double rotationZ;
 
         private Object3D selectedObject;
+        private List<AvailableColour> availableColours;
 
         public ObjectPropertiesViewModel()
         {
@@ -49,8 +52,35 @@ namespace Barnacle.ViewModels
             rotationZ = 90;
             PercentScale = 1;
             CanScale = false;
+            SetAvailableColours();
         }
 
+        private void SetAvailableColours()
+        {
+            List<AvailableColour> cls = new List<AvailableColour>();
+            Type colors = typeof(System.Drawing.Color);
+            PropertyInfo[] colorInfo = colors.GetProperties(BindingFlags.Public |
+                BindingFlags.Static);
+            foreach (PropertyInfo info in colorInfo)
+            {
+
+                cls.Add(new AvailableColour(info.Name));
+            }
+            AvailableColours = cls;
+        }
+
+        public List<AvailableColour> AvailableColours
+        {
+            get { return availableColours; }
+            set
+            {
+                if (availableColours != value)
+                {
+                    availableColours = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public bool CanScale
         {
             get
@@ -103,20 +133,34 @@ namespace Barnacle.ViewModels
                     if (selectedObject != null)
                     {
                         CheckPoint();
-                       selectedObject.Exportable = exportable;
+                        selectedObject.Exportable = exportable;
                         Document.Dirty = true;
                     }
                     NotifyPropertyChanged();
                 }
             }
         }
+        private bool controlsEnabled;
+        public bool ControlsEnabled
+        {
+            get { return controlsEnabled; }
+            set
+            {
+                if (controlsEnabled != value)
+                {
+                    controlsEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
 
         public ICommand MoveToCentreCommand { get; set; }
         public ICommand MoveToFloorCommand { get; set; }
         public ICommand MoveToZeroCommand { get; set; }
         public ICommand NudgeCommand { get; set; }
 
-        public Color ObjectColour
+        public AvailableColour ObjectColour
         {
             get
             {
@@ -131,7 +175,8 @@ namespace Barnacle.ViewModels
                     if (selectedObject != null)
                     {
                         CheckPoint();
-                        selectedObject.Color = objectColour;
+                        System.Drawing.Color tmp = System.Drawing.Color.FromName(objectColour.Name);
+                        selectedObject.Color = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
                         Document.Dirty = true;
                     }
                 }
@@ -575,18 +620,20 @@ namespace Barnacle.ViewModels
             if (selectedObject == null)
             {
                 //objectColour = new SolidColorBrush(Colors.Transparent);
-                objectColour = Colors.White;
+                objectColour = null;
                 objectName = "";
                 exportable = false;
                 description = "";
+                ControlsEnabled = false;
             }
             else
             {
-                objectColour = selectedObject.Color;
+                objectColour = FindAvailableColour(selectedObject.Color);
                 objectName = selectedObject.Name;
                 CanScale = selectedObject.IsSizable();
                 exportable = selectedObject.Exportable;
                 description = selectedObject.Description;
+                ControlsEnabled = true ;
             }
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");
@@ -603,6 +650,25 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ObjectName");
             NotifyPropertyChanged("Exportable");
             NotifyPropertyChanged("Description");
+            NotifyPropertyChanged("ControlsEnabled");
+        }
+
+        private AvailableColour FindAvailableColour(Color color)
+        {
+            AvailableColour res = null;
+            foreach (AvailableColour cl in AvailableColours)
+            {
+                if (cl.Colour.A == color.A &&
+                cl.Colour.R == color.R &&
+                cl.Colour.G == color.G &&
+                cl.Colour.B == color.B)
+                {
+                    res = cl;
+                    break;
+                }
+
+            }
+            return res;
         }
 
         private void OnPositionUpdated(object param)

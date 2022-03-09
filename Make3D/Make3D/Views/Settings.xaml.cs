@@ -1,6 +1,7 @@
 ﻿using Barnacle.ViewModels;
 using System;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Views
@@ -45,6 +46,7 @@ namespace Barnacle.Views
                     BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport = vm.ClearPreviousVersionsOnExport;
                     BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour = vm.DefaultObjectColour;
                     BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;
+                    BaseViewModel.Project.SharedProjectSettings.SlicerPath = vm.SlicerPath;
                     BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
                     //    BaseViewModel.Document.Dirty = true;
                 }
@@ -53,6 +55,31 @@ namespace Barnacle.Views
                 }
             }
             Close();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsViewModel vm = DataContext as SettingsViewModel;
+            OpenFileDialog dlg = new OpenFileDialog();
+            if (vm.SlicerPath != "")
+            {
+
+                string pth = System.IO.Path.GetDirectoryName(vm.SlicerPath);
+                if (pth != "" && System.IO.Directory.Exists(pth))
+                {
+                    dlg.InitialDirectory = pth;
+                }
+                dlg.FileName = vm.SlicerPath;
+
+
+            }
+            
+            if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                
+                vm.SlicerPath = dlg.FileName;
+            }
+
         }
     }
 }

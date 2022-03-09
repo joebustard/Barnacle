@@ -116,10 +116,13 @@ namespace Barnacle.Object3DLib
 
         public static void P3DToPointCollection(List<P3D> pnts, Point3DCollection targ)
         {
-            targ.Clear();
-            foreach (P3D p in pnts)
+            if (targ != null)
             {
-                targ.Add(new Point3D(p.X, p.Y, p.Z));
+                targ.Clear();
+                foreach (P3D p in pnts)
+                {
+                    targ.Add(new Point3D(p.X, p.Y, p.Z));
+                }
             }
         }
 

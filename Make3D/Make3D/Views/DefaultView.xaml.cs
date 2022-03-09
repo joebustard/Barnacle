@@ -60,6 +60,9 @@ namespace Barnacle.Views
             };
             startInfo.EnvironmentVariables.Add("BarnacleProject", BaseViewModel.Project.ProjectName);
             startInfo.EnvironmentVariables.Add("BarnacleFolder", Project.BaseFolder);
+            string currentFile = System.IO.Path.GetFileName(BaseViewModel.Document.FileName);
+            startInfo.EnvironmentVariables.Add("BarnacleFile", currentFile);
+            startInfo.EnvironmentVariables.Add("BarnacleSlicer", BaseViewModel.Project.SharedProjectSettings.SlicerPath);
             System.Diagnostics.Process.Start(startInfo);
         }
 
@@ -745,6 +748,7 @@ namespace Barnacle.Views
                     break;
             }
             BaseViewModel.Project.Save();
+            BaseViewModel.Document.SaveGlobalSettings();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)

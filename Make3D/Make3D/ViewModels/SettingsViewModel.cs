@@ -29,7 +29,19 @@ namespace Barnacle.ViewModels
         private bool swapAxis;
 
         private bool versionExport;
-
+        private string slicerPath;
+        public string SlicerPath
+        {
+            get { return slicerPath; }
+            set
+            {
+                if (value != slicerPath)
+                {
+                    slicerPath = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public SettingsViewModel()
         {
             AutoSaveScript = Project.SharedProjectSettings.AutoSaveScript;
@@ -47,6 +59,7 @@ namespace Barnacle.ViewModels
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
+            SlicerPath = Project.SharedProjectSettings.SlicerPath;
         }
 
         public bool AutoSaveScript

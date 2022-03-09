@@ -20,5 +20,8 @@
     <Setting Name="PartLibraryPath" Description="Location of the parts library project" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="SlicerPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

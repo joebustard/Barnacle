@@ -14,7 +14,7 @@ namespace ManifoldLib
 
         public ManifoldChecker()
         {
-            Points = null;
+            Points = new Point3DCollection();
             Indices = null;
             Vertices = new List<Vertex>();
             Faces = new List<Face>();
