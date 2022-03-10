@@ -174,7 +174,7 @@ namespace Barnacle.Object3DLib
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
 
             modeller = new BooleanModeller(leftSolid, rightSolid);
-            if (modeller.State == true)
+            if (modeller.State == BooleanModeller.ModellerState.Good)
             {
                 Solid result = null;
                 switch (PrimType)
@@ -235,6 +235,12 @@ namespace Barnacle.Object3DLib
                         res = true;
                     }
                 }
+            }
+            else
+                if ( modeller.State == BooleanModeller.ModellerState.Interrupted)
+            {
+                System.Windows.Forms.MessageBox.Show("Operation aborted");
+                res = false;
             }
             return res;
         }

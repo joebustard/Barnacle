@@ -3669,7 +3669,7 @@ namespace ScriptLanguage
                     nd.Value = Convert.ToInt32(token);
                     exp = nd;
                 }
-                catch (Exception ex)
+                catch 
                 {
                     ReportSyntaxError("Invalid int constant");
                 }

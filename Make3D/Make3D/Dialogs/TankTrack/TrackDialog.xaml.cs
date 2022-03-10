@@ -1153,7 +1153,7 @@ namespace Barnacle.Dialogs
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-     
+
         }
 
         private void LoadImage(string f)
@@ -1211,7 +1211,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            catch (Exception ex)
+            catch 
             {
             }
         }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Media;
 
 namespace Barnacle.ViewModels
@@ -9,6 +10,7 @@ namespace Barnacle.ViewModels
     internal class SettingsViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private bool autoSaveScript;
+        private AvailableColour objectColour;
         private bool clearPreviousVersionsOnExport;
         private Color defaultObjectColour;
         private string description;
@@ -17,7 +19,7 @@ namespace Barnacle.ViewModels
         private bool floorAll;
         private bool importSwapAxis;
         private string rotX;
-
+        private List<AvailableColour> availableColours;
         private string rotY;
 
         private string rotZ;
@@ -60,7 +62,72 @@ namespace Barnacle.ViewModels
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
             SlicerPath = Project.SharedProjectSettings.SlicerPath;
+            SetAvailableColours();
+            ObjectColour = FindAvailableColour(DefaultObjectColour);
         }
+
+        private AvailableColour FindAvailableColour(Color color)
+        {
+            AvailableColour res = null;
+            foreach (AvailableColour cl in AvailableColours)
+            {
+                if (cl.Colour.A == color.A &&
+                cl.Colour.R == color.R &&
+                cl.Colour.G == color.G &&
+                cl.Colour.B == color.B)
+                {
+                    res = cl;
+                    break;
+                }
+            }
+            return res;
+        }
+        private void SetAvailableColours()
+        {
+            List<AvailableColour> cls = new List<AvailableColour>();
+            Type colors = typeof(System.Drawing.Color);
+            PropertyInfo[] colorInfo = colors.GetProperties(BindingFlags.Public |
+                BindingFlags.Static);
+            foreach (PropertyInfo info in colorInfo)
+            {
+
+                cls.Add(new AvailableColour(info.Name));
+            }
+            AvailableColours = cls;
+        }
+
+        public List<AvailableColour> AvailableColours
+        {
+            get { return availableColours; }
+            set
+            {
+                if (availableColours != value)
+                {
+                    availableColours = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public AvailableColour ObjectColour
+        {
+            get
+            {
+                return objectColour;
+            }
+            set
+            {
+                if (objectColour != value)
+                {
+                    objectColour = value;
+                    System.Drawing.Color tmp = System.Drawing.Color.FromName(objectColour.Name);
+                    DefaultObjectColour = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
+                    NotifyPropertyChanged();
+                  
+                }
+            }
+        }
+
 
         public bool AutoSaveScript
         {

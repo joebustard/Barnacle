@@ -30,7 +30,7 @@
             <RowDefinition Height="2*"/>
         </Grid.RowDefinitions>
         <TabControl Grid.Column="1"
-                    Grid.Row="1">
+                    Grid.Row="1" BorderThickness="4">
             <TabItem Header="Project">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -47,7 +47,7 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="4*"/>
-                        
+
                     </Grid.RowDefinitions>
                     <Grid Grid.Column="1"
                           Grid.Row="0">
@@ -55,8 +55,8 @@
                             <ColumnDefinition Width="1*"/>
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Grid.Column="0">
-                        Description
+                        <Label Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.ColumnSpan="2">
+                            Description
                         </Label>
                     </Grid>
                     <TextBox AcceptsReturn="True"
@@ -76,15 +76,18 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0"
                                VerticalAlignment="Center">
-                        Tool Model Colour
+                            Tool Model Colour
                         </Label>
-                        <xctk:ColorPicker Grid.Column="1"
-                                          IsOpen="False"
-                                          Margin="2,0,2,2"
-                                          SelectedColor="{Binding DefaultObjectColour}"
-                                          VerticalAlignment="Center"
-                                          x:Name="_colorPicker"
-                                          Height="20"/>
+                        <ComboBox Name="cmbColors" Grid.Column="1" ItemsSource="{Binding AvailableColours}" SelectedItem="{Binding ObjectColour}" Margin="0,4">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <Rectangle Fill="{Binding Name}" Width="20" Height="20" Margin="0,0,5,0" />
+                                        <TextBlock Text="{Binding Title}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                     <Grid Grid.Column="1"
                           Grid.Row="5">
@@ -127,7 +130,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0"
                                VerticalAlignment="Center">
-                        Base Scale
+                            Base Scale
                         </Label>
                         <ComboBox Grid.Column="1"
                                   HorizontalAlignment="Left"
@@ -138,7 +141,7 @@
                                   Width="55"/>
                         <Label Grid.Column="3"
                                VerticalAlignment="Center">
-                        Export Scale
+                            Export Scale
                         </Label>
                         <ComboBox Grid.Column="4"
                                   HorizontalAlignment="Left"
@@ -210,7 +213,7 @@
                                    Grid.ColumnSpan="2"
                                    Grid.Row="3"
                                    VerticalAlignment="Center">
-                            Export Rotation
+                                Export Rotation
                             </Label>
                             <TextBox Grid.Column="2"
                                      Grid.Row="3"
@@ -263,9 +266,10 @@
             <TabItem Header="Limpet">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="10*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="29*"/>
+                        <ColumnDefinition Width="8*"/>
+                        <ColumnDefinition Width="364*"/>
+                        <ColumnDefinition Width="36*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
@@ -277,11 +281,11 @@
                         <RowDefinition Height="1*"/>
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
-                    <StackPanel Grid.Column="1"
+                    <StackPanel Grid.Column="2"
                                 Orientation="Horizontal"
-                                VerticalAlignment="Center">
+                                VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="0.2,8,35.8,8.2">
                         <CheckBox IsChecked="{Binding AutoSaveScript}">
-                        Autosave script on run.
+                            Autosave script on run.
                         </CheckBox>
                     </StackPanel>
                 </Grid>
@@ -296,12 +300,12 @@
             <Button Click="CancelButtonClicked"
                     Grid.Column="0"
                     Margin="10,4,10,4">
-            Cancel
+                Cancel
             </Button>
             <Button Click="OkButtonClicked"
                     Grid.Column="1"
                     Margin="10,4,10,4">
-            Ok
+                Ok
             </Button>
         </Grid>
     </Grid>

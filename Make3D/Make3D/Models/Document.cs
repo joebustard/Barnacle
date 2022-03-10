@@ -1089,14 +1089,14 @@ namespace Barnacle.Models
                                 // so we should have already read the referenced files by now
                                 // meaning there should already be a referenced object which matches.
                                 // if there is then update its position to whatever this object says
-                                bool found = false;
+                                
                                 foreach (Object3D old in Content)
                                 {
                                     if (old is ReferenceObject3D)
                                     {
                                         if (old.Name == ob.Name && (old as ReferenceObject3D).Reference.Path == ob.Reference.Path)
                                         {
-                                            found = true;
+                                           
                                             old.Position = ob.Position;
                                             old.Rotation = ob.Rotation;
                                             break;

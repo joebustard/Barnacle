@@ -11,12 +11,16 @@ namespace ScriptLanguage
     {
         //NODEFIELDS
 
-        public Make//TOOLNAMENode(//CONSTRUCTORPARAMETERS)
+        public Make//TOOLNAMENode
+            (
+            //CONSTRUCTORPARAMETERS
+            )
     {
         //COPYFIELDS
     }
 
-    public Make//TOOLNAMENode(ExpressionCollection coll)
+    public Make//TOOLNAMENode
+            (ExpressionCollection coll)
     {
         //COPYCOLLFIELDS
     }
@@ -30,9 +34,8 @@ public override bool Execute()
 
     //EXECUTIONVALUEDECLARATIONS
 
-    if (
-//EVALEXPRESSIONS
-       )
+
+    //EVALEXPRESSIONS
     {
         // check calculated values are in range
         bool inRange = true;

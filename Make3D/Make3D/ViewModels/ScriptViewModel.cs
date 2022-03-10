@@ -350,8 +350,7 @@ program ""Script Name""
 
         internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
         {
-            bool ctrlDown = false;
-
+            
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (cameraMode == CameraModes.CameraMove)
@@ -365,14 +364,7 @@ program ""Script Name""
                     LookToCenter();
                     lastMouse = newPos;
                 }
-                /*
-                else if (cameraMode == CameraModes.CameraMoveLookObject)
-                {
-                    MoveCameraDelta(lastMouse, newPos);
-                    LookToObject();
-                    lastMouse = newPos;
-                }
-                */
+
             }
         }
 
