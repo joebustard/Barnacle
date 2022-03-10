@@ -37,6 +37,7 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 
 using System;
 using System.Collections.Generic;
+using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
 namespace CSGLib
@@ -72,6 +73,12 @@ namespace CSGLib
         /// </summary>
         private List<Vertex> Vertices;
 
+        public enum PartState
+        {
+            Good,
+            Bad,
+            Interupted
+        }
         /// <summary>
         /// Constructs a Object3d object based on a solid file.
         /// </summary>
@@ -116,12 +123,21 @@ namespace CSGLib
         /// Classify faces as being inside, outside or on boundary of other object
         /// </summary>
         /// <param name="otherObject">object 3d used for the comparison</param>
-        public void ClassifyFaces(Part otherObject)
+        public PartState ClassifyFaces(Part otherObject)
         {
+            PartState result = PartState.Good;
             //calculate adjacency information
             Face face;
             for (int i = 0; i < NumFaces; i++)
             {
+                if ( i %10 ==0 )
+                {
+                    KeyStates s = Keyboard.GetKeyStates(Key.Escape);
+                    if ((s & KeyStates.Down) != 0)
+                    {
+                        return PartState.Interupted;
+                    }
+                }
                 face = GetFace(i);
                 face.V1.AddAdjacentVertex(face.V2);
                 face.V1.AddAdjacentVertex(face.V3);
@@ -135,28 +151,43 @@ namespace CSGLib
             for (int i = 0; i < NumFaces; i++)
             {
                 face = GetFace(i);
-
+                if (i % 10 == 0)
+                {
+                    KeyStates s = Keyboard.GetKeyStates(Key.Escape);
+                    if ((s & KeyStates.Down) != 0)
+                    {
+                        return PartState.Interupted;
+                    }
+                }
                 //if the face vertices aren't classified to make the simple classify
                 if (face.SimpleClassify() == false)
                 {
                     //makes the ray trace classification
-                    face.RayTraceClassify(otherObject);
+                    if (face.RayTraceClassify(otherObject))
+                    {
 
-                    //mark the vertices
-                    if (face.V1.Status == Status.UNKNOWN)
-                    {
-                        face.V1.Mark(face.GetStatus());
+                        //mark the vertices
+                        if (face.V1.Status == Status.UNKNOWN)
+                        {
+                            face.V1.Mark(face.GetStatus());
+                        }
+                        if (face.V2.Status == Status.UNKNOWN)
+                        {
+                            face.V2.Mark(face.GetStatus());
+                        }
+                        if (face.V3.Status == Status.UNKNOWN)
+                        {
+                            face.V3.Mark(face.GetStatus());
+                        }
                     }
-                    if (face.V2.Status == Status.UNKNOWN)
+                    else
                     {
-                        face.V2.Mark(face.GetStatus());
-                    }
-                    if (face.V3.Status == Status.UNKNOWN)
-                    {
-                        face.V3.Mark(face.GetStatus());
+                        result = PartState.Interupted;
+                        break;
                     }
                 }
             }
+            return result;
         }
 
         /// <summary>
@@ -226,9 +257,9 @@ namespace CSGLib
         /// Split faces so that none face is intercepted by a face of other object
         /// </summary>
         /// <param name="obj">the other object 3d used to make the split</param>
-        public bool SplitFaces(Part obj)
+        public PartState SplitFaces(Part obj)
         {
-            bool result = true;
+            PartState result = PartState.Good;
             Line line;
             Face face1, face2;
             Segment segment1;
@@ -248,6 +279,14 @@ namespace CSGLib
                 //for each object1 face...
                 for (int i = 0; i < NumFaces; i++)
                 {
+                    if ( i % 10 == 0)
+                    {
+                        KeyStates s = Keyboard.GetKeyStates(Key.Escape);
+                        if ((s & KeyStates.Down) != 0 )
+                        {
+                            return PartState.Interupted;
+                        }
+                    }
                     //if object1 face bound and object2 bound overlap ...
                     face1 = GetFace(i);
 
@@ -256,6 +295,14 @@ namespace CSGLib
                         //for each object2 face...
                         for (int j = 0; j < obj.NumFaces; j++)
                         {
+                            if (j % 10 == 0)
+                            {
+                                KeyStates s = Keyboard.GetKeyStates(Key.Escape);
+                                if ((s & KeyStates.Down) != 0)
+                                {
+                                    return PartState.Interupted;
+                                }
+                            }
                             //if object1 face bound and object2 face bound overlap...
                             face2 = obj.GetFace(j);
                             if (face1.GetBound().Overlap(face2.GetBound()))
@@ -319,7 +366,7 @@ namespace CSGLib
                                             if (NumFaces > facesLimit)
                                             {
                                                 //Logger.Log("possible infinite loop situation: terminating faces split");
-                                                return false;
+                                                return PartState.Bad;
                                             }
 
                                             //if the face in the position isn't the same, there was a break

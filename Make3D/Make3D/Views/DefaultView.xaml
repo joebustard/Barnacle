@@ -961,7 +961,7 @@
                         <Grid HorizontalAlignment="Stretch">
                             <ScrollViewer>
                                 <StackPanel HorizontalAlignment="Left"
-                                            Width="160">
+                                            Width="180">
                                     <local:CameraPalette HorizontalAlignment="Left"
                                                          VerticalAlignment="Stretch"
                                                          Visibility="{Binding CameraPaletteVisible}" />
@@ -1010,7 +1010,7 @@
                               HorizontalScrollBarVisibility="Auto"
                               VerticalAlignment="Stretch"
                               VerticalScrollBarVisibility="Auto"
-                              x:Name="Scroller">
+                                                            x:Name="Scroller">
                     <ContentControl Content="{Binding SubView}"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"

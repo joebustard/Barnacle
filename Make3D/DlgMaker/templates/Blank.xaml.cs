@@ -85,7 +85,9 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            BlankMaker maker = new BlankMaker(//MAKEPARAMETERS);
+            BlankMaker maker = new BlankMaker(
+                //MAKEPARAMETERS
+                );
             maker.Generate(Vertices, Faces);
         }
 

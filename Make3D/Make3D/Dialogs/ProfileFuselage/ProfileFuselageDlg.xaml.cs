@@ -277,7 +277,7 @@ namespace Barnacle.Dialogs
                                 noteWindow.Show();
 
                                 RibManager.ControlsEnabled = false;
-                                await Read(filePath);
+                              /*  await */ Read(filePath);
                                 noteWindow.Hide();
                                 dirty = false;
                                 RibManager.ControlsEnabled = true;
@@ -554,7 +554,7 @@ namespace Barnacle.Dialogs
                 noteWindow.Show();
 
                 RibManager.ControlsEnabled = false;
-                await Read(filePath);
+                /*await*/ Read(filePath);
                 noteWindow.Hide();
                 dirty = false;
                 RibManager.ControlsEnabled = true;
@@ -661,7 +661,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        private async Task Read(string fileName)
+        private /*async Task */ void Read(string fileName)
         {
             this.Cursor = Cursors.Wait;
             RibManager.Ribs.Clear();

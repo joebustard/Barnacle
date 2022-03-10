@@ -1167,7 +1167,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            catch (Exception ex)
+            catch 
             {
             }
         }

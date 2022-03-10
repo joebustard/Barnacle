@@ -12,12 +12,6 @@ namespace Barnacle.Views
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, System.Windows.RoutedEventArgs e)
-        {
-            ColourDialog dlg = new ColourDialog();
-            if (dlg.ShowDialog() == true)
-            {
-            }
-        }
+       
     }
 }

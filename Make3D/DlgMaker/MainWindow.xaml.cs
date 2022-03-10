@@ -1011,7 +1011,7 @@ public <pType> <PName>
                         l = l.Replace(@"//NODEFIELDS", nodeFields);
                         l = l.Replace(@"//COPYFIELDS", copyFields);
                         l = l.Replace(@"//EXECUTIONVALUEDECLARATIONS", exeValueFields);
-                        l = l.Replace(@"//EVALEXPRESSIONS", evalExpressions);
+                        l = l.Replace(@"//EVALEXPRESSIONS", "if ("+evalExpressions+")");
                         l = l.Replace(@"//MAKERPARAMS", makerParams);
                         l = l.Replace(@"//EXPRESSIONTORICHTEXT", richTextParams);
                         l = l.Replace(@"//EXPRESSIONTOSTRING", plainTextParams);

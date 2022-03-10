@@ -36,6 +36,7 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 */
 
 using System;
+using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
 //using OpenToolkit.Mathematics;
@@ -211,7 +212,7 @@ namespace CSGLib
         /// Classifies the face based on the ray trace technique
         /// </summary>
         /// <param name="obj">object3d used to compute the face status</param>
-        public void RayTraceClassify(Part obj)
+        public bool RayTraceClassify(Part obj)
         {
             //creating a ray starting at the face baricenter going to the normal direction
             Line ray = new Line(GetNormal(), Center);
@@ -229,6 +230,15 @@ namespace CSGLib
                 //for each face from the other solid...
                 for (int faceIndex = 0; faceIndex < obj.NumFaces; faceIndex++)
                 {
+                    if (faceIndex % 10 == 0 )
+                    {
+                        KeyStates s = Keyboard.GetKeyStates(Key.Escape);
+                        if ((s & KeyStates.Down) != 0)
+                        {
+                            return false;
+                        }
+                    }
+
                     Face face = obj.GetFace(faceIndex);
                     intersectionPoint = ray.ComputePlaneIntersection(face.GetPlane());
 
@@ -310,6 +320,7 @@ namespace CSGLib
                     Status = Status.OUTSIDE;
                 }
             }
+            return true;
         }
 
         /// <summary>

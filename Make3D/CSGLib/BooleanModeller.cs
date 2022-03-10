@@ -56,31 +56,51 @@ namespace CSGLib
 
         public BooleanModeller(Solid solid1, Solid solid2)
         {
-            State = false;
+            State = ModellerState.Bad;
             //representation to apply boolean operations
             Object1 = new Part(solid1);
             Object2 = new Part(solid2);
 
             //split the faces so that none of them intercepts each other
             //Logger.Log("Split Faces ob1 (ob2)\r\n");
-            if (Object1.SplitFaces(Object2))
+            Part.PartState ps1 = Object1.SplitFaces(Object2);
+            Part.PartState ps2 = Part.PartState.Good;
+            Part.PartState ps3 = Part.PartState.Good;
+            Part.PartState ps4 = Part.PartState.Good;
+            if (ps1 == Part.PartState.Good)
             {
-                // Logger.Log("Split Faces ob2 (ob1)\r\n");
-                if (Object2.SplitFaces(Object1))
+                
+                ps2 = Object2.SplitFaces(Object1);
+                if (ps2 == Part.PartState.Good)
                 {
                     //classify faces as being inside or outside the other solid
-                    Object1.ClassifyFaces(Object2);
-                    Object2.ClassifyFaces(Object1);
-                    State = true;
+                    ps3 = Object1.ClassifyFaces(Object2);
+                    if (ps3 == Part.PartState.Good)
+                    {
+                        ps4 = Object2.ClassifyFaces(Object1);
+                    }
+                    State = ModellerState.Good;
                 }
+            }
+            if ( ps1 == Part.PartState.Interupted || 
+                ps2 == Part.PartState.Interupted ||
+                ps3 == Part.PartState.Interupted ||
+                ps4 == Part.PartState.Interupted )
+            {
+                State = ModellerState.Interrupted;
             }
         }
 
         private BooleanModeller()
         {
         }
-
-        public bool State { get; set; }
+        public enum ModellerState
+        {
+            Bad,
+            Good,
+            Interrupted
+        }
+        public ModellerState State { get; set; }
         //--------------------------------CONSTRUCTORS----------------------------------//
 
         /**
