@@ -9,10 +9,7 @@ namespace ScriptLanguage
 {
     internal class UnionAllNode : ExpressionNode
     {
-        private ExpressionNode doubleupExp;
-        private ExpressionNode heightExp;
-        private ExpressionNode radius1Exp;
-        private ExpressionNode radius2Exp;
+
 
         public UnionAllNode()
         {

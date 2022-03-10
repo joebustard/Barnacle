@@ -316,9 +316,6 @@
     </Compile>
     <Compile Include="ViewModels\StartupViewModel.cs" />
     <Compile Include="ViewModels\ToolDef.cs" />
-    <Compile Include="Views\ColourDialog.xaml.cs">
-      <DependentUpon>ColourDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MultiPasteDlg.xaml.cs">
       <DependentUpon>MultiPasteDlg.xaml</DependentUpon>
     </Compile>
@@ -607,10 +604,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\CircularPasteDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ColourDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

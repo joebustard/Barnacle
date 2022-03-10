@@ -1153,11 +1153,7 @@ namespace Barnacle.Dialogs
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            Line ln = sender as Line;
-            int found = -1;
-            if (ln != null)
-            {
-            }
+     
         }
 
         private void LoadImage(string f)
