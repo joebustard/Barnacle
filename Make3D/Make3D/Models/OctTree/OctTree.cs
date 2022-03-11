@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Barnacle.Object3DLib;
@@ -11,7 +12,7 @@ namespace Barnacle.Models
 {
     internal class OctTree
     {
-        private const int MaxPointsPerNode = 1000;
+        private const int MaxPointsPerNode = 500;
         private OctNode root;
 
         public OctTree(Point3DCollection pnts, Point3D minPnt, Point3D maxPnt, int maxTreeDepth)
@@ -41,7 +42,40 @@ namespace Barnacle.Models
 
         internal void AddPoint(int index, Point3D position)
         {
-            root.AddPoint(index, position);
+            try
+            {
+                OctNode container = root.AddPoint(index, position);
+                OctNode.AllPoints.Add(position);
+                container?.Split();
+            }
+            catch ( Exception ex)
+            {
+                MessageBox.Show("AddPoint() " + ex.Message);
+            }
+        }
+        public int PointPresent( Point3D pnt)
+        {
+            int res = -1;
+            try
+            {
+                OctNode node = root?.FindNodeAround(pnt);
+            if (node != null)
+            {
+                foreach (int index in node.PointsInOctNode)
+                {
+                    if ( PointUtils.equals(OctNode.AllPoints[index],pnt.X, pnt.Y,pnt.Z))
+                    {
+                        res = index;
+                        break;
+                    }
+                }
+            }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("PointPresent() " + ex.Message);
+            }
+            return res;
         }
     }
 }

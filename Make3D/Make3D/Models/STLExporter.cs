@@ -66,8 +66,7 @@ namespace Barnacle.Models
                                 writer.Write((float)triangle.V1.Position.Z);
                             }
 
-                            //   System.Diagnostics.Debug.WriteLine($"V1 {triangle.V1.Position.X},{triangle.V1.Position.Y},{triangle.V1.Position.Z}");
-
+                         
                             writer.Write((float)triangle.V2.Position.X);
                             if (swapAxis)
                             {
@@ -81,8 +80,7 @@ namespace Barnacle.Models
                                 writer.Write((float)triangle.V2.Position.Z);
                             }
 
-                            //    System.Diagnostics.Debug.WriteLine($"V2 {triangle.V2.Position.X},{triangle.V2.Position.Y},{triangle.V2.Position.Z}");
-
+                        
                             writer.Write((float)triangle.V3.Position.X);
                             if (swapAxis)
                             {
@@ -96,7 +94,6 @@ namespace Barnacle.Models
                                 writer.Write((float)triangle.V3.Position.Z);
                             }
 
-                            //   System.Diagnostics.Debug.WriteLine($"V3 {triangle.V3.Position.X},{triangle.V3.Position.Y},{triangle.V3.Position.Z}");
                             writer.Write((ushort)0); // garbage value
                         }
                     }
@@ -174,9 +171,11 @@ namespace Barnacle.Models
             return res;
         }
 
-        private static int AddVertex(List<P3D> verts, Point3D pn)
+        private static int AddVertex(OctTree tree, List<P3D> verts, Point3D pn)
         {
+            
             int res = -1;
+            /*
             for (int i = 0; i < verts.Count; i++)
             {
                 if (PointUtils.equals(verts[i], pn.X, pn.Y, pn.Z))
@@ -185,11 +184,14 @@ namespace Barnacle.Models
                     break;
                 }
             }
-
+            */
+            res = tree.PointPresent(pn);
             if (res == -1)
             {
                 verts.Add(new P3D(pn));
+                
                 res = verts.Count - 1;
+                tree.AddPoint(res, pn);
             }
             return res;
         }
@@ -281,6 +283,9 @@ namespace Barnacle.Models
 
             if (stream != null)
             {
+                Point3DCollection treePoints = new Point3DCollection();
+                OctTree octTree = new OctTree(treePoints,new Point3D(-1000,-1000,-1000), new Point3D(1000,1000,1000),50);
+
                 var reader = new StreamReader(stream);
                 string line = "";
                 while (!line.ToLower().StartsWith("endsolid") && !reader.EndOfStream)
@@ -294,17 +299,17 @@ namespace Barnacle.Models
                         // p0
                         line = reader.ReadLine().ToLower();
                         Point3D pnt = GetVFromLine(line, swap);
-                        int p0 = AddVertex(pnts, pnt);
+                        int p0 = AddVertex(octTree,pnts, pnt);
 
                         // p1
                         line = reader.ReadLine().ToLower();
                         pnt = GetVFromLine(line, swap);
-                        int p1 = AddVertex(pnts, pnt);
+                        int p1 = AddVertex(octTree,pnts, pnt);
 
                         // p2
                         line = reader.ReadLine().ToLower();
                         pnt = GetVFromLine(line, swap);
-                        int p2 = AddVertex(pnts, pnt);
+                        int p2 = AddVertex(octTree,pnts, pnt);
 
                         tris.Add(p0);
                         tris.Add(p1);

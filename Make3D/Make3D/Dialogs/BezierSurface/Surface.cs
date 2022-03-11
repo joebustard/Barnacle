@@ -51,7 +51,7 @@ namespace Barnacle.Dialogs.BezierSurface
             }
             DateTime endTime = DateTime.Now;
             TimeSpan duration = endTime - startTime;
-            System.Diagnostics.Debug.WriteLine($"Surface generation took {duration.Milliseconds} ms");
+           
         }
 
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)

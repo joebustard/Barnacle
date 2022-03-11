@@ -472,8 +472,7 @@ namespace Barnacle.Dialogs
                                 if (proind < RibManager.Ribs[i].ProfilePoints.Count)
                                 {
                                     PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
-                                    System.Diagnostics.Debug.WriteLine($"proind {proind} {pnt.X},{pnt.Y}");
-                                    
+                                                                       
                                     double v = (double)pnt.X * (double)TopView.Dimensions[i].Height;
                                     double z = TopView.GetYmm(v + (double)TopView.Dimensions[i].P1.Y);
 

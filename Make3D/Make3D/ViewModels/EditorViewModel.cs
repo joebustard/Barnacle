@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -2524,7 +2525,7 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void OnImport(object param)
+        private async void OnImport(object param)
         {
             if (selectedObjectAdorner != null)
             {
@@ -2577,47 +2578,8 @@ namespace Barnacle.ViewModels
                             foreach (string fpath in files)
                             {
                                 InfoWindow.Instance().ShowText(System.IO.Path.GetFileName(fpath));
-                                string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
-
-                                string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
-                                if (!File.Exists(targetPath))
-                                {
-                                    try
-                                    {
-                                        Document localDoc = new Document();
-                                        localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
-                                        int numObs = 0;
-                                        foreach (Object3D ob in localDoc.Content)
-                                        {
-                                            ob.Name = rootName;
-                                            if (numObs > 0)
-                                            {
-                                                ob.Name += "_" + numObs.ToString();
-                                            }
-                                            ob.FlipInside();
-                                            ob.MoveOriginToCentroid();
-                                            ob.MoveToFloor();
-                                            ob.MoveToCentre();
-                                            numObs++;
-                                        }
-                                        localDoc.Save(targetPath);
-                                        
-                                        string fldr = System.IO.Path.GetDirectoryName(targetPath);
-                                        BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
-
-                                        localDoc.Clear();
-                                        localDoc = null;
-                                        GC.Collect();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        MessageBox.Show(ex.Message);
-                                    }
-                                }
-                                else
-                                {
-                                    System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
-                                }
+                                await Task.Run(() => ImportOneOfMany(fpath));
+                                
                             }
                         }
                         InfoWindow.Instance().CloseInfo();
@@ -2626,6 +2588,51 @@ namespace Barnacle.ViewModels
                         NotificationManager.Notify("ImportRefresh", null);
                     }
                     break;
+            }
+        }
+
+        private  void ImportOneOfMany(string fpath)
+        {
+            string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
+
+            string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
+            if (!File.Exists(targetPath))
+            {
+                try
+                {
+                    Document localDoc = new Document();
+                    localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                    int numObs = 0;
+                    foreach (Object3D ob in localDoc.Content)
+                    {
+                        ob.Name = rootName;
+                        if (numObs > 0)
+                        {
+                            ob.Name += "_" + numObs.ToString();
+                        }
+                        ob.FlipInside();
+                        ob.MoveOriginToCentroid();
+                        ob.MoveToFloor();
+                        ob.MoveToCentre();
+                        numObs++;
+                    }
+                    localDoc.Save(targetPath);
+
+                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
+                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+
+                    localDoc.Clear();
+                    localDoc = null;
+                    GC.Collect();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
             }
         }
 
