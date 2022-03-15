@@ -31,6 +31,7 @@ namespace Barnacle.ViewModels
                 }
                 Title += name[i];
             }
+            
             Colour = System.Drawing.Color.FromName(name);
             
         }

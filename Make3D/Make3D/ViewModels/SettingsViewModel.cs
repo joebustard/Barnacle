@@ -84,17 +84,39 @@ namespace Barnacle.ViewModels
         }
         private void SetAvailableColours()
         {
+            string[] ignore =
+            {
+        "AliceBlue",
+        "Azure",
+        "Beige",
+        "Cornsilk",
+        "Ivory",
+        "GhostWhite",
+        "LavenderBlush",
+        "LightYellow",
+        "Linen",
+        "MintCream",
+        "OldLace",
+        "SeaShell",
+        "Snow",
+        "WhiteSmoke",
+        "Transparent"
+        };
             List<AvailableColour> cls = new List<AvailableColour>();
             Type colors = typeof(System.Drawing.Color);
             PropertyInfo[] colorInfo = colors.GetProperties(BindingFlags.Public |
                 BindingFlags.Static);
             foreach (PropertyInfo info in colorInfo)
             {
-
-                cls.Add(new AvailableColour(info.Name));
+                var result = Array.Find(ignore, element => element == info.Name);
+                if (result == null || result == String.Empty)
+                {
+                    cls.Add(new AvailableColour(info.Name));
+                }
             }
             AvailableColours = cls;
         }
+
 
         public List<AvailableColour> AvailableColours
         {

@@ -2,30 +2,24 @@
   <!--   Basic Template -->
   <ProjectDefinition Name="Basic">
     <Description>
-      Creates a basic folder structure to save the new model.
+      Creates a basic folder structure with a single empty model file called untitled.txt.
+	  You can add as many more models as you like.
       The folders are
-      /export
-      A place to save any STL files exported from the project
-      /printer
-      A place to save 3D Printer files created by the external slicer.
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
-      /scripts
-      A place to save any limpet scripts
-
+      /export,  A place to save any STL files exported from the project
+      /printer, A place to save 3D Printer files created by the external slicer.
+      /docs,    A place to store documentation such as design notes and build instructions
+      /images,  A place to save any image files that will be used to create the model
+      /scripts, A place to save any limpet scripts
+      /commands, A place for command files or batch files to help with the workflow
       These folders are simply placeholders.
-      A single model file called untitled.txt is created in the project root.
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
     </Folder>
-    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="False" Clean="False" Export="False" />
+    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="True" Clean="False" Export="False" />
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="CopyToPrint3D.cmd" Source="templates/Commands/CopyToPrint3D.cmd" />
       <File Name="CopyLatestToPrint3D.cmd" Source="templates/Commands/CopyLatestToPrint3D.cmd" />
@@ -45,21 +39,16 @@
   <ProjectDefinition Name="Tank Model">
     <Description>
       Creates a  folder structure with empty 1/35 scale models for a typical tank model kit.
+	  These are empty but are a good starting point for your tank project.
       The folders are
-      /assemblies
-      A place to store sub assembly models
-      /backup
-      A place to store backups of the parts as they are developed
-      /export
-      A place to save any STL files exported from the project
-      /printer
-      A place to save 3D Printer files created by the external slicer.
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
-      /scripts
-      A place to save any limpet scripts.
+      /assemblies, A place to store sub assembly models
+      /backup,     A place to store backups of the parts as they are developed
+      /export,     A place to save any STL files exported from the project
+      /printer,    A place to save 3D Printer files created by the external slicer.
+      /docs,       A place to store documentation such as design notes and build instructions
+      /images,     A place to save any image files that will be used to create the model
+      /scripts,    A place to save any limpet scripts.
+	  /commands,   A place for command files or batch files to help with the workflow
     </Description>
 
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -95,8 +84,8 @@
       <File Name="BuildInstructions.docx" Source="templates/Tank/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="CopyLatestToPrint3D.cmd" Source="templates/Commands/CopyLatestToPrint3D.cmd" />
@@ -106,7 +95,7 @@
       <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
     </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
-       <File Name="GlobalDefinitions.txt" Source="templates/Tank/TankGlobals.cmd" />
+       <File Name="GlobalDefinitions.txt" Source="templates/Tank/TankGlobals.txt" />
     </Folder>
   </ProjectDefinition>
 
@@ -114,21 +103,17 @@
   <ProjectDefinition Name="Armoured Car">
     <Description>
       Creates a  folder structure with empty 1/35 scale models for a typical armoured car model kit.
+	  The model files are empty but are a good starting point for your tank project.
+
       The folders are
-      /assemblies
-      A place to store sub assembly models
-      /backup
-      A place to store backups of the parts as they are developed
-      /export
-      A place to save any STL files exported from the project
-      /printer
-      A place to save 3D Printer files created by the external slicer.
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
-      /scripts
-      A place to save any limpet scripts
+      /assemblies, A place to store sub assembly models
+      /backup,     A place to store backups of the parts as they are developed
+      /export,     A place to save any STL files exported from the project
+      /printer,    A place to save 3D Printer files created by the external slicer.
+      /docs,       A place to store documentation such as design notes and build instructions
+      /images,     A place to save any image files that will be used to create the model
+      /scripts,    A place to save any limpet scripts
+	  /commands,   A place for command files or batch files to help with the workflow
     </Description>
 
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -156,13 +141,13 @@
       <File Name="BuildInstructions.docx" Source="templates/TankBuildInstructions.docx" />
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="CopyLatestToPrint3D.cmd" Source="templates/Commands/CopyLatestToPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/Commands/CopyToPrint3D.cmd" />
-<File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
+      <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
       <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/Commands/OpenAllExportSTLsInCura.cmd" />
       <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
     </Folder>
@@ -175,22 +160,15 @@
     <Description>
       Creates a  folder structure with empty 1/35 scale models for a typical aircraft model kit.
       The folders are
-      /assemblies
-      A place to store sub assembly models
-      /backup
-      A place to store backups of the parts as they are developed
-      /export
-      A place to save any STL files exported from the project
-      /printer
-      A place to save 3D Printer files created by the external slicer.
-      /docs
-      A place to store documentation such as design notes and build instructions
-      /images
-      A place to save any image files that will be used to create the model
-      /images/ribs
-      A place to save rib images to create the fuselage
-      /scripts
-      A place to save any limpet scripts
+      /assemblies,   A place to store sub assembly models
+      /backup,       A place to store backups of the parts as they are developed
+      /export,       A place to save any STL files exported from the project
+      /printer,      A place to save 3D Printer files created by the external slicer.
+      /docs,         A place to store documentation such as design notes and build instructions
+      /images,       A place to save any image files that will be used to create the model
+      /images/ribs,  A place to save rib images to create the fuselage
+      /scripts,      A place to save any limpet scripts
+	  /commands,     A place for command files or batch files to help with the workflow
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
       <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
@@ -216,8 +194,8 @@
     </Folder>
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-    <Folder Name="Export" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
-    <Folder Name="Printer" Explorer="False" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
       <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/Commands/CopyToPrint3D.cmd" />

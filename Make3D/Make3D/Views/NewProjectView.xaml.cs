@@ -24,5 +24,10 @@ namespace Barnacle.Views
         {
             InitializeComponent();
         }
+
+        private void DescriptionBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
     }
 }

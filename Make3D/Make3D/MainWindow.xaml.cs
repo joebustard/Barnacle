@@ -1,4 +1,5 @@
-﻿using Barnacle.LineLib;
+﻿using Barnacle.Dialogs;
+using Barnacle.LineLib;
 using Barnacle.Models;
 using System;
 using System.Diagnostics;
@@ -19,6 +20,7 @@ namespace Barnacle
             InitializeComponent();
             //  LineUtils.CoplanerTest();
             PrepareUndo();
+           
         }
 
         private void PrepareUndo()
@@ -60,6 +62,8 @@ namespace Barnacle
             {
                 NotificationManager.Notify("ReloadProject", startProject);
             }
+
+            InfoWindow.Instance().Owner = this;
         }
 
         private struct V3D

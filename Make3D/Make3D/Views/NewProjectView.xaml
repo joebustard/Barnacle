@@ -39,7 +39,7 @@
         <Border Background="White"
                 BorderThickness="4"
                  Grid.Column="1"           
-                 Grid.ColumnSpan="3"  
+                 Grid.ColumnSpan="4"  
                Grid.Row="1"
                Grid.RowSpan="1"
                 Style="{StaticResource ControlBorder}">
@@ -72,12 +72,13 @@
                 Grid.Column="1"           
                 Grid.Row="3"
                 Grid.RowSpan="1"
-                Grid.ColumnSpan="3"  
+                Grid.ColumnSpan="4"  
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
                 </Grid.ColumnDefinitions>
                 <Label FontSize="18"
                Grid.Column="0"
@@ -87,7 +88,7 @@
                 </Label>
 
                 <ComboBox Grid.Column="1"
-                  Grid.ColumnSpan="2"            
+                  Grid.ColumnSpan="1"            
                   ItemsSource="{Binding TemplateNames}"
                   SelectedItem="{Binding SelectedTemplate}"
                   x:Name="TemplateBox"/>
@@ -123,7 +124,7 @@
                  FontSize="18"
                  Text="{Binding SelectedDescription}"
                  VerticalScrollBarVisibility="Visible"
-                 x:Name="DescriptionBox" >
+                 x:Name="DescriptionBox" TextChanged="DescriptionBox_TextChanged" >
             </TextBox>
             </Grid>
         </Border>

@@ -813,6 +813,7 @@ namespace Barnacle.ViewModels
                     {
                         selectedObjectAdorner.Clear();
                         Overlay.Children.Clear();
+                        NotificationManager.Notify("ObjectSelected", null);
                     }
                     floorMarker = new FloorMarker();
                     floorMarker.Position = hitPos;
@@ -1554,7 +1555,7 @@ namespace Barnacle.ViewModels
                 String pth = VisualSolutionExplorer.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
-                pe.Export(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles, BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport);
+                pe.ExportAsync(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles, BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport);
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }
@@ -2569,10 +2570,17 @@ namespace Barnacle.ViewModels
                 case "multistl":
                     {
                         var dialog = new System.Windows.Forms.FolderBrowserDialog();
+                        if (Properties.Settings.Default.LastImportFolder != "")
+                        {
+                            dialog.SelectedPath = Properties.Settings.Default.LastImportFolder;
+                        }
                         System.Windows.Forms.DialogResult result = dialog.ShowDialog();
                         if (result == System.Windows.Forms.DialogResult.OK)
                         {
                             string pth = dialog.SelectedPath;
+                            Properties.Settings.Default.LastImportFolder = pth;
+                            Properties.Settings.Default.Save();
+
                             string[] files = System.IO.Directory.GetFiles(pth, "*.stl");
                             InfoWindow.Instance().ShowInfo();
                             foreach (string fpath in files)
