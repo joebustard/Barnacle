@@ -660,7 +660,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        private /*async Task */ void Read(string fileName)
+        private async Task  Read(string fileName)
         {
             this.Cursor = Cursors.Wait;
             RibManager.Ribs.Clear();
@@ -695,24 +695,10 @@ namespace Barnacle.Dialogs
             {
                 XmlElement el = nd as XmlElement;
                 string nme = el.GetAttribute("Header");
+                noteWindow.Message = "Loading Rib " + nme;
                 int pos = Convert.ToInt16(el.GetAttribute("Position"));
-                Dispatcher.Invoke(new Action(() => { noteWindow.Message = "Loading Rib " + nme; }), DispatcherPriority.ContextIdle, null);
-
-                XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
-                ImagePathControl rc = new ImagePathControl();
-                rc.Read(el);
-                rc.Header = nme;
-                rc.Width = 600;
-                rc.Height = 600;
-                rc.FetchImage();
-                if (rc.IsValid)
-                {
-                    rc.SetImageSource();
-                    rc.OnForceReload = RibManager.OnForceRibReload;
-                    CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
-                    RibManager.Ribs.Add(rc);
-                    rc.GenerateProfilePoints();
-                }
+                await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
+                ;
                 nextY = 10 - nextY;
             }
 
@@ -726,6 +712,25 @@ namespace Barnacle.Dialogs
             noteWindow.Hide();
             this.Activate();
             this.Cursor = Cursors.Arrow;
+        }
+
+        private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
+        {
+            XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
+            ImagePathControl rc = new ImagePathControl();
+            rc.Read(el);
+            rc.Header = nme;
+            rc.Width = 600;
+            rc.Height = 600;
+            rc.FetchImage();
+            if (rc.IsValid)
+            {
+                rc.SetImageSource();
+                rc.OnForceReload = RibManager.OnForceRibReload;
+                CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
+                RibManager.Ribs.Add(rc);
+                rc.GenerateProfilePoints();
+            }
         }
 
         private void Right_Click(object sender, RoutedEventArgs e)

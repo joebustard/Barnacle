@@ -26,23 +26,37 @@
                         <RowDefinition />
                         <RowDefinition Height="25"/>
                     </Grid.RowDefinitions>
-          <!--
-                        <Menu>
-                            <MenuItem Header="_File">
-                                <MenuItem Header="_New" Command="{Binding ScriptCommand}" CommandParameter="New" />
-                                <MenuItem Header="_Load" Command="{Binding ScriptCommand}" CommandParameter="Load" />
-                                <MenuItem Header="_Save" Command="{Binding ScriptCommand}" CommandParameter="Save" />
-                            </MenuItem>
-                        </Menu>
-                            -->
+  
                     <UniformGrid Columns="6"
                                  Grid.Row="0"
                                  Rows="1">
+
+                        <Button Click="CheckClicked"
+                                Content="Check"
+                                Margin="2,2,2,2"
+                                ToolTip="Check the script for syntax errors but don't run it"/>
+
+                        <Button Click="RunClicked"
+                                Content="Run"
+                                Margin="2,2,2,2"
+                                ToolTip="Run the script"/>
+
+                        <Button Command="{Binding ScriptCommand}"
+                                CommandParameter="Clear"
+                                Content="Clear"
+                                Margin="2,2,2,2"
+                                ToolTip="Clear results log"/>
+                        
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Save"
                                 Content="Save"
                                 x:Name="SaveBut"/>
-
+                     
+                        <Button Command="{Binding ScriptCommand}"
+                                CommandParameter="Close"
+                                Content="Close"
+                                x:Name="CloseBut"/>
+                        
                         <StackPanel Orientation="Horizontal">
                             <TextBox Margin="2,2,0,2"
                                      Text="{Binding SearchText}"
@@ -53,21 +67,8 @@
                                     x:Name="SearchBut"/>
 
                         </StackPanel>
-                        <Button Click="RunClicked"
-                                Content="Run"
-                                Margin="2,2,2,2"
-                                ToolTip="Run the script"/>
-
-                        <Button Click="CheckClicked"
-                                Content="Check"
-                                Margin="2,2,2,2"
-                                ToolTip="Check the script for syntax errors but don't run it"/>
-
-                        <Button Command="{Binding ScriptCommand}"
-                                CommandParameter="Clear"
-                                Content="Clear"
-                                Margin="2,2,2,2"
-                                ToolTip="Clear results log"/>
+                     
+  
 
                     </UniformGrid>
                     <TextBox Background="Black"

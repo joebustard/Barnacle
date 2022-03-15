@@ -293,7 +293,7 @@ namespace Barnacle.Dialogs
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            MainRadius = 2;
+            MainRadius = 6;
             MainThickness = 4;
             HubRadius = 2;
             HubThickness = 2;

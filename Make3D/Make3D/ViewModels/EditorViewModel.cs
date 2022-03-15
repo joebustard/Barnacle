@@ -35,6 +35,8 @@ namespace Barnacle.ViewModels
         {
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
         };
+
+        // used when user trys to rotate an object using keyboard shortcuts
         private enum KeyboardRotation
         {
             None,
@@ -83,8 +85,7 @@ namespace Barnacle.ViewModels
             printerPlate = new PrinterPlate();
             floorMarker = null;
             grid = new Grid3D();
-            //FloorObjectVertices = flr.FloorPoints3D;
-            // FloorTriangleIndices = flr.FloorPointsIndices;
+
             camera = new PolarCamera();
 
             onePercentZoom = camera.Distance / 100.0;
@@ -1863,6 +1864,8 @@ namespace Barnacle.ViewModels
                     else
                     {
                         MessageBox.Show("Group operation failed, it produces too many faces");
+                        grp.LeftObject?.Remesh();
+                        grp.RightObject?.Remesh();
                         return false;
                     }
                 }

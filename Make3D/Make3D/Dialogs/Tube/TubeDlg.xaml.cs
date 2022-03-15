@@ -132,6 +132,8 @@ namespace Barnacle.Dialogs
                 if (tubeHeight != value)
                 {
                     tubeHeight = value;
+                    GenerateRing();
+                    Redisplay();
                     NotifyPropertyChanged();
                 }
             }
@@ -183,35 +185,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateRing()
         {
-            /*
-            List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
-
-            double cx = InnerRadius;
-
-            int rotDivisions = 36;
-
-            Point3D p3d = new Point3D(cx, 0, 0);
-            PolarCoordinate pcol = new PolarCoordinate(0, 0, 0);
-            pcol.SetPoint3D(p3d);
-            polarProfile.Add(pcol);
-
-            p3d = new Point3D(cx, 0, tubeHeight);
-            pcol = new PolarCoordinate(0, 0, 0);
-            pcol.SetPoint3D(p3d);
-            polarProfile.Add(pcol);
-
-            p3d = new Point3D(cx + TubeThickness, 0, tubeHeight - upperBevel);
-            pcol = new PolarCoordinate(0, 0, 0);
-            pcol.SetPoint3D(p3d);
-            polarProfile.Add(pcol);
-
-            p3d = new Point3D(cx + TubeThickness, 0, lowerBevel);
-            pcol = new PolarCoordinate(0, 0, 0);
-            pcol.SetPoint3D(p3d);
-            polarProfile.Add(pcol);
-
-            SweepPolarProfileTheta(polarProfile, cx, 0, sweepDegrees, rotDivisions);
-    */
+            
             TubeMaker tm = new TubeMaker(innerRadius, TubeThickness, lowerBevel, upperBevel, tubeHeight, sweepDegrees);
             tm.Generate(Vertices, Faces);
             CentreVertices();

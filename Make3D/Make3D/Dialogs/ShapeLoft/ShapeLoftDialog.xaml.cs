@@ -222,17 +222,7 @@ namespace Barnacle.Dialogs
                     Faces.Add(f + offset);
                 }
 
-                GeometryModel3D gm = GetModel();
-                MyModelGroup.Children.Clear();
-                if (floor != null)
-                {
-                    MyModelGroup.Children.Add(floor.FloorMesh);
-                    foreach (GeometryModel3D m in grid.Group.Children)
-                    {
-                        MyModelGroup.Children.Add(m);
-                    }
-                }
-                MyModelGroup.Children.Add(gm);
+                Redisplay();
             }
         }
 

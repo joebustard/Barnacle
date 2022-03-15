@@ -507,6 +507,11 @@ program ""Script Name""
 
         private void OnLimpetClosing(object param)
         {
+            CheckForSave();
+        }
+
+        private void CheckForSave()
+        {
             if (Dirty == true && filePath != "")
             {
                 MessageBoxResult res = MessageBox.Show("Script changed." + System.Environment.NewLine + "Save changes before closing?", "Warning", MessageBoxButton.YesNo);
@@ -603,33 +608,10 @@ program ""Script Name""
                     }
                     break;
 
-                case "load":
+                case "close":
                     {
-                        /*
-                        OpenFileDialog dlg = new OpenFileDialog();
-                        if (dlg.ShowDialog() == DialogResult.OK)
-                        {
-                            try
-                            {
-                                Source = File.ReadAllText(dlg.FileName);
-                                interpreter = new Interpreter();
-                                script = new Script();
-                                if (interpreter.LoadFromText(script, Source))
-                                {
-                                    Rtf = script.ToRichText();
-                                }
-                                else
-                                {
-                                    Rtf = Source;
-                                }
-                                NotificationManager.Notify("Update", null);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(ex.Message);
-                            }
-                        }
-                        */
+                        CheckForSave();
+                        NotificationManager.Notify("ScriptEditorClosed", null);
                     }
                     break;
 

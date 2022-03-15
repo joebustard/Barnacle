@@ -37,8 +37,15 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("ReloadProject", ReloadProject);
             NotificationManager.Subscribe("ExportRefresh", RefreshAfterExport);
             NotificationManager.Subscribe("ImportRefresh", RefreshAfterImport);
+            NotificationManager.Subscribe("ScriptEditorClosed", ScriptEditorClosed);
             NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
             vm = DataContext as DefaultViewModel;
+        }
+
+        private void ScriptEditorClosed(object param)
+        {
+            
+            vm.SwitchToView("Editor",false);
         }
 
         public void CheckPoint()

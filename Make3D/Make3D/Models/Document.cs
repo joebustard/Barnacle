@@ -620,6 +620,7 @@ namespace Barnacle.Models
                     {
                         clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
                         clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
+                        clone.MoveToCentre();
                     }
                     if (ProjectSettings.FloorAll)
                     {
@@ -824,37 +825,7 @@ namespace Barnacle.Models
                 ob.MoveToFloor();
             }
         }
-        /*
-        internal void ImportStl(string fileName, bool swapYZ)
-        {
-            STLExporter exp = new STLExporter();
-            Vector3DCollection normals = new Vector3DCollection();
-            Point3DCollection pnts = new Point3DCollection();
 
-            Int32Collection tris = new Int32Collection();
-            Object3D ob = new Object3D();
-            exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
-
-            ob.Normals = normals;
-            List<P3D> coords = new List<P3D>();
-            PointUtils.PointCollectionToP3D(pnts, coords);
-            ob.RelativeObjectVertices = coords;
-            ob.TriangleIndices = tris;
-            ob.PrimType = "Mesh";
-            ob.CalcScale();
-            ob.RelativeToAbsolute();
-
-            ob.Mesh.Positions = ob.AbsoluteObjectVertices;
-            ob.Mesh.TriangleIndices = ob.TriangleIndices;
-            ob.Mesh.Normals = ob.Normals;
-            ob.Rotate(new Point3D(-90, 0, 0));
-            ob.MoveToFloor();
-            ob.Remesh();
-            Content.Add(ob);
-            ob.Name = "Object_" + Content.Count.ToString();
-            Dirty = true;
-        }
-        */
         internal void ImportStl(string fileName, bool swapYZ)
         {
             STLExporter exp = new STLExporter();

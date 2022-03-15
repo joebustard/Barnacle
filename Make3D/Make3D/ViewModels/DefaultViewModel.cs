@@ -1027,9 +1027,9 @@ namespace Barnacle.ViewModels
             MainRibbon = mainRibbon;
         }
 
-        internal void SwitchToView(string v)
+        internal void SwitchToView(string v, bool checkForScript=true)
         {
-            if (currentViewName == "Script")
+            if (currentViewName == "Script" && checkForScript)
             {
                 NotificationManager.Notify("LimpetClosing", "");
             }
