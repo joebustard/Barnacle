@@ -34,28 +34,28 @@
                         <Button Click="CheckClicked"
                                 Content="Check"
                                 Margin="2,2,2,2"
-                                ToolTip="Check the script for syntax errors but don't run it"/>
+                                ToolTip="Check the script for syntax errors but don't run it" IsEnabled="{Binding EnableRun}"/>
 
                         <Button Click="RunClicked"
                                 Content="Run"
                                 Margin="2,2,2,2"
-                                ToolTip="Run the script"/>
+                                ToolTip="Run the script" IsEnabled="{Binding EnableRun}"/>
 
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Clear"
                                 Content="Clear"
                                 Margin="2,2,2,2"
-                                ToolTip="Clear results log"/>
+                                ToolTip="Clear results log" IsEnabled="{Binding EnableRun}"/>
                         
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Save"
                                 Content="Save"
-                                x:Name="SaveBut"/>
+                                x:Name="SaveBut" IsEnabled="{Binding EnableRun}"/>
                      
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Close"
                                 Content="Close"
-                                x:Name="CloseBut"/>
+                                x:Name="CloseBut" IsEnabled="{Binding EnableRun}"/>
                         
                         <StackPanel Orientation="Horizontal">
                             <TextBox Margin="2,2,0,2"
@@ -64,7 +64,7 @@
                                      Width="100"/>
                             <Button Command="{Binding FindCommand}"
                                     Content="Find"
-                                    x:Name="SearchBut"/>
+                                    x:Name="SearchBut" IsEnabled="{Binding EnableRun}"/>
 
                         </StackPanel>
                      

@@ -257,6 +257,8 @@
     <Compile Include="Models\VectorUtils.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AvailableColour.cs" />
+    <Compile Include="ViewModels\Logging\Log.cs" />
+    <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="Views\ScriptView.xaml.cs">

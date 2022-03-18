@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,7 +16,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-
+using Barnacle.ViewModels.Logging;
 namespace Barnacle.ViewModels
 {
     internal class ScriptViewModel : BaseViewModel, INotifyPropertyChanged
@@ -85,11 +86,12 @@ program ""Script Name""
             cameraMode = CameraModes.CameraMoveLookCenter;
             modelItems = new Model3DCollection();
             searchIndex = 0;
-            Log.Instance().UpdateText = UpdateText;
+            Logging.Log.Instance().UpdateText = UpdateText;
             BaseViewModel.ScriptClearBed = false;
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
             selectedTabIndex = 0;
+            
         }
 
         private enum CameraModes
@@ -236,6 +238,19 @@ program ""Script Name""
                 }
             }
         }
+        public bool enableRun;
+        public bool EnableRun
+        {
+            get { return enableRun; }
+            set
+            {
+                if (enableRun != value)
+                {
+                    enableRun = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public int SelectedTabIndex
         {
@@ -322,6 +337,16 @@ program ""Script Name""
             NotifyPropertyChanged("ModelItems");
         }
 
+        internal void Escape()
+        {
+            if ( s_cts != null && !s_cts.IsCancellationRequested)
+            {
+                s_cts.Cancel();
+                Logging.Log.Instance().AddEntry("Cancelled by user");
+                EnableRun = true;
+            }
+        }
+
         public void SwitchTabs()
         {
             if (SelectedTabIndex == 0)
@@ -337,6 +362,16 @@ program ""Script Name""
             {
                 OnFind(null);
             }
+            else
+                if ( key == Key.Escape)
+            {
+                if ( s_cts != null && !s_cts.IsCancellationRequested)
+                {
+                    
+                    s_cts.Cancel();
+                    Logging.Log.Instance().AddEntry("Cancelled by user");
+                }
+            }
         }
 
         internal void KeyUp(Key key, bool v1, bool v2)
@@ -350,7 +385,7 @@ program ""Script Name""
 
         internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
         {
-            
+
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (cameraMode == CameraModes.CameraMove)
@@ -383,9 +418,10 @@ program ""Script Name""
                 ZoomOut(null);
             }
         }
-
-        internal void RunScript()
+        static CancellationTokenSource s_cts; 
+        internal async void RunScript()
         {
+            EnableRun = false;
             if (filePath != "" && Project.SharedProjectSettings.AutoSaveScript == true)
             {
                 try
@@ -400,20 +436,102 @@ program ""Script Name""
             }
             content.Clear();
             script.SetPartsLibraryRoot(GetPartsLibraryPath());
-            script.SetResultsContent(content);
+          //  script.SetResultsContent(content);
             ClearResults();
             Refresh(resultsBox);
-            if (script.Execute())
+            s_cts = new CancellationTokenSource();
+           
+            RunRes res = await RunAsync(s_cts.Token);
+
+            // get the log entries from the script
+            // and put them all on the display in one hit
+            String alllog = "";
+            foreach (ScriptLanguage.LogEntry le in res.LogEntrys)
             {
-                Log.Instance().AddEntry("Complete");
+                alllog +=le.DateStamp + " "+le.Text+"\r\n";
+            }
+            UpdateText(alllog);
+
+            if (res.Status)
+            {
+                foreach( Object3D ob in res.Artefacts)
+                {
+                    content.Add(ob.Clone(true));
+                }
+                
+                Logging.Log.Instance().AddEntry("Complete");
             }
             else
             {
-                Log.Instance().AddEntry("Failed");
+                Logging.Log.Instance().AddEntry("Failed");
             }
             RegenerateDisplayList();
+            EnableRun = true;
+        }
+        struct RunRes
+        {
+            public bool Status { get; set; }
+            public List<Object3D> Artefacts { get; set; }
+            public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
+        }
+        private Task<RunRes> RunAsync(CancellationToken  cancellationToken)
+        {
+            
+            return Task.Run(() =>
+                {
+                    RunRes result = new RunRes();
+                    result.Artefacts = new List<Object3D>();
+                    result.LogEntrys = new List<ScriptLanguage.LogEntry>();
+                    script.SetResultsContent(result.Artefacts);
+                    script.SetCancelationToken(cancellationToken);
+                    result.Status = script.Execute();
+                    foreach( Object3D ob in result.Artefacts)
+                    {
+                        List<int> l = ob.Indices;
+                    }
+                    if (!cancellationToken.IsCancellationRequested)
+                    {
+                        foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
+                        {
+                            result.LogEntrys.Add(new ScriptLanguage.LogEntry(le.DateStamp, le.Text));
+                        }
+                    }
+                    ScriptLanguage.Log.Instance().Clear();
+                    return result;
+                });
         }
 
+        /*
+       internal void RunScript()
+       {
+           if (filePath != "" && Project.SharedProjectSettings.AutoSaveScript == true)
+           {
+               try
+               {
+                   File.WriteAllText(filePath, Source);
+                   Dirty = false;
+               }
+               catch (Exception ex)
+               {
+                   MessageBox.Show(ex.Message);
+               }
+           }
+           content.Clear();
+           script.SetPartsLibraryRoot(GetPartsLibraryPath());
+           script.SetResultsContent(content);
+           ClearResults();
+           Refresh(resultsBox);
+           if (script.Execute())
+           {
+               Log.Instance().AddEntry("Complete");
+           }
+           else
+           {
+               Log.Instance().AddEntry("Failed");
+           }
+           RegenerateDisplayList();
+       }
+       */
         internal bool ScriptText(string scriptText)
         {
             Source = scriptText;
@@ -585,7 +703,7 @@ program ""Script Name""
 
                 case "clear":
                     {
-                        Log.Instance().Clear();
+                        Logging.Log.Instance().Clear();
                         content.Clear();
                         ClearResults();
                     }

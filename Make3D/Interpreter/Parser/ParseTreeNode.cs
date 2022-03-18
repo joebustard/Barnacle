@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 
 namespace ScriptLanguage
 {
@@ -12,6 +13,9 @@ namespace ScriptLanguage
         public bool HighLight;
         protected ParseTreeNode Child;
         public static bool continueRunning;
+
+        public static CancellationToken CancellationToken { get; internal set; }
+
         // Instance constructor
         public ParseTreeNode()
         {

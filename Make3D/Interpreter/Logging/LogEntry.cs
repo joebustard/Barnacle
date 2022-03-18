@@ -26,6 +26,12 @@ namespace ScriptLanguage
             _DateStamp = it.DateStamp;
         }
 
+        public LogEntry(string dateStamp, string text)
+        {
+            DateStamp = dateStamp;
+            Text = text;
+        }
+
         public String DateStamp
         {
             get { return _DateStamp; }

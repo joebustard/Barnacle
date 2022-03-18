@@ -1,4 +1,5 @@
 ﻿using Barnacle.ViewModels;
+using Barnacle.ViewModels.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -81,7 +82,21 @@ namespace Barnacle.Views
             vm.ClearResults();
             if (RefreshInterpreterSource())
             {
-                ScriptLanguage.Log.Instance().AddEntry("OK");
+              
+                Log.Instance().AddEntry("OK");
+            }
+            else
+            {
+                CopyLanguageLogs();
+            }
+        }
+
+        private void CopyLanguageLogs()
+        {
+            Log.Instance().Clear();
+            foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
+            {
+                Log.Instance().AddEntry(le.DateStamp, le.Text);
             }
         }
 
@@ -239,6 +254,7 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             if (RefreshInterpreterSource())
             {
                 vm.RunScript();
+               // CopyLanguageLogs();
             }
         }
 
@@ -265,6 +281,11 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             {
                 e.Handled = true;
                 Run();
+            }
+            else if (e.Key == Key.Escape)
+            {
+                e.Handled = true;
+                vm.Escape() ;
             }
         }
 
@@ -294,6 +315,8 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
             vm.SetResultsBox(ResultsBox);
             ScriptBox.Focusable = true;
             loaded = true;
+            vm.EnableRun = true;
+
         }
 
         private void SetDisplayRtf()
