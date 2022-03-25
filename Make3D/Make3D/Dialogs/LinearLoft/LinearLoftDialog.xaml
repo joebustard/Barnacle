@@ -89,7 +89,7 @@
             <Button Click="Ok_Click"
                     Content="Ok"
                     Grid.Column="2"
-                    Margin="2,2,2,2"/>
+                    Margin="2,2,2,2" IsDefault="True"/>
 
         </Grid>
         <Border Grid.Column="2"

@@ -82,6 +82,7 @@
     <Compile Include="SolidFunctions\MakeStadium.cs" />
     <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTrapezoid.cs" />
+    <Compile Include="SolidFunctions\MakeTrickleNode.cs" />
     <Compile Include="SolidFunctions\MakeTube.cs" />
     <Compile Include="SolidFunctions\CSGNode.cs" />
     <Compile Include="SolidFunctions\MakePlatelet.cs" />

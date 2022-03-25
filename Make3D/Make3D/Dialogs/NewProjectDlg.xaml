@@ -82,7 +82,7 @@
                     Content="OK"
                     Grid.Column="1"
                     Margin="4,0,4,0"
-                    x:Name="OK_Button"/>
+                    x:Name="OK_Button" IsDefault="True"/>
 
         </Grid>
     </Grid>

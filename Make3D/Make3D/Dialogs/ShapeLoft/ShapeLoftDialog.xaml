@@ -14,6 +14,8 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
+
+            <RowDefinition Height="30"/>
             <RowDefinition Height="25"/>
             <RowDefinition Height="25"/>
         </Grid.RowDefinitions>
@@ -65,14 +67,18 @@
             </Viewport3D>
         </Border>
         <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0">
+            <StackPanel Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Content="Copy"/>
+                <Button Content="Down" Click="Down_Clicked" Margin="2,2,0,2"/>
+                <Button Content="Up" Click="Up_Clicked" Margin="8,2,0,2"/>
+            </StackPanel>
+        </Grid>
+      
+            <StackPanel Orientation="Horizontal" Grid.Row="3">
+            <Label Grid.Column="0" VerticalAlignment="Center">
             Size
             </Label>
-            <Grid Grid.Column="1">
+            <Grid Width="200" Margin="8,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="1*"/>
@@ -88,9 +94,10 @@
                          TextChanged="SizeZ_TextChanged"
                          x:Name="SizeZ"/>
             </Grid>
-        </Grid>
+            </StackPanel>
+        
         <Grid Grid.Column="0"
-              Grid.Row="3">
+              Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
@@ -108,7 +115,7 @@
 
         </Grid>
         <Grid Grid.Column="1"
-              Grid.Row="3">
+              Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80"/>
@@ -123,7 +130,7 @@
             <Button Click="Ok_Click"
                     Content="Ok"
                     Grid.Column="2"
-                    Margin="2,2,2,2"/>
+                    Margin="2,2,2,2" IsDefault="True"/>
 
         </Grid>
     </Grid>

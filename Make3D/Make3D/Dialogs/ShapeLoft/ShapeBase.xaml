@@ -20,8 +20,8 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Label FontSize="14"
                Grid.Column="0"
@@ -43,11 +43,12 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
+
             </Grid.RowDefinitions>
             <Label Grid.Column="0"
                    Grid.Row="0"
                    VerticalAlignment="Center">
+             No. Of Points            
             </Label>
             <local:NUDBox Grid.Column="1"
                           Grid.Row="0"
@@ -56,6 +57,7 @@
             <Label Grid.Column="0"
                    Grid.Row="1"
                    VerticalAlignment="Center">
+                    Rotation
             </Label>
             <Grid Grid.Column="1"
                   Grid.Row="1">
@@ -72,22 +74,23 @@
                 <Button Click="RotateMinus_Click"
                         Content="-"
                         Grid.Column="0"
-                        Grid.Row="1"/>
+                        Grid.Row="1" ToolTip="Rotate -1 degree"/>
 
                 <Button Click="RotateZero_Click"
-                        Content="0"
+                        Content="."
                         Grid.Column="1"
-                        Grid.Row="1"/>
+                        Grid.Row="1" FontSize="20" ToolTip="Zero the rotation"/>
 
                 <Button Click="RotatePlus_Click_1"
                         Content="+"
                         Grid.Column="2"
-                        Grid.Row="1"/>
+                        Grid.Row="1" ToolTip="Rotate +1 degree"/>
 
             </Grid>
             <Label Grid.Column="0"
                    Grid.Row="2"
                    VerticalAlignment="Center">
+                Snap Points
             </Label>
             <CheckBox Checked="CheckBox_Checked"
                       Grid.Column="1"
@@ -98,6 +101,7 @@
             <Label Grid.Column="0"
                    Grid.Row="3"
                    VerticalAlignment="Center">
+                Link Points
             </Label>
             <CheckBox Checked="LinkBox_Checked"
                       Grid.Column="1"
@@ -107,7 +111,8 @@
                       VerticalAlignment="Center"/>
             <Label Grid.Column="0"
                    Grid.Row="4">
-            </Label>
+
+Distance            </Label>
             <Label Grid.Column="1"
                    Grid.Row="4"
                    x:Name="DistanceLabel"/>

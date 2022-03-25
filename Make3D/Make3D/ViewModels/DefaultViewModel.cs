@@ -1058,6 +1058,7 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow = new List<ToolDef>();
             decorativeToolsToShow.Add(new ToolDef("Bicorn", true, "Bicorn", "Create a bicorn shape."));
             decorativeToolsToShow.Add(new ToolDef("Squirkle", true, "Squirkle", "Create a squirkle shape."));
+            decorativeToolsToShow.Add(new ToolDef("Trickle", true, "Trickle", "Create a trickle shape."));
             decorativeToolsToShow.Add(new ToolDef("Text", true, "Text", "Create Text."));
             NotifyPropertyChanged("DecorativeToolsToShow");
         }

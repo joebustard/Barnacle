@@ -948,6 +948,15 @@ public <pType> <PName>
             string p7Controls = GetControls(P7Name);
             string p8Controls = GetControls(P8Name);
 
+            string pSet = GetInitialSettings(p1Name, p1Min, p1Type);
+            pSet = GetInitialSettings(p2Name, p2Min, p2Type);
+            pSet = GetInitialSettings(p3Name, p3Min, p3Type);
+            pSet = GetInitialSettings(p4Name, p4Min, p4Type);
+            pSet = GetInitialSettings(p5Name, p5Min, p5Type);
+            pSet = GetInitialSettings(p6Name, p6Min, p6Type);
+            pSet = GetInitialSettings(p7Name, p7Min, p7Type);
+            pSet = GetInitialSettings(p8Name, p8Min, p8Type);
+
             System.IO.Directory.CreateDirectory(targetFolder);
             string[] files = System.IO.Directory.GetFiles(templateRoot, "Blank*.*");
             foreach (string fn in files)
@@ -974,12 +983,33 @@ public <pType> <PName>
                         l = l.Replace("<P8CONTROLS>", p8Controls);
                         l = l.Replace("//LOADPARMETERS", loadParams);
                         l = l.Replace("//SAVEPARMETERS", saveParams);
+                        l = l.Replace("//SAVEPARMETERS", saveParams);
+                        l = l.Replace("//SETPROPERTIES", pSet);
+                        
                         fout.WriteLine(l);
                     }
                     fin.Close();
                     fout.Close();
                 }
             }
+        }
+
+        private string GetInitialSettings(string n, string v,string t)
+        {
+            string res = "";
+            if ( n != "")
+            {
+                if (t.ToLower() == "string")
+                {
+                    res = $"        {n} = \"{v}\";";
+                }
+                else
+                {
+                    res = $"        {n} = {v};";
+                }
+            }
+
+            return res;
         }
 
         private void CreateInterpreterNode(string templateRoot, string targetFolder)

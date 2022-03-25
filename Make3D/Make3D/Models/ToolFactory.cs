@@ -42,6 +42,10 @@ namespace Barnacle.Models
                     res = new SquirkleDlg();
                     break;
 
+                case "Trickle":
+                    res = new TrickleDlg();
+                    break;
+
                 case "Scribble":
                     res = new ScribbleDlg();
                     break;

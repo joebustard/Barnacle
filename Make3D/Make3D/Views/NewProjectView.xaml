@@ -149,7 +149,7 @@
                     Grid.Column="3"
                     HorizontalAlignment="Right"
                     IsEnabled="{Binding OKEnabled}"
-                    Style="{StaticResource LargeButton}"/>
+                    Style="{StaticResource LargeButton}" IsDefault="True"/>
 
         </Grid>
     </Grid>
