@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace ScriptLanguage
+namespace Barnacle.ViewModels.Logging
 {
     public class Log
     {
         protected List<LogEntry> logEntrys;
-        public List<LogEntry> LogEntrys { get { return logEntrys; } }
+
         protected TextBox txtbox;
 
         private static Log singleton = null;
@@ -59,18 +62,30 @@ namespace ScriptLanguage
             {
                 UpdateText(le.DateStamp + " " + le.Text + "\r\n");
             }
-            /*
-                        if (txtbox != null)
-                        {
-                            int iStartOfLine = txtbox.Text.Length;
-
-                            txtbox.Text += le.DateStamp + " " + le.Text + "\r\n";
-                            txtbox.Select(iStartOfLine, 1);
-                            txtbox.ScrollToEnd();
-                        }
-                        */
+           
         }
 
+        public virtual void AddEntry(string ts, String Line)
+        {
+            LogEntry le = new LogEntry();
+            le.Text = Line;
+            le.DateStamp = ts;
+            logEntrys.Add(le);
+            if (UpdateText != null)
+            {
+                UpdateText(le.DateStamp + " " + le.Text + "\r\n");
+            }
+
+        }
+        public String GetAll()
+        {
+            string result = "";
+            foreach( LogEntry le in logEntrys)
+            {
+                result += le.DateStamp + " " + le.Text + "\r\n";
+            }
+            return result;
+        }
         public void Clear()
         {
             logEntrys.Clear();

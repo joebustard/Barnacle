@@ -230,6 +230,7 @@
     <Compile Include="Dialogs\TrapezoidDlg\TrapezoidDlg.xaml.cs">
       <DependentUpon>TrapezoidDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Trickle\TrickleDlg.xaml.cs" />
     <Compile Include="Dialogs\Tube\TubeDlg.xaml.cs">
       <DependentUpon>TubeDlg.xaml</DependentUpon>
     </Compile>
@@ -257,6 +258,8 @@
     <Compile Include="Models\VectorUtils.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AvailableColour.cs" />
+    <Compile Include="ViewModels\Logging\Log.cs" />
+    <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
     <Compile Include="ViewModels\ScriptViewModel.cs" />
     <Compile Include="Views\ScriptView.xaml.cs">
@@ -539,6 +542,10 @@
     <Page Include="Dialogs\TrapezoidDlg\TrapezoidDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Trickle\TrickleDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Tube\TubeDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -889,6 +896,9 @@
     <Resource Include="Images\Buttons\BendZ1.png" />
     <Resource Include="Images\Buttons\BendZ2.png" />
     <Resource Include="Images\Buttons\Bend.png" />
+    <Resource Include="Images\Buttons\Zoom.png" />
+    <Resource Include="Images\Buttons\ZoomMinus.png" />
+    <Resource Include="Images\Buttons\ZoomPlus.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

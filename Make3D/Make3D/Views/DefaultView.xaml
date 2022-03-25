@@ -878,23 +878,23 @@
             <Custom:RibbonTab Name="ViewTab1"
                               Header="View">
                 <Custom:RibbonGroup Name="ZoomGroup"
-                                    Header="Zoom">
+                                    Header="Zoom" LargeImageSource="/Barnacle;component/Images/Buttons/Zoom.png">
                     <Custom:RibbonButton Command="{Binding ZoomOutCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Zoom Out"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/question1.png"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/ZoomMinus.png"
                                          VerticalAlignment="Top"
                                          x:Name="ZoomOutButton" />
                     <Custom:RibbonButton Command="{Binding ZoomInCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Zoom In"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/question1.png"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/ZoomPlus.png"
                                          VerticalAlignment="Top"
                                          x:Name="ZoomInButton" />
                     <Custom:RibbonButton Command="{Binding Zoom100Command}"
                                          HorizontalAlignment="Stretch"
                                          Label="100%"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/question1.png"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/Zoom.png"
                                          VerticalAlignment="Top"
                                          x:Name="Zoom100Button" />
                 </Custom:RibbonGroup>

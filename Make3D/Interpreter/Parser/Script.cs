@@ -1,6 +1,7 @@
 using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace ScriptLanguage
 {
@@ -102,5 +103,9 @@ namespace ScriptLanguage
         {
             parseTree = tn;
         }
+
+        public void SetCancelationToken(CancellationToken cancellationToken)
+        {
+            ParseTreeNode.CancellationToken = cancellationToken;     }
     }
 }

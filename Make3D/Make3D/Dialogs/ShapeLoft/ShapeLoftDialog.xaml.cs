@@ -68,7 +68,13 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
+        private void Down_Clicked(object sender, RoutedEventArgs e)
+        {
+            BottomShape.Setup(TopShape.NumberOfPoints, TopShape.RotationDegrees, TopShape.PointAngles, TopShape.PointDistances);
+               }
+        private void Up_Clicked(object sender, RoutedEventArgs e)
+        {
+        }
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             EditorParameters.Set("TopNumberOfPoints", TopShape.NumberOfPoints.ToString());

@@ -75,7 +75,7 @@ namespace Barnacle.Object3DLib
             scale = groupScale;
         }
 
-        public override Object3D Clone()
+        public override Object3D Clone( bool useIndices = false)
         {
             Group3D res = new Group3D();
             res.Name = this.Name;
@@ -106,9 +106,19 @@ namespace Barnacle.Object3DLib
             res.AbsoluteBounds.Lower = new Point3D(this.AbsoluteBounds.Lower.X, this.AbsoluteBounds.Lower.Y, this.AbsoluteBounds.Lower.Z);
             res.AbsoluteBounds.Upper = new Point3D(this.AbsoluteBounds.Upper.X, this.AbsoluteBounds.Upper.Y, this.AbsoluteBounds.Upper.Z);
             res.TriangleIndices = new Int32Collection();
-            for (int i = 0; i < TriangleIndices.Count; i++)
+            if (useIndices)
             {
-                res.TriangleIndices.Add(this.TriangleIndices[i]);
+                foreach (int i in this.Indices)
+                {
+                    res.TriangleIndices.Add(i);
+                }
+            }
+            else
+            {
+                foreach (int i in this.TriangleIndices)
+                {
+                    res.TriangleIndices.Add(i);
+                }
             }
             return res;
         }

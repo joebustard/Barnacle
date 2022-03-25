@@ -88,6 +88,7 @@ namespace ScriptLanguage
                 "makesquirkle",
                 "maketorus",
                 "maketrapezoid",
+                "maketrickle",
                 "maketube",
                 "makewagonwheel",
                 "now",
@@ -2555,6 +2556,12 @@ namespace ScriptLanguage
                         case "maketrapezoid":
                             {
                                 exp = ParseMakeTrapezoidFunction(parentName);
+                            }
+                            break;
+
+                        case "maketrickle":
+                            {
+                                exp = ParseMakeTrickleFunction(parentName);
                             }
                             break;
 
@@ -5341,7 +5348,46 @@ namespace ScriptLanguage
             }
             return result;
         }
+        private ExpressionNode ParseMakeTrickleFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeTrickle";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 3;
 
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeTrickleNode mn = new MakeTrickleNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
         private bool ParseWholeStructAssignment(String leftidentifier, CompoundNode parentNode, String parentName)
         {
             // we should either see  a struct variable name followed by a semi colon;

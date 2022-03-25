@@ -224,6 +224,22 @@ namespace Barnacle.Object3DLib
             set { triangleIndices = value; }
         }
 
+        private List<int> indices;
+        public List<int> Indices
+        {
+            get {
+                if (indices == null)
+                {
+                    indices = new List<int>();
+                    foreach (int i in triangleIndices)
+                    {
+                        indices.Add(i);
+                    }
+                }
+                return indices;
+            }
+            
+        }
         protected String XmlType { get; set; }
 
         public static XmlElement FindExternalModel(string name, string path)
@@ -439,7 +455,7 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public virtual Object3D Clone()
+        public virtual Object3D Clone(bool useIndices = false)
         {
             Object3D res = new Object3D();
             res.Name = this.Name;
@@ -470,9 +486,20 @@ namespace Barnacle.Object3DLib
                     p3d.Z = p.Z;
                     res.relativeObjectVertices.Add(p3d);
                 }
-                foreach (int i in this.triangleIndices)
+                // THIS IS A HACK TO GET aroubd an async issue.
+                if (useIndices)
                 {
-                    res.triangleIndices.Add(i);
+                    foreach (int i in this.Indices)
+                    {
+                        res.triangleIndices.Add(i);
+                    }
+                }
+                else
+                {
+                    foreach (int i in this.triangleIndices)
+                    {
+                        res.triangleIndices.Add(i);
+                    }
                 }
             }
             res.EditorParameters.ToolName = EditorParameters.ToolName;

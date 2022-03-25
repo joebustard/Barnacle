@@ -98,7 +98,7 @@ namespace ScriptLanguage
                                 bool bExecuteBody;
                                 body.InBreakMode = false;
                                 bExecuteBody = ContinueLoop(Step);
-                                while (bExecuteBody && result && !body.InBreakMode)
+                                while (bExecuteBody && result && !body.InBreakMode && ParseTreeNode.continueRunning)
                                 {
                                     result = body.Execute();
                                     if (!body.InBreakMode)

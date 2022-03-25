@@ -40,7 +40,7 @@
         <Button Click="OKButton_Click"
                 Content="OK"
                 Grid.Column="1"
-                Grid.Row="2"/>
+                Grid.Row="2" IsDefault="True"/>
 
     </Grid>
 </Window>

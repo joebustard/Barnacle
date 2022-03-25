@@ -1,4 +1,4 @@
-﻿using MakerLib;
+using MakerLib;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -7,19 +7,88 @@ using System.Windows.Media.Media3D;
 namespace Barnacle.Dialogs
 {
     /// <summary>
-    /// Interaction logic for Blank.xaml
+    /// Interaction logic for Trickle.xaml
     /// </summary>
-    public partial class BlankDlg : BaseModellerDialog, INotifyPropertyChanged
+    public partial class TrickleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
         private bool loaded ;
 
-        //TOOLPROPS
+        
 
-        public BlankDlg()
+private double radius;
+public double Radius
+{
+    get
+    {
+      return radius;
+    }
+    set
+    {
+        if ( radius != value )
+        {
+            if (value >= 1 && value <= 100)
+            {
+              radius = value;
+              NotifyPropertyChanged();
+              UpdateDisplay();
+           }
+        }
+    }
+}
+
+
+
+private double side;
+public double Side
+{
+    get
+    {
+      return side;
+    }
+    set
+    {
+        if ( side != value )
+        {
+            if (value >= 1 && value <= 200)
+            {
+              side = value;
+              NotifyPropertyChanged();
+              UpdateDisplay();
+           }
+        }
+    }
+}
+
+
+
+private double thickness;
+public double Thickness
+{
+    get
+    {
+      return thickness;
+    }
+    set
+    {
+        if ( thickness != value )
+        {
+            if (value >= 0.1 && value <= 100)
+            {
+              thickness = value;
+              NotifyPropertyChanged();
+              UpdateDisplay();
+           }
+        }
+    }
+}
+
+
+
+        public TrickleDlg()
         {
             InitializeComponent();
-            ToolName = "Blank";
+            ToolName = "Trickle";
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
@@ -85,8 +154,8 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            BlankMaker maker = new BlankMaker(
-                //MAKEPARAMETERS
+            TrickleMaker maker = new TrickleMaker(
+                radius, side, thickness
                 );
             maker.Generate(Vertices, Faces);
         }
@@ -94,13 +163,31 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            //LOADPARMETERS
+            
+          if ( EditorParameters.Get("Radius") !="")
+          {
+              Radius= EditorParameters.GetDouble("Radius");
+          }
+
+          if ( EditorParameters.Get("Side") !="")
+          {
+              Side= EditorParameters.GetDouble("Side");
+          }
+
+          if ( EditorParameters.Get("Thickness") !="")
+          {
+              Thickness= EditorParameters.GetDouble("Thickness");
+          }
+
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            //SAVEPARMETERS
+            
+            EditorParameters.Set("Radius",Radius.ToString());
+            EditorParameters.Set("Side",Side.ToString());
+            EditorParameters.Set("Thickness",Thickness.ToString());
         }
 
         private void UpdateDisplay()
@@ -115,14 +202,14 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
+            Side = 20;
+            Thickness = 5;
+            Radius = 5;
             LoadEditorParameters();
             
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            
-            //SETPROPERTIES
-
             UpdateDisplay();
         }
     }

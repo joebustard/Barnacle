@@ -89,7 +89,7 @@ namespace ScriptLanguage
                         }
                     }
                 } while (bRunBody &&
-                           result && !_Body.InBreakMode);
+                           result && !_Body.InBreakMode && ParseTreeNode.continueRunning);
             }
             return result;
         }
