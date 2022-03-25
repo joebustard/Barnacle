@@ -39,7 +39,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
-
 namespace CSGLib
 {
     /// <summary>
@@ -51,7 +50,7 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
-        private int maxSplitLevel = 200;
+        private int maxSplitLevel = 7;
 
         /// <summary>
         /// tolerance value to test equalities
@@ -73,6 +72,7 @@ namespace CSGLib
         /// </summary>
         private List<Vertex> Vertices;
 
+        private OctTree octTree;
         public enum PartState
         {
             Good,
@@ -91,10 +91,12 @@ namespace CSGLib
             var verticesTemp = new List<Vertex>();
 
             //create vertices
+   
             Vertices = new List<Vertex>();
+            octTree = new OctTree(Vertices,solid.Minimum,solid.Maximum,100);
             for (int i = 0; i < verticesPoints.Length; i++)
             {
-                vertex = AddVertex(verticesPoints[i], Status.UNKNOWN);
+                vertex = AddVertex(octTree,verticesPoints[i], Status.UNKNOWN);
                 verticesTemp.Add(vertex);
             }
 
@@ -130,14 +132,7 @@ namespace CSGLib
             Face face;
             for (int i = 0; i < NumFaces; i++)
             {
-                if ( i %10 ==0 )
-                {
-                    KeyStates s = Keyboard.GetKeyStates(Key.Escape);
-                    if ((s & KeyStates.Down) != 0)
-                    {
-                        return PartState.Interupted;
-                    }
-                }
+               
                 face = GetFace(i);
                 face.V1.AddAdjacentVertex(face.V2);
                 face.V1.AddAdjacentVertex(face.V3);
@@ -151,14 +146,7 @@ namespace CSGLib
             for (int i = 0; i < NumFaces; i++)
             {
                 face = GetFace(i);
-                if (i % 10 == 0)
-                {
-                    KeyStates s = Keyboard.GetKeyStates(Key.Escape);
-                    if ((s & KeyStates.Down) != 0)
-                    {
-                        return PartState.Interupted;
-                    }
-                }
+               
                 //if the face vertices aren't classified to make the simple classify
                 if (face.SimpleClassify() == false)
                 {
@@ -279,33 +267,19 @@ namespace CSGLib
                 //for each object1 face...
                 for (int i = 0; i < NumFaces; i++)
                 {
-                    if ( i % 10 == 0)
-                    {
-                        KeyStates s = Keyboard.GetKeyStates(Key.Escape);
-                        if ((s & KeyStates.Down) != 0 )
-                        {
-                            return PartState.Interupted;
-                        }
-                    }
+
                     //if object1 face bound and object2 bound overlap ...
                     face1 = GetFace(i);
 
-                    if (face1.GetBound().Overlap(obj._Bound))
+                    if (face1.SplitLevel <= maxSplitLevel && face1.GetBound().Overlap(obj._Bound))
                     {
                         //for each object2 face...
                         for (int j = 0; j < obj.NumFaces; j++)
                         {
-                            if (j % 10 == 0)
-                            {
-                                KeyStates s = Keyboard.GetKeyStates(Key.Escape);
-                                if ((s & KeyStates.Down) != 0)
-                                {
-                                    return PartState.Interupted;
-                                }
-                            }
+                           
                             //if object1 face bound and object2 face bound overlap...
                             face2 = obj.GetFace(j);
-                            if (face1.GetBound().Overlap(face2.GetBound()))
+                            if (face2.SplitLevel <= maxSplitLevel && face1.GetBound().Overlap(face2.GetBound()))
                             {
                                 //PART I - DO TWO POLIGONS INTERSECT?
                                 //POSSIBLE RESULTS: INTERSECT, NOT_INTERSECT, COPLANAR
@@ -450,12 +424,28 @@ namespace CSGLib
         /// <param name="pos">vertex position</param>
         /// <param name="status">vertex status</param>
         /// <returns>The vertex inserted (if a similar vertex already exists, this is returned).</returns>
-        private Vertex AddVertex(Vector3D pos, Status status)
+        private Vertex AddVertex(OctTree octTree, Vector3D pos, Status status)
         {
             int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
-            for (i = 0; i < Vertices.Count; i++)
+            int index = octTree.PointPresent(vertex);
+            if (index != -1 )
+            {
+                vertex = Vertices[index];
+                vertex.SetStatus(status);
+                return vertex;
+            }
+            else
+            {
+                octTree.AddPoint(Vertices.Count, vertex);
+                //Vertices.Add(vertex);
+                return vertex;
+            }
+
+
+            /*
+             *    for (i = 0; i < Vertices.Count; i++)
             {
                 if (vertex.Equals(Vertices[i]))
                     break;
@@ -471,6 +461,7 @@ namespace CSGLib
                 vertex.SetStatus(status);
                 return vertex;
             }
+            */
         }
 
         /// <summary>
@@ -486,8 +477,8 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex1 = AddVertex(newPos1, Status.BOUNDARY);
-            Vertex vertex2 = AddVertex(newPos2, Status.BOUNDARY);
+            Vertex vertex1 = AddVertex(octTree,newPos1, Status.BOUNDARY);
+            Vertex vertex2 = AddVertex(octTree, newPos2, Status.BOUNDARY);
 
             if (linedVertex == 1)
             {
@@ -528,8 +519,8 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex1 = AddVertex(newPos1, Status.BOUNDARY);
-            Vertex vertex2 = AddVertex(newPos2, Status.BOUNDARY);
+            Vertex vertex1 = AddVertex(octTree, newPos1, Status.BOUNDARY);
+            Vertex vertex2 = AddVertex(octTree, newPos2, Status.BOUNDARY);
 
             if (endVertex.Equals(face.V1))
             {
@@ -567,8 +558,8 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex1 = AddVertex(newPos1, Status.BOUNDARY);
-            Vertex vertex2 = AddVertex(newPos2, Status.BOUNDARY);
+            Vertex vertex1 = AddVertex(octTree, newPos1, Status.BOUNDARY);
+            Vertex vertex2 = AddVertex(octTree, newPos2, Status.BOUNDARY);
 
             if (splitEdge == 1)
             {
@@ -602,7 +593,7 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex = AddVertex(newPos, Status.BOUNDARY);
+            Vertex vertex = AddVertex(octTree, newPos, Status.BOUNDARY);
 
             if (endVertex.Equals(face.V1))
             {
@@ -638,8 +629,8 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex1 = AddVertex(newPos1, Status.BOUNDARY);
-            Vertex vertex2 = AddVertex(newPos2, Status.BOUNDARY);
+            Vertex vertex1 = AddVertex(octTree, newPos1, Status.BOUNDARY);
+            Vertex vertex2 = AddVertex(octTree, newPos2, Status.BOUNDARY);
 
             if (startVertex.Equals(face.V1) && endVertex.Equals(face.V2))
             {
@@ -690,7 +681,7 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex = AddVertex(newPos, Status.BOUNDARY);
+            Vertex vertex = AddVertex(octTree, newPos, Status.BOUNDARY);
 
             AddFace(face.V1, face.V2, vertex, face.SplitLevel + 1);
             AddFace(face.V2, face.V3, vertex, face.SplitLevel + 1);
@@ -709,7 +700,7 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex = AddVertex(newPos, Status.BOUNDARY);
+            Vertex vertex = AddVertex(octTree, newPos, Status.BOUNDARY);
 
             if (splitEdge == 1)
             {
@@ -740,7 +731,7 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex = AddVertex(newPos, Status.BOUNDARY);
+            Vertex vertex = AddVertex(octTree, newPos, Status.BOUNDARY);
 
             if (endVertex.Equals(face.V1))
             {
@@ -787,7 +778,7 @@ namespace CSGLib
             double startDist, endDist;
 
             Face face = GetFace(facePos);
-            if (face.SplitLevel < maxSplitLevel)
+            if (face.SplitLevel <= maxSplitLevel)
             {
                 Vertex startVertex = segment1.StartVertex;
                 Vertex endVertex = segment1.EndVertex;
