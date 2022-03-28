@@ -50,7 +50,7 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
-        private int maxSplitLevel = 7;
+        private int maxSplitLevel = 300;
 
         /// <summary>
         /// tolerance value to test equalities

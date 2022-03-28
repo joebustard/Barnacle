@@ -267,7 +267,7 @@ namespace CSGLib
         *
         * @param status new status to be set
         */
-        const int depthLimit =7;
+        const int depthLimit =25;
         public void Mark(Status status, int depth = 0)
         {
             //mark vertex

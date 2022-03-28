@@ -117,7 +117,7 @@ namespace Barnacle.Models.Adorners
             Adornments.Add(GetMesh(xAxis));
             yAxis = CreateAxis(position, 1, 100, 1, Colors.Green, "YAxis");
             Adornments.Add(GetMesh(yAxis));
-            zAxis = CreateAxis(position, 1, 1, 100, Colors.Yellow, "ZAxis");
+            zAxis = CreateAxis(position, 1, 1, 100, Colors.Blue, "ZAxis");
             Adornments.Add(GetMesh(zAxis));
 
             sphere = new Object3D();

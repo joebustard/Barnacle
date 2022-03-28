@@ -487,7 +487,10 @@ program ""Script Name""
                     result.Status = script.Execute();
                     foreach( Object3D ob in result.Artefacts)
                     {
-                        List<int> l = ob.Indices;
+                        if (ob != null)
+                        {
+                            List<int> l = ob.Indices;
+                        }
                     }
                     if (!cancellationToken.IsCancellationRequested)
                     {
