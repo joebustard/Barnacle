@@ -3074,7 +3074,7 @@ namespace Barnacle.ViewModels
         private void OnSlice(object param)
         {
             string s = param.ToString();
-            if (s == "SliceAll")
+            if (s == "SliceModel")
             {
                 string modelPath = Document.FilePath;
                 string modelName = Path.GetFileNameWithoutExtension(modelPath);
@@ -3087,7 +3087,7 @@ namespace Barnacle.ViewModels
                 string exportedPath = Document.ExportAll("STL", allBounds, exportPath);
                 exportedPath = Path.Combine(exportPath, modelName + ".stl");
 
-                string gcodePath = Path.Combine(modelPath, "gcode");
+                string gcodePath = Path.Combine(modelPath, "Printer");
                 if (!Directory.Exists(gcodePath))
                 {
                     Directory.CreateDirectory(gcodePath);
@@ -3096,7 +3096,8 @@ namespace Barnacle.ViewModels
 
                 string logPath = Path.Combine(modelPath, "slicelog.log");
 
-                SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
+              //  SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
+              CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
             }
         }
 

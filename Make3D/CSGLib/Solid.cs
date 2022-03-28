@@ -83,6 +83,17 @@ namespace CSGLib
             }
         }
 
+        private Vertex min;
+        public Vertex Minimum 
+        {
+        get { return min; }
+        }
+
+        private Vertex max;
+        public Vertex Maximum
+        {
+            get { return max; }
+        }
         /**
         * Construct a solid based on data arrays. An exception may occur in the case of
         * abnormal arrays (indices making references to inexistent vertices, there are less
@@ -100,13 +111,52 @@ namespace CSGLib
             //      Logger.Log($"Number Of indices {indices.Count}\r\n");
             Vertices = new Vector3D[vertices.Count];
             Indices = new int[indices.Count];
+            double minx = double.MaxValue;
+            double miny = double.MaxValue;
+            double minz = double.MaxValue;
+
+            double maxx = double.MinValue;
+            double maxy = double.MinValue;
+            double maxz = double.MinValue;
+
+
+
             if (indices.Count != 0)
             {
                 for (int i = 0; i < vertices.Count; i++)
                 {
                     Vertices[i] = new Vector3D(vertices[i].X, vertices[i].Y, vertices[i].Z);
-                    //               Logger.Log($"Vertex {i}, {Vertices[i].X},{Vertices[i].Y},{Vertices[i].Z}\r\n");
+                    
+                    if ( Vertices[i].X <minx)
+                    {
+                        minx = Vertices[i].X;
+                    }
+                    if (Vertices[i].X > maxx)
+                    {
+                        maxx = Vertices[i].X;
+                    }
+
+
+                    if (Vertices[i].Y < miny)
+                    {
+                        miny = Vertices[i].Y;
+                    }
+                    if (Vertices[i].Y > maxy)
+                    {
+                        maxy = Vertices[i].Y;
+                    }
+
+                    if (Vertices[i].Z < minz)
+                    {
+                        minz = Vertices[i].Z;
+                    }
+                    if (Vertices[i].Z > maxz)
+                    {
+                        maxz = Vertices[i].Z;
+                    }
                 }
+                min = new Vertex(minx, miny, minz);
+                max = new Vertex(maxx,maxy,maxz);
                 int face = 0;
                 for (int i = 0; i < indices.Count; i += 3)
                 {

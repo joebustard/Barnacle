@@ -620,12 +620,10 @@ namespace Barnacle.Models
                     {
                         clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
                         clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
-                        clone.MoveToCentre();
+                        
                     }
-                    if (ProjectSettings.FloorAll)
-                    {
-                        clone.MoveToFloor();
-                    }
+                    clone.MoveToCentre();
+                    clone.MoveToFloor();
                     exportList.Add(clone);
                     string expName = System.IO.Path.Combine(pth, ob.Name + ".stl");
                     exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);

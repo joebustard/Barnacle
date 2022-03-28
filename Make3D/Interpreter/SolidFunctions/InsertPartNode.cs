@@ -28,47 +28,47 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            string partName = "";
-
-            if (EvalExpression(solid, ref partName, "PartName", "InsertPart"))
             {
-                if (partName != "" && Script.PartsLibraryPath != null && Script.PartsLibraryPath != "")
-                {
-                    string fName = Script.PartsLibraryPath;
-                    fName = System.IO.Path.Combine(Script.PartsLibraryPath, partName);
-                    if (!System.IO.File.Exists(fName))
-                    {
-                        Log.Instance().AddEntry($"InsertPart : couldn't find {fName}");
-                    }
-                    else
-                    {
-                        Object3D clone = Read(fName);
-                        if (clone != null)
-                        {
-                            clone.CalcScale(false);
-                            clone.Remesh();
+                string partName = "";
 
-                            Script.ResultArtefacts.Add(clone);
-                            ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
-                            result = true;
+                if (EvalExpression(solid, ref partName, "PartName", "InsertPart"))
+                {
+                    if (partName != "" && Script.PartsLibraryPath != null && Script.PartsLibraryPath != "")
+                    {
+                        string fName = Script.PartsLibraryPath;
+                        fName = System.IO.Path.Combine(Script.PartsLibraryPath, partName);
+                        if (!System.IO.File.Exists(fName))
+                        {
+                            Log.Instance().AddEntry($"InsertPart : couldn't find {fName}");
                         }
                         else
                         {
-                            Log.Instance().AddEntry("InsertPart : read failed");
+                            Object3D clone = Read(fName);
+                            if (clone != null)
+                            {
+                                clone.CalcScale(false);
+                                clone.Remesh();
+
+                                Script.ResultArtefacts.Add(clone);
+                                ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
+                                result = true;
+                            }
+                            else
+                            {
+                                Log.Instance().AddEntry("InsertPart : read failed");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    Log.Instance().AddEntry("InsertPart : expected part name");
+                    else
+                    {
+                        Log.Instance().AddEntry("InsertPart : expected part name");
+                    }
                 }
             }
-        }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Instance().AddEntry($"InsertPart : {ex.Message}");
-    }
+            }
             return result;
         }
 
@@ -134,7 +134,7 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("InsertPart") + "( ";
+            String result = RichTextFormatter.KeyWord("InsertPart( ") ;
 
             result += solid.ToRichText();
             result += " )";

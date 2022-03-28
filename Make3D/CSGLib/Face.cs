@@ -230,14 +230,7 @@ namespace CSGLib
                 //for each face from the other solid...
                 for (int faceIndex = 0; faceIndex < obj.NumFaces; faceIndex++)
                 {
-                    if (faceIndex % 10 == 0 )
-                    {
-                        KeyStates s = Keyboard.GetKeyStates(Key.Escape);
-                        if ((s & KeyStates.Down) != 0)
-                        {
-                            return false;
-                        }
-                    }
+                    
 
                     Face face = obj.GetFace(faceIndex);
                     intersectionPoint = ray.ComputePlaneIntersection(face.GetPlane());

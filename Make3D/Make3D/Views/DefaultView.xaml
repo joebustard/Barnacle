@@ -116,12 +116,12 @@
                     <Custom:RibbonApplicationMenuItem Command="{Binding InsertCommand}"
                                                       Header="Insert"
                                                       ImageSource="/images/buttons/human_document_open.png"
-                                                      ToolTip="Insert the entire contents of an external model into this one"
+                                                      ToolTip="Insert the entire contents of an external model file into this one"
                                                       x:Name="Insert" />
                     <Custom:RibbonApplicationMenuItem Command="{Binding ReferenceCommand}"
                                                       Header="Reference"
                                                       ImageSource="/images/buttons/human_document_open.png"
-                                                      ToolTip="Reference the contents of an external model. Objects can be moved and rotated but sized."
+                                                      ToolTip="Reference the contents of an external model file. Objects can be moved and rotated but not sized. If they are updated in the referenced file they will also change here."
                                                       x:Name="Reference" />
                     <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Command="{Binding NewProjectCommand}"
@@ -140,11 +140,7 @@
                                                       ImageSource="/images/buttons/exit.png" />
                 </Custom:RibbonApplicationMenu>
             </Custom:Ribbon.ApplicationMenu>
-            <!--
-                    <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
-                        <Custom:RibbonButton x:Name="Slicer" Label="Sl3cer" Command="{Binding SliceCommand}" CommandParameter="SliceAll" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice ( and copy to sdcard if present)" />
-                    </Custom:RibbonMenuButton>
-                    -->
+
             <Custom:RibbonTab Name="HomeTab1"
                               Header="Home">
                 <Custom:RibbonGroup Name="ClipboardGroup"
@@ -935,6 +931,13 @@
                                          x:Name="AboutButton" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
+            <Custom:RibbonTab Name="Slicing"
+                              Header="Slicing">
+                <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
+                    <Custom:RibbonButton x:Name="Slicer" Label="Cura" Command="{Binding SliceCommand}" CommandParameter="SliceModel" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice with CuraEngine (and copy to SD card if present)" />
+                </Custom:RibbonMenuButton>
+            </Custom:RibbonTab>
+
         </Custom:Ribbon>
         <Grid Grid.Row="1"
               SizeChanged="Grid_SizeChanged"
