@@ -20,10 +20,12 @@ namespace Barnacle.Dialogs
     {
         private List<Point> line;
 
-        private int numDivisions = 36;
+        private int numDivisions = 10;
 
         private int selectedPoint;
-
+        private bool snap;
+        private double gridX;
+        private double gridY;
         public LinearLoftDialog()
         {
             InitializeComponent();
@@ -34,6 +36,9 @@ namespace Barnacle.Dialogs
             DataContext = this;
             Camera.Distance = 2.0 * Camera.Distance;
             ModelGroup = MyModelGroup;
+            snap = false;
+            gridX = -1;
+            gridY = -1;
         }
 
         public override bool ShowAxies
@@ -104,6 +109,7 @@ namespace Barnacle.Dialogs
                     el.Fill = System.Windows.Media.Brushes.Red;
                     el.MouseDown += LineCanvas_MouseDown;
                     el.MouseMove += LineCanvas_MouseMove;
+                    el.MouseUp += LineCanvas_MouseUp;
                     LineCanvas.Children.Add(el);
                 }
             }
@@ -122,6 +128,7 @@ namespace Barnacle.Dialogs
             }
             EditorParameters.Set("Points", s);
             EditorParameters.Set("NumberOfSides", numDivisions.ToString());
+            EditorParameters.Set("Snap", snap.ToString());
         }
 
         private void GenerateShape()
@@ -230,7 +237,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            UpdateDisplay();
+            
         }
 
         private void LineCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -238,23 +245,48 @@ namespace Barnacle.Dialogs
             if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
             {
                 System.Windows.Point position = e.GetPosition(LineCanvas);
+                double px= position.X / LineCanvas.ActualWidth;
+                if ( snap )
+                {
+                    int ioff = (int)(px * 20);
+                    px  = (double)ioff / 20.0;
+                }
+                double py = line[selectedPoint].Y;
+                line[selectedPoint] = new Point(px, py);
 
-                line[selectedPoint] = new Point(position.X / LineCanvas.ActualWidth, line[selectedPoint].Y);
+                UpdateLine();
             }
             else
             {
                 selectedPoint = -1;
             }
-            UpdateDisplay();
+            //UpdateDisplay();
         }
 
         private void LineCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            UpdateDisplay();
         }
 
         private void RedrawLine()
         {
             LineCanvas.Children.Clear();
+             gridX = LineCanvas.ActualWidth / 20.0;
+             gridY = LineCanvas.ActualHeight / 20.0;
+            for ( int i = 0; i < 20; i ++)
+            {
+                for( int j = 0; j < 20; j ++)
+                {
+                    Ellipse el = new Ellipse();
+                    Canvas.SetLeft(el, i * gridX - 3);
+                    Canvas.SetTop(el, (j+1) * gridY - 3);
+                    el.Width = 6;
+                    el.Height = 6;
+                    el.Fill = Brushes.AliceBlue;
+                    el.Stroke = Brushes.CadetBlue;
+                    LineCanvas.Children.Add(el);
+                }
+            }
             if (line != null)
             {
                 double x1;
@@ -289,10 +321,15 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            RedrawLine();
-            DisplayPoints();
+            UpdateLine();
             GenerateShape();
             RedrawShape();
+        }
+
+        private void UpdateLine()
+        {
+            RedrawLine();
+            DisplayPoints();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -312,6 +349,12 @@ namespace Barnacle.Dialogs
                 s = EditorParameters.Get("NumberOfSides");
                 numDivisions = Convert.ToInt16(s);
                 HDivSlide.Value = numDivisions;
+                s = EditorParameters.Get("Snap");
+                if ( s.ToLower()=="true")
+                {
+                    snap = true;
+                    SnapBox.IsChecked = true;
+                }
             }
             else
             {
@@ -324,6 +367,21 @@ namespace Barnacle.Dialogs
             }
             UpdateCameraPos();
             UpdateDisplay();
+        }
+
+        private void CheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            snap = true;
+        }
+
+        private void CheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            snap = false;
+        }
+
+        private void OnSizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateLine();
         }
     }
 }
