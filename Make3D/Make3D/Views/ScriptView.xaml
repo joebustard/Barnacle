@@ -86,7 +86,7 @@
                                  PreviewKeyDown="ScriptBox_PreviewKeyDown"
                                  TextChanged="ScriptBox_TextChanged"
                                  VerticalScrollBarVisibility="Visible"
-                                 x:Name="ScriptBox">
+                                 x:Name="ScriptBox" IsEnabled="{Binding EnableRun}">
                         <RichTextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Command="ApplicationCommands.Cut"

@@ -83,6 +83,17 @@ Procedure SetSolidSize( Solid sl, Size sz)
   Resize sl,sz.l,sz.h,sz.w;
 }
 
+Procedure ScaleByPercent( Solid sl, double percent)
+{
+  double sc =  percent/100.0;
+  Size sz = GetSolidSize(sl);
+  Resize sl,sz.l+ ( sz.l *sc),
+            sz.h+ ( sz.h *sc),
+            sz.w+ ( sz.w *sc);
+}
+
+
+
 Procedure MakeSameSize( Solid sl1, Solid sl2)
 {
   Size sz;

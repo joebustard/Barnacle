@@ -7,6 +7,8 @@
     <Application.Resources>
         <SolidColorBrush Color="#770000"
                          x:Key="TextBrush"/>
+        <SolidColorBrush Color="#AA9999"
+                         x:Key="DisabledTextBrush"/>
         <SolidColorBrush Color="AliceBlue"
                          x:Key="ControlBackBrush"/>
         <SolidColorBrush Color="AliceBlue"
@@ -33,6 +35,26 @@
                                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                               x:Name="contentPresenter"/>
                         </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Button.IsDefaulted" Value="True">
+                                <Setter Property="BorderBrush"  Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background"  Value="#FFBEE6FD"/>
+                                <Setter Property="BorderBrush"  Value="#FF3C7FB1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background"  Value="#FFC4E5F6"/>
+                                <Setter Property="BorderBrush"  Value="#FF2C628B"/>
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background"  Value="#FFF4F4F4"/>
+                                <Setter Property="BorderBrush"  Value="#FFADB2B5"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="Red"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>

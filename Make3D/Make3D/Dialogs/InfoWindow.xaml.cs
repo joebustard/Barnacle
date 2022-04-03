@@ -52,6 +52,11 @@ namespace Barnacle.Dialogs
             instance.Show();
         }
 
+        public void ShowInfo(String title)
+        {
+            Instance().Title = title;
+            instance.Show();
+        }
         public void ShowText(String s)
         {
             instance.InfoLabel.Content = s;

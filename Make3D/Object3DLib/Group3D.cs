@@ -75,6 +75,16 @@ namespace Barnacle.Object3DLib
             scale = groupScale;
         }
 
+        public override void DeThread()
+        {
+            Indices = new List<int>();
+            foreach (int i in TriangleIndices)
+            {
+                Indices.Add(i);
+            }
+            leftObject.DeThread();
+            rightObject.DeThread();
+        }
         public override Object3D Clone( bool useIndices = false)
         {
             Group3D res = new Group3D();
@@ -86,8 +96,8 @@ namespace Barnacle.Object3DLib
 
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.Color = this.Color;
-            res.leftObject = this.leftObject.Clone();
-            res.rightObject = this.rightObject.Clone();
+            res.leftObject = this.leftObject.Clone(useIndices);
+            res.rightObject = this.rightObject.Clone(useIndices);
 
             res.RelativeObjectVertices = new List<P3D>();
 
@@ -97,17 +107,14 @@ namespace Barnacle.Object3DLib
                 res.RelativeObjectVertices.Add(po);
             }
             res.AbsoluteObjectVertices = new Point3DCollection();
-            foreach (Point3D po in this.AbsoluteObjectVertices)
-            {
-                Point3D pn = new Point3D(po.X, po.Y, po.Z);
-                res.AbsoluteObjectVertices.Add(po);
-            }
+  
             res.AbsoluteBounds = new Bounds3D();
             res.AbsoluteBounds.Lower = new Point3D(this.AbsoluteBounds.Lower.X, this.AbsoluteBounds.Lower.Y, this.AbsoluteBounds.Lower.Z);
             res.AbsoluteBounds.Upper = new Point3D(this.AbsoluteBounds.Upper.X, this.AbsoluteBounds.Upper.Y, this.AbsoluteBounds.Upper.Z);
             res.TriangleIndices = new Int32Collection();
             if (useIndices)
             {
+                
                 foreach (int i in this.Indices)
                 {
                     res.TriangleIndices.Add(i);
@@ -120,6 +127,7 @@ namespace Barnacle.Object3DLib
                     res.TriangleIndices.Add(i);
                 }
             }
+            res.Remesh();
             return res;
         }
 
@@ -247,7 +255,7 @@ namespace Barnacle.Object3DLib
                 }
             }
             else
-                if ( modeller.State == BooleanModeller.ModellerState.Interrupted)
+            if ( modeller.State == BooleanModeller.ModellerState.Interrupted)
             {
                 System.Windows.Forms.MessageBox.Show("Operation aborted");
                 res = false;

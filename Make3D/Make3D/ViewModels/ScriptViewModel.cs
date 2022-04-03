@@ -91,7 +91,7 @@ program ""Script Name""
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
             selectedTabIndex = 0;
-            
+
         }
 
         private enum CameraModes
@@ -339,7 +339,7 @@ program ""Script Name""
 
         internal void Escape()
         {
-            if ( s_cts != null && !s_cts.IsCancellationRequested)
+            if (s_cts != null && !s_cts.IsCancellationRequested)
             {
                 s_cts.Cancel();
                 Logging.Log.Instance().AddEntry("Cancelled by user");
@@ -363,11 +363,11 @@ program ""Script Name""
                 OnFind(null);
             }
             else
-                if ( key == Key.Escape)
+                if (key == Key.Escape)
             {
-                if ( s_cts != null && !s_cts.IsCancellationRequested)
+                if (s_cts != null && !s_cts.IsCancellationRequested)
                 {
-                    
+
                     s_cts.Cancel();
                     Logging.Log.Instance().AddEntry("Cancelled by user");
                 }
@@ -418,7 +418,7 @@ program ""Script Name""
                 ZoomOut(null);
             }
         }
-        static CancellationTokenSource s_cts; 
+        static CancellationTokenSource s_cts;
         internal async void RunScript()
         {
             EnableRun = false;
@@ -436,29 +436,31 @@ program ""Script Name""
             }
             content.Clear();
             script.SetPartsLibraryRoot(GetPartsLibraryPath());
-          //  script.SetResultsContent(content);
+            //  script.SetResultsContent(content);
             ClearResults();
             Refresh(resultsBox);
             s_cts = new CancellationTokenSource();
-           
-            RunRes res = await RunAsync(s_cts.Token);
+
+            RunRes res = await RunAsync(s_cts.Token).ConfigureAwait(true);
 
             // get the log entries from the script
             // and put them all on the display in one hit
             String alllog = "";
             foreach (ScriptLanguage.LogEntry le in res.LogEntrys)
             {
-                alllog +=le.DateStamp + " "+le.Text+"\r\n";
+                alllog += le.DateStamp + " " + le.Text + "\r\n";
             }
             UpdateText(alllog);
 
             if (res.Status)
             {
-                foreach( Object3D ob in res.Artefacts)
+                foreach (Object3D ob in res.Artefacts)
                 {
-                    content.Add(ob.Clone(true));
+                    if (ob != null)
+                    {
+                        content.Add(ob.Clone(true));
+                    }
                 }
-                
                 Logging.Log.Instance().AddEntry("Complete");
             }
             else
@@ -474,9 +476,9 @@ program ""Script Name""
             public List<Object3D> Artefacts { get; set; }
             public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
         }
-        private Task<RunRes> RunAsync(CancellationToken  cancellationToken)
+        private Task<RunRes> RunAsync(CancellationToken cancellationToken)
         {
-            
+
             return Task.Run(() =>
                 {
                     RunRes result = new RunRes();
@@ -485,13 +487,7 @@ program ""Script Name""
                     script.SetResultsContent(result.Artefacts);
                     script.SetCancelationToken(cancellationToken);
                     result.Status = script.Execute();
-                    foreach( Object3D ob in result.Artefacts)
-                    {
-                        if (ob != null)
-                        {
-                            List<int> l = ob.Indices;
-                        }
-                    }
+
                     if (!cancellationToken.IsCancellationRequested)
                     {
                         foreach (ScriptLanguage.LogEntry le in ScriptLanguage.Log.Instance().LogEntrys)
@@ -504,49 +500,26 @@ program ""Script Name""
                 });
         }
 
-        /*
-       internal void RunScript()
-       {
-           if (filePath != "" && Project.SharedProjectSettings.AutoSaveScript == true)
-           {
-               try
-               {
-                   File.WriteAllText(filePath, Source);
-                   Dirty = false;
-               }
-               catch (Exception ex)
-               {
-                   MessageBox.Show(ex.Message);
-               }
-           }
-           content.Clear();
-           script.SetPartsLibraryRoot(GetPartsLibraryPath());
-           script.SetResultsContent(content);
-           ClearResults();
-           Refresh(resultsBox);
-           if (script.Execute())
-           {
-               Log.Instance().AddEntry("Complete");
-           }
-           else
-           {
-               Log.Instance().AddEntry("Failed");
-           }
-           RegenerateDisplayList();
-       }
-       */
+
         internal bool ScriptText(string scriptText)
         {
-            Source = scriptText;
-
-            bool result = interpreter.LoadFromText(script, Source, filePath);
-            if (result)
+            if (enableRun)
             {
-                Rtf = script.ToRichText();
-                RawText = scriptText;
+                Source = scriptText;
+
+                bool result = interpreter.LoadFromText(script, Source, filePath);
+                if (result)
+                {
+                    Rtf = script.ToRichText();
+                    RawText = scriptText;
+                }
+                UpdatedInternally = false;
+                return result;
             }
-            UpdatedInternally = false;
-            return result;
+            else
+            {
+                return false;
+            }
         }
 
         internal void SetResultsBox(System.Windows.Controls.TextBox resultsBox)

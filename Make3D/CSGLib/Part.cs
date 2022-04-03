@@ -426,11 +426,13 @@ namespace CSGLib
         /// <returns>The vertex inserted (if a similar vertex already exists, this is returned).</returns>
         private Vertex AddVertex(OctTree octTree, Vector3D pos, Status status)
         {
+        
             int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
+            /*
             int index = octTree.PointPresent(vertex);
-            if (index != -1 )
+            if (index != -1 && index <Vertices.Count )
             {
                 vertex = Vertices[index];
                 vertex.SetStatus(status);
@@ -443,9 +445,8 @@ namespace CSGLib
                 return vertex;
             }
 
-
-            /*
-             *    for (i = 0; i < Vertices.Count; i++)
+*/
+            for (i = 0; i < Vertices.Count; i++)
             {
                 if (vertex.Equals(Vertices[i]))
                     break;
@@ -461,7 +462,7 @@ namespace CSGLib
                 vertex.SetStatus(status);
                 return vertex;
             }
-            */
+            
         }
 
         /// <summary>

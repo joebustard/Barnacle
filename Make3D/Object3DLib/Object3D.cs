@@ -228,15 +228,12 @@ namespace Barnacle.Object3DLib
         public List<int> Indices
         {
             get {
-                if (indices == null)
-                {
-                    indices = new List<int>();
-                    foreach (int i in triangleIndices)
-                    {
-                        indices.Add(i);
-                    }
-                }
+               
                 return indices;
+            }
+            set
+            {
+                indices = value;
             }
             
         }
@@ -300,6 +297,14 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public virtual  void DeThread()
+        {
+            Indices = new List<int>();
+            foreach ( int i in TriangleIndices)
+            {
+                Indices.Add(i);
+            }
+        }
         public bool BuildPrimitive(string obType)
         {
             bool built = false;
@@ -489,9 +494,10 @@ namespace Barnacle.Object3DLib
                 // THIS IS A HACK TO GET aroubd an async issue.
                 if (useIndices)
                 {
+                   
                     foreach (int i in this.Indices)
                     {
-                        res.triangleIndices.Add(i);
+                        res.TriangleIndices.Add(i);
                     }
                 }
                 else

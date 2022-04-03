@@ -40,56 +40,56 @@ namespace ScriptLanguage
         public override bool Execute()
         {
             bool result = false;
-try
-{ 
-            int tlc = 0;
-            int trc = 0;
-            int blc = 0;
-            int brc = 0;
-            double length = 0.0;
-            double height = 0;
-            double depth = 0;
-
-            if (EvalExpression(tlExp, ref tlc, "Topleft", "MakeSquirkle") &&
-                EvalExpression(trExp, ref trc, "Topright", "MakeSquirkle") &&
-                EvalExpression(blExp, ref blc, "Bottomleft", "MakeSquirkle") &&
-                EvalExpression(brExp, ref brc, "BottomRight", "MakeSquirkle") &&
-
-                EvalExpression(heightExp, ref length, "Length", "MakeSquirkle") &&
-                EvalExpression(lengthExp, ref height, "Height", "MakeSquirkle") &&
-                EvalExpression(depthExp, ref depth, "Width", "MakeSquirkle")
-                )
+            try
             {
-                if (CheckCode(tlc, "Topleft") &&
-                   CheckCode(trc, "Topright") &&
-                   CheckCode(blc, "Bottomleft") &&
-                   CheckCode(brc, "BottomRight") && length > 0 && height > 0 && depth > 0)
+                int tlc = 0;
+                int trc = 0;
+                int blc = 0;
+                int brc = 0;
+                double length = 0.0;
+                double height = 0;
+                double depth = 0;
+
+                if (EvalExpression(tlExp, ref tlc, "Topleft", "MakeSquirkle") &&
+                    EvalExpression(trExp, ref trc, "Topright", "MakeSquirkle") &&
+                    EvalExpression(blExp, ref blc, "Bottomleft", "MakeSquirkle") &&
+                    EvalExpression(brExp, ref brc, "BottomRight", "MakeSquirkle") &&
+
+                    EvalExpression(heightExp, ref length, "Length", "MakeSquirkle") &&
+                    EvalExpression(lengthExp, ref height, "Height", "MakeSquirkle") &&
+                    EvalExpression(depthExp, ref depth, "Width", "MakeSquirkle")
+                    )
                 {
-                    result = true;
+                    if (CheckCode(tlc, "Topleft") &&
+                       CheckCode(trc, "Topright") &&
+                       CheckCode(blc, "Bottomleft") &&
+                       CheckCode(brc, "BottomRight") && length > 0 && height > 0 && depth > 0)
+                    {
+                        result = true;
 
-                    Object3D obj = new Object3D();
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "Squirkle";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "Squirkle";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    SquirkleMaker maker = new SquirkleMaker(tlc, trc, blc, brc, length, height, depth);
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        SquirkleMaker maker = new SquirkleMaker(tlc, trc, blc, brc, length, height, depth);
 
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeSquirkle : Illegal value");
+                    }
                 }
-                else
-                {
-                    Log.Instance().AddEntry("MakeSquirkle : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

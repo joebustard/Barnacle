@@ -2585,7 +2585,7 @@ namespace Barnacle.ViewModels
                             Properties.Settings.Default.Save();
 
                             string[] files = System.IO.Directory.GetFiles(pth, "*.stl");
-                            InfoWindow.Instance().ShowInfo();
+                            InfoWindow.Instance().ShowInfo("Import Multiple");
                             foreach (string fpath in files)
                             {
                                 InfoWindow.Instance().ShowText(System.IO.Path.GetFileName(fpath));

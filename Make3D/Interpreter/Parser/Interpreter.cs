@@ -86,6 +86,7 @@ namespace ScriptLanguage
                 "makestadium",
                 "makesquaredstadium",
                 "makesquirkle",
+                "maketext",
                 "maketorus",
                 "maketrapezoid",
                 "maketrickle",
@@ -158,7 +159,7 @@ namespace ScriptLanguage
             return result;
         }
 
-        private bool CheckForComma( bool report = true)
+        private bool CheckForComma(bool report = true)
         {
             bool result = false;
             String token = "";
@@ -171,8 +172,8 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                if ( report)
-                {
+                    if (report)
+                    {
                         ReportSyntaxError("Expected comma");
                     }
                 }
@@ -195,7 +196,7 @@ namespace ScriptLanguage
                 else
                 {
 
-                        ReportSyntaxError($"{s} expected comma");
+                    ReportSyntaxError($"{s} expected comma");
 
                 }
             }
@@ -520,7 +521,7 @@ namespace ScriptLanguage
                                 token = parentName + token;
                                 if (parentNode.FindSymbol(token) != SymbolTable.SymbolType.unknown)
                                 {
-                                    ReportSyntaxError("Duplicate variable name "+strVarName);
+                                    ReportSyntaxError("Duplicate variable name " + strVarName);
                                 }
                                 else
                                 {
@@ -595,12 +596,12 @@ namespace ScriptLanguage
                             }
                         }
                         else
-                            ReportSyntaxError("Expected variable name , found "+token);
+                            ReportSyntaxError("Expected variable name , found " + token);
                     }
                 }
                 else
                 {
-                    ReportSyntaxError("Expected ], found "+token);
+                    ReportSyntaxError("Expected ], found " + token);
                 }
             }
             else
@@ -677,7 +678,7 @@ namespace ScriptLanguage
                     }
                     else
                     {
-                        ReportSyntaxError("Expected parameter name, found "+ token);
+                        ReportSyntaxError("Expected parameter name, found " + token);
                     }
                 }
                 else
@@ -710,7 +711,7 @@ namespace ScriptLanguage
                 {
                     if (token != "]")
                     {
-                        ReportSyntaxError("Expected ], found "+token);
+                        ReportSyntaxError("Expected ], found " + token);
                     }
                     else
                     {
@@ -801,7 +802,7 @@ namespace ScriptLanguage
                     tokenType != Tokeniser.TokenType.TimesEqual &&
                     tokenType != Tokeniser.TokenType.DivideEqual)
                     {
-                        ReportSyntaxError("Expected = or += or -= or *= or /=, found "+token);
+                        ReportSyntaxError("Expected = or += or -= or *= or /=, found " + token);
                     }
                     else
                     {
@@ -871,7 +872,7 @@ namespace ScriptLanguage
                 {
                     if (token != "[")
                     {
-                        ReportSyntaxError("Expected [, found "+token);
+                        ReportSyntaxError("Expected [, found " + token);
                     }
                     else
                     {
@@ -882,7 +883,7 @@ namespace ScriptLanguage
                             {
                                 if (token != "]")
                                 {
-                                    ReportSyntaxError("Expected ], found "+token);
+                                    ReportSyntaxError("Expected ], found " + token);
                                 }
                                 else
                                 {
@@ -900,7 +901,7 @@ namespace ScriptLanguage
                                                 result = CheckForSemiColon();
                                                 if (result)
                                                 {
-                                                    
+
                                                     AssignToArrayElement asn = new AssignToArrayElement();
                                                     asn.VariableName = internalName;
                                                     asn.ExternalName = externalName;
@@ -1008,7 +1009,7 @@ namespace ScriptLanguage
                             {
                                 if (token != "]")
                                 {
-                                    ReportSyntaxError("Expected ], found "+token );
+                                    ReportSyntaxError("Expected ], found " + token);
                                 }
                                 else
                                 {
@@ -1016,7 +1017,7 @@ namespace ScriptLanguage
                                     {
                                         if (tokenType != Tokeniser.TokenType.Assignment)
                                         {
-                                            ReportSyntaxError("Expected =, found "+token);
+                                            ReportSyntaxError("Expected =, found " + token);
                                         }
                                         else
                                         {
@@ -1026,7 +1027,7 @@ namespace ScriptLanguage
                                                 result = CheckForSemiColon();
                                                 if (result)
                                                 {
-                                                    
+
                                                     AssignStructToArrayElement asn = new AssignStructToArrayElement();
                                                     asn.VariableName = internalName;
                                                     asn.ExternalName = externalName;
@@ -1125,7 +1126,7 @@ namespace ScriptLanguage
                 en.IsInLibrary = tokeniser.InIncludeFile();
                 parentNode.AddStatement(en);
             }
-         
+
 
             return result;
         }
@@ -1374,7 +1375,7 @@ namespace ScriptLanguage
             if (leftSolid != null)
             {
                 if (CheckForComma())
-                { 
+                {
                     ExpressionNode rightSolid = ParseExpressionNode(parentName);
                     if (rightSolid != null)
                     {
@@ -1865,7 +1866,7 @@ namespace ScriptLanguage
 
                         if (FunctionType == SymbolTable.SymbolType.unknown)
                         {
-                            ReportSyntaxError("Function declaration expected return type, found "+typeId);
+                            ReportSyntaxError("Function declaration expected return type, found " + typeId);
                         }
                         else
                         {
@@ -2547,6 +2548,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "maketext":
+                            {
+                                exp = ParseMakeTextFunction(parentName);
+                            }
+                            break;
+
                         case "maketorus":
                             {
                                 exp = ParseMakeTorusFunction(parentName);
@@ -2802,7 +2809,7 @@ namespace ScriptLanguage
             if (r1Exp != null)
             {
                 if (CheckForComma())
-                
+
                 {
                     ExpressionNode r2Exp = ParseExpressionNode(parentName);
                     if (r2Exp != null)
@@ -2812,9 +2819,9 @@ namespace ScriptLanguage
                             ExpressionNode hexp = ParseExpressionNode(parentName);
                             if (hexp != null)
                             {
-                                if (CheckForComma() )
+                                if (CheckForComma())
                                 {
-                                 
+
                                     ExpressionNode gExp = ParseExpressionNode(parentName);
                                     if (gExp != null)
                                     {
@@ -2837,20 +2844,20 @@ namespace ScriptLanguage
             ExpressionNode solidexp1 = ParseExpressionNode(parentName);
             if (solidexp1 != null)
             {
-                if (CheckForComma() )
+                if (CheckForComma())
                 {
                     ExpressionNode xExp = ParseExpressionNode(parentName);
                     if (xExp != null)
                     {
                         if (CheckForComma())
                         {
-                           
+
                             ExpressionNode yExp = ParseExpressionNode(parentName);
                             if (yExp != null)
                             {
-                                if (CheckForComma() )
+                                if (CheckForComma())
                                 {
-                                    
+
                                     ExpressionNode zExp = ParseExpressionNode(parentName);
                                     if (zExp != null)
                                     {
@@ -2939,7 +2946,7 @@ namespace ScriptLanguage
                                     {
                                         if (CheckForComma("MakeParallelogram") == false)
                                         {
-                                     
+
                                             ExpressionNode bExp = ParseExpressionNode(parentName);
                                             if (bExp != null)
                                             {
@@ -2966,7 +2973,7 @@ namespace ScriptLanguage
             {
                 if (CheckForComma("MakePath"))
                 {
-         
+
                     ExpressionNode heightExp = ParseExpressionNode(parentName);
                     if (heightExp != null)
                     {
@@ -2985,7 +2992,7 @@ namespace ScriptLanguage
             ExpressionNode pointArrayExp = ParseExpressionForCallNode(parentName);
             if (pointArrayExp != null)
             {
-                if (CheckForComma("MakePlatlet") )
+                if (CheckForComma("MakePlatlet"))
                 {
                     ExpressionNode heightExp = ParseExpressionNode(parentName);
                     if (heightExp != null)
@@ -3003,7 +3010,7 @@ namespace ScriptLanguage
         {
             ExpressionNode exp = null;
             String label = "MakePulley";
-            
+
             bool parsed = true;
             ExpressionCollection coll = new ExpressionCollection();
             int exprCount = 6;
@@ -3177,18 +3184,18 @@ namespace ScriptLanguage
                     {
                         if (CheckForComma(label))
                         {
-                            
+
                             ExpressionNode elExp = ParseExpressionNode(parentName);
                             if (elExp != null)
                             {
-                                if (CheckForComma(label) )
+                                if (CheckForComma(label))
                                 {
                                     ExpressionNode hExp = ParseExpressionNode(parentName);
                                     if (hExp != null)
                                     {
                                         if (CheckForComma(label))
                                         {
-                                      
+
                                             ExpressionNode oExp = ParseExpressionNode(parentName);
                                             if (oExp != null)
                                             {
@@ -3236,7 +3243,7 @@ namespace ScriptLanguage
                                     {
                                         if (CheckForComma(label) == false)
                                         {
-                                     
+
                                             error = "Length expression";
                                             ExpressionNode lExp = ParseExpressionNode(parentName);
                                             if (lExp != null)
@@ -3396,6 +3403,77 @@ namespace ScriptLanguage
                         }
                     }
                 }
+            }
+            return exp;
+        }
+
+
+        private ExpressionNode ParseMakeTextFunction(string parentName)
+        {
+            string label = "MakeText";
+            string error = "";
+            ExpressionNode exp = null;
+            ExpressionCollection ecol = new ExpressionCollection();
+            error = "Text expression";
+
+            ExpressionNode tmp = ParseExpressionNode(parentName);
+            if (tmp != null)
+            {
+                ecol.Add(tmp);
+                if (CheckForComma(label))
+                {
+                    error = "Font Name expression";
+                    tmp = ParseExpressionNode(parentName);
+                    if (tmp != null)
+                    {
+                        ecol.Add(tmp);
+                        if (CheckForComma(label))
+                        {
+                            error = "Font Size expression";
+                            tmp = ParseExpressionNode(parentName);
+                            if (tmp != null)
+                            {
+                                ecol.Add(tmp);
+                                if (CheckForComma(label))
+                                {
+                                    error = "Thickness expression";
+                                    tmp = ParseExpressionNode(parentName);
+                                    if (tmp != null)
+                                    {
+                                        ecol.Add(tmp);
+                                        if (CheckForComma(label))
+                                        {
+
+                                            error = "Bold expression";
+                                            tmp = ParseExpressionNode(parentName);
+                                            if (tmp != null)
+                                            {
+                                                ecol.Add(tmp);
+                                                if (CheckForComma(label))
+                                                {
+                                                    error = "Italic expression";
+                                                    tmp = ParseExpressionNode(parentName);
+                                                    if (tmp != null)
+                                                    {
+                                                        ecol.Add(tmp);
+
+                                                        MakeTextNode mn = new MakeTextNode(ecol);
+                                                        mn.IsInLibrary = tokeniser.InIncludeFile();
+                                                        exp = mn;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (exp == null && error != "")
+            {
+                ReportSyntaxError($"{label} error {error}");
             }
             return exp;
         }
@@ -3676,7 +3754,7 @@ namespace ScriptLanguage
                     nd.Value = Convert.ToInt32(token);
                     exp = nd;
                 }
-                catch 
+                catch
                 {
                     ReportSyntaxError("Invalid int constant");
                 }
@@ -3943,7 +4021,7 @@ namespace ScriptLanguage
             Tokeniser.TokenType tokenType = Tokeniser.TokenType.None;
             bool bDone = false;
 
-            while (!bDone && result )
+            while (!bDone && result)
             {
                 bDone = true;
                 if (FetchToken(out token, out tokenType) == true)

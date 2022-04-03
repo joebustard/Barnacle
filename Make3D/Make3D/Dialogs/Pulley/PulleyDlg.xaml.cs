@@ -228,22 +228,22 @@ namespace Barnacle.Dialogs
 
             if (EditorParameters.Get("ExtraRimRadius") != "")
             {
-                MainThickness = EditorParameters.GetDouble("ExtraRimRadius");
+                ExtraRimRadius = EditorParameters.GetDouble("ExtraRimRadius");
             }
 
             if (EditorParameters.Get("ExtraRimThickness") != "")
             {
-                MainThickness = EditorParameters.GetDouble("ExtraRimThickness");
+                ExtraRimThickness = EditorParameters.GetDouble("ExtraRimThickness");
             }
 
             if (EditorParameters.Get("AxleBoreRadius") != "")
             {
-                MainThickness = EditorParameters.GetDouble("AxleBoreRadius");
+                AxleBoreRadius = EditorParameters.GetDouble("AxleBoreRadius");
             }
 
             if (EditorParameters.Get("GrooveDepth") != "")
             {
-                MainThickness = EditorParameters.GetDouble("GrooveDepth");
+                GrooveDepth = EditorParameters.GetDouble("GrooveDepth");
             }
         }
 
