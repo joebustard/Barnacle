@@ -250,6 +250,7 @@ Procedure MyProc( double px, double py, double pz, double l, double h, double w 
 
         private void Run()
         {
+            ResultsBox.Text = "";
             vm.ClearResults();
             if (RefreshInterpreterSource())
             {
