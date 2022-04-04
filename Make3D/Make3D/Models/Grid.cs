@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MakerLib;
+using System;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -44,7 +45,7 @@ namespace Barnacle.Models
         private void DefineModel(Model3DGroup group)
         {
             group.Children.Clear();
-
+            DefineText("Barnacle", group);
             for (double x = -length; x <= length; x += 1)
             {
                 MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
@@ -86,6 +87,44 @@ namespace Barnacle.Models
             }
         }
 
+        private void DefineText(string text, Model3DGroup group)
+        {
+            if (text != null && text != "")
+            {
+                TextMaker mk = new TextMaker(text, "Tahoma", 14, 0.2, true, false, false);
+                Point3DCollection Vertices = new Point3DCollection();
+                Int32Collection Faces = new Int32Collection();
+               mk.Generate(Vertices, Faces);
+                Vector3D v = new Vector3D(-26, 0.1, 85);
+                for ( int i = 0;i < Vertices.Count; i++)
+                               {
+                    Vertices[i] += v;
+                }
+                GeometryModel3D gm = GetModel(Vertices,Faces);
+                group.Children.Add(gm);
+            }
+        }
+
+        protected GeometryModel3D GetModel( Point3DCollection Vertices, Int32Collection Faces)
+        {
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions = Vertices;
+            mesh.TriangleIndices = Faces;
+            mesh.Normals = null;
+            GeometryModel3D gm = new GeometryModel3D();
+            gm.Geometry = mesh;
+
+            DiffuseMaterial mt = new DiffuseMaterial();
+            mt.Color = Colors.CadetBlue;
+            mt.Brush = new SolidColorBrush(Colors.CadetBlue);
+            gm.Material = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = Colors.CadetBlue;
+            mtb.Brush = new SolidColorBrush(Colors.CadetBlue);
+            gm.BackMaterial = mtb;
+
+            return gm;
+        }
         // Make a mesh containing a cube centered at this point.
         private MeshGeometry3D MakeCubeMesh(double x, double y, double z, double width)
         {

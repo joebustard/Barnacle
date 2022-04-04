@@ -29,7 +29,7 @@ namespace Barnacle.Dialogs
         {
             InitializeComponent();
             loaded = false;
-            ToolName = "TextDlg";
+            ToolName = "Text";
             DataContext = this;
             ModelGroup = MyModelGroup;
             text = "A";
@@ -48,6 +48,7 @@ namespace Barnacle.Dialogs
                 {
                     fontBold = value;
                     NotifyPropertyChanged();
+                    
                     UpdateDisplay();
                 }
             }
@@ -179,7 +180,9 @@ namespace Barnacle.Dialogs
                 {
                     text = value;
                     NotifyPropertyChanged();
-                    UpdateDisplay();
+
+                        UpdateDisplay();
+                    
                 }
             }
         }
@@ -256,23 +259,65 @@ namespace Barnacle.Dialogs
 
         private void LoadEditorParameters()
         {
-            // load back the tool specific parameters
+            if ( EditorParameters.Get("Text") != "")
+            {
+                Text = EditorParameters.Get("Text");
+                SelectedFont = EditorParameters.Get("FontName");
+                FontSizeText = EditorParameters.GetDouble("FontSize");
+                Thickness = EditorParameters.GetDouble("Thickness");
+                FontBold = EditorParameters.GetBoolean("Bold");
+                FontItalic = EditorParameters.GetBoolean("Italic");
+            }
         }
 
         private void SaveEditorParmeters()
         {
-            // save the parameters for the tool
+            EditorParameters.Set("Text", text);
+            EditorParameters.Set("FontName", selectedFont);
+            EditorParameters.Set("FontSize", fontSize);
+            EditorParameters.Set("Thickness", thickness.ToString());
+            EditorParameters.Set("Bold", fontBold.ToString());
+            EditorParameters.Set("Italic", fontItalic.ToString());
         }
 
         private void UpdateDisplay()
         {
             // building shapes is time consuming,dont do until all
             // the default parameters are set
-            if (loaded)
+            if (loaded )
             {
-                GenerateShape();
+                if (SettingsValid())
+                {
+                    GenerateShape();
+                }
+                else
+                {
+                    ClearShape();
+                }
                 Redisplay();
             }
+        }
+
+        private bool SettingsValid()
+        {
+            bool result = true;
+            if ( text == null || text == "")
+            {
+                result = false;
+            }
+            if (selectedFont == null || selectedFont =="")
+            {
+                result = false;
+            }
+            if ( fontSize < 4.0)
+            {
+                result = false;
+            }
+            if ( thickness <= 0)
+            {
+                result = false;
+            }
+            return result;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -282,7 +327,7 @@ namespace Barnacle.Dialogs
             FontSizeText = 24.0;
             FontBold = false;
             FontItalic = false;
-            Text = "Sample Text";
+            Text = "Text";
             Thickness = 10;
             LoadEditorParameters();
             loaded = true;

@@ -17,7 +17,7 @@ namespace MakerLib
         private string fontName;
         private double fontsize;
         private double height;
-        private double holeOverlap = 5;
+        private double holeOverlap = 10;
         private bool italic;
         private bool superSmooth;
         private string text;
@@ -114,74 +114,77 @@ namespace MakerLib
                     reverse = !reverse;
                 }
             }
+
+            bodyShape.AbsoluteToRelative();
+
+
             bool holesAdded = false;
-            // add front and back of holes
+
+
+
+            // Go through all the letter shapes
             foreach (TextPolygon pf in pfigures)
             {
-                bool reverse = true;
-                for (float py = (float)-holeOverlap / 2; py <= (float)(thickness + holeOverlap / 2); py += (float)(thickness + holeOverlap))
+               // does it have any holes
+                if (pf.Holes.Count > 0)
                 {
-                    EarClipping earClipping = new EarClipping();
-                    bool first = true;
-                    foreach (TextPolygon hole in pf.Holes)
+                    holesAdded = true;
+                    
+                    for (float py = (float)-holeOverlap / 2; py <= (float)(thickness + holeOverlap / 2); py += (float)(thickness + holeOverlap))
                     {
-                        holesAdded = true;
-                        List<Vector3m> rootPoints = new List<Vector3m>();
-                        if (pf.Holes.Count == 1)
-                        {
-                            foreach (PointF rp in hole.Points)
-                            {
-                                rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
-                            }
-                        }
-                        else
-                        {
-                            if (first)
-                            {
-                                foreach (PointF rp in hole.Points)
-                                {
-                                    rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
-                                }
-                                first = false;
-                            }
-                            else
-                            {
-                                foreach (PointF rp in hole.Points)
-                                {
-                                    rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
-                                }
-                            }
-                        }
+                        EarClipping earClipping = new EarClipping();
 
-                        earClipping.SetPoints(rootPoints);
-
-                        earClipping.Triangulate();
-                        var surface = earClipping.Result;
-                        for (int i = 0; i < surface.Count; i += 3)
+                        for (int holeIndex = 0; holeIndex < pf.Holes.Count; holeIndex++)
                         {
-                            int v1 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i].X, surface[i].Y, surface[i].Z);
-                            int v2 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
-                            int v3 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
-                            if (reverse)
+                            TextPolygon hole = pf.Holes[holeIndex];
+
+                            List<Vector3m> rootPoints = new List<Vector3m>();
+                     
+                                
+                                // turns out that if there are more than one holes, their orientaion alternates
+                                if (Math.Abs(py - (float)-holeOverlap / 2) <0.0001)
+                                {
+                                    foreach (PointF rp in hole.Points)
+                                    {
+                                        rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
+                                    }
+                                    
+                                }
+                                else
+                                {
+                                    foreach (PointF rp in hole.Points)
+                                    {
+                                        rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
+                                    }
+                                }
+                                
+            
+                            
+
+                            earClipping.SetPoints(rootPoints);
+
+                            earClipping.Triangulate();
+                            var surface = earClipping.Result;
+                            for (int i = 0; i < surface.Count; i += 3)
                             {
-                                holeShape.TriangleIndices.Add(v1);
-                                holeShape.TriangleIndices.Add(v3);
-                                holeShape.TriangleIndices.Add(v2);
+                                int v1 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i].X, surface[i].Y, surface[i].Z);
+                                int v2 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
+                                int v3 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
+                                
+                                    holeShape.TriangleIndices.Add(v1);
+                                    holeShape.TriangleIndices.Add(v2);
+                                    holeShape.TriangleIndices.Add(v3);
+                                
                             }
-                            else
-                            {
-                                holeShape.TriangleIndices.Add(v1);
-                                holeShape.TriangleIndices.Add(v2);
-                                holeShape.TriangleIndices.Add(v3);
-                            }
+
                         }
-                        reverse = !reverse;
                     }
                 }
             }
             if (holesAdded)
             {
-                bodyShape.AbsoluteToRelative();
+
+
                 holeShape.AbsoluteToRelative();
                 Group3D merged = new Group3D();
 
@@ -189,6 +192,8 @@ namespace MakerLib
                 merged.RightObject = holeShape;
                 merged.Position = new Point3D(0, 0, 0);
                 merged.PrimType = "groupdifference";
+
+                //merged.PrimType = "groupunion";
                 merged.Init();
                 merged.Remesh();
                 CopyShape(merged, pnts, faces);
