@@ -2435,6 +2435,7 @@ namespace Barnacle.ViewModels
                     }
                     string exportedPath = "";
                     String exportFolderPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+                    Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
                     if (all)
                     {
                         exportedPath = Document.ExportAll(param.ToString(), allBounds, exportFolderPath);
