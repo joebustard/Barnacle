@@ -326,7 +326,7 @@
                         -->
                 <Custom:RibbonGroup Name="DataGroup"
                                     Header="Objects"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/objects.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/objects.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonMenuButton Label="Flip"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Flip.png"
                                              x:Name="Flip">
@@ -777,7 +777,7 @@
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup"
                                     Header="Shapes"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/Bolt.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/Bolt.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding ParametricToolsToShow}"
                                              Label="Parametric"
@@ -809,7 +809,7 @@
                     -->
                 <Custom:RibbonGroup Name="MeshGroup"
                                     Header="Mesh"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/BigGear.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/BigGear.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonMenuButton Label="Edit">
                         <Custom:RibbonButton Command="{Binding MeshEditCommand}"
                                              HorizontalAlignment="Stretch"
@@ -970,7 +970,8 @@
                                                          Visibility="{Binding CameraPaletteVisible}" />
                                     <local:ObjectPalette HorizontalAlignment="Left"
                                                          VerticalAlignment="Stretch"
-                                                         Visibility="{Binding ToolPaletteVisible}" />
+                                                         Visibility="{Binding ToolPaletteVisible}" 
+                                                         IsEnabled="{Binding EditingActive}"/>
                                 </StackPanel>
                             </ScrollViewer>
                         </Grid>

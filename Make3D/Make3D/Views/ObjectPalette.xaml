@@ -29,98 +29,98 @@
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Box"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a box object">
+                    ToolTip="Add a box object" IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Square.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Sphere"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a sphere object">
+                    ToolTip="Add a sphere object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Circle.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Cylinder"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a cylinder object">
+                    ToolTip="Add a cylinder object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Cylinder.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Roof"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a roof object">
+                    ToolTip="Add a roof object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Roof.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Cone"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a cone object">
+                    ToolTip="Add a cone object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Cone.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Pyramid"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a pyramid with a square base">
+                    ToolTip="Add a pyramid with a square base"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Pyramid.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="RoundRoof"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a round roof object">
+                    ToolTip="Add a round roof object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/RoundRoof.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Torus"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a torus object">
+                    ToolTip="Add a torus object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Torus.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Cap"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a cap object">
+                    ToolTip="Add a cap object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Cap.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Polygon"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a polygon object">
+                    ToolTip="Add a polygon object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Polygon.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Tube"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a tube object">
+                    ToolTip="Add a tube object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Tube.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="RightAngle"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a right angle object">
+                    ToolTip="Add a right angle object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/RightAngle.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Pointy"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a  pointy object">
+                    ToolTip="Add a  pointy object"  IsEnabled="{Binding EditingActive}"> 
                 <Image Source="/Barnacle;component/Images/Buttons/Pointy.png"/>
 
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Pyramid2"
                     Style="{StaticResource ImageButton}"
-                    ToolTip="Add a pyramid with a triangular base">
+                    ToolTip="Add a pyramid with a triangular base"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png"/>
 
             </Button>

@@ -113,6 +113,7 @@ namespace ScriptLanguage
 
         public void SetCancelationToken(CancellationToken cancellationToken)
         {
-            ParseTreeNode.CancellationToken = cancellationToken;     }
+            ParseTreeNode.CancellationToken = cancellationToken;
+        }
     }
 }

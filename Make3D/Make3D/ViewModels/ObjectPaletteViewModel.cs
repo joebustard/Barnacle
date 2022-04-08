@@ -30,11 +30,35 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+        private bool editingActive;
+        public bool EditingActive
+        {
+            get
+            {
+                return editingActive;
+            }
+            set
+            {
+                if (editingActive != value)
+                {
+                    editingActive = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private void SuspendEditing(object param)
+        {
+            bool b = Convert.ToBoolean(param);
+            EditingActive = !b;
+        }
+
 
         public ObjectPaletteViewModel()
         {
             AddCommand = new RelayCommand(OnAdd);
             NotificationManager.Subscribe("ToolPaletteVisible", OnToolPaletteVisibleChanged);
+            NotificationManager.Subscribe("ObjectPalette","SuspendEditing", SuspendEditing);
+            editingActive = true;
         }
 
         private void OnToolPaletteVisibleChanged(object param)

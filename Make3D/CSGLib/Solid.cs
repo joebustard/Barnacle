@@ -104,11 +104,9 @@ namespace CSGLib
         * @param colors array of colors defining the vertices colors
         */
 
-        public Solid(Point3DCollection vertices, Int32Collection indices, bool switchWindingOrder)
-            : this()
+        public Solid(Point3DCollection vertices, Int32Collection indices, bool switchWindingOrder) : this()
         {
-            //     Logger.Log($"Number Of vertice {vertices.Count}\r\n");
-            //      Logger.Log($"Number Of indices {indices.Count}\r\n");
+
             Vertices = new Vector3D[vertices.Count];
             Indices = new int[indices.Count];
             double minx = double.MaxValue;
@@ -171,19 +169,13 @@ namespace CSGLib
                         Indices[i + 1] = indices[i + 1];
                         Indices[i + 2] = indices[i + 2];
                     }
-                    //Logger.Log($"Face {face}\r\n");
-                    //         Logger.Log($" {Vertices[Indices[i]].X:F3},{Vertices[Indices[i]].Y:F3},{Vertices[Indices[i]].Z:F3}\r\n");
-                    //          Logger.Log($" {Vertices[Indices[i + 1]].X:F3},{Vertices[Indices[i + 1]].Y:F3},{Vertices[Indices[i + 1]].Z:F3}\r\n");
-                    //          Logger.Log($" {Vertices[Indices[i + 2]].X:F3},{Vertices[Indices[i + 2]].Y:F3},{Vertices[Indices[i + 2]].Z:F3}\r\n\r\n");
-                    face++;
+                     face++;
                 }
 
-                DefineGeometry();
             }
         }
 
-        public Solid(Vector3D[] vertices, int[] indices)
-    : this()
+        public Solid(Vector3D[] vertices, int[] indices) : this()
         {
             SetData(vertices, indices);
         }
@@ -194,10 +186,6 @@ namespace CSGLib
         {
             Vertices = new Vector3D[0];
             Indices = new int[0];
-
-            //            setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
-            //            setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);
-            //            setCapability(Shape3D.ALLOW_APPEARANCE_READ);
         }
 
         //---------------------------------------GETS-----------------------------------//
@@ -261,32 +249,12 @@ namespace CSGLib
                 }
                 Array.Copy(indices, 0, Indices, 0, indices.Length);
 
-                DefineGeometry();
             }
         }
 
         //-------------------------GEOMETRICAL_TRANSFORMATIONS-------------------------//
 
-        /**
-        * Applies a translation into a solid
-        *
-        * @param dx translation on the x axis
-        * @param dy translation on the y axis
-        */
-
-        public void Translate(double dx, double dy)
-        {
-            if (dx != 0 || dy != 0)
-            {
-                for (int i = 0; i < Vertices.Length; i++)
-                {
-                    Vertices[i].X += dx;
-                    Vertices[i].Y += dy;
-                }
-
-                DefineGeometry();
-            }
-        }
+       
 
         /**
         * Applies a rotation into a solid
@@ -295,109 +263,10 @@ namespace CSGLib
         * @param dy rotation on the y axis
         */
 
-        public void Rotate(double dx, double dy)
-        {
-            double cosX = Math.Cos(dx);
-            double cosY = Math.Cos(dy);
-            double sinX = Math.Sin(dx);
-            double sinY = Math.Sin(dy);
-
-            if (dx != 0 || dy != 0)
-            {
-                //get mean
-                Vector3D mean = GetMean();
-
-                double newX, newY, newZ;
-                for (int i = 0; i < Vertices.Length; i++)
-                {
-                    Vertices[i].X -= mean.X;
-                    Vertices[i].Y -= mean.Y;
-                    Vertices[i].Z -= mean.Z;
-
-                    //x rotation
-                    if (dx != 0)
-                    {
-                        newY = Vertices[i].Y * cosX - Vertices[i].Z * sinX;
-                        newZ = Vertices[i].Y * sinX + Vertices[i].Z * cosX;
-                        Vertices[i].Y = newY;
-                        Vertices[i].Z = newZ;
-                    }
-
-                    //y rotation
-                    if (dy != 0)
-                    {
-                        newX = Vertices[i].X * cosY + Vertices[i].Z * sinY;
-                        newZ = -Vertices[i].X * sinY + Vertices[i].Z * cosY;
-                        Vertices[i].X = newX;
-                        Vertices[i].Z = newZ;
-                    }
-
-                    Vertices[i].X += mean.X;
-                    Vertices[i].Y += mean.Y;
-                    Vertices[i].Z += mean.Z;
-                }
-            }
-
-            DefineGeometry();
-        }
-
-        /**
-        * Applies a zoom into a solid
-        *
-        * @param dz translation on the z axis
-        */
-
-        public void Zoom(double dz)
-        {
-            if (dz != 0)
-            {
-                for (int i = 0; i < Vertices.Length; i++)
-                {
-                    Vertices[i].Z += dz;
-                }
-
-                DefineGeometry();
-            }
-        }
-
-        /**
-        * Applies a scale changing into the solid
-        *
-        * @param dx scale changing for the x axis
-        * @param dy scale changing for the y axis
-        * @param dz scale changing for the z axis
-        */
-
-        public void Scale(double dx, double dy, double dz)
-        {
-            for (int i = 0; i < Vertices.Length; i++)
-            {
-                Vertices[i].X *= dx;
-                Vertices[i].Y *= dy;
-                Vertices[i].Z *= dz;
-            }
-
-            DefineGeometry();
-        }
+      
 
         //-----------------------------------PRIVATES--------------------------------//
 
-        /** Creates a geometry based on the indexes and vertices set for the solid */
-
-        protected void DefineGeometry()
-        {
-            //            GeometryInfo gi = new GeometryInfo(GeometryInfo.TRIANGLE_ARRAY);
-            //            gi.setCoordinateIndices(indices);
-            //            gi.setCoordinates(vertices);
-            //            NormalGenerator ng = new NormalGenerator();
-            //            ng.generateNormals(gi);
-            //
-            //            gi.setColors(colors);
-            //            gi.setColorIndices(indices);
-            //            gi.recomputeIndices();
-            //
-            //            setGeometry(gi.getIndexedGeometryArray());
-        }
 
         /**
         * Gets the solid mean

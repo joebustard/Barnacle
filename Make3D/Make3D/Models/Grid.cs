@@ -113,18 +113,21 @@ namespace Barnacle.Models
             mesh.Normals = null;
             GeometryModel3D gm = new GeometryModel3D();
             gm.Geometry = mesh;
-
+            Color cl = Colors.CadetBlue;
+            cl.A = 200;
             DiffuseMaterial mt = new DiffuseMaterial();
-            mt.Color = Colors.CadetBlue;
-            mt.Brush = new SolidColorBrush(Colors.CadetBlue);
+            mt.Color = cl;
+            mt.Brush = new SolidColorBrush(cl);
             gm.Material = mt;
             DiffuseMaterial mtb = new DiffuseMaterial();
-            mtb.Color = Colors.CadetBlue;
-            mtb.Brush = new SolidColorBrush(Colors.CadetBlue);
+            mtb.Color = cl;
+            mtb.Brush = new SolidColorBrush(cl);
             gm.BackMaterial = mtb;
 
             return gm;
         }
+
+        
         // Make a mesh containing a cube centered at this point.
         private MeshGeometry3D MakeCubeMesh(double x, double y, double z, double width)
         {

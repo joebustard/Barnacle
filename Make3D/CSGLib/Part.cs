@@ -37,6 +37,7 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 namespace CSGLib
@@ -50,6 +51,12 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
+        private  CancellationToken cancelToken;
+        public void SetCancelationToken(CancellationToken cancellationToken)
+        {
+            cancelToken = cancellationToken;
+        }
+
         private int maxSplitLevel = 300;
 
         /// <summary>
@@ -112,6 +119,7 @@ namespace CSGLib
 
             //create bound
             _Bound = new Bound(verticesPoints);
+            cancelToken = new CancellationToken();
         }
 
         /// <summary>
@@ -130,7 +138,7 @@ namespace CSGLib
             PartState result = PartState.Good;
             //calculate adjacency information
             Face face;
-            for (int i = 0; i < NumFaces; i++)
+            for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
             {
                
                 face = GetFace(i);
@@ -143,7 +151,7 @@ namespace CSGLib
             }
 
             //for each face
-            for (int i = 0; i < NumFaces; i++)
+            for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
             {
                 face = GetFace(i);
                
@@ -265,7 +273,7 @@ namespace CSGLib
             if (_Bound.Overlap(obj._Bound))
             {
                 //for each object1 face...
-                for (int i = 0; i < NumFaces; i++)
+                for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
                 {
 
                     //if object1 face bound and object2 bound overlap ...
@@ -274,7 +282,7 @@ namespace CSGLib
                     if (face1.SplitLevel <= maxSplitLevel && face1.GetBound().Overlap(obj._Bound))
                     {
                         //for each object2 face...
-                        for (int j = 0; j < obj.NumFaces; j++)
+                        for (int j = 0; j < obj.NumFaces && !cancelToken.IsCancellationRequested; j++)
                         {
                            
                             //if object1 face bound and object2 face bound overlap...
@@ -377,6 +385,10 @@ namespace CSGLib
                         }
                     }
                 }
+            }
+            if ( cancelToken.IsCancellationRequested)
+            {
+                result = PartState.Interupted;
             }
             return result;
         }
