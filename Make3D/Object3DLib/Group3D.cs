@@ -9,6 +9,8 @@ using System.Xml;
 
 using Vector3D = System.Windows.Media.Media3D.Vector3D;
 using Solid = CSGLib.Solid;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace Barnacle.Object3DLib
 {
@@ -153,6 +155,33 @@ namespace Barnacle.Object3DLib
             return neo;
         }
 
+        public async Task<bool> InitAsync( CancellationTokenSource csgCancelation)
+        {
+            bool result = false;
+            if (leftObject != null && rightObject != null)
+            {
+                if (leftObject.RelativeObjectVertices != null && leftObject.RelativeObjectVertices.Count > 2)
+                {
+                    if (rightObject.RelativeObjectVertices != null && rightObject.RelativeObjectVertices.Count > 2)
+                    {
+                        Color = leftObject.Color;
+                        Bounds3D leftBnd = leftObject.AbsoluteBounds;
+                        Bounds3D rightBnd = rightObject.AbsoluteBounds;
+                        Point3D leftPnt = leftObject.Position;
+                        Point3D rightPnt = rightObject.Position;
+                        Bounds3D combined = new Bounds3D();
+                        combined.Add(leftBnd);
+                        combined.Add(rightBnd);
+
+                        result = await PerformOperationAsync(csgCancelation);
+                    }
+                }
+            }
+
+            return result;
+        }
+
+
         public bool Init()
         {
             bool result = false;
@@ -179,12 +208,13 @@ namespace Barnacle.Object3DLib
             return result;
         }
 
-        public bool PerformOperation()
+        public  bool PerformOperation()
         {
             bool res = false;
             absoluteBounds = new Bounds3D();
             leftObject.RelativeToAbsolute();
             rightObject.RelativeToAbsolute();
+            
             Logger.Log($"Left Solid {leftObject.AbsoluteObjectVertices.Count} pnts\r\n============\r\n");
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
 
@@ -221,6 +251,7 @@ namespace Barnacle.Object3DLib
                         }
                         break;
                 }
+  
 
                 if (result != null)
                 {
@@ -255,9 +286,98 @@ namespace Barnacle.Object3DLib
                 }
             }
             else
-            if ( modeller.State == BooleanModeller.ModellerState.Interrupted)
+            if (modeller.State == BooleanModeller.ModellerState.Interrupted)
             {
                 System.Windows.Forms.MessageBox.Show("Operation aborted");
+                res = false;
+            }
+            return res;
+        }
+
+        public async Task<bool> PerformOperationAsync(CancellationTokenSource csgCancelation)
+        {
+            bool res = false;
+            absoluteBounds = new Bounds3D();
+            leftObject.RelativeToAbsolute();
+            rightObject.RelativeToAbsolute();
+
+            BooleanModeller.OperationType op = BooleanModeller.OperationType.Union;
+            switch (PrimType)
+            {
+                case "groupunion":
+                    {
+                        op = BooleanModeller.OperationType.Union;
+                    }
+                    break;
+
+                case "groupdifference":
+                    {
+                        op = BooleanModeller.OperationType.Difference;
+                    }
+                    break;
+
+                case "groupreversedifference":
+                    {
+                        op = BooleanModeller.OperationType.ReverseDifference;
+                    }
+                    break;
+
+                case "groupintersection":
+                    {
+                        op = BooleanModeller.OperationType.Intersection;
+                    }
+                    break;
+            }
+            Solid result = null;
+            modeller = new BooleanModeller();
+            BooleanModeller.OpResult opRes = await modeller.DoModelOperationAsync(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices,
+                                      rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation);
+            
+            if (opRes.OperationStatus == BooleanModeller.ModellerState.Good)
+            {
+                result = opRes.ResultObject;
+                if (result != null)
+                {
+                    AbsoluteObjectVertices = new Point3DCollection();
+                    TriangleIndices = new System.Windows.Media.Int32Collection();
+                    Vector3D[] vc = result.GetVertices();
+                    if (vc.GetLength(0) > 0)
+                    {
+                        foreach (Vector3D v in vc)
+                        {
+                            Point3D p = new Point3D(v.X, v.Y, v.Z);
+                            AbsoluteObjectVertices.Add(p);
+                            absoluteBounds.Adjust(p);
+                        }
+                        int[] ids = result.GetIndices();
+                        for (int i = 0; i < ids.Length; i++)
+                        {
+                            TriangleIndices.Add(ids[i]);
+                        }
+
+                        double nx = absoluteBounds.MidPoint().X;
+                        double ny = absoluteBounds.MidPoint().Y;
+                        double nz = absoluteBounds.MidPoint().Z;
+                        Position = new Point3D(nx, ny, nz);
+
+                        AbsoluteToRelative();
+                        SetMesh();
+                        modeller = null;
+                        GC.Collect();
+                        res = true;
+                    }
+                }
+            }
+            else
+            if (opRes.OperationStatus == BooleanModeller.ModellerState.Interrupted)
+            {
+                System.Windows.Forms.MessageBox.Show("Operation aborted");
+                res = false;
+            }
+            else
+            if (opRes.OperationStatus == BooleanModeller.ModellerState.Bad)
+            {
+                System.Windows.Forms.MessageBox.Show("Bad");
                 res = false;
             }
             return res;

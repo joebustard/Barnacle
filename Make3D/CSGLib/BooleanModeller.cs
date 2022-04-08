@@ -35,10 +35,13 @@ Optimized and refactored by: Lars Brubaker (larsbrubaker@matterhackers.com)
 Project: https://github.com/MatterHackers/agg-sharp (an included library)
 */
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-//using OpenToolkit.Mathematics;
 
 namespace CSGLib
 {
@@ -54,6 +57,14 @@ namespace CSGLib
         private Part Object1;
         private Part Object2;
 
+        private Solid resultObject;
+        public enum OperationType
+        {
+            Union,
+            Difference,
+            Intersection,
+            ReverseDifference
+        }
         public BooleanModeller(Solid solid1, Solid solid2)
         {
             State = ModellerState.Bad;
@@ -69,7 +80,7 @@ namespace CSGLib
             Part.PartState ps4 = Part.PartState.Good;
             if (ps1 == Part.PartState.Good)
             {
-                
+
                 ps2 = Object2.SplitFaces(Object1);
                 if (ps2 == Part.PartState.Good)
                 {
@@ -82,17 +93,177 @@ namespace CSGLib
                     State = ModellerState.Good;
                 }
             }
-            if ( ps1 == Part.PartState.Interupted || 
+            if (ps1 == Part.PartState.Interupted ||
                 ps2 == Part.PartState.Interupted ||
                 ps3 == Part.PartState.Interupted ||
-                ps4 == Part.PartState.Interupted )
+                ps4 == Part.PartState.Interupted)
             {
                 State = ModellerState.Interrupted;
             }
         }
 
-        private BooleanModeller()
+        public BooleanModeller()
         {
+        }
+        public struct OpResult
+        {
+            public ModellerState OperationStatus;
+            public Solid ResultObject;
+        }
+        public async Task<OpResult> DoModelOperationAsync(Point3DCollection lp, Int32Collection li,
+                                    Point3DCollection rp, Int32Collection ri,
+                                    OperationType op, CancellationTokenSource csgCancelation)
+        {
+            BlockingCollection<Point3D> lpnts = new BlockingCollection<Point3D>();
+            foreach (Point3D p in lp)
+            {
+                lpnts.Add(new Point3D(p.X, p.Y, p.Z));
+            }
+
+            BlockingCollection<int> lint = new BlockingCollection<int>();
+            foreach (int i in li)
+            {
+                lint.Add(i);
+            }
+            BlockingCollection<Point3D> rpnts = new BlockingCollection<Point3D>();
+            foreach (Point3D p in rp)
+            {
+                rpnts.Add(new Point3D(p.X, p.Y, p.Z));
+            }
+
+            BlockingCollection<int> rint = new BlockingCollection<int>();
+            foreach (int i in ri)
+            {
+                rint.Add(i);
+            }
+            return await Task.Run(() =>
+            {
+                BooleanModeller btmp = new BooleanModeller();
+                btmp.SetCancelationToken(csgCancelation.Token);
+                OpResult res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op);
+                return res;
+            }, csgCancelation.Token).ConfigureAwait(false);
+
+        }
+        private static CancellationToken cancelToken;
+        public void SetCancelationToken(CancellationToken cancellationToken)
+        {
+            cancelToken = cancellationToken;
+        }
+
+
+        public OpResult DoModelOperation(BlockingCollection<Point3D> blp, BlockingCollection<int> bli,
+                                      BlockingCollection<Point3D> brp, BlockingCollection<int> bri,
+                                      OperationType op)
+        {
+            OpResult opresult = new OpResult();
+            opresult.ResultObject = null;
+            Point3DCollection lp = new Point3DCollection();
+            bool more = true;
+            while (more && !cancelToken.IsCancellationRequested)
+            {
+                Point3D pn;
+                more = blp.TryTake(out pn);
+                if (more) lp.Add(pn);
+            }
+            Point3DCollection rp = new Point3DCollection();
+            more = true;
+            while (more && !cancelToken.IsCancellationRequested)
+            {
+                Point3D pn;
+                more = brp.TryTake(out pn);
+                if (more) rp.Add(pn);
+            }
+            Int32Collection li = new Int32Collection();
+            more = true;
+            while (more && !cancelToken.IsCancellationRequested)
+            {
+                int i;
+                more = bli.TryTake(out i);
+                if (more) li.Add(i);
+            }
+            Int32Collection ri = new Int32Collection();
+            more = true;
+            while (more && !cancelToken.IsCancellationRequested)
+            {
+                int i;
+                more = bri.TryTake(out i);
+                if (more) ri.Add(i);
+            }
+
+            opresult.OperationStatus = ModellerState.Interrupted;
+            if (!cancelToken.IsCancellationRequested)
+            {
+                Solid leftie = new Solid(lp, li, false);
+                Object1 = new Part(leftie);
+                if (!cancelToken.IsCancellationRequested)
+                {
+
+                    Solid rightie = new Solid(rp, ri, false);
+                    if (!cancelToken.IsCancellationRequested)
+                    {
+
+                        Object2 = new Part(rightie);
+                        if (!cancelToken.IsCancellationRequested)
+                        {
+
+                            State = ModellerState.Bad;
+
+
+                            //split the faces so that none of them intercepts each other
+                            //Logger.Log("Split Faces ob1 (ob2)\r\n");
+
+                            if (!cancelToken.IsCancellationRequested && Object1.SplitFaces(Object2) == Part.PartState.Good)
+                            {
+
+                                if (!cancelToken.IsCancellationRequested && Object2.SplitFaces(Object1) == Part.PartState.Good)
+                                {
+
+                                    if (!cancelToken.IsCancellationRequested && Object1.ClassifyFaces(Object2) == Part.PartState.Good)
+                                    {
+                                        if (!cancelToken.IsCancellationRequested && Object2.ClassifyFaces(Object1) == Part.PartState.Good)
+                                        {
+                                            State = ModellerState.Good;
+                                            switch (op)
+                                            {
+                                                case OperationType.Union:
+                                                    {
+                                                        resultObject = GetUnion();
+                                                    }
+                                                    break;
+                                                case OperationType.Difference:
+                                                    {
+                                                        resultObject = GetDifference();
+                                                    }
+                                                    break;
+                                                case OperationType.ReverseDifference:
+                                                    {
+                                                        resultObject = GetReverseDifference();
+                                                    }
+                                                    break;
+                                                case OperationType.Intersection:
+                                                    {
+                                                        resultObject = GetIntersection();
+                                                    }
+                                                    break;
+                                            }
+
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                    if (resultObject != null)
+                    {
+                        opresult.OperationStatus = ModellerState.Good;
+                        opresult.ResultObject = resultObject;
+                    }
+                }
+            }
+
+            return opresult;
         }
         public enum ModellerState
         {
@@ -103,28 +274,7 @@ namespace CSGLib
         public ModellerState State { get; set; }
         //--------------------------------CONSTRUCTORS----------------------------------//
 
-        /**
-        * Constructs a BooleanModeller object to apply boolean operation in two solids.
-        * Makes preliminary calculations
-        *
-        * @param solid1 first solid where boolean operations will be applied
-        * @param solid2 second solid where boolean operations will be applied
-        */
-        //----------------------------------OVERRIDES-----------------------------------//
 
-        /**
-        * Clones the BooleanModeller object
-        *
-        * @return cloned BooleanModeller object
-        */
-
-        public BooleanModeller Clone()
-        {
-            BooleanModeller clone = new BooleanModeller();
-            clone.Object1 = Object1.Clone();
-            clone.Object2 = Object2.Clone();
-            return clone;
-        }
 
         //-------------------------------BOOLEAN_OPERATIONS-----------------------------//
 
@@ -165,18 +315,6 @@ namespace CSGLib
             return ComposeSolid(Status.OUTSIDE, Status.SAME, Status.OUTSIDE);
         }
 
-        /**
-        * Gets the solid generated by the intersection of the two solids submitted to the constructor
-        *
-        * @return solid generated by the intersection of the two solids submitted to the constructor.
-        * The generated solid may be empty depending on the solids. In this case, it can't be used on a scene
-        * graph. To check this, use the Solid.isEmpty() method.
-        */
-        /** Gets the solid generated by the difference of the two solids submitted to the constructor.
-        * The fist solid is substracted by the second.
-        *
-        * @return solid generated by the difference of the two solids submitted to the constructor
-        */
 
         //--------------------------PRIVATES--------------------------------------------//
 

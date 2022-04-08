@@ -31,6 +31,28 @@ namespace Barnacle.ViewModels
 
         private Object3D selectedObject;
         private List<AvailableColour> availableColours;
+        private void SuspendEditing(object param)
+        {
+            bool b = Convert.ToBoolean(param);
+            EditingActive = !b;
+        }
+        private bool editingActive;
+        public bool EditingActive
+        {
+            get
+            {
+                return editingActive;
+            }
+            set
+            {
+                if (editingActive != value)
+                {
+                    editingActive = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged("ControlsEnabled");
+                }
+            }
+        }
 
         public ObjectPropertiesViewModel()
         {
@@ -47,6 +69,8 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("ObjectSelected", OnObjectSelected);
             NotificationManager.Subscribe("ScaleUpdated", OnScaleUpdated);
             NotificationManager.Subscribe("PositionUpdated", OnPositionUpdated);
+            NotificationManager.Subscribe("ObjectProperties", "SuspendEditing", SuspendEditing);
+            editingActive = true;
             rotationX = 90;
             rotationY = 90;
             rotationZ = 90;
@@ -164,7 +188,7 @@ namespace Barnacle.ViewModels
         private bool controlsEnabled;
         public bool ControlsEnabled
         {
-            get { return controlsEnabled; }
+            get { return (controlsEnabled && editingActive); }
             set
             {
                 if (controlsEnabled != value)

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
@@ -65,6 +66,7 @@ namespace Barnacle.ViewModels
         private bool twoShapeEnabled;
         private bool underLineChecked;
         private bool wingEnabled;
+        private bool editingActive;
 
         public DefaultViewModel()
         {
@@ -143,10 +145,6 @@ namespace Barnacle.ViewModels
             buildPlateManager = new BuildPlateManager();
             buildPlateManager.Initialise();
 
-            //if (buildPlateManager.BuildPlates.Count > 0)
-            //{
-            //    SelectedBuildPlate = buildPlateManager.BuildPlates[0].PrinterName;
-            //}
             foreach (BuildPlate bp in buildPlateManager.BuildPlates)
             {
                 buildPlateNames.Add(bp.PrinterName);
@@ -166,10 +164,13 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("SetSingleToolsVisible", SetSingleToolVisible);
             NotificationManager.Subscribe("ObjectNamesChanged", ObjectNamesChanged);
             NotificationManager.Subscribe("Loading", LoadingNewFile);
+            NotificationManager.Subscribe("SuspendEditing", SuspendEditing);
 
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
+            editingActive = true;
             EnableAllTools(true);
+            
             NotificationManager.Notify("ProjectChanged", Project);
             /* if (buildPlateManager.BuildPlates.Count > 0)
              {
@@ -178,6 +179,13 @@ namespace Barnacle.ViewModels
              */
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void SuspendEditing(object param)
+        {
+            bool b = Convert.ToBoolean(param);
+            EditingActive = !b;
+            EnableAllTools(editingActive);
         }
 
         public ICommand AboutCommand { get; set; }
@@ -222,6 +230,21 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public bool EditingActive
+        {
+            get
+            {
+                return editingActive;
+            }
+            set
+            {
+                if (editingActive != value)
+                {
+                    editingActive = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public bool BoldChecked
         {
             get
@@ -1285,10 +1308,10 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("Fuselage", null);
         }
 
-        private void OnGroup(object obj)
+        private async void OnGroup(object obj)
         {
             string s = obj.ToString();
-            NotificationManager.Notify("Group", s);
+            await NotificationManager.NotifyTask("Group", s);
         }
 
         private void OnHullEdit(object obj)

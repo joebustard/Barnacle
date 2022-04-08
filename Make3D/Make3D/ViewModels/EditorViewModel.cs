@@ -16,6 +16,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -35,7 +36,7 @@ namespace Barnacle.ViewModels
         {
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
         };
-
+        static CancellationTokenSource csgCancelation;
         // used when user trys to rotate an object using keyboard shortcuts
         private enum KeyboardRotation
         {
@@ -107,7 +108,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "NewDocument", OnNewDocument);
             NotificationManager.Subscribe("Editor", "Remesh", OnRemesh);
             NotificationManager.Subscribe("Editor", "Select", Select);
-            NotificationManager.Subscribe("Editor", "Group", OnGroup);
+            NotificationManager.SubscribeTask("Editor", "Group", OnGroup);
             NotificationManager.Subscribe("Editor", "Cut", OnCut);
             NotificationManager.Subscribe("Editor", "Copy", OnCopy);
             NotificationManager.Subscribe("Editor", "Paste", OnPaste);
@@ -596,6 +597,15 @@ namespace Barnacle.ViewModels
                     {
                         showAdorners = false;
                         RegenerateDisplayList();
+                    }
+                    break;
+
+                case Key.Escape:
+                    {
+                        if ( csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                        {
+                            csgCancelation.Cancel();
+                        }
                     }
                     break;
             }
@@ -1820,8 +1830,9 @@ namespace Barnacle.ViewModels
             ob.Remesh();
         }
 
-        private bool MakeGroup3D(string s)
+        private async Task <bool> MakeGroup3D(string s)
         {
+            NotificationManager.Notify("SuspendEditing", true);
             bool res = false;
             bool cut = false;
             if (s == "groupcut")
@@ -1833,46 +1844,55 @@ namespace Barnacle.ViewModels
             if (selectedObjectAdorner.NumberOfSelectedObjects() >= 2)
             {
                 CheckPoint();
+               
                 Object3D leftie = selectedObjectAdorner.SelectedObjects[0];
                 int i = 1;
-                while (i < selectedObjectAdorner.NumberOfSelectedObjects())
+                while (i < selectedObjectAdorner.NumberOfSelectedObjects() && leftie != null)
                 {
-                    Group3D grp = new Group3D();
-                    grp.Name = leftie.Name;
-                    grp.Description = leftie.Description;
-                    grp.LeftObject = leftie;
-                    if (cut)
-                    {
-                        Object3D cln = selectedObjectAdorner.SelectedObjects[i].Clone();
-                        grp.RightObject = cln;
-                    }
-                    else
-                    {
-                        grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
-                    }
-                    grp.PrimType = s;
 
-                    if (grp.Init())
-                    //if (grp.TestInit())
-                    {
-                        Document.ReplaceObjectsByGroup(grp);
-                        //  RemoveDuplicateVertices(grp);
-                        leftie = grp;
-                        i++;
-                        res = true;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Group operation failed, it produces too many faces");
-                        grp.LeftObject?.Remesh();
-                        grp.RightObject?.Remesh();
-                        return false;
-                    }
+                    leftie = await GroupTwo(leftie,i, s, cut);
+                    i++; 
                 }
+                if ( i < selectedObjectAdorner.NumberOfSelectedObjects() || csgCancelation.IsCancellationRequested || leftie == null)
+                {
+                    Undo();
+                }
+                csgCancelation = null;
             }
+            NotificationManager.Notify("SuspendEditing", false);
             return res;
         }
 
+        private async Task<Object3D> GroupTwo(Object3D leftie, int i, string s, bool cut)
+        {
+            bool res;
+            Group3D grp = new Group3D();
+            grp.Name = leftie.Name;
+            grp.Description = leftie.Description;
+            grp.LeftObject = leftie;
+            if (cut)
+            {
+                Object3D cln = selectedObjectAdorner.SelectedObjects[i].Clone();
+                grp.RightObject = cln;
+            }
+            else
+            {
+                grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
+            }
+            grp.PrimType = s;
+
+            res = await grp.InitAsync(csgCancelation);
+            if (res)
+            {
+                Document.ReplaceObjectsByGroup(grp);
+
+            }
+            else
+            {
+                grp = null;
+            }
+            return grp; ;
+        }
         private void MakeSizeAdorner()
         {
             selectedObjectAdorner = new SizeAdorner(camera);
@@ -2487,7 +2507,7 @@ namespace Barnacle.ViewModels
             DisplayModeller(dlg);
         }
 
-        private void OnGroup(object param)
+        private async Task OnGroup(object param)
         {
             string s = param.ToString().ToLower();
             if (s == "test")
@@ -2524,7 +2544,8 @@ namespace Barnacle.ViewModels
             }
             else
             {
-                MakeGroup3D(s);
+                csgCancelation = new CancellationTokenSource();
+                await MakeGroup3D(s);
                 RegenerateDisplayList();
                 NotificationManager.Notify("ObjectNamesChanged", null);
             }
