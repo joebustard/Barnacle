@@ -46,6 +46,7 @@
     <Compile Include="AxisAlignedBoundingBox.cs" />
     <Compile Include="BooleanModeller.cs" />
     <Compile Include="Bound.cs" />
+    <Compile Include="CSGGroupProgress.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="Line.cs" />
     <Compile Include="Logger.cs" />
