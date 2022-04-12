@@ -35,12 +35,7 @@
             <RowDefinition />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
-        <!---
-                <Custom:RibbonGroup Name="ViewGroup" Header="View">
-                    <Custom:RibbonButton x:Name="EditorButton" Label="Editor" Command="{Binding ViewCommand}" CommandParameter="Editor" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
-                    <Custom:RibbonButton x:Name="ScriptButton" Label="Script" Command="{Binding ViewCommand}" CommandParameter="Script" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" />
-                </Custom:RibbonGroup>
-                -->
+ 
         <Custom:Ribbon Background="{StaticResource WindowBackBrush}"
                        FontSize="14"
                        Foreground="{StaticResource TextBrush}"
@@ -49,28 +44,28 @@
                        SelectionChanged="MainRibbon_SelectionChanged"
                        x:Name="MainRibbon">
             <Custom:Ribbon.QuickAccessToolBar>
-                <Custom:RibbonQuickAccessToolBar>
+                <Custom:RibbonQuickAccessToolBar >
                     <Custom:RibbonButton Command="{Binding NewCommand}"
                                          SmallImageSource="/images/buttons/new_file.png"
-                                         x:Name="New" />
+                                         x:Name="New" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding OpenCommand}"
                                          SmallImageSource="/images/buttons/human_document_open.png"
-                                         x:Name="Open" />
+                                         x:Name="Open" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SaveCommand}"
                                          SmallImageSource="/images/buttons/document_save_as.png"
-                                         x:Name="SaveButton" />
+                                         x:Name="SaveButton" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SaveAsCommand}"
                                          SmallImageSource="/images/buttons/document_save_as.png"
-                                         x:Name="SaveItAs" />
+                                         x:Name="SaveItAs" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding UndoCommand}"
                                          SmallImageSource="/images/buttons/edit_undo.png"
-                                         x:Name="Undo" />
+                                         x:Name="Undo" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding RedoCommand}"
                                          SmallImageSource="/images/buttons/edit_redo.png"
-                                         x:Name="Redo" />
+                                         x:Name="Redo" IsEnabled="{Binding EditingActive}"/>
                 </Custom:RibbonQuickAccessToolBar>
             </Custom:Ribbon.QuickAccessToolBar>
-            <Custom:Ribbon.ApplicationMenu>
+            <Custom:Ribbon.ApplicationMenu >
                 <Custom:RibbonApplicationMenu KeyTip="f">
                     <Custom:RibbonApplicationMenu.AuxiliaryPaneContent>
                         <Grid HorizontalAlignment="Stretch"
@@ -90,7 +85,7 @@
                                     <DataTemplate>
                                         <Custom:RibbonApplicationMenuItem Command="{Binding DataContext.OpenRecentFileCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                                           CommandParameter="{Binding Path}"
-                                                                          Header="{Binding Name}" />
+                                                                          Header="{Binding Name}" IsEnabled="{Binding EditingActive}"/>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
@@ -100,40 +95,40 @@
                                                       Header="New"
                                                       ImageSource="/images/buttons/new_file.png"
                                                       ToolTip="Create a new file."
-                                                      x:Name="New1" />
+                                                      x:Name="New1" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonApplicationMenuItem Command="{Binding OpenCommand}"
                                                       Header="Open"
                                                       ImageSource="/images/buttons/human_document_open.png"
-                                                      x:Name="Open1" />
+                                                      x:Name="Open1" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonApplicationMenuItem Command="{Binding SaveCommand}"
                                                       Header="Save"
                                                       ImageSource="/images/buttons/document_save_as.png"
-                                                      x:Name="Save1" />
+                                                      x:Name="Save1" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonApplicationMenuItem Command="{Binding SaveAsCommand}"
                                                       Header="Save As"
                                                       ImageSource="/images/buttons/document_save_as.png"
-                                                      x:Name="Save2" />
+                                                      x:Name="Save2" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonApplicationMenuItem Command="{Binding InsertCommand}"
                                                       Header="Insert"
                                                       ImageSource="/images/buttons/human_document_open.png"
                                                       ToolTip="Insert the entire contents of an external model file into this one"
-                                                      x:Name="Insert" />
+                                                      x:Name="Insert" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonApplicationMenuItem Command="{Binding ReferenceCommand}"
                                                       Header="Reference"
                                                       ImageSource="/images/buttons/human_document_open.png"
                                                       ToolTip="Reference the contents of an external model file. Objects can be moved and rotated but not sized. If they are updated in the referenced file they will also change here."
-                                                      x:Name="Reference" />
+                                                      x:Name="Reference" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Command="{Binding NewProjectCommand}"
                                                       Header="New Project"
                                                       ImageSource="/images/buttons/new_file.png"
                                                       ToolTip="Create a  new project"
-                                                      x:Name="NewProjectMenu" />
+                                                      x:Name="NewProjectMenu" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonApplicationMenuItem Command="{Binding OpenProjectCommand}"
                                                       Header="Open Project"
                                                       ImageSource="/images/buttons/new_file.png"
                                                       ToolTip="Open an existing project"
-                                                      x:Name="OpenProjectMenu" />
+                                                      x:Name="OpenProjectMenu" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonSeparator />
                     <Custom:RibbonApplicationMenuItem Command="{Binding ExitCommand}"
                                                       Header="Exit"
@@ -145,7 +140,7 @@
                               Header="Home">
                 <Custom:RibbonGroup Name="ClipboardGroup"
                                     Header="Clipboard"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/clipboard.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/clipboard.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonButton Command="{Binding CutCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Cut"
@@ -187,7 +182,7 @@
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="SelectionGroup"
                                     Header="Selection"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/SelectAll.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/SelectAll.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="First"
                                          HorizontalAlignment="Stretch"
