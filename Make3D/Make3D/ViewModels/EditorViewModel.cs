@@ -5,6 +5,7 @@ using Barnacle.Models.Adorners;
 using Barnacle.Models.LoopSmoothing;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
+using CSGLib;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
@@ -1866,6 +1867,7 @@ namespace Barnacle.ViewModels
         private async Task<Object3D> GroupTwo(Object3D leftie, int i, string s, bool cut)
         {
             bool res;
+            var progress = new Progress<CSGGroupProgress>(ShowCSGProgress);
             Group3D grp = new Group3D();
             grp.Name = leftie.Name;
             grp.Description = leftie.Description;
@@ -1881,7 +1883,7 @@ namespace Barnacle.ViewModels
             }
             grp.PrimType = s;
 
-            res = await grp.InitAsync(csgCancelation);
+            res = await grp.InitAsync(csgCancelation, progress);
             if (res)
             {
                 Document.ReplaceObjectsByGroup(grp);
@@ -1893,6 +1895,13 @@ namespace Barnacle.ViewModels
             }
             return grp; ;
         }
+
+        private void ShowCSGProgress(CSGGroupProgress obj)
+        {
+            InfoWindow.Instance().ShowInfo("CSG Operation");
+            InfoWindow.Instance().ShowText(obj.Text);
+        }
+
         private void MakeSizeAdorner()
         {
             selectedObjectAdorner = new SizeAdorner(camera);

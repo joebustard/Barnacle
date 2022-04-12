@@ -155,7 +155,7 @@ namespace Barnacle.Object3DLib
             return neo;
         }
 
-        public async Task<bool> InitAsync( CancellationTokenSource csgCancelation)
+        public async Task<bool> InitAsync( CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
         {
             bool result = false;
             if (leftObject != null && rightObject != null)
@@ -173,7 +173,7 @@ namespace Barnacle.Object3DLib
                         combined.Add(leftBnd);
                         combined.Add(rightBnd);
 
-                        result = await PerformOperationAsync(csgCancelation);
+                        result = await PerformOperationAsync(csgCancelation, progress);
                     }
                 }
             }
@@ -294,7 +294,7 @@ namespace Barnacle.Object3DLib
             return res;
         }
 
-        public async Task<bool> PerformOperationAsync(CancellationTokenSource csgCancelation)
+        public async Task<bool> PerformOperationAsync(CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
         {
             bool res = false;
             absoluteBounds = new Bounds3D();
@@ -331,7 +331,7 @@ namespace Barnacle.Object3DLib
             Solid result = null;
             modeller = new BooleanModeller();
             BooleanModeller.OpResult opRes = await modeller.DoModelOperationAsync(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices,
-                                      rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation);
+                                      rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation,progress);
             
             if (opRes.OperationStatus == BooleanModeller.ModellerState.Good)
             {

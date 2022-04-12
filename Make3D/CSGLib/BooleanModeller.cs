@@ -35,6 +35,7 @@ Optimized and refactored by: Lars Brubaker (larsbrubaker@matterhackers.com)
 Project: https://github.com/MatterHackers/agg-sharp (an included library)
 */
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
@@ -112,7 +113,7 @@ namespace CSGLib
         }
         public async Task<OpResult> DoModelOperationAsync(Point3DCollection lp, Int32Collection li,
                                     Point3DCollection rp, Int32Collection ri,
-                                    OperationType op, CancellationTokenSource csgCancelation)
+                                    OperationType op, CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
         {
             BlockingCollection<Point3D> lpnts = new BlockingCollection<Point3D>();
             foreach (Point3D p in lp)
@@ -140,7 +141,7 @@ namespace CSGLib
             {
                 BooleanModeller btmp = new BooleanModeller();
                 btmp.SetCancelationToken(csgCancelation.Token);
-                OpResult res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op);
+                OpResult res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
                 return res;
             }, csgCancelation.Token).ConfigureAwait(false);
 
@@ -150,12 +151,14 @@ namespace CSGLib
         {
             cancelToken = cancellationToken;
         }
-
+        private static CSGGroupProgress currentProgress = new CSGGroupProgress();
 
         public OpResult DoModelOperation(BlockingCollection<Point3D> blp, BlockingCollection<int> bli,
                                       BlockingCollection<Point3D> brp, BlockingCollection<int> bri,
-                                      OperationType op)
+                                      OperationType op, IProgress<CSGGroupProgress> progress)
         {
+
+            ReportProgress("Initialising", 0,progress);
             OpResult opresult = new OpResult();
             opresult.ResultObject = null;
             Point3DCollection lp = new Point3DCollection();
@@ -212,15 +215,16 @@ namespace CSGLib
 
                             //split the faces so that none of them intercepts each other
                             //Logger.Log("Split Faces ob1 (ob2)\r\n");
-
+                            ReportProgress("Split Left Faces", 0, progress);
                             if (!cancelToken.IsCancellationRequested && Object1.SplitFaces(Object2) == Part.PartState.Good)
                             {
-
+                                ReportProgress("Split Right Face", 0, progress);
                                 if (!cancelToken.IsCancellationRequested && Object2.SplitFaces(Object1) == Part.PartState.Good)
                                 {
-
+                                    ReportProgress("Classify Left Faces", 0, progress);
                                     if (!cancelToken.IsCancellationRequested && Object1.ClassifyFaces(Object2) == Part.PartState.Good)
                                     {
+                                        ReportProgress("Classify Right Faces", 0, progress);
                                         if (!cancelToken.IsCancellationRequested && Object2.ClassifyFaces(Object1) == Part.PartState.Good)
                                         {
                                             State = ModellerState.Good;
@@ -228,21 +232,25 @@ namespace CSGLib
                                             {
                                                 case OperationType.Union:
                                                     {
+                                                        ReportProgress("Union", 0, progress);
                                                         resultObject = GetUnion();
                                                     }
                                                     break;
                                                 case OperationType.Difference:
                                                     {
+                                                        ReportProgress("DIfference", 0, progress);
                                                         resultObject = GetDifference();
                                                     }
                                                     break;
                                                 case OperationType.ReverseDifference:
                                                     {
+                                                        ReportProgress("Reverse Difference", 0, progress);
                                                         resultObject = GetReverseDifference();
                                                     }
                                                     break;
                                                 case OperationType.Intersection:
                                                     {
+                                                        ReportProgress("Intersection", 0, progress);
                                                         resultObject = GetIntersection();
                                                     }
                                                     break;
@@ -265,6 +273,17 @@ namespace CSGLib
 
             return opresult;
         }
+
+        private void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
+        {
+            if(progress != null)
+            {
+                currentProgress.Text = v1;
+                currentProgress.Val = v2;
+                progress.Report(currentProgress);
+            }
+        }
+
         public enum ModellerState
         {
             Bad,
