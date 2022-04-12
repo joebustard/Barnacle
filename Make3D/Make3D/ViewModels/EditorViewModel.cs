@@ -1859,6 +1859,7 @@ namespace Barnacle.ViewModels
                     Undo();
                 }
                 csgCancelation = null;
+                InfoWindow.Instance().Hide();
             }
             NotificationManager.Notify("SuspendEditing", false);
             return res;
