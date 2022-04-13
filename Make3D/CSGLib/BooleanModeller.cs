@@ -46,6 +46,15 @@ using System.Windows.Media.Media3D;
 
 namespace CSGLib
 {
+    public enum CSGState
+    {
+        Unknown,
+        Good,
+        Bad,
+        Toolarge,
+        Interrupted
+    };
+
     /// <summary>
     /// Class used to apply boolean operations on solids.
     /// Two 'Solid' objects are submitted to this class constructor. There is a methods for
@@ -68,38 +77,38 @@ namespace CSGLib
         }
         public BooleanModeller(Solid solid1, Solid solid2)
         {
-            State = ModellerState.Bad;
+            State = CSGState.Bad;
             //representation to apply boolean operations
             Object1 = new Part(solid1);
             Object2 = new Part(solid2);
 
             //split the faces so that none of them intercepts each other
             //Logger.Log("Split Faces ob1 (ob2)\r\n");
-            Part.PartState ps1 = Object1.SplitFaces(Object2);
-            Part.PartState ps2 = Part.PartState.Good;
-            Part.PartState ps3 = Part.PartState.Good;
-            Part.PartState ps4 = Part.PartState.Good;
-            if (ps1 == Part.PartState.Good)
+            CSGState ps1 = Object1.SplitFaces(Object2);
+            CSGState ps2 = CSGState.Good;
+            CSGState ps3 = CSGState.Good;
+            CSGState ps4 = CSGState.Good;
+            if (ps1 == CSGState.Good)
             {
 
                 ps2 = Object2.SplitFaces(Object1);
-                if (ps2 == Part.PartState.Good)
+                if (ps2 == CSGState.Good)
                 {
                     //classify faces as being inside or outside the other solid
                     ps3 = Object1.ClassifyFaces(Object2);
-                    if (ps3 == Part.PartState.Good)
+                    if (ps3 == CSGState.Good)
                     {
                         ps4 = Object2.ClassifyFaces(Object1);
                     }
-                    State = ModellerState.Good;
+                    State = CSGState.Good;
                 }
             }
-            if (ps1 == Part.PartState.Interupted ||
-                ps2 == Part.PartState.Interupted ||
-                ps3 == Part.PartState.Interupted ||
-                ps4 == Part.PartState.Interupted)
+            if (ps1 == CSGState.Interrupted ||
+                ps2 == CSGState.Interrupted ||
+                ps3 == CSGState.Interrupted ||
+                ps4 == CSGState.Interrupted)
             {
-                State = ModellerState.Interrupted;
+                State = CSGState.Interrupted;
             }
         }
 
@@ -108,7 +117,7 @@ namespace CSGLib
         }
         public struct OpResult
         {
-            public ModellerState OperationStatus;
+            public CSGState OperationStatus;
             public Solid ResultObject;
         }
         public async Task<OpResult> DoModelOperationAsync(Point3DCollection lp, Int32Collection li,
@@ -143,7 +152,7 @@ namespace CSGLib
                 btmp.SetCancelationToken(csgCancelation.Token);
                 OpResult res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
                 return res;
-            }, csgCancelation.Token).ConfigureAwait(false);
+            }, csgCancelation.Token).ConfigureAwait(true);
 
         }
         private static CancellationToken cancelToken;
@@ -158,7 +167,7 @@ namespace CSGLib
                                       OperationType op, IProgress<CSGGroupProgress> progress)
         {
 
-            ReportProgress("Initialising", 0,progress);
+            ReportProgress("Initialising", 0, progress);
             OpResult opresult = new OpResult();
             opresult.ResultObject = null;
             Point3DCollection lp = new Point3DCollection();
@@ -194,11 +203,12 @@ namespace CSGLib
                 if (more) ri.Add(i);
             }
 
-            opresult.OperationStatus = ModellerState.Interrupted;
+            opresult.OperationStatus = CSGState.Interrupted;
             if (!cancelToken.IsCancellationRequested)
             {
                 Solid leftie = new Solid(lp, li, false);
                 Object1 = new Part(leftie);
+                Object1.SetCancelationToken(cancelToken);
                 if (!cancelToken.IsCancellationRequested)
                 {
 
@@ -207,55 +217,71 @@ namespace CSGLib
                     {
 
                         Object2 = new Part(rightie);
+                        Object2.SetCancelationToken(cancelToken);
                         if (!cancelToken.IsCancellationRequested)
                         {
 
-                            State = ModellerState.Bad;
-
+                            State = CSGState.Bad;
 
                             //split the faces so that none of them intercepts each other
-                            //Logger.Log("Split Faces ob1 (ob2)\r\n");
                             ReportProgress("Split Left Faces", 0, progress);
-                            if (!cancelToken.IsCancellationRequested && Object1.SplitFaces(Object2) == Part.PartState.Good)
+                            if (!cancelToken.IsCancellationRequested)
                             {
-                                ReportProgress("Split Right Face", 0, progress);
-                                if (!cancelToken.IsCancellationRequested && Object2.SplitFaces(Object1) == Part.PartState.Good)
+                                opresult.OperationStatus = Object1.SplitFaces(Object2);
+                                if (opresult.OperationStatus == CSGState.Good)
                                 {
-                                    ReportProgress("Classify Left Faces", 0, progress);
-                                    if (!cancelToken.IsCancellationRequested && Object1.ClassifyFaces(Object2) == Part.PartState.Good)
+                                    ReportProgress("Split Right Faces", 0, progress);
+                                    if (!cancelToken.IsCancellationRequested)
                                     {
-                                        ReportProgress("Classify Right Faces", 0, progress);
-                                        if (!cancelToken.IsCancellationRequested && Object2.ClassifyFaces(Object1) == Part.PartState.Good)
+                                        opresult.OperationStatus = Object2.SplitFaces(Object1);
+                                        if (opresult.OperationStatus == CSGState.Good)
                                         {
-                                            State = ModellerState.Good;
-                                            switch (op)
+                                            ReportProgress("Classify Left Faces", 0, progress);
+                                            if (!cancelToken.IsCancellationRequested)
                                             {
-                                                case OperationType.Union:
-                                                    {
-                                                        ReportProgress("Union", 0, progress);
-                                                        resultObject = GetUnion();
-                                                    }
-                                                    break;
-                                                case OperationType.Difference:
-                                                    {
-                                                        ReportProgress("DIfference", 0, progress);
-                                                        resultObject = GetDifference();
-                                                    }
-                                                    break;
-                                                case OperationType.ReverseDifference:
-                                                    {
-                                                        ReportProgress("Reverse Difference", 0, progress);
-                                                        resultObject = GetReverseDifference();
-                                                    }
-                                                    break;
-                                                case OperationType.Intersection:
-                                                    {
-                                                        ReportProgress("Intersection", 0, progress);
-                                                        resultObject = GetIntersection();
-                                                    }
-                                                    break;
-                                            }
 
+                                                opresult.OperationStatus = Object1.ClassifyFaces(Object2);
+                                                if (opresult.OperationStatus == CSGState.Good)
+                                                {
+                                                    ReportProgress("Classify Right Faces", 0, progress);
+                                                    if (!cancelToken.IsCancellationRequested)
+                                                    {
+                                                        opresult.OperationStatus = Object2.ClassifyFaces(Object1);
+                                                        if (opresult.OperationStatus == CSGState.Good)
+                                                        {
+                                                            State = CSGState.Good;
+                                                            switch (op)
+                                                            {
+                                                                case OperationType.Union:
+                                                                    {
+                                                                        ReportProgress("Union", 0, progress);
+                                                                        resultObject = GetUnion();
+                                                                    }
+                                                                    break;
+                                                                case OperationType.Difference:
+                                                                    {
+                                                                        ReportProgress("DIfference", 0, progress);
+                                                                        resultObject = GetDifference();
+                                                                    }
+                                                                    break;
+                                                                case OperationType.ReverseDifference:
+                                                                    {
+                                                                        ReportProgress("Reverse Difference", 0, progress);
+                                                                        resultObject = GetReverseDifference();
+                                                                    }
+                                                                    break;
+                                                                case OperationType.Intersection:
+                                                                    {
+                                                                        ReportProgress("Intersection", 0, progress);
+                                                                        resultObject = GetIntersection();
+                                                                    }
+                                                                    break;
+                                                            }
+                                                        }
+
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -265,7 +291,7 @@ namespace CSGLib
                     }
                     if (resultObject != null)
                     {
-                        opresult.OperationStatus = ModellerState.Good;
+                        opresult.OperationStatus = CSGState.Good;
                         opresult.ResultObject = resultObject;
                     }
                 }
@@ -276,7 +302,7 @@ namespace CSGLib
 
         private void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
         {
-            if(progress != null)
+            if (progress != null)
             {
                 currentProgress.Text = v1;
                 currentProgress.Val = v2;
@@ -284,13 +310,7 @@ namespace CSGLib
             }
         }
 
-        public enum ModellerState
-        {
-            Bad,
-            Good,
-            Interrupted
-        }
-        public ModellerState State { get; set; }
+        public CSGState State { get; set; }
         //--------------------------------CONSTRUCTORS----------------------------------//
 
 

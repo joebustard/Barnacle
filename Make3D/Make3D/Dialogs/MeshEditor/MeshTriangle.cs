@@ -232,36 +232,44 @@ namespace Barnacle.Dialogs.MeshEditor
 
         internal void Subdivide(List<MeshVertex> vertices, List<MeshTriangle> faces, MeshOctTree octTree, List<MeshTriangle> needModels)
         {
-            Log("SubDivide()");
+           
+            int ind0 = octTree.PointPresent(P0P1Mid);
+            if (ind0 == -1)
+            {
+                MeshVertex mv1 = new MeshVertex();
+                mv1.Position = P0P1Mid;
+                ind0 = vertices.Count;
+                octTree.AddPoint(ind0, mv1.Position);
+                vertices.Add(mv1);
+                mv1.CreateModel();
+            }
 
-            MeshVertex mv1 = new MeshVertex();
-            mv1.Position = P0P1Mid;
-            int ind0 = vertices.Count;
-            octTree.AddPoint(ind0, mv1.Position);
+            int ind1 = octTree.PointPresent(P1P2Mid);
+            if (ind1 == -1)
+            {
+                MeshVertex mv2 = new MeshVertex();
+                mv2.Position = P1P2Mid;
+                ind1 = vertices.Count;
+                octTree.AddPoint(ind1, mv2.Position);
+                vertices.Add(mv2);
+                mv2.CreateModel();
+            }
 
-            vertices.Add(mv1);
-            mv1.CreateModel();
-
-            MeshVertex mv2 = new MeshVertex();
-            mv2.Position = P1P2Mid;
-            int ind1 = vertices.Count;
-            octTree.AddPoint(ind1, mv2.Position);
-            vertices.Add(mv2);
-            mv2.CreateModel();
-
-            MeshVertex mv3 = new MeshVertex();
-            mv3.Position = P2P0Mid;
-            int ind2 = vertices.Count;
-            octTree.AddPoint(ind2, mv3.Position);
-            vertices.Add(mv3);
-            mv3.CreateModel();
-            Log($"Added vertices {ind0}, {ind1}, {ind2}");
-
+            int ind2 = octTree.PointPresent(P2P0Mid);
+            if (ind2 == -1)
+            {
+                MeshVertex mv3 = new MeshVertex();
+                mv3.Position = P2P0Mid;
+                ind2 = vertices.Count;
+                octTree.AddPoint(ind2, mv3.Position);
+                vertices.Add(mv3);
+                mv3.CreateModel();
+            }
             MeshTriangle tri1 = new MeshTriangle();
             tri1.P0 = this.P0;
             tri1.P1 = ind0;
             tri1.P2 = ind2;
-            Log($"Added triangle {tri1.P0}, {tri1.P1}, {tri1.P2}");
+       
             faces.Add(tri1);
             needModels.Add(tri1);
             tri1.MakeVerticesReferToThis(vertices);
@@ -270,7 +278,7 @@ namespace Barnacle.Dialogs.MeshEditor
             tri2.P0 = ind0;
             tri2.P1 = this.P1;
             tri2.P2 = ind1;
-            Log($"Added triangle {tri2.P0}, {tri2.P1}, {tri2.P2}");
+            
             faces.Add(tri2);
             needModels.Add(tri2);
             tri2.MakeVerticesReferToThis(vertices);
@@ -279,7 +287,7 @@ namespace Barnacle.Dialogs.MeshEditor
             tri3.P0 = ind1;
             tri3.P1 = this.P2;
             tri3.P2 = ind2;
-            Log($"Added triangle {tri3.P0}, {tri3.P1}, {tri3.P2}");
+            
             faces.Add(tri3);
             needModels.Add(tri3);
             tri3.MakeVerticesReferToThis(vertices);
@@ -289,13 +297,13 @@ namespace Barnacle.Dialogs.MeshEditor
             tri4.P1 = ind1;
             tri4.P2 = ind2;
             faces.Add(tri4);
-            Log($"Added triangle {tri4.P0}, {tri4.P1}, {tri4.P2}");
+            
             needModels.Add(tri4);
             tri4.MakeVerticesReferToThis(vertices);
 
-            //     SplitSideTriangle(faces, NeighbourP0P1, P0, P1, ind0, vertices, needModels, tri1, tri2);
-            //     SplitSideTriangle(faces, NeighbourP1P2, P1, P2, ind1, vertices, needModels, tri2, tri3);
-            //     SplitSideTriangle(faces, NeighbourP2P0, P2, P0, ind2, vertices, needModels, tri3, tri1);
+           SplitSideTriangle(faces, NeighbourP0P1, P0, P1, ind0, vertices, needModels, tri1, tri2);
+           SplitSideTriangle(faces, NeighbourP1P2, P1, P2, ind1, vertices, needModels, tri2, tri3);
+           SplitSideTriangle(faces, NeighbourP2P0, P2, P0, ind2, vertices, needModels, tri3, tri1);
         }
 
         private int AddPoint(Point3DCollection positions, Point3D v)
@@ -361,7 +369,7 @@ namespace Barnacle.Dialogs.MeshEditor
 
         private void SplitSideTriangle(List<MeshTriangle> faces, MeshTriangle neighbour, int v0, int v1, int vn, List<MeshVertex> vertices, List<MeshTriangle> needModels, MeshTriangle tri1, MeshTriangle tri2)
         {
-            Log($"Split neighbour {v0} to {v1}");
+           
             // Only split the neighbour if its NOT selected, Yes thats right
             if (!neighbour.Selected)
             {
@@ -405,7 +413,7 @@ namespace Barnacle.Dialogs.MeshEditor
                     n1.P2 = neighbour.P2;
                     faces.Add(n1);
                     needModels.Add(n1);
-                    // n1.NeighbourP0P1 = tri2;
+                    
 
                     MeshTriangle n2 = new MeshTriangle();
                     n2.P0 = vn;
@@ -413,7 +421,7 @@ namespace Barnacle.Dialogs.MeshEditor
                     n2.P2 = neighbour.P2;
                     faces.Add(n2);
                     needModels.Add(n2);
-                    //  n2.NeighbourP0P1 = tri1;
+                    
                 }
                 else
                 if (splitSide == 1)
@@ -424,7 +432,7 @@ namespace Barnacle.Dialogs.MeshEditor
                     n1.P2 = neighbour.P0;
                     faces.Add(n1);
                     needModels.Add(n1);
-                    //     n1.NeighbourP1P2 = tri2;
+                    
 
                     MeshTriangle n2 = new MeshTriangle();
                     n2.P0 = vn;
@@ -432,7 +440,7 @@ namespace Barnacle.Dialogs.MeshEditor
                     n2.P2 = neighbour.P0;
                     faces.Add(n2);
                     needModels.Add(n2);
-                    //      n2.NeighbourP1P2 = tri1;
+                    
                 }
                 else
                 if (splitSide == 2)
@@ -451,15 +459,14 @@ namespace Barnacle.Dialogs.MeshEditor
                     n2.P2 = neighbour.P1;
                     faces.Add(n2);
                     needModels.Add(n2);
-                    //     n1.NeighbourP2P0 = tri1;
+                    
                 }
                 else
                 {
                     Log($"ERROR Cant work out which side to split");
                 }
-                needModels.Add(neighbour.NeighbourP0P1);
-                needModels.Add(neighbour.NeighbourP1P2);
-                needModels.Add(neighbour.NeighbourP2P0);
+
+                // get rid of the neightbour as its not valid anymore
                 neighbour.DereferencePoints(vertices);
                 needModels.Remove(neighbour);
                 faces.Remove(neighbour);

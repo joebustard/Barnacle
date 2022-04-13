@@ -222,7 +222,7 @@ namespace Barnacle.Object3DLib
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
 
             modeller = new BooleanModeller(leftSolid, rightSolid);
-            if (modeller.State == BooleanModeller.ModellerState.Good)
+            if (modeller.State == CSGState.Good)
             {
                 Solid result = null;
                 switch (PrimType)
@@ -286,9 +286,21 @@ namespace Barnacle.Object3DLib
                 }
             }
             else
-            if (modeller.State == BooleanModeller.ModellerState.Interrupted)
+            if (modeller.State == CSGState.Interrupted)
             {
                 System.Windows.Forms.MessageBox.Show("Operation aborted");
+                res = false;
+            }
+            else
+            if (modeller.State == CSGState.Bad)
+            {
+                System.Windows.Forms.MessageBox.Show("Bad");
+                res = false;
+            }
+            else
+            if (modeller.State == CSGState.Toolarge)
+            {
+                System.Windows.Forms.MessageBox.Show("Operation would create too many new faces");
                 res = false;
             }
             return res;
@@ -333,7 +345,7 @@ namespace Barnacle.Object3DLib
             BooleanModeller.OpResult opRes = await modeller.DoModelOperationAsync(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices,
                                       rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation,progress);
             
-            if (opRes.OperationStatus == BooleanModeller.ModellerState.Good)
+            if (opRes.OperationStatus ==CSGState.Good)
             {
                 result = opRes.ResultObject;
                 if (result != null)
@@ -369,15 +381,21 @@ namespace Barnacle.Object3DLib
                 }
             }
             else
-            if (opRes.OperationStatus == BooleanModeller.ModellerState.Interrupted)
+            if (opRes.OperationStatus ==CSGState.Interrupted)
             {
                 System.Windows.Forms.MessageBox.Show("Operation aborted");
                 res = false;
             }
             else
-            if (opRes.OperationStatus == BooleanModeller.ModellerState.Bad)
+            if (opRes.OperationStatus == CSGState.Bad)
             {
                 System.Windows.Forms.MessageBox.Show("Bad");
+                res = false;
+            }
+            else
+            if (opRes.OperationStatus == CSGState.Toolarge)
+            {
+                System.Windows.Forms.MessageBox.Show("Operation would create too many new faces");
                 res = false;
             }
             return res;

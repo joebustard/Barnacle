@@ -31,55 +31,68 @@ namespace Barnacle.ViewModels
 {
     internal class EditorViewModel : BaseViewModel, INotifyPropertyChanged
     {
+        private static CancellationTokenSource csgCancelation;
+
         // some of the primitives need to be rotated when they are first created so they match the
         // orientaion shown on the icons
         private static string[] rotatedPrimitives =
         {
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
         };
-        static CancellationTokenSource csgCancelation;
-        // used when user trys to rotate an object using keyboard shortcuts
-        private enum KeyboardRotation
-        {
-            None,
-            x1,
-            x2,
-            y1,
-            y2,
-            z1,
-            z2
-        }
         private Bounds3D allBounds;
+
         private Axies axies;
+
         private PolarCamera camera;
 
         private Point3D CameraLookObject = new Point3D(0, 0, 0);
 
-        //     private Point3D cameraPos;
         private CameraModes cameraMode;
 
         private Point3D CameraScrollDelta = new Point3D(1, 1, 0);
 
         private Floor floor;
+
         private FloorMarker floorMarker;
+
         private Grid3D grid;
-        private Point lastMouse;
-        private Vector3D lookDirection;
-        private Model3DCollection modelItems;
-        private double onePercentZoom;
-        private PrinterPlate printerPlate;
-        private List<Object3D> selectedItems;
-        private Adorner selectedObjectAdorner;
-        private bool showAdorners;
-        private bool showAxies;
-        private bool showBuildPlate;
-        private bool showFloor;
-        private bool showFloorMarker;
-        private int totalFaces;
-        private double zoomPercent = 100;
+
+        private bool isEditingEnabled;
+
         private double keyrotationx = 90;
+
         private double keyrotationy = 90;
+
         private double keyrotationz = 90;
+
+        private Point lastMouse;
+
+        private Vector3D lookDirection;
+
+        private Model3DCollection modelItems;
+
+        private double onePercentZoom;
+
+        private PrinterPlate printerPlate;
+
+        private List<Object3D> selectedItems;
+
+        private Adorner selectedObjectAdorner;
+
+        private bool showAdorners;
+
+        private bool showAxies;
+
+        private bool showBuildPlate;
+
+        private bool showFloor;
+
+        private bool showFloorMarker;
+
+        private int totalFaces;
+
+        private double zoomPercent = 100;
+
         public EditorViewModel()
         {
             floor = new Floor();
@@ -94,7 +107,6 @@ namespace Barnacle.ViewModels
             LookToCenter();
 
             cameraMode = CameraModes.CameraMoveLookCenter;
-            //  LoadObject("teapot.obj");
 
             modelItems = new Model3DCollection();
 
@@ -169,26 +181,9 @@ namespace Barnacle.ViewModels
             showAdorners = true;
             showFloorMarker = true;
             showBuildPlate = true;
+            isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
-        }
-
-        private void XRotationChanged(object param)
-        {
-            double d = (double)param;
-            keyrotationx = d;
-        }
-
-        private void YRotationChanged(object param)
-        {
-            double d = (double)param;
-            keyrotationy = d;
-        }
-
-        private void ZRotationChanged(object param)
-        {
-            double d = (double)param;
-            keyrotationz = d;
         }
 
         private enum CameraModes
@@ -199,12 +194,30 @@ namespace Barnacle.ViewModels
             CameraMoveLookObject
         }
 
+        // used when user trys to rotate an object using keyboard shortcuts
+        private enum KeyboardRotation
+        {
+            None,
+            x1,
+            x2,
+            y1,
+            y2,
+            z1,
+            z2
+        }
+
+        /// <summary>
+        /// Current position of camera
+        /// </summary>
         public Point3D CameraPos
         {
             get { return camera.CameraPos; }
             set { NotifyPropertyChanged(); }
         }
 
+        /// <summary>
+        /// Direction that camera is looking
+        /// </summary>
         public Vector3D LookDirection
         {
             get
@@ -221,6 +234,9 @@ namespace Barnacle.ViewModels
             }
         }
 
+        /// <summary>
+        /// Items to be displayed in main editor area
+        /// </summary>
         public Model3DCollection ModelItems
         {
             get
@@ -237,8 +253,14 @@ namespace Barnacle.ViewModels
             }
         }
 
+        /// <summary>
+        /// Canvas to draw things like text labels on
+        /// </summary>
         public Canvas Overlay { get; internal set; }
 
+        /// <summary>
+        /// Calculate total number of faces of all objects
+        /// </summary>
         public void CountFaces()
         {
             totalFaces = 0;
@@ -248,6 +270,12 @@ namespace Barnacle.ViewModels
             }
         }
 
+
+        /// <summary>
+        /// Regenerate display in response to something outside this view model
+        /// requesting it
+        /// </summary>
+        /// <param name="param"></param>
         public void OnRefreshAdorners(object param)
         {
             allBounds = new Bounds3D();
@@ -292,11 +320,17 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ModelItems");
         }
 
+        /// <summary>
+        /// Regenerate the main display list. That is all the
+        /// things that are to be shown in the main area. This will
+        /// most likely be trigged by something happening in this viewmodel rather
+        /// than elsewhere
+        /// </summary>
         public void RegenerateDisplayList()
         {
             try
             {
-                CountFaces();
+               // CountFaces();
                 allBounds = new Bounds3D();
                 allBounds.Zero();
                 modelItems.Clear();
@@ -349,6 +383,7 @@ namespace Barnacle.ViewModels
                     }
                 }
                 NotifyPropertyChanged("ModelItems");
+                ReportStatistics();
             }
             catch
             {
@@ -371,358 +406,254 @@ namespace Barnacle.ViewModels
 
         internal void KeyDown(Key key, bool shift, bool ctrl)
         {
-            switch (key)
+            if (isEditingEnabled)
             {
-                case Key.Up:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (ctrl)
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
-                                }
-                                else
-                                {
-                               
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
-                                    
-                                }
-                            }
-                            else
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
-                                }
-                                else
-                                {
-                                    // If R is down treat as rotate
-                                    if (Keyboard.IsKeyDown(Key.R))
-                                    {
-                                        KeyboardRotation rd = GetRotationDirection(Key.Up);
-                                        OnKeyRotate(rd);
-
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Down:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (ctrl)
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
-                                }
-                                else
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);                           
-                                }
-                            }
-                            else
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
-                                }
-                                else
-                                {
-                                    // If R is down treat as rotate
-                                    if (Keyboard.IsKeyDown(Key.R))
-                                    {
-                                        KeyboardRotation rd = GetRotationDirection(Key.Down);
-                                        OnKeyRotate(rd);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Left:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (shift)
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
-                            }
-                            else
-                            {
-                                // If R is down treat as rotate
-                                if (Keyboard.IsKeyDown(Key.R))
-                                {
-                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                    KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
-                                    OnKeyRotate(rd);
-                                    
-                                }
-                                else
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Right:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (shift)
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
-                            }
-                            else
-                            {
-                                if(Keyboard.IsKeyDown(Key.R))
-                                {
-                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                    KeyboardRotation rd = GetRotationDirection(Key.Right,ctrlDown);
-                                    OnKeyRotate(rd);
-
-                                }
-                                else
-{
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.A:
-                    {
-                        if (ctrl)
-                        {
-                            SelectAll();
-                        }
-                    }
-                    break;
-
-                case Key.C:
-                    {
-                        if (ctrl)
-                        {
-                            OnCopy(null);
-                        }
-                        else
-                        {
-                            CheckPoint();
-                            MoveSelectionToCentre();
-                        }
-                    }
-                    break;
-
-                case Key.E:
-                    {
-                        CheckEditSelection();
-                    }
-                    break;
-
-                case Key.V:
-                    {
-                        if (ctrl)
-                        {
-                            OnPaste(null);
-                        }
-                    }
-                    break;
-
-                case Key.F:
-                    {
-                        if (ctrl)
-                        {
-                            CheckPoint();
-                            FloorAllObjects();
-                            RegenerateDisplayList();
-                        }
-                        else
-                        {
-                            CheckPoint();
-                            AlignSelectedObjects("Floor");
-                            RegenerateDisplayList();
-                        }
-                    }
-                    break;
-
-                case Key.M:
-                    {
-                        CheckPoint();
-                        MoveToMarker(null);
-                        RegenerateDisplayList();
-                    }
-                    break;
-
-                case Key.Delete:
-                    {
-                        OnCut(null);
-                    }
-                    break;
-
-                case Key.Z:
-                    {
-                        if (ctrl)
-                        {
-                            Undo();
-                        }
-                        else
-                        {
-                            CheckPoint();
-                            MoveSelectionToZero();
-                        }
-                    }
-                    break;
-
-                case Key.H:
-                    {
-                        showAdorners = false;
-                        RegenerateDisplayList();
-                    }
-                    break;
-
-                case Key.Escape:
-                    {
-                        if ( csgCancelation != null && !csgCancelation.IsCancellationRequested)
-                        {
-                            csgCancelation.Cancel();
-                        }
-                    }
-                    break;
-            }
-        }
-
-        private void OnKeyRotate(KeyboardRotation rd)
-        {
-            if ( selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 1)
-            {
-                double x = 0;
-                double y = 0;
-                double z = 0;
-                switch ( rd)
+                switch (key)
                 {
-                    case KeyboardRotation.z1:
+                    case Key.Up:
                         {
-                            z = keyrotationz;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (ctrl)
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                                    }
+                                    else
+                                    {
+                                        // If R is down treat as rotate
+                                        if (Keyboard.IsKeyDown(Key.R))
+                                        {
+                                            KeyboardRotation rd = GetRotationDirection(Key.Up);
+                                            OnKeyRotate(rd);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                        }
+                                    }
+                                }
+                            }
                         }
                         break;
-                    case KeyboardRotation.z2:
+
+                    case Key.Down:
                         {
-                            z = -keyrotationz;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (ctrl)
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                                    }
+                                    else
+                                    {
+                                        // If R is down treat as rotate
+                                        if (Keyboard.IsKeyDown(Key.R))
+                                        {
+                                            KeyboardRotation rd = GetRotationDirection(Key.Down);
+                                            OnKeyRotate(rd);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                        }
+                                    }
+                                }
+                            }
                         }
                         break;
-                    case KeyboardRotation.x1:
+
+                    case Key.Left:
                         {
-                            x = -keyrotationx;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                                }
+                                else
+                                {
+                                    // If R is down treat as rotate
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                        KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                                    }
+                                }
+                            }
                         }
                         break;
-                    case KeyboardRotation.x2:
+
+                    case Key.Right:
                         {
-                            x = keyrotationx;
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                                }
+                                else
+                                {
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                        KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                                    }
+                                }
+                            }
                         }
                         break;
-                    case KeyboardRotation.y1:
+
+                    case Key.A:
                         {
-                            y = -keyrotationy;
+                            if (ctrl)
+                            {
+                                SelectAll();
+                            }
                         }
                         break;
-                    case KeyboardRotation.y2:
+
+                    case Key.C:
                         {
-                            y = keyrotationz;
+                            if (ctrl)
+                            {
+                                OnCopy(null);
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                MoveSelectionToCentre();
+                            }
+                        }
+                        break;
+
+                    case Key.E:
+                        {
+                            CheckEditSelection();
+                        }
+                        break;
+
+                    case Key.V:
+                        {
+                            if (ctrl)
+                            {
+                                OnPaste(null);
+                            }
+                        }
+                        break;
+
+                    case Key.F:
+                        {
+                            if (ctrl)
+                            {
+                                CheckPoint();
+                                FloorAllObjects();
+                                RegenerateDisplayList();
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                AlignSelectedObjects("Floor");
+                                RegenerateDisplayList();
+                            }
+                        }
+                        break;
+
+                    case Key.M:
+                        {
+                            CheckPoint();
+                            MoveToMarker(null);
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case Key.Delete:
+                        {
+                            OnCut(null);
+                        }
+                        break;
+
+                    case Key.Z:
+                        {
+                            if (ctrl)
+                            {
+                                Undo();
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                MoveSelectionToZero();
+                            }
+                        }
+                        break;
+
+                    case Key.H:
+                        {
+                            showAdorners = false;
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case Key.Escape:
+                        {
+                            if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                            {
+                                csgCancelation.Cancel();
+                            }
                         }
                         break;
                 }
-                Point3D pr = new Point3D(x, y, z);
-                RotateSelected(selectedObjectAdorner.SelectedObjects[0], pr);
             }
-        }
-        private void RotateSelected(Object3D obj, Point3D pr)
-        {
-            if (obj != null)
+            else
             {
-                CheckPoint();
-                obj.Rotate(pr);
-                obj.Remesh();
-
-                NotifyPropertyChanged();
-                NotificationManager.Notify("ScaleRefresh", obj);
-                NotificationManager.Notify("RefreshAdorners", null);
-                Document.Dirty = true;
+                // if editing is disable, ignore all keys except escape ( which may enale it again)
+                if ( key == Key.Escape)
+                {
+                    if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                    {
+                        csgCancelation.Cancel();
+                    }
+                }
             }
-        }
-        private KeyboardRotation GetRotationDirection(Key k, bool ctrlDown =false)
-        {
-            KeyboardRotation result = KeyboardRotation.z1;
-            result = GetRotationDirectionFromKey(k, ctrlDown);
-           
-            return result;
-        }
-
-        private KeyboardRotation GetRotationDirectionFromKey(Key k, bool ctrlDown)
-        {
-            KeyboardRotation res = KeyboardRotation.None;
-            switch ( k)
-            {
-                case Key.Left:
-                    {
-                        if (ctrlDown)
-                        {
-                            res = KeyboardRotation.y1;
-                        }
-                        else
-                        {
-                            res = KeyboardRotation.z1;
-                        }
-                    }
-                    break;
-                case Key.Right:
-                    {
-                        if (ctrlDown)
-                        {
-                            res = KeyboardRotation.y2;
-                        }
-                        else
-                        {
-                            res = KeyboardRotation.z2;
-                        }
-                    }
-                    break;
-                case Key.Up:
-                    {
-                        
-                            res = KeyboardRotation.x1;
-                        
-                    }
-                    break;
-                case Key.Down:
-                    {
-                        
-                            res = KeyboardRotation.x2;
-                        
-                    }
-                    break;
-            }
-            return res;
         }
 
         internal void KeyUp(Key key, bool shift, bool ctrl)
@@ -750,7 +681,7 @@ namespace Barnacle.ViewModels
             {
                 ctrlDown = true;
             }
-            if (selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e, ctrlDown) == true)
+            if (  isEditingEnabled  && selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e, ctrlDown) == true)
             {
                 lastMouse = newPos;
             }
@@ -781,7 +712,7 @@ namespace Barnacle.ViewModels
 
         internal void MouseUp(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
         {
-            if (selectedObjectAdorner != null)
+            if (isEditingEnabled &&  selectedObjectAdorner != null)
             {
                 selectedObjectAdorner.MouseUp();
             }
@@ -802,38 +733,41 @@ namespace Barnacle.ViewModels
 
         internal void Select(GeometryModel3D geo, Point3D hitPos, bool size, bool append, bool control)
         {
-            bool handled = false;
-            NotificationManager.Notify("SetToolsVisibility", false);
+            if (isEditingEnabled)
+            {
+                bool handled = false;
+                NotificationManager.Notify("SetToolsVisibility", false);
 
-            if (selectedObjectAdorner != null)
-            {
-                handled = selectedObjectAdorner.Select(geo);
-            }
-            if (!handled)
-            {
-                handled = CheckIfContentSelected(geo, append, size, control);
-                if (handled)
+                if (selectedObjectAdorner != null)
                 {
-                    SetSelectionColours();
+                    handled = selectedObjectAdorner.Select(geo);
                 }
-            }
-            if (!handled)
-            {
-                if (floor.Matches(geo) || grid.Matches(geo))
+                if (!handled)
                 {
-                    if (selectedObjectAdorner != null)
+                    handled = CheckIfContentSelected(geo, append, size, control);
+                    if (handled)
                     {
-                        selectedObjectAdorner.Clear();
-                        Overlay.Children.Clear();
-                        NotificationManager.Notify("ObjectSelected", null);
+                        SetSelectionColours();
                     }
-                    floorMarker = new FloorMarker();
-                    floorMarker.Position = hitPos;
-                    RegenerateDisplayList();
                 }
-            }
+                if (!handled)
+                {
+                    if (floor.Matches(geo) || grid.Matches(geo))
+                    {
+                        if (selectedObjectAdorner != null)
+                        {
+                            selectedObjectAdorner.Clear();
+                            Overlay.Children.Clear();
+                            NotificationManager.Notify("ObjectSelected", null);
+                        }
+                        floorMarker = new FloorMarker();
+                        floorMarker.Position = hitPos;
+                        RegenerateDisplayList();
+                    }
+                }
 
-            ShowToolForCurrentSelection();
+                ShowToolForCurrentSelection();
+            }
         }
 
         private static void CleanFolder(string pth, string subName, string search)
@@ -1106,7 +1040,7 @@ namespace Barnacle.ViewModels
             zoomPercent = 100;
         }
 
-        private void BendObjectInHalf(Object3D ob, string ori,bool fold = false)
+        private void BendObjectInHalf(Object3D ob, string ori, bool fold = false)
         {
             double smallObjectsLimit = 1000;
             double bendAngle = 10 * Math.PI / 180.0;
@@ -1247,6 +1181,47 @@ namespace Barnacle.ViewModels
                     default:
                         break;
                 }
+            }
+        }
+
+        private void BendOver(object param, bool fold)
+        {
+            bool warning = true;
+
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+                {
+                    bool confirmed = true;
+                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                    if (ob is Group3D)
+                    {
+                        MessageBoxResult res = MessageBox.Show("Some objects will have to be converted to meshes first. Convert now.", "Warning", MessageBoxButton.OKCancel);
+                        confirmed = res == MessageBoxResult.OK;
+                        if (confirmed)
+                        {
+                            Document.Content.Remove(ob);
+
+                            Object3D it = ob.ConvertToMesh();
+                            it.Remesh();
+                            Document.Content.Add(it);
+                            Document.Dirty = true;
+                            ob = it;
+                        }
+                    }
+                    if (confirmed)
+                    {
+                        CheckPoint();
+                        string ori = param.ToString();
+                        BendObjectInHalf(ob, ori, fold);
+                    }
+                    warning = false;
+                }
+            }
+
+            if (warning)
+            {
+                MessageBox.Show("Requires a single object to be selected", "Warning");
             }
         }
 
@@ -1696,6 +1671,60 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ModelItems");
         }
 
+        private KeyboardRotation GetRotationDirection(Key k, bool ctrlDown = false)
+        {
+            KeyboardRotation result = KeyboardRotation.z1;
+            result = GetRotationDirectionFromKey(k, ctrlDown);
+
+            return result;
+        }
+
+        private KeyboardRotation GetRotationDirectionFromKey(Key k, bool ctrlDown)
+        {
+            KeyboardRotation res = KeyboardRotation.None;
+            switch (k)
+            {
+                case Key.Left:
+                    {
+                        if (ctrlDown)
+                        {
+                            res = KeyboardRotation.y1;
+                        }
+                        else
+                        {
+                            res = KeyboardRotation.z1;
+                        }
+                    }
+                    break;
+
+                case Key.Right:
+                    {
+                        if (ctrlDown)
+                        {
+                            res = KeyboardRotation.y2;
+                        }
+                        else
+                        {
+                            res = KeyboardRotation.z2;
+                        }
+                    }
+                    break;
+
+                case Key.Up:
+                    {
+                        res = KeyboardRotation.x1;
+                    }
+                    break;
+
+                case Key.Down:
+                    {
+                        res = KeyboardRotation.x2;
+                    }
+                    break;
+            }
+            return res;
+        }
+
         private bool GroupToMesh()
         {
             document.Dirty = true;
@@ -1713,6 +1742,37 @@ namespace Barnacle.ViewModels
             return res;
         }
 
+        private async Task<Object3D> GroupTwo(Object3D leftie, int i, string s, bool cut)
+        {
+            bool res;
+            var progress = new Progress<CSGGroupProgress>(ShowCSGProgress);
+            Group3D grp = new Group3D();
+            grp.Name = leftie.Name;
+            grp.Description = leftie.Description;
+            grp.LeftObject = leftie;
+            if (cut)
+            {
+                Object3D cln = selectedObjectAdorner.SelectedObjects[i].Clone();
+                grp.RightObject = cln;
+            }
+            else
+            {
+                grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
+            }
+            grp.PrimType = s;
+
+            res = await grp.InitAsync(csgCancelation, progress);
+            if (res)
+            {
+                Document.ReplaceObjectsByGroup(grp);
+            }
+            else
+            {
+                grp = null;
+            }
+            return grp; ;
+        }
+
         private void HomeCamera()
         {
             ResetSelection();
@@ -1722,6 +1782,51 @@ namespace Barnacle.ViewModels
             CameraScrollDelta = new Point3D(1, 1, 0);
             LookToCenter();
             zoomPercent = 100;
+        }
+
+        private void ImportOneOfMany(string fpath)
+        {
+            string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
+
+            string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
+            if (!File.Exists(targetPath))
+            {
+                try
+                {
+                    Document localDoc = new Document();
+                    localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                    int numObs = 0;
+                    foreach (Object3D ob in localDoc.Content)
+                    {
+                        ob.Name = rootName;
+                        if (numObs > 0)
+                        {
+                            ob.Name += "_" + numObs.ToString();
+                        }
+                        ob.FlipInside();
+                        ob.MoveOriginToCentroid();
+                        ob.MoveToFloor();
+                        ob.MoveToCentre();
+                        numObs++;
+                    }
+                    localDoc.Save(targetPath);
+
+                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
+                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+
+                    localDoc.Clear();
+                    localDoc = null;
+                    GC.Collect();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
+            }
         }
 
         private void LeftCamera()
@@ -1831,9 +1936,10 @@ namespace Barnacle.ViewModels
             ob.Remesh();
         }
 
-        private async Task <bool> MakeGroup3D(string s)
+        private async Task<bool> MakeGroup3D(string s)
         {
             NotificationManager.Notify("SuspendEditing", true);
+            isEditingEnabled = false;
             bool res = false;
             bool cut = false;
             if (s == "groupcut")
@@ -1845,16 +1951,15 @@ namespace Barnacle.ViewModels
             if (selectedObjectAdorner.NumberOfSelectedObjects() >= 2)
             {
                 CheckPoint();
-               
+
                 Object3D leftie = selectedObjectAdorner.SelectedObjects[0];
                 int i = 1;
                 while (i < selectedObjectAdorner.NumberOfSelectedObjects() && leftie != null)
                 {
-
-                    leftie = await GroupTwo(leftie,i, s, cut);
-                    i++; 
+                    leftie = await GroupTwo(leftie, i, s, cut);
+                    i++;
                 }
-                if ( i < selectedObjectAdorner.NumberOfSelectedObjects() || csgCancelation.IsCancellationRequested || leftie == null)
+                if (i < selectedObjectAdorner.NumberOfSelectedObjects() || csgCancelation.IsCancellationRequested || leftie == null)
                 {
                     Undo();
                 }
@@ -1862,45 +1967,8 @@ namespace Barnacle.ViewModels
                 InfoWindow.Instance().Hide();
             }
             NotificationManager.Notify("SuspendEditing", false);
+            isEditingEnabled = true;
             return res;
-        }
-
-        private async Task<Object3D> GroupTwo(Object3D leftie, int i, string s, bool cut)
-        {
-            bool res;
-            var progress = new Progress<CSGGroupProgress>(ShowCSGProgress);
-            Group3D grp = new Group3D();
-            grp.Name = leftie.Name;
-            grp.Description = leftie.Description;
-            grp.LeftObject = leftie;
-            if (cut)
-            {
-                Object3D cln = selectedObjectAdorner.SelectedObjects[i].Clone();
-                grp.RightObject = cln;
-            }
-            else
-            {
-                grp.RightObject = selectedObjectAdorner.SelectedObjects[i];
-            }
-            grp.PrimType = s;
-
-            res = await grp.InitAsync(csgCancelation, progress);
-            if (res)
-            {
-                Document.ReplaceObjectsByGroup(grp);
-
-            }
-            else
-            {
-                grp = null;
-            }
-            return grp; ;
-        }
-
-        private void ShowCSGProgress(CSGGroupProgress obj)
-        {
-            InfoWindow.Instance().ShowInfo("CSG Operation");
-            InfoWindow.Instance().ShowText(obj.Text);
         }
 
         private void MakeSizeAdorner()
@@ -2063,51 +2131,7 @@ namespace Barnacle.ViewModels
 
         private void OnBend(object param)
         {
-            BendOver(param,false);
-        }
-        private void OnFold(object param)
-        {
-            BendOver(param, true);
-        }
-        private void BendOver(object param,bool fold)
-        {
-            bool warning = true;
-            
-            if (selectedObjectAdorner != null)
-            {
-                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
-                {
-                    bool confirmed = true;
-                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
-                    if (ob is Group3D)
-                    {
-                        MessageBoxResult res = MessageBox.Show("Some objects will have to be converted to meshes first. Convert now.", "Warning", MessageBoxButton.OKCancel);
-                        confirmed = res == MessageBoxResult.OK;
-                        if (confirmed)
-                        {
-                            Document.Content.Remove(ob);
-
-                            Object3D it = ob.ConvertToMesh();
-                            it.Remesh();
-                            Document.Content.Add(it);
-                            Document.Dirty = true;
-                            ob = it;
-                        }
-                    }
-                    if (confirmed)
-                    {
-                        CheckPoint();
-                        string ori = param.ToString();
-                        BendObjectInHalf(ob, ori, fold);
-                    }
-                    warning = false;
-                }
-            }
-
-            if (warning)
-            {
-                MessageBox.Show("Requires a single object to be selected", "Warning");
-            }
+            BendOver(param, false);
         }
 
         private void OnCameraCommand(object param)
@@ -2510,6 +2534,11 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void OnFold(object param)
+        {
+            BendOver(param, true);
+        }
+
         private void OnFuselage(object param)
         {
             FuselageLoftDialog dlg = new FuselageLoftDialog();
@@ -2622,7 +2651,6 @@ namespace Barnacle.ViewModels
                             {
                                 InfoWindow.Instance().ShowText(System.IO.Path.GetFileName(fpath));
                                 await Task.Run(() => ImportOneOfMany(fpath));
-                                
                             }
                         }
                         InfoWindow.Instance().CloseInfo();
@@ -2634,48 +2662,53 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private  void ImportOneOfMany(string fpath)
+        private void OnKeyRotate(KeyboardRotation rd)
         {
-            string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
-
-            string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
-            if (!File.Exists(targetPath))
+            if (selectedObjectAdorner != null && selectedObjectAdorner.NumberOfSelectedObjects() == 1)
             {
-                try
+                double x = 0;
+                double y = 0;
+                double z = 0;
+                switch (rd)
                 {
-                    Document localDoc = new Document();
-                    localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
-                    int numObs = 0;
-                    foreach (Object3D ob in localDoc.Content)
-                    {
-                        ob.Name = rootName;
-                        if (numObs > 0)
+                    case KeyboardRotation.z1:
                         {
-                            ob.Name += "_" + numObs.ToString();
+                            z = keyrotationz;
                         }
-                        ob.FlipInside();
-                        ob.MoveOriginToCentroid();
-                        ob.MoveToFloor();
-                        ob.MoveToCentre();
-                        numObs++;
-                    }
-                    localDoc.Save(targetPath);
+                        break;
 
-                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
-                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt");
+                    case KeyboardRotation.z2:
+                        {
+                            z = -keyrotationz;
+                        }
+                        break;
 
-                    localDoc.Clear();
-                    localDoc = null;
-                    GC.Collect();
+                    case KeyboardRotation.x1:
+                        {
+                            x = -keyrotationx;
+                        }
+                        break;
+
+                    case KeyboardRotation.x2:
+                        {
+                            x = keyrotationx;
+                        }
+                        break;
+
+                    case KeyboardRotation.y1:
+                        {
+                            y = -keyrotationy;
+                        }
+                        break;
+
+                    case KeyboardRotation.y2:
+                        {
+                            y = keyrotationz;
+                        }
+                        break;
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-            }
-            else
-            {
-                System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
+                Point3D pr = new Point3D(x, y, z);
+                RotateSelected(selectedObjectAdorner.SelectedObjects[0], pr);
             }
         }
 
@@ -3128,8 +3161,8 @@ namespace Barnacle.ViewModels
 
                 string logPath = Path.Combine(modelPath, "slicelog.log");
 
-              //  SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
-              CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
+                //  SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
+                CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
             }
         }
 
@@ -3267,6 +3300,15 @@ namespace Barnacle.ViewModels
             String s = $"Camera ({camera.CameraPos.X:F2},{camera.CameraPos.Y:F2},{camera.CameraPos.Z:F2}) => ({lookDirection.X:F2},{lookDirection.Y:F2},{lookDirection.Z:F2}) Zoom {zoomPercent:F1}%";
             NotificationManager.Notify("SetStatusText1", s);
             NotifyPropertyChanged("ModelItems");
+            ReportStatistics();
+        }
+
+        /// <summary>
+        /// Report the memory used, number of faces and vertices.
+        /// </summary>
+        private void ReportStatistics()
+        {
+            string s;
             Process currentProcess = Process.GetCurrentProcess();
             long usedMemory = currentProcess.PrivateMemorySize64;
             double mb = usedMemory / (1024 * 1024);
@@ -3280,6 +3322,7 @@ namespace Barnacle.ViewModels
                 s = $"Faces {totalFaces} Vertices {totalFaces * 3}, Mem {mb.ToString("F3", CultureInfo.InvariantCulture)}Mb";
             }
             NotificationManager.Notify("SetStatusText3", s);
+            
         }
 
         private void ResetSelection()
@@ -3404,6 +3447,21 @@ namespace Barnacle.ViewModels
             CameraScrollDelta = new Point3D(0, 1, -1);
             LookToCenter();
             zoomPercent = 100;
+        }
+
+        private void RotateSelected(Object3D obj, Point3D pr)
+        {
+            if (obj != null)
+            {
+                CheckPoint();
+                obj.Rotate(pr);
+                obj.Remesh();
+
+                NotifyPropertyChanged();
+                NotificationManager.Notify("ScaleRefresh", obj);
+                NotificationManager.Notify("RefreshAdorners", null);
+                Document.Dirty = true;
+            }
         }
 
         private void Select(object param)
@@ -3702,6 +3760,12 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void ShowCSGProgress(CSGGroupProgress obj)
+        {
+            InfoWindow.Instance().ShowInfo("CSG Operation");
+            InfoWindow.Instance().ShowText(obj.Text);
+        }
+
         private void ShowToolForCurrentSelection(bool clear = false)
         {
             if (clear == true)
@@ -3909,6 +3973,18 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ModelItems");
         }
 
+        private void XRotationChanged(object param)
+        {
+            double d = (double)param;
+            keyrotationx = d;
+        }
+
+        private void YRotationChanged(object param)
+        {
+            double d = (double)param;
+            keyrotationy = d;
+        }
+
         private void Zoom(double v)
         {
             camera.Zoom(v);
@@ -3935,6 +4011,12 @@ namespace Barnacle.ViewModels
             double diff = 100 - zoomPercent;
             Zoom(diff);
             zoomPercent = 100;
+        }
+
+        private void ZRotationChanged(object param)
+        {
+            double d = (double)param;
+            keyrotationz = d;
         }
     }
 }

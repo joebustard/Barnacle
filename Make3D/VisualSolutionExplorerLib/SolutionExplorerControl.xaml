@@ -95,6 +95,7 @@
                   Drop="DropTree_Drop"
                   Grid.Row="1"
                   ItemsSource="{Binding Folders}"
+                  Focusable="False"
                   PreviewMouseLeftButtonDown="Tree_PreviewMouseLeftButtonDown"
                   PreviewMouseMove="Tree_MouseMove"
                   SelectedItemChanged="TreeView_SelectedItemChanged"

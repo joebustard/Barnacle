@@ -803,6 +803,7 @@ namespace Barnacle.Dialogs.MeshEditor
                 // remove face from main list
                 Faces.Remove(mt);
             }
+
             foreach (MeshTriangle tri in Faces)
             {
                 tri.NeighbourP0P1 = null;
@@ -810,15 +811,29 @@ namespace Barnacle.Dialogs.MeshEditor
                 tri.NeighbourP2P0 = null;
             }
             FindNeighbours();
-
+            
             foreach (MeshTriangle mt in needModels)
             {
-                mt.Selected = false;
+               mt.Selected = false;
                 SetupNewFace(mt);
-                // mt.NeighbourP0P1 = FindNeighbourTriangle(mt, mt.P0, mt.P1);
-                //  mt.NeighbourP1P2 = FindNeighbourTriangle(mt, mt.P1, mt.P2);
-                //mt.NeighbourP2P0 = FindNeighbourTriangle(mt, mt.P2, mt.P0);
             }
+            
+        }
+        public void DiagnosticSplitSelectedFaces()
+        {
+
+            List<MeshTriangle> trisToSmooth = new List<MeshTriangle>();
+            foreach (MeshTriangle t in Faces)
+            {
+                if (t.Selected)
+
+                {
+                    trisToSmooth.Add(t);
+
+                }
+            }
+            SmoothTriangles(trisToSmooth);
+
         }
     }
 }

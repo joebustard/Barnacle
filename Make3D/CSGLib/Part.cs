@@ -133,9 +133,9 @@ namespace CSGLib
         /// Classify faces as being inside, outside or on boundary of other object
         /// </summary>
         /// <param name="otherObject">object 3d used for the comparison</param>
-        public PartState ClassifyFaces(Part otherObject)
+        public CSGState ClassifyFaces(Part otherObject)
         {
-            PartState result = PartState.Good;
+            CSGState result = CSGState.Good;
             //calculate adjacency information
             Face face;
             for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
@@ -176,12 +176,12 @@ namespace CSGLib
                             face.V3.Mark(face.GetStatus());
                         }
                     }
-                    else
-                    {
-                        result = PartState.Interupted;
-                        break;
-                    }
+
                 }
+            }
+            if ( cancelToken.IsCancellationRequested)
+            {
+                result = CSGState.Interrupted;
             }
             return result;
         }
@@ -253,9 +253,9 @@ namespace CSGLib
         /// Split faces so that none face is intercepted by a face of other object
         /// </summary>
         /// <param name="obj">the other object 3d used to make the split</param>
-        public PartState SplitFaces(Part obj)
+        public CSGState SplitFaces(Part obj)
         {
-            PartState result = PartState.Good;
+            CSGState result = CSGState.Good;
             Line line;
             Face face1, face2;
             Segment segment1;
@@ -348,7 +348,7 @@ namespace CSGLib
                                             if (NumFaces > facesLimit)
                                             {
                                                 //Logger.Log("possible infinite loop situation: terminating faces split");
-                                                return PartState.Bad;
+                                                return CSGState.Toolarge;
                                             }
 
                                             //if the face in the position isn't the same, there was a break
@@ -388,7 +388,7 @@ namespace CSGLib
             }
             if ( cancelToken.IsCancellationRequested)
             {
-                result = PartState.Interupted;
+                result = CSGState.Interrupted;
             }
             return result;
         }

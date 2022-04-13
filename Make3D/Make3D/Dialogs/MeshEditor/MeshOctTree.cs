@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Barnacle.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -92,6 +94,30 @@ namespace Barnacle.Dialogs.MeshEditor
                     }
                 }
             }
+        }
+        public int PointPresent(Point3D pnt)
+        {
+            int res = -1;
+            try
+            {
+                MeshOctNode node = root?.FindNodeAround(pnt);
+                if (node != null)
+                {
+                    foreach (int index in node.PointsInOctNode)
+                    {
+                        if (PointUtils.equals(MeshOctNode.AllPoints[index].Position, pnt.X, pnt.Y, pnt.Z))
+                        {
+                            res = index;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("PointPresent() " + ex.Message);
+            }
+            return res;
         }
     }
 }

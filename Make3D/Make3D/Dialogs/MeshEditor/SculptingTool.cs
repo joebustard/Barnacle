@@ -12,7 +12,7 @@ namespace Barnacle.Dialogs.MeshEditor
 
         public SculptingTool()
         {
-            Radius = 5;
+            Radius = 2.5;
             Scaler = 0.5;
         }
 

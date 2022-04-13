@@ -187,7 +187,7 @@
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="SelectionGroup"
                                     Header="Selection"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/SelectAll.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"  IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="First"
                                          HorizontalAlignment="Stretch"
@@ -246,7 +246,7 @@
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ProjectGroup"
                                     Header="Project"
-                                    LargeImageSource="/Barnacle;component/Images/Buttons/Project.png">
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/Project.png"  IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonButton Command="{Binding SettingsCommand}"
                                          CommandParameter="Settings"
                                          HorizontalAlignment="Stretch"
