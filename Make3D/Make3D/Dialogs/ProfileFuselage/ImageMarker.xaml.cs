@@ -547,7 +547,7 @@ namespace Barnacle.Dialogs
                 while (y < workingImage.Height && !found)
                 {
                     System.Drawing.Color c = workingImage.GetPixel(x, y);
-                    if (c.R != 255)
+                    if (c.R <128)
                     {
 
                         found = true;
@@ -564,7 +564,7 @@ namespace Barnacle.Dialogs
                     while (y > 0 && !found)
                     {
                         System.Drawing.Color c = workingImage.GetPixel(x, y);
-                        if (c.R != 255)
+                        if (c.R <128)
                         {
                             found = true;
                             down = new Point(x, y);

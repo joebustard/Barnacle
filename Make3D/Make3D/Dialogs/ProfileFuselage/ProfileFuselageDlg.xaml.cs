@@ -636,6 +636,7 @@ namespace Barnacle.Dialogs
                 nextX = markers[markers.Count - 1].Position.X + 10;
             }
             CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
+            SortRibs();
             TopView.AddRib(name);
             SideView.AddRib(name);
             UpdateDisplay();
@@ -698,7 +699,7 @@ namespace Barnacle.Dialogs
                 noteWindow.Message = "Loading Rib " + nme;
                 int pos = Convert.ToInt16(el.GetAttribute("Position"));
                 await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
-                ;
+                
                 nextY = 10 - nextY;
             }
 
