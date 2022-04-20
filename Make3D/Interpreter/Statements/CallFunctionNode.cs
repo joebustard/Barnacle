@@ -50,6 +50,11 @@ namespace ScriptLanguage
                     //
                     result = ProcToCall.ExecuteFromCall();
                 }
+                else
+                {
+                   
+                    Log.Instance().AddEntry("Run time error:Call failed");
+                }
             }
 
             return result;

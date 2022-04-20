@@ -91,6 +91,7 @@ namespace ScriptLanguage
                     }
                     else
                     {
+                        ReportStatement();
                         Log.Instance().AddEntry("Run Time Error : Print expression incorrect");
                         result = false;
                     }
@@ -102,6 +103,7 @@ namespace ScriptLanguage
             }
             else
             {
+                ReportStatement();
                 Log.Instance().AddEntry("Run Time Error : Print expression failed");
             }
 

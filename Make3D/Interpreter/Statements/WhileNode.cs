@@ -77,6 +77,7 @@ namespace ScriptLanguage
 
                             default:
                                 {
+                                    ReportStatement();
                                     Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
                                     result = false;
                                 }
@@ -130,6 +131,7 @@ namespace ScriptLanguage
 
                                 case StackItem.ItemType.dval:
                                     {
+                                        ReportStatement();
                                         Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
                                         result = false;
                                     }
@@ -137,6 +139,7 @@ namespace ScriptLanguage
 
                                 case StackItem.ItemType.sval:
                                     {
+                                        ReportStatement();
                                         Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
                                         result = false;
                                     }

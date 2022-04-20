@@ -53,22 +53,12 @@ namespace ScriptLanguage
         {
             LogEntry le = new LogEntry();
             le.Text = Line;
-            le.DateStamp = DateTime.Now.ToString();
+            le.DateStamp = DateTime.Now.ToString("T");
             logEntrys.Add(le);
             if (UpdateText != null)
             {
                 UpdateText(le.DateStamp + " " + le.Text + "\r\n");
             }
-            /*
-                        if (txtbox != null)
-                        {
-                            int iStartOfLine = txtbox.Text.Length;
-
-                            txtbox.Text += le.DateStamp + " " + le.Text + "\r\n";
-                            txtbox.Select(iStartOfLine, 1);
-                            txtbox.ScrollToEnd();
-                        }
-                        */
         }
 
         public void Clear()

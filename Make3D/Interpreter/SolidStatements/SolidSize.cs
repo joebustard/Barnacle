@@ -30,7 +30,8 @@ namespace ScriptLanguage
                     int objectIndex;
                     if (!PullSolid(out objectIndex))
                     {
-                        Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            ReportStatement();
+                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
                     }
                     else
                     {

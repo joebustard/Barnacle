@@ -79,14 +79,16 @@ namespace ScriptLanguage
 
                         case StackItem.ItemType.dval:
                             {
-                                Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
+                                ReportStatement();
+                                Log.Instance().AddEntry("Run Time Error : Expected boolean in if");
                                 result = false;
                             }
                             break;
 
                         case StackItem.ItemType.sval:
                             {
-                                Log.Instance().AddEntry("Run Time Error : Expected boolean in while");
+                                ReportStatement();
+                                Log.Instance().AddEntry("Run Time Error : Expected boolean in if");
                                 result = false;
                             }
                             break;
