@@ -24,6 +24,7 @@ namespace Barnacle.ViewModels
         public List<ToolDef> loftedToolsToShow;
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
+        public List<ToolDef> buildingToolsToShow;
 
         private static string statusBlockText1;
         private static string statusBlockText2;
@@ -1011,6 +1012,23 @@ namespace Barnacle.ViewModels
             }
         }
 
+
+
+        public List<ToolDef> BuildingToolsToShow
+        {
+            get
+            {
+                return buildingToolsToShow;
+            }
+            set
+            {
+                if (buildingToolsToShow != value)
+                {
+                    buildingToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public ICommand ViewCommand { get; set; }
 
         public bool WingEnabled
@@ -1072,7 +1090,7 @@ namespace Barnacle.ViewModels
             aircraftToolsToShow.Add(new ToolDef("Canvas Wing", true, "CanvasWing", "Create a wing that looks like canvas streteched over struts from a database of airfoil profiles."));
             aircraftToolsToShow.Add(new ToolDef("Propeller", true, "Propeller", "Create a propeller."));
             aircraftToolsToShow.Add(new ToolDef("Turbo Fan", true, "TurboFan", "Create a turbofan."));
-
+            SortMenu(aircraftToolsToShow);
             NotifyPropertyChanged("AircraftToolsToShow");
         }
 
@@ -1083,6 +1101,7 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("Squirkle", true, "Squirkle", "Create a squirkle shape."));
             decorativeToolsToShow.Add(new ToolDef("Trickle", true, "Trickle", "Create a trickle shape."));
             decorativeToolsToShow.Add(new ToolDef("Text", true, "Text", "Create Text."));
+            SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
         }
 
@@ -1093,30 +1112,60 @@ namespace Barnacle.ViewModels
             loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
             loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
             //  loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
+            SortMenu(loftedToolsToShow);
             NotifyPropertyChanged("LoftedToolsToShow");
         }
 
+        private void CreateBuildingMenu()
+        {
+            buildingToolsToShow = new List<ToolDef>();
+            buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a brick wall."));
+            SortMenu(buildingToolsToShow);
+            NotifyPropertyChanged("BuildingToolsToShow");
+        }
         private void CreateParametricMenu()
         {
             parametricToolsToShow = new List<ToolDef>();
             parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
-            parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
+         //   parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
             parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
 
             parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
-            parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
             parametricToolsToShow.Add(new ToolDef("Squared Stadium", true, "SquaredStadium", "Create a stadium or sausage with one end a variable radius and the other square."));
-            parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
+
+            parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
+             parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
             parametricToolsToShow.Add(new ToolDef("Thread", true, "Thread", "Create a thread for a bolt or nut."));
+            parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
+
             parametricToolsToShow.Add(new ToolDef("Trapezoid", true, "Trapazoid", "Create a trapazoid."));
 
-            parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
-
+            SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
+        }
+
+        private void SortMenu(List<ToolDef> tools)
+        {
+            ToolDef tmp;
+            bool swapped = true;
+            while ( swapped)
+            {
+                swapped = false;
+                for ( int i = 0; i < tools.Count-1; i ++)
+                {
+                    if ( String.Compare( tools[i].Name, tools[i+1].Name) > 0)
+                    {
+                        tmp = tools[i];
+                        tools[i] = tools[i + 1];
+                        tools[i + 1] = tmp;
+                        swapped = true;
+                    }
+                }
+            }
         }
 
         private void CreateToolMenus()
@@ -1126,6 +1175,7 @@ namespace Barnacle.ViewModels
             CreateVehicleToolMenu();
             CreateAircraftToolMenu();
             CreateDecorativeToolMenu();
+            CreateBuildingMenu();
         }
 
         private void CreateVehicleToolMenu()
@@ -1136,6 +1186,7 @@ namespace Barnacle.ViewModels
             vehicleToolsToShow.Add(new ToolDef("Rail Wheel", true, "RailWheel", "Create a basic rail wheel."));
             vehicleToolsToShow.Add(new ToolDef("Wagon Wheel", true, "WagonWheel", "Create a spoked wagon wheel."));
             vehicleToolsToShow.Add(new ToolDef("Pulley", true, "Pulley", "Create a basic pulley wheel."));
+            SortMenu(vehicleToolsToShow);
             NotifyPropertyChanged("VehicleToolsToShow");
         }
 
@@ -1162,6 +1213,7 @@ namespace Barnacle.ViewModels
             EnabledToolIst(b, vehicleToolsToShow);
             EnabledToolIst(b, aircraftToolsToShow);
             EnabledToolIst(b, decorativeToolsToShow);
+            EnabledToolIst(b, buildingToolsToShow);
         }
 
         private void EnabledToolIst(bool b, List<ToolDef> defs)
