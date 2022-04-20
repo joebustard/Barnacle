@@ -10,6 +10,11 @@ namespace Barnacle.Models
             BaseModellerDialog res = null;
             switch (name)
             {
+
+                case "BrickWall":
+                    res = new BrickWallDlg();
+                    break;
+
                 case "WagonWheel":
                     res = new WagonWheelDlg();
                     break;

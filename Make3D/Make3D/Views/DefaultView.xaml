@@ -775,9 +775,19 @@
                                     Header="Shapes"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/Bolt.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
-                                             ItemsSource="{Binding ParametricToolsToShow}"
-                                             Label="Parametric"
-                                             x:Name="ParametricTools">
+                                             ItemsSource="{Binding AircraftToolsToShow}"
+                                             Label="Aircraft"
+                                             x:Name="AircraftTools">
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                                             ItemsSource="{Binding BuildingToolsToShow}"
+                                             Label="Buildings"
+                                             x:Name="BuildingsTools">
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                                             ItemsSource="{Binding DecorativeToolsToShow}"
+                                             Label="Decorative"
+                                             x:Name="DecorativeTools">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding LoftedToolsToShow}"
@@ -785,20 +795,18 @@
                                              x:Name="LoftTools">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                                             ItemsSource="{Binding ParametricToolsToShow}"
+                                             Label="Parametric"
+                                             x:Name="ParametricTools">
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding VehicleToolsToShow}"
                                              Label="Vehicles"
                                              x:Name="VehicleTools">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
-                                             ItemsSource="{Binding AircraftToolsToShow}"
-                                             Label="Aircraft"
-                                             x:Name="AircraftTools">
-                    </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
-                                             ItemsSource="{Binding DecorativeToolsToShow}"
-                                             Label="Decorative"
-                                             x:Name="DecorativeTools">
-                    </Custom:RibbonMenuButton>
+                    
+                   
+
                 </Custom:RibbonGroup>
                 <!--
                         <Custom:RibbonButton x:Name="MeshRecenterButton" Label="Re-Origin" Command="{Binding MeshReoriginCommand}" IsEnabled="{Binding MeshEditEnabled}"  HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/question1.png" ToolTip="Smooth mesh using Catmull-Clarke" />
