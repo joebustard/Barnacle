@@ -12,168 +12,149 @@ namespace Barnacle.Dialogs
     public partial class BrickWallDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
-        private bool loaded ;
+        private bool loaded;
 
-        
 
-private double wallLength;
-public double WallLength
-{
-    get
-    {
-      return wallLength;
-    }
-    set
-    {
-        if ( wallLength != value )
+
+        private double wallLength;
+        public double WallLength
         {
-            if (value >= 1 && value <= 200)
+            get
             {
-              wallLength = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return wallLength;
+            }
+            set
+            {
+                if (wallLength != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
 
 
-private double wallHeight;
-public double WallHeight
-{
-    get
-    {
-      return wallHeight;
-    }
-    set
-    {
-        if ( wallHeight != value )
+        private double wallHeight;
+        public double WallHeight
         {
-            if (value >= 1 && value <= 200)
+            get
             {
-              wallHeight = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return wallHeight;
+            }
+            set
+            {
+                if (wallHeight != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
 
 
-private double wallWidth;
-public double WallWidth
-{
-    get
-    {
-      return wallWidth;
-    }
-    set
-    {
-        if ( wallWidth != value )
+        private double wallWidth;
+        public double WallWidth
         {
-            if (value >= 1 && value <= 200)
+            get
             {
-              wallWidth = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return wallWidth;
+            }
+            set
+            {
+                if (wallWidth != value)
+                {
+                    if (value >= 1 && value <= 600)
+                    {
+                        wallWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
 
 
-private double largeBrickLength;
-public double LargeBrickLength
-{
-    get
-    {
-      return largeBrickLength;
-    }
-    set
-    {
-        if ( largeBrickLength != value )
+        private double brickLength;
+        public double BrickLength
         {
-            if (value >= 1 && value <= 100)
+            get
             {
-              largeBrickLength = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return brickLength;
+            }
+            set
+            {
+                if (brickLength != value)
+                {
+                    if (value >= 1 && value <= 100)
+                    {
+                        brickLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
 
 
-private double smallBrickLength;
-public double SmallBrickLength
-{
-    get
-    {
-      return smallBrickLength;
-    }
-    set
-    {
-        if ( smallBrickLength != value )
+     
+
+
+
+        private double brickHeight;
+        public double BrickHeight
         {
-            if (value >= 1 && value <= 100)
+            get
             {
-              smallBrickLength = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return brickHeight;
+            }
+            set
+            {
+                if (brickHeight != value)
+                {
+                    if (value >= 1 && value <= 100)
+                    {
+                        brickHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
 
 
-private double brickHeight;
-public double BrickHeight
-{
-    get
-    {
-      return brickHeight;
-    }
-    set
-    {
-        if ( brickHeight != value )
+        private double mortarGap;
+        public double MortarGap
         {
-            if (value >= 1 && value <= 100)
+            get
             {
-              brickHeight = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double mortarGap;
-public double MortarGap
-{
-    get
-    {
-      return mortarGap;
-    }
-    set
-    {
-        if ( mortarGap != value )
-        {
-            if (value >= 0 && value <= 100)
+                return mortarGap;
+            }
+            set
             {
-              mortarGap = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                if (mortarGap != value)
+                {
+                    if (value >= 0 && value <= 100)
+                    {
+                        mortarGap = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
 
 
@@ -247,7 +228,7 @@ public double MortarGap
         {
             ClearShape();
             BrickWallMaker maker = new BrickWallMaker(
-                wallLength, wallHeight, wallWidth, largeBrickLength, smallBrickLength, brickHeight, mortarGap
+                wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap
                 );
             maker.Generate(Vertices, Faces);
         }
@@ -255,55 +236,51 @@ public double MortarGap
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            
-          if ( EditorParameters.Get("WallLength") !="")
-          {
-              WallLength= EditorParameters.GetDouble("WallLength");
-          }
 
-          if ( EditorParameters.Get("WallHeight") !="")
-          {
-              WallHeight= EditorParameters.GetDouble("WallHeight");
-          }
+            if (EditorParameters.Get("WallLength") != "")
+            {
+                WallLength = EditorParameters.GetDouble("WallLength");
+            }
 
-          if ( EditorParameters.Get("WallWidth") !="")
-          {
-              WallWidth= EditorParameters.GetDouble("WallWidth");
-          }
+            if (EditorParameters.Get("WallHeight") != "")
+            {
+                WallHeight = EditorParameters.GetDouble("WallHeight");
+            }
 
-          if ( EditorParameters.Get("LargeBrickLength") !="")
-          {
-              LargeBrickLength= EditorParameters.GetDouble("LargeBrickLength");
-          }
+            if (EditorParameters.Get("WallWidth") != "")
+            {
+                WallWidth = EditorParameters.GetDouble("WallWidth");
+            }
 
-          if ( EditorParameters.Get("SmallBrickLength") !="")
-          {
-              SmallBrickLength= EditorParameters.GetDouble("SmallBrickLength");
-          }
+            if (EditorParameters.Get("LargeBrickLength") != "")
+            {
+                BrickLength = EditorParameters.GetDouble("BrickLength");
+            }
 
-          if ( EditorParameters.Get("BrickHeight") !="")
-          {
-              BrickHeight= EditorParameters.GetDouble("BrickHeight");
-          }
+          
+            if (EditorParameters.Get("BrickHeight") != "")
+            {
+                BrickHeight = EditorParameters.GetDouble("BrickHeight");
+            }
 
-          if ( EditorParameters.Get("MortarGap") !="")
-          {
-              MortarGap= EditorParameters.GetDouble("MortarGap");
-          }
+            if (EditorParameters.Get("MortarGap") != "")
+            {
+                MortarGap = EditorParameters.GetDouble("MortarGap");
+            }
 
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            
-            EditorParameters.Set("WallLength",WallLength.ToString());
-            EditorParameters.Set("WallHeight",WallHeight.ToString());
-            EditorParameters.Set("WallWidth",WallWidth.ToString());
-            EditorParameters.Set("LargeBrickLength",LargeBrickLength.ToString());
-            EditorParameters.Set("SmallBrickLength",SmallBrickLength.ToString());
-            EditorParameters.Set("BrickHeight",BrickHeight.ToString());
-            EditorParameters.Set("MortarGap",MortarGap.ToString());
+
+            EditorParameters.Set("WallLength", WallLength.ToString());
+            EditorParameters.Set("WallHeight", WallHeight.ToString());
+            EditorParameters.Set("WallWidth", WallWidth.ToString());
+            EditorParameters.Set("BrickLength", BrickLength.ToString());
+
+            EditorParameters.Set("BrickHeight", BrickHeight.ToString());
+            EditorParameters.Set("MortarGap", MortarGap.ToString());
         }
 
         private void UpdateDisplay()
@@ -318,13 +295,20 @@ public double MortarGap
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
+            WallLength = 200;
+            wallHeight = 100;
+            WallWidth = 8;
+            BrickLength = 12;
+
+            BrickHeight = 6;
+            MortarGap = 2;
             LoadEditorParameters();
-            
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            
-            
+
+
 
             UpdateDisplay();
         }

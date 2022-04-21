@@ -31,35 +31,34 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">WallLength</Label>
+                                <Label VerticalAlignment="Center" Width="100">Wall Length</Label>
                  <TextBox Margin="8,0,0,0" Text="{Binding WallLength}" Width="150"/>
 
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">WallHeight</Label>
+                                <Label VerticalAlignment="Center" Width="100">Wall Height</Label>
                  <TextBox Margin="8,0,0,0" Text="{Binding WallHeight}" Width="150"/>
 
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">WallWidth</Label>
+                                <Label VerticalAlignment="Center" Width="100">Wall Width</Label>
                  <TextBox Margin="8,0,0,0" Text="{Binding WallWidth}" Width="150"/>
 
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">LargeBrickLength</Label>
+                <Label VerticalAlignment="Center" Width="100">Brick Length</Label>
                  <TextBox Margin="8,0,0,0" Text="{Binding LargeBrickLength}" Width="150"/>
 
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">SmallBrickLength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding SmallBrickLength}" Width="150"/>
 
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                                <Label VerticalAlignment="Center" Width="100">Brick Height</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding BrickHeight}" Width="150"/>
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">BrickHeight</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding BrickHeight}" Width="150"/>
-
-            </StackPanel>
+                    <Label VerticalAlignment="Center" Width="100">Mortar Gap</Label>
+                    <TextBox Margin="8,0,0,0" Text="{Binding MortarGap}" Width="150"/>
+                </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
