@@ -45,6 +45,10 @@ namespace ScriptLanguage
                         ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
                         result = true;
                     }
+                    else
+                    {
+                        Log.Instance().AddEntry("Run Time Error: Copy source not found");
+                    }
                 }
             }
             catch( Exception ex)

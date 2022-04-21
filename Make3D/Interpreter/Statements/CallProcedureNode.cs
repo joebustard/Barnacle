@@ -45,6 +45,7 @@ namespace ScriptLanguage
                 result = expressions.Execute();
                 if (!result)
                 {
+                    ReportStatement();
                     Log.Instance().AddEntry("Failed evaluating parameters for procedure " + ProcedureName);
                 }
                 else

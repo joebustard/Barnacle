@@ -118,8 +118,8 @@ namespace ScriptLanguage
                                 }
                                 else
                                 {
-                                   
-                                        Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
+                                    ReportStatement();
+                                    Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                                     
                                 }
                             }
@@ -158,6 +158,7 @@ namespace ScriptLanguage
                                 }
                                 else
                                 {
+                                    ReportStatement();
                                     Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                                 }
                             }
@@ -179,6 +180,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
+                                ReportStatement();
                                 Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                             }
                         }

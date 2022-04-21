@@ -81,6 +81,10 @@ namespace ScriptLanguage
                 {
                     result = PullStackTopToVar();
                 }
+                else
+                {
+                    ReportStatement();
+                }
             }
             return result;
         }

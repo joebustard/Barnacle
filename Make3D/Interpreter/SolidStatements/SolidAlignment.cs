@@ -94,6 +94,7 @@ namespace ScriptLanguage
                                 int rightobjectIndex;
                                 if (!PullSolid(out rightobjectIndex))
                                 {
+                                    ReportStatement();
                                     Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
                                 }
                                 else

@@ -47,5 +47,9 @@ namespace ScriptLanguage
             String result = "";
             return result;
         }
+        public void ReportStatement()
+        {
+            Log.Instance().AddEntry($"{this.ToString()}");
+        }
     }
 }

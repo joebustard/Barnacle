@@ -77,8 +77,8 @@ namespace ScriptLanguage
             }
             return result;
         }
-
-        private bool AssignTopOfStackToVar(string VariableName)
+        
+            private bool AssignTopOfStackToVar(string VariableName)
         {
             bool result = false;
             StackItem sti = ExecutionStack.Instance().Pull();
@@ -112,6 +112,7 @@ namespace ScriptLanguage
                                     }
                                     else
                                     {
+                                        ReportStatement();
                                         Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                                     }
                                 }
@@ -137,6 +138,7 @@ namespace ScriptLanguage
                                 }
                                 else
                                 {
+                                    ReportStatement();
                                     Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                                 }
                             }
@@ -153,6 +155,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
+                                ReportStatement();
                                 Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                             }
                         }
@@ -168,6 +171,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
+                                ReportStatement();
                                 Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                             }
                         }
@@ -183,6 +187,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
+                                ReportStatement();
                                 Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                             }
                         }
@@ -198,6 +203,7 @@ namespace ScriptLanguage
                             }
                             else
                             {
+                                ReportStatement();
                                 Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
                             }
                         }

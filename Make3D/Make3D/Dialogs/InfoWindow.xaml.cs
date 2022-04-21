@@ -55,7 +55,14 @@ namespace Barnacle.Dialogs
         public void ShowInfo(String title)
         {
             Instance().Title = title;
-            instance.Show();
+            try
+            {
+                instance.Show();
+            }
+            catch
+            {
+
+            }
         }
         public void ShowText(String s)
         {
