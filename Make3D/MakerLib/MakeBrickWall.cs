@@ -39,14 +39,15 @@ namespace MakerLib
             double bAndg= (largeBrickLength + mortarGap); 
             double columns = wallLength / bAndg;
             int bricksinRow = (int)columns;
-            double lengthOfHoleBricks = bricksinRow * bAndg;
-            Double leftOver = wallLength - lengthOfHoleBricks;
+            double lengthOfAllBricks = bricksinRow * bAndg;
+            Double leftOver = wallLength - lengthOfAllBricks;
             Double gapHAdjustment = leftOver / bricksinRow;
             double gl = mortarGap + gapHAdjustment;
             double y = wallHeight;
+            double x = 0;
             while (y > 0)
             {
-                double x = 0;
+                x = 0;
                 for (int i = 0; i < bricksinRow; i ++)
                 {
                     if (row % 2 == 0 && i ==0 )
@@ -72,8 +73,76 @@ namespace MakerLib
                 y = y - brickHeight - mortarGap;
                 row++;
             }
+            
+
+            // assume top left point is 0,wallheight,0
+            // close the "box"
+            Point3D v0 = new Point3D(0, wallHeight, mortarGap - wallWidth);
+            Point3D v1 = new Point3D(x, wallHeight, mortarGap - wallWidth);
+            Point3D v2 = new Point3D(0, y, mortarGap - wallWidth);
+            Point3D v3 = new Point3D(x, y, mortarGap - wallWidth);
+            int p0 = AddVertice(v0);
+            int p1 = AddVertice(v1);
+            int p2 = AddVertice(v2);
+            int p3 = AddVertice(v3);
+
+            Point3D v4 = new Point3D(0, wallHeight, 0);
+            Point3D v5 = new Point3D(x, wallHeight, 0);
+            Point3D v6 = new Point3D(0, y, 0);
+            Point3D v7 = new Point3D(x, y, 0);
+            int p4 = AddVertice(v4);
+            int p5 = AddVertice(v5);
+            int p6 = AddVertice(v6);
+            int p7 = AddVertice(v7);
+
+            // back
+            Faces.Add(p0);
+            Faces.Add(p1);
+            Faces.Add(p2);
+
+            Faces.Add(p2);
+            Faces.Add(p1);
+            Faces.Add(p3);
+
+            
+
+            // top
+            Faces.Add(p0);
+            Faces.Add(p4);
+            Faces.Add(p1);
+
+            Faces.Add(p4);
+            Faces.Add(p5);
+            Faces.Add(p1);
+
+            //  bottom
+            Faces.Add(p2);
+            Faces.Add(p3);
+            Faces.Add(p6);
+
+            Faces.Add(p6);
+            Faces.Add(p3);
+            Faces.Add(p7);
+
+            //  left
+            Faces.Add(p0);
+            Faces.Add(p2);
+            Faces.Add(p4);
+
+            Faces.Add(p4);
+            Faces.Add(p2);
+            Faces.Add(p6);
+
+            //  right
+            Faces.Add(p7);
+            Faces.Add(p3);
+            Faces.Add(p5);
+
+            Faces.Add(p3);
+            Faces.Add(p1);
+            Faces.Add(p5);
         }
-        
+
         private void OneBrickPoints(Point3D origin, double bl, double bh, double bw, double gl, double gh)
         {
             int[] vid = new int[13];

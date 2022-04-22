@@ -47,7 +47,7 @@
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Brick Length</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding LargeBrickLength}" Width="150"/>
+                 <TextBox Margin="8,0,0,0" Text="{Binding BrickLength}" Width="150"/>
 
             </StackPanel>
 

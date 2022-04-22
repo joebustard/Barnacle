@@ -228,9 +228,9 @@ namespace Barnacle.Dialogs
         {
             ClearShape();
             BrickWallMaker maker = new BrickWallMaker(
-                wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap
-                );
+                wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap);
             maker.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -239,33 +239,33 @@ namespace Barnacle.Dialogs
 
             if (EditorParameters.Get("WallLength") != "")
             {
-                WallLength = EditorParameters.GetDouble("WallLength");
+                wallLength = EditorParameters.GetDouble("WallLength");
             }
 
             if (EditorParameters.Get("WallHeight") != "")
             {
-                WallHeight = EditorParameters.GetDouble("WallHeight");
+                wallHeight = EditorParameters.GetDouble("WallHeight");
             }
 
             if (EditorParameters.Get("WallWidth") != "")
             {
-                WallWidth = EditorParameters.GetDouble("WallWidth");
+                wallWidth = EditorParameters.GetDouble("WallWidth");
             }
 
-            if (EditorParameters.Get("LargeBrickLength") != "")
+            if (EditorParameters.Get("BrickLength") != "")
             {
-                BrickLength = EditorParameters.GetDouble("BrickLength");
+                brickLength = EditorParameters.GetDouble("BrickLength");
             }
 
           
             if (EditorParameters.Get("BrickHeight") != "")
             {
-                BrickHeight = EditorParameters.GetDouble("BrickHeight");
+                brickHeight = EditorParameters.GetDouble("BrickHeight");
             }
 
             if (EditorParameters.Get("MortarGap") != "")
             {
-                MortarGap = EditorParameters.GetDouble("MortarGap");
+                mortarGap = EditorParameters.GetDouble("MortarGap");
             }
 
         }
@@ -295,19 +295,26 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
-            WallLength = 200;
+            wallLength = 200;
             wallHeight = 100;
-            WallWidth = 8;
-            BrickLength = 12;
+            wallWidth = 8;
+            brickLength = 12;
 
-            BrickHeight = 6;
-            MortarGap = 2;
+            brickHeight = 6;
+            mortarGap = 2;
             LoadEditorParameters();
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
 
+            NotifyPropertyChanged("WallLength");
+            NotifyPropertyChanged("WallHeight");
+
+            NotifyPropertyChanged("WallWidth");
+            NotifyPropertyChanged("BrickLength");
+            NotifyPropertyChanged("BrickHeight");
+            NotifyPropertyChanged("MortarGap");
 
 
             UpdateDisplay();
