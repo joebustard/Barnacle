@@ -1,6 +1,4 @@
-using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -8,7 +6,6 @@ namespace MakerLib
 {
     public class BrickWallMaker : MakerBase
     {
-
         private double wallLength;
         private double wallHeight;
         private double wallWidth;
@@ -26,7 +23,6 @@ namespace MakerLib
             this.smallBrickLength = smallBrickLength;
             this.brickHeight = brickHeight;
             this.mortarGap = mortarGap;
-
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -36,11 +32,12 @@ namespace MakerLib
             Vertices = pnts;
             Faces = faces;
             int row = 0;
-            double bAndg= (largeBrickLength + mortarGap); 
-            double columns = wallLength / bAndg;
+            double bAndg = (largeBrickLength + mortarGap);
+            double lengthWithoutLastBrick = wallLength - largeBrickLength;
+            double columns = lengthWithoutLastBrick / bAndg;
             int bricksinRow = (int)columns;
             double lengthOfAllBricks = bricksinRow * bAndg;
-            Double leftOver = wallLength - lengthOfAllBricks;
+            Double leftOver = lengthWithoutLastBrick - lengthOfAllBricks;
             Double gapHAdjustment = leftOver / bricksinRow;
             double gl = mortarGap + gapHAdjustment;
             double y = wallHeight;
@@ -48,32 +45,49 @@ namespace MakerLib
             while (y > 0)
             {
                 x = 0;
-                for (int i = 0; i < bricksinRow; i ++)
+                for (int i = 0; i <= bricksinRow; i++)
                 {
-                    if (row % 2 == 0 && i ==0 )
+                    if (row % 2 == 0)
                     {
-                        Point3D brickOrigin = new Point3D(x, y, 0);
-                        OneBrickPoints(brickOrigin, smallBrickLength, brickHeight, mortarGap, gl, mortarGap);
-                        x += smallBrickLength + gl;
+                        if (i == 0)
+                        {
+                            Point3D brickOrigin = new Point3D(x, y, 0);
+                            OneBrickPoints(brickOrigin, smallBrickLength, brickHeight, mortarGap, gl, mortarGap);
+                            x += smallBrickLength + gl;
+                        }
+                        /*      else
+                              if (i == bricksinRow - 1)
+                              {
+                                  Point3D brickOrigin = new Point3D(x, y, 0);
+                                  OneBrickPoints(brickOrigin, smallBrickLength, brickHeight, mortarGap, gl, mortarGap);
+                                  x += smallBrickLength + gl;
+                              } */
+                        else
+                        {
+                            Point3D brickOrigin = new Point3D(x, y, 0);
+                            OneBrickPoints(brickOrigin, largeBrickLength, brickHeight, mortarGap, gl, mortarGap);
+                            x += largeBrickLength + gl;
+                        }
                     }
                     else
-                    if (row %2 == 1 &&   (i == bricksinRow - 1))
                     {
-                        Point3D brickOrigin = new Point3D(x, y, 0);
-                        OneBrickPoints(brickOrigin, smallBrickLength, brickHeight, mortarGap, gl, mortarGap);
-                        x += smallBrickLength + gl;
-                    }
-                    else
-                    {
-                        Point3D brickOrigin = new Point3D(x, y, 0);
-                        OneBrickPoints(brickOrigin, largeBrickLength, brickHeight, mortarGap, gl, mortarGap);
-                        x += largeBrickLength + gl;
+                        if  (i == bricksinRow - 1)
+                        {
+                            Point3D brickOrigin = new Point3D(x, y, 0);
+                            OneBrickPoints(brickOrigin, smallBrickLength, brickHeight, mortarGap, gl, mortarGap);
+                            x += smallBrickLength + gl;
+                        }
+                        else
+                        {
+                            Point3D brickOrigin = new Point3D(x, y, 0);
+                            OneBrickPoints(brickOrigin, largeBrickLength, brickHeight, mortarGap, gl, mortarGap);
+                            x += largeBrickLength + gl;
+                        }
                     }
                 }
                 y = y - brickHeight - mortarGap;
                 row++;
             }
-            
 
             // assume top left point is 0,wallheight,0
             // close the "box"
@@ -103,8 +117,6 @@ namespace MakerLib
             Faces.Add(p2);
             Faces.Add(p1);
             Faces.Add(p3);
-
-            
 
             // top
             Faces.Add(p0);
@@ -147,22 +159,22 @@ namespace MakerLib
         {
             int[] vid = new int[13];
             // gap above brick
-            vid[0] = AddVertice(new Point3D(origin.X,           origin.Y, origin.Z));
-            vid[1] = AddVertice(new Point3D(origin.X + bl,      origin.Y, origin.Z));
+            vid[0] = AddVertice(new Point3D(origin.X, origin.Y, origin.Z));
+            vid[1] = AddVertice(new Point3D(origin.X + bl, origin.Y, origin.Z));
             vid[2] = AddVertice(new Point3D(origin.X + bl + gl, origin.Y, origin.Z));
 
-            vid[3] = AddVertice(new Point3D(origin.X,           origin.Y - gh, origin.Z));
-            vid[4] = AddVertice(new Point3D(origin.X + bl,      origin.Y - gh, origin.Z));
+            vid[3] = AddVertice(new Point3D(origin.X, origin.Y - gh, origin.Z));
+            vid[4] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z));
             vid[5] = AddVertice(new Point3D(origin.X + bl + gl, origin.Y - gh, origin.Z));
 
-            vid[6] = AddVertice(new Point3D(origin.X,           origin.Y - bh - gh, origin.Z));
-            vid[7] = AddVertice(new Point3D(origin.X + bl,      origin.Y - bh - gh, origin.Z));
+            vid[6] = AddVertice(new Point3D(origin.X, origin.Y - bh - gh, origin.Z));
+            vid[7] = AddVertice(new Point3D(origin.X + bl, origin.Y - bh - gh, origin.Z));
             vid[8] = AddVertice(new Point3D(origin.X + bl + gl, origin.Y - bh - gh, origin.Z));
 
             // front of brick
-            vid[9] =  AddVertice(new Point3D(origin.X,      origin.Y - gh, origin.Z + bw));
-            vid[10] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z + bw));   
-            vid[11] = AddVertice(new Point3D(origin.X,      origin.Y - gh - bh, origin.Z + bw));
+            vid[9] = AddVertice(new Point3D(origin.X, origin.Y - gh, origin.Z + bw));
+            vid[10] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh, origin.Z + bw));
+            vid[11] = AddVertice(new Point3D(origin.X, origin.Y - gh - bh, origin.Z + bw));
             vid[12] = AddVertice(new Point3D(origin.X + bl, origin.Y - gh - bh, origin.Z + bw));
 
             Faces.Add(vid[0]);

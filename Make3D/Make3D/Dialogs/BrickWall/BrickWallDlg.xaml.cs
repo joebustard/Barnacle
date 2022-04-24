@@ -1,8 +1,6 @@
 using MakerLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -14,9 +12,8 @@ namespace Barnacle.Dialogs
         private string warningText;
         private bool loaded;
 
-
-
         private double wallLength;
+
         public double WallLength
         {
             get
@@ -37,9 +34,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         private double wallHeight;
+
         public double WallHeight
         {
             get
@@ -60,9 +56,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         private double wallWidth;
+
         public double WallWidth
         {
             get
@@ -83,9 +78,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         private double brickLength;
+
         public double BrickLength
         {
             get
@@ -106,13 +100,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
-     
-
-
-
         private double brickHeight;
+
         public double BrickHeight
         {
             get
@@ -133,9 +122,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         private double mortarGap;
+
         public double MortarGap
         {
             get
@@ -155,8 +143,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-
 
         public BrickWallDlg()
         {
@@ -227,8 +213,7 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            BrickWallMaker maker = new BrickWallMaker(
-                wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap);
+            BrickWallMaker maker = new BrickWallMaker( wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap);
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }
@@ -257,7 +242,6 @@ namespace Barnacle.Dialogs
                 brickLength = EditorParameters.GetDouble("BrickLength");
             }
 
-          
             if (EditorParameters.Get("BrickHeight") != "")
             {
                 brickHeight = EditorParameters.GetDouble("BrickHeight");
@@ -267,7 +251,6 @@ namespace Barnacle.Dialogs
             {
                 mortarGap = EditorParameters.GetDouble("MortarGap");
             }
-
         }
 
         private void SaveEditorParmeters()
@@ -315,7 +298,6 @@ namespace Barnacle.Dialogs
             NotifyPropertyChanged("BrickLength");
             NotifyPropertyChanged("BrickHeight");
             NotifyPropertyChanged("MortarGap");
-
 
             UpdateDisplay();
         }
