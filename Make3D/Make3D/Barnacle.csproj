@@ -211,6 +211,7 @@
     <Compile Include="Dialogs\Star\Star.xaml.cs">
       <DependentUpon>Star.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\StoneWall\StoneWallDlg.xaml.cs" />
     <Compile Include="Dialogs\TankTrack\ExternalLinks.cs" />
     <Compile Include="Dialogs\TankTrack\Link.cs" />
     <Compile Include="Dialogs\TankTrack\LinkPart.cs" />
@@ -527,6 +528,10 @@
     <Page Include="Dialogs\Star\Star.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\StoneWall\StoneWallDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\TextDlg\TextDlg.xaml">
       <SubType>Designer</SubType>

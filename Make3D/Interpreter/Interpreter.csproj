@@ -81,6 +81,7 @@
     <Compile Include="SolidFunctions\MakeSquaredStadium.cs" />
     <Compile Include="SolidFunctions\MakeSquirkle.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
+    <Compile Include="SolidFunctions\MakeStoneWallNode.cs" />
     <Compile Include="SolidFunctions\MakeText.cs" />
     <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTrapezoid.cs" />

@@ -87,6 +87,7 @@ namespace ScriptLanguage
                 "makestadium",
                 "makesquaredstadium",
                 "makesquirkle",
+                "makestonewall",
                 "maketext",
                 "maketorus",
                 "maketrapezoid",
@@ -2555,6 +2556,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makestonewall":
+                            {
+                                exp = ParseMakeStoneWallFunction(parentName);
+                            }
+                            break;
+
                         case "maketext":
                             {
                                 exp = ParseMakeTextFunction(parentName);
@@ -3260,6 +3267,48 @@ namespace ScriptLanguage
             }
             return exp;
         }
+
+        private ExpressionNode ParseMakeStoneWallFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeStoneWall";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 4;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeStoneWallNode mn = new MakeStoneWallNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
 
         private ExpressionNode ParseMakeSquirkleFunction(string parentName)
         {

@@ -54,6 +54,7 @@
     <Compile Include="MakerBase.cs" />
     <Compile Include="MakeReuleaux.cs" />
     <Compile Include="MakeSquirkle.cs" />
+    <Compile Include="MakeStoneWall.cs" />
     <Compile Include="MakeTrickle.cs" />
     <Compile Include="MakeWagonWheel.cs" />
     <Compile Include="PGramMaker.cs" />
