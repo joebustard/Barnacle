@@ -39,7 +39,12 @@ namespace MakerLib
                     cells[r, c] = 0;
                 }
             }
+            
+            
             int stones = numberOfStones;
+            byte reserved = (byte) (stones + 1);
+            cells[0, 0] = reserved;
+            cells[0, (int)(wallLength-1)] = reserved;
             while (stones > 0)
             {
                 int rr = (int)(rand.NextDouble() * (double)wallHeight);
@@ -60,44 +65,92 @@ namespace MakerLib
             while (cellQueue.Count > 0)
             {
                 Point p = cellQueue[0];
-                int direction = (int)(rand.NextDouble() * 4.0);
-                int startDirection = direction;
-                bool done = false;
-                while (!done)
+                int direction = (int)( rand.NextDouble() * 4);
+                for (int dir = 0; dir < 8; dir++)
                 {
                     Point offset = GetOffset(direction);
                     Point p2 = new Point(p.X + offset.X, p.Y + offset.Y);
-                    if (p2.X >= 0 && p2.X < wallLength && p2.Y >= 0 && p2.Y < wallHeight && cells[p2.Y,p2.X]==0)
+                    if (p2.X >= 0 && p2.X < wallLength && p2.Y >= 0 && p2.Y < wallHeight && cells[p2.Y, p2.X] == 0)
                     {
-                        if ( CheckGap(cells,p2.Y,p2.X,5,cells[p.Y,p.X]))
+                        if (CheckGap(cells, p2.Y, p2.X, 5, cells[p.Y, p.X]))
                         {
                             cells[p2.Y, p2.X] = cells[p.Y, p.X];
                             cellQueue.Add(p2);
-                            done = true;
+                            //   done = true;
                         }
-                        
-                            
 
                     }
-                    direction = (direction + 1) % 4;
-                    if (direction == startDirection)
-                    {
-                        done = true;
-                    }
+                    direction = (direction + 1) % 8;
+
                 }
                 cellQueue.RemoveAt(0);
             }
-            DumpCells(cells);
+            // DumpCells(cells);
+
+            for (int r = 0; r < wallHeight; r++)
+            {
+                for (int c = 0; c < wallLength; c++)
+                {
+                    double x = c;
+                    double y = wallHeight - r;
+                    double z = 0;
+
+                    if (cells[r, c] != 0 && cells[r, c] != reserved)
+                    {
+                        z = 2;
+                    }
+
+                    int v1 = AddVertice(x, y, z);
+                    int v2 = AddVertice(x+1, y, z);
+                    int v3 = AddVertice(x, y-1, z);
+                    int v4 = AddVertice(x+1, y-1, z);
+
+                    Faces.Add(v1);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+
+                    Faces.Add(v3);
+                    Faces.Add(v4);
+                    Faces.Add(v2);
+
+                    if (z > 0)
+                    {
+                        if (r > 0 && c > 0)
+                        {
+                            if (cells[r, c - 1] == 0 || cells[r, c - 1] == reserved)
+                            {
+                                int v5 = AddVertice(x, y, 0);
+                                int v6 = AddVertice(x, y-1, 0);
+                                Faces.Add(v1);
+                                Faces.Add(v3);
+                                Faces.Add(v6);
+
+                                Faces.Add(v6);
+                                Faces.Add(v5);
+                                Faces.Add(v1);
+                            }
+                        }
+                    }
+                }
+                
+            }
 
         }
 
         private void DumpCells(byte[,] cells)
         {
-            for ( int r = 0; r < wallHeight; r ++)
+            for (int r = 0; r < wallHeight; r++)
             {
                 for (int c = 0; c < wallLength; c++)
                 {
-                    System.Diagnostics.Debug.Write(cells[r, c].ToString());
+                    if (cells[r, c] == 0)
+                    {
+                        System.Diagnostics.Debug.Write('.');
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Write((char)(cells[r, c] + '@'));
+                    }
                 }
                 System.Diagnostics.Debug.WriteLine("");
             }
@@ -111,6 +164,10 @@ namespace MakerLib
                 case 1: return new Point(1, 0); break;
                 case 2: return new Point(0, 1); break;
                 case 3: return new Point(-1, 0); break;
+                case 4: return new Point(-1, -1); break;
+                case 5: return new Point(1, -1); break;
+                case 6: return new Point(-1, 1); break;
+                case 7: return new Point(1, 1); break;
                 default: return new Point(0, 0); break;
             }
         }
