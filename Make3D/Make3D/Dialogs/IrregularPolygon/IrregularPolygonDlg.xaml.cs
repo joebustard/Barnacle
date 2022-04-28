@@ -1176,19 +1176,23 @@ namespace Barnacle.Dialogs
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
             PositionLabel.Content = $"({position.X},{position.Y})";
-            if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed && moving)
+            if (selectedPoint != -1)
             {
-                polyPoints[selectedPoint].X = position.X;
-                polyPoints[selectedPoint].Y = position.Y;
-                flexiPath.SetPointPos(selectedPoint, position);
-                PathText = flexiPath.ToPath();
-                GenerateFaces();
-                UpdateDisplay();
+                if ( e.LeftButton == MouseButtonState.Pressed && moving)
+                {
+                    polyPoints[selectedPoint].X = position.X;
+                    polyPoints[selectedPoint].Y = position.Y;
+                    flexiPath.SetPointPos(selectedPoint, position);
+                    PathText = flexiPath.ToPath();
+                    GenerateFaces();
+                    UpdateDisplay();
+                }
+                else
+                {
+                    moving = false;
+                }
             }
-            else
-            {
-                moving = false;
-            }
+            
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)

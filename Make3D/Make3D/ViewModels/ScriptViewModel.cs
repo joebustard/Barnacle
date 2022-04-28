@@ -467,6 +467,7 @@ program ""Script Name""
             {
                 Logging.Log.Instance().AddEntry("Failed");
             }
+            Refresh(resultsBox);
             RegenerateDisplayList();
             EnableRun = true;
         }

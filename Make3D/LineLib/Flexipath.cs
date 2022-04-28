@@ -214,12 +214,14 @@ namespace Barnacle.LineLib
             // display points are NOT the same as the raw FlexiPoints;
             // Any curves etc may generate more intermediate display points
             List<Point> res = new List<Point>();
-            res.Add(Start.ToPoint());
-            foreach (FlexiSegment sg in segs)
+            if (Start != null)
             {
-                sg.DisplayPoints(res, points);
+                res.Add(Start.ToPoint());
+                foreach (FlexiSegment sg in segs)
+                {
+                    sg.DisplayPoints(res, points);
+                }
             }
-
             return res;
         }
 
