@@ -422,10 +422,7 @@ namespace Barnacle.Dialogs
                 // clear out existing 3d model
                 Faces.Clear();
                 Vertices.Clear();
-                foreach( LetterMarker mk in markers)
-                {
-                    mk.Dump();
-                }
+
                 // do we have enough data to construct the model
                 if (RibManager.Ribs.Count > 1)
                 {
@@ -701,8 +698,8 @@ namespace Barnacle.Dialogs
                 string nme = el.GetAttribute("Header");
                 noteWindow.Message = "Loading Rib " + nme;
                 int pos = Convert.ToInt16(el.GetAttribute("Position"));
-                await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
-                
+                //    await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
+                LoadOneRib(nextY, el, nme, pos);
                 nextY = 10 - nextY;
             }
 
@@ -1034,6 +1031,19 @@ namespace Barnacle.Dialogs
             SideView.WorkingImage = bmp;
             SideView.SetupImage(bmp, tlx, tly, brx, bry);
             SideView.UpdateDisplay();
+        }
+
+        private void ResetMarkers_Click(object sender, RoutedEventArgs e)
+        {
+            if (markers != null && markers.Count > 1)
+            {
+                double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
+                for (int i = 0; i < markers.Count; i++)
+                {
+                    markers[i].Position = new System.Drawing.Point((int)(TopView.LeftLimit + (i * markerDist))+2, markers[i].Position.Y);
+                }
+                UpdateDisplay();
+            }
         }
     }
 }

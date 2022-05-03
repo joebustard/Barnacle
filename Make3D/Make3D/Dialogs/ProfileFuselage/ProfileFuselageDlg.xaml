@@ -62,53 +62,33 @@
                     </Grid.RowDefinitions>
                     <UniformGrid Columns="2"
                                  Grid.Column="0"
-                                 Grid.Row="0">
+                                 Grid.Row="0" >
                         <Button Click="Front_Click"
                                 Content="Front"
-                                x:Name="FrontButton"/>
+                                x:Name="FrontButton" Margin="2,2,2,2"/>
 
                         <Button Click="Back_Click"
                                 Content="Back"
-                                x:Name="BackButton"/>
+                                x:Name="BackButton" Margin="2,2,2,2"/>
 
                         <Button Click="Left_Click"
                                 Content="Left"
-                                x:Name="LeftButton"/>
+                                x:Name="LeftButton" Margin="2,2,2,2"/>
 
                         <Button Click="Right_Click"
                                 Content="Right"
-                                x:Name="RightButton"/>
+                                x:Name="RightButton" Margin="2,2,2,2"/>
 
                         <Button Click="Top_Click"
                                 Content="Top"
-                                x:Name="TopButton"/>
+                                x:Name="TopButton" Margin="2,2,2,2"/>
 
                         <Button Click="Bottom_Click"
                                 Content="Bottom"
-                                x:Name="BottomButton"/>
+                                x:Name="BottomButton" Margin="2,2,2,2"/>
 
                     </UniformGrid>
-                    <UniformGrid Columns="1"
-                                 Grid.Row="1"
-                                 Margin="4,4,4,4">
-                        <RadioButton Content="Whole"
-                                     GroupName="BodyMode"
-                                     IsChecked="{Binding WholeBody}"/>
-                        <RadioButton Content="Front"
-                                     GroupName="BodyMode"
-                                     IsChecked="{Binding FrontBody}"/>
-                        <RadioButton Content="Back"
-                                     GroupName="BodyMode"
-                                     IsChecked="{Binding BackBody}"/>
-                        <StackPanel Orientation="Horizontal">
-                            <Label VerticalAlignment="Center">
-                            Divisions
-                            </Label>
-                            <TextBox Text="{Binding NumberOfDivisions}"
-                                     VerticalContentAlignment="Center"
-                                     Width="80"/>
-                        </StackPanel>
-                    </UniformGrid>
+                   
                     <Border Background="AliceBlue"
                             BorderBrush="Blue"
                             BorderThickness="4"
@@ -147,7 +127,7 @@
                         </Viewport3D>
                     </Border>
                     <Grid Grid.Column="0"
-                          Grid.Row="2">
+                          Grid.Row="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
@@ -181,6 +161,28 @@
                         
 
                     </Grid>
+                    <UniformGrid Columns="1"
+                                 Grid.Row="2"
+                                 Margin="4,4,4,4">
+                        <RadioButton Content="Whole"
+                                     GroupName="BodyMode"
+                                     IsChecked="{Binding WholeBody}" VerticalAlignment="Center"/>
+                        <RadioButton Content="Front"
+                                     GroupName="BodyMode"
+                                     IsChecked="{Binding FrontBody}" VerticalAlignment="Center"/>
+                        <RadioButton Content="Back"
+                                     GroupName="BodyMode"
+                                     IsChecked="{Binding BackBody}" VerticalAlignment="Center"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Label VerticalAlignment="Center">
+                                Divisions
+                            </Label>
+                            <TextBox Text="{Binding NumberOfDivisions}"
+                                     VerticalContentAlignment="Center"
+                                     Width="80" Height="30"/>
+                        </StackPanel>
+                        <Button x:Name="ResetMarkers" Click="ResetMarkers_Click" Content="Reset Markers" ToolTip="Spread markers evenly"/>
+                    </UniformGrid>
                     <TabControl Grid.Column="1"
                                 Grid.Row="2"
                                 Grid.RowSpan="2">
