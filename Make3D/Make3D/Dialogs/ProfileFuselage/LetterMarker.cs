@@ -13,5 +13,10 @@ namespace Barnacle.Dialogs
         public string Letter { get; set; }
         public Point Position { get; set; }
         public ImagePathControl Rib { get; set; }
+
+        internal void Dump()
+        {
+            System.Diagnostics.Debug.WriteLine($"Marker {Letter} at {Position.X},{Position.Y}");
+        }
     }
 }

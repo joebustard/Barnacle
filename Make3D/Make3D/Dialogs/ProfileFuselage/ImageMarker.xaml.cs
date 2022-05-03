@@ -261,14 +261,14 @@ namespace Barnacle.Dialogs
                 // the others
                 foreach (LetterMarker mk in markers)
                 {
-                    if (selectedMarker != mk)
+                  //  if (selectedMarker != mk)
                     {
                         UpdateMarker(mk);
                     }
                 }
                 if (selectedMarker != null)
                 {
-                    UpdateMarker(selectedMarker);
+           //         UpdateMarker(selectedMarker);
                 }
             }
             UpdateCanvas();
@@ -484,6 +484,10 @@ namespace Barnacle.Dialogs
                 {
                     selectedMarker = (sender as Ellipse).Tag as LetterMarker;
                     UpdateDisplay();
+                }
+                else
+                {
+                    MessageBox.Show($" ImageMarker br_MouseDown sender type {sender.ToString()}");
                 }
             }
         }
@@ -758,7 +762,7 @@ namespace Barnacle.Dialogs
            
             Dimension dp = GetUpperAndLowerPoints(mk.Position.X);
             dimensions.Add(dp);
-            AddLetter(mk.Position.X, mk.Position.Y, mk.Letter, mk,dp.Height.ToString());
+            AddLetter(mk.Position.X, mk.Position.Y, mk.Letter, mk,$"Size at X={mk.Position.X} is {dp.Height}");
             AddCircle((int)dp.P1.X, (int)dp.P1.Y, mk);
             AddCircle((int)dp.P2.X, (int)dp.P2.Y, mk);
             AddCircle((int)dp.P1.X, (int)dp.Mid.Y, mk);

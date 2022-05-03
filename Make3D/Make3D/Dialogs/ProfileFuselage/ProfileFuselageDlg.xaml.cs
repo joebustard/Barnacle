@@ -422,7 +422,10 @@ namespace Barnacle.Dialogs
                 // clear out existing 3d model
                 Faces.Clear();
                 Vertices.Clear();
-
+                foreach( LetterMarker mk in markers)
+                {
+                    mk.Dump();
+                }
                 // do we have enough data to construct the model
                 if (RibManager.Ribs.Count > 1)
                 {
@@ -977,6 +980,15 @@ namespace Barnacle.Dialogs
             SideView.SetScale(zoomLevel);
         }
 
+        private void ZoomFit_Click(object sender, RoutedEventArgs e)
+        {
+            double imageLength = (TopView.RightLimit - TopView.LeftLimit)+10;
+            double imagescale = TopView.ActualWidth / imageLength;
+
+            zoomLevel = imagescale;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
         private void ZoomReset_Click(object sender, RoutedEventArgs e)
         {
             zoomLevel = 1;

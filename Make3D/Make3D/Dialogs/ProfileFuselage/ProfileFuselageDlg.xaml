@@ -152,21 +152,33 @@
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
                         </Grid.RowDefinitions>
                         <Button Click="ZoomIn_Click"
-                                Content="Zoom In"
+                                Content="+"
                                 Grid.Row="0"
+                                ToolTip="Zoom In"
                                 x:Name="ZoomIn"/>
 
-                        <Button Click="ZoomOut_Click"
-                                Content="Zoom Out"
+                        <Button Click="ZoomReset_Click"
+                                Content="."
                                 Grid.Row="1"
+                                ToolTip="Zoom Reset"
+                                x:Name="ZoomReset"/>
+                        
+                        <Button Click="ZoomOut_Click"
+                                Content="-"
+                                Grid.Row="2"
+                                ToolTip="Zoom Out"
                                 x:Name="ZoomOut"/>
 
-                        <Button Click="ZoomReset_Click"
-                                Content="Zoom Reset"
-                                Grid.Row="2"
-                                x:Name="ZoomReset"/>
+                        <Button Click="ZoomFit_Click"
+                                Content="[ ]"
+                                Grid.Row="3"
+                                ToolTip="Zoom Fit"
+                                x:Name="ZoomFit"/>
+
+                        
 
                     </Grid>
                     <TabControl Grid.Column="1"
