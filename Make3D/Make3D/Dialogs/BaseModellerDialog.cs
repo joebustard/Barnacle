@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Shapes;
 
 namespace Barnacle.Dialogs
 {
@@ -977,6 +978,7 @@ namespace Barnacle.Dialogs
                         ModelGroup.Children.Add(m);
                     }
                 }
+
                 GeometryModel3D gm = GetModel();
                 ModelGroup.Children.Add(gm);
             }
@@ -1040,5 +1042,43 @@ namespace Barnacle.Dialogs
                 Camera.DistanceToFit(w, h, d * 1.5);
             }
         }
+
+        private double InchesToMM(double x)
+        {
+            return x * 25.4;
+        }
+        internal void CreateCanvasGrid( Canvas cnv, out double gridX, out double gridY, double gridSizeMM,List<Shape> markers)
+        {
+            double divsX;
+            double divsY;
+            double x=0;
+            double y=0;
+            DpiScale sc =VisualTreeHelper.GetDpi(cnv);
+            gridX = (sc.PixelsPerInchX / 25.4) *gridSizeMM;
+            
+            gridY = (sc.PixelsPerInchY/ 25.4) * gridSizeMM;
+            
+            while ( x < cnv.ActualWidth)
+            {
+                y = 0;
+                while ( y < cnv.ActualHeight)
+                {
+                    Ellipse el = new Ellipse();
+                    Canvas.SetLeft(el, x-1);
+                    Canvas.SetTop(el, y-1);
+                    el.Width = 3;
+                    el.Height = 3;
+                    el.Fill = Brushes.AliceBlue;
+                    el.Stroke = Brushes.CadetBlue;
+                    if ( markers != null)
+                    {
+                        markers.Add(el);
+                    }
+                    y += gridY;
+                }
+                x += gridX;
+            }
+        }
     }
+
 }

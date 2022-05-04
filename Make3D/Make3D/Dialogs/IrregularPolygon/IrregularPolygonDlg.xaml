@@ -25,19 +25,20 @@
               Grid.RowSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="160"/>
+                <RowDefinition Height="80"/>
                 <RowDefinition Height="60"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Border Grid.Column="0"
                     Grid.Row="0"
-                    Padding="2,2,2,10"
+                    Padding="2,2,2,2"
                     Style="{StaticResource ControlBorder}">
                 <StackPanel>
-                    <UniformGrid Margin="0,0,0,4">
+                    <UniformGrid >
                         <Button Click="ResetButton_Click"
-                                Content="Reset"
+                                Content="New"
                                 Margin="2,2,2,2"
-                                ToolTip="Reset the polygon points back to the default square"
+                                ToolTip="Clear the polygon and start a new one"
                                 x:Name="ResetButton"/>
 
                         <Button Click="ImageButton_Click"
@@ -46,31 +47,19 @@
                                 ToolTip="Load a background image to position the points over"
                                 x:Name="ImageButton"/>
 
-                        <Button Click="InButton_Click"
-                                Content="Zoom In"
-                                Margin="2,2,2,2"
-                                ToolTip="Zoom in on polygon"
-                                x:Name="ZoomInButton"/>
-
-                        <Button Click="OutButton_Click"
-                                Content="Zoom Out"
-                                Margin="2,2,2,2"
-                                ToolTip="Zoom out on polygon"
-                                x:Name="ZoomOutButton"/>
-
                     </UniformGrid>
                     <RadioButton GroupName="HollowGroup"
-                                 IsChecked="{Binding SolidShape}">
-                    Solid
-                    </RadioButton>
+                                 IsChecked="{Binding SolidShape}" Content="Solid" Margin="2,2,2,2"/>
                     <RadioButton GroupName="HollowGroup"
-                                 IsChecked="{Binding HollowShape}">
-                    Hollow
-                    </RadioButton>
+                                 IsChecked="{Binding HollowShape}" Content="Hollow" Margin="2,2,2,2"/>
+
+
+                    <!--
                     <RadioButton GroupName="HollowGroup"
                                  IsChecked="{Binding LineShape}">
                     Line
                     </RadioButton>
+                    -->
                     <StackPanel Margin="2,2,2,4"
                                 Orientation="Horizontal">
                         <Label Margin="2,2,4,0"
@@ -89,8 +78,30 @@
                     </CheckBox>
                 </StackPanel>
             </Border>
+            <Border Grid.Column="0" Grid.Row="1" Padding="1,1,1,1" Style="{StaticResource ControlBorder}">
+                <UniformGrid Columns="1">
+                    <Button Click="InButton_Click"
+                                Content="+"
+                                Margin="2,2,2,2"
+                                ToolTip="Zoom in on polygon"
+                                x:Name="ZoomInButton"/>
+                    <Button Click="ZoomReset_Click"
+                                Content="."
+                                Margin="2,2,2,2"
+                                ToolTip="Reset Zoom"
+                                x:Name="ZoomResetButton"/>
+
+                    <Button Click="OutButton_Click"
+                                Content="-"
+                                Margin="2,2,2,2"
+                                ToolTip="Zoom out on polygon"
+                                x:Name="ZoomOutButton"/> 
+
+                </UniformGrid>
+                
+            </Border>
             <Border Grid.Column="0"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Padding="1,1,1,1"
                     Style="{StaticResource ControlBorder}">
                 <UniformGrid Columns="7"
@@ -177,7 +188,7 @@
                 </UniformGrid>
             </Border>
             <Border Grid.Column="0"
-                    Grid.Row="2"
+                    Grid.Row="3"
                     Padding="2,2,2,10"
                     Style="{StaticResource ControlBorder}">
                 <DataGrid AutoGenerateColumns="False"
@@ -266,7 +277,7 @@
                             MouseDown="MainCanvas_MouseDown"
                             MouseMove="MainCanvas_MouseMove"
                             MouseUp="MainCanvas_MouseUp"
-                            x:Name="MainCanvas">
+                            x:Name="MainCanvas" SizeChanged="MainCanvas_SizeChanged">
                         <Canvas.LayoutTransform>
                             <ScaleTransform x:Name="MainScale"/>
                         </Canvas.LayoutTransform>
@@ -295,6 +306,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor"
                           Grid.Column="1"
@@ -304,11 +317,23 @@
                           Grid.Column="2"
                           IsChecked="{Binding ShowAxies}"
                           VerticalAlignment="Center"/>
+                
+                
+                <CheckBox Content="Grid"
+                          Grid.Column="3"
+                          IsChecked="{Binding ShowPolyGrid}"
+                          VerticalAlignment="Center"/>
+
+                <CheckBox Content="Snap"
+                          Grid.Column="4"
+                          IsChecked="{Binding Snap}"
+                          VerticalAlignment="Center"/>
+                
                 <Button Click="Home_Click"
                         Content="Home"
-                        Grid.Column="3"/>
+                        Grid.Column="5"  Margin="2,2,2,2"/>
 
-                <Label Grid.Column="4"
+                <Label Grid.Column="6"
                        x:Name="PositionLabel"/>
 
             </Grid>
