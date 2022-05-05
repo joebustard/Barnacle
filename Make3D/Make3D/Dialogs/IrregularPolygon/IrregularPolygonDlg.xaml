@@ -34,22 +34,15 @@
                     Padding="2,2,2,2"
                     Style="{StaticResource ControlBorder}">
                 <StackPanel>
-                    <UniformGrid >
-                        <Button Click="ResetButton_Click"
-                                Content="New"
-                                Margin="2,2,2,2"
-                                ToolTip="Clear the polygon and start a new one"
-                                x:Name="ResetButton"/>
-
+  
                         <Button Click="ImageButton_Click"
                                 Content="Image"
                                 Margin="2,2,2,2"
                                 ToolTip="Load a background image to position the points over"
-                                x:Name="ImageButton"/>
+                                x:Name="ImageButton" HorizontalAlignment="Left"/>
 
-                    </UniformGrid>
                     <RadioButton GroupName="HollowGroup"
-                                 IsChecked="{Binding SolidShape}" Content="Solid" Margin="2,2,2,2"/>
+                                 IsChecked="{Binding SolidShape}" Content="Solid" Margin="2,2,2,2" />
                     <RadioButton GroupName="HollowGroup"
                                  IsChecked="{Binding HollowShape}" Content="Hollow" Margin="2,2,2,2"/>
 

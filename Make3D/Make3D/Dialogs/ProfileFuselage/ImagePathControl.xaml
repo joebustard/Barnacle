@@ -22,12 +22,13 @@
                       Margin="0,0,0,0"
                       VerticalAlignment="Stretch">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="0"/>
                         <ColumnDefinition Width="200"/>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
                         <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="100"/>
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
@@ -80,9 +81,9 @@
                               IsChecked="{Binding ShowOrtho}"
                               Margin="2,0,0,0"
                               VerticalAlignment="Center"
-                              x:Name="ShowOrthoBox">
-                    Show Ortho
-                    </CheckBox>
+                              x:Name="ShowOrthoBox" Content="Show Ortho"/>
+                    
+
                 </Grid>
             </Border>
             <Border Grid.Column="0"
