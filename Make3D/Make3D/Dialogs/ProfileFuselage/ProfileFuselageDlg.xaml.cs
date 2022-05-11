@@ -277,7 +277,8 @@ namespace Barnacle.Dialogs
                                 noteWindow.Show();
 
                                 RibManager.ControlsEnabled = false;
-                              /*  await */ Read(filePath);
+                                /*  await */
+                                Read(filePath);
                                 noteWindow.Hide();
                                 dirty = false;
                                 RibManager.ControlsEnabled = true;
@@ -422,9 +423,17 @@ namespace Barnacle.Dialogs
                 // clear out existing 3d model
                 Faces.Clear();
                 Vertices.Clear();
-
+                bool okToGenerate = true;
+                for (int i = 0; i < RibManager.Ribs.Count; i++)
+                {
+                    if (!RibManager.Ribs[i].HasPoints)
+                    {
+                        okToGenerate = false;
+                        break;
+                    }
+                }
                 // do we have enough data to construct the model
-                if (RibManager.Ribs.Count > 1)
+                if (RibManager.Ribs.Count > 1 && okToGenerate)
                 {
                     RibManager.Ribs[0].GenerateProfilePoints();
                     int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
@@ -472,7 +481,7 @@ namespace Barnacle.Dialogs
                                 if (proind < RibManager.Ribs[i].ProfilePoints.Count)
                                 {
                                     PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
-                                                                       
+
                                     double v = (double)pnt.X * (double)TopView.Dimensions[i].Height;
                                     double z = TopView.GetYmm(v + (double)TopView.Dimensions[i].P1.Y);
 
@@ -522,7 +531,7 @@ namespace Barnacle.Dialogs
                                 Faces.Add(v4);
                             }
                         }
-                       
+
                         TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
                         TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
                         CentreVertices();
@@ -553,7 +562,8 @@ namespace Barnacle.Dialogs
                 noteWindow.Show();
 
                 RibManager.ControlsEnabled = false;
-                /*await*/ Read(filePath);
+                /*await*/
+                Read(filePath);
                 noteWindow.Hide();
                 dirty = false;
                 RibManager.ControlsEnabled = true;
@@ -661,7 +671,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        private async Task  Read(string fileName)
+        private async Task Read(string fileName)
         {
             this.Cursor = Cursors.Wait;
             RibManager.Ribs.Clear();
@@ -979,7 +989,7 @@ namespace Barnacle.Dialogs
 
         private void ZoomFit_Click(object sender, RoutedEventArgs e)
         {
-            double imageLength = (TopView.RightLimit - TopView.LeftLimit)+10;
+            double imageLength = (TopView.RightLimit - TopView.LeftLimit) + 10;
             double imagescale = TopView.ActualWidth / imageLength;
 
             zoomLevel = imagescale;
@@ -1040,7 +1050,7 @@ namespace Barnacle.Dialogs
                 double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
                 for (int i = 0; i < markers.Count; i++)
                 {
-                    markers[i].Position = new System.Drawing.Point((int)(TopView.LeftLimit + (i * markerDist))+2, markers[i].Position.Y);
+                    markers[i].Position = new System.Drawing.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
                 }
                 UpdateDisplay();
             }

@@ -9,7 +9,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="100"/>
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid Background="Azure"
@@ -60,22 +60,28 @@
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Delete the selected rib"
                     x:Name="DeleteRib"/>
+            <Button Click="RenameRibs_Click"
+                    Content="Rename"
+                    Grid.Row="5"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Rename all the ribs starting at A. (Does not alter the file names)"
+                    x:Name="RenameRibsButton"/>
 
             <Label FontSize="14"
-                   Grid.Row="6"
+                   Grid.Row="7"
                    Style="{StaticResource InverseLabel}">
             Rib Files
             </Label>
             <Button Click="LoadRibs_Click"
                     Content="Load"
-                    Grid.Row="7"
+                    Grid.Row="8"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Load a ribs definition file"
                     x:Name="LoadRibs"/>
 
             <Button Click="SaveRibs_Click"
                     Content="Save"
-                    Grid.Row="8"
+                    Grid.Row="9"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Save a ribs definition file"
                     x:Name="SaveRibs"/>

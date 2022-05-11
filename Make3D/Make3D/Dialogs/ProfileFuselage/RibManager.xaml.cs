@@ -184,7 +184,49 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+        private void RenameRibs_Click(object sender, RoutedEventArgs e)
+        {
+            if (ribs.Count > 0)
+            {
+                List<NameRec> nameRecs = new List<NameRec>();
 
+
+                int j = 1;
+                for (int i = 0; i < Ribs.Count; i++)
+                {
+
+                    NameRec rec = new NameRec();
+                    rec.ribIndex = i;
+                    rec.originalName = Ribs[i].Header;
+                    if (i <= 26)
+                    {
+                        rec.newName = ((char)('A' + i)).ToString();
+                    }
+                    else
+                    {
+                        rec.newName = "Z" + j.ToString();
+                        j++;
+                    }
+                    nameRecs.Add(rec);
+
+                }
+
+
+                // now rename the ribs locally
+                for (int i = 0; i < nameRecs.Count; i++)
+                {
+                    Ribs[nameRecs[i].ribIndex].Header = nameRecs[i].newName;
+                    Ribs[nameRecs[i].ribIndex].UpdateHeaderLabel();
+                }
+
+                // pass the data on to the main dialog to that the marker names match
+                if (OnRibsRenamed != null)
+                {
+                    OnRibsRenamed(nameRecs);
+                }
+            }
+
+        }
         private void AddRib_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();

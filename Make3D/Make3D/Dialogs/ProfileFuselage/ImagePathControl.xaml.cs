@@ -84,7 +84,23 @@ namespace Barnacle.Dialogs
         private int wallWidth;
 
         private System.Drawing.Bitmap workingImage;
+        public bool HasPoints
+        {
+            get
+            {
+                bool res = true;
+                if (selectionMode == SelectionModeType.StartPoint || selectionMode == SelectionModeType.AddPoint)
+                {
+                    res = false;
+                }
+                if (polyPoints.Count < 3)
+                {
+                    res = false;
+                }
 
+                return res;
+            }
+        }
         public ImagePathControl()
         {
             InitializeComponent();
@@ -942,7 +958,7 @@ namespace Barnacle.Dialogs
                         InsertQuadCurveSegment(found, position);
                     }
 
-                  
+
                 }
                 else
                 {
@@ -1299,7 +1315,7 @@ namespace Barnacle.Dialogs
             return Math.Sqrt(diff);
         }
 
-      
+
 
         private void FlexiPathCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -1426,7 +1442,7 @@ namespace Barnacle.Dialogs
         {
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
-            
+
             if (selectedPoint != -1)
             {
                 if (e.LeftButton == MouseButtonState.Pressed && moving)
@@ -1435,7 +1451,10 @@ namespace Barnacle.Dialogs
                     polyPoints[selectedPoint].Y = position.Y;
                     flexiPath.SetPointPos(selectedPoint, position);
                     PathText = flexiPath.ToPath();
-                    GenerateProfilePoints();
+                    if (selectionMode != SelectionModeType.StartPoint && selectionMode != SelectionModeType.AddPoint)
+                    {
+                        GenerateProfilePoints();
+                    }
                     UpdateDisplay();
                 }
                 else
@@ -1447,12 +1466,12 @@ namespace Barnacle.Dialogs
 
         private void FlexiPathCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
-         
+
             moving = false;
-            if (selectedPoint != -1 && moving )
+            if (selectedPoint != -1 && moving)
             {
                 System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
-                double gx = position.X ;
+                double gx = position.X;
                 double gy = position.Y;
                 polyPoints[selectedPoint].X = gx;
                 polyPoints[selectedPoint].Y = gy;
@@ -1812,6 +1831,15 @@ namespace Barnacle.Dialogs
             SelectionMode = SelectionModeType.SelectPoint;
         }
 
+        private void ShowAllPointsButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach( FlexiPoint p  in polyPoints)
+            {
+                p.Visible = true;
+            }
+            UpdateDisplay();
+        }
+
         private ContextMenu PointMenu(object tag)
         {
             ContextMenu mn = new ContextMenu();
@@ -1826,9 +1854,7 @@ namespace Barnacle.Dialogs
         private void ResetPathButton_Click(object sender, RoutedEventArgs e)
         {
             InitialisePoints();
-            scale = 1;
-            PathCanvasScale.ScaleX = scale;
-            PathCanvasScale.ScaleY = scale;
+
             selectedPoint = -1;
             UpdateDisplay();
             PathText = flexiPath.ToPath();
@@ -2028,8 +2054,10 @@ namespace Barnacle.Dialogs
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
+            showOrtho = true;
             ScrollView.ScrollToHorizontalOffset(scrollX);
             ScrollView.ScrollToVerticalOffset(scrollY);
+            selectionMode = SelectionModeType.SelectPoint;
             UpdateDisplay();
             loaded = true;
         }

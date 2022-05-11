@@ -62,7 +62,7 @@ namespace Barnacle.Dialogs
         private bool pinSelected;
 
         private double rightLimit;
-        private double scale;
+        private static double scale = 1.0;
 
         private LetterMarker selectedMarker = null;
 
@@ -772,9 +772,10 @@ namespace Barnacle.Dialogs
         {
             mainCanvas.Background = System.Windows.Media.Brushes.Transparent;
             pinSelected = false;
+            
             upperPoint = new Point(-1, -1);
             pinPos = 150;
-            scale = 1;
+            
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
             UpdateDisplay();
