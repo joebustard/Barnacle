@@ -1,4 +1,5 @@
-﻿using Barnacle.Models;
+﻿using Barnacle.Dialogs.ProfileFuselage.ViewModels;
+using Barnacle.Models;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
@@ -295,7 +296,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void OnRibAdded(string name, ImagePathControl rc)
+        public void OnRibAdded(string name, ImagePathViewModel rc)
         {
             int nextX = 0;
             int nextY = 10;
@@ -313,7 +314,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        public void OnRibDeleted(ImagePathControl rc)
+        public void OnRibDeleted(ImagePathViewModel rc)
         {
             LetterMarker target = null;
             foreach (LetterMarker mk in markers)
@@ -333,7 +334,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        public void OnRibInserted(string name, ImagePathControl rc)
+        public void OnRibInserted(string name, ImagePathViewModel rc)
         {
             int nextX = 10;
             int nextY = 10;
@@ -402,7 +403,7 @@ namespace Barnacle.Dialogs
             RibManager.CopyARib(name);
         }
 
-        private void CreateLetter(string v1, System.Drawing.Point v2, ImagePathControl rib)
+        private void CreateLetter(string v1, System.Drawing.Point v2, ImagePathViewModel rib)
         {
             LetterMarker mk = new LetterMarker(v1, v2);
             mk.Rib = rib;
@@ -595,11 +596,11 @@ namespace Barnacle.Dialogs
             bool res = true;
             try
             {
-                ImagePathControl rc = new ImagePathControl();
+                ImagePathViewModel rc = new ImagePathViewModel();
                 rc.ImagePath = pth;
-                rc.Header = nme;
-                rc.Width = 600;
-                rc.Height = 600;
+                rc.ImagePathHeader = nme;
+             //   rc.Width = 600;
+             //   rc.Height = 600;
                 rc.Scale = viewScale;
                 rc.EdgePath = edgePath;
                 rc.ScrollX = scx;
@@ -622,7 +623,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private void OnRibInserted(string name, ImagePathControl rc, ImagePathControl after)
+        private void OnRibInserted(string name, ImagePathViewModel rc, ImagePathViewModel after)
         {
             int nextX = 0;
             int nextY = 10;
@@ -728,11 +729,11 @@ namespace Barnacle.Dialogs
         private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
         {
             XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
-            ImagePathControl rc = new ImagePathControl();
+            ImagePathViewModel rc = new ImagePathViewModel();
             rc.Read(el);
-            rc.Header = nme;
-            rc.Width = 600;
-            rc.Height = 600;
+            rc.ImagePathHeader = nme;
+        //    rc.Width = 600;
+         //   rc.Height = 600;
             rc.FetchImage();
             if (rc.IsValid)
             {
@@ -823,7 +824,7 @@ namespace Barnacle.Dialogs
                 }
                 SideView.Markers = markers;
                 TopView.Markers = markers;
-                ObservableCollection<ImagePathControl> ribs = new ObservableCollection<ImagePathControl>();
+                ObservableCollection<ImagePathViewModel> ribs = new ObservableCollection<ImagePathViewModel>();
                 foreach (LetterMarker mk in markers)
                 {
                     ribs.Add(mk.Rib);
@@ -951,17 +952,17 @@ namespace Barnacle.Dialogs
             SideViewManager.PathControl.Write(doc, sideNode);
             sideNode.SetAttribute("Path", SideViewManager.ImageFilePath);
             docNode.AppendChild(sideNode);
-            foreach (ImagePathControl ob in RibManager.Ribs)
+            foreach (ImagePathViewModel ob in RibManager.Ribs)
             {
 
 
                 foreach (LetterMarker mk in markers)
                 {
-                    if (mk.Letter == ob.Header)
+                    if (mk.Letter == ob.ImagePathHeader)
                     {
                         // ob.Write(doc, docNode, mk.Position.X, mk.Letter);
                         XmlElement ribNode = doc.CreateElement("Rib");
-                        ribNode.SetAttribute("Header", ob.Header);
+                        ribNode.SetAttribute("Header", ob.ImagePathHeader);
                         ribNode.SetAttribute("Position", mk.Position.X.ToString());
                         docNode.AppendChild(ribNode);
                         ob.Write(doc, ribNode);

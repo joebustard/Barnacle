@@ -89,6 +89,7 @@
         </Grid>
         <Border Grid.Column="1"
                 Style="{StaticResource ControlBorder}">
+            <!-- 
             <ListView ItemsSource="{Binding Ribs}"
                       SelectedItem="{Binding SelectedRib}">
                 <ListView.ItemsPanel>
@@ -97,7 +98,29 @@
                         </StackPanel>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
-            </ListView>
+            </ListView> 
+            -->
+
+            <TabControl ItemsSource="{Binding Ribs}">
+                <TabControl.ItemContainerStyle>
+                    <Style TargetType="TabItem">
+                        <Setter Property="HeaderTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Path=ImagePathHeader}"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </TabControl.ItemContainerStyle>
+                <TabControl.ContentTemplate>
+                    <DataTemplate>
+                        <local:ImagePathControl />
+                    </DataTemplate>
+                </TabControl.ContentTemplate>
+            </TabControl>
         </Border>
     </Grid>
 </UserControl>

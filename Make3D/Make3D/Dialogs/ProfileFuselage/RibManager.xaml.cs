@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Barnacle.Dialogs.ProfileFuselage.ViewModels;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -20,14 +21,14 @@ namespace Barnacle.Dialogs
         private bool controlsEnabled;
 
         private int modelType;
-        private ObservableCollection<ImagePathControl> ribs;
+        private ObservableCollection<ImagePathViewModel> ribs;
 
-        private ImagePathControl selectedRib;
+        private ImagePathViewModel selectedRib;
 
         public RibManager()
         {
             InitializeComponent();
-            ribs = new ObservableCollection<ImagePathControl>();
+            ribs = new ObservableCollection<ImagePathViewModel>();
             DataContext = this;
             NextNameLetter = 'A';
             NextNameNumber = 0;
@@ -38,11 +39,11 @@ namespace Barnacle.Dialogs
 
         public delegate void CommandHandler(string command);
 
-        public delegate void RibAdded(string ribName, ImagePathControl rc);
+        public delegate void RibAdded(string ribName, ImagePathViewModel rc);
 
-        public delegate void RibDeleted(ImagePathControl rc);
+        public delegate void RibDeleted(ImagePathViewModel rc);
 
-        public delegate void RibInserted(string ribName, ImagePathControl rc, ImagePathControl after);
+        public delegate void RibInserted(string ribName, ImagePathViewModel rc, ImagePathViewModel after);
 
         public delegate void RibsRenamed(List<NameRec> newNames);
 
@@ -95,7 +96,7 @@ namespace Barnacle.Dialogs
                 if (value != numberOfProfilePoints)
                 {
                     numberOfProfilePoints = value;
-                    foreach (ImagePathControl rc in ribs)
+                    foreach (ImagePathViewModel rc in ribs)
                     {
                         rc.NumDivisions = numberOfProfilePoints;
                     }
@@ -112,7 +113,7 @@ namespace Barnacle.Dialogs
 
         public RibsRenamed OnRibsRenamed { get; set; }
 
-        public ObservableCollection<ImagePathControl> Ribs
+        public ObservableCollection<ImagePathViewModel> Ribs
         {
             get
             {
@@ -128,7 +129,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public ImagePathControl SelectedRib
+        public ImagePathViewModel SelectedRib
         {
             get
             {
@@ -155,10 +156,10 @@ namespace Barnacle.Dialogs
         internal void CopyARib(string name)
         {
             selectedRib = null;
-            ImagePathControl src = null;
-            foreach (ImagePathControl rc in Ribs)
+            ImagePathViewModel src = null;
+            foreach (ImagePathViewModel rc in Ribs)
             {
-                if (rc.Header == name)
+                if (rc.ImagePathHeader == name)
                 {
                     src = rc;
                     break;
@@ -172,7 +173,7 @@ namespace Barnacle.Dialogs
 
         internal void OnForceRibReload(string s)
         {
-            foreach (ImagePathControl rc in Ribs)
+            foreach (ImagePathViewModel rc in Ribs)
             {
                 if (rc.ImagePath == s)
                 {
@@ -197,7 +198,7 @@ namespace Barnacle.Dialogs
 
                     NameRec rec = new NameRec();
                     rec.ribIndex = i;
-                    rec.originalName = Ribs[i].Header;
+                    rec.originalName = Ribs[i].ImagePathHeader;
                     if (i <= 26)
                     {
                         rec.newName = ((char)('A' + i)).ToString();
@@ -215,7 +216,7 @@ namespace Barnacle.Dialogs
                 // now rename the ribs locally
                 for (int i = 0; i < nameRecs.Count; i++)
                 {
-                    Ribs[nameRecs[i].ribIndex].Header = nameRecs[i].newName;
+                    Ribs[nameRecs[i].ribIndex].ImagePathHeader = nameRecs[i].newName;
                     Ribs[nameRecs[i].ribIndex].UpdateHeaderLabel();
                 }
 
@@ -235,7 +236,7 @@ namespace Barnacle.Dialogs
             {
                 try
                 {
-                    ImagePathControl rc = new ImagePathControl();
+                    ImagePathViewModel rc = new ImagePathViewModel();
 
                     rc.ImagePath = dlg.FileName;
                     rc.FetchImage();
@@ -253,9 +254,9 @@ namespace Barnacle.Dialogs
                             NextNameLetter = 'A';
                             NextNameNumber++;
                         }
-                        rc.Header = name;
-                        rc.Width = 600;
-                        rc.Height = 600;
+                        rc.ImagePathHeader = name;
+                    //    rc.Width = 600;
+                    //    rc.Height = 600;
                         Ribs.Add(rc);
                         NotifyPropertyChanged("Ribs");
                         if (OnRibAdded != null)
@@ -271,19 +272,19 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void Copy(ImagePathControl src)
+        private void Copy(ImagePathViewModel src)
         {
-            ImagePathControl clone = src.Clone();
-            string nameStart = clone.Header.Substring(0, 1);
+            ImagePathViewModel clone = src.Clone();
+            string nameStart = clone.ImagePathHeader.Substring(0, 1);
             int subName = 0;
-            foreach (ImagePathControl rc in Ribs)
+            foreach (ImagePathViewModel rc in Ribs)
             {
-                if (rc.Header.StartsWith(nameStart))
+                if (rc.ImagePathHeader.StartsWith(nameStart))
                 {
                     subName++;
                 }
             }
-            clone.Header = nameStart + subName.ToString();
+            clone.ImagePathHeader = nameStart + subName.ToString();
             int index = Ribs.IndexOf(src);
             if (index >= 0 && index < Ribs.Count - 1)
             {
@@ -297,7 +298,7 @@ namespace Barnacle.Dialogs
             NotifyPropertyChanged("Ribs");
             if (OnRibInserted != null)
             {
-                OnRibInserted(clone.Header, clone, src);
+                OnRibInserted(clone.ImagePathHeader, clone, src);
             }
             RenameRibs(nameStart);
         }
@@ -334,7 +335,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateProfiles()
         {
-            foreach (ImagePathControl rc in ribs)
+            foreach (ImagePathViewModel rc in ribs)
             {
                 rc.GenerateProfilePoints(modelType);
             }
@@ -343,6 +344,7 @@ namespace Barnacle.Dialogs
         private void LoadRibs_Click(object sender, RoutedEventArgs e)
         {
             OnCommandHandler?.Invoke("LoadProject");
+            NotifyPropertyChanged("Ribs");
         }
 
         private void LoadSide_Click(object sender, RoutedEventArgs e)
@@ -361,11 +363,11 @@ namespace Barnacle.Dialogs
             int j = 0;
             for (int i = 0; i < Ribs.Count; i++)
             {
-                if (Ribs[i].Header.StartsWith(nameStart))
+                if (Ribs[i].ImagePathHeader.StartsWith(nameStart))
                 {
                     NameRec rec = new NameRec();
                     rec.ribIndex = i;
-                    rec.originalName = Ribs[i].Header;
+                    rec.originalName = Ribs[i].ImagePathHeader;
                     if (j == 0)
                     {
                         rec.newName = nameStart;
@@ -382,7 +384,7 @@ namespace Barnacle.Dialogs
             // now rename the ribs locally
             for (int i = 0; i < nameRecs.Count; i++)
             {
-                Ribs[nameRecs[i].ribIndex].Header = nameRecs[i].newName;
+                Ribs[nameRecs[i].ribIndex].ImagePathHeader = nameRecs[i].newName;
                 Ribs[nameRecs[i].ribIndex].UpdateHeaderLabel();
             }
 

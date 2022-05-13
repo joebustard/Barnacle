@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barnacle.Dialogs.ProfileFuselage.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -279,7 +280,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        internal void DeleteMarker(ImagePathControl rc)
+        internal void DeleteMarker(ImagePathViewModel rc)
         {
             UpdateDisplay();
         }
