@@ -34,6 +34,7 @@ namespace Barnacle.Dialogs
             selectedRib = null;
             controlsEnabled = true;
             numberOfProfilePoints = 80;
+            selectedRibIndex = -1;
         }
 
         public delegate void CommandHandler(string command);
@@ -403,6 +404,40 @@ namespace Barnacle.Dialogs
             public string newName;
             public string originalName;
             public int ribIndex;
+        }
+        private int selectedRibIndex;
+
+        public int SelectedRibIndex
+        {
+            get { return selectedRibIndex; }
+            set
+            {
+                if (value != selectedRibIndex)
+                {
+                    selectedRibIndex = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private void NextRib_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (selectedRibIndex < ribs.Count - 1)
+            {
+                SelectedRibIndex++;
+                SelectedRib = ribs[selectedRibIndex];
+                RibList.ScrollIntoView(selectedRib);
+            }
+        }
+
+        private void PreviousRib_CLicked(object sender, RoutedEventArgs e)
+        {
+            if (selectedRibIndex > 0)
+            {
+                SelectedRibIndex--;
+                SelectedRib = ribs[selectedRibIndex];
+                RibList.ScrollIntoView(selectedRib);
+            }
         }
     }
 }

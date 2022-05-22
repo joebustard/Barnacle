@@ -89,15 +89,25 @@
         </Grid>
         <Border Grid.Column="1"
                 Style="{StaticResource ControlBorder}">
-            <ListView ItemsSource="{Binding Ribs}"
-                      SelectedItem="{Binding SelectedRib}">
-                <ListView.ItemsPanel>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="30"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Height="30" Content="&lt;" Click="PreviousRib_CLicked"/>
+                <ListView Grid.Column="1" ItemsSource="{Binding Ribs}"
+                      SelectedItem="{Binding SelectedRib}" SelectedIndex="{Binding SelectedRibIndex}" x:Name="RibList"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+
+                    <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal">
                         </StackPanel>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
+                <Button Grid.Column="2" Height="30" Content="&gt;" Click="NextRib_Clicked"/>
+            </Grid>
         </Border>
     </Grid>
 </UserControl>

@@ -24,7 +24,7 @@
                     Grid.ColumnSpan="2"
                     Grid.Row="0"
                     x:Name="MainTab">
-            <TabItem Header="Spars">
+            <TabItem Header="Ribs">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="23*"/>

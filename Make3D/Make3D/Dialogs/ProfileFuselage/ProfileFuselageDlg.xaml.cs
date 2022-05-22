@@ -52,7 +52,7 @@ namespace Barnacle.Dialogs
             dirty = false;
             filePath = "";
             noteWindow = new NoteWindow();
-            numberOfDivisions = 13;
+            numberOfDivisions = 80;
             ModelGroup = MyModelGroup;
         }
 
@@ -1007,6 +1007,7 @@ namespace Barnacle.Dialogs
         private void OnPositionTabSelected(object sender, RoutedEventArgs e)
         {
             CopyPathsToViews();
+            UpdateDisplay();
         }
 
         private void CopyPathsToViews()

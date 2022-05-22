@@ -1705,18 +1705,20 @@ namespace Barnacle.Dialogs
         private System.Windows.Point MakeRect(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
         {
             System.Windows.Shapes.Rectangle el = new System.Windows.Shapes.Rectangle();
-
-            Canvas.SetLeft(el, ToPixelX(p.X) - rad);
-            Canvas.SetTop(el, ToPixelY(p.Y) - rad);
-            el.Width = 2 * rad;
-            el.Height = 2 * rad;
-            el.Stroke = br;
-            el.Fill = br;
-            el.MouseDown += FlexiPathCanvas_MouseDown;
-            el.MouseMove += FlexiPathCanvas_MouseMove;
-            el.MouseUp += FlexiPathCanvas_MouseUp;
-            el.ContextMenu = PointMenu(el);
-            FlexiPathCanvas.Children.Add(el);
+            if (p.X >= 0 && p.X < double.MaxValue)
+            {
+                Canvas.SetLeft(el, ToPixelX(p.X) - rad);
+                Canvas.SetTop(el, ToPixelY(p.Y) - rad);
+                el.Width = 2 * rad;
+                el.Height = 2 * rad;
+                el.Stroke = br;
+                el.Fill = br;
+                el.MouseDown += FlexiPathCanvas_MouseDown;
+                el.MouseMove += FlexiPathCanvas_MouseMove;
+                el.MouseUp += FlexiPathCanvas_MouseUp;
+                el.ContextMenu = PointMenu(el);
+                FlexiPathCanvas.Children.Add(el);
+            }
             return p;
         }
 
