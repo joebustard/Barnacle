@@ -16,7 +16,7 @@ namespace MakerLib
         private bool bold;
         private string fontName;
         private double fontsize;
-
+        private double height;
         private double holeOverlap = 10;
         private bool italic;
         private bool superSmooth;
