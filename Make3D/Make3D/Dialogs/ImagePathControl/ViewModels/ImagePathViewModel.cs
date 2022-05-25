@@ -578,22 +578,25 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                         }
                     }
                 }
-            }
 
-            List<PointF> tmp = new List<PointF>();
 
-            for (int j = minIndex; j < profilePoints.Count; j++)
-            {
-                tmp.Add(profilePoints[j]);
-            }
-            if (minIndex > 0)
-            {
-                for (int j = 0; j < minIndex; j++)
+                List<PointF> tmp = new List<PointF>();
+
+                for (int j = minIndex; j < profilePoints.Count; j++)
                 {
                     tmp.Add(profilePoints[j]);
                 }
+                if (minIndex > 0)
+                {
+                    for (int j = 0; j < minIndex; j++)
+                    {
+                        tmp.Add(profilePoints[j]);
+                    }
+                }
+
+                profilePoints = tmp;
             }
-            profilePoints = tmp;
+        
         }
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")

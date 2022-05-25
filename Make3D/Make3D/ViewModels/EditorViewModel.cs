@@ -2105,7 +2105,7 @@ namespace Barnacle.ViewModels
                 }
                 obj.Remesh();
                 allBounds += obj.AbsoluteBounds;
-
+                obj.MoveToFloor();
                 GeometryModel3D gm = GetMesh(obj);
 
                 Document.Content.Add(obj);

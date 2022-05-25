@@ -912,6 +912,11 @@
     <Resource Include="Images\Buttons\ZoomMinus.png" />
     <Resource Include="Images\Buttons\ZoomPlus.png" />
     <Resource Include="Images\Buttons\SeeAllPoints.png" />
+    <Resource Include="Images\Buttons\BoxCell.png" />
+    <Resource Include="Images\Buttons\HexagonCell.png" />
+    <Resource Include="Images\Buttons\OctagonCell.png" />
+    <Resource Include="Images\Buttons\PentagonCell.png" />
+    <Resource Include="Images\Buttons\TriangleCell.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

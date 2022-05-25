@@ -96,19 +96,12 @@
                 <Image Source="/Barnacle;component/Images/Buttons/Polygon.png"/>
 
             </Button>
-            <Button Command="{Binding AddCommand}"
-                    CommandParameter="Tube"
-                    Style="{StaticResource ImageButton}"
-                    ToolTip="Add a tube object"  IsEnabled="{Binding EditingActive}">
-                <Image Source="/Barnacle;component/Images/Buttons/Tube.png"/>
-
-            </Button>
+           
             <Button Command="{Binding AddCommand}"
                     CommandParameter="RightAngle"
                     Style="{StaticResource ImageButton}"
                     ToolTip="Add a right angle object"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/RightAngle.png"/>
-
             </Button>
             <Button Command="{Binding AddCommand}"
                     CommandParameter="Pointy"
@@ -122,6 +115,48 @@
                     Style="{StaticResource ImageButton}"
                     ToolTip="Add a pyramid with a triangular base"  IsEnabled="{Binding EditingActive}">
                 <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png"/>
+
+            </Button>
+
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="Tube"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a tube object"  IsEnabled="{Binding EditingActive}">
+                <Image Source="/Barnacle;component/Images/Buttons/Tube.png"/>
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="TriangleCell"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a hollow Triangle"  IsEnabled="{Binding EditingActive}">
+                <Image Source="/Barnacle;component/Images/Buttons/TriangleCell.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="BoxCell"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a hollow Cube"  IsEnabled="{Binding EditingActive}">
+                <Image Source="/Barnacle;component/Images/Buttons/BoxCell.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="PentagonCell"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a hollow Pentagon"  IsEnabled="{Binding EditingActive}">
+                <Image Source="/Barnacle;component/Images/Buttons/PentagonCell.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="HexagonCell"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a hollow Hexagon"  IsEnabled="{Binding EditingActive}">
+                <Image Source="/Barnacle;component/Images/Buttons/HexagonCell.png"/>
+
+            </Button>
+            <Button Command="{Binding AddCommand}"
+                    CommandParameter="OctagonCell"
+                    Style="{StaticResource ImageButton}"
+                    ToolTip="Add a hollow Octagon"  IsEnabled="{Binding EditingActive}">
+                <Image Source="/Barnacle;component/Images/Buttons/OctagonCell.png"/>
 
             </Button>
         </UniformGrid>
