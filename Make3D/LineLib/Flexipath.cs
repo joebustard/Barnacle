@@ -173,12 +173,23 @@ namespace Barnacle.LineLib
             {
                 segs[segs.Count - 1].DeletePoints(points);
                 segs.RemoveAt(segs.Count - 1);
+
             }
         }
 
+        public void DeleteSegment(int index)
+        {
+            if (index >=0 &&index < segs.Count && segs.Count>3)
+            {
+                int numPointsRemoved = segs[index].NumberOfPoints() - 1;
+                segs[index].DeletePoints(points);
+                segs.RemoveAt(index);
+                PointsRemoved(segs, index, numPointsRemoved);
+            }
+        }
         public void DeleteSegmentStartingAt(int index)
         {
-            if (segs.Count > 2)
+            if (segs.Count > 3)
             {
                 for (int i = 0; i < segs.Count; i++)
                 {
@@ -629,7 +640,7 @@ namespace Barnacle.LineLib
 
         public string ToPath(bool absolute = false)
         {
-            string result="";
+            string result = "";
             double ox;
             double oy;
             if (points.Count > 1)
@@ -801,6 +812,21 @@ namespace Barnacle.LineLib
                     }
                 }
             }
+        }
+
+        public bool DeleteSelectedSegment()
+        {
+            bool result = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    DeleteSegment(i);
+                    result = true;
+                    break;
+                }
+            }
+            return result;
         }
     }
 }

@@ -211,7 +211,13 @@ namespace Barnacle.Dialogs
                     nameRecs.Add(rec);
 
                 }
-
+                NextNameLetter = (char)('A' + Ribs.Count);
+                NextNameNumber = 0;
+                if (Ribs.Count > 26)
+                { 
+                    NextNameLetter = 'Z';
+                    NextNameNumber= Ribs.Count - 26;
+                }
 
                 // now rename the ribs locally
                 for (int i = 0; i < nameRecs.Count; i++)
@@ -255,8 +261,8 @@ namespace Barnacle.Dialogs
                             NextNameNumber++;
                         }
                         rc.Header = name;
-                        rc.Width = 600;
-                        rc.Height = 600;
+                        rc.Width = 500;
+                        rc.Height = 500;
                         Ribs.Add(rc);
                         NotifyPropertyChanged("Ribs");
                         if (OnRibAdded != null)
@@ -359,6 +365,7 @@ namespace Barnacle.Dialogs
         private void RenameRibs(string nameStart)
         {
             List<NameRec> nameRecs = new List<NameRec>();
+           
             int j = 0;
             for (int i = 0; i < Ribs.Count; i++)
             {
@@ -370,6 +377,7 @@ namespace Barnacle.Dialogs
                     if (j == 0)
                     {
                         rec.newName = nameStart;
+                       
                     }
                     else
                     {

@@ -676,6 +676,7 @@ namespace Barnacle.Dialogs
 
         internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
         {
+            int sc = 2;
             tlx = double.MaxValue;
             tly = double.MaxValue;
             brx = double.MinValue;
@@ -684,7 +685,7 @@ namespace Barnacle.Dialogs
             List<PointF> pnts = flexiPath.DisplayPointsF();
             if (bmp == null && pnts.Count > 0 && workingImage != null)
             {
-                bmp = new Bitmap(workingImage.Width, workingImage.Height);
+                bmp = new Bitmap(sc *workingImage.Width, sc * workingImage.Height);
             }
             if (bmp != null)
             {
@@ -710,7 +711,10 @@ namespace Barnacle.Dialogs
                         bry = (double)pnts[i].Y;
                     }
                 }
-
+                tlx *= sc;
+                tly *= sc;
+                brx *= sc;
+                bry *= sc;
                 using (var gfx = Graphics.FromImage(bmp))
                 using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
                 {
@@ -724,8 +728,8 @@ namespace Barnacle.Dialogs
                         {
                             j = 0;
                         }
-                        var pt1 = new System.Drawing.Point((int)(pnts[i].X) - (int)tlx + offset, (int)(pnts[i].Y) - (int)tly + offset);
-                        var pt2 = new System.Drawing.Point((int)(pnts[j].X) - (int)tlx + offset, (int)(pnts[j].Y) - (int)tly + offset);
+                        var pt1 = new System.Drawing.Point((int)(pnts[i].X*sc) - (int)tlx + offset, (int)(pnts[i].Y*sc) - (int)(tly) + offset);
+                        var pt2 = new System.Drawing.Point((int)(pnts[j].X*sc) - (int)tlx + offset, (int)(pnts[j].Y*sc) - (int)(tly) + offset);
                         gfx.DrawLine(pen, pt1, pt2);
                     }
                 }
@@ -1142,6 +1146,11 @@ namespace Barnacle.Dialogs
             int found = -1;
             bool added = false;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
+            if ( flexiPath.SelectAtPoint(position))
+            {
+                flexiPath.DeleteSelectedSegment();
+            }
+            /*
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             for (int i = 0; i < polyPoints.Count; i++)
             {
@@ -1166,13 +1175,20 @@ namespace Barnacle.Dialogs
                 added = true;
                 PathText = flexiPath.ToPath();
             }
-
+            */
             return added;
         }
 
         private void DelSegButton_Click(object sender, RoutedEventArgs e)
         {
-            SelectionMode = SelectionModeType.DeleteSegment;
+            if (flexiPath.DeleteSelectedSegment())
+            {
+                UpdateDisplay();
+            }
+            else
+            {
+                SelectionMode = SelectionModeType.DeleteSegment;
+            }
         }
 
         private void DisplayLines()
