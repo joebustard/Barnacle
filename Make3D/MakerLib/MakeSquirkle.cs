@@ -25,8 +25,8 @@ namespace MakerLib
             trc = tr;
             blc = bl;
             brc = br;
-            length = l;
-            squirkleheight = h;
+            length = h;
+            squirkleheight = l;
             depth = w;
         }
 

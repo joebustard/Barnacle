@@ -426,6 +426,44 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
+                case "pentagoncell":
+                    {
+                        PrimitiveGenerator.GenerateCell(5,ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Chartreuse);
+                       
+                        built = true;
+                    }
+                    break;
+
+                case "trianglecell":
+                    {
+                        PrimitiveGenerator.GenerateCell(3, ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.DarkOrchid);
+                        built = true;
+                    }
+                    break;
+
+                case "boxcell":
+                    {
+                        PrimitiveGenerator.GenerateCell(4, ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.DeepPink);
+                        built = true;
+                    }
+                    break;
+                case "hexagoncell":
+                    {
+                        PrimitiveGenerator.GenerateCell(6, ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.SpringGreen);
+                        built = true;
+                    }
+                    break;
+                case "octagoncell":
+                    {
+                        PrimitiveGenerator.GenerateCell(8, ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Color.FromRgb(0xEF, 0xAB, 0x00));
+                        built = true;
+                    }
+                    break;
                 default:
                     {
                         //   obj.LoadObject(pth + obType+".txt");

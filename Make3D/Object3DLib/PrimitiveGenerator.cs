@@ -4935,8 +4935,163 @@ namespace Barnacle.Object3DLib
             indices.Add(8);
             SwitchInsideOut(indices);
         }
+        public static void GenerateCell(int numsides,  ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            double innerR = 0.4;
+            double outterR = 0.5;
+            double dt = (Math.PI * 2.0) / numsides;
+            double theta = 0;
+            for ( int i = 0; i< numsides; i ++)
+            {
+                double x = innerR * Math.Sin(theta);
+                double y = innerR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, -0.5));
+            }
 
-        public static void GeneratePolygon(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+            theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = outterR * Math.Sin(theta);
+                double y = outterR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, -0.5));
+            }
+
+            theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = innerR * Math.Sin(theta);
+                double y = innerR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, 0.5));
+            }
+
+           
+            theta = 0;
+            for (int i = 0; i < numsides; i++)
+            {
+                double x = outterR * Math.Sin(theta);
+                double y = outterR * Math.Cos(theta);
+                theta += dt;
+                pnts.Add(new Point3D(x, y, 0.5));
+            }
+
+            double minx = double.MaxValue;
+            double maxx = double.MinValue;
+            double miny = double.MaxValue;
+            double maxy = double.MinValue;
+            for ( int i = 0; i < pnts.Count; i ++)
+            {
+                if (pnts[i].X < minx) minx = pnts[i].X;
+                if (pnts[i].X > maxx) maxx = pnts[i].X;
+                if (pnts[i].Y < miny) miny = pnts[i].Y;
+                if (pnts[i].Y > maxy) maxy = pnts[i].Y;
+            }
+            double xs = (maxx - minx); 
+            double ys = (maxy - miny);
+            if ( xs >0 && ys > 0)
+            {
+                for (int i = 0; i < pnts.Count; i++)
+                {
+                    pnts[i] = new Point3D(pnts[i].X / xs, (pnts[i].Y) / ys, pnts[i].Z);
+                }
+            }
+            for (int i = 0; i < numsides; i++)
+            {
+                int j = i + 1;
+                if ( j == numsides)
+                {
+                    j = 0;
+                }
+                int k = i + (2 * numsides);
+                int l = k + 1;
+                if ( l == 3 * numsides)
+                {
+                    l = 2 * numsides;
+                }
+                // tri 1 of inner
+                indices.Add(i);
+                indices.Add(j);
+                indices.Add(k);
+
+                // tri 2 of inner
+                indices.Add(j);
+                indices.Add(l);
+                indices.Add(k);
+            }
+            
+            for (int i = numsides; i < numsides*2; i++)
+            {
+                int j = i + 1;
+                if (j == numsides * 2)
+                {
+                    j = numsides;
+                }
+                int k = i + (2 * numsides);
+                int l = j + (2 * numsides);
+
+                
+                // tri 1 of outter
+                indices.Add(k);
+                indices.Add(j);
+                indices.Add(i);
+                
+                
+                // tri 2 of outter
+                indices.Add(l);
+                indices.Add(j);
+                indices.Add(k);
+                
+            }
+
+            // bottom
+            for (int i = 0; i < numsides ; i++)
+            {
+                int j = i + 1;
+                if (j == numsides )
+                {
+                    j = 0;
+                }
+                int k = i + numsides;
+                int l = j + numsides;
+                
+                // tri 1 of outter
+                indices.Add(i);
+                indices.Add(k);
+                indices.Add(j);
+
+
+                indices.Add(j);
+                indices.Add(k);
+                indices.Add(l);
+               
+            }
+
+            // top
+            for (int i = numsides*2 ; i < 3 *numsides; i++)
+            {
+                int j = i + 1;
+                if (j == 3 * numsides)
+                {
+                    j = 2 * numsides;
+                }
+                int k = i + numsides;
+                int l = j + numsides;
+
+                // tri 1 of outter
+                indices.Add(i);
+                indices.Add(j);
+                indices.Add(k);
+
+
+                indices.Add(j);
+                indices.Add(l);
+                indices.Add(k);
+
+            }
+        }
+            public static void GeneratePolygon(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts.Add(new Point3D(-0.500, 0.250, 0.500));
             pnts.Add(new Point3D(-0.500, 0.250, -0.500));
