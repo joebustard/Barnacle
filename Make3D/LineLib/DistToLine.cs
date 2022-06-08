@@ -53,6 +53,29 @@ namespace Barnacle.LineLib
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
+
+        /// <summary>
+        /// Find the t of the point relative to a line seqment
+        /// </summary>
+        /// <param name="pt"> point whose t we want</param>
+        /// <param name="p1">one end of the segment</param>
+        /// <param name="p2">other end of the segment</param>
+        /// <returns></returns>
+        public static double FindTOfClosestToLine(
+          Point pt, Point p1, Point p2)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            if ((dx == 0) && (dy == 0))
+            {
+                return double.MinValue;
+            }
+
+            // Calculate the t that minimizes the distance.
+            double t = ((pt.X - p1.X) * dx + (pt.Y - p1.Y) * dy) /
+                (dx * dx + dy * dy);
+            return t;
+        }
         public static double FindDistanceToLine(
            Point pt, Point p1, Point p2)
         {

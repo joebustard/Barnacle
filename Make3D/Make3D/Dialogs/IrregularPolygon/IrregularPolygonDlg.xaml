@@ -66,7 +66,7 @@
                                  Width="100"/>
                     </StackPanel>
                     <CheckBox IsChecked="{Binding ShowOrtho}"
-                              ToolTip="Show orthogononal guides and highligh orthogonal points">
+                              ToolTip="Show orthogononal guides and highlight orthogonal points">
                     Show Ortho
                     </CheckBox>
                 </StackPanel>
@@ -93,93 +93,7 @@
                 </UniformGrid>
                 
             </Border>
-            <Border Grid.Column="0"
-                    Grid.Row="2"
-                    Padding="1,1,1,1"
-                    Style="{StaticResource ControlBorder}">
-                <UniformGrid Columns="7"
-                             Margin="-0.4,-0.4,0.4,0.4"
-                             VerticalAlignment="Bottom"
-                             Height="40">
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="PickBorder">
-                        <Button Click="PickButton_Click"
-                                Style="{StaticResource SmallButton }"
-                                ToolTip="Select a segment or point"
-                                x:Name="PickButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png"/>
-
-                        </Button>
-                    </Border>
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="AddSegBorder">
-                        <Button Click="AddSegButton_Click"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Insert a straight segment"
-                                x:Name="AddSegButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png"/>
-
-                        </Button>
-                    </Border>
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="AddBezierBorder">
-                        <Button Click="AddBezierButton_Click"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Convert a straight segment to a cubic spline"
-                                x:Name="AddBezierButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png"/>
-
-                        </Button>
-                    </Border>
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="AddQuadBezierBorder">
-                        <Button Click="AddQuadBezierButton_Click"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Convert a straight segment to a quadratic spline"
-                                x:Name="AddQuadBezierButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png"/>
-
-                        </Button>
-                    </Border>
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="DelSegBorder">
-                        <Button Click="DelSegButton_Click"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Delete a segment"
-                                x:Name="DelSegButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png"/>
-
-                        </Button>
-                    </Border>
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="MovePathBorder">
-                        <Button Click="MovePathButton_Click"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Move entire path to clicked point"
-                                x:Name="MovePathButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/MovePath.png"/>
-
-                        </Button>
-                    </Border>
-                    <Border BorderThickness="4"
-                            CornerRadius="2"
-                            x:Name="ResetPathBorder">
-                        <Button Click="ResetPathButton_Click"
-                                Style="{StaticResource SmallButton}"
-                                ToolTip="Reset the entire path"
-                                x:Name="ResetPathButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png"/>
-
-                        </Button>
-                    </Border>
-                </UniformGrid>
-            </Border>
+            
             <Border Grid.Column="0"
                     Grid.Row="3"
                     Padding="2,2,2,10"
@@ -260,10 +174,108 @@
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="48"/>
                     <RowDefinition />
                     <RowDefinition Height="25"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer Grid.Row="0"
+                <Border Grid.Column="0"
+                    Grid.Row="0"
+                    Padding="1,1,1,1"
+                    Style="{StaticResource ControlBorder}">
+                    <UniformGrid Columns="9"
+                             Margin="-0.4,-0.4,0.4,0.4"
+                             VerticalAlignment="Bottom"
+                             Height="40">
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="PickBorder">
+                            <Button Click="PickButton_Click"
+                                Style="{StaticResource SmallButton }"
+                                ToolTip="Select a segment or point"
+                                x:Name="PickButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png"/>
+
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="AddSegBorder">
+                            <Button Click="AddSegButton_Click"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Insert a straight segment"
+                                x:Name="AddSegButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png"/>
+
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="CNVDoubleSegBorder">
+                            <Button Command="{Binding CNVDoubleSegCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Convert two selected straight segments into a Quadratic spline"
+                                x:Name="CNVSegButton" Visibility="{Binding CNVDoubleVisible}" >
+                                <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png"/>
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="AddBezierBorder">
+                            <Button Click="AddBezierButton_Click"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Convert a straight segment to a cubic spline"
+                                x:Name="AddBezierButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png"/>
+
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="AddQuadBezierBorder">
+                            <Button Click="AddQuadBezierButton_Click"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Convert a straight segment to a quadratic spline"
+                                x:Name="AddQuadBezierButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png"/>
+
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="DelSegBorder">
+                            <Button Click="DelSegButton_Click"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Delete a segment"
+                                x:Name="DelSegButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png"/>
+
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="MovePathBorder">
+                            <Button Click="MovePathButton_Click"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Move entire path to clicked point"
+                                x:Name="MovePathButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/MovePath.png"/>
+
+                            </Button>
+                        </Border>
+                        <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="ResetPathBorder">
+                            <Button Click="ResetPathButton_Click"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Reset the entire path"
+                                x:Name="ResetPathButton">
+                                <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png"/>
+
+                            </Button>
+                        </Border>
+                    </UniformGrid>
+                </Border>
+                <ScrollViewer Grid.Row="1"
                               HorizontalScrollBarVisibility="Visible"
                               VerticalScrollBarVisibility="Visible">
                     <Canvas Background="Transparent"
@@ -276,7 +288,7 @@
                         </Canvas.LayoutTransform>
                     </Canvas>
                 </ScrollViewer>
-                <StackPanel Grid.Row="1"
+                <StackPanel Grid.Row="2"
                             Orientation="Horizontal">
                     <Button Click="CopyPath_Click"
                             ToolTip="Copy the path text to the clipboard."

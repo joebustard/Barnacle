@@ -916,6 +916,7 @@
     <Resource Include="Images\Buttons\OctagonCell.png" />
     <Resource Include="Images\Buttons\PentagonCell.png" />
     <Resource Include="Images\Buttons\TriangleCell.png" />
+    <Resource Include="Images\Buttons\CNVDoubleSegment.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
