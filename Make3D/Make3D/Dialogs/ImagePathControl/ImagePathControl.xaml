@@ -93,7 +93,7 @@
                     Grid.Row="1"
                     Padding="2,2,2,2"
                     Style="{StaticResource ControlBorder}">
-                <UniformGrid Columns="8"
+                <UniformGrid Columns="9"
                              MaxWidth="500">
                     <Button Command="{Binding ShowAllPointsCommand}"
                                 Style="{StaticResource SmallButton }"
@@ -126,6 +126,17 @@
                     </Border>
                     <Border BorderThickness="4"
                             CornerRadius="2"
+                            x:Name="CNVDoubleSegBorder">
+                        <Button Command="{Binding CNVDoubleSegCommand}"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Convert two selected straight segments into a Quadratic spline"
+                                x:Name="CNVSegButton" IsEnabled="{Binding CanCNVDouble}" HorizontalAlignment="Right" Margin="0,0,0.2,0" Width="47">
+                            <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png"/>
+
+                        </Button>
+                    </Border>
+                    <Border BorderThickness="4"
+                            CornerRadius="2"
                             x:Name="AddBezierBorder">
                         <Button Command="{Binding AddBezierCommand}"
                                 Style="{StaticResource SmallButton}"
@@ -140,7 +151,7 @@
                             x:Name="AddQuadBezierBorder">
                         <Button Command="{Binding AddQuadBezierCommand}"
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Convert a straight segment to a quadratic spline"
+                                ToolTip="Convert a sinle straight segment to a quadratic spline"
                                 x:Name="AddQuadBezierButton">
                             <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png"/>
 

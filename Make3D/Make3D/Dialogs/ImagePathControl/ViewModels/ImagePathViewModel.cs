@@ -129,7 +129,19 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
 
         public delegate void ForceReload(string pth);
 
-
+        private bool canCNVDouble;
+        public bool CanCNVDouble
+        {
+            get { return canCNVDouble; }
+            set
+            {
+                if ( canCNVDouble != value)
+                {
+                    canCNVDouble = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public enum SelectionModeType
         {
@@ -910,6 +922,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         public ICommand DelSegCommand { get; set; }
         public ICommand MovePathCommand { get; set; }
         public ICommand ResetPathCommand { get; set; }
+        public ICommand CNVDoubleSegCommand { get; set; }
         public ImagePathViewModel()
         {
             ZoomInCommand = new RelayCommand(OnZoomIn);
@@ -917,7 +930,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             ZoomResetCommand = new RelayCommand(OnZoomReset);
             ShowAllPointsCommand = new RelayCommand(OnShowAllPoints);
             AddSegCommand = new RelayCommand(OnAddSeg);
-
+            CNVDoubleSegCommand = new RelayCommand(OnCNVDoublePath);
             AddBezierCommand = new RelayCommand(OnAddBezier);
             AddQuadBezierCommand = new RelayCommand(OnAddQuadBezier);
             DelSegCommand = new RelayCommand(OnDeleteSeg);
@@ -968,6 +981,11 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             return added;
         }
         private void AddPointClicked(object sender, RoutedEventArgs e)
+        {
+        }
+
+
+        private void OnCNVDoublePath(object obj)
         {
         }
 
@@ -1634,6 +1652,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                     UpdateDisplay();
                 }
             }
+            canCNVDouble = flexiPath.HasTwoConsecutiveLineSegmentsSelected();
         }
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)

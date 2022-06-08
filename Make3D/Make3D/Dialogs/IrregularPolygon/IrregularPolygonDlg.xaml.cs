@@ -1,5 +1,6 @@
 ﻿using Barnacle.LineLib;
 using Barnacle.Models;
+using Barnacle.ViewModels;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
@@ -69,10 +70,11 @@ namespace Barnacle.Dialogs
             SetButtonBorderColours();
             showGrid = true;
             snap = true;
+            CNVDoubleSegCommand = new RelayCommand(OnCNVDoublePath);
         }
         private bool closeFigure;
         public enum SelectionModeType
-        {   
+        {
             StartPoint,
             AddPoint,
             SelectPoint,
@@ -589,7 +591,7 @@ namespace Barnacle.Dialogs
                 {
                     for (int i = 0; i < points.Count; i++)
                     {
-                        AddLine(i, i + 1, points,  closeFigure);
+                        AddLine(i, i + 1, points, closeFigure);
                     }
                 }
             }
@@ -659,7 +661,7 @@ namespace Barnacle.Dialogs
                     }
                 }
                 // If we are appending points to the polygon then always draw the start point
-                if ( (selectionMode == SelectionModeType.StartPoint || selectionMode == SelectionModeType.AddPoint) && polyPoints.Count >0)
+                if ((selectionMode == SelectionModeType.StartPoint || selectionMode == SelectionModeType.AddPoint) && polyPoints.Count > 0)
                 {
                     br = System.Windows.Media.Brushes.Red;
                     var p = polyPoints[0].ToPoint();
@@ -1097,7 +1099,8 @@ namespace Barnacle.Dialogs
                 {
                     case SelectionModeType.SelectPoint:
                         {
-                            found = SelectLineFromPoint(e);
+                            bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                            found = SelectLineFromPoint(e,shiftDown);
                         }
                         break;
 
@@ -1131,6 +1134,7 @@ namespace Barnacle.Dialogs
                 }
                 if (found)
                 {
+                    e.Handled = true;
                     UpdateDisplay();
                 }
             }
@@ -1219,13 +1223,13 @@ namespace Barnacle.Dialogs
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
-            
-           
-            if ( Math.Abs(position.X-flexiPath.Start.X)<2 && Math.Abs(position.Y - flexiPath.Start.Y) < 2)
+
+
+            if (Math.Abs(position.X - flexiPath.Start.X) < 2 && Math.Abs(position.Y - flexiPath.Start.Y) < 2)
             {
                 closeFigure = true;
                 selectedPoint = -1;
-                selectionMode = SelectionModeType.SelectPoint; 
+                selectionMode = SelectionModeType.SelectPoint;
             }
             else
             {
@@ -1248,7 +1252,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-            private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
@@ -1276,7 +1280,7 @@ namespace Barnacle.Dialogs
             if (selectedPoint != -1 && moving && snap)
             {
                 System.Windows.Point position = e.GetPosition(MainCanvas);
-                
+
                 PositionLabel.Content = "";
 
                 double gx = position.X / gridX;
@@ -1286,7 +1290,7 @@ namespace Barnacle.Dialogs
                 polyPoints[selectedPoint].X = gx;
                 polyPoints[selectedPoint].Y = gy;
 
-                flexiPath.SetPointPos(selectedPoint, new System.Windows.Point(ToMMX(gx),ToMMY(gy)));
+                flexiPath.SetPointPos(selectedPoint, new System.Windows.Point(ToMMX(gx), ToMMY(gy)));
                 PathText = flexiPath.ToPath();
                 GenerateFaces();
                 UpdateDisplay();
@@ -1450,7 +1454,7 @@ namespace Barnacle.Dialogs
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
         }
-        
+
         private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
         {
             double x;
@@ -1501,6 +1505,46 @@ namespace Barnacle.Dialogs
         {
             selectionMode = SelectionModeType.SelectPoint;
         }
+        private bool canCNVDouble;
+        public bool CanCNVDouble
+        {
+            get { return canCNVDouble; }
+            set
+            {
+                if (canCNVDouble != value)
+                {
+                    canCNVDouble = value;
+                    NotifyPropertyChanged();
+                    NotifyPropertyChanged("CNVDoubleVisible");
+                }
+            }
+        }
+        public Visibility CNVDoubleVisible
+        {
+            get
+            {
+                if (canCNVDouble)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Hidden;
+                }
+            }
+        }
+        public ICommand CNVDoubleSegCommand { get; set; }
+        private void OnCNVDoublePath(object obj)
+        {
+            if ( canCNVDouble)
+            {
+                flexiPath.ConvertTwoLineSegmentsToQuadraticBezier();
+                GenerateFaces();
+                UpdateDisplay();
+                PathText = flexiPath.ToPath();
+                CanCNVDouble = false;
+            }
+        }
 
         private ContextMenu PointMenu(object tag)
         {
@@ -1534,12 +1578,12 @@ namespace Barnacle.Dialogs
             PathText = flexiPath.ToPath();
         }
 
-        private bool SelectLineFromPoint(MouseButtonEventArgs e)
+        private bool SelectLineFromPoint(MouseButtonEventArgs e, bool shift)
         {
             bool found;
             System.Windows.Point position = e.GetPosition(MainCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
-            found = flexiPath.SelectAtPoint(position);
+            found = flexiPath.SelectAtPoint(position, !shift);
 
             if (found)
             {
@@ -1548,7 +1592,7 @@ namespace Barnacle.Dialogs
                 CollectionViewSource.GetDefaultView(Points).Refresh();
                 Redisplay();
             }
-
+            CanCNVDouble = flexiPath.HasTwoConsecutiveLineSegmentsSelected();
             return found;
         }
 
