@@ -9,8 +9,7 @@
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                          Width="800"
-                          Height="800">
+                          >
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
@@ -56,9 +55,9 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
-                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1.25*"/>
+                        <RowDefinition Height="2*"/>
+                        
                     </Grid.RowDefinitions>
                     <UniformGrid Columns="2"
                                  Grid.Column="0"
@@ -169,19 +168,20 @@
                                      IsChecked="{Binding WholeBody}" VerticalAlignment="Center"/>
                         <RadioButton Content="Front"
                                      GroupName="BodyMode"
-                                     IsChecked="{Binding FrontBody}" VerticalAlignment="Center"/>
+                                     IsChecked="{Binding FrontBody}" VerticalAlignment="Center" Margin="0,4,0,0"/>
                         <RadioButton Content="Back"
                                      GroupName="BodyMode"
-                                     IsChecked="{Binding BackBody}" VerticalAlignment="Center"/>
-                        <StackPanel Orientation="Horizontal">
+                                     IsChecked="{Binding BackBody}" VerticalAlignment="Center"  Margin="0,4,0,0"/>
+                        <CheckBox Content="Autofit" IsChecked="{Binding AutoFit}" ToolTip="If consecutive ribs have the same path automatically interpolate virtual ribs in between."  Margin="0,4,0,0"/>
+                        <StackPanel Orientation="Horizontal"  Margin="0,4,0,0">
                             <Label VerticalAlignment="Center">
                                 Divisions
                             </Label>
                             <TextBox Text="{Binding NumberOfDivisions}"
                                      VerticalContentAlignment="Center"
-                                     Width="80" Height="30"/>
+                                     Width="60" Height="30" Margin="4,0,0,0"/>
                         </StackPanel>
-                        <Button x:Name="ResetMarkers" Click="ResetMarkers_Click" Content="Reset Markers" ToolTip="Spread markers evenly"/>
+                        <Button x:Name="ResetMarkers" Click="ResetMarkers_Click" Content="Reset Markers" ToolTip="Spread markers evenly"  Margin="0,4,0,0"/>
                     </UniformGrid>
                     <TabControl Grid.Column="1"
                                 Grid.Row="2"

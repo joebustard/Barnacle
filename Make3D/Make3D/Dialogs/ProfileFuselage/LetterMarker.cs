@@ -1,5 +1,4 @@
-﻿using Barnacle.Dialogs.ProfileFuselage.ViewModels;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Barnacle.Dialogs
 {
@@ -13,7 +12,7 @@ namespace Barnacle.Dialogs
 
         public string Letter { get; set; }
         public Point Position { get; set; }
-        public ImagePathViewModel Rib { get; set; }
+        public ImagePathControl Rib { get; set; }
 
         internal void Dump()
         {

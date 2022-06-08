@@ -1,5 +1,4 @@
-﻿using Barnacle.Dialogs.ProfileFuselage.ViewModels;
-using Barnacle.Models;
+﻿using Barnacle.Models;
 using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
@@ -37,7 +36,22 @@ namespace Barnacle.Dialogs
         private string topViewFilename;
         private Point3DCollection vertices;
         private bool wholeBody;
+        private bool autoFit;
+        public bool AutoFit
+        {
+            get { return autoFit; }
+            set
+            {
+                if (autoFit != value)
+                {
+                    autoFit = value;
+                    NotifyPropertyChanged();
+                    GenerateSkin();
+                    Redisplay();
+                }
 
+            }
+        }
         private double zoomLevel;
 
         public ProfileFuselageDlg()
@@ -49,6 +63,7 @@ namespace Barnacle.Dialogs
             mesh = new MeshGeometry3D();
             vertices = new Point3DCollection();
             WholeBody = true;
+            autoFit = false;
             zoomLevel = 1;
             dirty = false;
             filePath = "";
@@ -296,7 +311,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void OnRibAdded(string name, ImagePathViewModel rc)
+        public void OnRibAdded(string name, ImagePathControl rc)
         {
             int nextX = 0;
             int nextY = 10;
@@ -314,7 +329,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        public void OnRibDeleted(ImagePathViewModel rc)
+        public void OnRibDeleted(ImagePathControl rc)
         {
             LetterMarker target = null;
             foreach (LetterMarker mk in markers)
@@ -334,7 +349,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        public void OnRibInserted(string name, ImagePathViewModel rc)
+        public void OnRibInserted(string name, ImagePathControl rc)
         {
             int nextX = 10;
             int nextY = 10;
@@ -403,7 +418,7 @@ namespace Barnacle.Dialogs
             RibManager.CopyARib(name);
         }
 
-        private void CreateLetter(string v1, System.Drawing.Point v2, ImagePathViewModel rib)
+        private void CreateLetter(string v1, System.Drawing.Point v2, ImagePathControl rib)
         {
             LetterMarker mk = new LetterMarker(v1, v2);
             mk.Rib = rib;
@@ -425,25 +440,71 @@ namespace Barnacle.Dialogs
                 Faces.Clear();
                 Vertices.Clear();
                 bool okToGenerate = true;
+                double prevX = 0;
+                List<ImagePathControl> theRibs = new List<ImagePathControl>();
+                List<double> ribXs = new List<double>();
+                List<Dimension> topDims = new List<Dimension>();
+                List<Dimension> sideDims = new List<Dimension>();
+                
                 for (int i = 0; i < RibManager.Ribs.Count; i++)
                 {
-                    if (!RibManager.Ribs[i].HasPoints)
+                    double x =markers[i].Position.X;
+                    ImagePathControl cp = RibManager.Ribs[i].Clone(false);
+                    cp.GenerateProfilePoints();
+                    string cpPath = cp.GenPath();
+                    if (autoFit && theRibs.Count > 0)
+                    {
+                        string prevPath = theRibs[theRibs.Count - 1].PathText;
+
+                        if (cpPath == prevPath)
+                        {
+                            if (x - prevX > 4)
+                            {
+                                double nx = prevX + 1;
+                                while ( nx < x)
+                                {
+                                    ImagePathControl nr = RibManager.Ribs[i].Clone(false);
+                                    nr.GenerateProfilePoints();
+                                    theRibs.Add(nr);
+                                    ribXs.Add(nx);
+                                    Dimension dp1 = TopView.GetUpperAndLowerPoints((int)nx);
+                                    topDims.Add(dp1);
+                                    dp1 = SideView.GetUpperAndLowerPoints((int)nx);
+                                    sideDims.Add(dp1);
+                                    nx += 4;
+                                }
+                            }
+                        }
+                    }
+                    theRibs.Add(cp);
+                    ribXs.Add(x);
+                    Dimension dp = TopView.GetUpperAndLowerPoints((int)x);
+                    topDims.Add(dp);
+                    dp = SideView.GetUpperAndLowerPoints((int)x);
+                   sideDims.Add(dp);
+                    prevX = x;
+                }
+
+                
+                for (int i = 0; i < theRibs.Count; i++)
+                {
+                    if (theRibs[i].ProfilePoints.Count ==0)
                     {
                         okToGenerate = false;
                         break;
                     }
                 }
                 // do we have enough data to construct the model
-                if (RibManager.Ribs.Count > 1 && okToGenerate)
+                if (theRibs.Count > 1 && okToGenerate)
                 {
-                    RibManager.Ribs[0].GenerateProfilePoints();
-                    int facesPerRib = RibManager.Ribs[0].ProfilePoints.Count;
-                    int[,] ribvertices = new int[RibManager.Ribs.Count, facesPerRib];
+                   // theRibs[0].GenerateProfilePoints();
+                    int facesPerRib = theRibs[0].ProfilePoints.Count;
+                    int[,] ribvertices = new int[theRibs.Count, facesPerRib];
                     // there should be a marker and hence a dimension for every rib.
                     // If ther isn't then somethins wrong
-                    if (RibManager.Ribs.Count != TopView.Dimensions.Count)
+                    if (theRibs.Count != topDims.Count)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Ribs {RibManager.Ribs.Count} TopView Dimensions {TopView.Dimensions.Count}");
+                        System.Diagnostics.Debug.WriteLine($"Ribs {theRibs.Count} TopView Dimensions {topDims.Count}");
                     }
                     else
                     {
@@ -455,23 +516,33 @@ namespace Barnacle.Dialogs
                         // assume its whole model
                         int start = 0;
                         int end = facesPerRib;
+                        if (frontBody)
+                        {
+                            end = facesPerRib / 2;
+                        }
+                        if (backBody)
+                        {
+                            start = facesPerRib / 2;
+                        }
 
-                        double x = TopView.GetXmm(markers[0].Position.X);
+                        //double x = TopView.GetXmm(ribXs[0]);
+                        double x = ribXs[0];
                         List<PointF> leftEdge = new List<PointF>();
                         double leftx = x;
                         List<PointF> rightEdge = new List<PointF>();
                         double rightx = x;
                         int vert = 0;
                         int vindex = 0;
-                        for (int i = 0; i < RibManager.Ribs.Count; i++)
+                        for (int i = 0; i <theRibs.Count; i++)
                         {
-                            if (i != 0)
-                            {
-                                RibManager.Ribs[i].GenerateProfilePoints();
-                            }
-                            System.Diagnostics.Debug.WriteLine($"Rib {i} pnts {RibManager.Ribs[i].ProfilePoints.Count}");
-                            x = TopView.GetXmm(markers[i].Position.X);
-                            if (i == RibManager.Ribs.Count - 1)
+                       //     if (i != 0)
+                      //      {
+                      //         theRibs[i].GenerateProfilePoints();
+                      //      }
+                      //      System.Diagnostics.Debug.WriteLine($"Rib {i} pnts {RibManager.Ribs[i].ProfilePoints.Count}");
+                            x = TopView.GetXmm(ribXs[i]);
+                            //x = ribXs[i];
+                            if (i == theRibs.Count - 1)
                             {
                                 rightx = x;
                             }
@@ -479,16 +550,16 @@ namespace Barnacle.Dialogs
                             vindex = 0;
                             for (int proind = start; proind < end; proind++)
                             {
-                                if (proind < RibManager.Ribs[i].ProfilePoints.Count)
+                                if (proind <theRibs[i].ProfilePoints.Count)
                                 {
-                                    PointF pnt = RibManager.Ribs[i].ProfilePoints[proind];
+                                    PointF pnt = theRibs[i].ProfilePoints[proind];
 
-                                    double v = (double)pnt.X * (double)TopView.Dimensions[i].Height;
-                                    double z = TopView.GetYmm(v + (double)TopView.Dimensions[i].P1.Y);
+                                    double v = (double)pnt.X * (double)topDims[i].Height;
+                                    double z = TopView.GetYmm(v + (double)topDims[i].P1.Y);
 
 
-                                    v = (double)pnt.Y * (double)SideView.Dimensions[i].Height;
-                                    double y = -SideView.GetYmm(v + SideView.Dimensions[i].P1.Y);
+                                    v = (double)pnt.Y * (double)sideDims[i].Height;
+                                    double y = -SideView.GetYmm(v + sideDims[i].P1.Y);
 
                                     vert = AddVertice(x, y, z);
                                     ribvertices[i, vindex] = vert;
@@ -498,7 +569,7 @@ namespace Barnacle.Dialogs
                                         leftEdge.Add(new PointF((float)y, (float)z));
 
                                     }
-                                    if (i == RibManager.Ribs.Count - 1)
+                                    if (i ==theRibs.Count - 1)
                                     {
                                         rightEdge.Add(new PointF((float)y, (float)z));
                                     }
@@ -510,7 +581,7 @@ namespace Barnacle.Dialogs
                             }
                         }
                         facesPerRib = leftEdge.Count;
-                        for (int ribIndex = 0; ribIndex < RibManager.Ribs.Count - 1; ribIndex++)
+                        for (int ribIndex = 0; ribIndex <theRibs.Count - 1; ribIndex++)
                         {
                             for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
                             {
@@ -588,6 +659,7 @@ namespace Barnacle.Dialogs
                 {
                     NumberOfDivisions = Convert.ToInt16(s);
                 }
+                autoFit = EditorParameters.GetBoolean("AutoFit");
             }
         }
 
@@ -596,11 +668,11 @@ namespace Barnacle.Dialogs
             bool res = true;
             try
             {
-                ImagePathViewModel rc = new ImagePathViewModel();
+                ImagePathControl rc = new ImagePathControl();
                 rc.ImagePath = pth;
-                rc.ImagePathHeader = nme;
-             //   rc.Width = 600;
-             //   rc.Height = 600;
+                rc.Header = nme;
+                rc.Width = 600;
+                rc.Height = 600;
                 rc.Scale = viewScale;
                 rc.EdgePath = edgePath;
                 rc.ScrollX = scx;
@@ -623,7 +695,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private void OnRibInserted(string name, ImagePathViewModel rc, ImagePathViewModel after)
+        private void OnRibInserted(string name, ImagePathControl rc, ImagePathControl after)
         {
             int nextX = 0;
             int nextY = 10;
@@ -729,11 +801,11 @@ namespace Barnacle.Dialogs
         private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
         {
             XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
-            ImagePathViewModel rc = new ImagePathViewModel();
+            ImagePathControl rc = new ImagePathControl();
             rc.Read(el);
-            rc.ImagePathHeader = nme;
-        //    rc.Width = 600;
-         //   rc.Height = 600;
+            rc.Header = nme;
+            rc.Width = 600;
+            rc.Height = 600;
             rc.FetchImage();
             if (rc.IsValid)
             {
@@ -782,6 +854,7 @@ namespace Barnacle.Dialogs
             }
             EditorParameters.Set("Model", md);
             EditorParameters.Set("NumberOfDivisions", numberOfDivisions.ToString());
+            EditorParameters.Set("AutoFit", autoFit.ToString());
         }
 
         private void SaveProject()
@@ -824,7 +897,7 @@ namespace Barnacle.Dialogs
                 }
                 SideView.Markers = markers;
                 TopView.Markers = markers;
-                ObservableCollection<ImagePathViewModel> ribs = new ObservableCollection<ImagePathViewModel>();
+                ObservableCollection<ImagePathControl> ribs = new ObservableCollection<ImagePathControl>();
                 foreach (LetterMarker mk in markers)
                 {
                     ribs.Add(mk.Rib);
@@ -952,17 +1025,17 @@ namespace Barnacle.Dialogs
             SideViewManager.PathControl.Write(doc, sideNode);
             sideNode.SetAttribute("Path", SideViewManager.ImageFilePath);
             docNode.AppendChild(sideNode);
-            foreach (ImagePathViewModel ob in RibManager.Ribs)
+            foreach (ImagePathControl ob in RibManager.Ribs)
             {
 
 
                 foreach (LetterMarker mk in markers)
                 {
-                    if (mk.Letter == ob.ImagePathHeader)
+                    if (mk.Letter == ob.Header)
                     {
                         // ob.Write(doc, docNode, mk.Position.X, mk.Letter);
                         XmlElement ribNode = doc.CreateElement("Rib");
-                        ribNode.SetAttribute("Header", ob.ImagePathHeader);
+                        ribNode.SetAttribute("Header", ob.Header);
                         ribNode.SetAttribute("Position", mk.Position.X.ToString());
                         docNode.AppendChild(ribNode);
                         ob.Write(doc, ribNode);

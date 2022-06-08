@@ -162,13 +162,12 @@
       <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
-    <Compile Include="Dialogs\ImagePathControl\ImagePathControl.xaml.cs">
+    <Compile Include="Dialogs\ProfileFuselage\ImagePathControl.xaml.cs">
       <DependentUpon>ImagePathControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ProfileFuselage\ViewManager.xaml.cs">
       <DependentUpon>ViewManager.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ImagePathControl\ViewModels\ImagePathViewModel.cs" />
     <Compile Include="Dialogs\Propeller\Propeller.xaml.cs">
       <DependentUpon>Propeller.xaml</DependentUpon>
     </Compile>
@@ -459,7 +458,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\ImagePathControl\ImagePathControl.xaml">
+    <Page Include="Dialogs\ProfileFuselage\ImagePathControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

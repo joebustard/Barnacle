@@ -78,23 +78,27 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private int numberOfStones;
+        private int stoneSize;
 
-        public int  NumberOfStones
+        public int  StoneSize
         {
             get
             {
-                return numberOfStones;
+                return stoneSize;
             }
             set
             {
-                if (numberOfStones != value)
+                if (stoneSize != value)
                 {
-                    if (value >= 5 && value <= 200)
+                    if (value >= 5 && value <= wallHeight / 2 && value <= wallLength / 2)
                     {
-                        numberOfStones = value;
+                        stoneSize = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
+                    }
+                    else
+                    {
+                        WarningText = "Stone size myust be in the range 5 to wallLength / 2 or wallHeight / 2";
                     }
                 }
             }
@@ -107,7 +111,7 @@ namespace Barnacle.Dialogs
             wallLength = 100;
             wallHeight = 80;
             wallThickness = 4;
-            numberOfStones = 10;
+            stoneSize = 5; 
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
@@ -173,7 +177,7 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            StoneWallMaker maker = new StoneWallMaker(wallLength, wallHeight, wallThickness, numberOfStones);
+            StoneWallMaker maker = new StoneWallMaker(wallLength, wallHeight, wallThickness, stoneSize);
             maker.Generate(Vertices, Faces);
         }
 
@@ -196,9 +200,9 @@ namespace Barnacle.Dialogs
                 wallThickness = EditorParameters.GetDouble("WallThickness");
             }
 
-            if (EditorParameters.Get("NumberOfStones") != "")
+            if (EditorParameters.Get("StoneSize") != "")
             {
-                numberOfStones = EditorParameters.GetInt("NumberOfStones");
+                stoneSize = EditorParameters.GetInt("StoneSize");
             }
         }
 
@@ -209,7 +213,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("WallLength", WallLength.ToString());
             EditorParameters.Set("WallHeight", WallHeight.ToString());
             EditorParameters.Set("WallThickness", WallThickness.ToString());
-            EditorParameters.Set("NumberOfStones", NumberOfStones.ToString());
+            EditorParameters.Set("StoneSize", StoneSize.ToString());
         }
 
         private void UpdateDisplay()

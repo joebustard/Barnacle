@@ -46,8 +46,8 @@
 
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">NumberOfStones</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding NumberOfStones}" Width="150"/>
+                                <Label VerticalAlignment="Center" Width="100">Stone Size</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding StoneSize}" Width="150"/>
 
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">

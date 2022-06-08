@@ -1,35 +1,28 @@
 ﻿using Barnacle.LineLib;
-using Barnacle.ViewModels;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml;
-using Clipboard = System.Windows.Clipboard;
 
-namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
+namespace Barnacle.Dialogs
 {
-    public class ImagePathViewModel : INotifyPropertyChanged
+    /// <summary>
+    /// Interaction logic for ImagePathControl.xaml
+    /// </summary>
+    public partial class ImagePathControl : UserControl, INotifyPropertyChanged
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-
-
-
         public ForceReload OnForceReload;
         private double brx = double.MinValue;
         private double bry = double.MinValue;
@@ -90,23 +83,6 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         private double tly = double.MaxValue;
         private int wallWidth;
 
-        private Canvas displayCanvas;
-
-        public Canvas DisplayCanvas
-        {
-            get { return displayCanvas; }
-            set
-            {
-                if (displayCanvas != value)
-                {
-                    displayCanvas = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-       
-
         private System.Drawing.Bitmap workingImage;
         public bool HasPoints
         {
@@ -125,11 +101,17 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                 return res;
             }
         }
+        public ImagePathControl()
+        {
+            InitializeComponent();
 
+            Clear();
+            loaded = false;
+        }
 
         public delegate void ForceReload(string pth);
 
-
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public enum SelectionModeType
         {
@@ -181,7 +163,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             }
         }
 
-        public string ImagePathHeader
+        public string Header
         {
             get
             {
@@ -428,7 +410,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
 
         public void Clear()
         {
-            ImagePathHeader = "";
+            Header = "";
             FName = "";
             NumDivisions = 80;
             ProfilePoints = new List<PointF>();
@@ -438,7 +420,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             SelectionMode = SelectionModeType.SelectPoint;
 
             isValid = false;
-
+            DataContext = this;
             imagePath = "";
             workingImage = null;
             src = null;
@@ -461,142 +443,137 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         {
             profilePoints = new List<PointF>();
             List<PointF> pnts = flexiPath.DisplayPointsF();
-            if (pnts.Count > 0)
+            pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+
+            double pathLength = 0;
+            for (int i = 0; i < pnts.Count; i++)
             {
-                pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
-                tlx = double.MaxValue;
-                tly = double.MaxValue;
-                brx = double.MinValue;
-                bry = double.MinValue;
-
-                double pathLength = 0;
-                for (int i = 0; i < pnts.Count; i++)
+                if (i < pnts.Count - 1)
                 {
-                    if (i < pnts.Count - 1)
-                    {
-                        pathLength += Distance(pnts[i], pnts[i + 1]);
-                    }
-                    if (pnts[i].X < tlx)
-                    {
-                        tlx = pnts[i].X;
-                    }
-
-                    if (pnts[i].Y < tly)
-                    {
-                        tly = pnts[i].Y;
-                    }
-
-                    if (pnts[i].X > brx)
-                    {
-                        brx = pnts[i].X;
-                    }
-
-                    if (pnts[i].Y > bry)
-                    {
-                        bry = pnts[i].Y;
-                    }
+                    pathLength += Distance(pnts[i], pnts[i + 1]);
                 }
-                System.Diagnostics.Debug.WriteLine($"Path bounds tlx {tlx} tly {tly} brx {brx} bry {bry}");
-                divisionLength = pathLength / (NumDivisions - 1);
-                pathWidth = brx - tlx;
-                pathHeight = bry - tly;
-                middleX = tlx + pathWidth / 2.0;
-                middleY = tly + pathHeight / 2.0;
-                double minangle = double.MaxValue;
-                int minIndex = int.MaxValue;
-                System.Diagnostics.Debug.WriteLine($"Pathwidth {pathWidth} PathHeight {pathHeight} middleX {middleX} middleY {middleY}");
-                double deltaT = 1.0 / (NumDivisions + 1);
-                List<double> angles = new List<double>();
-                for (int div = 0; div < NumDivisions; div++)
+                if (pnts[i].X < tlx)
                 {
-                    double t = div * deltaT;
-                    double targetDistance = t * pathLength;
-                    if (targetDistance < pathLength)
-                    {
-                        double runningDistance = 0;
-                        int cp = 1;
-                        bool found = false;
+                    tlx = pnts[i].X;
+                }
 
-                        while (!found && cp < pnts.Count)
+                if (pnts[i].Y < tly)
+                {
+                    tly = pnts[i].Y;
+                }
+
+                if (pnts[i].X > brx)
+                {
+                    brx = pnts[i].X;
+                }
+
+                if (pnts[i].Y > bry)
+                {
+                    bry = pnts[i].Y;
+                }
+            }
+            System.Diagnostics.Debug.WriteLine($"Path bounds tlx {tlx} tly {tly} brx {brx} bry {bry}");
+            divisionLength = pathLength / (NumDivisions - 1);
+            pathWidth = brx - tlx;
+            pathHeight = bry - tly;
+            middleX = tlx + pathWidth / 2.0;
+            middleY = tly + pathHeight / 2.0;
+            double minangle = double.MaxValue;
+            int minIndex = int.MaxValue;
+            System.Diagnostics.Debug.WriteLine($"Pathwidth {pathWidth} PathHeight {pathHeight} middleX {middleX} middleY {middleY}");
+            double deltaT = 1.0 / (NumDivisions + 1);
+            List<double> angles = new List<double>();
+            for (int div = 0; div < NumDivisions; div++)
+            {
+                double t = div * deltaT;
+                double targetDistance = t * pathLength;
+                if (targetDistance < pathLength)
+                {
+                    double runningDistance = 0;
+                    int cp = 1;
+                    bool found = false;
+
+                    while (!found && cp < pnts.Count)
+                    {
+                        PointF p0 = pnts[cp - 1];
+                        PointF p1 = pnts[cp];
+                        double d = Distance(p0, p1);
+                        if ((runningDistance <= targetDistance) &&
+                             (runningDistance + d >= targetDistance))
                         {
-                            PointF p0 = pnts[cp - 1];
-                            PointF p1 = pnts[cp];
-                            double d = Distance(p0, p1);
-                            if ((runningDistance <= targetDistance) &&
-                                 (runningDistance + d >= targetDistance))
+                            found = true;
+                            double overhang = targetDistance - runningDistance;
+                            if (overhang < 0)
                             {
-                                found = true;
-                                double overhang = targetDistance - runningDistance;
-                                if (overhang < 0)
-                                {
-                                    System.Diagnostics.Debug.WriteLine("Distance error creating profile");
-                                }
-                                if (overhang != 0.0)
-                                {
-                                    double delta = overhang / d;
-                                    double nx = p0.X + (p1.X - p0.X) * delta;
-                                    double ny = p0.Y + (p1.Y - p0.Y) * delta;
-
-                                    double rx = nx - middleX;
-                                    double ry = ny - middleY;
-                                    double rd = Math.Atan2(ry, rx);
-                                    angles.Add(rd);
-                                    if (rx > 0 && rd < minangle)
-                                    {
-                                        minIndex = angles.Count - 1;
-                                        minangle = rd;
-                                    }
-
-                                    nx = (nx - tlx) / pathWidth;
-                                    ny = (ny - tly) / pathHeight;
-                                    profilePoints.Add(new PointF((float)nx, (float)ny));
-                                    System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
-                                }
-                                else
-                                {
-                                    double nx = p0.X;
-                                    double ny = p0.Y;
-
-                                    double rx = nx - middleX;
-                                    double ry = ny - middleY;
-                                    double rd = Math.Atan2(ry, rx);
-                                    angles.Add(rd);
-                                    if (rx > 0 && rd < minangle)
-                                    {
-                                        minIndex = angles.Count - 1;
-                                        minangle = rd;
-                                    }
-
-                                    nx = (nx - tlx) / pathWidth;
-                                    ny = (ny - tly) / pathHeight;
-                                    profilePoints.Add(new PointF((float)nx, (float)ny));
-                                    System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
-                                }
+                                System.Diagnostics.Debug.WriteLine("Distance error creating profile");
                             }
-                            runningDistance += d;
-                            cp++;
+                            if (overhang != 0.0)
+                            {
+                                double delta = overhang / d;
+                                double nx = p0.X + (p1.X - p0.X) * delta;
+                                double ny = p0.Y + (p1.Y - p0.Y) * delta;
+
+                                double rx = nx - middleX;
+                                double ry = ny - middleY;
+                                double rd = Math.Atan2(ry, rx);
+                                angles.Add(rd);
+                                if (rx > 0 && rd < minangle)
+                                {
+                                    minIndex = angles.Count - 1;
+                                    minangle = rd;
+                                }
+
+                                nx = (nx - tlx) / pathWidth;
+                                ny = (ny - tly) / pathHeight;
+                                profilePoints.Add(new PointF((float)nx, (float)ny));
+                                System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
+                            }
+                            else
+                            {
+                                double nx = p0.X;
+                                double ny = p0.Y;
+
+                                double rx = nx - middleX;
+                                double ry = ny - middleY;
+                                double rd = Math.Atan2(ry, rx);
+                                angles.Add(rd);
+                                if (rx > 0 && rd < minangle)
+                                {
+                                    minIndex = angles.Count - 1;
+                                    minangle = rd;
+                                }
+
+                                nx = (nx - tlx) / pathWidth;
+                                ny = (ny - tly) / pathHeight;
+                                profilePoints.Add(new PointF((float)nx, (float)ny));
+                                System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
+                            }
                         }
+                        runningDistance += d;
+                        cp++;
                     }
                 }
+            }
+            //
 
+            List<PointF> tmp = new List<PointF>();
 
-                List<PointF> tmp = new List<PointF>();
-
-                for (int j = minIndex; j < profilePoints.Count; j++)
+            for (int j = minIndex; j < profilePoints.Count; j++)
+            {
+                tmp.Add(profilePoints[j]);
+            }
+            if (minIndex > 0)
+            {
+                for (int j = 0; j < minIndex; j++)
                 {
                     tmp.Add(profilePoints[j]);
                 }
-                if (minIndex > 0)
-                {
-                    for (int j = 0; j < minIndex; j++)
-                    {
-                        tmp.Add(profilePoints[j]);
-                    }
-                }
-
-                profilePoints = tmp;
             }
-        
+            profilePoints = tmp;
         }
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -612,59 +589,32 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             if (workingImage != null)
             {
                 PathBackgroundImage.Source = loadBitmap(workingImage);
-                CanvasWidth = workingImage.Width;
-                CanvasHeight = workingImage.Height;
+                FlexiPathCanvas.Width = workingImage.Width;
+                FlexiPathCanvas.Height = workingImage.Height;
             }
         }
 
-        private int canvasWidth;
-        public int CanvasWidth
-        {
-            get { return canvasWidth; }
-            set
-            {
-                if (canvasWidth != value)
-                {
-                    canvasWidth = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-
-        private int canvasHeight;
-        public int CanvasHeight
-        {
-            get { return canvasHeight; }
-            set
-            {
-                if (canvasHeight != value)
-                {
-                    canvasHeight = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
         public void UpdateDisplay()
         {
-            if (displayCanvas != null )
-                {
-                displayCanvas.Children.Clear();
-                displayCanvas.Children.Add(PathBackgroundImage);
-                DisplayLines();
-                DisplayPoints();
-                if (showProfilePoints)
-                {
-                    ShowProfile();
-                }
+            FlexiPathCanvas.Children.Clear();
+            FlexiPathCanvas.Children.Add(PathBackgroundImage);
+            DisplayLines();
+            DisplayPoints();
+            if (showProfilePoints)
+            {
+                ShowProfile();
             }
-            
+            PathText = flexiPath.ToPath();
         }
-
+        public string GenPath()
+        {
+            PathText = flexiPath.ToPath();
+            return PathText;
+        }
         public void UpdateHeaderLabel()
         {
-      //      HeaderLabel.Content = ImagePathHeader;
-     //       FNameLabel.Content = FName;
+            HeaderLabel.Content = Header;
+            FNameLabel.Content = FName;
         }
 
         public void Write(XmlDocument doc, XmlElement parentNode)
@@ -682,10 +632,10 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             ele.AppendChild(pnts);
         }
 
-        internal ImagePathViewModel Clone()
+        internal ImagePathControl Clone( bool copyImage=true)
         {
-            ImagePathViewModel cl = new ImagePathViewModel();
-            cl.ImagePathHeader = ImagePathHeader;
+            ImagePathControl cl = new ImagePathControl();
+            cl.Header = Header;
             cl.NumDivisions = NumDivisions;
 
             cl.ImagePath = ImagePath;
@@ -696,13 +646,15 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                 PointF fn = new PointF(fp.X, fp.Y);
                 cl.ProfilePoints.Add(fn);
             }
-
-            cl.WorkingImage = new System.Drawing.Bitmap(workingImage);
-            for (int px = 0; px < workingImage.Width; px++)
+            if (copyImage)
             {
-                for (int py = 0; py < workingImage.Height; py++)
+                cl.WorkingImage = new System.Drawing.Bitmap(workingImage);
+                for (int px = 0; px < workingImage.Width; px++)
                 {
-                    cl.WorkingImage.SetPixel(px, py, workingImage.GetPixel(px, py));
+                    for (int py = 0; py < workingImage.Height; py++)
+                    {
+                        cl.WorkingImage.SetPixel(px, py, workingImage.GetPixel(px, py));
+                    }
                 }
             }
             cl.src = src;
@@ -722,8 +674,8 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             string p = edgeNode.InnerText;
             flexiPath.FromTextPath(p);
             loaded = false;
-     //       ScrollView.ScrollToHorizontalOffset(scrollX);
-     //       ScrollView.ScrollToVerticalOffset(scrollY);
+            ScrollView.ScrollToHorizontalOffset(scrollX);
+            ScrollView.ScrollToVerticalOffset(scrollY);
             UpdateDisplay();
             loaded = true;
             NotifyPropertyChanged("Scale");
@@ -795,7 +747,171 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             tly = offset;
         }
 
+        /*
+                public double EdgeLength
+                {
+                    get
+                    {
+                        if (imageEdge != null)
+                        {
+                            return imageEdge.Length;
+                        }
+                        else
+                        {
+                            return 0;
+                        }
+                    }
+                }
+        */
+        /*
+        public void FindEdge()
+        {
+            imageEdge.Clear();
 
+            // left side
+            double px = 0;
+            double py = 0;
+            while (py < workingImage.Height)
+            {
+                px = 0;
+                bool found = false;
+                while (px < workingImage.Width && !found)
+                {
+                    System.Drawing.Color c = workingImage.GetPixel((int)px, (int)py);
+                    if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
+                    {
+                        found = true;
+                        imageEdge.Add(px, py); ;
+                    }
+                    else
+                    {
+                        px++;
+                    }
+                }
+                py++;
+            }
+
+            // right side
+            py = workingImage.Height - 1;
+            while (py >= 0)
+            {
+                px = workingImage.Width - 1;
+                bool found = false;
+                while (px >= 0 && !found)
+                {
+                    System.Drawing.Color c = workingImage.GetPixel((int)px, (int)py);
+                    if (c.R == 0 && c.G == 0 && c.B == 0 && c.A == 255)
+                    {
+                        found = true;
+                        imageEdge.Add(px, py);
+                    }
+                    else
+                    {
+                        px--;
+                    }
+                }
+                py--;
+            }
+
+            imageEdge.Analyse();
+
+            ShowEdge();
+        }
+
+        public void GenerateProfilePoints(int modelType)
+        {
+            System.Diagnostics.Debug.WriteLine("=================================== GenerateProfilePoints ================================");
+            System.Diagnostics.Debug.WriteLine($"{imagePath}");
+
+            divisionLength = EdgeLength / (NumDivisions - 1);
+
+            middleX = imageEdge.MiddleX;
+            middleY = imageEdge.MiddleY;
+            System.Diagnostics.Debug.WriteLine($"MiddleX {middleX} middleY {middleY} ");
+            profilePoints = new List<PointF>();
+
+            List<PointF> tmp = new List<PointF>();
+            int startP = -1;
+            int endP = -1;
+            if (modelType == 0)
+            {
+                startP = imageEdge.WholeStart;
+                endP = imageEdge.WholeEnd;
+                divisionLength = imageEdge.Length / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
+            }
+            if (modelType == 1)
+            {
+                startP = imageEdge.BackStart;
+                endP = imageEdge.BackEnd;
+                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
+            }
+            if (modelType == 2)
+            {
+                startP = imageEdge.FrontStart;
+                endP = imageEdge.FrontEnd;
+                divisionLength = imageEdge.CalcLength(startP, endP) / (NumDivisions - 1);
+                System.Diagnostics.Debug.WriteLine($"shape {modelType} start {startP} end {endP} DivisionLength {divisionLength}");
+            }
+
+            for (int i = startP; i < endP; i++)
+            {
+                tmp.Add(new PointF((float)(imageEdge.EdgePoints[i].X - middleX), (float)(imageEdge.EdgePoints[i].Y - middleY)));
+            }
+            // for convenience add the first point onto the end again
+            tmp.Add(new PointF(tmp[0].X, tmp[0].Y));
+
+            for (int i = 0; i < NumDivisions; i++)
+            {
+                double targetDistance = i * divisionLength;
+                double runningDistance = 0;
+                int cp = 1;
+                bool found = false;
+                while (!found && cp < tmp.Count)
+                {
+                    PointF p0 = tmp[cp - 1];
+                    PointF p1 = tmp[cp];
+                    double d = Distance(p0, p1);
+                    if ((runningDistance <= targetDistance) &&
+                         (runningDistance + d >= targetDistance))
+                    {
+                        found = true;
+                        double overhang = targetDistance - runningDistance;
+                        if (overhang < 0)
+                        {
+                            System.Diagnostics.Debug.WriteLine("Distance error creating profile");
+                        }
+                        if (overhang != 0.0)
+                        {
+                            double delta = overhang / d;
+                            double nx = p0.X + (p1.X - p0.X) * delta;
+                            double ny = p0.Y + (p1.Y - p0.Y) * delta;
+
+                            nx = nx / middleX;
+                            ny = ny / middleY;
+                            profilePoints.Add(new PointF((float)nx, (float)ny));
+                        }
+                        else
+                        {
+                            double nx = p0.X;
+                            double ny = p0.Y;
+
+                            nx = nx / middleX;
+                            ny = ny / middleY;
+                            profilePoints.Add(new PointF((float)nx, (float)ny));
+                        }
+                    }
+                    runningDistance += d;
+                    cp++;
+                }
+            }
+            if (profilePoints.Count != NumDivisions)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR incorrect number of profile divisions");
+            }
+        }
+        */
 
         private static void AdjustBounds(ref double tlx, ref double tly, ref double brx, ref double bry, double px, double py)
         {
@@ -821,16 +937,16 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         [DllImport("gdi32")]
         private static extern int DeleteObject(IntPtr o);
 
-        private void OnAddBezier(object obj)
+        private void AddBezierButton_Click(object sender, RoutedEventArgs e)
         {
             SelectionMode = SelectionModeType.AddBezier;
         }
 
-        private bool AddBezierFromPoint(System.Windows.Input.MouseButtonEventArgs e, Line ln, bool cubic)
+        private bool AddBezierFromPoint(MouseButtonEventArgs e, Line ln, bool cubic)
         {
             int found = -1;
             bool added = false;
-            System.Windows.Point position = e.GetPosition(PathCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             for (int i = 0; i < polyPoints.Count; i++)
             {
@@ -898,51 +1014,14 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             ln.Y2 = ToPixelY(points[v].Y);
             ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
             ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
-            if (displayCanvas != null)
-            {
-                displayCanvas.Children.Add(ln);
-            }
+            FlexiPathCanvas.Children.Add(ln);
         }
-        public ICommand ZoomInCommand { get; set; }
-        public ICommand ZoomOutCommand { get; set; }
-        public ICommand ZoomResetCommand { get; set; }
-        public ICommand ShowAllPointsCommand { get; set; }
-        public ICommand PickCommand { get; set; }
-        public ICommand AddSegCommand { get; set; }
-        public ICommand AddBezierCommand { get; set; }
-        public ICommand AddQuadBezierCommand { get; set; }
-        public ICommand DelSegCommand { get; set; }
-        public ICommand MovePathCommand { get; set; }
-        public ICommand ResetPathCommand { get; set; }
-        public ImagePathViewModel()
-        {
-            ZoomInCommand = new RelayCommand(OnZoomIn);
-            ZoomOutCommand = new RelayCommand(OnZoomOut);
-            ZoomResetCommand = new RelayCommand(OnZoomReset);
-            ShowAllPointsCommand = new RelayCommand(OnShowAllPoints);
-            AddSegCommand = new RelayCommand(OnAddSeg);
 
-            AddBezierCommand = new RelayCommand(OnAddBezier);
-            AddQuadBezierCommand = new RelayCommand(OnAddQuadBezier);
-            DelSegCommand = new RelayCommand(OnDeleteSeg);
-            PickCommand = new RelayCommand(OnPick);
-            MovePathCommand = new RelayCommand(OnMove);
-            ResetPathCommand = new RelayCommand(OnResetPath);
-            Clear();
-            displayCanvas = null;
-
-                showOrtho = true;
-                //  ScrollView.ScrollToHorizontalOffset(scrollX);
-                //    ScrollView.ScrollToVerticalOffset(scrollY);
-                selectionMode = SelectionModeType.SelectPoint;
-
-
-        }
-        private bool AddLineFromPoint(System.Windows.Input.MouseButtonEventArgs e, Line ln)
+        private bool AddLineFromPoint(MouseButtonEventArgs e, Line ln)
         {
             int found = -1;
             bool added = false;
-            System.Windows.Point position = e.GetPosition(PathCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             for (int i = 0; i < polyPoints.Count; i++)
             {
@@ -975,12 +1054,12 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         {
         }
 
-        private void OnAddQuadBezier(object obj)
+        private void AddQuadBezierButton_Click(object sender, RoutedEventArgs e)
         {
             SelectionMode = SelectionModeType.AddQuadBezier;
         }
 
-        private void OnAddSeg(object obj)
+        private void AddSegButton_Click(object sender, RoutedEventArgs e)
         {
             SelectionMode = SelectionModeType.AddLine;
         }
@@ -1003,6 +1082,17 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             Clipboard.SetText(PathText);
         }
 
+        private void PastePath_Click(object sender, RoutedEventArgs e)
+        {
+            string pth = Clipboard.GetText();
+            if (pth != null && pth != "" && pth.StartsWith("M"))
+            {
+                PathText = pth;
+                flexiPath.FromTextPath(pth);
+                UpdateDisplay();
+            }
+            
+        }
         private void CopySrcToWorking()
         {
             System.Drawing.Color c;
@@ -1061,31 +1151,53 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             ln.Y1 = y1;
             ln.X2 = x2;
             ln.Y2 = y2;
-            if (displayCanvas != null)
-            {
-                displayCanvas.Children.Add(ln);
-            }
+
+            FlexiPathCanvas.Children.Add(ln);
         }
 
         private void DeletePointClicked(object sender, RoutedEventArgs e)
         {
         }
 
-        private bool DeleteSegment(System.Windows.Input.MouseButtonEventArgs e, Line ln)
+        private bool DeleteSegment(MouseButtonEventArgs e, Line ln)
         {
             int found = -1;
             bool added = false;
-
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             if ( flexiPath.SelectAtPoint(position))
             {
                 flexiPath.DeleteSelectedSegment();
             }
+            /*
+            position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
+            for (int i = 0; i < polyPoints.Count; i++)
+            {
+                if (Math.Abs(ToPixelX(polyPoints[i].X) - ln.X1) < 0.0001 && Math.Abs(ToPixelY(polyPoints[i].Y) - ln.Y1) < 0.0001)
+                {
+                    found = i;
+                    break;
+                }
+            }
+            if (found != -1)
+            {
+                if (found < polyPoints.Count - 1)
+                {
+                    flexiPath.DeleteSegmentStartingAt(found);
 
+                }
+                else
+                {
+                    flexiPath.AddLine(position);
+
+                }
+                added = true;
+                PathText = flexiPath.ToPath();
+            }
+            */
             return added;
         }
 
-        private void OnDeleteSeg(object obj)
+        private void DelSegButton_Click(object sender, RoutedEventArgs e)
         {
             if (flexiPath.DeleteSelectedSegment())
             {
@@ -1170,13 +1282,11 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
 
                         if (selectedPoint == i && showOrtho)
                         {
-                            DashLine(ToPixelX(p.X), 0, ToPixelX(p.X), pathCanvasActualHeight - 1);
-                            DashLine(0, ToPixelY(p.Y), pathCanvasActualWidth - 1, ToPixelY(p.Y));
+                            DashLine(ToPixelX(p.X), 0, ToPixelX(p.X), FlexiPathCanvas.ActualHeight - 1);
+                            DashLine(0, ToPixelY(p.Y), FlexiPathCanvas.ActualWidth - 1, ToPixelY(p.Y));
                         }
                     }
                 }
-
- 
                 // If we are appending points to the polygon then always draw the start point
                 if ((selectionMode == SelectionModeType.StartPoint || selectionMode == SelectionModeType.AddPoint) && polyPoints.Count > 0)
                 {
@@ -1214,36 +1324,6 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             }
         }
 
-        private double pathCanvasActualWidth;
-
-        public double PathCanvasActualWidth
-        {
-            get { return pathCanvasActualWidth; }
-            set
-            {
-                if (pathCanvasActualWidth != value)
-                {
-                    pathCanvasActualWidth = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double pathCanvasActualHeight;
-
-        public double PathCanvasActualHeight
-        {
-            get { return pathCanvasActualHeight; }
-            set
-            {
-                if (pathCanvasActualHeight != value)
-                {
-                    pathCanvasActualHeight = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -1258,10 +1338,8 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             ln.Y1 = ToPixelY(p1.Y);
             ln.X2 = ToPixelX(p2.X);
             ln.Y2 = ToPixelY(p2.Y);
-            if (displayCanvas != null)
-            {
-                displayCanvas.Children.Add(ln);
-            }
+
+            FlexiPathCanvas.Children.Add(ln);
         }
         private double Distance(PointF point1, PointF point2)
         {
@@ -1272,18 +1350,6 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         }
 
 
-        private DpiScale screenScale;
-
-        public DpiScale ScreenScale
-        {
-            get { return screenScale; }
-            set
-            {
-
-                    screenScale = value;
-
-            }
-        }
 
         private void FlexiPathCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -1305,7 +1371,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                     }
                     SelectedPoint = -1;
 
-                   System.Windows.Point position = e.GetPosition(PathCanvas);
+                    System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
                     position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
                     // do this test here because the othe modes only trigger ifn you click a line
                     if (selectionMode == SelectionModeType.MovePath)
@@ -1348,7 +1414,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
 
         private void AddAnotherPointToPoly(MouseButtonEventArgs e)
         {
-            System.Windows.Point position = e.GetPosition(PathCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
 
 
@@ -1371,42 +1437,44 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         }
 
         private double ToMMX(double x)
-        {       
-            double res = 25.4 * x / screenScale.PixelsPerInchX;
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(FlexiPathCanvas);
+            double res = 25.4 * x / sc.PixelsPerInchX;
             return res;
         }
 
         private double ToMMY(double y)
         {
-            double res = 25.4 * y / screenScale.PixelsPerInchY;
+            DpiScale sc = VisualTreeHelper.GetDpi(FlexiPathCanvas);
+            double res = 25.4 * y / sc.PixelsPerInchY;
             return res;
         }
 
         private double ToPixelX(double x)
         {
-
-            double res = screenScale.PixelsPerInchX * x / 25.4;
+            DpiScale sc = VisualTreeHelper.GetDpi(FlexiPathCanvas);
+            double res = sc.PixelsPerInchX * x / 25.4;
             return res;
         }
 
         private double ToPixelY(double y)
         {
-
-            double res = screenScale.PixelsPerInchY * y / 25.4;
+            DpiScale sc = VisualTreeHelper.GetDpi(FlexiPathCanvas);
+            double res = sc.PixelsPerInchY * y / 25.4;
             return res;
         }
         private void AddStartPointToPoly(MouseButtonEventArgs e)
         {
-          System.Windows.Point position = e.GetPosition(PathCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             flexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
             selectionMode = SelectionModeType.AddPoint;
             UpdateDisplay();
         }
 
-        private void FlexiPathCanvas_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        private void FlexiPathCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            System.Windows.Point position = e.GetPosition(PathCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
 
             if (selectedPoint != -1)
@@ -1430,13 +1498,13 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             }
         }
 
-        private void FlexiPathCanvas_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        private void FlexiPathCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
 
             moving = false;
             if (selectedPoint != -1 && moving)
             {
-                System.Windows.Point position = e.GetPosition(PathCanvas);
+                System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
                 double gx = position.X;
                 double gy = position.Y;
                 polyPoints[selectedPoint].X = gx;
@@ -1450,7 +1518,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             moving = false;
         }
 
-        private void FlexiPathCanvas_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void FlexiPathCanvas_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (selectedPoint != -1)
             {
@@ -1498,14 +1566,14 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         private void GeneratePointParams()
         {
             String s = flexiPath.ToString();
-
+            //          EditorParameters.Set("Points", s);
         }
 
         private void ImageButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog opDlg = new OpenFileDialog();
             opDlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.png) | *.jpg; *.jpeg; *.jpe; *.png";
-            if (opDlg.ShowDialog() == DialogResult.OK)
+            if (opDlg.ShowDialog() == true)
             {
                 try
                 {
@@ -1518,47 +1586,24 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
 
             UpdateDisplay();
         }
-        private double pathCanvasScaleX;
 
-        public double PathCanvasScaleX
-        {
-            get { return pathCanvasScaleX; }
-            set
-            {
-                if (pathCanvasScaleX != value)
-                {
-                    pathCanvasScaleX = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double pathCanvasScaleY;
-
-        public double PathCanvasScaleY
-        {
-            get { return pathCanvasScaleY; }
-            set
-            {
-                if (pathCanvasScaleY != value)
-                {
-                    pathCanvasScaleY = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
         private void InButton_Click(object sender, RoutedEventArgs e)
         {
             scale *= 1.1;
-            PathCanvasScaleX = scale;
-            PathCanvasScaleY = scale;
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
         }
 
         private void InitialisePoints()
         {
             flexiPath.Clear();
             selectionMode = SelectionModeType.StartPoint;
-
+            /*
+            flexiPath.Start = new FlexiPoint(new System.Windows.Point(10, 10), 0);
+            flexiPath.AddLine(new System.Windows.Point(100, 10));
+            flexiPath.AddLine(new System.Windows.Point(100, 100));
+            flexiPath.AddLine(new System.Windows.Point(10, 100));
+            */
         }
 
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
@@ -1650,23 +1695,9 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             //    localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             //EditorParameters.Set("ImagePath", f);
-            PathCanvas.Width = localImage.Width;
-            PathCanvas.Height = localImage.Height;
+            FlexiPathCanvas.Width = localImage.Width;
+            FlexiPathCanvas.Height = localImage.Height;
             UpdateDisplay();
-        }
-        private Canvas canvas;
-
-        public Canvas PathCanvas
-        {
-            get { return canvas; }
-            set
-            {
-                if (canvas != value)
-                {
-                    canvas = value;
-                    NotifyPropertyChanged();
-                }
-            }
         }
 
         private void LoadImage(string imagePath, bool force)
@@ -1683,7 +1714,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             }
             else
             {
-                System.Windows.MessageBox.Show($"Cant find image {imagePath}");
+                MessageBox.Show($"Cant find image {imagePath}");
             }
         }
 
@@ -1701,17 +1732,13 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             el.MouseMove += FlexiPathCanvas_MouseMove;
             el.MouseUp += FlexiPathCanvas_MouseUp;
             el.ContextMenu = PointMenu(el);
-            if (displayCanvas != null)
-            {
-                displayCanvas.Children.Add(el);
-            }
+            FlexiPathCanvas.Children.Add(el);
             return p;
         }
 
         private System.Windows.Point MakeRect(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
         {
             System.Windows.Shapes.Rectangle el = new System.Windows.Shapes.Rectangle();
-
             if (p.X >= 0 && p.X < double.MaxValue)
             {
                 Canvas.SetLeft(el, ToPixelX(p.X) - rad);
@@ -1725,7 +1752,6 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                 el.MouseUp += FlexiPathCanvas_MouseUp;
                 el.ContextMenu = PointMenu(el);
                 FlexiPathCanvas.Children.Add(el);
-
             }
             return p;
         }
@@ -1754,11 +1780,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             myPolygon.MouseMove += FlexiPathCanvas_MouseMove;
             myPolygon.MouseUp += FlexiPathCanvas_MouseUp;
             myPolygon.ContextMenu = PointMenu(myPolygon);
-            if (displayCanvas != null)
-            {
-
-                displayCanvas.Children.Add(myPolygon);
-            }
+            FlexiPathCanvas.Children.Add(myPolygon);
             return p;
         }
         private void Mark(int x, int y, System.Drawing.Color c)
@@ -1776,7 +1798,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             }
         }
 
-        private void OnMove(object obj)
+        private void MovePathButton_Click(object sender, RoutedEventArgs e)
         {
             SelectionMode = SelectionModeType.MovePath;
         }
@@ -1790,8 +1812,8 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         private void OutButton_Click(object sender, RoutedEventArgs e)
         {
             scale *= 0.9;
-            PathCanvasScaleX = scale;
-            PathCanvasScaleY = scale;
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
         }
 
         private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
@@ -1840,24 +1862,24 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             return res;
         }
 
-        private void OnPick(object obj)
+        private void PickButton_Click(object sender, RoutedEventArgs e)
         {
             SelectionMode = SelectionModeType.SelectPoint;
         }
 
-        private void OnShowAllPoints(object obj)
+        private void ShowAllPointsButton_Click(object sender, RoutedEventArgs e)
         {
-            foreach (FlexiPoint p in polyPoints)
+            foreach( FlexiPoint p  in polyPoints)
             {
                 p.Visible = true;
             }
             UpdateDisplay();
         }
 
-        private System.Windows.Controls.ContextMenu PointMenu(object tag)
+        private ContextMenu PointMenu(object tag)
         {
-            System.Windows.Controls.ContextMenu mn = new System.Windows.Controls.ContextMenu();
-            System.Windows.Controls.MenuItem mni = new System.Windows.Controls.MenuItem();
+            ContextMenu mn = new ContextMenu();
+            MenuItem mni = new MenuItem();
             mni.Header = "Delete Point";
             mni.Click += DeletePointClicked;
             mni.Tag = tag;
@@ -1865,7 +1887,7 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             return mn;
         }
 
-        private void OnResetPath(object obj)
+        private void ResetPathButton_Click(object sender, RoutedEventArgs e)
         {
             InitialisePoints();
 
@@ -1886,12 +1908,13 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
         private bool SelectLineFromPoint(MouseButtonEventArgs e)
         {
             bool found;
-            System.Windows.Point position = e.GetPosition(PathCanvas);
+            System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             found = flexiPath.SelectAtPoint(position);
 
             if (found)
             {
+                // GetRawFlexiPoints();
 
                 UpdateDisplay();
             }
@@ -1901,7 +1924,6 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
 
         private void SetButtonBorderColours()
         {
-            /*
             switch (selectionMode)
             {
                 case SelectionModeType.SelectPoint:
@@ -1970,13 +1992,12 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
                     }
                     break;
             }
-            */
         }
 
         private void SetFlexiPathScale()
         {
-            PathCanvasScaleX = scale;
-            PathCanvasScaleY = scale;
+            PathCanvasScale.ScaleX = scale;
+            PathCanvasScale.ScaleY = scale;
         }
 
         private void SetPointIds()
@@ -2066,21 +2087,30 @@ namespace Barnacle.Dialogs.ProfileFuselage.ViewModels
             return res;
         }
 
-     
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+            showOrtho = true;
+            ScrollView.ScrollToHorizontalOffset(scrollX);
+            ScrollView.ScrollToVerticalOffset(scrollY);
+            selectionMode = SelectionModeType.SelectPoint;
+            UpdateDisplay();
+            loaded = true;
+        }
 
-        private void OnZoomIn(object obj)
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
             scale = 1.1 * scale;
             SetFlexiPathScale();
         }
 
-        private void OnZoomOut(object obj)
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
         {
             scale = 0.9 * scale;
             SetFlexiPathScale();
         }
 
-        private void OnZoomReset(object obj)
+        private void ZoomReset_Click(object sender, RoutedEventArgs e)
         {
             scale = 1.0;
             SetFlexiPathScale();

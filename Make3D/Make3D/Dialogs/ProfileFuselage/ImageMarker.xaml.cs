@@ -1,5 +1,4 @@
-﻿using Barnacle.Dialogs.ProfileFuselage.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -280,7 +279,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        internal void DeleteMarker(ImagePathViewModel rc)
+        internal void DeleteMarker(ImagePathControl rc)
         {
             UpdateDisplay();
         }
@@ -539,7 +538,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private Dimension GetUpperAndLowerPoints(int x)
+        public Dimension GetUpperAndLowerPoints(int x)
         {
             Dimension res = null;
             Point up = new Point(0, 0);

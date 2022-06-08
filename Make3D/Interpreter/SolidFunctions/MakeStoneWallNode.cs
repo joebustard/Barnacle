@@ -12,18 +12,18 @@ namespace ScriptLanguage
         private ExpressionNode wallLengthExp;
         private ExpressionNode wallHeightExp;
         private ExpressionNode wallThicknessExp;
-        private ExpressionNode numberOfStonesExp;
+        private ExpressionNode stoneSize;
 
 
         public MakeStoneWallNode
             (
-            ExpressionNode wallLength, ExpressionNode wallHeight, ExpressionNode wallThickness, ExpressionNode numberOfStones
+            ExpressionNode wallLength, ExpressionNode wallHeight, ExpressionNode wallThickness, ExpressionNode stoneSize
             )
         {
             this.wallLengthExp = wallLength;
             this.wallHeightExp = wallHeight;
             this.wallThicknessExp = wallThickness;
-            this.numberOfStonesExp = numberOfStones;
+            this.stoneSize = stoneSize;
 
         }
 
@@ -33,7 +33,7 @@ namespace ScriptLanguage
             this.wallLengthExp = coll.Get(0);
             this.wallHeightExp = coll.Get(1);
             this.wallThicknessExp = coll.Get(2);
-            this.numberOfStonesExp = coll.Get(3);
+            this.stoneSize = coll.Get(3);
 
         }
 
@@ -47,14 +47,14 @@ namespace ScriptLanguage
             double valWallLength = 0;
             double valWallHeight = 0;
             double valWallThickness = 0;
-            int  valNumberOfStones = 0;
+            int  valStoneSize = 0;
 
 
             if (
                        EvalExpression(wallLengthExp, ref valWallLength, "WallLength", "MakeStoneWall") &&
                        EvalExpression(wallHeightExp, ref valWallHeight, "WallHeight", "MakeStoneWall") &&
                        EvalExpression(wallThicknessExp, ref valWallThickness, "WallThickness", "MakeStoneWall") &&
-                       EvalExpression(numberOfStonesExp, ref valNumberOfStones, "NumberOfStones", "MakeStoneWall"))
+                       EvalExpression(stoneSize, ref valStoneSize, "Stone Size", "MakeStoneWall"))
             {
                 // check calculated values are in range
                 bool inRange = true;
@@ -77,9 +77,9 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-                if (valNumberOfStones < 5 || valNumberOfStones > 200)
+                if (valStoneSize < 5 || valStoneSize > valWallLength / 2 || valStoneSize > valWallHeight / 2)
                 {
-                    Log.Instance().AddEntry("MakeStoneWall : NumberOfStones value out of range (5..200)");
+                    Log.Instance().AddEntry("MakeStoneWall : Stone Size  value out of range (5.. WallLength /2 , wallHeight/2)");
                     inRange = false;
                 }
 
@@ -95,7 +95,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    StoneWallMaker maker = new StoneWallMaker(valWallLength, valWallHeight, valWallThickness, valNumberOfStones);
+                    StoneWallMaker maker = new StoneWallMaker(valWallLength, valWallHeight, valWallThickness, valStoneSize);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -125,7 +125,7 @@ namespace ScriptLanguage
             result += wallLengthExp.ToRichText() + ", ";
             result += wallHeightExp.ToRichText() + ", ";
             result += wallThicknessExp.ToRichText() + ", ";
-            result += numberOfStonesExp.ToRichText();
+            result += stoneSize.ToRichText();
             result += " )";
             return result;
         }
@@ -137,7 +137,7 @@ namespace ScriptLanguage
             result += wallLengthExp.ToString() + ", ";
             result += wallHeightExp.ToString() + ", ";
             result += wallThicknessExp.ToString() + ", ";
-            result += numberOfStonesExp.ToString();
+            result += stoneSize.ToString();
             result += " )";
             return result;
         }

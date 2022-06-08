@@ -6,12 +6,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.Dialogs"
-             xmlns:ViewModels="clr-namespace:Barnacle.Dialogs.ProfileFuselage.ViewModels"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <UserControl.DataContext>
-        <ViewModels:ImagePathViewModel />
-    </UserControl.DataContext>
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
             <Grid.RowDefinitions>
@@ -36,7 +32,7 @@
                         <ColumnDefinition Width="100"/>
                         <ColumnDefinition />
                     </Grid.ColumnDefinitions>
-                    <Label Content="{Binding ImagePathHeader}"
+                    <Label Content="{Binding Header}"
                            FontSize="14"
                            Grid.Column="0"
                            HorizontalAlignment="Center"
@@ -57,7 +53,7 @@
                            Margin="2,1,0,1"
                            VerticalAlignment="Center"/>
 
-                    <Button Command="{Binding ZoomOutCommand}"
+                    <Button Click="ZoomOut_Click"
                             FontSize="16"
                             Grid.Column="3"
                             Margin="2,0,0,0"
@@ -65,7 +61,7 @@
                             x:Name="ZoomOut">
                     -
                     </Button>
-                    <Button Command="{Binding ZoomResetCommand}"
+                    <Button Click="ZoomReset_Click"
                             FontSize="16"
                             Grid.Column="4"
                             Margin="2,0,0,0"
@@ -73,13 +69,14 @@
                             x:Name="ZoomReset">
                     .
                     </Button>
-                    <Button Command="{Binding ZoomInCommand}"
+                    <Button Click="ZoomIn_Click"
                             FontSize="16"
                             Grid.Column="5"
                             Margin="2,0,0,0"
                             Style="{StaticResource SmallButton}"
-                            x:Name="ZoomIn" Content="+"/>
-                   
+                            x:Name="ZoomIn">
+                    +
+                    </Button>
                     <CheckBox Grid.Column="6"
                               IsChecked="{Binding ShowOrtho}"
                               Margin="2,0,0,0"
@@ -95,7 +92,7 @@
                     Style="{StaticResource ControlBorder}">
                 <UniformGrid Columns="8"
                              MaxWidth="500">
-                    <Button Command="{Binding ShowAllPointsCommand}"
+                    <Button Click="ShowAllPointsButton_Click"
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Select a segment or point"
                                 x:Name="ShowAllPointsButton">
@@ -105,7 +102,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="PickBorder">
-                        <Button Command="{Binding PickCommand}"
+                        <Button Click="PickButton_Click"
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Select a segment or point"
                                 x:Name="PickButton">
@@ -116,7 +113,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="AddSegBorder">
-                        <Button Command="{Binding AddSegCommand}"
+                        <Button Click="AddSegButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Insert a straight segment"
                                 x:Name="AddSegButton">
@@ -127,7 +124,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="AddBezierBorder">
-                        <Button Command="{Binding AddBezierCommand}"
+                        <Button Click="AddBezierButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert a straight segment to a cubic spline"
                                 x:Name="AddBezierButton">
@@ -138,7 +135,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="AddQuadBezierBorder">
-                        <Button Command="{Binding AddQuadBezierCommand}"
+                        <Button Click="AddQuadBezierButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert a straight segment to a quadratic spline"
                                 x:Name="AddQuadBezierButton">
@@ -149,7 +146,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="DelSegBorder">
-                        <Button Command="{Binding DelSegCommand}"
+                        <Button Click="DelSegButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Delete a segment"
                                 x:Name="DelSegButton">
@@ -160,7 +157,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="MovePathBorder">
-                        <Button Command="{Binding MovePathCommand}"
+                        <Button Click="MovePathButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Move entire path to clicked point"
                                 x:Name="MovePathButton">
@@ -171,7 +168,7 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="ResetPathBorder">
-                        <Button Command="{Binding ResetPathCommand}"
+                        <Button Click="ResetPathButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Reset the entire path"
                                 x:Name="ResetPathButton">
@@ -182,35 +179,45 @@
                 </UniformGrid>
             </Border>
             <ScrollViewer Grid.Row="2"
-                          Grid.RowSpan="2"
+                          
                           HorizontalScrollBarVisibility="Visible"
-                          Margin="0,5,0,28.6"
+                          Margin="0,2,0,0"
                           Padding="5,5,5,5"
                           ScrollChanged="ScrollViewer_ScrollChanged"
                           VerticalScrollBarVisibility="Visible"
                           x:Name="ScrollView">
-
+        <!--
+                    <Image x:Name="RibImage" />
+                    -->
                 <Canvas Background="Transparent"
                         Margin="2,2"
-                        
                         MouseDown="FlexiPathCanvas_MouseDown"
                         MouseMove="FlexiPathCanvas_MouseMove"
                         MouseUp="FlexiPathCanvas_MouseUp"
                         x:Name="FlexiPathCanvas"
-                        Width="{Binding CanvasWidth}"
-                        Height="{Binding CanvasHeight}">
+                        Width="400"
+                        Height="400">
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="PathCanvasScale"/>
                     </Canvas.LayoutTransform>
-                    <ContentPresenter Content="{Binding PathChildren}">
-                        
-                    </ContentPresenter>
                 </Canvas>
             </ScrollViewer>
+            <Grid Grid.Row="3">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
             <CheckBox Content="Profile Points"
                       Grid.Row="3"
                       IsChecked="{Binding ShowProfilePoints}"
                       VerticalAlignment="Center"/>
+                <TextBox Grid.Column="1" Text="{Binding PathText}" Margin="2,2,2,2"/>
+                <Button Grid.Column="2" Content="Copy" Click="CopyPath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
+                <Button Grid.Column="3" Content="Paste" Click="PastePath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>
