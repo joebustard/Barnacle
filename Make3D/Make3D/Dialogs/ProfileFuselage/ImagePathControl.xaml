@@ -124,10 +124,10 @@
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="CNVDoubleSegBorder">
-                        <Button Command="{Binding CNVDoubleSegCommand}"
+                        <Button Click="CNVSegButton_Click"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert two selected straight segments into a Quadratic spline"
-                                x:Name="CNVSegButton" IsEnabled="{Binding CanCNVDouble}" HorizontalAlignment="Right" Margin="0,0,0.2,0" Width="47">
+                                x:Name="CNVSegButton" Visibility="{Binding CNVDoubleVisible}" HorizontalAlignment="Right" Margin="0,0,0.2,0" Width="47">
                             <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png"/>
 
                         </Button>

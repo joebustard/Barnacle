@@ -1163,10 +1163,12 @@ namespace Barnacle.Dialogs
             if (selectionMode == SelectionModeType.StartPoint)
             {
                 AddStartPointToPoly(e);
+                e.Handled = true;
             }
             else if (selectionMode == SelectionModeType.AddPoint)
             {
                 AddAnotherPointToPoly(e);
+                e.Handled = true;
             }
             else
             {
@@ -1186,6 +1188,7 @@ namespace Barnacle.Dialogs
                         MoveWholePath(position);
                         SelectionMode = SelectionModeType.SelectPoint;
                         UpdateDisplay();
+                        e.Handled = true;
                     }
                     else
                     {
@@ -1208,6 +1211,7 @@ namespace Barnacle.Dialogs
 
                         if (e.LeftButton == MouseButtonState.Pressed)
                         {
+                            e.Handled = true;
                             UpdateDisplay();
                         }
                     }
@@ -1587,7 +1591,6 @@ namespace Barnacle.Dialogs
 
             if (found)
             {
-                // GetRawFlexiPoints();
                 PointGrid.ItemsSource = Points;
                 CollectionViewSource.GetDefaultView(Points).Refresh();
                 Redisplay();

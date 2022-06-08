@@ -192,7 +192,7 @@ namespace Barnacle.LineLib
         }
         public void DeleteSegmentStartingAt(int index)
         {
-            if (segs.Count > 3)
+            if (segs.Count >= 3)
             {
                 for (int i = 0; i < segs.Count; i++)
                 {
@@ -912,7 +912,7 @@ namespace Barnacle.LineLib
                     P1.X = (targetPoint.X - (1.0 - t) * t * P0.X - ((t * t) * P2.X)) / (2.0 * (1 - t) * t);
                     P1.Y = (targetPoint.Y - (1.0 - t) * t * P0.Y - ((t * t) * P2.Y)) / (2.0 * (1 - t) * t);
                     // convert seg1 to a quadratic bezier
-                    ConvertLineQuadCurveSegment(firstSeg, P1, false);
+                    ConvertLineQuadCurveSegment(seg1P0, P1, false);
                 }
 
 

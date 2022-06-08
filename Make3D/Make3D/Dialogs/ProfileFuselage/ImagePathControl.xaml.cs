@@ -124,6 +124,7 @@ namespace Barnacle.Dialogs
                 {
                     canCNVDouble = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged("CNVDoubleVisible");
                 }
             }
         }
@@ -1033,41 +1034,9 @@ namespace Barnacle.Dialogs
             FlexiPathCanvas.Children.Add(ln);
         }
 
-        public ICommand ZoomInCommand { get; set; }
-        public ICommand ZoomOutCommand { get; set; }
-        public ICommand ZoomResetCommand { get; set; }
-        public ICommand ShowAllPointsCommand { get; set; }
-        public ICommand PickCommand { get; set; }
-        public ICommand AddSegCommand { get; set; }
-        public ICommand AddBezierCommand { get; set; }
-        public ICommand AddQuadBezierCommand { get; set; }
-        public ICommand DelSegCommand { get; set; }
-        public ICommand MovePathCommand { get; set; }
-        public ICommand ResetPathCommand { get; set; }
-        public ICommand CNVDoubleSegCommand { get; set; }
-        public ImagePathViewModel()
+        private void AddQuadBezierButton_Click(object sender, RoutedEventArgs e)
         {
-            ZoomInCommand = new RelayCommand(OnZoomIn);
-            ZoomOutCommand = new RelayCommand(OnZoomOut);
-            ZoomResetCommand = new RelayCommand(OnZoomReset);
-            ShowAllPointsCommand = new RelayCommand(OnShowAllPoints);
-            AddSegCommand = new RelayCommand(OnAddSeg);
-            CNVDoubleSegCommand = new RelayCommand(OnCNVDoublePath);
-            AddBezierCommand = new RelayCommand(OnAddBezier);
-            AddQuadBezierCommand = new RelayCommand(OnAddQuadBezier);
-            DelSegCommand = new RelayCommand(OnDeleteSeg);
-            PickCommand = new RelayCommand(OnPick);
-            MovePathCommand = new RelayCommand(OnMove);
-            ResetPathCommand = new RelayCommand(OnResetPath);
-            Clear();
-            displayCanvas = null;
-
-                showOrtho = true;
-                //  ScrollView.ScrollToHorizontalOffset(scrollX);
-                //    ScrollView.ScrollToVerticalOffset(scrollY);
-                selectionMode = SelectionModeType.SelectPoint;
-
-
+            SelectionMode = SelectionModeType.AddQuadBezier;
         }
         private bool AddLineFromPoint(System.Windows.Input.MouseButtonEventArgs e, Line ln)
         {
@@ -1414,10 +1383,12 @@ namespace Barnacle.Dialogs
             if (selectionMode == SelectionModeType.StartPoint)
             {
                 AddStartPointToPoly(e);
+                e.Handled = true;
             }
             else if (selectionMode == SelectionModeType.AddPoint)
             {
                 AddAnotherPointToPoly(e);
+                e.Handled = true;
             }
             else
             {
@@ -1437,6 +1408,7 @@ namespace Barnacle.Dialogs
                         MoveWholePath(position);
                         SelectionMode = SelectionModeType.SelectPoint;
                         UpdateDisplay();
+                        e.Handled = true;
                     }
                     else
                     {
@@ -1459,8 +1431,10 @@ namespace Barnacle.Dialogs
 
                         if (e.LeftButton == MouseButtonState.Pressed)
                         {
+                            e.Handled = true;
                             UpdateDisplay();
                         }
+
                     }
                 }
 
@@ -1682,6 +1656,21 @@ namespace Barnacle.Dialogs
             PathText = flexiPath.ToPath();
         }
 
+
+        public Visibility CNVDoubleVisible
+        {
+            get
+            {
+                if (canCNVDouble)
+                {
+                    return Visibility.Visible;
+                }
+                else
+                {
+                    return Visibility.Hidden;
+                }
+            }
+        }
         private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             Line ln = sender as Line;
@@ -1692,7 +1681,8 @@ namespace Barnacle.Dialogs
                 {
                     case SelectionModeType.SelectPoint:
                         {
-                            found = SelectLineFromPoint(e);
+                            bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                            found = SelectLineFromPoint(e, shiftDown);
                         }
                         break;
 
@@ -1964,22 +1954,21 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool SelectLineFromPoint(MouseButtonEventArgs e)
+        private bool SelectLineFromPoint(MouseButtonEventArgs e, bool shift)
         {
             bool found;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
-            found = flexiPath.SelectAtPoint(position);
+            found = flexiPath.SelectAtPoint(position, !shift);
 
             if (found)
             {
-                // GetRawFlexiPoints();
-
-                UpdateDisplay();
+            UpdateDisplay();
             }
-
+            CanCNVDouble = flexiPath.HasTwoConsecutiveLineSegmentsSelected();
             return found;
         }
+
 
         private void SetButtonBorderColours()
         {
@@ -2173,6 +2162,18 @@ namespace Barnacle.Dialogs
         {
             scale = 1.0;
             SetFlexiPathScale();
+        }
+
+        private void CNVSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (canCNVDouble)
+            {
+                flexiPath.ConvertTwoLineSegmentsToQuadraticBezier();
+                
+                UpdateDisplay();
+                PathText = flexiPath.ToPath();
+                CanCNVDouble = false;
+            }
         }
     }
 }
