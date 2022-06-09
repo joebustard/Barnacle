@@ -1117,6 +1117,7 @@ namespace Barnacle.Dialogs
                 PathText = pth;
                 flexiPath.FromTextPath(pth);
                 UpdateDisplay();
+                SelectionMode = SelectionModeType.SelectPoint;
             }
             
         }

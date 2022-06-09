@@ -94,9 +94,9 @@
                              MaxWidth="500">
                     <Button Click="ShowAllPointsButton_Click"
                                 Style="{StaticResource SmallButton }"
-                                ToolTip="Select a segment or point"
+                                ToolTip="Show all the control points on the path"
                                 x:Name="ShowAllPointsButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Reveal all path points"/>
+                        <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path"/>
 
                     </Button>
                     <Border BorderThickness="4"
@@ -115,7 +115,7 @@
                             x:Name="AddSegBorder">
                         <Button Click="AddSegButton_Click"
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Insert a straight segment"
+                                ToolTip="Split a line segment in two at the selected point"
                                 x:Name="AddSegButton">
                             <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png"/>
 
@@ -148,7 +148,7 @@
                             x:Name="AddQuadBezierBorder">
                         <Button Click="AddQuadBezierButton_Click"
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Convert a sinle straight segment to a quadratic spline"
+                                ToolTip="Convert a single straight segment to a quadratic spline"
                                 x:Name="AddQuadBezierButton">
                             <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png"/>
 
@@ -170,7 +170,7 @@
                             x:Name="MovePathBorder">
                         <Button Click="MovePathButton_Click"
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Move entire path to clicked point"
+                                ToolTip="Move the entire path to clicked point"
                                 x:Name="MovePathButton">
                             <Image Source="/Barnacle;component/Images/Buttons/MovePath.png"/>
 
@@ -181,7 +181,7 @@
                             x:Name="ResetPathBorder">
                         <Button Click="ResetPathButton_Click"
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Reset the entire path"
+                                ToolTip="Clear the entire path and add it again"
                                 x:Name="ResetPathButton">
                             <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png"/>
 

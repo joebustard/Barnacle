@@ -136,7 +136,10 @@ namespace Barnacle.LineLib
         {
             P0 -= n;
             P1 -= n;
-            P2 -= n;
+            if (P2 != 0)
+            {
+                P2 -= n;
+            }
         }
 
         public void ResetControlPoints(ObservableCollection<FlexiPoint> points)

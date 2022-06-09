@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Barnacle.LineLib
@@ -170,19 +167,51 @@ namespace Barnacle.LineLib
             }
         }
 
+        public void ConvertTwoLineSegmentsToQuadraticBezier()
+        {
+            // have we really got two consecutive line segs selected?
+            int firstSeg = TwoConsecutiveLineSegmentsSelected();
+            if (firstSeg > -1)
+            {
+                int secondSeg = firstSeg + 1;
+                // collect the details of the points in case we need em later
+                int seg1P0 = segs[firstSeg].Start();
+                Point P0 = points[seg1P0].ToPoint();
+
+                int seg2P0 = segs[secondSeg].Start();
+                Point targetPoint = points[seg2P0].ToPoint();
+
+                int seg2P1 = segs[secondSeg].End();
+                Point P2 = points[seg2P1].ToPoint();
+
+                double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
+                if (t != double.MinValue && t != 0)
+                {
+                    // Now it gets nasty
+                    // delete the second segment
+                    DeleteSegmentStartingAt(seg1P0);
+                    // calculate where the control point should be so cuve goes through target point
+                    Point P1 = new Point(0, 0);
+                    P1.X = (targetPoint.X - (1.0 - t) * t * P0.X - ((t * t) * P2.X)) / (2.0 * (1 - t) * t);
+                    P1.Y = (targetPoint.Y - (1.0 - t) * t * P0.Y - ((t * t) * P2.Y)) / (2.0 * (1 - t) * t);
+                    // convert seg1 to a quadratic bezier
+                    ConvertLineQuadCurveSegment(seg1P0, P1, false);
+                }
+            }
+        }
+
         public void DeleteLastSegment()
         {
             if (segs.Count > 0)
             {
                 segs[segs.Count - 1].DeletePoints(points);
                 segs.RemoveAt(segs.Count - 1);
-
             }
         }
 
         public void DeleteSegment(int index)
         {
-            if (index >=0 &&index < segs.Count && segs.Count>3)
+            if (index >= 0 && index < segs.Count && segs.Count > 3)
             {
                 int numPointsRemoved = segs[index].NumberOfPoints() - 1;
                 segs[index].DeletePoints(points);
@@ -190,6 +219,7 @@ namespace Barnacle.LineLib
                 PointsRemoved(segs, index, numPointsRemoved);
             }
         }
+
         public void DeleteSegmentStartingAt(int index)
         {
             if (segs.Count >= 3)
@@ -213,6 +243,26 @@ namespace Barnacle.LineLib
                     }
                 }
             }
+        }
+
+        public bool DeleteSelectedSegment()
+        {
+            bool result = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    // if its not the closing segment go ahead an do a simple delete
+                    if (segs[i].End() != 0)
+                    {
+                        DeleteSegment(i);
+                        result = true;
+                    }
+                   
+                    break;
+                }
+            }
+            return result;
         }
 
         public void DeselectAll()
@@ -273,6 +323,16 @@ namespace Barnacle.LineLib
             else
             {
                 FromTextPath(s);
+            }
+        }
+
+        public void ClosePath()
+        {
+            if (segs.Count > 2)
+            {
+                // create a separate segment that goes back to point zero
+                LineSegment sq = new LineSegment(points.Count - 1, 0);
+                segs.Add(sq);
             }
         }
 
@@ -488,8 +548,7 @@ namespace Barnacle.LineLib
             }
             if (valid && pnts.Count > 2)
             {
-                segs.Clear();
-                segs.AddRange(segments);
+
 
                 points.Clear();
                 int i = 0;
@@ -499,8 +558,86 @@ namespace Barnacle.LineLib
                     points.Add(f);
                     i++;
                 }
+
+                // auto close
+                if (points[0].X != points[i - 1].X || points[0].Y != points[i - 1].Y)
+                {
+                    // create a separate segment that goes back to point zero
+                    LineSegment sq = new LineSegment(pnts.Count - 1, 0);
+                    segments.Add(sq);
+                }
+                segs.Clear();
+                segs.AddRange(segments);
             }
             return valid;
+        }
+
+        public bool ConvertToQuadQuadAtSelected(Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            ConvertLineQuadCurveSegment(start, position);
+                        }
+                        else
+                        {
+
+                            // Delete the last dummy segment
+                            segs.RemoveAt(segs.Count - 1);
+                            // Append a new curve
+                            AppendClosingCurveSegment();
+
+                            segs[segs.Count - 1].Select(points);
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
+        }
+
+        public bool ConvertToCubic(Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            ConvertLineCurveSegment(start, position);
+                        }
+                        else
+                        {
+
+                            // Delete the last dummy segment
+                            segs.RemoveAt(segs.Count - 1);
+                            // Append a new curve
+                            AppendClosingCurveSegment();
+
+                            segs[segs.Count-1].Select(points);
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
         }
 
         public List<FlexiPoint> GetSegmentPoints()
@@ -512,6 +649,21 @@ namespace Barnacle.LineLib
                 sg.GetSegmentPoints(res, points);
             }
             return res;
+        }
+
+        /// <summary>
+        /// Does the path have two consecutive line segments selected
+        /// Used to enable related buttons
+        /// </summary>
+        /// <returns></returns>
+        public bool HasTwoConsecutiveLineSegmentsSelected()
+        {
+            bool result = false;
+            if (TwoConsecutiveLineSegmentsSelected() != -1)
+            {
+                result = true;
+            }
+            return result;
         }
 
         public void InsertCurveSegment(int index, Point position)
@@ -534,18 +686,18 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void InsertLineSegment(int index, Point position)
+        public void InsertLineSegment(int pointIndex, Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
             {
-                if (segs[i].Start() == index)
+                if (segs[i].Start() == pointIndex)
                 {
                     int end = segs[i].End();
-                    points.Insert(index + 1, new FlexiPoint(position, index + 1));
+                    points.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
 
-                    LineSegment ls = new LineSegment(index + 1, index + 2);
-                    PointInserted(segs, i + 1, index + 1, 1);
+                    LineSegment ls = new LineSegment(pointIndex + 1, pointIndex + 2);
+                    PointInserted(segs, i + 1, pointIndex + 1, 1);
                     segs.Insert(i + 1, ls);
                     DeselectAll();
                     segs[i + 1].Select(points);
@@ -557,7 +709,7 @@ namespace Barnacle.LineLib
             {
                 // special case, trying to split the imaginary line that connects
                 // the last point back to the first
-                if (segs[segs.Count - 1].End() == index)
+                if (segs[segs.Count - 1].End() == pointIndex)
                 {
                     FlexiPoint np = new FlexiPoint(position, points.Count);
                     points.Add(np);
@@ -569,6 +721,41 @@ namespace Barnacle.LineLib
             }
         }
 
+        public bool SplitSelectedLineSegment( Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+              if ( segs[i].Selected)
+                {
+                    if ( segs[i] is LineSegment)
+                    {
+                        int start = segs[i].Start();
+                        int end = segs[i].End();
+                        // closing segment which goes back to 0 is a special case
+                        if (end != 0)
+                        {
+                            InsertLineSegment(start, position);
+                        }
+                        else
+                        {
+                            // add a new flexipoint at the given position
+                            FlexiPoint fx = new FlexiPoint(position.X , position.Y);
+                            points.Add(fx);
+                            // Make the existing segment refr to this point
+                            (segs[i] as LineSegment).P1 = points.Count - 1;
+                            segs[i].Deselect( points);
+                            // now reclose the path to linkback up to the first path
+                            ClosePath();
+                            segs[i + 1].Select(points);
+                        }
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
+        }
         public void MoveTo(Point position)
         {
             double cx = 0;
@@ -589,7 +776,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public bool SelectAtPoint(Point position, bool clear=true)
+        public bool SelectAtPoint(Point position, bool clear = true)
         {
             bool found = false;
             if (clear)
@@ -696,20 +883,19 @@ namespace Barnacle.LineLib
         public int TwoConsecutiveLineSegmentsSelected()
         {
             int res = -1;
-           
+
             int segmentindex = 0;
             bool foundSelected = false;
-            while (foundSelected == false && segmentindex < segs.Count-1)
+            while (foundSelected == false && segmentindex < segs.Count - 1)
             {
-                if ( segs[segmentindex].Selected)
+                if (segs[segmentindex].Selected)
                 {
                     foundSelected = true;
-                    if ( segs[segmentindex] is LineSegment)
+                    if (segs[segmentindex] is LineSegment)
                     {
-                        if (segs[segmentindex+1].Selected)
+                        if (segs[segmentindex + 1].Selected)
                         {
-                            
-                            if (segs[segmentindex+1] is LineSegment)
+                            if (segs[segmentindex + 1] is LineSegment)
                             {
                                 res = segmentindex;
                             }
@@ -719,21 +905,6 @@ namespace Barnacle.LineLib
                 segmentindex++;
             }
             return res;
-        }
-
-        /// <summary>
-        /// Does the path have two consecutive line segments selected
-        /// Used to enable related buttons
-        /// </summary>
-        /// <returns></returns>
-        public bool HasTwoConsecutiveLineSegmentsSelected()
-        {
-            bool result = false;
-            if (TwoConsecutiveLineSegmentsSelected() != -1)
-            {
-                result = true;
-            }
-            return result;
         }
         private void CoordsFromString(string coordPart)
         {
@@ -867,58 +1038,6 @@ namespace Barnacle.LineLib
                     }
                 }
             }
-        }
-
-
-        public bool DeleteSelectedSegment()
-        {
-            bool result = false;
-            for (int i = 0; i < segs.Count; i++)
-            {
-                if (segs[i].Selected)
-                {
-                    DeleteSegment(i);
-                    result = true;
-                    break;
-                }
-            }
-            return result;
-		}
-        public void ConvertTwoLineSegmentsToQuadraticBezier()
-        {
-            // have we really got two consecutive line segs selected?
-            int firstSeg = TwoConsecutiveLineSegmentsSelected(); 
-            if ( firstSeg > -1)
-            {
-                int secondSeg = firstSeg + 1;
-                // collect the details of the points in case we need em later
-                int seg1P0 = segs[firstSeg].Start();
-                Point P0 = points[seg1P0].ToPoint();
-
-                int seg2P0 = segs[secondSeg].Start();
-                Point targetPoint = points[seg2P0].ToPoint();
-
-                int seg2P1 = segs[secondSeg].End();
-                Point P2 = points[seg2P1].ToPoint();
-
-                double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
-                if (t != double.MinValue && t != 0)
-                {
-                    // Now it gets nasty
-                    // delete the second segment
-                    DeleteSegmentStartingAt(seg1P0);
-                    // calculate where the control point should be so cuve goes through target point
-                    Point P1 = new Point(0, 0);
-                    P1.X = (targetPoint.X - (1.0 - t) * t * P0.X - ((t * t) * P2.X)) / (2.0 * (1 - t) * t);
-                    P1.Y = (targetPoint.Y - (1.0 - t) * t * P0.Y - ((t * t) * P2.Y)) / (2.0 * (1 - t) * t);
-                    // convert seg1 to a quadratic bezier
-                    ConvertLineQuadCurveSegment(seg1P0, P1, false);
-                }
-
-
-            }
-
-
         }
     }
 }

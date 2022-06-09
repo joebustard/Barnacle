@@ -301,7 +301,6 @@ namespace Barnacle.Dialogs
                     GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
                     if (lastHitModel == null)
                     {
-                        // UpdateResultInfo(rayMeshResult);
                         lastHitModel = hitgeo;
                         lastHitPoint = rayMeshResult.PointHit;
                     }

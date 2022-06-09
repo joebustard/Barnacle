@@ -186,6 +186,15 @@
                              Margin="-0.4,-0.4,0.4,0.4"
                              VerticalAlignment="Bottom"
                              Height="40">
+                        
+                        <Button Click="ShowAllPointsButton_Click"
+                                Style="{StaticResource SmallButton }"
+                                ToolTip="Show all the control points on the path"
+                                x:Name="ShowAllPointsButton">
+                        <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path"/>
+
+                        </Button>
+
                         <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="PickBorder">
@@ -290,14 +299,10 @@
                 </ScrollViewer>
                 <StackPanel Grid.Row="2"
                             Orientation="Horizontal">
-                    <Button Click="CopyPath_Click"
-                            ToolTip="Copy the path text to the clipboard."
-                            VerticalAlignment="Center">
-                    Path
-                    </Button>
-                    <Label Content="{Binding PathText}"
-                           Margin="4,0,0,0"
-                           VerticalAlignment="Center"/>
+                    <Label Content="Path" VerticalAlignment="Center" />
+                    <TextBox  Text="{Binding PathText}" Width="300" Margin="2,2,2,2"/>
+                    <Button  Content="Copy" Width="50" Click="CopyPath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
+                    <Button  Content="Paste" Width="50" Click="PastePath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
 
                 </StackPanel>
             </Grid>

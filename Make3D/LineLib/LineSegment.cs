@@ -94,7 +94,11 @@ namespace Barnacle.LineLib
         public override void PointsRemoved(int n)
         {
             P0 -= n;
-            P1 -= n;
+            // if this segment is pointing back to the start of the poly dont move its end
+            if (P1 != 0)
+            {
+                P1 -= n;
+            }
         }
 
         public override void Select(ObservableCollection<FlexiPoint> points)
