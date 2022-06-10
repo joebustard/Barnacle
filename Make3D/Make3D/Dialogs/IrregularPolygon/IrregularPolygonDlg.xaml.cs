@@ -25,7 +25,7 @@ namespace Barnacle.Dialogs
     public partial class PlateletDlg : BaseModellerDialog
     {
         private bool canCNVDouble;
-        private bool closeFigure;
+
         private FlexiPath flexiPath;
         private List<Shape> gridMarkers;
         private double gridX = 0;
@@ -50,7 +50,7 @@ namespace Barnacle.Dialogs
         public PlateletDlg()
         {
             InitializeComponent();
-            //polyPoints = new ObservableCollection<PolyPoint>();
+
             flexiPath = new FlexiPath();
             polyPoints = flexiPath.FlexiPoints;
             selectedPoint = -1;
@@ -76,6 +76,7 @@ namespace Barnacle.Dialogs
             snap = true;
             CNVDoubleSegCommand = new RelayCommand(OnCNVDoublePath);
         }
+
         public enum SelectionModeType
         {
             StartPoint,
@@ -310,6 +311,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public Visibility ShowWidth
         {
             get
@@ -410,6 +412,41 @@ namespace Barnacle.Dialogs
             SelectionMode = SelectionModeType.ConvertToCubicBezier;
         }
 
+        private void AddPointClicked(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void AddQuadBezierButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.ConvertToQuadBezier;
+        }
+
+        private void AddSegButton_Click(object sender, RoutedEventArgs e)
+        {
+            SelectionMode = SelectionModeType.SplitLine;
+        }
+
+        private void AddStartPointToPoly(MouseButtonEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            position = SnapPositionToMM(position);
+            flexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
+            selectionMode = SelectionModeType.AppendPoint;
+            UpdateDisplay();
+        }
+
+        private void ClearPointSelections()
+        {
+            if (polyPoints != null)
+            {
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    polyPoints[i].Selected = false;
+                    polyPoints[i].Visible = false;
+                }
+            }
+        }
+
         private bool ConvertLineAtPointToBezier(MouseButtonEventArgs e, Line ln, bool cubic)
         {
             int found = -1;
@@ -436,106 +473,7 @@ namespace Barnacle.Dialogs
                 }
             }
 
-
-
             return added;
-        }
-
-        private void DrawLine(int i, int v, List<System.Windows.Point> points, bool joinLast)
-        {
-            if (v >= points.Count)
-            {
-                if (joinLast)
-                {
-                    v = 0;
-                }
-                else
-                {
-                    return;
-                }
-            }
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
-            Line ln = new Line();
-            ln.Stroke = br;
-            ln.StrokeThickness = 6;
-            ln.Fill = br;
-            ln.X1 = ToPixelX(points[i].X);
-            ln.Y1 = ToPixelY(points[i].Y);
-            ln.X2 = ToPixelX(points[v].X);
-            ln.Y2 = ToPixelY(points[v].Y);
-            ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
-            ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
-            MainCanvas.Children.Add(ln);
-        }
-
-        private bool SplitLineAtPoint(MouseButtonEventArgs e, Line ln)
-        {
-
-            bool added = false;
-            System.Windows.Point position = e.GetPosition(MainCanvas);
-            position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
-            if (flexiPath.SelectAtPoint(position, true))
-            {
-
-                if (flexiPath.SplitSelectedLineSegment(position))
-                {
-                    PointGrid.ItemsSource = Points;
-                    CollectionViewSource.GetDefaultView(Points).Refresh();
-                    UpdateDisplay();
-                    added = true;
-                    PathText = flexiPath.ToPath();
-                }
-            }
-            return added;
-        }
-
-        private void AddPointClicked(object sender, RoutedEventArgs e)
-        {
-        }
-
-        private void AddQuadBezierButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectionMode = SelectionModeType.ConvertToQuadBezier;
-        }
-
-        private void AddSegButton_Click(object sender, RoutedEventArgs e)
-        {
-            SelectionMode = SelectionModeType.SplitLine;
-        }
-
-        private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
-        {
-
-            double gx = pos.X;
-            double gy = pos.Y;
-            if (snap)
-            {
-                gx = pos.X / gridX;
-                gx = Math.Round(gx) * gridX;
-                gy = pos.Y / gridY;
-                gy = Math.Round(gy) * gridY;
-            }
-            return new System.Windows.Point(ToMMX(gx), ToMMY(gy));
-        }
-        private void AddStartPointToPoly(MouseButtonEventArgs e)
-        {
-            System.Windows.Point position = e.GetPosition(MainCanvas);
-            position = SnapPositionToMM(position);
-            flexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
-            selectionMode = SelectionModeType.AppendPoint;
-            UpdateDisplay();
-        }
-
-        private void ClearPointSelections()
-        {
-            if (polyPoints != null)
-            {
-                for (int i = 0; i < polyPoints.Count; i++)
-                {
-                    polyPoints[i].Selected = false;
-                    polyPoints[i].Visible = false;
-                }
-            }
         }
 
         private void CopyPath_Click(object sender, RoutedEventArgs e)
@@ -603,12 +541,10 @@ namespace Barnacle.Dialogs
             int found = -1;
             bool deleted = false;
             System.Windows.Point position = e.GetPosition(MainCanvas);
-            
+
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             if (flexiPath.SelectAtPoint(position, true))
             {
-
-
                 deleted = flexiPath.DeleteSelectedSegment();
 
                 if (deleted)
@@ -616,10 +552,9 @@ namespace Barnacle.Dialogs
                     PointGrid.ItemsSource = Points;
                     CollectionViewSource.GetDefaultView(Points).Refresh();
                     UpdateDisplay();
-                    deleted = true;
                     PathText = flexiPath.ToPath();
+                    e.Handled = true;
                 }
-
             }
             return deleted;
         }
@@ -634,11 +569,11 @@ namespace Barnacle.Dialogs
             if (flexiPath != null)
             {
                 List<System.Windows.Point> points = flexiPath.DisplayPoints();
-                if (points != null && points.Count > 2)
+                if (points != null && points.Count >= 2)
                 {
-                    for (int i = 0; i < points.Count; i++)
+                    for (int i = 0; i < points.Count-1; i++)
                     {
-                        DrawLine(i, i + 1, points, closeFigure);
+                        DrawLine(i, i + 1, points);
                     }
                 }
             }
@@ -760,6 +695,25 @@ namespace Barnacle.Dialogs
             ln.Y2 = ToPixelY(p2.Y);
 
             MainCanvas.Children.Add(ln);
+        }
+
+        private void DrawLine(int i, int v, List<System.Windows.Point> points)
+        {
+            if (v < points.Count)
+            {
+                SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
+                Line ln = new Line();
+                ln.Stroke = br;
+                ln.StrokeThickness = 6;
+                ln.Fill = br;
+                ln.X1 = ToPixelX(points[i].X);
+                ln.Y1 = ToPixelY(points[i].Y);
+                ln.X2 = ToPixelX(points[v].X);
+                ln.Y2 = ToPixelY(points[v].Y);
+                ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
+                ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
+                MainCanvas.Children.Add(ln);
+            }
         }
 
         private void GenerateFaces()
@@ -914,14 +868,13 @@ namespace Barnacle.Dialogs
 
             outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
             innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
-            // outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+
             innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth);
             System.Windows.Point opf = Perpendicular(new System.Windows.Point(outerPolygon[0].X, outerPolygon[0].Y), new System.Windows.Point(outerPolygon[1].X, outerPolygon[1].Y), 0, wallWidth);
             innerPolygon[0] = new PointF((float)opf.X, (float)opf.Y);
             opf = Perpendicular(new System.Windows.Point(outerPolygon[outerPolygon.Count - 2].X, outerPolygon[outerPolygon.Count - 2].Y), new System.Windows.Point(outerPolygon[outerPolygon.Count - 1].X, outerPolygon[outerPolygon.Count - 1].Y), 1, -wallWidth);
             innerPolygon[innerPolygon.Count - 1] = new PointF((float)opf.X, (float)opf.Y);
-            //  outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
-            // innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth / 2.0F);
+
             tmp.Clear();
             for (int i = outerPolygon.Count - 1; i >= 0; i--)
             {
@@ -1100,12 +1053,6 @@ namespace Barnacle.Dialogs
         {
             flexiPath.Clear();
             selectionMode = SelectionModeType.StartPoint;
-            /*
-            flexiPath.Start = new FlexiPoint(new System.Windows.Point(10, 10), 0);
-            flexiPath.AddLine(new System.Windows.Point(100, 10));
-            flexiPath.AddLine(new System.Windows.Point(100, 100));
-            flexiPath.AddLine(new System.Windows.Point(10, 100));
-            */
         }
 
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
@@ -1184,7 +1131,9 @@ namespace Barnacle.Dialogs
                     e.Handled = true;
                     UpdateDisplay();
                 }
+                canCNVDouble = flexiPath.HasTwoConsecutiveLineSegmentsSelected();
             }
+
         }
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -1240,8 +1189,7 @@ namespace Barnacle.Dialogs
                     }
                     else
                     {
-
-                        // dont snap position when selecting points as they  may have been positioned between two 
+                        // dont snap position when selecting points as they  may have been positioned between two
                         // grid points .
                         // just convert position to mm
                         position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
@@ -1256,7 +1204,6 @@ namespace Barnacle.Dialogs
                                                     ((position.Y - p.Y) * (position.Y - p.Y)));
                             if (dist < minDist && dist < rad)
                             {
-
                                 SelectedPoint = i;
                                 minDist = dist;
                             }
@@ -1279,14 +1226,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void ShowAllPointsButton_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (FlexiPoint p in polyPoints)
-            {
-                p.Visible = true;
-            }
-            UpdateDisplay();
-        }
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);
@@ -1488,6 +1427,7 @@ namespace Barnacle.Dialogs
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
         }
+
         private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
         {
             double x;
@@ -1668,6 +1608,47 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ShowAllPointsButton_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (FlexiPoint p in polyPoints)
+            {
+                p.Visible = true;
+            }
+            UpdateDisplay();
+        }
+
+        private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
+        {
+            double gx = pos.X;
+            double gy = pos.Y;
+            if (snap)
+            {
+                gx = pos.X / gridX;
+                gx = Math.Round(gx) * gridX;
+                gy = pos.Y / gridY;
+                gy = Math.Round(gy) * gridY;
+            }
+            return new System.Windows.Point(ToMMX(gx), ToMMY(gy));
+        }
+
+        private bool SplitLineAtPoint(MouseButtonEventArgs e, Line ln)
+        {
+            bool added = false;
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
+            if (flexiPath.SelectAtPoint(position, true))
+            {
+                if (flexiPath.SplitSelectedLineSegment(position))
+                {
+                    PointGrid.ItemsSource = Points;
+                    CollectionViewSource.GetDefaultView(Points).Refresh();
+                    UpdateDisplay();
+                    added = true;
+                    PathText = flexiPath.ToPath();
+                }
+            }
+            return added;
+        }
         private double ToMM(double x)
         {
             double res = x;
@@ -1723,7 +1704,7 @@ namespace Barnacle.Dialogs
                 if (gridMarkers == null)
                 {
                     gridMarkers = new List<Shape>();
-                    CreateCanvasGrid(MainCanvas, out gridX, out gridY, 10.0, gridMarkers);
+                    BaseModellerDialog.CreateCanvasGrid(MainCanvas, out gridX, out gridY, 10.0, gridMarkers);
                 }
                 foreach (Shape sh in gridMarkers)
                 {

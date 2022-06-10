@@ -1046,10 +1046,9 @@ namespace Barnacle.Dialogs
         {
             return x * 25.4;
         }
-        internal void CreateCanvasGrid( Canvas cnv, out double gridX, out double gridY, double gridSizeMM,List<Shape> markers)
+        public static void CreateCanvasGrid( Canvas cnv, out double gridX, out double gridY, double gridSizeMM,List<Shape> markers)
         {
-            double divsX;
-            double divsY;
+
             double x=0;
             double y=0;
             DpiScale sc =VisualTreeHelper.GetDpi(cnv);
