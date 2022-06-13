@@ -122,5 +122,17 @@ namespace Barnacle.Properties {
                 this["LastImportFolder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string slicerProfileName {
+            get {
+                return ((string)(this["slicerProfileName"]));
+            }
+            set {
+                this["slicerProfileName"] = value;
+            }
+        }
     }
 }

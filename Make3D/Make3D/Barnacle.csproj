@@ -917,6 +917,14 @@
     <Resource Include="Images\Buttons\PentagonCell.png" />
     <Resource Include="Images\Buttons\TriangleCell.png" />
     <Resource Include="Images\Buttons\CNVDoubleSegment.png" />
+    <None Include="Data\Ender3ProRaft.profile" />
+    <Resource Include="Images\Buttons\ImportObj.png" />
+    <Resource Include="Images\Buttons\FlipD.png" />
+    <Resource Include="Images\Buttons\FlipH.png" />
+    <Resource Include="Images\Buttons\FlipV.png" />
+    <Resource Include="Images\Buttons\FlipIO.png" />
+    <Resource Include="Images\Buttons\Floor.png" />
+    <Resource Include="Images\Buttons\Marker.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

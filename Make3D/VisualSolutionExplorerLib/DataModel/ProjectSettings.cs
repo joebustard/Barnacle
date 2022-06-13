@@ -22,7 +22,7 @@ namespace VisualSolutionExplorer
             ExportEmptyFiles = false;
             AutoSaveScript = true;
             DefaultObjectColour = Colors.CadetBlue;
-            SlicerPath = @"C:\Program Files\Ultimaker Cura 4.13.1\cura.exe";
+            SlicerPath = @"";
         }
 
         public bool AutoSaveScript { get; set; }
@@ -76,6 +76,11 @@ namespace VisualSolutionExplorer
                 FloorAll = Convert.ToBoolean(s);
             }
 
+            if (ele.HasAttribute("SlicerPath"))
+            {
+                SlicerPath = ele.GetAttribute("SlicerPath");
+                
+            }
             if (ele.HasAttribute("VersionExport"))
             {
                 string s = ele.GetAttribute("VersionExport");
@@ -124,6 +129,7 @@ namespace VisualSolutionExplorer
 
             ele.SetAttribute("AutoSaveScript", AutoSaveScript.ToString());
             ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());
+            ele.SetAttribute("SlicerPath", SlicerPath);
             XmlElement rot = doc.CreateElement("Rotation");
             rot.SetAttribute("X", ExportRotation.X.ToString());
             rot.SetAttribute("Y", ExportRotation.Y.ToString());

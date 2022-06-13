@@ -119,16 +119,20 @@ pause
 
         }
 
-        public static void Slice(string stlPath, string gcodePath, string logPath, string sdCardName)
+        public static void Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath)
         {
             try
             {
                 string sdcard = "";
+                // look fora named sd card.
+                // if we find one  then we can copy the gocde there.
                 if (sdCardName != "")
                 {
                     sdcard = FindSDCard(sdCardName);
                 }
 
+                // weneed toconstruct a cmd fileto run the slice
+                // WOrk  out where it should be.
                 string tmpCmdFile = Path.GetTempPath();
                 tmpCmdFile = Path.Combine(tmpCmdFile, "slice.cmd");
                 string tmpFile = Path.GetTempPath();
@@ -137,6 +141,10 @@ pause
                 {
                     File.Delete(tmpFile);
                 }
+
+                // We need a slicer profile. 
+                // The profile is based on the ones upplied with Cura BUT
+                // it doesn't use Cura's ones directly
                 SlicerProfile defpro = new SlicerProfile();
                 string settingoverrides = "";
                 foreach (SettingOverride ov in defpro.Overrides)
@@ -149,7 +157,7 @@ pause
                 string startg = defpro.StartGCode.Replace("$NAME",n);
                 
                 WriteSliceFileCmd(tmpCmdFile,
-                @"C:\Program Files\Ultimaker Cura 4.13.1",
+                                    slicerPath,
                                   defpro.Printer,
                                   defpro.Extruder,
                                   settingoverrides,
@@ -159,6 +167,9 @@ pause
                                  tmpFile);
                 ExecuteCmds(tmpCmdFile);
                 ReplaceNewLines(tmpFile, gcodePath);
+
+                // debugging, just save the profile so we can have a peek.
+               // defpro.Save("C:\\tmp\\sorted.txt");
             }
             catch (Exception ex)
             {

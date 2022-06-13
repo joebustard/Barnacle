@@ -60,24 +60,22 @@ namespace Barnacle.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             SettingsViewModel vm = DataContext as SettingsViewModel;
-            OpenFileDialog dlg = new OpenFileDialog();
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
             if (vm.SlicerPath != "")
             {
 
                 string pth = System.IO.Path.GetDirectoryName(vm.SlicerPath);
                 if (pth != "" && System.IO.Directory.Exists(pth))
                 {
-                    dlg.InitialDirectory = pth;
+                    dlg.SelectedPath = pth;
                 }
-                dlg.FileName = vm.SlicerPath;
-
-
+                
             }
             
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 
-                vm.SlicerPath = dlg.FileName;
+                vm.SlicerPath = dlg.SelectedPath;
             }
 
         }

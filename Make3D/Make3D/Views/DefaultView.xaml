@@ -257,14 +257,14 @@
                                              CommandParameter="OBJ"
                                              HorizontalAlignment="Stretch"
                                              Label="OBJ"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/cut.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/importobj.png"
                                              VerticalAlignment="Top"
                                              x:Name="ImportOBJ" />
                         <Custom:RibbonButton Command="{Binding ImportCommand}"
                                              CommandParameter="STL"
                                              HorizontalAlignment="Stretch"
                                              Label="STL"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/cut.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/stl.png"
                                              ToolTip="Import the object in a single STL into the current file."
                                              VerticalAlignment="Top"
                                              x:Name="ImportSTL" />
@@ -272,7 +272,7 @@
                                              CommandParameter="MultiSTL"
                                              HorizontalAlignment="Stretch"
                                              Label="Multiple STLs"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/cut.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/multistl.png"
                                              ToolTip="Import all the STLs from a folder into their own project files."
                                              VerticalAlignment="Top"
                                              x:Name="ImportMultiSTL" />
@@ -330,7 +330,7 @@
                                              CommandParameter="Horizontal"
                                              HorizontalAlignment="Stretch"
                                              Label="Horizontal"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/cut.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipH.png"
                                              ToolTip="Flip objects vertices horizontally (left to right)."
                                              VerticalAlignment="Top"
                                              x:Name="HorizontalFlip" />
@@ -338,7 +338,7 @@
                                              CommandParameter="Vertical"
                                              HorizontalAlignment="Stretch"
                                              Label="Vertical"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipV.png"
                                              ToolTip="Flip objects vertices vertically (top to bottom)."
                                              VerticalAlignment="Top"
                                              x:Name="VerticalFlip" />
@@ -346,7 +346,7 @@
                                              CommandParameter="Distal"
                                              HorizontalAlignment="Stretch"
                                              Label="Distal"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipD.png"
                                              ToolTip="Flip Flip objects vertices distally {back to front)."
                                              VerticalAlignment="Top"
                                              x:Name="DistalFlip" />
@@ -354,7 +354,7 @@
                                              CommandParameter="Inside"
                                              HorizontalAlignment="Stretch"
                                              Label="Inside out"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipIO.png"
                                              ToolTip="Flip inside out."
                                              VerticalAlignment="Top"
                                              x:Name="InsideFlip" />
@@ -414,7 +414,7 @@
                                              CommandParameter="Floor"
                                              HorizontalAlignment="Stretch"
                                              Label="Floor"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Floor.png"
                                              ToolTip="Align objects so they are all on the floor."
                                              VerticalAlignment="Top"
                                              x:Name="FloorAlignment" />
@@ -429,7 +429,7 @@
                         <Custom:RibbonButton Command="{Binding MarkerCommand}"
                                              HorizontalAlignment="Stretch"
                                              Label="Marker"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Marker.png"
                                              ToolTip="Move items to the marker on the floor"
                                              VerticalAlignment="Top"
                                              x:Name="MarkerAlignment" />
@@ -814,7 +814,10 @@
                 <Custom:RibbonGroup Name="MeshGroup"
                                     Header="Mesh"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/BigGear.png" IsEnabled="{Binding EditingActive}">
+                 
+                   
                     <Custom:RibbonMenuButton Label="Edit">
+                        <!--
                         <Custom:RibbonButton Command="{Binding MeshEditCommand}"
                                              HorizontalAlignment="Stretch"
                                              IsEnabled="{Binding MeshEditEnabled}"
@@ -822,6 +825,7 @@
                                              SmallImageSource="/Barnacle;component/Images/Buttons/question1.png"
                                              VerticalAlignment="Top"
                                              x:Name="MeshEditButton" />
+                    -->
                         <Custom:RibbonButton Command="{Binding MeshHullCommand}"
                                              HorizontalAlignment="Stretch"
                                              IsEnabled="{Binding MeshEditEnabled}"

@@ -3162,7 +3162,7 @@ namespace Barnacle.ViewModels
                 string logPath = Path.Combine(modelPath, "slicelog.log");
 
                 //  SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
-                CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
+                CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D",Project.SharedProjectSettings.SlicerPath);
             }
         }
 
