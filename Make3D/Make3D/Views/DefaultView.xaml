@@ -830,7 +830,7 @@
                                              HorizontalAlignment="Stretch"
                                              IsEnabled="{Binding MeshEditEnabled}"
                                              Label="Hull"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/question1.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Hull.png"
                                              ToolTip="Replace the object by its convex hull"
                                              VerticalAlignment="Top"
                                              x:Name="MeshHullButton" />
@@ -838,7 +838,7 @@
                                              HorizontalAlignment="Stretch"
                                              IsEnabled="{Binding MeshEditEnabled}"
                                              Label="Smooth"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/question1.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/smooth.png"
                                              ToolTip="Smooth mesh using Loop smoothing"
                                              VerticalAlignment="Top"
                                              x:Name="MeshSmoothButton" />

@@ -925,6 +925,8 @@
     <Resource Include="Images\Buttons\FlipIO.png" />
     <Resource Include="Images\Buttons\Floor.png" />
     <Resource Include="Images\Buttons\Marker.png" />
+    <Resource Include="Images\Buttons\Smooth.png" />
+    <Resource Include="Images\Buttons\Hull.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
