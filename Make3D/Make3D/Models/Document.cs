@@ -565,6 +565,25 @@ namespace Barnacle.Models
                     res = expName;
                 }
             }
+            else
+            if (v == "STLSLICE")
+            {
+                STLExporter exp = new STLExporter();
+
+              
+                    String pth = exportFolderPath;
+                    if (!Directory.Exists(pth))
+                    {
+                        Directory.CreateDirectory(pth);
+                    }
+                    string expName = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+                    
+                    expName = expName + ".stl";
+                    expName = System.IO.Path.Combine(pth, expName);
+                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                    res = expName;
+                
+            }
             else if (v == "STLParts")
             {
                 STLExporter exp = new STLExporter();

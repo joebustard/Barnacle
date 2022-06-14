@@ -26,7 +26,7 @@ $StartGcode
 $EndGcode
 -e0 ^
 -l ""$src"" ^
--o ""$trg"" 2>c:\tmp\slice.log
+-o ""$trg"" 2>""$tmpslice.log""
 cd %fld%
 pause
     ";
@@ -115,6 +115,10 @@ pause
 
             txt = txt.Replace("$src", src);
             txt = txt.Replace("$trg", target);
+
+            String tmp = Path.GetTempPath();
+            txt = txt.Replace("$tmp", tmp);
+
             System.IO.File.WriteAllText(File, txt);
 
         }

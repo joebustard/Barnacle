@@ -3149,7 +3149,7 @@ namespace Barnacle.ViewModels
                 {
                     Directory.CreateDirectory(exportPath);
                 }
-                string exportedPath = Document.ExportAll("STL", allBounds, exportPath);
+                string exportedPath = Document.ExportAll("STLSLICE", allBounds, exportPath);
                 exportedPath = Path.Combine(exportPath, modelName + ".stl");
 
                 string gcodePath = Path.Combine(modelPath, "Printer");
