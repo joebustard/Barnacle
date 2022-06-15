@@ -2,7 +2,9 @@
 using Barnacle.LineLib;
 using Barnacle.Models;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -64,6 +66,15 @@ namespace Barnacle
             }
 
             InfoWindow.Instance().Owner = this;
+/*
+            List<PointF> poly = new List<PointF>();
+            poly.Add(new PointF(10, 10));
+            poly.Add(new PointF(10, 20));
+            poly.Add(new PointF(50, 80));
+            poly.Add(new PointF(20, 10));
+
+            bool inside = LineUtils.IsPointInPolygon(new PointF(35, 55), poly);
+            */
         }
 
         private struct V3D

@@ -226,5 +226,29 @@ namespace Barnacle.Models
 
             return coplaner;
         }
+
+        // assumes polygon DOES not have repeated points
+        public static bool IsPointInPolygon(PointF point, List<PointF> polygon)
+        {
+            int polyCorners = polygon.Count;
+            int i = 0;
+            int j = polyCorners - 1;
+            bool oddNodes = false;
+
+            for (i = 0; i < polyCorners; i++)
+            {
+                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
+                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
+                {
+                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
+                    {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        }
     }
 }
