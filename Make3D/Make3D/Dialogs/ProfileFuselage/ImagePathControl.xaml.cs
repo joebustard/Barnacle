@@ -39,7 +39,7 @@ namespace Barnacle.Dialogs
         private double height = 10;
 
         private bool hollowShape;
-
+        public bool Dirty { get; set; }
         private ImageEdge imageEdge;
 
         // raw list of points font around the bitmap
@@ -471,6 +471,7 @@ namespace Barnacle.Dialogs
         }
         public void Clear()
         {
+            Dirty = true;
             Header = "";
             FName = "";
             NumDivisions = 80;
@@ -635,6 +636,7 @@ namespace Barnacle.Dialogs
                 }
             }
             profilePoints = tmp;
+            Dirty = false;
         }
 
         public string GenPath()
@@ -687,6 +689,7 @@ namespace Barnacle.Dialogs
         }
         public void UpdateHeaderLabel()
         {
+            Dirty = true;
             HeaderLabel.Content = Header;
             FNameLabel.Content = FName;
         }
@@ -753,6 +756,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
             loaded = true;
             NotifyPropertyChanged("Scale");
+            Dirty = true;
         }
 
         internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
@@ -1013,6 +1017,7 @@ namespace Barnacle.Dialogs
 
         private void AddAnotherPointToPoly(MouseButtonEventArgs e)
         {
+            Dirty = true;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = SnapPositionToMM(position);
 
@@ -1042,6 +1047,7 @@ namespace Barnacle.Dialogs
 
         private bool AddLineFromPoint(System.Windows.Input.MouseButtonEventArgs e, Line ln)
         {
+            Dirty = true;
             int found = -1;
             bool added = false;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
@@ -1087,6 +1093,7 @@ namespace Barnacle.Dialogs
 
         private void AddStartPointToPoly(MouseButtonEventArgs e)
         {
+            Dirty = true;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
             position = SnapPositionToMM(position);
             flexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
@@ -1108,6 +1115,7 @@ namespace Barnacle.Dialogs
 
         private void CNVSegButton_Click(object sender, RoutedEventArgs e)
         {
+            Dirty = true;
             if (canCNVDouble)
             {
                 flexiPath.ConvertTwoLineSegmentsToQuadraticBezier();
@@ -1118,8 +1126,10 @@ namespace Barnacle.Dialogs
             }
         }
 
+
         private bool ConvertLineAtPointToBezier(MouseButtonEventArgs e, Line ln, bool cubic)
         {
+            Dirty = true;
             int found = -1;
             bool added = false;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
@@ -1219,6 +1229,7 @@ namespace Barnacle.Dialogs
 
         private bool DeleteSegment(MouseButtonEventArgs e, Line ln)
         {
+            Dirty = true;
             int found = -1;
             bool deleted = false;
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
@@ -1240,6 +1251,7 @@ namespace Barnacle.Dialogs
 
         private void DelSegButton_Click(object sender, RoutedEventArgs e)
         {
+            Dirty = true;
             if (flexiPath.DeleteSelectedSegment())
             {
                 UpdateDisplay();
@@ -1436,6 +1448,7 @@ namespace Barnacle.Dialogs
                     // do this test here because the othe modes only trigger ifn you click a line
                     if (selectionMode == SelectionModeType.MovePath)
                     {
+                        Dirty = true;
                         position = SnapPositionToMM(position);
                         MoveWholePath(position);
                         SelectionMode = SelectionModeType.SelectSegmentAtPoint;
@@ -1490,6 +1503,7 @@ namespace Barnacle.Dialogs
             {
                 if (e.LeftButton == MouseButtonState.Pressed && moving)
                 {
+                    Dirty = true;
                     polyPoints[selectedPoint].X = position.X;
                     polyPoints[selectedPoint].Y = position.Y;
                     flexiPath.SetPointPos(selectedPoint, snappedPos);
@@ -1512,6 +1526,7 @@ namespace Barnacle.Dialogs
             moving = false;
             if (selectedPoint != -1 && moving)
             {
+                Dirty = true;
                 System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
                 System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
                 polyPoints[selectedPoint].X = position.X;
@@ -1566,7 +1581,7 @@ namespace Barnacle.Dialogs
                         }
                         break;
                 }
-
+                Dirty = true;
                 UpdateDisplay();
             }
         }
@@ -1611,18 +1626,21 @@ namespace Barnacle.Dialogs
 
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
         {
+            Dirty = true;
             flexiPath.ConvertLineCurveSegment(startIndex, position);
             PathText = flexiPath.ToPath();
         }
 
         private void InsertLineSegment(int startIndex, System.Windows.Point position)
         {
+            Dirty = true;
             flexiPath.InsertLineSegment(startIndex, position);
             PathText = flexiPath.ToPath();
         }
 
         private void InsertQuadCurveSegment(int startIndex, System.Windows.Point position)
         {
+            Dirty = true;
             flexiPath.ConvertLineQuadCurveSegment(startIndex, position);
             PathText = flexiPath.ToPath();
         }
@@ -1812,6 +1830,7 @@ namespace Barnacle.Dialogs
 
         private void MoveWholePath(System.Windows.Point position)
         {
+            Dirty = true;
             flexiPath.MoveTo(position);
             GenerateProfilePoints();
         }
@@ -1837,6 +1856,7 @@ namespace Barnacle.Dialogs
             string pth = Clipboard.GetText();
             if (pth != null && pth != "" && pth.StartsWith("M"))
             {
+                Dirty = true;
                 PathText = pth;
                 flexiPath.FromTextPath(pth);
                 UpdateDisplay();
@@ -1907,6 +1927,7 @@ namespace Barnacle.Dialogs
 
         private void ResetPathButton_Click(object sender, RoutedEventArgs e)
         {
+
             InitialisePoints();
 
             selectedPoint = -1;

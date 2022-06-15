@@ -445,12 +445,21 @@ namespace Barnacle.Dialogs
                 List<double> ribXs = new List<double>();
                 List<Dimension> topDims = new List<Dimension>();
                 List<Dimension> sideDims = new List<Dimension>();
-                
+
                 for (int i = 0; i < RibManager.Ribs.Count; i++)
                 {
-                    double x =markers[i].Position.X;
-                    ImagePathControl cp = RibManager.Ribs[i].Clone(false);
-                    cp.GenerateProfilePoints();
+                    double x = markers[i].Position.X;
+
+                    ImagePathControl cp;
+                    if (RibManager.Ribs[i].Dirty)
+                    {
+                        cp = RibManager.Ribs[i].Clone(false);
+                        cp.GenerateProfilePoints();
+                    }
+                    else
+                    {
+                        cp = RibManager.Ribs[i];
+                    }
                     string cpPath = cp.GenPath();
                     if (autoFit && theRibs.Count > 0)
                     {
@@ -461,10 +470,10 @@ namespace Barnacle.Dialogs
                             if (x - prevX > 4)
                             {
                                 double nx = prevX + 1;
-                                while ( nx < x)
+                                while (nx < x)
                                 {
                                     ImagePathControl nr = RibManager.Ribs[i].Clone(false);
-                                    nr.GenerateProfilePoints();
+                                   // nr.GenerateProfilePoints();
                                     theRibs.Add(nr);
                                     ribXs.Add(nx);
                                     Dimension dp1 = TopView.GetUpperAndLowerPoints((int)nx);
@@ -481,14 +490,14 @@ namespace Barnacle.Dialogs
                     Dimension dp = TopView.GetUpperAndLowerPoints((int)x);
                     topDims.Add(dp);
                     dp = SideView.GetUpperAndLowerPoints((int)x);
-                   sideDims.Add(dp);
+                    sideDims.Add(dp);
                     prevX = x;
                 }
 
-                
+
                 for (int i = 0; i < theRibs.Count; i++)
                 {
-                    if (theRibs[i].ProfilePoints.Count ==0)
+                    if (theRibs[i].ProfilePoints.Count == 0)
                     {
                         okToGenerate = false;
                         break;
@@ -497,7 +506,7 @@ namespace Barnacle.Dialogs
                 // do we have enough data to construct the model
                 if (theRibs.Count > 1 && okToGenerate)
                 {
-                   // theRibs[0].GenerateProfilePoints();
+                    // theRibs[0].GenerateProfilePoints();
                     int facesPerRib = theRibs[0].ProfilePoints.Count;
                     int[,] ribvertices = new int[theRibs.Count, facesPerRib];
                     // there should be a marker and hence a dimension for every rib.
@@ -525,23 +534,19 @@ namespace Barnacle.Dialogs
                             start = facesPerRib / 2;
                         }
 
-                        //double x = TopView.GetXmm(ribXs[0]);
-                        double x = ribXs[0];
+
                         List<PointF> leftEdge = new List<PointF>();
-                        double leftx = x;
                         List<PointF> rightEdge = new List<PointF>();
+                        double x = TopView.GetXmm(ribXs[0]);
+                        double leftx = x;
                         double rightx = x;
                         int vert = 0;
                         int vindex = 0;
-                        for (int i = 0; i <theRibs.Count; i++)
+                        for (int i = 0; i < theRibs.Count; i++)
                         {
-                       //     if (i != 0)
-                      //      {
-                      //         theRibs[i].GenerateProfilePoints();
-                      //      }
-                      //      System.Diagnostics.Debug.WriteLine($"Rib {i} pnts {RibManager.Ribs[i].ProfilePoints.Count}");
+
                             x = TopView.GetXmm(ribXs[i]);
-                            //x = ribXs[i];
+                            //
                             if (i == theRibs.Count - 1)
                             {
                                 rightx = x;
@@ -550,7 +555,7 @@ namespace Barnacle.Dialogs
                             vindex = 0;
                             for (int proind = start; proind < end; proind++)
                             {
-                                if (proind <theRibs[i].ProfilePoints.Count)
+                                if (proind < theRibs[i].ProfilePoints.Count)
                                 {
                                     PointF pnt = theRibs[i].ProfilePoints[proind];
 
@@ -569,7 +574,7 @@ namespace Barnacle.Dialogs
                                         leftEdge.Add(new PointF((float)y, (float)z));
 
                                     }
-                                    if (i ==theRibs.Count - 1)
+                                    if (i == theRibs.Count - 1)
                                     {
                                         rightEdge.Add(new PointF((float)y, (float)z));
                                     }
@@ -581,7 +586,7 @@ namespace Barnacle.Dialogs
                             }
                         }
                         facesPerRib = leftEdge.Count;
-                        for (int ribIndex = 0; ribIndex <theRibs.Count - 1; ribIndex++)
+                        for (int ribIndex = 0; ribIndex < theRibs.Count - 1; ribIndex++)
                         {
                             for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
                             {
@@ -639,25 +644,27 @@ namespace Barnacle.Dialogs
                 noteWindow.Hide();
                 dirty = false;
                 RibManager.ControlsEnabled = true;
-
+                wholeBody = true;
+                frontBody = false;
+                backBody = false;
                 s = EditorParameters.Get("Model");
-                if (s == "Whole")
+                if (s == "Front")
                 {
-                    WholeBody = true;
-                }
-                else if (s == "Front")
-                {
-                    FrontBody = true;
+                    wholeBody = false;
+                    frontBody = true;
+                    backBody = false;
                 }
                 else
                 if (s == "Back")
                 {
-                    BackBody = true;
+                    backBody = true;
+                    frontBody = false;
+                    wholeBody = false;
                 }
                 s = EditorParameters.Get("NumberOfDivisions");
                 if (s != "")
                 {
-                    NumberOfDivisions = Convert.ToInt16(s);
+                    numberOfDivisions = Convert.ToInt16(s);
                 }
                 autoFit = EditorParameters.GetBoolean("AutoFit");
             }
@@ -848,7 +855,7 @@ namespace Barnacle.Dialogs
             {
                 md = "Front";
             }
-            else
+            if (BackBody)
             {
                 md = "Back";
             }
@@ -1007,6 +1014,11 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
 
             Redisplay();
+            NotifyPropertyChanged("WholeBody");
+            NotifyPropertyChanged("FrontBody");
+            NotifyPropertyChanged("BackBody");
+            NotifyPropertyChanged("NumberOfDivisions");
+            NotifyPropertyChanged("AutoFit");
         }
 
         private void Write(string f)
