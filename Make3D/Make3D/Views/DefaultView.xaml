@@ -529,7 +529,7 @@
                                              CommandParameter="SameLength"
                                              HorizontalAlignment="Stretch"
                                              Label="Same Length (X)"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SameX.png"
                                              ToolTip="Make all selected objects the same length as the first selected one"
                                              VerticalAlignment="Top"
                                              x:Name="SameLength" />
@@ -537,7 +537,7 @@
                                              CommandParameter="SameHeight"
                                              HorizontalAlignment="Stretch"
                                              Label="Same Height (Y)"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SameY.png"
                                              ToolTip="Make all selected objects the same height as the first selected one"
                                              VerticalAlignment="Top"
                                              x:Name="SameHeight" />
@@ -545,7 +545,7 @@
                                              CommandParameter="SameWidth"
                                              HorizontalAlignment="Stretch"
                                              Label="Same Width (Z)"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SameZ.png"
                                              ToolTip="Make all selected objects the same width as the first selected one"
                                              VerticalAlignment="Top"
                                              x:Name="SameWidth" />
@@ -553,7 +553,7 @@
                                              CommandParameter="SameAll"
                                              HorizontalAlignment="Stretch"
                                              Label="All Same"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/SameAll.png"
                                              ToolTip="Make all selected objects the same size as the first selected one"
                                              VerticalAlignment="Top"
                                              x:Name="SameBoth" />
