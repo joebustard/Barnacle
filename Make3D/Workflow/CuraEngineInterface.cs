@@ -15,9 +15,9 @@ namespace Workflow
         @"
 set fld=%~dp0
 set CURAPATH=$CPATH
-set CURA_ENGINE_SEARCH_PATH=%CURAPATH%\resources
+set CURA_ENGINE_SEARCH_PATH=%CURAPATH%\resources;%CURAPATH%\resources\definitions;%CURAPATH%\resources\extruders
 cd ""%CURAPATH%""
-set path = ""%CURAPATH%"";%CURA_ENGINE_SEARCH_PATH%;%CURA_ENGINE_SEARCH_PATH%\definitions;%CURA_ENGINE_SEARCH_PATH%\extruders;%Path%
+set path = ""%CURAPATH%"";%CURA_ENGINE_SEARCH_PATH%;%Path%
 curaengine.exe slice ^
 $Printer
 $Extruder
