@@ -13,7 +13,7 @@ using VisualSolutionExplorer;
 
 namespace Barnacle.Models
 {
-    internal class Document : INotifyPropertyChanged
+    public class Document : INotifyPropertyChanged
     {
         public List<Object3D> Content;
         internal string ProjectFilter;

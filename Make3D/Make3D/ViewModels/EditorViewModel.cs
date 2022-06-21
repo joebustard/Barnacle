@@ -1,4 +1,5 @@
 ﻿using Barnacle.Dialogs;
+using Barnacle.Dialogs.Slice;
 using Barnacle.EditorParameterLib;
 using Barnacle.Models;
 using Barnacle.Models.Adorners;
@@ -3139,31 +3140,14 @@ namespace Barnacle.ViewModels
         private void OnSlice(object param)
         {
             string s = param.ToString();
-            if (s == "SliceModel")
-            {
-                string modelPath = Document.FilePath;
-                string modelName = Path.GetFileNameWithoutExtension(modelPath);
-                modelPath = Path.GetDirectoryName(modelPath);
-                String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
-                if (!Directory.Exists(exportPath))
-                {
-                    Directory.CreateDirectory(exportPath);
-                }
-                string exportedPath = Document.ExportAll("STLSLICE", allBounds, exportPath);
-                exportedPath = Path.Combine(exportPath, modelName + ".stl");
-
-                string gcodePath = Path.Combine(modelPath, "Printer");
-                if (!Directory.Exists(gcodePath))
-                {
-                    Directory.CreateDirectory(gcodePath);
-                }
-                gcodePath = Path.Combine(gcodePath, modelName + ".gcode");
-
-                string logPath = Path.Combine(modelPath, "slicelog.log");
-
-                //  SlicerInterface.Slice(exportedPath, gcodePath, logPath, "Print3D");
-                CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D",Project.SharedProjectSettings.SlicerPath);
-            }
+            SliceControl dlg = new SliceControl();
+            dlg.ModelMode = s;
+            dlg.ModelPath = Document.FilePath;
+            dlg.SlicerPath = Project.SharedProjectSettings.SlicerPath;
+            dlg.ExportDocument = Document;
+            dlg.ShowDialog();
+            
+            
         }
 
         private void OnSplit(object param)

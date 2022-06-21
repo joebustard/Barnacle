@@ -1,0 +1,48 @@
+﻿<Window x:Class="Barnacle.Dialogs.Slice.SliceControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Barnacle.Dialogs.Slice"
+        mc:Ignorable="d"
+        Title="Slice Control" Height="450" Width="600" Loaded="Window_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
+           
+            <RowDefinition />
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="10"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="10*"/>
+            
+            <ColumnDefinition Width="10*"/>
+
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <Label Grid.Column="1" Grid.Row="1" Content="Printer" Margin="2,2,2,10" VerticalAlignment="Center"/>
+        <ComboBox Grid.Column="2" Grid.Row="1" Margin="2,2,2,10" ItemsSource="{Binding Printers}" SelectedItem="{Binding SelectedPrinter}"/>
+
+        <Label Grid.Column="1" Grid.Row="2" Content="Extruder" Margin="2,2,2,10" VerticalAlignment="Center"/>
+        <ComboBox Grid.Column="2" Grid.Row="2" Margin="2,2,2,10" ItemsSource="{Binding Extruders}" SelectedItem="{Binding SelectedExtruder}"/>
+        <Label Grid.Column="1" Grid.Row="3" Margin="2,2,2,10" Content="Profile Overrides" VerticalAlignment="Center"/>
+        <ComboBox Grid.Column="2" Grid.Row="3" Margin="2,2,2,10" />
+
+        <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center"/>
+        <TextBox Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True"></TextBox>
+
+
+
+        <Button Grid.Column="3" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="Button_Click"/>
+
+        <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanClose}" Content="Close" Margin="2,4,0,0" Click="Button_Click_1"/>
+    </Grid>
+</Window>

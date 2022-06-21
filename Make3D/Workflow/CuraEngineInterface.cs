@@ -141,7 +141,7 @@ pause
                 tmpCmdFile = Path.Combine(tmpCmdFile, "slice.cmd");
                 string tmpFile = Path.GetTempPath();
                 tmpFile = Path.Combine(tmpFile, "tmp.gcode");
-                if ( File.Exists(tmpFile))
+                if (File.Exists(tmpFile))
                 {
                     File.Delete(tmpFile);
                 }
@@ -158,8 +158,8 @@ pause
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
 
                 string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
-                string startg = defpro.StartGCode.Replace("$NAME",n);
-                
+                string startg = defpro.StartGCode.Replace("$NAME", n);
+
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
                                   defpro.Printer,
@@ -173,20 +173,55 @@ pause
                 ReplaceNewLines(tmpFile, gcodePath);
 
                 // debugging, just save the profile so we can have a peek.
-               // defpro.Save("C:\\tmp\\sorted.txt");
+                // defpro.Save("C:\\tmp\\sorted.txt");
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
         }
+        public static  List<String> GetAvailablePrinters(string folder)
+        {
 
-        private static void ReplaceNewLines(string src,string trg)
+            List<string> res = new List<string>();
+            if (folder != null && folder != "")
+            {
+                String[] files = Directory.GetFiles(folder, "*.json");
+                if (files.GetLength(0) > 0)
+                {
+                    foreach (string s in files)
+                    {
+                        res.Add(Path.GetFileNameWithoutExtension(s));
+                    }
+                }
+            }
+            return res;
+        }
+
+        public static List<String> GetAvailableExtruders(string folder)
+        {
+            List<string> res = new List<string>();
+            if (folder != null && folder != "")
+            {
+                String[] files = Directory.GetFiles(folder, "*.json");
+                if (files.GetLength(0) > 0)
+                {
+                    foreach (string s in files)
+                    {
+                        string t = Path.GetFileName(s).Replace(".def.json", "");
+                        res.Add(t);
+                    }
+                }
+            }
+            return res;
+        }
+
+        private static void ReplaceNewLines(string src, string trg)
         {
             if (File.Exists(src))
             {
                 String[] str = File.ReadAllLines(src);
-                if ( File.Exists(trg))
+                if (File.Exists(trg))
                 {
                     File.Delete(trg);
                 }
@@ -202,9 +237,9 @@ pause
                     }
                     else
                     {
-                    
-                        string[] lines = l.Split(seps,StringSplitOptions.RemoveEmptyEntries);
-                        for ( int j = 0; j < lines.Count(); j ++)
+
+                        string[] lines = l.Split(seps, StringSplitOptions.RemoveEmptyEntries);
+                        for (int j = 0; j < lines.Count(); j++)
                         {
                             fout.WriteLine(lines[j].Trim());
                         }
