@@ -44,6 +44,20 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+        private String sdCardName;
+        public String SDCardName
+        {
+            get { return sdCardName; }
+            set
+            {
+
+                if (sdCardName != value)
+                {
+                    sdCardName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public SettingsViewModel()
         {
             AutoSaveScript = Project.SharedProjectSettings.AutoSaveScript;
@@ -61,7 +75,8 @@ namespace Barnacle.ViewModels
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
-            SlicerPath = Project.SharedProjectSettings.SlicerPath;
+          SlicerPath = Properties.Settings.Default.SlicerPath ;
+            SDCardName = Properties.Settings.Default.SDCardLabel;
             SetAvailableColours();
             ObjectColour = FindAvailableColour(DefaultObjectColour);
         }
@@ -145,7 +160,7 @@ namespace Barnacle.ViewModels
                     System.Drawing.Color tmp = System.Drawing.Color.FromName(objectColour.Name);
                     DefaultObjectColour = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
                     NotifyPropertyChanged();
-                  
+
                 }
             }
         }

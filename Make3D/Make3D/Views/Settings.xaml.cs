@@ -48,7 +48,9 @@ namespace Barnacle.Views
                     BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;
                     BaseViewModel.Project.SharedProjectSettings.SlicerPath = vm.SlicerPath;
                     BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
-                    //    BaseViewModel.Document.Dirty = true;
+                    Properties.Settings.Default.SlicerPath = vm.SlicerPath;
+                    Properties.Settings.Default.SDCardLabel = vm.SDCardName;
+                    Properties.Settings.Default.Save();
                 }
                 catch (Exception)
                 {
@@ -69,12 +71,12 @@ namespace Barnacle.Views
                 {
                     dlg.SelectedPath = pth;
                 }
-                
+
             }
-            
+
             if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                
+
                 vm.SlicerPath = dlg.SelectedPath;
             }
 

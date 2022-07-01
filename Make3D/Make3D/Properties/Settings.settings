@@ -26,7 +26,7 @@
     <Setting Name="LastImportFolder" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="slicerProfileName" Type="System.String" Scope="User">
+    <Setting Name="SlicerProfileName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="SlicerExtruder" Type="System.String" Scope="User">
@@ -34,6 +34,9 @@
     </Setting>
     <Setting Name="SlicerPrinter" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="SDCardLabel" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Print3D</Value>
     </Setting>
   </Settings>
 </SettingsFile>

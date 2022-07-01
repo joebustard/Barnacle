@@ -28,7 +28,7 @@ $EndGcode
 -l ""$src"" ^
 -o ""$trg"" 2>""$tmpslice.log""
 cd %fld%
-pause
+rem pause
     ";
 
 
@@ -123,7 +123,7 @@ pause
 
         }
 
-        public static void Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath)
+        public static void Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile )
         {
             try
             {
@@ -135,7 +135,7 @@ pause
                     sdcard = FindSDCard(sdCardName);
                 }
 
-                // weneed toconstruct a cmd fileto run the slice
+                // weneed toconstruct a cmd file to run the slice
                 // WOrk  out where it should be.
                 string tmpCmdFile = Path.GetTempPath();
                 tmpCmdFile = Path.Combine(tmpCmdFile, "slice.cmd");
@@ -150,6 +150,14 @@ pause
                 // The profile is based on the ones upplied with Cura BUT
                 // it doesn't use Cura's ones directly
                 SlicerProfile defpro = new SlicerProfile();
+                if (userProfile != "")
+                {
+
+                    string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    folder += "\\Barnacle\\PrinterProfiles\\";
+                    userProfile = folder + userProfile + ".profile";
+                    defpro.Load(userProfile);
+                }
                 string settingoverrides = "";
                 foreach (SettingOverride ov in defpro.Overrides)
                 {
@@ -160,10 +168,11 @@ pause
                 string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
                 string startg = defpro.StartGCode.Replace("$NAME", n);
 
+
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
-                                  defpro.Printer,
-                                  defpro.Extruder,
+                                  @".\resources\definitions\"+printer,
+                                  @".\resources\extruders\"+extruder,
                                   settingoverrides,
                                   startg,
                                   defpro.EndGCode,
@@ -180,6 +189,27 @@ pause
                 MessageBox.Show(ex.Message);
             }
         }
+
+        public static List<string> GetAvailableUserProfiles()
+        {
+            
+           
+            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            folder += "\\Barnacle\\PrinterProfiles";
+            List<string> res = new List<string>();
+
+                String[] files = Directory.GetFiles(folder, "*.profile");
+                if (files.GetLength(0) > 0)
+                {
+                    foreach (string s in files)
+                    {
+                        res.Add(Path.GetFileNameWithoutExtension(s));
+                    }
+                }
+            
+            return res;
+        }
+
         public static  List<String> GetAvailablePrinters(string folder)
         {
 

@@ -1,5 +1,6 @@
 ﻿using Barnacle.Models;
 using Barnacle.Object3DLib;
+using Barnacle.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using VisualSolutionExplorer;
 using Workflow;
 using Path = System.IO.Path;
 
@@ -58,6 +60,18 @@ namespace Barnacle.Dialogs.Slice
             set
             {
                 printers = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private List<String> profiles;
+
+        public List<String> Profiles
+        {
+            get { return profiles; }
+            set
+            {
+                profiles = value;
                 NotifyPropertyChanged();
             }
         }
@@ -107,66 +121,77 @@ namespace Barnacle.Dialogs.Slice
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+            if (!Directory.Exists(exportPath))
+            {
+                Directory.CreateDirectory(exportPath);
+            }
+            string printerPath = VisualSolutionExplorer.Project.BaseFolder + "\\printer";
+            if (!Directory.Exists(printerPath))
+            {
+                Directory.CreateDirectory(printerPath);
+            }
             if (ModelMode == "SliceModel")
             {
-                CanClose = false;
-
-                string modelName = Path.GetFileNameWithoutExtension(modelPath);
-                modelPath = Path.GetDirectoryName(modelPath);
-                String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
-                if (!Directory.Exists(exportPath))
-                {
-                    Directory.CreateDirectory(exportPath);
-                }
-                Bounds3D allBounds = RecalculateAllBounds();
-
-                string exportedPath = exportDoc.ExportAll("STLSLICE", allBounds, exportPath);
-                exportedPath = Path.Combine(exportPath, modelName + ".stl");
-
-                string gcodePath = Path.Combine(modelPath, "Printer");
-                if (!Directory.Exists(gcodePath))
-                {
-                    Directory.CreateDirectory(gcodePath);
-                }
-                gcodePath = Path.Combine(gcodePath, modelName + ".gcode");
-
-                string logPath = Path.Combine(modelPath, "slicelog.log");
-
-
-                CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D", SlicerPath);
-                CanClose = true;
+                string fullPath = modelPath;
+                SliceSingleModel(fullPath,exportPath, printerPath);
             }
+            else
+            {
+                string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
+                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                foreach (string fullPath in filenames)
+                {
+                    SliceSingleModel(fullPath, exportPath, printerPath);
+                }
+
+            }
+            NotificationManager.Notify("ExportRefresh", null);
         }
+
+        private void SliceSingleModel(string fullPath, string exportPath, string printerPath)
+        {
+            CanClose = false;
+            exportDoc = new Document();
+            exportDoc.Load(fullPath);
+
+            string modelName = Path.GetFileNameWithoutExtension(fullPath);
+            fullPath = Path.GetDirectoryName(fullPath);
+            Bounds3D allBounds = RecalculateAllBounds();
+
+            string exportedPath = exportDoc.ExportAll("STLSLICE", allBounds, exportPath);
+            exportedPath = Path.Combine(exportPath, modelName + ".stl");
+
+
+            string gcodePath = Path.Combine(printerPath, modelName + ".gcode");
+
+            string logPath = Path.Combine(modelPath, "slicelog.log");
+            string prf = selectedUserProfile;
+
+            CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D", SlicerPath, selectedPrinter + ".json", selectedExtruder + ".def.json", prf);
+            NotificationManager.Notify("ExportRefresh", null);
+            CanClose = true;
+        }
+
         private bool canSlice;
 
         public bool CanSlice
         {
             get { return canSlice; }
-            set { canSlice = value; }
+            set
+            {
+                canSlice = value;
+                NotifyPropertyChanged();
+            }
         }
         private String selectedPrinter;
 
         public String SelectedPrinter
         {
             get { return selectedPrinter; }
-            set { selectedPrinter = value; 
-            if ( selectedPrinter != "" && selectedExtruder != "")
+            set
             {
-                    CanSlice = true;
-            }
-            else
-            {
-                    CanSlice = false;
-                }
-            NotifyPropertyChanged(); }
-        }
-
-        private String selectedExtruder;
-
-        public String SelectedExtruder
-        {
-            get { return selectedExtruder; }
-            set { selectedExtruder = value;
+                selectedPrinter = value;
                 if (selectedPrinter != "" && selectedExtruder != "")
                 {
                     CanSlice = true;
@@ -175,7 +200,41 @@ namespace Barnacle.Dialogs.Slice
                 {
                     CanSlice = false;
                 }
-                NotifyPropertyChanged(); }
+                NotifyPropertyChanged();
+            }
+        }
+
+        private String selectedUserProfile;
+        public String SelectedUserProfile
+        {
+            get { return selectedUserProfile; }
+            set
+            {
+                if (selectedUserProfile != value)
+                {
+                    selectedUserProfile = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private String selectedExtruder;
+
+        public String SelectedExtruder
+        {
+            get { return selectedExtruder; }
+            set
+            {
+                selectedExtruder = value;
+                if (selectedPrinter != "" && selectedExtruder != "")
+                {
+                    CanSlice = true;
+                }
+                else
+                {
+                    CanSlice = false;
+                }
+                NotifyPropertyChanged();
+            }
         }
 
 
@@ -184,24 +243,43 @@ namespace Barnacle.Dialogs.Slice
         public bool CanClose
         {
             get { return canClose; }
-            set { canClose = value; }
+            set
+            {
+                canClose = value;
+                NotifyPropertyChanged();
+            }
         }
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
 
-            Properties.Settings.Default.SlicerPrinter= SelectedPrinter;
-            Properties.Settings.Default.SlicerExtruder = SelectedExtruder  ;
+            Properties.Settings.Default.SlicerPrinter = SelectedPrinter;
+            Properties.Settings.Default.SlicerExtruder = SelectedExtruder;
+            Properties.Settings.Default.SlicerProfileName = SelectedUserProfile;
             Close();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
-            Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath +@"\Resources\definitions");
-            Extruders = CuraEngineInterface.GetAvailableExtruders(SlicerPath +@"\Resources\extruders");
-            SelectedPrinter = Properties.Settings.Default.SlicerPrinter;
-            SelectedExtruder = Properties.Settings.Default.SlicerExtruder;
+            if (SlicerPath != null && SlicerPath != "")
+            {
+                Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath + @"\Resources\definitions");
+                Extruders = CuraEngineInterface.GetAvailableExtruders(SlicerPath + @"\Resources\extruders");
+                Profiles = CuraEngineInterface.GetAvailableUserProfiles();
+                SelectedPrinter = Properties.Settings.Default.SlicerPrinter;
+                SelectedExtruder = Properties.Settings.Default.SlicerExtruder;
+                SelectedUserProfile = Properties.Settings.Default.SlicerProfileName;
+            }
+
             CanClose = true;
+            if (selectedPrinter != "" && selectedExtruder != "")
+            {
+                CanSlice = true;
+            }
+            else
+            {
+                CanSlice = false;
+            }
         }
     }
 }

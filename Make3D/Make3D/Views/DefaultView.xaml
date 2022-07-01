@@ -277,7 +277,7 @@
                                              VerticalAlignment="Top"
                                              x:Name="ImportMultiSTL" />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton Label="Export"
+                    <Custom:RibbonMenuButton Label="STL Export"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/export.png"
                                              x:Name="Export">
                         <Custom:RibbonButton Command="{Binding ExportCommand}"
@@ -305,7 +305,26 @@
                                              VerticalAlignment="Top"
                                              x:Name="STLParts" />
                         <Custom:RibbonSeparator />
-                        <Custom:RibbonButton Command="{Binding ExportCommand}"
+                       
+                    </Custom:RibbonMenuButton>
+
+
+                    <Custom:RibbonMenuButton Label="Slice"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/export.png"
+                                             x:Name="Slice" IsEnabled="{Binding EditingActive}">
+                        
+                            <Custom:RibbonButton x:Name="SliceProject" Label="Project" Command="{Binding SliceCommand}" CommandParameter="SliceProject" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export all files to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}"/>
+
+
+
+                        <Custom:RibbonButton x:Name="SliceOneModel" Label="Model" Command="{Binding SliceCommand}" CommandParameter="SliceModel" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export current file to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}"/>
+                            
+                        <Custom:RibbonSeparator />
+
+                    </Custom:RibbonMenuButton>
+
+
+                    <Custom:RibbonButton Command="{Binding ExportCommand}"
                                              CommandParameter="Clean"
                                              HorizontalAlignment="Stretch"
                                              Label="Clean"
@@ -313,7 +332,6 @@
                                              ToolTip="Delete all exported stl and printer files"
                                              VerticalAlignment="Top"
                                              x:Name="Clean" />
-                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <!--
                         <Custom:RibbonSeparator />
@@ -939,12 +957,7 @@
                                          x:Name="AboutButton" />
                 </Custom:RibbonGroup>
             </Custom:RibbonTab>
-            <Custom:RibbonTab Name="Slicing"
-                              Header="Slicing">
-                <Custom:RibbonMenuButton x:Name="Slice" Label="Slice">
-                    <Custom:RibbonButton x:Name="Slicer" Label="Cura" Command="{Binding SliceCommand}" CommandParameter="SliceModel" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export to stl, slice with CuraEngine (and copy to SD card if present)" />
-                </Custom:RibbonMenuButton>
-            </Custom:RibbonTab>
+           
 
         </Custom:Ribbon>
         <Grid Grid.Row="1"

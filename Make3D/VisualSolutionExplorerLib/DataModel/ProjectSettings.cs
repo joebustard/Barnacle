@@ -39,6 +39,7 @@ namespace VisualSolutionExplorer
         public bool ImportAxisSwap { get; set; }
         public bool VersionExport { get; set; }
         public string SlicerPath { get; set; }
+        public string SDCardName { get; set; }
 
         internal void Read(XmlNode nd)
         {
@@ -114,6 +115,7 @@ namespace VisualSolutionExplorer
            
         }
 
+
         internal void Write(XmlDocument doc, XmlElement docNode)
         {
             XmlElement ele = doc.CreateElement("Settings");
@@ -129,7 +131,7 @@ namespace VisualSolutionExplorer
 
             ele.SetAttribute("AutoSaveScript", AutoSaveScript.ToString());
             ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());
-            ele.SetAttribute("SlicerPath", SlicerPath);
+            
             XmlElement rot = doc.CreateElement("Rotation");
             rot.SetAttribute("X", ExportRotation.X.ToString());
             rot.SetAttribute("Y", ExportRotation.Y.ToString());

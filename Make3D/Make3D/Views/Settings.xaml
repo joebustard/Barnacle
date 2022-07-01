@@ -35,7 +35,7 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="10*"/>
+                        <ColumnDefinition Width="12*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
@@ -92,7 +92,7 @@
                     <Grid Grid.Column="1"
                           Grid.Row="5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="2*"/>
@@ -100,8 +100,23 @@
                             <ColumnDefinition Width="1*"/>
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" VerticalAlignment="Center">Slicer Folder</Label>
-                        <TextBox Grid.Column="1" Text="{Binding SlicerPath}" Grid.ColumnSpan="4" ToolTip="The folder containing Cura"/>
+                        <TextBox Grid.Column="1" Text="{Binding SlicerPath}" Grid.ColumnSpan="4" ToolTip="The folder containing Cura. If present integrated slicing will be enabled."/>
                         <Button Grid.Column="5" FontSize="22" Style="{StaticResource SmallButton}" Click="Button_Click">...</Button>
+                        <Label Grid.Column="0" Grid.Row="6" VerticalAlignment="Center">Slicer Folder</Label>
+                        <TextBox Grid.Column="1" Text="{Binding SlicerPath}" Grid.ColumnSpan="4" ToolTip="The folder containing Cura. If present integrated slicing will be enabled."/>
+
+                    </Grid>
+                    <Grid Grid.Column="1" Grid.Row="6">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="1*"/>
+                            <ColumnDefinition Width="1*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0"  VerticalAlignment="Center">SD Card</Label>
+                        <TextBox Grid.Column="1" Text="{Binding SDCardName}" Grid.ColumnSpan="4" ToolTip="The label of the SDCard that is used with the 3D Printer. If set Barnacle will enable some extra functions when this SD card is detected."/>
                     </Grid>
                 </Grid>
             </TabItem>

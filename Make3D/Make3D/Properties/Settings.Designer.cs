@@ -126,12 +126,12 @@ namespace Barnacle.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string slicerProfileName {
+        public string SlicerProfileName {
             get {
-                return ((string)(this["slicerProfileName"]));
+                return ((string)(this["SlicerProfileName"]));
             }
             set {
-                this["slicerProfileName"] = value;
+                this["SlicerProfileName"] = value;
             }
         }
         
@@ -156,6 +156,18 @@ namespace Barnacle.Properties {
             }
             set {
                 this["SlicerPrinter"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Print3D")]
+        public string SDCardLabel {
+            get {
+                return ((string)(this["SDCardLabel"]));
+            }
+            set {
+                this["SDCardLabel"] = value;
             }
         }
     }

@@ -68,7 +68,19 @@ namespace Barnacle.ViewModels
         private bool underLineChecked;
         private bool wingEnabled;
         private bool editingActive;
-
+        private bool canSlice;
+        public bool CanSlice
+        {
+            get { return canSlice; }
+            set
+            {
+                if (canSlice != value)
+                {
+                    canSlice = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public DefaultViewModel()
         {
             settingsLoaded = false;
@@ -171,13 +183,9 @@ namespace Barnacle.ViewModels
             CreateToolMenus();
             editingActive = true;
             EnableAllTools(true);
-            
+
             NotificationManager.Notify("ProjectChanged", Project);
-            /* if (buildPlateManager.BuildPlates.Count > 0)
-             {
-                 NotificationManager.Notify("BuildPlate", buildPlateManager.BuildPlates[0]);
-             }
-             */
+
             LoadShowSettings();
             LoadPartLibrary();
         }
@@ -1068,7 +1076,7 @@ namespace Barnacle.ViewModels
             MainRibbon = mainRibbon;
         }
 
-        internal void SwitchToView(string v, bool checkForScript=true)
+        internal void SwitchToView(string v, bool checkForScript = true)
         {
             if (currentViewName == "Script" && checkForScript)
             {
@@ -1128,7 +1136,7 @@ namespace Barnacle.ViewModels
         {
             parametricToolsToShow = new List<ToolDef>();
             parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
-         //   parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
+            //   parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
@@ -1138,7 +1146,7 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Squared Stadium", true, "SquaredStadium", "Create a stadium or sausage with one end a variable radius and the other square."));
 
             parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
-             parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
+            parametricToolsToShow.Add(new ToolDef("Star", true, "Star", "Create a star."));
             parametricToolsToShow.Add(new ToolDef("Thread", true, "Thread", "Create a thread for a bolt or nut."));
             parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
 
@@ -1153,12 +1161,12 @@ namespace Barnacle.ViewModels
         {
             ToolDef tmp;
             bool swapped = true;
-            while ( swapped)
+            while (swapped)
             {
                 swapped = false;
-                for ( int i = 0; i < tools.Count-1; i ++)
+                for (int i = 0; i < tools.Count - 1; i++)
                 {
-                    if ( String.Compare( tools[i].Name, tools[i+1].Name) > 0)
+                    if (String.Compare(tools[i].Name, tools[i + 1].Name) > 0)
                     {
                         tmp = tools[i];
                         tools[i] = tools[i + 1];
@@ -1255,12 +1263,27 @@ namespace Barnacle.ViewModels
             ShowFloorMarkerChecked = Properties.Settings.Default.ShowMarker;
             ShowAxiesChecked = Properties.Settings.Default.ShowAxis;
             SelectedBuildPlate = Properties.Settings.Default.SelectedBuildPlate;
+            CheckIfCanSlice();
+
             settingsLoaded = true;
             NotificationManager.Notify("ShowBuildPlate", showBuildPlate);
             NotificationManager.Notify("ShowFloor", showFloorChecked);
             NotificationManager.Notify("ShowFloorMarker", showFloorMarkerChecked);
             NotificationManager.Notify("ShowAxies", showAxiesChecked);
             SelectedBuildPlateUpdated();
+        }
+
+        private void CheckIfCanSlice()
+        {
+            CanSlice = false;
+            if (Properties.Settings.Default.SlicerPath != null)
+            {
+                if (File.Exists(System.IO.Path.Combine(Properties.Settings.Default.SlicerPath, "cura.exe")))
+                {
+                    CanSlice = true;
+
+                }
+            }
         }
 
         private void ObjectNamesChanged(object param)
@@ -1490,6 +1513,7 @@ namespace Barnacle.ViewModels
         private void OnSettings(object obj)
         {
             NotificationManager.Notify("Settings", null);
+            CheckIfCanSlice();
         }
 
         private void OnSize(object obj)

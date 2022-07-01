@@ -10,7 +10,7 @@ using TemplateLib;
 
 namespace Barnacle.ViewModels
 {
-    internal class NewProjectViewModel : BaseViewModel, INotifyPropertyChanged
+    internal class        NewProjectViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private Dictionary<string, string> descriptions;
         private bool okEnabled;
