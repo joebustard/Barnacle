@@ -46,7 +46,7 @@ namespace Barnacle.Views
                     BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport = vm.ClearPreviousVersionsOnExport;
                     BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour = vm.DefaultObjectColour;
                     BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles = !vm.IgnoreEmpty;
-                    BaseViewModel.Project.SharedProjectSettings.SlicerPath = vm.SlicerPath;
+                    
                     BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
                     Properties.Settings.Default.SlicerPath = vm.SlicerPath;
                     Properties.Settings.Default.SDCardLabel = vm.SDCardName;

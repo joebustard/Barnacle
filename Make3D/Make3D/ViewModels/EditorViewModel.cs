@@ -3139,13 +3139,13 @@ namespace Barnacle.ViewModels
 
         private void OnSlice(object param)
         {
-            if (Project.SharedProjectSettings.SlicerPath != "")
+            if (Properties.Settings.Default.SlicerPath != "")
             {
                 string s = param.ToString();
                 SliceControl dlg = new SliceControl();
                 dlg.ModelMode = s;
                 dlg.ModelPath = Document.FilePath;
-                dlg.SlicerPath = Project.SharedProjectSettings.SlicerPath;
+                dlg.SlicerPath = Properties.Settings.Default.SlicerPath;
                 // dlg.ExportDocument = Document;
                 dlg.ShowDialog();
             }  

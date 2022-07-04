@@ -263,7 +263,8 @@ namespace Barnacle.Dialogs.Slice
             DataContext = this;
             if (SlicerPath != null && SlicerPath != "")
             {
-                Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath + @"\Resources\definitions");
+                
+            Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath + @"\Resources\definitions");
                 Extruders = CuraEngineInterface.GetAvailableExtruders(SlicerPath + @"\Resources\extruders");
                 Profiles = CuraEngineInterface.GetAvailableUserProfiles();
                 SelectedPrinter = Properties.Settings.Default.SlicerPrinter;

@@ -75,7 +75,7 @@ namespace Barnacle.ViewModels
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
-          SlicerPath = Properties.Settings.Default.SlicerPath ;
+            SlicerPath = Properties.Settings.Default.SlicerPath ;
             SDCardName = Properties.Settings.Default.SDCardLabel;
             SetAvailableColours();
             ObjectColour = FindAvailableColour(DefaultObjectColour);
