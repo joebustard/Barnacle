@@ -5,19 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
-using VisualSolutionExplorer;
+using System.Windows.Threading;
 using Workflow;
 using Path = System.IO.Path;
 
@@ -28,56 +19,56 @@ namespace Barnacle.Dialogs.Slice
     /// </summary>
     public partial class SliceControl : Window, INotifyPropertyChanged
     {
+        private bool canClose;
+        private bool canSlice;
+        private Document exportDoc;
+        private List<String> extruders;
+        private string modelPath;
 
-        string modelPath;
-        internal string ModelPath
+        private List<String> printers;
+
+        private List<String> profiles;
+
+        private string resultsText;
+
+        private String selectedExtruder;
+
+        private String selectedPrinter;
+
+        private String selectedUserProfile;
+
+        public SliceControl()
         {
-            get { return modelPath; }
+            InitializeComponent();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool CanClose
+        {
+            get { return canClose; }
             set
             {
-                modelPath = value;
+                canClose = value;
+                NotifyPropertyChanged();
             }
-
         }
-        private Document exportDoc;
+
+        public bool CanSlice
+        {
+            get { return canSlice; }
+            set
+            {
+                canSlice = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public Document ExportDocument
         {
             get { return exportDoc; }
             set { exportDoc = value; }
         }
-
-        public String SlicerPath { get; set; }
-        public SliceControl()
-        {
-            InitializeComponent();
-        }
-        private List<String> printers;
-
-        public List<String> Printers
-        {
-            get { return printers; }
-            set
-            {
-                printers = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-        private List<String> profiles;
-
-        public List<String> Profiles
-        {
-            get { return profiles; }
-            set
-            {
-                profiles = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-
-        private List<String> extruders;
 
         public List<String> Extruders
         {
@@ -89,135 +80,40 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-
         public string ModelMode { get; internal set; }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        public List<String> Printers
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        private Bounds3D RecalculateAllBounds()
-        {
-            Bounds3D allBounds = new Bounds3D();
-            if (exportDoc.Content.Count == 0)
-            {
-                allBounds.Zero();
-            }
-            else
-            {
-                foreach (Object3D ob in exportDoc.Content)
-                {
-                    allBounds += ob.AbsoluteBounds;
-                }
-            }
-            return allBounds;
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
-            if (!Directory.Exists(exportPath))
-            {
-                Directory.CreateDirectory(exportPath);
-            }
-            string printerPath = VisualSolutionExplorer.Project.BaseFolder + "\\printer";
-            if (!Directory.Exists(printerPath))
-            {
-                Directory.CreateDirectory(printerPath);
-            }
-            if (ModelMode == "SliceModel")
-            {
-                string fullPath = modelPath;
-                SliceSingleModel(fullPath,exportPath, printerPath);
-            }
-            else
-            {
-                string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
-                String pth = VisualSolutionExplorer.Project.BaseFolder;
-                foreach (string fullPath in filenames)
-                {
-                    SliceSingleModel(fullPath, exportPath, printerPath);
-                }
-
-            }
-            NotificationManager.Notify("ExportRefresh", null);
-        }
-
-        private void SliceSingleModel(string fullPath, string exportPath, string printerPath)
-        {
-            CanClose = false;
-            exportDoc = new Document();
-            exportDoc.Load(fullPath);
-
-            string modelName = Path.GetFileNameWithoutExtension(fullPath);
-            fullPath = Path.GetDirectoryName(fullPath);
-            Bounds3D allBounds = RecalculateAllBounds();
-
-            string exportedPath = exportDoc.ExportAll("STLSLICE", allBounds, exportPath);
-            exportedPath = Path.Combine(exportPath, modelName + ".stl");
-
-
-            string gcodePath = Path.Combine(printerPath, modelName + ".gcode");
-
-            string logPath = Path.Combine(modelPath, "slicelog.log");
-            string prf = selectedUserProfile;
-
-            CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, "Print3D", SlicerPath, selectedPrinter + ".json", selectedExtruder + ".def.json", prf);
-            NotificationManager.Notify("ExportRefresh", null);
-            CanClose = true;
-        }
-
-        private bool canSlice;
-
-        public bool CanSlice
-        {
-            get { return canSlice; }
+            get { return printers; }
             set
             {
-                canSlice = value;
-                NotifyPropertyChanged();
-            }
-        }
-        private String selectedPrinter;
-
-        public String SelectedPrinter
-        {
-            get { return selectedPrinter; }
-            set
-            {
-                selectedPrinter = value;
-                if (selectedPrinter != "" && selectedExtruder != "")
-                {
-                    CanSlice = true;
-                }
-                else
-                {
-                    CanSlice = false;
-                }
+                printers = value;
                 NotifyPropertyChanged();
             }
         }
 
-        private String selectedUserProfile;
-        public String SelectedUserProfile
+        public List<String> Profiles
         {
-            get { return selectedUserProfile; }
+            get { return profiles; }
             set
             {
-                if (selectedUserProfile != value)
+                profiles = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string ResultsText
+        {
+            get { return resultsText; }
+            set
+            {
+                if (resultsText != value)
                 {
-                    selectedUserProfile = value;
+                    resultsText = value;
                     NotifyPropertyChanged();
                 }
             }
         }
-        private String selectedExtruder;
 
         public String SelectedExtruder
         {
@@ -237,34 +133,169 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-
-        private bool canClose;
-
-        public bool CanClose
+        public String SelectedPrinter
         {
-            get { return canClose; }
+            get { return selectedPrinter; }
             set
             {
-                canClose = value;
+                selectedPrinter = value;
+                if (selectedPrinter != "" && selectedExtruder != "")
+                {
+                    CanSlice = true;
+                }
+                else
+                {
+                    CanSlice = false;
+                }
                 NotifyPropertyChanged();
             }
         }
+
+        public String SelectedUserProfile
+        {
+            get { return selectedUserProfile; }
+            set
+            {
+                if (selectedUserProfile != value)
+                {
+                    selectedUserProfile = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String SlicerPath { get; set; }
+
+        internal string ModelPath
+        {
+            get { return modelPath; }
+            set
+            {
+                modelPath = value;
+            }
+        }
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private void AppendResults(string s)
+        {
+            Application.Current.Dispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new Action(() =>
+                {
+                    ResultsText += s + "\n";
+                }));
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
+        {
+            CanClose = false;
+            CanSlice = false;
+            ClearResults();
+            String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+            if (!Directory.Exists(exportPath))
+            {
+                Directory.CreateDirectory(exportPath);
+            }
+            string printerPath = VisualSolutionExplorer.Project.BaseFolder + "\\printer";
+            if (!Directory.Exists(printerPath))
+            {
+                Directory.CreateDirectory(printerPath);
+            }
+            if (ModelMode == "SliceModel")
+            {
+                string fullPath = modelPath;
+                await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+            }
+            else
+            {
+                string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
+                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                foreach (string fullPath in filenames)
+                {
+                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                }
+            }
+            NotificationManager.Notify("ExportRefresh", null);
+            CanClose = true;
+            CanSlice = true;
+        }
+
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-
             Properties.Settings.Default.SlicerPrinter = SelectedPrinter;
             Properties.Settings.Default.SlicerExtruder = SelectedExtruder;
             Properties.Settings.Default.SlicerProfileName = SelectedUserProfile;
             Close();
         }
 
+        private void ClearResults()
+        {
+            Application.Current.Dispatcher.BeginInvoke(
+                DispatcherPriority.Background,
+                new Action(() =>
+                {
+                    ResultsText = "";
+                }));
+        }
+
+        private Bounds3D RecalculateAllBounds()
+        {
+            Bounds3D allBounds = new Bounds3D();
+            if (exportDoc.Content.Count == 0)
+            {
+                allBounds.Zero();
+            }
+            else
+            {
+                foreach (Object3D ob in exportDoc.Content)
+                {
+                    allBounds += ob.AbsoluteBounds;
+                }
+            }
+            return allBounds;
+        }
+        private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
+        {
+            exportDoc = new Document();
+            exportDoc.Load(fullPath);
+
+            string modelName = Path.GetFileNameWithoutExtension(fullPath);
+            fullPath = Path.GetDirectoryName(fullPath);
+            Bounds3D allBounds = RecalculateAllBounds();
+
+            string exportedPath = exportDoc.ExportAll("STLSLICE", allBounds, exportPath);
+            exportedPath = Path.Combine(exportPath, modelName + ".stl");
+
+            string gcodePath = Path.Combine(printerPath, modelName + ".gcode");
+
+            string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
+            string prf = selectedUserProfile;
+
+            AppendResults("Slice " + modelName);
+            bool ok;
+            ok = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, selectedPrinter + ".json", selectedExtruder + ".def.json", prf)));
+            if (ok)
+            {
+                AppendResults("Completed " + modelName);
+            }
+            else
+            {
+                AppendResults("FAILED  " + modelName);
+                AppendResults("View Logfile  at " + logPath);
+            }
+        }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
             if (SlicerPath != null && SlicerPath != "")
             {
-                
-            Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath + @"\Resources\definitions");
+                Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath + @"\Resources\definitions");
                 Extruders = CuraEngineInterface.GetAvailableExtruders(SlicerPath + @"\Resources\extruders");
                 Profiles = CuraEngineInterface.GetAvailableUserProfiles();
                 SelectedPrinter = Properties.Settings.Default.SlicerPrinter;

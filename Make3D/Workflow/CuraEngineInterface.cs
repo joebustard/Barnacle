@@ -26,9 +26,9 @@ $StartGcode
 $EndGcode
 -e0 ^
 -l ""$src"" ^
--o ""$trg"" 2>""$tmpslice.log""
+-o ""$trg"" 2>""$log""
 cd %fld%
-rem pause
+exit 0
     ";
 
 
@@ -53,7 +53,8 @@ rem pause
                                              string startgcode,
                                              string endgcode,
                                              string src,
-                                             string target
+                                             string target,
+                                             string logPath
                                              )
 
         {
@@ -115,7 +116,7 @@ rem pause
 
             txt = txt.Replace("$src", src);
             txt = txt.Replace("$trg", target);
-
+            txt = txt.Replace("$log", logPath);
             String tmp = Path.GetTempPath();
             txt = txt.Replace("$tmp", tmp);
 
@@ -123,24 +124,35 @@ rem pause
 
         }
 
-        public static void Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile )
+        public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile)
         {
+            bool ok = false;
             try
             {
                 string sdcard = "";
                 // look fora named sd card.
                 // if we find one  then we can copy the gocde there.
-                if (sdCardName != "")
+                //  if (sdCardName != "")
+                //   {
+                //       sdcard = FindSDCard(sdCardName);
+                //   }
+
+                // we need to construct a cmd file to run the slice
+                // WOrk  out where it should be.
+                //string tmpCmdFile = Path.GetTempPath();
+                // tmpCmdFile = Path.Combine(tmpCmdFile, "slice.cmd");
+
+                string tmpCmdFile = Path.GetTempFileName();
+                tmpCmdFile = Path.ChangeExtension(tmpCmdFile, "cmd");
+                if (File.Exists(tmpCmdFile))
                 {
-                    sdcard = FindSDCard(sdCardName);
+                    File.Delete(tmpCmdFile);
                 }
 
-                // weneed toconstruct a cmd file to run the slice
-                // WOrk  out where it should be.
-                string tmpCmdFile = Path.GetTempPath();
-                tmpCmdFile = Path.Combine(tmpCmdFile, "slice.cmd");
-                string tmpFile = Path.GetTempPath();
-                tmpFile = Path.Combine(tmpFile, "tmp.gcode");
+                string tmpFile = Path.GetTempFileName();
+                tmpFile = Path.ChangeExtension(tmpFile, "gcode");
+
+                //tmpFile = Path.Combine(tmpFile, "tmp.gcode");
                 if (File.Exists(tmpFile))
                 {
                     File.Delete(tmpFile);
@@ -150,7 +162,7 @@ rem pause
                 // The profile is based on the ones upplied with Cura BUT
                 // it doesn't use Cura's ones directly
                 SlicerProfile defpro = new SlicerProfile();
-                if (userProfile != "")
+                if (userProfile != "" && userProfile.ToLower() != "none")
                 {
 
                     string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
@@ -171,16 +183,26 @@ rem pause
 
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
-                                  @".\resources\definitions\"+printer,
-                                  @".\resources\extruders\"+extruder,
+                                  @".\resources\definitions\" + printer,
+                                  @".\resources\extruders\" + extruder,
                                   settingoverrides,
                                   startg,
                                   defpro.EndGCode,
                                   stlPath,
-                                 tmpFile);
-                ExecuteCmds(tmpCmdFile);
-                ReplaceNewLines(tmpFile, gcodePath);
+                                 tmpFile,
+                                 logPath);
+               // await Task.Run(() => DoSlice(gcodePath, tmpCmdFile, tmpFile));
+                ok = await  DoSlice(gcodePath, tmpCmdFile, tmpFile);
 
+                if (File.Exists(tmpCmdFile))
+                {
+                   File.Delete(tmpCmdFile);
+                }
+
+                if (File.Exists(tmpFile))
+                {
+                  File.Delete(tmpFile);
+                }
                 // debugging, just save the profile so we can have a peek.
                 // defpro.Save("C:\\tmp\\sorted.txt");
             }
@@ -188,29 +210,52 @@ rem pause
             {
                 MessageBox.Show(ex.Message);
             }
+            return ok;
+        }
+
+        private static Task< bool> DoSlice(string gcodePath, string tmpCmdFile, string tmpFile)
+        {
+            bool result =  ExecuteCmds(tmpCmdFile);
+            if (result)
+            {
+                result = ReplaceNewLines(tmpFile, gcodePath);
+            }
+
+            return Task.FromResult<bool>(result);
         }
 
         public static List<string> GetAvailableUserProfiles()
         {
-            
-           
+
+
             string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             folder += "\\Barnacle\\PrinterProfiles";
-            List<string> res = new List<string>();
-
-                String[] files = Directory.GetFiles(folder, "*.profile");
-                if (files.GetLength(0) > 0)
+            if (!Directory.Exists(folder))
+            {
+                try
                 {
-                    foreach (string s in files)
-                    {
-                        res.Add(Path.GetFileNameWithoutExtension(s));
-                    }
+                    Directory.CreateDirectory(folder);
                 }
-            
+                catch
+                {
+
+                }
+            }
+            List<string> res = new List<string>();
+            res.Add("None");
+            String[] files = Directory.GetFiles(folder, "*.profile");
+            if (files.GetLength(0) > 0)
+            {
+                foreach (string s in files)
+                {
+                    res.Add(Path.GetFileNameWithoutExtension(s));
+                }
+            }
+
             return res;
         }
 
-        public static  List<String> GetAvailablePrinters(string folder)
+        public static List<String> GetAvailablePrinters(string folder)
         {
 
             List<string> res = new List<string>();
@@ -246,8 +291,9 @@ rem pause
             return res;
         }
 
-        private static void ReplaceNewLines(string src, string trg)
+        private static bool ReplaceNewLines(string src, string trg)
         {
+            bool result = false;
             if (File.Exists(src))
             {
                 String[] str = File.ReadAllLines(src);
@@ -276,23 +322,31 @@ rem pause
                     }
                 }
                 fout.Close();
+                result = true;
             }
-
+            return result;
         }
 
-        public static void ExecuteCmds(string pt)
+        public static bool ExecuteCmds(string pt)
         {
+            bool result = false;
             if (File.Exists(pt))
             {
                 ProcessStartInfo pi = new ProcessStartInfo();
                 pi.UseShellExecute = true;
                 pi.FileName = pt;
-                pi.WindowStyle = ProcessWindowStyle.Normal;
+              //  pi.WindowStyle = ProcessWindowStyle.Normal;
+                pi.WindowStyle = ProcessWindowStyle.Hidden;
                 pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\3dModels";
                 Process runner = Process.Start(pi);
                 runner.WaitForExit();
-
+                if ( runner.ExitCode == 0)
+                {
+                    result = true;
+                }
             }
+
+            return result;
         }
 
         private static string FindSDCard(string label)

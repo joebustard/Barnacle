@@ -69,7 +69,8 @@ namespace Barnacle.Views
             startInfo.EnvironmentVariables.Add("BarnacleFolder", Project.BaseFolder);
             string currentFile = System.IO.Path.GetFileName(BaseViewModel.Document.FileName);
             startInfo.EnvironmentVariables.Add("BarnacleFile", currentFile);
-            startInfo.EnvironmentVariables.Add("BarnacleSlicer", BaseViewModel.Project.SharedProjectSettings.SlicerPath);
+            startInfo.EnvironmentVariables.Add("BarnacleSlicer", Properties.Settings.Default.SlicerPath);
+            startInfo.EnvironmentVariables.Add("BarnacleSDCard", Properties.Settings.Default.SDCardLabel);
             System.Diagnostics.Process.Start(startInfo);
         }
 

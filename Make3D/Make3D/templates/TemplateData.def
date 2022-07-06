@@ -26,7 +26,7 @@
       <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
 	<File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
-      <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/Commands/OpenAllExportSTLsInCura.cmd" />
+      
     </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
@@ -91,7 +91,7 @@
       <File Name="CopyLatestToPrint3D.cmd" Source="templates/Commands/CopyLatestToPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/Commands/CopyToPrint3D.cmd" />
 <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
-      <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/Commands/OpenAllExportSTLsInCura.cmd" />
+      
       <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
     </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
@@ -148,7 +148,6 @@
       <File Name="CopyLatestToPrint3D.cmd" Source="templates/Commands/CopyLatestToPrint3D.cmd" />
       <File Name="CopyToPrint3D.cmd" Source="templates/Commands/CopyToPrint3D.cmd" />
       <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
-      <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/Commands/OpenAllExportSTLsInCura.cmd" />
       <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
     </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
@@ -201,7 +200,6 @@
       <File Name="CopyToPrint3D.cmd" Source="templates/Commands/CopyToPrint3D.cmd" />
       <File Name="CopyLatestToPrint3D.cmd" Source="templates/Commands/CopyLatestToPrint3D.cmd" />
 <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
-      <File Name="OpenAllExportSTLsInCura.cmd" Source="templates/Commands/OpenAllExportSTLsInCura.cmd" />
       <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
     </Folder>
     <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">

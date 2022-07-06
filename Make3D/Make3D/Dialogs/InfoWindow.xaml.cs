@@ -25,13 +25,25 @@ namespace Barnacle.Dialogs
         private InfoWindow()
         {
             InitializeComponent();
+            IsClosed = false;
+            Closed += InfoWindow_Closed;
         }
-
+        private void InfoWindow_Closed(object sender, EventArgs e)
+        {
+            IsClosed = true;
+        }
         public static InfoWindow Instance()
         {
             if (instance == null)
             {
                 instance = new InfoWindow();
+            }
+            else
+            {
+                if ( instance.IsClosed)
+                {
+                    instance = new InfoWindow();
+                }
             }
             return instance;
         }
@@ -49,9 +61,9 @@ namespace Barnacle.Dialogs
 
         public void ShowInfo()
         {
-            instance.Show();
+            Instance().Show();
         }
-
+        public bool IsClosed { get; set; } = false;
         public void ShowInfo(String title)
         {
             Instance().Title = title;

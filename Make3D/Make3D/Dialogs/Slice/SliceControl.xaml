@@ -37,7 +37,7 @@
         <ComboBox Grid.Column="2" Grid.Row="3" Margin="2,2,2,10" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedUserProfile}"/>
 
         <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center"/>
-        <TextBox Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True"></TextBox>
+        <TextBox Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top"></TextBox>
 
 
 
