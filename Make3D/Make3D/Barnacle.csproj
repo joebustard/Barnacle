@@ -189,6 +189,7 @@
     <Compile Include="Dialogs\Slice\SliceControl.xaml.cs">
       <DependentUpon>SliceControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\SpaceTreeNode.cs" />
     <Compile Include="Dialogs\SquaredStadium\SquaredStadiumDlg.xaml.cs">
       <DependentUpon>SquaredStadiumDlg.xaml</DependentUpon>
     </Compile>

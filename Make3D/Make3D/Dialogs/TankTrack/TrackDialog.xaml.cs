@@ -841,8 +841,7 @@ namespace Barnacle.Dialogs
             BusyCon.Visibility = Visibility.Visible;
             //    var result = await Task.Run(() => GenerationTask());
             var result = GenerationTask();
-            Vertices.Clear();
-            Faces.Clear();
+            ClearShape();
             foreach (Point3D p in result.Vertices)
             {
                 Vertices.Add(new Point3D(p.X, p.Y, p.Z));

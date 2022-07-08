@@ -383,8 +383,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateFaces()
         {
-            Faces.Clear();
-            Vertices.Clear();
+            ClearShape();
             MakeFacesFrommOuterAndInner();
         }
 
@@ -440,8 +439,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateM1Track()
         {
-            Faces.Clear();
-            Vertices.Clear();
+            ClearShape();
             GenerateM1Main(Vertices, Faces);
         }
 

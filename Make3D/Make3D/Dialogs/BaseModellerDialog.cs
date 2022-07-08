@@ -55,6 +55,7 @@ namespace Barnacle.Dialogs
             showFloor = true;
             showAxies = true;
             bounds = new Bounds3D();
+            spaceTreeRoot = null;   
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -509,8 +510,7 @@ namespace Barnacle.Dialogs
             // now we have a lovely copy of the profile in polar coordinates.
             if (clear)
             {
-                Vertices.Clear();
-                Faces.Clear();
+                ClearShape();
             }
 
             double sweep = sweepRange * (Math.PI * 2.0) / 360.0;
@@ -576,8 +576,7 @@ namespace Barnacle.Dialogs
             // now we have a lovely copy of the profile in polar coordinates.
             if (clear)
             {
-                Vertices.Clear();
-                Faces.Clear();
+                ClearShape();
             }
 
             double sweep = sweepRange * (Math.PI * 2.0) / 360.0;
@@ -731,23 +730,10 @@ namespace Barnacle.Dialogs
 
         protected int AddVertice(double x, double y, double z)
         {
-            int res = -1;
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                if (PointUtils.equals(vertices[i], x, y, z))
-                {
-                    res = i;
-                    break;
-                }
-            }
-
-            if (res == -1)
-            {
-                vertices.Add(new Point3D(x, y, z));
-                res = vertices.Count - 1;
-            }
+            int res = AddVertice(new Point3D(x, y, z));
             return res;
         }
+        private SpaceTreeNode spaceTreeRoot;
 
         protected int AddVertice(Point3DCollection verts, double x, double y, double z)
         {
@@ -772,6 +758,14 @@ namespace Barnacle.Dialogs
         protected int AddVertice(Point3D v)
         {
             int res = -1;
+            if (spaceTreeRoot != null )
+            {
+                res = spaceTreeRoot.Present(v);
+            }
+
+               
+            
+            /*
             for (int i = 0; i < vertices.Count; i++)
             {
                 if (PointUtils.equals(vertices[i], v.X, v.Y, v.Z))
@@ -780,11 +774,19 @@ namespace Barnacle.Dialogs
                     break;
                 }
             }
-
+            */
             if (res == -1)
             {
                 vertices.Add(new Point3D(v.X, v.Y, v.Z));
                 res = vertices.Count - 1;
+                if (spaceTreeRoot == null)
+                {
+                    spaceTreeRoot = SpaceTreeNode.Create(v, res);
+                }
+                else
+                {
+                    spaceTreeRoot.Add(v, spaceTreeRoot,res);
+                }
             }
             return res;
         }
@@ -841,6 +843,7 @@ namespace Barnacle.Dialogs
 
         protected void ClearShape()
         {
+            spaceTreeRoot = null;
             Vertices.Clear();
             Faces.Clear();
         }

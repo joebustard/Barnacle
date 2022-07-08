@@ -489,8 +489,7 @@ namespace Barnacle.Dialogs
                 List<Point> midProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeMid, ref midEdgeLength);
                 List<Point> tipProfile = GetProfilePoints(RootGroup, SelectedAirfoil, bladeTip, ref tipEdgeLength);
 
-                Vertices.Clear();
-                Faces.Clear();
+                ClearShape();
                 double dtheta = (Math.PI * 2) / NumberOfBlades;
                 double theta = 0;
 

@@ -718,8 +718,7 @@ namespace Barnacle.Dialogs
                 double endT = 1;
                 bool close = false;
 
-                Vertices.Clear();
-                Faces.Clear();
+                ClearShape();
                 rootPnts.Clear();
                 tipPnts.Clear();
                 if (TopModelChecked)
