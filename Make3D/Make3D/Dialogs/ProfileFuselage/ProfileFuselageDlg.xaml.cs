@@ -437,8 +437,7 @@ namespace Barnacle.Dialogs
             try
             {
                 // clear out existing 3d model
-                Faces.Clear();
-                Vertices.Clear();
+                ClearShape();
                 bool okToGenerate = true;
                 double prevX = 0;
                 List<ImagePathControl> theRibs = new List<ImagePathControl>();

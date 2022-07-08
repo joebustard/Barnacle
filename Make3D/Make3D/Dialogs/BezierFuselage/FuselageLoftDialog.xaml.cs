@@ -281,7 +281,7 @@ namespace Barnacle.Dialogs
                 // create a place to store the indices of the vertices for each bulkhead.
                 // Used to make the triangles
                 indexFrame = new int[bulkHeads.Count, pointsPerBulkHead];
-                Vertices.Clear();
+                ClearShape();
 
                 // create a place to store all the points from the bulkheads
                 List<Point>[] blkPoints = new List<Point>[bulkHeads.Count];

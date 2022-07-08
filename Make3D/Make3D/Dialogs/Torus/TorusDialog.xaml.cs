@@ -91,8 +91,7 @@ namespace Barnacle.Dialogs
 
         private void GeneratePoints()
         {
-            Vertices.Clear();
-            Faces.Clear();
+            ClearShape();
             double height = stretch;
 
             if (TypeAButton.IsChecked == true)

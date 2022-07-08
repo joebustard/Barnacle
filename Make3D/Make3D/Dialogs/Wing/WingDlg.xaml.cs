@@ -657,8 +657,7 @@ namespace Barnacle.Dialogs
 
                         if (tipProfile.Count > 0)
                         {
-                            Vertices.Clear();
-                            Faces.Clear();
+                            ClearShape();
 
                             double dt = 0.01;
                             double startT = 0;

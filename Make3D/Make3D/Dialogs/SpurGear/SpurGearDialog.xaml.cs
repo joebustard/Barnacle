@@ -341,8 +341,8 @@ namespace Barnacle.Dialogs
                         tooth = !tooth;
                     }
                     DisplayFlatView(points);
-                    Vertices.Clear();
-                    Faces.Clear();
+
+                    ClearShape();
 
                     // generate side triangles so original points are already in list
                     for (int i = 0; i < points.Count; i++)

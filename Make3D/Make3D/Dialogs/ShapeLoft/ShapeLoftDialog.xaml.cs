@@ -181,7 +181,7 @@ namespace Barnacle.Dialogs
                     py = st.Y + (t * (nd.Y - st.Y));
                     topShell.Add(new Point(px, py));
                 }
-                Vertices.Clear();
+                ClearShape();
 
                 int numUp = 10;
                 Vertices.Add(new Point3D(0, 0, 0));
