@@ -168,7 +168,8 @@ exit 0
                     string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     folder += "\\Barnacle\\PrinterProfiles\\";
                     userProfile = folder + userProfile + ".profile";
-                    defpro.Load(userProfile);
+                    defpro.LoadOverrides(userProfile);
+                    defpro.SaveAsXml(folder + "\\test.xaml");
                 }
                 string settingoverrides = "";
                 foreach (SettingOverride ov in defpro.Overrides)
@@ -266,7 +267,8 @@ exit 0
                 {
                     foreach (string s in files)
                     {
-                        res.Add(Path.GetFileNameWithoutExtension(s));
+                        string t = Path.GetFileName(s).Replace(".def.json", "");
+                        res.Add(Path.GetFileNameWithoutExtension(t));
                     }
                 }
             }

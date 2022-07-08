@@ -279,7 +279,7 @@ namespace Barnacle.Dialogs.Slice
 
             AppendResults("Slice " + modelName);
             bool ok;
-            ok = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, selectedPrinter + ".json", selectedExtruder + ".def.json", prf)));
+            ok = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, selectedPrinter + ".def.json", selectedExtruder + ".def.json", prf)));
             if (ok)
             {
                 AppendResults("Completed " + modelName);
