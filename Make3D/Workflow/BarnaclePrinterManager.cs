@@ -1,17 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 
 namespace Workflow
 {
-    internal class BarnaclePrinterManager
+    public class BarnaclePrinterManager
     {
+        private string filePath;
+
         public BarnaclePrinterManager()
         {
             Printers = new List<BarnaclePrinter>();
+
+            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            folder += "\\Barnacle\\PrinterProfiles\\";
+            filePath = folder + "printers.xml";
+            LoadFromXml(filePath);
+        }
+
+        public void Save()
+        {
+            if (filePath != null && filePath != "")
+            {
+                SaveAsXml(filePath);
+            }
         }
 
         public List<BarnaclePrinter> Printers { get; set; }
+
         public void LoadFromXml(string fileName)
         {
             if (File.Exists(fileName))
@@ -54,7 +71,46 @@ namespace Workflow
                     docNode.AppendChild(prnt.SaveAsXml(doc));
                 }
             }
+            doc.AppendChild(docNode);
             doc.Save(fileName);
+        }
+
+        public List<string> GetPrinterNames()
+        {
+            List<String> res = new List<string>();
+            foreach (BarnaclePrinter bp in Printers)
+            {
+                res.Add(bp.Name);
+            }
+            return res;
+        }
+
+        public BarnaclePrinter FindPrinter(String name)
+        {
+            BarnaclePrinter res = null;
+            foreach (BarnaclePrinter bp in Printers)
+            {
+                if (bp.Name == name)
+                {
+                    res = bp;
+                    break;
+                }
+            }
+            return res;
+        }
+
+        public void AddPrinter(string printerName, string curaPrinter, string curaExtuder, string startGCode, string endGCode)
+        {
+            if (Printers != null)
+            {
+                BarnaclePrinter bp = new BarnaclePrinter();
+                bp.Name = printerName;
+                bp.CuraPrinterFile = curaPrinter;
+                bp.CuraExtruderFile = curaExtuder;
+                bp.StartGCode = startGCode;
+                bp.EndGCode = endGCode;
+                Printers.Add(bp);
+            }
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -35,49 +33,48 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-
-            double lt = 0;
-            double h = 0;
-
-            double w = 0;
-            double lb = 0;
-            double b = 0;
-
-            if (EvalExpression(bottomLengthExp, ref lb, "BottomLength", "MakeTrapezoid") &&
-                EvalExpression(bevelExp, ref b, "Bevel", "MakeTrapezoid") &&
-                EvalExpression(heightExp, ref h, "Height", "MakeTrapezoid") &&
-                EvalExpression(widthExp, ref w, "Width", "MakeTrapezoid") &&
-                EvalExpression(topLengthExp, ref lt, "TopLength", "MakeTrapezoid")
-                )
             {
-                if (lt > 0 && w > 0 && h > 0 && lb > 0 && b >= 0)
+                double lt = 0;
+                double h = 0;
+
+                double w = 0;
+                double lb = 0;
+                double b = 0;
+
+                if (EvalExpression(bottomLengthExp, ref lb, "BottomLength", "MakeTrapezoid") &&
+                    EvalExpression(bevelExp, ref b, "Bevel", "MakeTrapezoid") &&
+                    EvalExpression(heightExp, ref h, "Height", "MakeTrapezoid") &&
+                    EvalExpression(widthExp, ref w, "Width", "MakeTrapezoid") &&
+                    EvalExpression(topLengthExp, ref lt, "TopLength", "MakeTrapezoid")
+                    )
                 {
-                    result = true;
+                    if (lt > 0 && w > 0 && h > 0 && lb > 0 && b >= 0)
+                    {
+                        result = true;
 
-                    Object3D obj = new Object3D();
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "Trapezoid";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "Trapezoid";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    TrapezoidMaker maker = new TrapezoidMaker(lt, lb, h, w, b);
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        TrapezoidMaker maker = new TrapezoidMaker(lt, lb, h, w, b);
 
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeTrapezoid : Illegal value");
+                    }
                 }
-                else
-                {
-                    Log.Instance().AddEntry("MakeTrapezoid : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

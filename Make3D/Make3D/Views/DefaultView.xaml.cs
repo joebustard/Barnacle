@@ -44,8 +44,7 @@ namespace Barnacle.Views
 
         private void ScriptEditorClosed(object param)
         {
-            
-            vm.SwitchToView("Editor",false);
+            vm.SwitchToView("Editor", false);
         }
 
         public void CheckPoint()

@@ -3,7 +3,7 @@ using System.Xml;
 
 namespace Workflow
 {
-    internal class BarnaclePrinter
+    public class BarnaclePrinter
     {
         public BarnaclePrinter()
         {
@@ -19,6 +19,7 @@ namespace Workflow
         public String EndGCode { get; set; }
         public string Name { get; set; }
         public String StartGCode { get; set; }
+
         public XmlElement SaveAsXml(XmlDocument doc)
         {
             doc.XmlResolver = null;

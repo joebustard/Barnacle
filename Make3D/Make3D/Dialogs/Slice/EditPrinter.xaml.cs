@@ -12,19 +12,19 @@ namespace Barnacle.Dialogs.Slice
     /// </summary>
     public partial class EditPrinter : Window, INotifyPropertyChanged
     {
-        private List<String> printers;
-        private List<String> extruders;
+        private List<String> curaPrinters;
+        private List<String> curaExtruders;
         private String selectedExtruder;
         private String selectedPrinter;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public List<String> Extruders
+        public List<String> CuraExtruders
         {
-            get { return extruders; }
+            get { return curaExtruders; }
             set
             {
-                extruders = value;
+                curaExtruders = value;
                 NotifyPropertyChanged();
             }
         }
@@ -51,6 +51,51 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
+        private string printerName;
+
+        public String PrinterName
+        {
+            get { return printerName; }
+            set
+            {
+                if (value != printerName)
+                {
+                    printerName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private String startGCode;
+
+        public String StartGCode
+        {
+            get { return startGCode; }
+            set
+            {
+                if (value != startGCode)
+                {
+                    startGCode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private String endGCode;
+
+        public String EndGCode
+        {
+            get { return endGCode; }
+            set
+            {
+                if (value != endGCode)
+                {
+                    endGCode = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -59,22 +104,26 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        public List<String> Printers
+        public List<String> CuraPrinters
         {
-            get { return printers; }
+            get { return curaPrinters; }
             set
             {
-                printers = value;
+                curaPrinters = value;
                 NotifyPropertyChanged();
             }
         }
+
         private void CancelClick(object sender, RoutedEventArgs e)
         {
-            
+            DialogResult = false;
+            Close();
         }
+
         private void OKClick(object sender, RoutedEventArgs e)
         {
-
+            DialogResult = true;
+            Close();
         }
 
         public EditPrinter()
@@ -89,8 +138,8 @@ namespace Barnacle.Dialogs.Slice
 
             if (SlicerPath != null && SlicerPath != "")
             {
-                Printers = CuraEngineInterface.GetAvailableCuraPrinterDefinitions(SlicerPath + @"\Resources\definitions");
-                Extruders = CuraEngineInterface.GetAvailableCuraExtruders(SlicerPath + @"\Resources\extruders");
+                CuraPrinters = CuraEngineInterface.GetAvailableCuraPrinterDefinitions(SlicerPath + @"\Resources\definitions");
+                CuraExtruders = CuraEngineInterface.GetAvailableCuraExtruders(SlicerPath + @"\Resources\extruders");
             }
         }
     }

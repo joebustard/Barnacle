@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -30,7 +29,6 @@ $EndGcode
 cd %fld%
 exit 0
     ";
-
 
         // examples
         // $Printer =".\resources\definitions\creality_ender3pro.def.json"
@@ -72,8 +70,6 @@ exit 0
             {
                 txt = txt.Replace("$Printer\r\n", "");
             }
-
-
 
             if (extruder != "")
             {
@@ -121,7 +117,6 @@ exit 0
             txt = txt.Replace("$tmp", tmp);
 
             System.IO.File.WriteAllText(File, txt);
-
         }
 
         public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile)
@@ -157,13 +152,12 @@ exit 0
                     File.Delete(tmpFile);
                 }
 
-                // We need a slicer profile. 
+                // We need a slicer profile.
                 // The profile is based on the ones upplied with Cura BUT
                 // it doesn't use Cura's ones directly
                 SlicerProfile defpro = new SlicerProfile();
                 if (userProfile != "" && userProfile.ToLower() != "none")
                 {
-
                     string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                     folder += "\\Barnacle\\PrinterProfiles\\";
                     userProfile = folder + userProfile + ".profile";
@@ -178,30 +172,31 @@ exit 0
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
 
                 string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
-                string startg = defpro.StartGCode.Replace("$NAME", n);
+                //             string startg = defpro.StartGCode.Replace("$NAME", n);
 
-
+                string startg = "Get GCODE FROM PRINTER NOT PROFILE";
+                string endG = "GET GOCED FROM PRINTER NOT PROFILE";
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
                                   @".\resources\definitions\" + printer,
                                   @".\resources\extruders\" + extruder,
                                   settingoverrides,
                                   startg,
-                                  defpro.EndGCode,
+                                  endG,
                                   stlPath,
                                  tmpFile,
                                  logPath);
-               // await Task.Run(() => DoSlice(gcodePath, tmpCmdFile, tmpFile));
-                ok = await  DoSlice(gcodePath, tmpCmdFile, tmpFile);
+                // await Task.Run(() => DoSlice(gcodePath, tmpCmdFile, tmpFile));
+                ok = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
 
                 if (File.Exists(tmpCmdFile))
                 {
-                   File.Delete(tmpCmdFile);
+                    File.Delete(tmpCmdFile);
                 }
 
                 if (File.Exists(tmpFile))
                 {
-                  File.Delete(tmpFile);
+                    File.Delete(tmpFile);
                 }
                 // debugging, just save the profile so we can have a peek.
                 // defpro.Save("C:\\tmp\\sorted.txt");
@@ -213,9 +208,9 @@ exit 0
             return ok;
         }
 
-        private static Task< bool> DoSlice(string gcodePath, string tmpCmdFile, string tmpFile)
+        private static Task<bool> DoSlice(string gcodePath, string tmpCmdFile, string tmpFile)
         {
-            bool result =  ExecuteCmds(tmpCmdFile);
+            bool result = ExecuteCmds(tmpCmdFile);
             if (result)
             {
                 result = ReplaceNewLines(tmpFile, gcodePath);
@@ -226,8 +221,6 @@ exit 0
 
         public static List<string> GetAvailableUserProfiles()
         {
-
-
             string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             folder += "\\Barnacle\\PrinterProfiles";
             if (!Directory.Exists(folder))
@@ -238,7 +231,6 @@ exit 0
                 }
                 catch
                 {
-
                 }
             }
             List<string> res = new List<string>();
@@ -257,7 +249,6 @@ exit 0
 
         public static List<String> GetAvailableCuraPrinterDefinitions(string folder)
         {
-
             List<string> res = new List<string>();
             if (folder != null && folder != "")
             {
@@ -314,7 +305,6 @@ exit 0
                     }
                     else
                     {
-
                         string[] lines = l.Split(seps, StringSplitOptions.RemoveEmptyEntries);
                         for (int j = 0; j < lines.Count(); j++)
                         {
@@ -336,12 +326,12 @@ exit 0
                 ProcessStartInfo pi = new ProcessStartInfo();
                 pi.UseShellExecute = true;
                 pi.FileName = pt;
-              //  pi.WindowStyle = ProcessWindowStyle.Normal;
+                //  pi.WindowStyle = ProcessWindowStyle.Normal;
                 pi.WindowStyle = ProcessWindowStyle.Hidden;
                 pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\3dModels";
                 Process runner = Process.Start(pi);
                 runner.WaitForExit();
-                if ( runner.ExitCode == 0)
+                if (runner.ExitCode == 0)
                 {
                     result = true;
                 }
@@ -372,4 +362,3 @@ exit 0
         }
     }
 }
-

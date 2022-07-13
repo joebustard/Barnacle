@@ -46,7 +46,7 @@ popd";
                 File.WriteAllText(tmpFile, cmdsToRun);
                 ExecuteCmds(tmpFile);
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
