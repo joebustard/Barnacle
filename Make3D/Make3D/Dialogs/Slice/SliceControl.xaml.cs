@@ -235,6 +235,16 @@ namespace Barnacle.Dialogs.Slice
             Close();
         }
 
+
+        private void NewProfileClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void EditProfileClicked(object sender, RoutedEventArgs e)
+        {
+
+        }
         private void ClearResults()
         {
             Application.Current.Dispatcher.BeginInvoke(

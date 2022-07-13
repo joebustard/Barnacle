@@ -189,6 +189,9 @@
     <Compile Include="Dialogs\Slice\EditPrinter.xaml.cs">
       <DependentUpon>EditPrinter.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Slice\EditProfile.xaml.cs">
+      <DependentUpon>EditProfile.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Slice\SliceControl.xaml.cs">
       <DependentUpon>SliceControl.xaml</DependentUpon>
     </Compile>
@@ -498,6 +501,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Slice\EditPrinter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Slice\EditProfile.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -932,7 +939,7 @@
     <Resource Include="Images\Buttons\PentagonCell.png" />
     <Resource Include="Images\Buttons\TriangleCell.png" />
     <Resource Include="Images\Buttons\CNVDoubleSegment.png" />
-    <None Include="Data\Ender3ProRaft.profile" />
+    <None Include="Data\DefaultPrinter.profile" />
     <Resource Include="Images\Buttons\ImportObj.png" />
     <Resource Include="Images\Buttons\FlipD.png" />
     <Resource Include="Images\Buttons\FlipH.png" />
