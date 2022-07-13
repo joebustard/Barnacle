@@ -138,10 +138,9 @@ exit 0
                 //   }
 
                 // we need to construct a cmd file to run the slice
-                // WOrk  out where it should be.
-                //string tmpCmdFile = Path.GetTempPath();
-                // tmpCmdFile = Path.Combine(tmpCmdFile, "slice.cmd");
-
+                // Work  out where it should be.
+                // use different temp names, because we will have async tasks going
+                // and we dont want two trying to write to the same cmd or log file
                 string tmpCmdFile = Path.GetTempFileName();
                 tmpCmdFile = Path.ChangeExtension(tmpCmdFile, "cmd");
                 if (File.Exists(tmpCmdFile))
@@ -256,7 +255,7 @@ exit 0
             return res;
         }
 
-        public static List<String> GetAvailablePrinters(string folder)
+        public static List<String> GetAvailableCuraPrinterDefinitions(string folder)
         {
 
             List<string> res = new List<string>();
@@ -275,7 +274,7 @@ exit 0
             return res;
         }
 
-        public static List<String> GetAvailableExtruders(string folder)
+        public static List<String> GetAvailableCuraExtruders(string folder)
         {
             List<string> res = new List<string>();
             if (folder != null && folder != "")

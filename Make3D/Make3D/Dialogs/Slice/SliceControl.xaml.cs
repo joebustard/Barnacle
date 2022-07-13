@@ -22,17 +22,15 @@ namespace Barnacle.Dialogs.Slice
         private bool canClose;
         private bool canSlice;
         private Document exportDoc;
-        private List<String> extruders;
+
         private string modelPath;
 
         private List<String> printers;
-
+        private List<String> extruders;
         private List<String> profiles;
-
         private string resultsText;
 
         private String selectedExtruder;
-
         private String selectedPrinter;
 
         private String selectedUserProfile;
@@ -295,8 +293,8 @@ namespace Barnacle.Dialogs.Slice
             DataContext = this;
             if (SlicerPath != null && SlicerPath != "")
             {
-                Printers = CuraEngineInterface.GetAvailablePrinters(SlicerPath + @"\Resources\definitions");
-                Extruders = CuraEngineInterface.GetAvailableExtruders(SlicerPath + @"\Resources\extruders");
+                Printers = CuraEngineInterface.GetAvailableCuraPrinterDefinitions(SlicerPath + @"\Resources\definitions");
+                Extruders = CuraEngineInterface.GetAvailableCuraExtruders(SlicerPath + @"\Resources\extruders");
                 Profiles = CuraEngineInterface.GetAvailableUserProfiles();
                 SelectedPrinter = Properties.Settings.Default.SlicerPrinter;
                 SelectedExtruder = Properties.Settings.Default.SlicerExtruder;

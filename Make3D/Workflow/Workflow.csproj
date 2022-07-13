@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BarnaclePrinter.cs" />
+    <Compile Include="BarnaclePrinterManager.cs" />
     <Compile Include="CuraEngineInterface.cs" />
     <Compile Include="SettingOverride.cs" />
     <Compile Include="SlicerInterface.cs" />

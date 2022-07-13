@@ -186,6 +186,9 @@
     <Compile Include="Dialogs\ReuleauxDlg\RuleauxDlg.xaml.cs">
       <DependentUpon>RuleauxDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Slice\EditPrinter.xaml.cs">
+      <DependentUpon>EditPrinter.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Slice\SliceControl.xaml.cs">
       <DependentUpon>SliceControl.xaml</DependentUpon>
     </Compile>
@@ -493,6 +496,10 @@
     <Page Include="Dialogs\ReuleauxDlg\RuleauxDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\Slice\EditPrinter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Slice\SliceControl.xaml">
       <SubType>Designer</SubType>
