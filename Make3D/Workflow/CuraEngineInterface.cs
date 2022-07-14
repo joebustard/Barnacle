@@ -119,7 +119,7 @@ exit 0
             System.IO.File.WriteAllText(File, txt);
         }
 
-        public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile)
+        public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile,String startG, string endG)
         {
             bool ok = false;
             try
@@ -172,26 +172,25 @@ exit 0
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
 
                 string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
-                //             string startg = defpro.StartGCode.Replace("$NAME", n);
+                
 
-                string startg = "Get GCODE FROM PRINTER NOT PROFILE";
-                string endG = "GET GOCED FROM PRINTER NOT PROFILE";
+
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
-                                  @".\resources\definitions\" + printer,
-                                  @".\resources\extruders\" + extruder,
+                                  slicerPath+@"\resources\definitions\" + printer,
+                                  slicerPath+@"\resources\extruders\" + extruder,
                                   settingoverrides,
-                                  startg,
+                                  startG,
                                   endG,
                                   stlPath,
                                  tmpFile,
                                  logPath);
-                // await Task.Run(() => DoSlice(gcodePath, tmpCmdFile, tmpFile));
+               
                 ok = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
 
                 if (File.Exists(tmpCmdFile))
                 {
-                    File.Delete(tmpCmdFile);
+              //      File.Delete(tmpCmdFile);
                 }
 
                 if (File.Exists(tmpFile))

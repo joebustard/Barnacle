@@ -238,12 +238,30 @@ namespace Barnacle.Dialogs.Slice
 
         private void NewProfileClicked(object sender, RoutedEventArgs e)
         {
-
+            EditProfile dlg = new EditProfile();
+            String defProfile = AppDomain.CurrentDomain.BaseDirectory + "\\Data\\DefaultPrinter.profile";
+            dlg.LoadFile(defProfile);
+            dlg.ProfileName = "New Profile";
+            dlg.CreatingNewProfile = true;
+            dlg.ShowDialog();
+            
         }
 
         private void EditProfileClicked(object sender, RoutedEventArgs e)
         {
-
+            if (!String.IsNullOrEmpty(selectedUserProfile))
+            {
+                EditProfile dlg = new EditProfile();
+               
+                String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
+                if (File.Exists(defProfile))
+                {
+                    dlg.LoadFile(defProfile);
+                    dlg.ProfileName = selectedUserProfile;
+                    dlg.CreatingNewProfile = false;
+                    dlg.ShowDialog();
+                }
+            }
         }
         private void ClearResults()
         {
@@ -290,8 +308,24 @@ namespace Barnacle.Dialogs.Slice
             string prf = selectedUserProfile;
 
             AppendResults("Slice " + modelName);
+            string curaPrinterName;
+            string curaExtruderName;
+            BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
+            curaPrinterName = bp.CuraPrinterFile + ".def.json";
+            curaExtruderName = bp.CuraExtruderFile + ".def.json";
+
+            // start and end gcode may have a mcro $NAME in it.
+            //Both must be a single line of text when passed to cura engine
+            string sg = bp.StartGCode.Replace("$NAME", modelName);
+            sg = sg.Replace("\r\n", "\\n");
+            sg = sg.Replace("\n", "\\n");
+            
+            string eg = bp.EndGCode.Replace("$NAME", modelName);
+            eg = eg.Replace("\r\n", "\\n");
+            eg = eg.Replace("\n", "\\n");
+
             bool ok;
-            ok = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, selectedPrinter + ".def.json", selectedExtruder + ".def.json", prf)));
+            ok = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, curaPrinterName,curaExtruderName, prf,sg, eg)));
             if (ok)
             {
                 AppendResults("Completed " + modelName);
