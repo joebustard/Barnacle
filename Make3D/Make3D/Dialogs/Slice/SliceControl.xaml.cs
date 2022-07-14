@@ -19,20 +19,20 @@ namespace Barnacle.Dialogs.Slice
     /// </summary>
     public partial class SliceControl : Window, INotifyPropertyChanged
     {
+        private List<String> barnaclePrinterNames;
         private bool canClose;
         private bool canSlice;
         private Document exportDoc;
 
-        private string modelPath;
-
-        private List<String> barnaclePrinterNames;
         private List<String> extruders;
+        private bool isEditPrinterEnabled;
+        private bool isEditProfileEnabled;
+        private string modelPath;
+        private BarnaclePrinterManager printerManager;
         private List<String> profiles;
         private string resultsText;
 
-        private String selectedExtruder;
         private String selectedPrinter;
-
         private String selectedUserProfile;
 
         public SliceControl()
@@ -41,6 +41,16 @@ namespace Barnacle.Dialogs.Slice
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public List<String> BarnaclePrinterNames
+        {
+            get { return barnaclePrinterNames; }
+            set
+            {
+                barnaclePrinterNames = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public bool CanClose
         {
@@ -78,18 +88,30 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        public string ModelMode { get; internal set; }
-
-        public List<String> BarnaclePrinterNames
+        public bool IsEditPrinterEnabled
         {
-            get { return barnaclePrinterNames; }
-            set
-            {
-                barnaclePrinterNames = value;
-                NotifyPropertyChanged();
+            get { return isEditPrinterEnabled; }
+            set {
+                if (value != isEditPrinterEnabled)
+                {
+                    isEditPrinterEnabled = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
-
+        public bool IsEditProfileEnabled
+        {
+            get { return isEditProfileEnabled; }
+            set
+            {
+                if (value != isEditProfileEnabled)
+                {
+                    isEditProfileEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public string ModelMode { get; internal set; }
         public List<String> Profiles
         {
             get { return profiles; }
@@ -99,9 +121,6 @@ namespace Barnacle.Dialogs.Slice
                 NotifyPropertyChanged();
             }
         }
-
-        private BarnaclePrinterManager printerManager;
-
         public string ResultsText
         {
             get { return resultsText; }
@@ -115,23 +134,7 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        public String SelectedExtruder
-        {
-            get { return selectedExtruder; }
-            set
-            {
-                selectedExtruder = value;
-                if (selectedPrinter != "" && selectedExtruder != "")
-                {
-                    CanSlice = true;
-                }
-                else
-                {
-                    CanSlice = false;
-                }
-                NotifyPropertyChanged();
-            }
-        }
+   
 
         public String SelectedPrinter
         {
@@ -139,7 +142,17 @@ namespace Barnacle.Dialogs.Slice
             set
             {
                 selectedPrinter = value;
-                if (selectedPrinter != "" && selectedExtruder != "")
+                if (!String.IsNullOrEmpty(selectedPrinter))
+                {
+                    IsEditPrinterEnabled = true;
+                }
+                else
+                {
+                    IsEditPrinterEnabled = false;
+                }
+
+
+                if (selectedPrinter != "" )
                 {
                     CanSlice = true;
                 }
@@ -159,6 +172,14 @@ namespace Barnacle.Dialogs.Slice
                 if (selectedUserProfile != value)
                 {
                     selectedUserProfile = value;
+                    if (!String.IsNullOrEmpty(selectedUserProfile) && selectedUserProfile != "None")
+                    {
+                        IsEditProfileEnabled = true;
+                    }
+                    else
+                    {
+                        IsEditProfileEnabled = false;
+                    }
                     NotifyPropertyChanged();
                 }
             }
@@ -236,33 +257,6 @@ namespace Barnacle.Dialogs.Slice
         }
 
 
-        private void NewProfileClicked(object sender, RoutedEventArgs e)
-        {
-            EditProfile dlg = new EditProfile();
-            String defProfile = AppDomain.CurrentDomain.BaseDirectory + "\\Data\\DefaultPrinter.profile";
-            dlg.LoadFile(defProfile);
-            dlg.ProfileName = "New Profile";
-            dlg.CreatingNewProfile = true;
-            dlg.ShowDialog();
-            
-        }
-
-        private void EditProfileClicked(object sender, RoutedEventArgs e)
-        {
-            if (!String.IsNullOrEmpty(selectedUserProfile))
-            {
-                EditProfile dlg = new EditProfile();
-               
-                String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
-                if (File.Exists(defProfile))
-                {
-                    dlg.LoadFile(defProfile);
-                    dlg.ProfileName = selectedUserProfile;
-                    dlg.CreatingNewProfile = false;
-                    dlg.ShowDialog();
-                }
-            }
-        }
         private void ClearResults()
         {
             Application.Current.Dispatcher.BeginInvoke(
@@ -273,6 +267,99 @@ namespace Barnacle.Dialogs.Slice
                 }));
         }
 
+        private void EditPrinterClicked(object sender, RoutedEventArgs e)
+        {
+            if (selectedPrinter != null && selectedPrinter != "")
+            {
+                BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
+                if (bp != null)
+                {
+                    EditPrinter dlg = new EditPrinter();
+                    dlg.PrinterName = bp.Name;
+                    dlg.SelectedPrinter = bp.CuraPrinterFile;
+                    dlg.SelectedExtruder = bp.CuraExtruderFile;
+                    dlg.StartGCode = bp.StartGCode;
+                    dlg.EndGCode = bp.EndGCode;
+                    if (dlg.ShowDialog() == true)
+                    {
+                        bp.Name = dlg.PrinterName;
+                        bp.CuraPrinterFile = dlg.SelectedPrinter;
+                        bp.CuraExtruderFile = dlg.SelectedExtruder;
+                        bp.StartGCode = dlg.StartGCode;
+                        bp.EndGCode = dlg.EndGCode;
+                        printerManager.Save();
+                        BarnaclePrinterNames = printerManager.GetPrinterNames();
+                        SelectedPrinter = dlg.PrinterName;
+                    }
+                }
+            }
+        }
+
+        private void EditProfileClicked(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(selectedUserProfile))
+            {
+                EditProfile dlg = new EditProfile();
+
+                String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
+                if (File.Exists(defProfile))
+                {
+                    dlg.LoadFile(defProfile);
+                    dlg.ProfileName = selectedUserProfile;
+                    dlg.CreatingNewProfile = false;
+                    dlg.ShowDialog();
+                }
+            }
+        }
+
+        private void NewPrinterClicked(object sender, RoutedEventArgs e)
+        {
+            EditPrinter dlg = new EditPrinter();
+            dlg.PrinterName = "New Printer";
+            dlg.SelectedPrinter = @"creality_ender3pro";
+            dlg.SelectedExtruder = @"creality_base_extruder_0";
+            dlg.StartGCode =
+@"M117 $NAME
+; Ender 3 Custom Start G - code
+G92 E0; Reset Extruder
+G28; Home all axes
+G1 Z2.0 F3000; Move Z Axis up little to prevent scratching of Heat Bed
+G1 X0.1 Y20 Z0.3 F5000.0; Move to start position
+G1 X0.1 Y200.0 Z0.3 F1500.0 E15; Draw the first line
+G1 X0.4 Y200.0 Z0.3 F5000.0; Move to side a little
+G1 X0.4 Y20 Z0.3 F1500.0 E30; Draw the second line
+G92 E0; Reset Extruder
+G1 Z2.0 F3000; Move Z Axis up little to prevent scratching of Heat Bed
+G1 X5 Y20 Z0.3 F5000.0; Move over to prevent blob squish";
+            dlg.EndGCode =
+@"G91 ;Relative positioning
+G1 E-2 F2700 ;Retract a bit
+G1 E-2 Z0.2 F2400 ;Retract and raise Z
+G1 X5 Y5 F3000 ;Wipe out
+G1 Z10 ;Raise Z more
+G90 ;Absolute positioning";
+
+            if (dlg.ShowDialog() == true)
+            {
+                printerManager.AddPrinter(dlg.PrinterName, dlg.SelectedPrinter, dlg.SelectedExtruder, dlg.StartGCode, dlg.EndGCode);
+                printerManager.Save();
+                BarnaclePrinterNames = printerManager.GetPrinterNames();
+                SelectedPrinter = dlg.PrinterName;
+            }
+        }
+
+        private void NewProfileClicked(object sender, RoutedEventArgs e)
+        {
+            EditProfile dlg = new EditProfile();
+            String defProfile = AppDomain.CurrentDomain.BaseDirectory + "\\Data\\DefaultPrinter.profile";
+            dlg.LoadFile(defProfile);
+            dlg.ProfileName = "New Profile";
+            dlg.CreatingNewProfile = true;
+            dlg.ShowDialog();
+            // refresh profiles list
+            Profiles = CuraEngineInterface.GetAvailableUserProfiles();
+
+        }
         private Bounds3D RecalculateAllBounds()
         {
             Bounds3D allBounds = new Bounds3D();
@@ -351,77 +438,13 @@ namespace Barnacle.Dialogs.Slice
             }
 
             CanClose = true;
-            if (selectedPrinter != "" && selectedExtruder != "")
+            if (selectedPrinter != "" )
             {
                 CanSlice = true;
             }
             else
             {
                 CanSlice = false;
-            }
-        }
-
-        private void EditPrinterClicked(object sender, RoutedEventArgs e)
-        {
-            if (selectedPrinter != null && selectedPrinter != "")
-            {
-                BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
-                if (bp != null)
-                {
-                    EditPrinter dlg = new EditPrinter();
-                    dlg.PrinterName = bp.Name;
-                    dlg.SelectedPrinter = bp.CuraPrinterFile;
-                    dlg.SelectedExtruder = bp.CuraExtruderFile;
-                    dlg.StartGCode = bp.StartGCode;
-                    dlg.EndGCode = bp.EndGCode;
-                    if (dlg.ShowDialog() == true)
-                    {
-                        bp.Name = dlg.PrinterName;
-                        bp.CuraPrinterFile = dlg.SelectedPrinter;
-                        bp.CuraExtruderFile = dlg.SelectedExtruder;
-                        bp.StartGCode = dlg.StartGCode;
-                        bp.EndGCode = dlg.EndGCode;
-                        printerManager.Save();
-                        BarnaclePrinterNames = printerManager.GetPrinterNames();
-                        SelectedPrinter = dlg.PrinterName;
-                    }
-                }
-            }
-        }
-
-        private void NewPrinterClicked(object sender, RoutedEventArgs e)
-        {
-            EditPrinter dlg = new EditPrinter();
-            dlg.PrinterName = "New Printer";
-            dlg.SelectedPrinter = @"creality_ender3pro";
-            dlg.SelectedExtruder = @"creality_base_extruder_0";
-            dlg.StartGCode =
-@"M117 $NAME
-; Ender 3 Custom Start G - code
-G92 E0; Reset Extruder
-G28; Home all axes
-G1 Z2.0 F3000; Move Z Axis up little to prevent scratching of Heat Bed
-G1 X0.1 Y20 Z0.3 F5000.0; Move to start position
-G1 X0.1 Y200.0 Z0.3 F1500.0 E15; Draw the first line
-G1 X0.4 Y200.0 Z0.3 F5000.0; Move to side a little
-G1 X0.4 Y20 Z0.3 F1500.0 E30; Draw the second line
-G92 E0; Reset Extruder
-G1 Z2.0 F3000; Move Z Axis up little to prevent scratching of Heat Bed
-G1 X5 Y20 Z0.3 F5000.0; Move over to prevent blob squish";
-            dlg.EndGCode =
-@"G91 ;Relative positioning
-G1 E-2 F2700 ;Retract a bit
-G1 E-2 Z0.2 F2400 ;Retract and raise Z
-G1 X5 Y5 F3000 ;Wipe out
-G1 Z10 ;Raise Z more
-G90 ;Absolute positioning";
-
-            if (dlg.ShowDialog() == true)
-            {
-                printerManager.AddPrinter(dlg.PrinterName, dlg.SelectedPrinter, dlg.SelectedExtruder, dlg.StartGCode, dlg.EndGCode);
-                printerManager.Save();
-                BarnaclePrinterNames = printerManager.GetPrinterNames();
-                SelectedPrinter = dlg.PrinterName;
             }
         }
     }

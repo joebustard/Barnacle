@@ -88,7 +88,7 @@ namespace Barnacle.Dialogs.Slice
         }
         private void OKClick(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
+            
 
             String fileName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Barnacle\\PrinterProfiles\\";
             fileName += ProfileName;
@@ -98,13 +98,15 @@ namespace Barnacle.Dialogs.Slice
             }
             if (CreatingNewProfile && File.Exists(fileName))
             {
-                MessageBox.Show($"File {fileName} already exists","Error");
+                MessageBox.Show($"Profile {ProfileName} already exists. Use a different name.","Error");
             }
             else
             {
+                DialogResult = true;
                 SaveFile(fileName);
+                Close();
             }
-            Close();
+            
         }
 
         private void SaveFile(string fName)
