@@ -111,7 +111,11 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
+        /// <summary>
+        /// Are we doing a single model or all the models in the project?
+        /// </summary>
         public string ModelMode { get; internal set; }
+
         public List<String> Profiles
         {
             get { return profiles; }
@@ -187,6 +191,9 @@ namespace Barnacle.Dialogs.Slice
 
         public String SlicerPath { get; set; }
 
+        /// <summary>
+        /// If processing  a single document this is were to find it.
+        /// </summary>
         internal string ModelPath
         {
             get { return modelPath; }
@@ -214,7 +221,7 @@ namespace Barnacle.Dialogs.Slice
                 }));
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+        private async void SliceClicked(object sender, RoutedEventArgs e)
         {
             CanClose = false;
             CanSlice = false;
@@ -248,7 +255,7 @@ namespace Barnacle.Dialogs.Slice
             CanSlice = true;
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void CloseClicked(object sender, RoutedEventArgs e)
         {
             Properties.Settings.Default.SlicerPrinter = SelectedPrinter;
 
@@ -320,7 +327,6 @@ namespace Barnacle.Dialogs.Slice
             dlg.SelectedExtruder = @"creality_base_extruder_0";
             dlg.StartGCode =
 @"M117 $NAME
-; Ender 3 Custom Start G - code
 G92 E0; Reset Extruder
 G28; Home all axes
 G1 Z2.0 F3000; Move Z Axis up little to prevent scratching of Heat Bed

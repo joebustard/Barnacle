@@ -41,8 +41,8 @@
         <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center" />
         <TextBox Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top"></TextBox>
 
-        <Button Grid.Column="3" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="Button_Click" />
+        <Button Grid.Column="3" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="SliceClicked" />
 
-        <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanClose}" Content="Close" Margin="2,4,0,0" Click="Button_Click_1" />
+        <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanClose}" Content="Close" Margin="2,4,0,0" Click="CloseClicked" />
     </Grid>
 </Window>
