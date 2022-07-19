@@ -8,6 +8,10 @@ namespace Barnacle.Models
 
         public static void Initialise()
         {
+            Standard["2"] = 2;
+            Standard["1 3/4"] = 1.75;
+            Standard["1 1/2"] = 1.5;
+            Standard["1 1/4"] = 1.25;
             Standard["1"] = 1.0;
             Standard["1/2"] = 1.0 / 2.0;
             Standard["1/3"] = 1.0 / 3.0;
