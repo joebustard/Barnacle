@@ -186,6 +186,7 @@
     <Compile Include="Dialogs\ReuleauxDlg\RuleauxDlg.xaml.cs">
       <DependentUpon>RuleauxDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\RoofTileDlg\TiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\Slice\EditPrinter.xaml.cs">
       <DependentUpon>EditPrinter.xaml</DependentUpon>
     </Compile>
@@ -498,6 +499,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ReuleauxDlg\RuleauxDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RoofTileDlg\TiledRoofDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

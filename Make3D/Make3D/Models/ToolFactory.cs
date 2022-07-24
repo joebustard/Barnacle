@@ -55,6 +55,10 @@ namespace Barnacle.Models
                     res = new TrickleDlg();
                     break;
 
+                case "TiledRoof":
+                    res = new TiledRoofDlg();
+                    break;
+
                 case "Scribble":
                     res = new ScribbleDlg();
                     break;
