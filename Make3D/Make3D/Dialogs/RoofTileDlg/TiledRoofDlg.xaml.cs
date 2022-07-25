@@ -1,8 +1,6 @@
 using MakerLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -11,171 +9,16 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class TiledRoofDlg : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool loaded;
+        private double tileGap;
+        private double tileHeight;
+        private double tileLength;
+        private double tileOverlap;
+        private double tileWidth;
+        private double wallHeight;
+        private double wallLength;
+        private double wallWidth;
         private string warningText;
-        private bool loaded ;
-
-        
-
-private double wallLength;
-public double WallLength
-{
-    get
-    {
-      return wallLength;
-    }
-    set
-    {
-        if ( wallLength != value )
-        {
-            if (value >= 10 && value <= 200)
-            {
-              wallLength = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double wallHeight;
-public double WallHeight
-{
-    get
-    {
-      return wallHeight;
-    }
-    set
-    {
-        if ( wallHeight != value )
-        {
-            if (value >= 1 && value <= 200)
-            {
-              wallHeight = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double wallWidth;
-public double WallWidth
-{
-    get
-    {
-      return wallWidth;
-    }
-    set
-    {
-        if ( wallWidth != value )
-        {
-            if (value >= 1 && value <= 200)
-            {
-              wallWidth = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double tileLength;
-public double TileLength
-{
-    get
-    {
-      return tileLength;
-    }
-    set
-    {
-        if ( tileLength != value )
-        {
-            if (value >= 1 && value <= 10)
-            {
-              tileLength = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double tileHeight;
-public double TileHeight
-{
-    get
-    {
-      return tileHeight;
-    }
-    set
-    {
-        if ( tileHeight != value )
-        {
-            if (value >= 1 && value <= 20)
-            {
-              tileHeight = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double tileWidth;
-public double TileWidth
-{
-    get
-    {
-      return tileWidth;
-    }
-    set
-    {
-        if ( tileWidth != value )
-        {
-            if (value >= 1 && value <= 20)
-            {
-              tileWidth = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
-
-private double gapBetweenTiles;
-public double GapBetweenTiles
-{
-    get
-    {
-      return gapBetweenTiles;
-    }
-    set
-    {
-        if ( gapBetweenTiles != value )
-        {
-            if (value >= 1 && value <= 10)
-            {
-              gapBetweenTiles = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-        }
-    }
-}
-
-
 
         public TiledRoofDlg()
         {
@@ -220,6 +63,177 @@ public double GapBetweenTiles
             }
         }
 
+        private bool chamfer;
+
+        public bool Chamfer
+        {
+            get { return chamfer; }
+            set
+            {
+                if (chamfer != value)
+                {
+                    chamfer = value;
+                    NotifyPropertyChanged();
+
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public double TileGap
+        {
+            get { return tileGap; }
+            set
+            {
+                if (tileGap != value)
+                {
+                    if (value >= 1 && value <= 10)
+                    {
+                        tileGap = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double TileHeight
+        {
+            get
+            {
+                return tileHeight;
+            }
+            set
+            {
+                if (tileHeight != value)
+                {
+                    if (value >= 1 && value <= 20)
+                    {
+                        tileHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double TileLength
+        {
+            get
+            {
+                return tileLength;
+            }
+            set
+            {
+                if (tileLength != value)
+                {
+                    if (value >= 1 && value <= 10)
+                    {
+                        tileLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double TileOverlap
+        {
+            get { return tileOverlap; }
+            set
+            {
+                if (tileOverlap != value)
+                {
+                    if (value >= 0.1 && value <= 0.9)
+                    {
+                        tileOverlap = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double TileWidth
+        {
+            get
+            {
+                return tileWidth;
+            }
+            set
+            {
+                if (tileWidth != value)
+                {
+                    if (value >= 1 && value <= 20)
+                    {
+                        tileWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double WallHeight
+        {
+            get
+            {
+                return wallHeight;
+            }
+            set
+            {
+                if (wallHeight != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double WallLength
+        {
+            get
+            {
+                return wallLength;
+            }
+            set
+            {
+                if (wallLength != value)
+                {
+                    if (value >= 10 && value <= 200)
+                    {
+                        wallLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public double WallWidth
+        {
+            get
+            {
+                return wallWidth;
+            }
+            set
+            {
+                if (wallWidth != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        wallWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         public string WarningText
         {
             get
@@ -246,64 +260,83 @@ public double GapBetweenTiles
         private void GenerateShape()
         {
             ClearShape();
-            TiledRoofMaker maker = new TiledRoofMaker(
-                wallLength, wallHeight, wallWidth, tileLength, tileHeight, tileWidth, gapBetweenTiles
-                );
+            TiledRoofMaker maker = new TiledRoofMaker(wallLength,
+                                                        wallHeight,
+                                                        wallWidth,
+                                                        tileLength,
+                                                        tileHeight,
+                                                        tileWidth,
+                                                        tileOverlap,
+                                                        tileGap,
+                                                        chamfer
+                                                        );
             maker.Generate(Vertices, Faces);
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            
-          if ( EditorParameters.Get("Length") !="")
-          {
-              WallLength= EditorParameters.GetDouble("Length");
-          }
 
-          if ( EditorParameters.Get("WallHeight") !="")
-          {
-              WallHeight= EditorParameters.GetDouble("WallHeight");
-          }
+            if (EditorParameters.Get("Length") != "")
+            {
+                WallLength = EditorParameters.GetDouble("Length");
+            }
 
-          if ( EditorParameters.Get("Width") !="")
-          {
-              WallWidth= EditorParameters.GetDouble("Width");
-          }
+            if (EditorParameters.Get("WallHeight") != "")
+            {
+                WallHeight = EditorParameters.GetDouble("WallHeight");
+            }
 
-          if ( EditorParameters.Get("TileLength") !="")
-          {
-              TileLength= EditorParameters.GetDouble("TileLength");
-          }
+            if (EditorParameters.Get("Width") != "")
+            {
+                WallWidth = EditorParameters.GetDouble("Width");
+            }
 
-          if ( EditorParameters.Get("TileHeight") !="")
-          {
-              TileHeight= EditorParameters.GetDouble("TileHeight");
-          }
+            if (EditorParameters.Get("TileLength") != "")
+            {
+                TileLength = EditorParameters.GetDouble("TileLength");
+            }
 
-          if ( EditorParameters.Get("TileWidth") !="")
-          {
-              TileWidth= EditorParameters.GetDouble("TileWidth");
-          }
+            if (EditorParameters.Get("TileHeight") != "")
+            {
+                TileHeight = EditorParameters.GetDouble("TileHeight");
+            }
 
-          if ( EditorParameters.Get("GapBetweenTiles") !="")
-          {
-              GapBetweenTiles= EditorParameters.GetDouble("GapBetweenTiles");
-          }
+            if (EditorParameters.Get("TileWidth") != "")
+            {
+                TileWidth = EditorParameters.GetDouble("TileWidth");
+            }
 
+            if (EditorParameters.Get("TileGap") != "")
+            {
+                TileGap = EditorParameters.GetDouble("TileGap");
+            }
+
+            if (EditorParameters.Get("TileOverlap") != "")
+            {
+                TileOverlap = EditorParameters.GetDouble("TileOverlap");
+            }
+
+
+            if (EditorParameters.Get("Chamfer") != "")
+            {
+                Chamfer = EditorParameters.GetBoolean("Chamfer");
+            }
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            
-            EditorParameters.Set("WallLength",WallLength.ToString());
-            EditorParameters.Set("WallHeight",WallHeight.ToString());
-            EditorParameters.Set("WallWidth",WallWidth.ToString());
-            EditorParameters.Set("TileLength",TileLength.ToString());
-            EditorParameters.Set("TileHeight",TileHeight.ToString());
-            EditorParameters.Set("TileWidth",TileWidth.ToString());
-            EditorParameters.Set("GapBetweenTiles",GapBetweenTiles.ToString());
+
+            EditorParameters.Set("WallLength", WallLength.ToString());
+            EditorParameters.Set("WallHeight", WallHeight.ToString());
+            EditorParameters.Set("WallWidth", WallWidth.ToString());
+            EditorParameters.Set("TileLength", TileLength.ToString());
+            EditorParameters.Set("TileHeight", TileHeight.ToString());
+            EditorParameters.Set("TileWidth", TileWidth.ToString());
+            EditorParameters.Set("TileGap", TileGap.ToString());
+            EditorParameters.Set("TileOverlap", TileOverlap.ToString());
+            EditorParameters.Set("Chamfer", Chamfer.ToString());
         }
 
         private void UpdateDisplay()
@@ -324,14 +357,13 @@ public double GapBetweenTiles
             TileHeight = 10;
             TileLength = 8;
             TileWidth = 4;
-            GapBetweenTiles = 1;
+            TileGap = 1;
+            TileOverlap = 0.1;
             LoadEditorParameters();
-            
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            
-            
 
             UpdateDisplay();
         }

@@ -141,7 +141,7 @@ namespace ScriptLanguage
             String commaError = $"{label} expected ,";
             bool parsed = true;
             ExpressionCollection coll = new ExpressionCollection();
-            int exprCount = 7;
+            int exprCount = 8;
 
             for (int i = 0; i < exprCount && parsed; i++)
             {

@@ -29,6 +29,8 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Length</Label>
@@ -60,7 +62,19 @@
                  <TextBox Margin="8,0,0,0" Text="{Binding TileWidth}" Width="150"/>
 
             </StackPanel>
+            <StackPanel Grid.Row="7" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Content="Tile Gap" Width="100" />
+                <TextBox Margin="8,0,0,0" Text="{Binding TileGap}" Width="150"/>
+            </StackPanel>
+            <StackPanel Grid.Row="8" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Content="Tile Overlap" Width="100" />
+                <TextBox Margin="8,0,0,0" Text="{Binding TileOverlap}" Width="150"/>
+            </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
+                <CheckBox VerticalAlignment="Center" Content="Chamfer" Width="100" IsChecked="{Binding Chamfer}"/>
+                
+            </StackPanel>
+            <StackPanel Grid.Row="10" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
         </Grid>
