@@ -59,7 +59,7 @@ namespace MakerLib
             {
                 x = -hwallLen;
                 bool offsetStart = (j % 2) == 0;
-                for (int i = 0; i < numFullTilesInLength-1; i++)
+                for (int i = 0; i < numFullTilesInLength; i++)
                 {
                     
                     if (offsetStart)
@@ -98,6 +98,10 @@ namespace MakerLib
         private void CloseBack()
         {
             double z = tileWidth - wallWidth;
+            if ( z > 0)
+            {
+                z = 0;
+            }
             double hl = wallLength / 2.0;
             // back
             int p0 = AddVertice(new Point3D(-hl, wallHeight, z));
@@ -132,6 +136,35 @@ namespace MakerLib
             p1 = AddVertice(new Point3D(hl, wallHeight, 0));
             p2 = AddVertice(new Point3D(hl, 0, 0));
             p3 = AddVertice(new Point3D(hl, 0, z));
+
+            Faces.Add(p0);
+            Faces.Add(p1);
+            Faces.Add(p2);
+
+            Faces.Add(p3);
+            Faces.Add(p0);
+            Faces.Add(p2);
+
+            // Bottom
+            p0 = AddVertice(new Point3D(-hl, 0, z));
+            p1 = AddVertice(new Point3D(-hl, 0, 0));
+            p2 = AddVertice(new Point3D(hl, 0, 0));
+            p3 = AddVertice(new Point3D(hl, 0, z));
+
+            Faces.Add(p0);
+            Faces.Add(p2);
+            Faces.Add(p1);
+
+            Faces.Add(p3);
+            Faces.Add(p2);
+            Faces.Add(p0);
+
+
+            // Top
+            p0 = AddVertice(new Point3D(-hl, wallHeight, z));
+            p1 = AddVertice(new Point3D(-hl, wallHeight, 0));
+            p2 = AddVertice(new Point3D(hl, wallHeight, 0));
+            p3 = AddVertice(new Point3D(hl, wallHeight, z));
 
             Faces.Add(p0);
             Faces.Add(p1);
