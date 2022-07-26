@@ -1,3 +1,4 @@
+using Barnacle.Object3DLib;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -14,6 +15,7 @@ namespace MakerLib
         private double wallHeight;
         private double wallLength;
         private double wallWidth;
+
         public TiledRoofMaker(double length, double height, double width, double tileLength, double tileHeight, double tileWidth, double overlap, double gapBetweenTiles, bool chamfer = false)
         {
             this.wallLength = length;
@@ -79,7 +81,7 @@ namespace MakerLib
                 y = y + overlappedTileHeight;
             }
             y = y - overlappedTileHeight;
-          
+
             // May need a smaller row at the top to make up the correct height
             double lastHeight = wallHeight - y;
 
@@ -115,6 +117,25 @@ namespace MakerLib
             }
 
             CloseBack(chamfer);
+
+            // make sure 0,0,0 is in the middle
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(Vertices, ref min, ref max);
+
+            double scaleX = max.X - min.X;
+            double scaleY = max.Y - min.Y;
+            double scaleZ = max.Z - min.Z;
+
+            double midx = min.X + (scaleX / 2);
+            double midy = min.Y + (scaleY / 2);
+            double midz = min.Z + (scaleZ / 2);
+            Vector3D offset = new Vector3D(-midx, -min.Y, -midz);
+
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Vertices[i] += offset;
+            }
         }
 
         private void CloseBack(bool chamfer)
