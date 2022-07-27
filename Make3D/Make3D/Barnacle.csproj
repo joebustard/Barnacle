@@ -271,6 +271,7 @@
     <Compile Include="Models\OctTree\OctTree.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControlViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml.cs">
       <DependentUpon>FlexiPathEditorControl.xaml</DependentUpon>
     </Compile>
