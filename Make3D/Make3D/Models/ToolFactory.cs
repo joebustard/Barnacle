@@ -158,6 +158,11 @@ namespace Barnacle.Models
                 case "Pulley":
                     res = new PulleyDlg();
                     break;
+
+
+                case "DevTest":
+                    res = new DevTest();
+                    break;
             }
             if (res != null)
             {

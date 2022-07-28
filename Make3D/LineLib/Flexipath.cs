@@ -258,7 +258,7 @@ namespace Barnacle.LineLib
                         DeleteSegment(i);
                         result = true;
                     }
-                   
+
                     break;
                 }
             }
@@ -302,9 +302,50 @@ namespace Barnacle.LineLib
                     sg.DisplayPointsF(res, points);
                 }
             }
+            //  We want a consistent orientaion of the final points, no matter how the user
+            // has drawn his curve
+            bool anticlockwise = SignedPolygonArea(res) > 0;
+            if ( anticlockwise)
+            {
+                List<System.Drawing.PointF> tmp = new List<System.Drawing.PointF>();
+                for ( int i = 0; i <res.Count; i ++ )
+                {
+                    tmp.Insert(0, res[i]);
+                }
+                res = tmp;
+
+            }
             return res;
         }
 
+        // Return the polygon's area in "square units."
+        // Add the areas of the trapezoids defined by the
+        // polygon's edges dropped to the X-axis. When the
+        // program considers a bottom edge of a polygon, the
+        // calculation gives a negative area so the space
+        // between the polygon and the axis is subtracted,
+        // leaving the polygon's area. This method gives odd
+        // results for non-simple polygons.
+        //
+        // The value will be negative if the polygon is
+        // oriented clockwise.
+        private float SignedPolygonArea(List<System.Drawing.PointF> fpoints)
+        {
+            // Get the areas.
+            float area = 0;
+            // Add the first point to the end.
+            int num_points = fpoints.Count - 1;
+
+            for (int i = 0; i < num_points; i++)
+            {
+                area +=
+                    (fpoints[i + 1].X - fpoints[i].X) *
+                    (fpoints[i + 1].Y + fpoints[i].Y) / 2;
+            }
+
+            // Return the result.
+            return area;
+        }
         public void FromString(string s)
         {
             string coordPart;
@@ -630,7 +671,7 @@ namespace Barnacle.LineLib
                             // Append a new curve
                             AppendClosingCurveSegment();
 
-                            segs[segs.Count-1].Select(points);
+                            segs[segs.Count - 1].Select(points);
                         }
                         found = true;
                     }
@@ -721,14 +762,14 @@ namespace Barnacle.LineLib
             }
         }
 
-        public bool SplitSelectedLineSegment( Point position)
+        public bool SplitSelectedLineSegment(Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
             {
-              if ( segs[i].Selected)
+                if (segs[i].Selected)
                 {
-                    if ( segs[i] is LineSegment)
+                    if (segs[i] is LineSegment)
                     {
                         int start = segs[i].Start();
                         int end = segs[i].End();
@@ -740,11 +781,11 @@ namespace Barnacle.LineLib
                         else
                         {
                             // add a new flexipoint at the given position
-                            FlexiPoint fx = new FlexiPoint(position.X , position.Y);
+                            FlexiPoint fx = new FlexiPoint(position.X, position.Y);
                             points.Add(fx);
                             // Make the existing segment refr to this point
                             (segs[i] as LineSegment).P1 = points.Count - 1;
-                            segs[i].Deselect( points);
+                            segs[i].Deselect(points);
                             // now reclose the path to linkback up to the first path
                             ClosePath();
                             segs[i + 1].Select(points);

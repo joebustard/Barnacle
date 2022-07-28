@@ -1100,7 +1100,7 @@ namespace Barnacle.Dialogs
 
                     case SelectionModeType.SplitLine:
                         {
-                            found = SplitLineAtPoint(e, ln);
+                            found = SplitLineAtPoint(e);
                             SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                         }
                         break;
@@ -1631,7 +1631,7 @@ namespace Barnacle.Dialogs
             return new System.Windows.Point(ToMMX(gx), ToMMY(gy));
         }
 
-        private bool SplitLineAtPoint(MouseButtonEventArgs e, Line ln)
+        private bool SplitLineAtPoint(MouseButtonEventArgs e)
         {
             bool added = false;
             System.Windows.Point position = e.GetPosition(MainCanvas);

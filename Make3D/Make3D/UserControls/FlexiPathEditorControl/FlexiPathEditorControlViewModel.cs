@@ -10,9 +10,9 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace Barnacle.UserControls.FlexiPathEditorControl
+namespace Barnacle.UserControls
 {
-    internal class FlexiPathEditorControlViewModel : INotifyPropertyChanged
+    public class FlexiPathEditorControlViewModel : INotifyPropertyChanged
     {
         private bool canCNVDouble;
 
@@ -27,11 +27,45 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
         private string pathText;
         private ObservableCollection<FlexiPoint> polyPoints; // SHOULD BE CALLED FLEXIPAHCONTROLPOINTS
         private double scale;
+        private DpiScale screenDpi;
+
         private int selectedPoint;
+
         private SelectionModeType selectionMode;
+
         private bool showGrid;
+        public bool ShowGrid
+        {
+             get { return showGrid; }
+            set
+            {
+                showGrid = value;
+            }
+        }
+        public List<Shape> GridMarkers
+        {
+            get { return gridMarkers;  }
+            set
+            {
+                gridMarkers = value;
+            }
+        }
         private bool showOrtho;
+        public bool ShowOrtho
+        {
+            get { return showOrtho; }
+            set
+            {
+                if ( showOrtho != value)
+                {
+                    showOrtho = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private Visibility showWidth;
+
         private bool snap;
 
         public FlexiPathEditorControlViewModel()
@@ -58,6 +92,26 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
             showWidth = Visibility.Hidden;
             showGrid = true;
             snap = true;
+        }
+
+        internal bool MouseUp(MouseButtonEventArgs e, Point position)
+        {
+            bool updateRequired = false;
+            if (selectedPoint != -1 && moving && snap)
+            {
+
+                System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
+
+                polyPoints[selectedPoint].X = position.X;
+                polyPoints[selectedPoint].Y = position.Y;
+
+                flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
+                PathText = flexiPath.ToPath();
+                updateRequired = true;
+                selectedPoint = -1;
+            }
+            moving = false;
+            return updateRequired;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -155,6 +209,25 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
 
         public ICommand ResetPathCommand { get; set; }
 
+        public DpiScale ScreenDpi
+        {
+            get { return screenDpi; }
+            set
+            {
+                screenDpi = value;
+            }
+        }
+        private void ClearPointSelections()
+        {
+            if (polyPoints != null)
+            {
+                for (int i = 0; i < polyPoints.Count; i++)
+                {
+                    polyPoints[i].Selected = false;
+                    polyPoints[i].Visible = false;
+                }
+            }
+        }
         public int SelectedPoint
         {
             get
@@ -176,7 +249,6 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
                             polyPoints[selectedPoint].Visible = true;
                         }
                     }
-
                 }
             }
         }
@@ -199,23 +271,9 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
 
         public ICommand ShowAllPointsCommand { get; set; }
 
-        
-        public bool ShowOrtho
+     public List<System.Windows.Point> DisplayPoints
         {
-            get
-            {
-                return showOrtho;
-            }
-            set
-            {
-                if (value != showOrtho)
-                {
-                    showOrtho = value;
-
-                    NotifyPropertyChanged();
-                   
-                }
-            }
+            get { return flexiPath.DisplayPoints(); }
         }
 
         public bool ShowPolyGrid
@@ -227,7 +285,6 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
                 {
                     showGrid = value;
                     NotifyPropertyChanged();
-                    
                 }
             }
         }
@@ -253,18 +310,161 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
             }
         }
 
-        private void ClearPointSelections()
+        internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
-            if (polyPoints != null)
+            bool updateRequired = false;
+            if (selectionMode == SelectionModeType.StartPoint)
             {
-                for (int i = 0; i < polyPoints.Count; i++)
+                AddStartPointToPoly(position);
+                updateRequired = true;
+                e.Handled = true;
+            }
+            else if (selectionMode == SelectionModeType.AppendPoint)
+            {
+                AddAnotherPointToPoly(position);
+                e.Handled = true;
+                updateRequired = true;
+            }
+            else
+            {
+                try
                 {
-                    polyPoints[i].Selected = false;
-                    polyPoints[i].Visible = false;
+                    if (selectedPoint >= 0)
+                    {
+                        Points[selectedPoint].Selected = false;
+                    }
+                    SelectedPoint = -1;
+
+                    // do this test here because the othe modes only trigger ifn you click a line
+                    if (selectionMode == SelectionModeType.MovePath)
+                    {
+                        position = SnapPositionToMM(position);
+                        MoveWholePath(position);
+                        SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                        updateRequired = true;
+                        e.Handled = true;
+                    }
+                    else
+                    {
+                        // dont snap position when selecting points as they  may have been positioned between two
+                        // grid points .
+                        // just convert position to mm
+                        position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
+
+                        // find the closest point thats within search radius
+                        double rad = 3;
+                        double minDist = double.MaxValue;
+                        for (int i = 0; i < Points.Count; i++)
+                        {
+                            System.Windows.Point p = Points[i].ToPoint();
+                            double dist = Math.Sqrt(((position.X - p.X) * (position.X - p.X)) +
+                                                    ((position.Y - p.Y) * (position.Y - p.Y)));
+                            if (dist < minDist && dist < rad)
+                            {
+                                SelectedPoint = i;
+                                minDist = dist;
+                            }
+                        }
+                        if (SelectedPoint != -1)
+                        {
+                            Points[SelectedPoint].Selected = true;
+                            moving = true;
+                        }
+                        if (e.LeftButton == MouseButtonState.Pressed)
+                        {
+                            e.Handled = true;
+                            updateRequired = true;
+                        }
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            return updateRequired;
+        }
+        private string positionText;
+        public String PositionText
+        {
+            get { return positionText; }
+            set
+            {
+                if (positionText != value)
+                {
+                    positionText = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
 
+        public double GridX {
+            get { return gridX; }
+            set { gridX = value; } }
+        public double GridY
+        {
+            get { return gridY; }
+            set { gridY = value; }
+        }
+
+        
+        public bool MouseMove(MouseEventArgs e, System.Windows.Point position)
+        {
+            bool updateRequired = false;
+            System.Windows.Point snappedPos = SnapPositionToMM(position);
+            PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
+            if (selectedPoint != -1)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed && moving)
+                {
+                    polyPoints[selectedPoint].X = position.X;
+                    polyPoints[selectedPoint].Y = position.Y;
+                    flexiPath.SetPointPos(selectedPoint, snappedPos);
+                    PathText = flexiPath.ToPath();
+                    updateRequired = true;
+                }
+                else
+                {
+                    moving = false;
+                }
+                
+            }
+            return updateRequired;
+        }
+        private void AddAnotherPointToPoly(System.Windows.Point position)
+        {
+            position = SnapPositionToMM(position);
+
+            if (Math.Abs(position.X - flexiPath.Start.X) < 2 && Math.Abs(position.Y - flexiPath.Start.Y) < 2)
+            {
+                //  closeFigure = true;
+                selectedPoint = -1;
+                selectionMode = SelectionModeType.SelectSegmentAtPoint;
+                flexiPath.ClosePath();
+            }
+            else
+            {
+                flexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
+
+                selectionMode = SelectionModeType.AppendPoint;
+                selectedPoint = polyPoints.Count - 1;
+                moving = true;
+            }
+        }
+
+        private void AddStartPointToPoly(System.Windows.Point position)
+        {
+            position = SnapPositionToMM(position);
+            flexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
+            selectionMode = SelectionModeType.AppendPoint;
+        }
+
+       
+
+        private void MoveWholePath(System.Windows.Point position)
+        {
+            flexiPath.MoveTo(position);
+        }
         private void OnAddCubic(object obj)
         {
             SelectionMode = SelectionModeType.ConvertToCubicBezier;
@@ -310,6 +510,7 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
         }
+
         private void OnPickSegment(object obj)
         {
             selectionMode = SelectionModeType.SelectSegmentAtPoint;
@@ -317,6 +518,9 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
 
         private void OnResetPath(object obj)
         {
+            flexiPath.Clear();
+            SelectionMode = SelectionModeType.StartPoint;
+            PathText = "";
         }
 
         private void OnShowAllPoints(object obj)
@@ -325,6 +529,45 @@ namespace Barnacle.UserControls.FlexiPathEditorControl
             {
                 p.Visible = true;
             }
+        }
+
+        private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
+        {
+            double gx = pos.X;
+            double gy = pos.Y;
+            if (snap)
+            {
+                gx = pos.X / gridX;
+                gx = Math.Round(gx) * gridX;
+                gy = pos.Y / gridY;
+                gy = Math.Round(gy) * gridY;
+            }
+            return new System.Windows.Point(ToMMX(gx), ToMMY(gy));
+        }
+
+        private double ToMMX(double x)
+        {
+
+            double res = 25.4 * x / ScreenDpi.PixelsPerInchX;
+            return res;
+        }
+
+        private double ToMMY(double y)
+        {
+            double res = 25.4 * y / ScreenDpi.PixelsPerInchY;
+            return res;
+        }
+
+        private double ToPixelX(double x)
+        {
+            double res = ScreenDpi.PixelsPerInchX * x / 25.4;
+            return res;
+        }
+
+        private double ToPixelY(double y)
+        {
+            double res = ScreenDpi.PixelsPerInchY * y / 25.4;
+            return res;
         }
     }
 }

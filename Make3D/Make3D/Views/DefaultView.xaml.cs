@@ -42,11 +42,6 @@ namespace Barnacle.Views
             vm = DataContext as DefaultViewModel;
         }
 
-        private void ScriptEditorClosed(object param)
-        {
-            vm.SwitchToView("Editor", false);
-        }
-
         public void CheckPoint()
         {
             if (BaseViewModel.Document != null)
@@ -365,6 +360,10 @@ namespace Barnacle.Views
             }
         }
 
+        private void ScriptEditorClosed(object param)
+        {
+            vm.SwitchToView("Editor", false);
+        }
         private void SetLibraryImageSource(string p)
         {
             BitmapImage bim = null;

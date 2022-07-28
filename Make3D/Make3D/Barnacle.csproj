@@ -106,6 +106,9 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DevTest\DevTest.xaml.cs">
+      <DependentUpon>DevTest.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\Exporting\ExportSelectedDialog.xaml.cs">
       <DependentUpon>ExportSelectedDialog.xaml</DependentUpon>
     </Compile>
@@ -403,6 +406,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\DecimatorSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DevTest\DevTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

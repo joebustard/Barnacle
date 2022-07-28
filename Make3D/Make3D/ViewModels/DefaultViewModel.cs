@@ -1154,6 +1154,9 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Trapezoid", true, "Trapazoid", "Create a trapazoid."));
 
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
+
+
+            parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
         }
