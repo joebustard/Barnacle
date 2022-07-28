@@ -1,4 +1,5 @@
-﻿using Barnacle.LineLib;
+﻿using Barnacle.Dialogs;
+using Barnacle.LineLib;
 using Barnacle.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -450,6 +451,13 @@ namespace Barnacle.UserControls
                 selectedPoint = polyPoints.Count - 1;
                 moving = true;
             }
+        }
+
+        internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
+        {
+            ScreenDpi = dpiScale;
+            GridMarkers = new List<Shape>();
+            BaseModellerDialog.CreateGrid(dpiScale, actualWidth, actualHeight, out gridX, out gridY, 10.0, GridMarkers);
         }
 
         private void AddStartPointToPoly(System.Windows.Point position)

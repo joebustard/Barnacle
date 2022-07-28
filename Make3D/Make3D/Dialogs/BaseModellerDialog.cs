@@ -1049,29 +1049,27 @@ namespace Barnacle.Dialogs
         {
             return x * 25.4;
         }
-        public static void CreateCanvasGrid( Canvas cnv, out double gridX, out double gridY, double gridSizeMM,List<Shape> markers)
+        public static void CreateGrid(DpiScale sc, double aw, double ah, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
         {
+            double x = 0;
+            double y = 0;
+            gridX = (sc.PixelsPerInchX / 25.4) * gridSizeMM;
 
-            double x=0;
-            double y=0;
-            DpiScale sc =VisualTreeHelper.GetDpi(cnv);
-            gridX = (sc.PixelsPerInchX / 25.4) *gridSizeMM;
-            
-            gridY = (sc.PixelsPerInchY/ 25.4) * gridSizeMM;
-            
-            while ( x < cnv.ActualWidth)
+            gridY = (sc.PixelsPerInchY / 25.4) * gridSizeMM;
+
+            while (x < aw)
             {
                 y = 0;
-                while ( y < cnv.ActualHeight)
+                while (y < ah)
                 {
                     Ellipse el = new Ellipse();
-                    Canvas.SetLeft(el, x-1);
-                    Canvas.SetTop(el, y-1);
+                    Canvas.SetLeft(el, x - 1);
+                    Canvas.SetTop(el, y - 1);
                     el.Width = 3;
                     el.Height = 3;
                     el.Fill = Brushes.AliceBlue;
                     el.Stroke = Brushes.CadetBlue;
-                    if ( markers != null)
+                    if (markers != null)
                     {
                         markers.Add(el);
                     }
@@ -1079,6 +1077,15 @@ namespace Barnacle.Dialogs
                 }
                 x += gridX;
             }
+        }
+        public static void CreateCanvasGrid( Canvas cnv, out double gridX, out double gridY, double gridSizeMM,List<Shape> markers)
+        {
+            DpiScale sc =VisualTreeHelper.GetDpi(cnv);
+
+
+            double aw = cnv.ActualWidth;
+            double ah = cnv.ActualHeight;
+            CreateGrid(sc, aw, ah, out gridX, out gridY, gridSizeMM, markers);
         }
     }
 

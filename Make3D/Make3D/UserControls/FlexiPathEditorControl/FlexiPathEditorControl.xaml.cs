@@ -60,25 +60,19 @@ namespace Barnacle.UserControls
             }
             */
             // this is the grid on the path edit
-            if (vm.ShowGrid)
+            if (vm != null)
             {
-                if (vm.GridMarkers == null)
+                if (vm.ShowGrid == true)
                 {
-                    vm.GridMarkers = new List<Shape>();
-                    double gridX=0;
-                    double gridY=0;
-                    BaseModellerDialog.CreateCanvasGrid(MainCanvas, out gridX, out gridY, 10.0, vm.GridMarkers);
-                    vm.GridX = gridX;
-                    vm.GridY = gridY;
-                }
-                foreach (Shape sh in vm.GridMarkers)
-                {
-                    MainCanvas.Children.Add(sh);
-                }
-            }
-            DisplayLines();
-            DisplayPoints();
 
+                    foreach (Shape sh in vm.GridMarkers)
+                    {
+                        MainCanvas.Children.Add(sh);
+                    }
+                }
+                DisplayLines();
+                DisplayPoints();
+            }
         }
         private void DisplayLines()
         {
@@ -362,7 +356,8 @@ namespace Barnacle.UserControls
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-
+            vm?.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
+            UpdateDisplay();
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -374,10 +369,12 @@ namespace Barnacle.UserControls
                 {
                     vm.PropertyChanged += Vm_PropertyChanged;
 
-                    vm.ScreenDpi = VisualTreeHelper.GetDpi(MainCanvas);
+                    
+                    vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth,MainCanvas.ActualHeight);
                     
                 }
             }
+            UpdateDisplay();
         }
 
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
