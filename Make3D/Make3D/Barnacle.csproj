@@ -976,6 +976,7 @@
     <Resource Include="Images\Buttons\SameY.png" />
     <Resource Include="Images\Buttons\SameZ.png" />
     <Resource Include="Images\Buttons\SameAll.png" />
+    <Resource Include="Images\Buttons\ShowGrid.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -16,7 +16,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="80"/>
                 <RowDefinition />
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="25"/>
             </Grid.RowDefinitions>
             <Border Grid.Row="0" Style="{StaticResource ControlBorder}">
             <UniformGrid  Rows="2" Columns="9" VerticalAlignment="Top" >
@@ -24,7 +24,7 @@
                 <Button Command="{Binding ShowAllPointsCommand}"
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Show all the control points on the path"
-                                x:Name="ShowAllPointsButton">
+                                x:Name="ShowAllPointsButton" Margin="4,4,4,4">
                     <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path"/>
 
                 </Button>
@@ -116,18 +116,70 @@
 
                     </Button>
                 </Border>
-            </UniformGrid>
+                    <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="GridBorder">
+                        <Button Command="{Binding GridCommand}"
+                             
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Turn off grid and snapping"
+                                x:Name="GridButton">
+                            <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png"/>
+                        </Button>
+                    </Border>
+                    <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="ZoomOutBorder">
+                        <Button Command="{Binding ZoomCommand}"
+                                CommandParameter="Out"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Zoom Out"
+                                x:Name="ZoomOutButton">
+                            <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png"/>
+                        </Button>
+                    </Border>
+                    <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="ZoomResetBorder">
+                        <Button Command="{Binding ZoomCommand}"
+                             CommandParameter="Reset"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Zoom Reset"
+                                x:Name="ZoomResetButton">
+                            <Image Source="/Barnacle;component/Images/Buttons/Zoom.png"/>
+                        </Button>
+                    </Border>
+                    <Border BorderThickness="4"
+                            CornerRadius="2"
+                            x:Name="ZoomInBorder">
+                        <Button Command="{Binding ZoomCommand}"
+                             CommandParameter="In"
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Zoom In"
+                                x:Name="ZoomInButton">
+                            <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png"/>
+                        </Button>
+                    </Border>
+
+                    <Button Command="{Binding LoadImageCommand}"
+                            Content="Image"
+                            Margin="2,2,2,2"
+                            ToolTip="Set a background image to overlay the editing polygon on"
+                            x:Name="ImageButton"/>
+                </UniformGrid>
             </Border>
             <ScrollViewer Grid.Row="1"
                               HorizontalScrollBarVisibility="Visible"
                               VerticalScrollBarVisibility="Visible">
                 <Canvas Background="Transparent"
+                         Width="800"
+                        Height="800"
                             MouseDown="MainCanvas_MouseDown"
                             MouseMove="MainCanvas_MouseMove"
                             MouseUp="MainCanvas_MouseUp"
                             x:Name="MainCanvas" SizeChanged="MainCanvas_SizeChanged">
                     <Canvas.LayoutTransform>
-                        <ScaleTransform x:Name="MainScale"/>
+                        <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
                     </Canvas.LayoutTransform>
                 </Canvas>
             </ScrollViewer>

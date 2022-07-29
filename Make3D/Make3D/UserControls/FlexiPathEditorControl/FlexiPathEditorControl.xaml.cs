@@ -1,18 +1,10 @@
-﻿using Barnacle.Dialogs;
-using Barnacle.LineLib;
+﻿using Barnacle.LineLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Barnacle.UserControls
@@ -23,69 +15,42 @@ namespace Barnacle.UserControls
     public partial class FlexiPathEditorControl : UserControl
     {
         private FlexiPathEditorControlViewModel vm;
+
         public FlexiPathEditorControl()
         {
             InitializeComponent();
         }
 
-        private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        private void DashLine(double x1, double y1, double x2, double y2)
         {
-            System.Windows.Point position = e.GetPosition(MainCanvas);
-           if ( vm.MouseDown(e,position))
-            {
-                UpdateDisplay();
-            }
-            
+            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
+            Line ln = new Line();
+            ln.Stroke = br;
+            ln.StrokeThickness = 2;
+            ln.StrokeDashArray = new DoubleCollection();
+            ln.StrokeDashArray.Add(0.5);
+            ln.StrokeDashArray.Add(0.5);
+            ln.Fill = br;
+            ln.X1 = x1;
+            ln.Y1 = y1;
+            ln.X2 = x2;
+            ln.Y2 = y2;
+            ln.MouseMove += MainCanvas_MouseMove;
+            ln.MouseUp += MainCanvas_MouseUp;
+            ln.MouseDown += MainCanvas_MouseDown;
+            MainCanvas.Children.Add(ln);
         }
 
-        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            System.Windows.Point position = e.GetPosition(MainCanvas);
-            if ( vm.MouseMove(e, position) )
-            {
-                UpdateDisplay();
-            }
-        }
-        private void UpdateDisplay()
-        {
-            MainCanvas.Children.Clear();
-            /*
-            if (localImage != null)
-            {
-                Image image = new System.Windows.Controls.Image();
-                image.Source = localImage;
-                image.Width = localImage.Width;
-                image.Height = localImage.Height;
-                MainCanvas.Children.Add(image);
-            }
-            */
-            // this is the grid on the path edit
-            if (vm != null)
-            {
-                if (vm.ShowGrid == true)
-                {
-
-                    foreach (Shape sh in vm.GridMarkers)
-                    {
-                        MainCanvas.Children.Add(sh);
-                    }
-                }
-                DisplayLines();
-                DisplayPoints();
-            }
-        }
         private void DisplayLines()
         {
-
-                List<System.Windows.Point> points = vm.DisplayPoints;
-                if (points != null && points.Count >= 2)
+            List<System.Windows.Point> points = vm.DisplayPoints;
+            if (points != null && points.Count >= 2)
+            {
+                for (int i = 0; i < points.Count - 1; i++)
                 {
-                    for (int i = 0; i < points.Count - 1; i++)
-                    {
-                        DrawLine(i, i + 1, points);
-                    }
+                    DrawLine(i, i + 1, points);
                 }
-            
+            }
         }
 
         private void DisplayPoints()
@@ -187,24 +152,155 @@ namespace Barnacle.UserControls
                 }
             }
         }
-        private void DashLine(double x1, double y1, double x2, double y2)
+
+        private void DoButtonBorder(Border src, Border trg)
+        {
+            if (src == trg)
+            {
+                trg.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+            }
+            else
+            {
+                trg.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+            }
+        }
+
+        private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
             Line ln = new Line();
             ln.Stroke = br;
-            ln.StrokeThickness = 2;
+            ln.StrokeThickness = 1;
             ln.StrokeDashArray = new DoubleCollection();
             ln.StrokeDashArray.Add(0.5);
             ln.StrokeDashArray.Add(0.5);
             ln.Fill = br;
-            ln.X1 = x1;
-            ln.Y1 = y1;
-            ln.X2 = x2;
-            ln.Y2 = y2;
-            ln.MouseMove += MainCanvas_MouseMove;
-            ln.MouseUp += MainCanvas_MouseUp;
-            ln.MouseDown += MainCanvas_MouseDown;
+            ln.X1 = ToPixelX(p1.X);
+            ln.Y1 = ToPixelY(p1.Y);
+            ln.X2 = ToPixelX(p2.X);
+            ln.Y2 = ToPixelY(p2.Y);
+
             MainCanvas.Children.Add(ln);
+        }
+
+        private void DrawLine(int i, int v, List<System.Windows.Point> points)
+        {
+            if (v < points.Count)
+            {
+                SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
+                Line ln = new Line();
+                ln.Stroke = br;
+                ln.StrokeThickness = 6;
+                ln.Fill = br;
+                ln.X1 = ToPixelX(points[i].X);
+                ln.Y1 = ToPixelY(points[i].Y);
+                ln.X2 = ToPixelX(points[v].X);
+                ln.Y2 = ToPixelY(points[v].Y);
+                ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
+                ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
+                MainCanvas.Children.Add(ln);
+            }
+        }
+
+        private void EnableSelectionModeBorder(Border src)
+        {
+            DoButtonBorder(src, PickBorder);
+            DoButtonBorder(src, AddSegBorder);
+            DoButtonBorder(src, AddBezierBorder);
+            DoButtonBorder(src, AddQuadBezierBorder);
+            DoButtonBorder(src, DelSegBorder);
+            DoButtonBorder(src, MovePathBorder);
+        }
+
+
+        private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            Line ln = sender as Line;
+            bool found = false;
+            if (ln != null)
+            {
+                switch (vm.SelectionMode)
+                {
+                    case FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint:
+                        {
+                            bool shiftDown = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
+                            found = vm.SelectLineFromPoint(position, shiftDown);
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.SplitLine:
+                        {
+                            found = vm.SplitLineAtPoint(position);
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToCubicBezier:
+                        {
+                            found = vm.ConvertLineAtPointToBezier(position, true);
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToQuadBezier:
+                        {
+                            found = vm.ConvertLineAtPointToBezier(position, false);
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.DeleteSegment:
+                        {
+                            found = vm.DeleteSegment(position);
+
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+                }
+                if (found)
+                {
+                    e.Handled = true;
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+        }
+
+        private void MainCanvas_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            if (vm.MouseDown(e, position))
+            {
+                UpdateDisplay();
+            }
+        }
+
+        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            if (vm.MouseMove(e, position))
+            {
+                UpdateDisplay();
+            }
+        }
+
+        private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            System.Windows.Point position = e.GetPosition(MainCanvas);
+            if (vm.MouseUp(e, position))
+            {
+                UpdateDisplay();
+            }
+        }
+
+        private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            vm?.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
+            UpdateDisplay();
         }
 
         private System.Windows.Point MakeEllipse(double rad, System.Windows.Media.Brush br, System.Windows.Point p)
@@ -220,7 +316,7 @@ namespace Barnacle.UserControls
             el.MouseDown += MainCanvas_MouseDown;
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
-           // el.ContextMenu = PointMenu(el);
+            // el.ContextMenu = PointMenu(el);
             MainCanvas.Children.Add(el);
             return p;
         }
@@ -238,7 +334,7 @@ namespace Barnacle.UserControls
             el.MouseDown += MainCanvas_MouseDown;
             el.MouseMove += MainCanvas_MouseMove;
             el.MouseUp += MainCanvas_MouseUp;
-      //      el.ContextMenu = PointMenu(el);
+            //      el.ContextMenu = PointMenu(el);
             MainCanvas.Children.Add(el);
             return p;
         }
@@ -266,28 +362,56 @@ namespace Barnacle.UserControls
             myPolygon.MouseDown += MainCanvas_MouseDown;
             myPolygon.MouseMove += MainCanvas_MouseMove;
             myPolygon.MouseUp += MainCanvas_MouseUp;
-         //   myPolygon.ContextMenu = PointMenu(myPolygon);
+            //   myPolygon.ContextMenu = PointMenu(myPolygon);
             MainCanvas.Children.Add(myPolygon);
             return p;
         }
 
-        private void DrawControlLine(System.Windows.Point p1, System.Windows.Point p2)
+        private void SetSelectionModeBorderColours()
         {
-            SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
-            Line ln = new Line();
-            ln.Stroke = br;
-            ln.StrokeThickness = 1;
-            ln.StrokeDashArray = new DoubleCollection();
-            ln.StrokeDashArray.Add(0.5);
-            ln.StrokeDashArray.Add(0.5);
-            ln.Fill = br;
-            ln.X1 = ToPixelX(p1.X);
-            ln.Y1 = ToPixelY(p1.Y);
-            ln.X2 = ToPixelX(p2.X);
-            ln.Y2 = ToPixelY(p2.Y);
+            // put a clear border around the button associated with active state
+            switch (vm.SelectionMode)
+            {
+                case FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint:
+                case FlexiPathEditorControlViewModel.SelectionModeType.StartPoint:
+                case FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint:
+                    {
+                        EnableSelectionModeBorder(PickBorder);
+                    }
+                    break;
 
-            MainCanvas.Children.Add(ln);
+                case FlexiPathEditorControlViewModel.SelectionModeType.SplitLine:
+                    {
+                        EnableSelectionModeBorder(AddSegBorder);
+                    }
+                    break;
+
+                case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToCubicBezier:
+                    {
+                        EnableSelectionModeBorder(AddBezierBorder);
+                    }
+                    break;
+
+                case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToQuadBezier:
+                    {
+                        EnableSelectionModeBorder(AddQuadBezierBorder);
+                    }
+                    break;
+
+                case FlexiPathEditorControlViewModel.SelectionModeType.DeleteSegment:
+                    {
+                        EnableSelectionModeBorder(DelSegBorder);
+                    }
+                    break;
+
+                case FlexiPathEditorControlViewModel.SelectionModeType.MovePath:
+                    {
+                        EnableSelectionModeBorder(MovePathBorder);
+                    }
+                    break;
+            }
         }
+
         private double ToMMX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
@@ -316,50 +440,34 @@ namespace Barnacle.UserControls
             return res;
         }
 
-        private void DrawLine(int i, int v, List<System.Windows.Point> points)
+        private void UpdateDisplay()
         {
-            if (v < points.Count)
+            MainCanvas.Children.Clear();
+            
+           
+            
+            // this is the grid on the path edit
+            if (vm != null)
             {
-                SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
-                Line ln = new Line();
-                ln.Stroke = br;
-                ln.StrokeThickness = 6;
-                ln.Fill = br;
-                ln.X1 = ToPixelX(points[i].X);
-                ln.Y1 = ToPixelY(points[i].Y);
-                ln.X2 = ToPixelX(points[v].X);
-                ln.Y2 = ToPixelY(points[v].Y);
-                ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
-                ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
-                MainCanvas.Children.Add(ln);
+                if (vm.BackgroundImage != null)
+                {
+                    Image image = new System.Windows.Controls.Image();
+                    image.Source = vm.BackgroundImage;
+                    image.Width = vm.BackgroundImage.Width;
+                    image.Height = vm.BackgroundImage.Height;
+                    MainCanvas.Children.Add(image);
+                }
+                if (vm.ShowGrid == true)
+                {
+                    foreach (Shape sh in vm.GridMarkers)
+                    {
+                        MainCanvas.Children.Add(sh);
+                    }
+                }
+                DisplayLines();
+                DisplayPoints();
             }
         }
-
-        private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-
-        }
-
-        private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
-        {
-            System.Windows.Point position = e.GetPosition(MainCanvas);
-            if (vm.MouseUp(e, position))
-            {
-                UpdateDisplay();
-            }
-        }
-
-        private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            vm?.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
-            UpdateDisplay();
-        }
-
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -369,9 +477,8 @@ namespace Barnacle.UserControls
                 {
                     vm.PropertyChanged += Vm_PropertyChanged;
 
-                    
-                    vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth,MainCanvas.ActualHeight);
-                    
+                    vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
+                    ShowGridStatus();
                 }
             }
             UpdateDisplay();
@@ -383,76 +490,35 @@ namespace Barnacle.UserControls
             {
                 case "SelectionMode":
                     {
-                        SetButtonBorderColours();
+                        SetSelectionModeBorderColours();
+                    }
+                    break;
+
+                case "ShowGrid":
+                    {
+                        ShowGridStatus();
+                        UpdateDisplay();
+                    }
+                    break;
+
+                case "Points":
+                case "BackgroundImage":
+                    {
+                        UpdateDisplay();
                     }
                     break;
             }
         }
 
-        private void DoButtonBorder(Border src, Border trg)
+        private void ShowGridStatus()
         {
-            if (src == trg)
+            if (vm.ShowGrid)
             {
-                trg.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+                GridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
             }
             else
             {
-                trg.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
-            }
-        }
-
-        private void EnableBorder(Border src)
-        {
-            DoButtonBorder(src, PickBorder);
-            DoButtonBorder(src, AddSegBorder);
-            DoButtonBorder(src, AddBezierBorder);
-            DoButtonBorder(src, DelSegBorder);
-            DoButtonBorder(src, MovePathBorder);
-        }
-        private void SetButtonBorderColours()
-        {
-            // put a clear border around the button associated with active state
-            switch (vm.SelectionMode)
-            {
-
-                case FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint:
-                case FlexiPathEditorControlViewModel.SelectionModeType.StartPoint:
-                case FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint:
-                    {
-                        EnableBorder(PickBorder);
-                    }
-                    break;
-
-                case FlexiPathEditorControlViewModel.SelectionModeType.SplitLine:
-                    {
-                        EnableBorder(AddSegBorder);
-                    }
-                    break;
-
-                case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToCubicBezier:
-                    {
-                        EnableBorder(AddBezierBorder);
-                    }
-                    break;
-
-                case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToQuadBezier:
-                    {
-                        EnableBorder(AddQuadBezierBorder);
-                    }
-                    break;
-
-                case FlexiPathEditorControlViewModel.SelectionModeType.DeleteSegment:
-                    {
-                        EnableBorder(DelSegBorder);
-                    }
-                    break;
-
-                case FlexiPathEditorControlViewModel.SelectionModeType.MovePath:
-                    {
-                        EnableBorder(MovePathBorder);
-                    }
-                    break;
-
+                GridBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
             }
         }
     }
