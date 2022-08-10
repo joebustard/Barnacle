@@ -14,11 +14,14 @@ namespace Barnacle.UserControls
     /// </summary>
     public partial class FlexiPathEditorControl : UserControl
     {
+        public delegate void FlexiPathChanged(List<System.Windows.Point> points);
+        public FlexiPathChanged OnFlexiPathChanged;
         private FlexiPathEditorControlViewModel vm;
 
         public FlexiPathEditorControl()
         {
             InitializeComponent();
+            OnFlexiPathChanged = null;
         }
 
         private void DashLine(double x1, double y1, double x2, double y2)
@@ -505,6 +508,10 @@ namespace Barnacle.UserControls
                 case "BackgroundImage":
                     {
                         UpdateDisplay();
+                        if (OnFlexiPathChanged != null)
+                        {
+                            OnFlexiPathChanged(vm.DisplayPoints);
+                        }
                     }
                     break;
             }

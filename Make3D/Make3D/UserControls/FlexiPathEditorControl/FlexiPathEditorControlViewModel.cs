@@ -620,7 +620,7 @@ namespace Barnacle.UserControls
                 CanCNVDouble = false;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                 NotifyPropertyChanged("Points");
-                ;
+                
             }
         }
 

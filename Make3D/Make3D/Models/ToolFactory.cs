@@ -11,6 +11,10 @@ namespace Barnacle.Models
             switch (name)
             {
 
+                case "Dual":
+                    res = new DualProfileDlg();
+                    break;
+
                 case "BrickWall":
                     res = new BrickWallDlg();
                     break;
