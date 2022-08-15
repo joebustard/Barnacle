@@ -8,7 +8,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using Barnacle.Object3DLib;
-using Object3DLib;
+
 
 namespace MakerLib
 {

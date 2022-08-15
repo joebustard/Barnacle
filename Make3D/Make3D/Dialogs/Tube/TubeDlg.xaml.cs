@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
-using Object3DLib;
+
 using Barnacle.Object3DLib;
 using MakerLib;
 

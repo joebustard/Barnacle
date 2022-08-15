@@ -109,6 +109,7 @@
     <Compile Include="Dialogs\DevTest\DevTest.xaml.cs">
       <DependentUpon>DevTest.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DualProfile\DualProfileDlg.xaml.cs" />
     <Compile Include="Dialogs\Exporting\ExportSelectedDialog.xaml.cs">
       <DependentUpon>ExportSelectedDialog.xaml</DependentUpon>
     </Compile>
@@ -412,6 +413,10 @@
     <Page Include="Dialogs\DevTest\DevTest.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DualProfile\DualProfileDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Exporting\ExportSelectedDialog.xaml">
       <SubType>Designer</SubType>
