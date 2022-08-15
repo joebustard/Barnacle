@@ -8,6 +8,7 @@ namespace ScriptLanguage
         private String[] keywords;
         private Tokeniser tokeniser;
         private string lastError;
+
         // Instance constructor
         public Interpreter()
         {
@@ -115,6 +116,7 @@ namespace ScriptLanguage
                 "val"
             };
         }
+
         private ExpressionNode ParseMakeDualProfileFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -175,6 +177,7 @@ namespace ScriptLanguage
             }
             return result;
         }
+
         private ExpressionNode ParseMakeTiledRoofFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -215,6 +218,7 @@ namespace ScriptLanguage
 
             return exp;
         }
+
         public bool LoadFromText(Script script, string text, string originalfilePath)
         {
             bool result = false;
@@ -264,7 +268,6 @@ namespace ScriptLanguage
             return result;
         }
 
-
         private bool CheckForComma(string s)
         {
             bool result = false;
@@ -278,9 +281,7 @@ namespace ScriptLanguage
                 }
                 else
                 {
-
                     ReportSyntaxError($"{s} expected comma");
-
                 }
             }
             return result;
@@ -673,7 +674,6 @@ namespace ScriptLanguage
                                         }
 
                                         result = CheckForSemiColon();
-
                                     }
                                 }
                             }
@@ -984,7 +984,6 @@ namespace ScriptLanguage
                                                 result = CheckForSemiColon();
                                                 if (result)
                                                 {
-
                                                     AssignToArrayElement asn = new AssignToArrayElement();
                                                     asn.VariableName = internalName;
                                                     asn.ExternalName = externalName;
@@ -1110,7 +1109,6 @@ namespace ScriptLanguage
                                                 result = CheckForSemiColon();
                                                 if (result)
                                                 {
-
                                                     AssignStructToArrayElement asn = new AssignStructToArrayElement();
                                                     asn.VariableName = internalName;
                                                     asn.ExternalName = externalName;
@@ -1209,7 +1207,6 @@ namespace ScriptLanguage
                 en.IsInLibrary = tokeniser.InIncludeFile();
                 parentNode.AddStatement(en);
             }
-
 
             return result;
         }
@@ -1528,7 +1525,6 @@ namespace ScriptLanguage
                 en.IsInLibrary = tokeniser.InIncludeFile();
                 parentNode.AddStatement(en);
             }
-
 
             return result;
         }
@@ -2401,7 +2397,6 @@ namespace ScriptLanguage
                             ReportSyntaxError("Can't open Include file " + token);
                         }
                     }
-
                 }
                 else
                 {
@@ -2565,6 +2560,7 @@ namespace ScriptLanguage
                                 exp = ParseMakeDualProfileFunction(parentName);
                             }
                             break;
+
                         case "makebrickwall":
                             {
                                 exp = ParseMakeBrickWallFunction(parentName);
@@ -2612,6 +2608,7 @@ namespace ScriptLanguage
                                 exp = ParseMakeParabolicDishFunction(parentName);
                             }
                             break;
+
                         case "makeplatelet":
                             {
                                 exp = ParseMakePlateletFunction(parentName);
@@ -2653,7 +2650,6 @@ namespace ScriptLanguage
                                 exp = ParseMakeTextFunction(parentName);
                             }
                             break;
-
 
                         case "maketiledroof":
                             {
@@ -2832,6 +2828,7 @@ namespace ScriptLanguage
             }
             return resultNode;
         }
+
         private ExpressionNode ParseMakeBrickWallFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -2968,7 +2965,6 @@ namespace ScriptLanguage
                             {
                                 if (CheckForComma())
                                 {
-
                                     ExpressionNode gExp = ParseExpressionNode(parentName);
                                     if (gExp != null)
                                     {
@@ -2998,13 +2994,11 @@ namespace ScriptLanguage
                     {
                         if (CheckForComma())
                         {
-
                             ExpressionNode yExp = ParseExpressionNode(parentName);
                             if (yExp != null)
                             {
                                 if (CheckForComma())
                                 {
-
                                     ExpressionNode zExp = ParseExpressionNode(parentName);
                                     if (zExp != null)
                                     {
@@ -3093,7 +3087,6 @@ namespace ScriptLanguage
                                     {
                                         if (CheckForComma("MakeParallelogram") == false)
                                         {
-
                                             ExpressionNode bExp = ParseExpressionNode(parentName);
                                             if (bExp != null)
                                             {
@@ -3120,7 +3113,6 @@ namespace ScriptLanguage
             {
                 if (CheckForComma("MakePath"))
                 {
-
                     ExpressionNode heightExp = ParseExpressionNode(parentName);
                     if (heightExp != null)
                     {
@@ -3171,7 +3163,6 @@ namespace ScriptLanguage
                     {
                         if (!CheckForComma(label))
                         {
-
                             parsed = false;
                         }
                     }
@@ -3212,7 +3203,6 @@ namespace ScriptLanguage
                     {
                         if (!CheckForComma(label))
                         {
-
                             parsed = false;
                         }
                     }
@@ -3253,7 +3243,6 @@ namespace ScriptLanguage
                     {
                         if (!CheckForComma(label))
                         {
-
                             parsed = false;
                         }
                     }
@@ -3294,7 +3283,6 @@ namespace ScriptLanguage
                     {
                         if (!CheckForComma(label))
                         {
-
                             parsed = false;
                         }
                     }
@@ -3331,7 +3319,6 @@ namespace ScriptLanguage
                     {
                         if (CheckForComma(label))
                         {
-
                             ExpressionNode elExp = ParseExpressionNode(parentName);
                             if (elExp != null)
                             {
@@ -3342,7 +3329,6 @@ namespace ScriptLanguage
                                     {
                                         if (CheckForComma(label))
                                         {
-
                                             ExpressionNode oExp = ParseExpressionNode(parentName);
                                             if (oExp != null)
                                             {
@@ -3402,7 +3388,6 @@ namespace ScriptLanguage
             return exp;
         }
 
-
         private ExpressionNode ParseMakeSquirkleFunction(string parentName)
         {
             string label = "MakeSquirkle";
@@ -3432,7 +3417,6 @@ namespace ScriptLanguage
                                     {
                                         if (CheckForComma(label) == false)
                                         {
-
                                             error = "Length expression";
                                             ExpressionNode lExp = ParseExpressionNode(parentName);
                                             if (lExp != null)
@@ -3596,7 +3580,6 @@ namespace ScriptLanguage
             return exp;
         }
 
-
         private ExpressionNode ParseMakeTextFunction(string parentName)
         {
             string label = "MakeText";
@@ -3632,7 +3615,6 @@ namespace ScriptLanguage
                                         ecol.Add(tmp);
                                         if (CheckForComma(label))
                                         {
-
                                             error = "Bold expression";
                                             tmp = ParseExpressionNode(parentName);
                                             if (tmp != null)
@@ -5615,6 +5597,7 @@ namespace ScriptLanguage
             }
             return result;
         }
+
         private ExpressionNode ParseMakeTrickleFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -5655,6 +5638,7 @@ namespace ScriptLanguage
 
             return exp;
         }
+
         private bool ParseWholeStructAssignment(String leftidentifier, CompoundNode parentNode, String parentName)
         {
             // we should either see  a struct variable name followed by a semi colon;

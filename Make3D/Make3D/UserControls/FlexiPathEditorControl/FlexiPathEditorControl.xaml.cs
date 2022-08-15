@@ -297,6 +297,7 @@ namespace Barnacle.UserControls
             if (vm.MouseUp(e, position))
             {
                 UpdateDisplay();
+                NotifyPathPointsChanged();
             }
         }
 
@@ -508,12 +509,17 @@ namespace Barnacle.UserControls
                 case "BackgroundImage":
                     {
                         UpdateDisplay();
-                        if (OnFlexiPathChanged != null)
-                        {
-                            OnFlexiPathChanged(vm.DisplayPoints);
-                        }
+                        NotifyPathPointsChanged();
                     }
                     break;
+            }
+        }
+
+        private void NotifyPathPointsChanged()
+        {
+            if (OnFlexiPathChanged != null)
+            {
+                OnFlexiPathChanged(vm.DisplayPoints);
             }
         }
 

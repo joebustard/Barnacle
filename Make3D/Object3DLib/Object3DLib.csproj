@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bounds3D.cs" />
-    <Compile Include="Class1.cs" />
     <Compile Include="ExternalReference.cs" />
     <Compile Include="Group3D.cs" />
     <Compile Include="IcoSphereCreator.cs" />

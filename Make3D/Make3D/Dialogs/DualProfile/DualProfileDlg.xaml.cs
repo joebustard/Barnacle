@@ -18,17 +18,28 @@ namespace Barnacle.Dialogs
         private string frontProfile;
         private double frontXSize;
         private double frontYSize;
-        private string topProfile;
+        // scaled and centered on 0
+        private List<System.Windows.Point> frontpnts;
 
+        private string topProfile;
+        private double topXSize;
+        private double topYSize;
+        // scaled and centered on 0
+        private List<System.Windows.Point> toppnts;
         public DualProfileDlg()
         {
             InitializeComponent();
             ToolName = "DualProfile";
             DataContext = this;
             frontProfile = "";
-            topProfile = "";
             frontXSize = 0;
             frontYSize = 0;
+            frontpnts = new List<Point>();
+            
+            topProfile = "";
+            topXSize = 0;
+            topYSize = 0;
+            toppnts = new List<Point>();
             FrontPathControl.OnFlexiPathChanged += FrontPointsChanged;
             TopPathControl.OnFlexiPathChanged += TopPointsChanged;
             ModelGroup = MyModelGroup;
@@ -45,6 +56,14 @@ namespace Barnacle.Dialogs
             {
                 frontXSize = brx - tlx;
                 frontYSize = bry - tly;
+
+                double mx = tlx + frontXSize / 2.0;
+                double my = tly + frontYSize / 2.0;
+                frontpnts.Clear();
+                foreach( Point p in pnts)
+                {
+                    frontpnts.Add(new Point( (p.X-mx)/frontXSize, (p.Y-my)/frontYSize));
+                }
             }
         }
 
@@ -65,7 +84,24 @@ namespace Barnacle.Dialogs
 
         private void TopPointsChanged(List<System.Windows.Point> pnts)
         {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            GetBounds(pnts, ref tlx, ref tly, ref brx, ref bry);
+            if (tlx < double.MaxValue)
+            {
+                topXSize = brx - tlx;
+                topYSize = bry - tly;
 
+                double mx = tlx + topXSize / 2.0;
+                double my = tly + topYSize / 2.0;
+                toppnts.Clear();
+                foreach (Point p in pnts)
+                {
+                    toppnts.Add(new Point((p.X - mx) / topXSize, (p.Y - my) / topYSize));
+                }
+            }
         }
         public override bool ShowAxies
         {
