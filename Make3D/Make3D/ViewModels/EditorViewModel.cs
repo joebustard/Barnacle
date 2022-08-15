@@ -1,4 +1,5 @@
-﻿using Barnacle.Dialogs;
+﻿using asdflibrary;
+using Barnacle.Dialogs;
 using Barnacle.Dialogs.Slice;
 using Barnacle.EditorParameterLib;
 using Barnacle.Models;
@@ -329,12 +330,33 @@ namespace Barnacle.ViewModels
         /// </summary>
         public void RegenerateDisplayList()
         {
+            AdaptiveSignedDistanceField adfTest = new AdaptiveSignedDistanceField();
+            AdaptiveSignedDistanceField.OnCalculateDistance += asdflibrary.Functions.Sphere;
+            asdflibrary.Functions.SphereRadius = 5;
+            adfTest.SetDimensions(-10F, -10F, -10F, 10F, 10F, 10F);
+            adfTest.Dump();
+            adfTest.SplitRoot();
+            System.Diagnostics.Debug.WriteLine("After split");
+            adfTest.Dump();
+            Object3D cb = new Object3D();
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection tris = new Int32Collection();
+            adfTest.GetCube(7, pnts, tris);
+            cb.TriangleIndices = tris;
+            foreach( Point3D p in pnts)
+            {
+                cb.RelativeObjectVertices.Add(new P3D(p.X, p.Y, p.Z));
+            }
+            cb.Remesh();
             try
             {
                // CountFaces();
                 allBounds = new Bounds3D();
                 allBounds.Zero();
                 modelItems.Clear();
+
+                GeometryModel3D gmcb = GetMesh(cb);
+                modelItems.Add(gmcb);
                 if (showFloor)
                 {
                     modelItems.Add(floor.FloorMesh);

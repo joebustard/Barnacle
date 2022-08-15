@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.1525
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32602.291
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -45,6 +45,8 @@ EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "BarnacleSetup", "BarnacleSetup\BarnacleSetup.vdproj", "{2363C462-06BF-4AEC-B76F-E25D3C85C5AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlgMaker", "DlgMaker\DlgMaker.csproj", "{40834B69-0308-43CE-B36A-10B66E3C932D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asdflibrary", "asdflibrary\asdflibrary.csproj", "{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -126,6 +128,10 @@ Global
 		{40834B69-0308-43CE-B36A-10B66E3C932D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40834B69-0308-43CE-B36A-10B66E3C932D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40834B69-0308-43CE-B36A-10B66E3C932D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

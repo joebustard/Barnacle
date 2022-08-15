@@ -9,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
+using asdflibrary;
 
 namespace Barnacle
 {
@@ -17,12 +18,13 @@ namespace Barnacle
     /// </summary>
     public partial class MainWindow : Window
     {
+        AdaptiveSignedDistanceField adfTest;
         public MainWindow()
         {
             InitializeComponent();
             //  LineUtils.CoplanerTest();
             PrepareUndo();
-           
+            
         }
 
         private void PrepareUndo()
@@ -66,15 +68,17 @@ namespace Barnacle
             }
 
             InfoWindow.Instance().Owner = this;
-/*
-            List<PointF> poly = new List<PointF>();
-            poly.Add(new PointF(10, 10));
-            poly.Add(new PointF(10, 20));
-            poly.Add(new PointF(50, 80));
-            poly.Add(new PointF(20, 10));
+            /*
+                        List<PointF> poly = new List<PointF>();
+                        poly.Add(new PointF(10, 10));
+                        poly.Add(new PointF(10, 20));
+                        poly.Add(new PointF(50, 80));
+                        poly.Add(new PointF(20, 10));
 
-            bool inside = LineUtils.IsPointInPolygon(new PointF(35, 55), poly);
-            */
+                        bool inside = LineUtils.IsPointInPolygon(new PointF(35, 55), poly);
+                        */
+
+
         }
 
         private struct V3D

@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Barnacle</RootNamespace>
     <AssemblyName>Barnacle</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -767,6 +767,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\asdflibrary\asdflibrary.csproj">
+      <Project>{2557b21c-fe6c-4b1d-8dab-ad7d8404fd56}</Project>
+      <Name>asdflibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClassLibrary1\HullLIbrary.csproj">
       <Project>{8FFB3AA5-559D-4880-A4A3-8859C0D30D8E}</Project>
       <Name>HullLIbrary</Name>
