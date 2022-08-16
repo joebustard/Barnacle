@@ -1,8 +1,11 @@
+using asdflibrary;
+using Barnacle.Object3DLib;
 using MakerLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
@@ -65,6 +68,8 @@ namespace Barnacle.Dialogs
                     frontpnts.Add(new Point( (p.X-mx)/frontXSize, (p.Y-my)/frontYSize));
                 }
             }
+            GenerateShape();
+            Redisplay();
         }
 
         private void GetBounds(List<Point> pnts, ref double tlx, ref double tly, ref double brx, ref double bry)
@@ -102,6 +107,8 @@ namespace Barnacle.Dialogs
                     toppnts.Add(new Point((p.X - mx) / topXSize, (p.Y - my) / topYSize));
                 }
             }
+            GenerateShape();
+            Redisplay();
         }
         public override bool ShowAxies
         {
@@ -163,10 +170,118 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            DualProfileMaker maker = new DualProfileMaker(frontProfile,topProfile );
-            maker.Generate(Vertices, Faces);
+            if (frontpnts.Count > 3 && toppnts.Count > 3)
+            {
+                DualProfileMaker maker = new DualProfileMaker(frontProfile, topProfile);
+                maker.Generate(Vertices, Faces);
+
+                AdaptiveSignedDistanceField adfTest = new AdaptiveSignedDistanceField();
+                AdaptiveSignedDistanceField.OnCalculateDistance += CalculateDistance;
+
+                adfTest.SetDimensions(-1F, -1F, -1F, 1F, 1F, 1F);
+
+                adfTest.SplitRoot();
+                System.Diagnostics.Debug.WriteLine("After split");
+                adfTest.Dump();
+                Object3D cb = new Object3D();
+                Point3DCollection pnts = new Point3DCollection();
+                Int32Collection tris = new Int32Collection();
+                // adfTest.GetCube(7, pnts, tris);
+                cb.TriangleIndices = tris;
+                foreach (Point3D p in pnts)
+                {
+                    cb.RelativeObjectVertices.Add(new P3D(p.X, p.Y, p.Z));
+                }
+                cb.Remesh();
+            }
         }
 
+        private float CalculateDistance(float x, float y, float z)
+        {
+            float res = float.MaxValue;
+            bool inFront = IsPointInPolygon( x, y, frontpnts);
+            float frontDist = DistToPoly(frontpnts, x, y);
+            return res;
+        }
+
+        private float DistToPoly(List<Point> pnts, float x, float y)
+        {
+            float v = float.MaxValue;
+            float d = 0;
+            Point closest;
+            for ( int i = 0; i < pnts.Count -1; i ++)
+            {
+                d = FindClosestToLine(x, y, pnts[i], pnts[i + 1], out closest);
+                if ( d< v)
+                {
+                    v = d;
+                }
+            }
+            return v;
+        }
+        public  float FindClosestToLine(
+          float x, float y, Point p1, Point p2, out Point closest)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            if ((dx == 0) && (dy == 0))
+            {
+                // It's a point not a line segment.
+                closest = p1;
+                dx = x - p1.X;
+                dy = y - p1.Y;
+                return (float) Math.Sqrt(dx * dx + dy * dy);
+            }
+
+            // Calculate the t that minimizes the distance.
+            double t = ((x - p1.X) * dx + (y - p1.Y) * dy) /
+                (dx * dx + dy * dy);
+
+            // See if this represents one of the segment's
+            // end points or a point in the middle.
+            if (t < 0)
+            {
+                closest = new Point(p1.X, p1.Y);
+                dx = x - p1.X;
+                dy = y - p1.Y;
+            }
+            else if (t > 1)
+            {
+                closest = new Point(p2.X, p2.Y);
+                dx = x - p2.X;
+                dy = y - p2.Y;
+            }
+            else
+            {
+                closest = new Point(p1.X + t * dx, p1.Y + t * dy);
+                dx = x - closest.X;
+                dy = y - closest.Y;
+            }
+
+            return (float) Math.Sqrt(dx * dx + dy * dy);
+        }
+        public static bool IsPointInPolygon(float x, float y, List<Point> polygon)
+        {
+            int polyCorners = polygon.Count;
+            int i = 0;
+            int j = polyCorners - 1;
+            bool oddNodes = false;
+
+            for (i = 0; i < polyCorners; i++)
+            {
+                if (polygon[i].Y < y && polygon[j].Y >= y
+                || polygon[j].Y < y && polygon[i].Y >= y)
+                {
+                    if (polygon[i].X + (y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < x)
+                    {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        }
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters

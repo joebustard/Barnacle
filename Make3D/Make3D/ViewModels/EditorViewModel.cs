@@ -329,7 +329,7 @@ namespace Barnacle.ViewModels
         /// than elsewhere
         /// </summary>
         public void RegenerateDisplayList()
-        {
+        {/*
             AdaptiveSignedDistanceField adfTest = new AdaptiveSignedDistanceField();
             AdaptiveSignedDistanceField.OnCalculateDistance += asdflibrary.Functions.Sphere;
             asdflibrary.Functions.SphereRadius = 5;
@@ -348,6 +348,7 @@ namespace Barnacle.ViewModels
                 cb.RelativeObjectVertices.Add(new P3D(p.X, p.Y, p.Z));
             }
             cb.Remesh();
+            */
             try
             {
                // CountFaces();
@@ -355,8 +356,8 @@ namespace Barnacle.ViewModels
                 allBounds.Zero();
                 modelItems.Clear();
 
-                GeometryModel3D gmcb = GetMesh(cb);
-                modelItems.Add(gmcb);
+               // GeometryModel3D gmcb = GetMesh(cb);
+             //   modelItems.Add(gmcb);
                 if (showFloor)
                 {
                     modelItems.Add(floor.FloorMesh);

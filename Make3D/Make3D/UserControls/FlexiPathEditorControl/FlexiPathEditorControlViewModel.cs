@@ -357,6 +357,7 @@ namespace Barnacle.UserControls
                 if (added)
                 {
                     PathText = flexiPath.ToPath();
+                    NotifyPropertyChanged("Points");
                 }
             }
 
@@ -379,6 +380,7 @@ namespace Barnacle.UserControls
             }
             // just in case the segment deletion means the point has gone
             SelectedPoint = -1;
+            NotifyPropertyChanged("Points");
             return deleted;
         }
 
@@ -435,6 +437,7 @@ namespace Barnacle.UserControls
                 {
                     added = true;
                     PathText = flexiPath.ToPath();
+                    NotifyPropertyChanged("Points");
                 }
             }
             return added;
@@ -461,6 +464,7 @@ namespace Barnacle.UserControls
                 AddAnotherPointToPoly(position);
                 e.Handled = true;
                 updateRequired = true;
+                NotifyPropertyChanged("Points");
             }
             else
             {
@@ -536,6 +540,7 @@ namespace Barnacle.UserControls
                 PathText = flexiPath.ToPath();
                 updateRequired = true;
                 selectedPoint = -1;
+                NotifyPropertyChanged("Points");
             }
             moving = false;
             return updateRequired;
