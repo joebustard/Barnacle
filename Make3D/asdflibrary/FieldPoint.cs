@@ -103,7 +103,7 @@ namespace asdflibrary
         }
         public void Dump(string insert = "")
         {
-            System.Diagnostics.Debug.WriteLine($"{insert} x {x} ,y {y} ,z {z}");
+            System.Diagnostics.Debug.WriteLine($"{insert} x {x} ,y {y} ,z {z}, v {v}");
         }
     }
 }

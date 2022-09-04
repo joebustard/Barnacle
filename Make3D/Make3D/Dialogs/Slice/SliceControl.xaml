@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs.Slice"
         mc:Ignorable="d"
-        Title="Slice Control" Height="450" Width="600" Loaded="Window_Loaded">
+        Title="Slice Control" Height="450" Width="650" Loaded="Window_Loaded">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10" />
@@ -23,9 +23,8 @@
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="30*" />
             <ColumnDefinition Width="10*" />
-
             <ColumnDefinition Width="10*" />
-
+            <ColumnDefinition Width="10*" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Label Grid.Column="1" Grid.Row="1" Content="Printer" Margin="2,2,2,10" VerticalAlignment="Center" />
@@ -37,12 +36,14 @@
         <ComboBox Grid.Column="2" Grid.Row="2" Margin="2,2,2,4" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedUserProfile}" />
         <Button Grid.Column="3" Grid.Row="2" Margin="2,2,2,4" Content="Edit" Click="EditProfileClicked" IsEnabled="{Binding IsEditProfileEnabled}" />
         <Button Grid.Column="4" Grid.Row="2" Margin="2,2,2,4" Content="New" Click="NewProfileClicked" />
-
+        <Button Grid.Column="5" Grid.Row="2" Margin="2,2,2,4" Content="Del" Click="DelProfileClicked" ToolTip="Delete Current Profile" IsEnabled="{Binding IsEditProfileEnabled}"/>
         <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center" />
         <TextBox Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top"></TextBox>
 
         <Button Grid.Column="3" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="SliceClicked" />
 
-        <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanClose}" Content="Close" Margin="2,4,0,0" Click="CloseClicked" />
+        <Button Grid.Column="4" Grid.Row="6" IsEnabled="{Binding CanCopyToSD}" Content="SD Card" Margin="2,4,0,0" Click="SDClicked" />
+
+        <Button Grid.Column="5" Grid.Row="6" IsEnabled="{Binding CanClose}" Content="Close" Margin="2,4,0,0" Click="CloseClicked" />
     </Grid>
 </Window>

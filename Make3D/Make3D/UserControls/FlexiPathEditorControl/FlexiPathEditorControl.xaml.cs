@@ -23,7 +23,20 @@ namespace Barnacle.UserControls
             InitializeComponent();
             OnFlexiPathChanged = null;
         }
-
+         public bool PathClosed
+         {
+         get
+         {
+                bool cl = false;
+                if (vm != null && vm.Points != null)
+                {
+                    cl = (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) &&
+                              (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.StartPoint) &&
+                              (vm.Points.Count > 3);
+                }
+                return cl;
+         }
+         }
         private void DashLine(double x1, double y1, double x2, double y2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));

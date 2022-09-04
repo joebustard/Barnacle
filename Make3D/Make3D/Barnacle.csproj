@@ -274,6 +274,7 @@
     <Compile Include="Models\OctTree\OctNode.cs" />
     <Compile Include="Models\OctTree\OctTree.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
+    <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControlViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml.cs">

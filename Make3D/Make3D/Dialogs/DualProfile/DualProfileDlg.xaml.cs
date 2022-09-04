@@ -1,6 +1,5 @@
 using asdflibrary;
 using Barnacle.Object3DLib;
-using MakerLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,19 +15,22 @@ namespace Barnacle.Dialogs
     public partial class DualProfileDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
-        private bool loaded ;
+        private bool loaded;
 
         private string frontProfile;
         private double frontXSize;
         private double frontYSize;
+
         // scaled and centered on 0
         private List<System.Windows.Point> frontpnts;
 
         private string topProfile;
         private double topXSize;
         private double topYSize;
+
         // scaled and centered on 0
         private List<System.Windows.Point> toppnts;
+
         public DualProfileDlg()
         {
             InitializeComponent();
@@ -38,7 +40,7 @@ namespace Barnacle.Dialogs
             frontXSize = 0;
             frontYSize = 0;
             frontpnts = new List<Point>();
-            
+
             topProfile = "";
             topXSize = 0;
             topYSize = 0;
@@ -48,14 +50,15 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
         }
-        private void FrontPointsChanged(List<System.Windows.Point>pnts)
+
+        private void FrontPointsChanged(List<System.Windows.Point> pnts)
         {
-            double tlx=0;
-            double tly=0;
-            double brx=0;
-            double bry=0;
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
             GetBounds(pnts, ref tlx, ref tly, ref brx, ref bry);
-            if ( tlx <double.MaxValue)
+            if (tlx < double.MaxValue)
             {
                 frontXSize = brx - tlx;
                 frontYSize = bry - tly;
@@ -63,9 +66,9 @@ namespace Barnacle.Dialogs
                 double mx = tlx + frontXSize / 2.0;
                 double my = tly + frontYSize / 2.0;
                 frontpnts.Clear();
-                foreach( Point p in pnts)
+                foreach (Point p in pnts)
                 {
-                    frontpnts.Add(new Point( (p.X-mx)/frontXSize, (p.Y-my)/frontYSize));
+                    frontpnts.Add(new Point((p.X - mx) / frontXSize, (p.Y - my) / frontYSize));
                 }
             }
             GenerateShape();
@@ -78,7 +81,7 @@ namespace Barnacle.Dialogs
             tly = double.MaxValue;
             brx = double.MinValue;
             bry = double.MinValue;
-            foreach( Point p in pnts)
+            foreach (Point p in pnts)
             {
                 if (p.X < tlx) tlx = p.X;
                 if (p.X > brx) brx = p.X;
@@ -110,6 +113,7 @@ namespace Barnacle.Dialogs
             GenerateShape();
             Redisplay();
         }
+
         public override bool ShowAxies
         {
             get
@@ -170,56 +174,214 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            if (frontpnts.Count > 3 && toppnts.Count > 3)
+            if (TopPathControl.PathClosed && FrontPathControl.PathClosed)
             {
-                DualProfileMaker maker = new DualProfileMaker(frontProfile, topProfile);
-                maker.Generate(Vertices, Faces);
-
-                AdaptiveSignedDistanceField adfTest = new AdaptiveSignedDistanceField();
-                AdaptiveSignedDistanceField.OnCalculateDistance += CalculateDistance;
-
-                adfTest.SetDimensions(-1F, -1F, -1F, 1F, 1F, 1F);
-
-                adfTest.SplitRoot();
-                System.Diagnostics.Debug.WriteLine("After split");
-                adfTest.Dump();
-                Object3D cb = new Object3D();
-                Point3DCollection pnts = new Point3DCollection();
-                Int32Collection tris = new Int32Collection();
-                // adfTest.GetCube(7, pnts, tris);
-                cb.TriangleIndices = tris;
-                foreach (Point3D p in pnts)
+                if (frontpnts.Count > 3 && toppnts.Count > 3)
                 {
-                    cb.RelativeObjectVertices.Add(new P3D(p.X, p.Y, p.Z));
+                    CubeMarcher cm = new CubeMarcher();
+                    GridCell gc = new GridCell();
+                    List<Triangle> triangles = new List<Triangle>();
+                    bool[] ins = new bool[4];
+                    float[] xyd = new float[4];
+                    bool[] itop = new bool[4];
+                    float[] xzd = new float[4];
+                    float dd = 0.025F;
+                    for (float x = -0.6F; x <= 0.6; x += dd)
+                    {
+                        for (float y = -0.6F; y <= 0.6F; y += dd)
+                        {
+
+                            ins[0] = InFront(x, y);
+                            ins[1] = InFront(x + dd, y);
+                            ins[2] = InFront(x + dd, y + dd);
+                            ins[3] = InFront(x, y + dd);
+
+                            xyd[0] = FrontDist(x, y, ins[0]);
+                            xyd[1] = FrontDist(x + dd, y, ins[1]);
+                            xyd[2] = FrontDist(x + dd, y + dd, ins[2]);
+                            xyd[3] = FrontDist(x, y + dd, ins[3]);
+                            bool firstZ = true;
+                            for (float z = -0.6F; z <= 0.6; z += dd)
+                            {
+                                gc.p[0] = new XYZ(x, y, z);
+
+                                gc.p[1] = new XYZ(x + dd, y, z);
+                                gc.p[2] = new XYZ(x + dd, y, z + dd);
+                                gc.p[3] = new XYZ(x, y, z + dd);
+                                gc.p[4] = new XYZ(x, y + dd, z);
+                                gc.p[5] = new XYZ(x + dd, y + dd, z);
+                                gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
+                                gc.p[7] = new XYZ(x, y + dd, z + dd);
+
+                                if (firstZ)
+                                {
+                                    itop[0] = InTop(x, z);
+                                    itop[1] = InTop(x + dd, z);
+                                }
+                                else
+                                {
+                                    itop[0] = itop[2];
+                                    itop[1] = itop[3];
+                                }
+                                itop[2] = InTop(x + dd, z + dd);
+                                itop[3] = InTop(x, z + dd);
+
+                                if (firstZ)
+                                {
+                                    xzd[0] = TopDist(x, z, itop[0]);
+                                    xzd[1] = TopDist(x + dd, z, itop[1]);
+                                    //firstZ = false;
+                                }
+                                else
+                                {
+                                    xzd[0] = xzd[2];
+                                    xzd[1] = xzd[3];
+                                }
+                                xzd[2] = TopDist(x + dd, z + dd, itop[2]);
+                                xzd[3] = TopDist(x, z + dd, itop[3]);
+                                
+                                gc.val[0] = GetDist(ins[0], xyd[0], itop[0], xzd[0]);
+                                gc.val[1] = GetDist(ins[1], xyd[1], itop[1], xzd[1]);
+                                gc.val[2] = GetDist(ins[1], xyd[1], itop[2], xzd[2]);
+                                gc.val[3] = GetDist(ins[0], xyd[0], itop[3], xzd[3]);
+                                
+                                gc.val[4] = GetDist(ins[3], xyd[3], itop[0], xzd[0]);
+                                gc.val[5] = GetDist(ins[2], xyd[2], itop[1], xzd[1]);
+                                gc.val[6] = GetDist(ins[2], xyd[2], itop[2], xzd[2]);
+                                gc.val[7] = GetDist(ins[3], xyd[3], itop[3], xzd[3]);
+
+                                triangles.Clear();
+
+                                cm.Polygonise(gc, 0, triangles);
+
+                                foreach (Triangle t in triangles)
+                                {
+                                    int p0 = AddVertice(t.p[0].x * frontXSize, -(t.p[0].y * frontYSize), t.p[0].z * topYSize);
+                                    int p1 = AddVertice(t.p[1].x * frontXSize, - (t.p[1].y * frontYSize), t.p[1].z * topYSize);
+                                    int p2 = AddVertice(t.p[2].x * frontXSize, - (t.p[2].y * frontYSize), t.p[2].z * topYSize);
+
+                                    Faces.Add(p0);
+                                    Faces.Add(p2);
+                                    Faces.Add(p1);
+                                }
+                            }
+                        }
+                    }
+
+
                 }
-                cb.Remesh();
             }
+        }
+        private double GetDist(bool fin, float fid, bool tin, float ftop)
+        {
+            double res = Math.Abs(fid);
+            /*
+            if ( Math.Abs(ftop) > res)
+            {
+                res = Math.Abs(ftop);
+            }
+            */
+            res = fid * fid;
+            res += ftop * ftop;
+            res = Math.Sqrt(res);
+            if ( fin && tin)
+            {
+                res = -res;
+            }
+            return res;
+        }
+        private bool InFront(float x, float y)
+        {
+            bool inFront = IsPointInPolygon(x, y, frontpnts);
+            return inFront;
+        }
+        private float FrontDist(float x, float y, bool inside)
+        {
+            Point closest = new Point(0, 0);
+            float frontDist = DistToPoly(frontpnts, x, y, ref closest);
+            if (inside)
+            {
+                frontDist = -frontDist;
+            }
+            return frontDist;
+        }
+        private bool InTop(float x, float y)
+        {
+            bool inTop = IsPointInPolygon(x, y, toppnts);
+            return inTop;
+        }
+        private float TopDist(float x, float y, bool inside)
+        {
+            Point closest = new Point(0, 0);
+            float topDist = DistToPoly(toppnts, x, y, ref closest);
+            if (inside)
+            {
+                topDist = -topDist;
+            }
+            return topDist;
+        }
+        private float CalculateFrontDistance(float x, float y, float z)
+        {
+            Point closest = new Point(0, 0);
+
+            float res = float.MaxValue;
+            bool inFront = IsPointInPolygon(x, y, frontpnts);
+            float frontDist = DistToPoly(frontpnts, x, y, ref closest);
+            res = (float)((closest.X - x) * (closest.X - x) +
+                          (closest.Y - y) * (closest.Y - y));
+            bool inTop = IsPointInPolygon(x, z, toppnts);
+            float topDist = DistToPoly(toppnts, x, z, ref closest);
+            res += (float)((closest.Y - y) * (closest.Y - y));
+
+            res = (float)Math.Sqrt(res);
+            if (inFront && inTop)
+            {
+                res = -res;
+            }
+            return res;
         }
 
         private float CalculateDistance(float x, float y, float z)
         {
+            Point closest = new Point(0, 0);
+
             float res = float.MaxValue;
-            bool inFront = IsPointInPolygon( x, y, frontpnts);
-            float frontDist = DistToPoly(frontpnts, x, y);
+            bool inFront = IsPointInPolygon(x, y, frontpnts);
+            float frontDist = DistToPoly(frontpnts, x, y, ref closest);
+            res = (float)((closest.X - x) * (closest.X - x) +
+                          (closest.Y - y) * (closest.Y - y));
+            bool inTop = IsPointInPolygon(x, z, toppnts);
+            float topDist = DistToPoly(toppnts, x, z, ref closest);
+            res += (float)((closest.Y - y) * (closest.Y - y));
+
+            res = (float)Math.Sqrt(res);
+            if (inFront && inTop)
+            {
+                res = -res;
+            }
             return res;
         }
 
-        private float DistToPoly(List<Point> pnts, float x, float y)
+        private float DistToPoly(List<Point> pnts, float x, float y, ref Point closest)
         {
             float v = float.MaxValue;
             float d = 0;
-            Point closest;
-            for ( int i = 0; i < pnts.Count -1; i ++)
+
+            Point cl2 = new Point(0, 0);
+            for (int i = 0; i < pnts.Count - 1; i++)
             {
-                d = FindClosestToLine(x, y, pnts[i], pnts[i + 1], out closest);
-                if ( d< v)
+                d = FindClosestToLine(x, y, pnts[i], pnts[i + 1], out cl2);
+                if (d < v)
                 {
                     v = d;
                 }
             }
+            closest.X = cl2.X;
+            closest.Y = cl2.Y;
             return v;
         }
-        public  float FindClosestToLine(
+
+        public float FindClosestToLine(
           float x, float y, Point p1, Point p2, out Point closest)
         {
             double dx = p2.X - p1.X;
@@ -230,7 +392,7 @@ namespace Barnacle.Dialogs
                 closest = p1;
                 dx = x - p1.X;
                 dy = y - p1.Y;
-                return (float) Math.Sqrt(dx * dx + dy * dy);
+                return (float)Math.Sqrt(dx * dx + dy * dy);
             }
 
             // Calculate the t that minimizes the distance.
@@ -258,8 +420,9 @@ namespace Barnacle.Dialogs
                 dy = y - closest.Y;
             }
 
-            return (float) Math.Sqrt(dx * dx + dy * dy);
+            return (float)Math.Sqrt(dx * dx + dy * dy);
         }
+
         public static bool IsPointInPolygon(float x, float y, List<Point> polygon)
         {
             int polyCorners = polygon.Count;
@@ -282,16 +445,15 @@ namespace Barnacle.Dialogs
 
             return oddNodes;
         }
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            
         }
 
         private void UpdateDisplay()
@@ -307,12 +469,10 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-            
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            
-            
 
             UpdateDisplay();
         }

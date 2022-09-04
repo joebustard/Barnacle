@@ -8,6 +8,18 @@ namespace asdflibrary
         public double x;
         public double y;
         public double z;
+        public XYZ()
+        {
+            this.x = 0;
+            this.y = 0;
+            this.z = 0;
+        }
+        public XYZ(double x, double y, double z)
+        {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
     };
 
     public class Triangle
@@ -32,33 +44,7 @@ namespace asdflibrary
     public class CubeMarcher
     {
 
-        /*        typedef struct {
-           XYZ p[3];
-            }
-            TRIANGLE;
-
-        typedef struct {
-           XYZ p[8];
-            double val[8];
-        }
-        GRIDCELL;
-        */
-
-        /*
-           Given a grid cell and an isolevel, calculate the triangular
-           facets required to represent the isosurface through the cell.
-           Return the number of triangular facets, the array "triangles"
-           will be loaded up with the vertices at most 5 triangular facets.
-            0 will be returned if the grid cell is either totally above
-           of totally below the isolevel.
-        */
-        int Polygonise(GridCell grid, double isolevel, List<Triangle> triangles)
-        {
-            int i, ntriang;
-            int cubeindex;
-            XYZ[] vertlist = new XYZ[12];
-
-            int[] edgeTable ={
+      private  int[] edgeTable ={
 0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
 0x190, 0x99 , 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -93,8 +79,8 @@ namespace asdflibrary
 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0   };
 
 
-            int[,] triTable =
-        {
+    private int[,] triTable =
+    {
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -352,6 +338,24 @@ namespace asdflibrary
 { 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
     };
+        public CubeMarcher()
+        {
+
+        }
+        /*
+           Given a grid cell and an isolevel, calculate the triangular
+           facets required to represent the isosurface through the cell.
+           Return the number of triangular facets, the array "triangles"
+           will be loaded up with the vertices at most 5 triangular facets.
+            0 will be returned if the grid cell is either totally above
+           of totally below the isolevel.
+        */
+      public int Polygonise(GridCell grid, double isolevel, List<Triangle> triangles)
+        {
+            int i, ntriang;
+            int cubeindex;
+            XYZ[] vertlist = new XYZ[12];
+
 
             /*
                Determine the index into the edge table which
@@ -401,9 +405,11 @@ namespace asdflibrary
             ntriang = 0;
             for (i = 0; triTable[cubeindex, i] != -1; i += 3)
             {
-                triangles[ntriang].p[0] = vertlist[triTable[cubeindex, i]];
-                triangles[ntriang].p[1] = vertlist[triTable[cubeindex, i + 1]];
-                triangles[ntriang].p[2] = vertlist[triTable[cubeindex, i + 2]];
+                Triangle tri = new Triangle();
+                tri.p[0] = vertlist[triTable[cubeindex, i]];
+                tri.p[1] = vertlist[triTable[cubeindex, i + 1]];
+                tri.p[2] = vertlist[triTable[cubeindex, i + 2]];
+                triangles.Add(tri);
                 ntriang++;
             }
 

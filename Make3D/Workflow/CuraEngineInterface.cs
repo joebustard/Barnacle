@@ -339,25 +339,6 @@ exit 0
             return result;
         }
 
-        private static string FindSDCard(string label)
-        {
-            string res = "";
-            var driveList = DriveInfo.GetDrives();
-
-            foreach (DriveInfo drive in driveList)
-            {
-                if (drive.IsReady)
-                {
-                    if (drive.DriveType == DriveType.Removable)
-                    {
-                        if (drive.VolumeLabel.ToLower() == label.ToLower())
-                        {
-                            res = drive.Name;
-                        }
-                    }
-                }
-            }
-            return res;
-        }
+       
     }
 }

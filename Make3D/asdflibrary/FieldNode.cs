@@ -150,8 +150,8 @@ namespace asdflibrary
             }
             return result;
         }
-
-        public void Subdivide()
+        private const int MAX_DEPTH = 10;
+        public void Subdivide(int depth = 0)
         {
 
             // cant subdivide if its already subdivided
@@ -233,17 +233,19 @@ namespace asdflibrary
                     }
                 }
             }
-
-            for (int i = 0; i < 8; i++)
+            if (depth < MAX_DEPTH)
             {
-
-
-                if (SubNodes[i] != null && !SubNodes[i].SignsSame())
+                for (int i = 0; i < 8; i++)
                 {
-                    // a node which isn't all in or all out 
-                    if (SubNodes[i].Differential() > 2)
+
+
+                    if (SubNodes[i] != null && !SubNodes[i].SignsSame())
                     {
-                        SubNodes[i].Subdivide();
+                        // a node which isn't all in or all out 
+                        if (SubNodes[i].Differential() > 0.75)
+                        {
+                            SubNodes[i].Subdivide(depth + 1);
+                        }
                     }
                 }
             }
