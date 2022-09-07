@@ -531,8 +531,13 @@ G90 ;Absolute positioning";
                 }
                 else
                 {
-                    MessageBox.Show("Couldn'y find sdcard labelled " + cardName);
+                    MessageBox.Show("Couldn't find sdcard labelled " + cardName);
                 }
+            }
+            else
+            {
+                MessageBox.Show("Sdcard label not defined in settings." +
+                "" );
             }
 
         }
