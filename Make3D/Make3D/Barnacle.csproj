@@ -103,6 +103,7 @@
     <Compile Include="Dialogs\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
@@ -406,6 +407,10 @@
     <Page Include="Dialogs\BusyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>

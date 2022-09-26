@@ -167,6 +167,10 @@ namespace Barnacle.Models
                 case "DevTest":
                     res = new DevTest();
                     break;
+
+                case "CurvedFunnel":
+                    res = new CurvedFunnelDlg();
+                    break;
             }
             if (res != null)
             {

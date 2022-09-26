@@ -48,6 +48,7 @@
     <Compile Include="BicornMaker.cs" />
     <Compile Include="HollowPolyMaker.cs" />
     <Compile Include="MakeBrickWall.cs" />
+    <Compile Include="MakeCurvedFunnel.cs" />
     <Compile Include="MakeDualProfile.cs" />
     <Compile Include="MakeParabolicDish.cs" />
     <Compile Include="MakePulley.cs" />
