@@ -36,12 +36,12 @@
 
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">FactorA</Label>
+                                <Label VerticalAlignment="Center" Width="100">Curve</Label>
                  <TextBox Margin="8,0,0,0" Text="{Binding FactorA}" Width="150"/>
 
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">WallThickness</Label>
+                                <Label VerticalAlignment="Center" Width="100">Wall Thickness</Label>
                  <TextBox Margin="8,0,0,0" Text="{Binding WallThickness}" Width="150"/>
 
             </StackPanel>

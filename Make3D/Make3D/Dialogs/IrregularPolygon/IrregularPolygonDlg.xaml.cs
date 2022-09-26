@@ -449,7 +449,6 @@ namespace Barnacle.Dialogs
 
         private bool ConvertLineAtPointToBezier(MouseButtonEventArgs e, Line ln, bool cubic)
         {
-            int found = -1;
             bool added = false;
             System.Windows.Point position = e.GetPosition(MainCanvas);
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));

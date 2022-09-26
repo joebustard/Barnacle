@@ -33,13 +33,14 @@ public double Radius
               NotifyPropertyChanged();
               UpdateDisplay();
            }
+
         }
     }
 }
 
 
 
-private double factorA=10;
+private double factorA=0.75;
 public double FactorA
 {
     get
@@ -79,6 +80,7 @@ public double WallThickness
               NotifyPropertyChanged();
               UpdateDisplay();
            }
+
         }
     }
 }
@@ -177,11 +179,17 @@ public double ShapeHeight
         private void GenerateShape()
         {
             ClearShape();
-            CurvedFunnelMaker maker = new CurvedFunnelMaker(
-                radius, factorA, wallThickness, shapeHeight
-                );
-            maker.Generate(Vertices, Faces);
-            CentreVertices();
+            if (Radius - WallThickness <= 0)
+            {
+                WarningText = "Radius must be bigger than Wall Thickness";
+            }
+            else
+            {
+                WarningText = "";
+                CurvedFunnelMaker maker = new CurvedFunnelMaker( radius, factorA, wallThickness, shapeHeight );
+                maker.Generate(Vertices, Faces);
+                CentreVertices();
+            }
         }
 
         private void LoadEditorParameters()
