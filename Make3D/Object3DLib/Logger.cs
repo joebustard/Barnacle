@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Forms;
 
 namespace Barnacle.Object3DLib
 {
@@ -12,9 +13,18 @@ namespace Barnacle.Object3DLib
         {
             if (!initialised)
             {
-                path = AppDomain.CurrentDomain.BaseDirectory + "log.txt";
-                File.WriteAllText(path, DateTime.Now.ToString() + "\r\n");
-                initialised = true;
+                path = System.IO.Path.Combine(System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Barnacle");
+                try
+                {
+                    Directory.CreateDirectory(path);
+                    path += "\\log.txt";
+                    File.WriteAllText(path, DateTime.Now.ToString() + "\r\n");
+                    initialised = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
             try
             {

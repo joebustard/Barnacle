@@ -90,8 +90,12 @@ namespace Barnacle.Dialogs.Slice
         {
             
 
-            String fileName = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Barnacle\\PrinterProfiles\\";
-            fileName += ProfileName;
+            String fileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
+            if ( !Directory.Exists(fileName))
+            {
+                Directory.CreateDirectory(fileName);
+            }
+            fileName += "\\"+ProfileName;
             if (!fileName.ToLower().EndsWith(".profile"))
             {
                 fileName += ".profile";

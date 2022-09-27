@@ -60,7 +60,7 @@ popd";
                 pi.UseShellExecute = true;
                 pi.FileName = pt;
                 pi.WindowStyle = ProcessWindowStyle.Normal;
-                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\3dModels";
+                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
                 Process.Start(pi);
             }
         }

@@ -13,10 +13,17 @@ namespace Workflow
         {
             Printers = new List<BarnaclePrinter>();
 
-            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             folder += "\\Barnacle\\PrinterProfiles\\";
-            filePath = folder + "printers.xml";
-            LoadFromXml(filePath);
+            if (!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            else
+            {
+                filePath = folder + "printers.xml";
+                LoadFromXml(filePath);
+            }
         }
 
         public void Save()

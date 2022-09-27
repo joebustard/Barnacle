@@ -158,7 +158,7 @@ exit 0
                 SlicerProfile defpro = new SlicerProfile();
                 if (userProfile != "" && userProfile.ToLower() != "none")
                 {
-                    string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                     folder += "\\Barnacle\\PrinterProfiles\\";
                     userProfile = folder + userProfile + ".profile";
                     defpro.LoadOverrides(userProfile);
@@ -220,7 +220,7 @@ exit 0
 
         public static List<string> GetAvailableUserProfiles()
         {
-            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             folder += "\\Barnacle\\PrinterProfiles";
             if (!Directory.Exists(folder))
             {
@@ -327,7 +327,7 @@ exit 0
                 pi.FileName = pt;
                 //  pi.WindowStyle = ProcessWindowStyle.Normal;
                 pi.WindowStyle = ProcessWindowStyle.Hidden;
-                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\3dModels";
+                pi.WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle";
                 Process runner = Process.Start(pi);
                 runner.WaitForExit();
                 if (runner.ExitCode == 0)

@@ -250,11 +250,17 @@
             <Setter Property="Background"
                     Value="{StaticResource ControlBackBrush}"/>
         </Style>
-        <Style TargetType="ComboBox">
+        <Style TargetType="ComboBox" x:Key="LargeCombo">
             <Setter Property="Foreground"
                     Value="{StaticResource TextBrush}"/>
             <Setter Property="Background"
                     Value="{StaticResource ControlBackBrush}"/>
+            <Setter Property="Border.CornerRadius"
+                    Value="8,0,8,0"/>
+            <Setter Property="FontSize"
+                    Value="14"
+                    
+                    />
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Foreground"

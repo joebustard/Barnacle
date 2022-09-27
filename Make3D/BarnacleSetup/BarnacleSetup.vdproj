@@ -15,20 +15,56 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_034A657AFFDDDEAA4DF7627CCCEB8F3E"
+        "MsmKey" = "8:_0436108AF80348688D4C9CB8B1A8FFC0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_0F28C8236978406CBD2B73C6B8626638"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_137C49805BA38099805481B2EB16E8D1"
+        "OwnerKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_197809B4E5114ABA8865D30B8354D77C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1C304255AF374363832F76CC69788AC7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_1C49BF414ED94A6BB0947AB9FFCB31E2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_223E82112F696A92EF545BA3C0D31134"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_0F6369FA14929B1FA7273C5C7936E088"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_223E82112F696A92EF545BA3C0D31134"
+        "OwnerKey" = "8:_C7BA4C78340FD203257D55F20C9EB64B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_11A4EE0CCCB3132BD25B7051E8E017FA"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_236553DDEC0A4199AAB81EB6A3684D5E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -45,20 +81,38 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_41A72FF9ACA4138AAD9965101EF4AFB2"
+        "MsmKey" = "8:_37284581A25F9EF4170EA63A9E42F901"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_41A72FF9ACA4138AAD9965101EF4AFB2"
-        "OwnerKey" = "8:_C7BA4C78340FD203257D55F20C9EB64B"
+        "MsmKey" = "8:_37284581A25F9EF4170EA63A9E42F901"
+        "OwnerKey" = "8:_7F2D08AE6543BB98B41C1B7FB3BB32A6"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_4B2483006BEE4D665FF40FFC2196B7C3"
+        "MsmKey" = "8:_3BAD130B09344F949489D0821585387D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_3F865547F63A4347A2AE4A908EFB6045"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_450B3AAAFD8EAB07F5988E470DF57FAB"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4D1541900E924C4997332F0C2DAB4645"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -75,8 +129,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_56A4476D5A9046C1C051C4F638BF9B3F"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_5639CE54194A47A2AE0AE954334078BE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_57773F20FB1762D999B78D310C9F7555"
+        "OwnerKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5819A8FCBF27453E97EF92EE1577EDC3"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -89,6 +155,36 @@
         {
         "MsmKey" = "8:_5849D70BABB9B4FAD43E1A061FD715AC"
         "OwnerKey" = "8:_C7BA4C78340FD203257D55F20C9EB64B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_584DE32A5C5718728E0A84E0234E63AB"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5C502028E1BA4D44A44914C3B5431C16"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
+        "OwnerKey" = "8:_7F2D08AE6543BB98B41C1B7FB3BB32A6"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F03A75FF5C944409391E8A0CC0B6006"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -107,6 +203,12 @@
         {
         "MsmKey" = "8:_63598880C017D756DC0ED2B89EA3A2A7"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_649E65B0613BAFB5E0AE8875D77842A9"
+        "OwnerKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -153,8 +255,8 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_77826BFD3A42C36B38641C3E4DB3D913"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_760605C36E5E42FEB48EA667076245B2"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -171,62 +273,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_85459628B3AF981D82AC05571633B9CC"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_92BD44637AC048B48F05C851D290A6A0"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_8850C0702B7281C0AD12760E6B96C106"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_933D2C11F15146D2A233F155182EDF2E"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_8850C0702B7281C0AD12760E6B96C106"
-        "OwnerKey" = "8:_7F2D08AE6543BB98B41C1B7FB3BB32A6"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_89509E916E7A77AEEC5888EF8BE2540A"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8D9CD9CCCDA912171CB5DB179704F83D"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_8D9CD9CCCDA912171CB5DB179704F83D"
-        "OwnerKey" = "8:_77826BFD3A42C36B38641C3E4DB3D913"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9D1A6CB2C1D19E15EB7B087D10AA655E"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9D1A6CB2C1D19E15EB7B087D10AA655E"
-        "OwnerKey" = "8:_F0A57FCBB7D9A229A7BBC12B5F12D9CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9D1A6CB2C1D19E15EB7B087D10AA655E"
-        "OwnerKey" = "8:_4B2483006BEE4D665FF40FFC2196B7C3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_9D1A6CB2C1D19E15EB7B087D10AA655E"
-        "OwnerKey" = "8:_11A4EE0CCCB3132BD25B7051E8E017FA"
+        "MsmKey" = "8:_97201C5E63604119AB0D05F75DD911DA"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -249,6 +309,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B4F2B94D877142CB8957AB360272172B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B7D7E74F97414E318B9B6AC9B42B1D81"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_B895D44683C748D3985F92E6B3E8EC09"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_BAA09B1AEF4FDC664E017ECF39A952AD"
         "OwnerKey" = "8:_74B8189F9A02D55735DC097059DEDA11"
         "MsmSig" = "8:_UNDEFINED"
@@ -273,6 +351,36 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_BCBCA8AE041A40D2A07F628BB864BB5A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BE053BB5FA8D60F77A3ACE82848892AE"
+        "OwnerKey" = "8:_137C49805BA38099805481B2EB16E8D1"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BE053BB5FA8D60F77A3ACE82848892AE"
+        "OwnerKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_BF3C3CF1D62E434C8956F603A0F0E3A4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C1A03C659BD745CCAAF9CC73CDECAC66"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_C7BA4C78340FD203257D55F20C9EB64B"
         "OwnerKey" = "8:_BAA09B1AEF4FDC664E017ECF39A952AD"
         "MsmSig" = "8:_UNDEFINED"
@@ -287,6 +395,12 @@
         {
         "MsmKey" = "8:_C7BA4C78340FD203257D55F20C9EB64B"
         "OwnerKey" = "8:_74B8189F9A02D55735DC097059DEDA11"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C9764B95519B979177EAB23CA27712D4"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -303,14 +417,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_E44636EBB66336CD5D0F59E66F60AD70"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_D93AECBD06764F66A7E1F9E56EE4821B"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_E44636EBB66336CD5D0F59E66F60AD70"
-        "OwnerKey" = "8:_7F2D08AE6543BB98B41C1B7FB3BB32A6"
+        "MsmKey" = "8:_E34FD42752BC4FBF916E21436F5EFAC4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E6E6E31C0B4C477294E7013E7EB2F01B"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -321,20 +441,20 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F0A57FCBB7D9A229A7BBC12B5F12D9CC"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmKey" = "8:_F284D7C44BA746A9BFABD19C9107BB23"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F46D3C2BFE164844AF9792D5614B389A"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FBAA793F878989BB3A8D37230C75BB49"
-        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -370,12 +490,6 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_E44636EBB66336CD5D0F59E66F60AD70"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_252F3434CC126DD44C61A588EFEFEF60"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -389,36 +503,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_73E75AF92B3590B89380BBB9190C53C8"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_85459628B3AF981D82AC05571633B9CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F0A57FCBB7D9A229A7BBC12B5F12D9CC"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_4B2483006BEE4D665FF40FFC2196B7C3"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_11A4EE0CCCB3132BD25B7051E8E017FA"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_9D1A6CB2C1D19E15EB7B087D10AA655E"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -484,55 +568,61 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_41A72FF9ACA4138AAD9965101EF4AFB2"
+        "OwnerKey" = "8:_223E82112F696A92EF545BA3C0D31134"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_56A4476D5A9046C1C051C4F638BF9B3F"
+        "OwnerKey" = "8:_584DE32A5C5718728E0A84E0234E63AB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_89509E916E7A77AEEC5888EF8BE2540A"
+        "OwnerKey" = "8:_37284581A25F9EF4170EA63A9E42F901"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_77826BFD3A42C36B38641C3E4DB3D913"
+        "OwnerKey" = "8:_5E4153D52154CD8D6C4D07F7C40B3ACE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8D9CD9CCCDA912171CB5DB179704F83D"
+        "OwnerKey" = "8:_57773F20FB1762D999B78D310C9F7555"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_FBAA793F878989BB3A8D37230C75BB49"
+        "OwnerKey" = "8:_137C49805BA38099805481B2EB16E8D1"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_034A657AFFDDDEAA4DF7627CCCEB8F3E"
+        "OwnerKey" = "8:_BE053BB5FA8D60F77A3ACE82848892AE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_8850C0702B7281C0AD12760E6B96C106"
+        "OwnerKey" = "8:_649E65B0613BAFB5E0AE8875D77842A9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_0F6369FA14929B1FA7273C5C7936E088"
+        "OwnerKey" = "8:_C9764B95519B979177EAB23CA27712D4"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_450B3AAAFD8EAB07F5988E470DF57FAB"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -622,7 +712,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:v4.7.2 "
+                "FrameworkVersion" = "8:v4.7.2  "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=863262"
                 }
@@ -630,20 +720,60 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_034A657AFFDDDEAA4DF7627CCCEB8F3E"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0436108AF80348688D4C9CB8B1A8FFC0"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\TemplateData.def"
+            "TargetName" = "8:TemplateData.def"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0F28C8236978406CBD2B73C6B8626638"
+            {
+            "SourcePath" = "8:..\\Make3D\\Dialogs\\TankTrack\\Links\\Simple.txt"
+            "TargetName" = "8:Simple.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_157431C232B245B98AC66C0ED8C73037"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_137C49805BA38099805481B2EB16E8D1"
             {
             "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Runtime.Serialization.Primitives, Version=4.0.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+            "AssemblyIsInGAC" = "11:TRUE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_034A657AFFDDDEAA4DF7627CCCEB8F3E"
+                    "_137C49805BA38099805481B2EB16E8D1"
                     {
-                    "Name" = "8:System.Runtime.Serialization.Primitives.dll"
+                    "Name" = "8:System.IO.Compression.FileSystem.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Runtime.Serialization.Primitives.dll"
+            "SourcePath" = "8:System.IO.Compression.FileSystem.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -661,20 +791,80 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_0F6369FA14929B1FA7273C5C7936E088"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_197809B4E5114ABA8865D30B8354D77C"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\BodyAssembly1_35.txt"
+            "TargetName" = "8:BodyAssembly1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1C304255AF374363832F76CC69788AC7"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\BuildPlates.xml"
+            "TargetName" = "8:BuildPlates.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_2C70B6009DE74DCFB8DFE47A597DF46D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1C49BF414ED94A6BB0947AB9FFCB31E2"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\CopyToPrint3D.cmd"
+            "TargetName" = "8:CopyToPrint3D.cmd"
+            "Tag" = "8:"
+            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_223E82112F696A92EF545BA3C0D31134"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Diagnostics.Tracing, Version=4.0.20.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+            "AssemblyAsmDisplayName" = "8:HullLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_0F6369FA14929B1FA7273C5C7936E088"
+                    "_223E82112F696A92EF545BA3C0D31134"
                     {
-                    "Name" = "8:System.Diagnostics.Tracing.dll"
+                    "Name" = "8:HullLibrary.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Diagnostics.Tracing.dll"
+            "SourcePath" = "8:HullLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -692,23 +882,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_11A4EE0CCCB3132BD25B7051E8E017FA"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_236553DDEC0A4199AAB81EB6A3684D5E"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Xceed.Wpf.AvalonDock.Themes.Aero, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_11A4EE0CCCB3132BD25B7051E8E017FA"
-                    {
-                    "Name" = "8:Xceed.Wpf.AvalonDock.Themes.Aero.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Xceed.Wpf.AvalonDock.Themes.Aero.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\TankBuildInstructions.docx"
+            "TargetName" = "8:TankBuildInstructions.docx"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -720,7 +899,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_252F3434CC126DD44C61A588EFEFEF60"
@@ -730,6 +909,11 @@
             "AssemblyAsmDisplayName" = "8:Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_252F3434CC126DD44C61A588EFEFEF60"
+                    {
+                    "Name" = "8:Microsoft.Xaml.Behaviors.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Microsoft.Xaml.Behaviors.dll"
             "TargetName" = "8:"
@@ -749,15 +933,20 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_41A72FF9ACA4138AAD9965101EF4AFB2"
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_37284581A25F9EF4170EA63A9E42F901"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:ClassLibrary1, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Runtime.InteropServices.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
+                    "_37284581A25F9EF4170EA63A9E42F901"
+                    {
+                    "Name" = "8:System.Runtime.InteropServices.WindowsRuntime.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
-            "SourcePath" = "8:ClassLibrary1.dll"
+            "SourcePath" = "8:System.Runtime.InteropServices.WindowsRuntime.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -775,20 +964,60 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4B2483006BEE4D665FF40FFC2196B7C3"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3BAD130B09344F949489D0821585387D"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\blankmodel1_35.txt"
+            "TargetName" = "8:blankmodel1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3F865547F63A4347A2AE4A908EFB6045"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\AircraftBuildInstructions.docx"
+            "TargetName" = "8:AircraftBuildInstructions.docx"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_450B3AAAFD8EAB07F5988E470DF57FAB"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Xceed.Wpf.AvalonDock.Themes.Metro, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL"
+            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
                 "ScatterAssemblies"
                 {
-                    "_4B2483006BEE4D665FF40FFC2196B7C3"
+                    "_450B3AAAFD8EAB07F5988E470DF57FAB"
                     {
-                    "Name" = "8:Xceed.Wpf.AvalonDock.Themes.Metro.dll"
+                    "Name" = "8:System.Net.Http.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:Xceed.Wpf.AvalonDock.Themes.Metro.dll"
+            "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -804,6 +1033,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4D1541900E924C4997332F0C2DAB4645"
+            {
+            "SourcePath" = "8:..\\Make3D\\Dialogs\\Wing\\Airfoils\\Airfoils.xml"
+            "TargetName" = "8:Airfoils.xml"
+            "Tag" = "8:"
+            "Folder" = "8:_2C70B6009DE74DCFB8DFE47A597DF46D"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_4F475015BCC3C97E98B15CAFD726CFA6"
@@ -813,6 +1062,11 @@
             "AssemblyAsmDisplayName" = "8:System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_4F475015BCC3C97E98B15CAFD726CFA6"
+                    {
+                    "Name" = "8:System.Threading.Tasks.Extensions.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Threading.Tasks.Extensions.dll"
             "TargetName" = "8:"
@@ -832,20 +1086,40 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_56A4476D5A9046C1C051C4F638BF9B3F"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5639CE54194A47A2AE0AE954334078BE"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\AircraftBillOfMaterials.xlsx"
+            "TargetName" = "8:AircraftBillOfMaterials.xlsx"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_57773F20FB1762D999B78D310C9F7555"
             {
             "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Windows.Controls.Ribbon, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+            "AssemblyIsInGAC" = "11:TRUE"
+            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_56A4476D5A9046C1C051C4F638BF9B3F"
+                    "_57773F20FB1762D999B78D310C9F7555"
                     {
-                    "Name" = "8:System.Windows.Controls.Ribbon.dll"
+                    "Name" = "8:System.Net.Http.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.Windows.Controls.Ribbon.dll"
+            "SourcePath" = "8:System.Net.Http.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -863,6 +1137,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5819A8FCBF27453E97EF92EE1577EDC3"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\ClearPrint3D.cmd"
+            "TargetName" = "8:ClearPrint3D.cmd"
+            "Tag" = "8:"
+            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5849D70BABB9B4FAD43E1A061FD715AC"
             {
             "AssemblyRegister" = "3:1"
@@ -870,6 +1164,11 @@
             "AssemblyAsmDisplayName" = "8:CSGLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_5849D70BABB9B4FAD43E1A061FD715AC"
+                    {
+                    "Name" = "8:CSGLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:CSGLib.dll"
             "TargetName" = "8:"
@@ -889,6 +1188,108 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_584DE32A5C5718728E0A84E0234E63AB"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:asdflibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_584DE32A5C5718728E0A84E0234E63AB"
+                    {
+                    "Name" = "8:asdflibrary.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:asdflibrary.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5C502028E1BA4D44A44914C3B5431C16"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\LimpetTemplate.txt"
+            "TargetName" = "8:LimpetTemplate.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_5E4153D52154CD8D6C4D07F7C40B3ACE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51"
+                "ScatterAssemblies"
+                {
+                    "_5E4153D52154CD8D6C4D07F7C40B3ACE"
+                    {
+                    "Name" = "8:netstandard.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:netstandard.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F03A75FF5C944409391E8A0CC0B6006"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\EngineAssembly1_35.txt"
+            "TargetName" = "8:EngineAssembly1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_62EA85DE5811B8D3E870CA8367774193"
             {
             "AssemblyRegister" = "3:1"
@@ -896,6 +1297,11 @@
             "AssemblyAsmDisplayName" = "8:EditorParameterLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_62EA85DE5811B8D3E870CA8367774193"
+                    {
+                    "Name" = "8:EditorParameterLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:EditorParameterLib.dll"
             "TargetName" = "8:"
@@ -922,8 +1328,44 @@
             "AssemblyAsmDisplayName" = "8:Workflow, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_63598880C017D756DC0ED2B89EA3A2A7"
+                    {
+                    "Name" = "8:Workflow.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Workflow.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_649E65B0613BAFB5E0AE8875D77842A9"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:TRUE"
+            "AssemblyAsmDisplayName" = "8:System.Diagnostics.Tracing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_649E65B0613BAFB5E0AE8875D77842A9"
+                    {
+                    "Name" = "8:System.Diagnostics.Tracing.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.Diagnostics.Tracing.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -948,6 +1390,11 @@
             "AssemblyAsmDisplayName" = "8:LineLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_6D84AF172E07D691353C49427B6EAFB1"
+                    {
+                    "Name" = "8:LineLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:LineLib.dll"
             "TargetName" = "8:"
@@ -974,6 +1421,11 @@
             "AssemblyAsmDisplayName" = "8:VisualSolutionExplorerLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_6DD8A511F63D4E5958B7E100BB52993C"
+                    {
+                    "Name" = "8:VisualSolutionExplorerLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:VisualSolutionExplorerLib.dll"
             "TargetName" = "8:"
@@ -1000,6 +1452,11 @@
             "AssemblyAsmDisplayName" = "8:TemplateLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_6EAC8FB2AC8605632F074D5ABD7D0B94"
+                    {
+                    "Name" = "8:TemplateLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:TemplateLib.dll"
             "TargetName" = "8:"
@@ -1026,6 +1483,11 @@
             "AssemblyAsmDisplayName" = "8:PlacementLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_73E75AF92B3590B89380BBB9190C53C8"
+                    {
+                    "Name" = "8:PlacementLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:PlacementLib.dll"
             "TargetName" = "8:"
@@ -1052,6 +1514,11 @@
             "AssemblyAsmDisplayName" = "8:InterpreterLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_74B8189F9A02D55735DC097059DEDA11"
+                    {
+                    "Name" = "8:InterpreterLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:InterpreterLib.dll"
             "TargetName" = "8:"
@@ -1071,23 +1538,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_77826BFD3A42C36B38641C3E4DB3D913"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_760605C36E5E42FEB48EA667076245B2"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-                "ScatterAssemblies"
-                {
-                    "_77826BFD3A42C36B38641C3E4DB3D913"
-                    {
-                    "Name" = "8:System.IO.Compression.FileSystem.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.IO.Compression.FileSystem.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\Data\\DefaultPrinter.profile"
+            "TargetName" = "8:DefaultPrinter.profile"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_2C70B6009DE74DCFB8DFE47A597DF46D"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1099,7 +1555,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_7F2D08AE6543BB98B41C1B7FB3BB32A6"
@@ -1109,6 +1565,11 @@
             "AssemblyAsmDisplayName" = "8:System.Reactive, Version=5.0.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_7F2D08AE6543BB98B41C1B7FB3BB32A6"
+                    {
+                    "Name" = "8:System.Reactive.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Reactive.dll"
             "TargetName" = "8:"
@@ -1128,23 +1589,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_85459628B3AF981D82AC05571633B9CC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_92BD44637AC048B48F05C851D290A6A0"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Xceed.Wpf.Toolkit, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_85459628B3AF981D82AC05571633B9CC"
-                    {
-                    "Name" = "8:Xceed.Wpf.Toolkit.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Xceed.Wpf.Toolkit.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\ExtractThingiverseFiles.cmd"
+            "TargetName" = "8:ExtractThingiverseFiles.cmd"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1156,26 +1606,15 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8850C0702B7281C0AD12760E6B96C106"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_933D2C11F15146D2A233F155182EDF2E"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Runtime.InteropServices.WindowsRuntime, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-                "ScatterAssemblies"
-                {
-                    "_8850C0702B7281C0AD12760E6B96C106"
-                    {
-                    "Name" = "8:System.Runtime.InteropServices.WindowsRuntime.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Runtime.InteropServices.WindowsRuntime.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\WholeArmouredCarAssembly1_35.txt"
+            "TargetName" = "8:WholeArmouredCarAssembly1_35.txt"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1187,26 +1626,15 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_89509E916E7A77AEEC5888EF8BE2540A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_97201C5E63604119AB0D05F75DD911DA"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Net.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-                "ScatterAssemblies"
-                {
-                    "_89509E916E7A77AEEC5888EF8BE2540A"
-                    {
-                    "Name" = "8:System.Net.Http.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Net.Http.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\TankGlobals.txt"
+            "TargetName" = "8:TankGlobals.txt"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1218,69 +1646,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8D9CD9CCCDA912171CB5DB179704F83D"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Compression, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-                "ScatterAssemblies"
-                {
-                    "_8D9CD9CCCDA912171CB5DB179704F83D"
-                    {
-                    "Name" = "8:System.IO.Compression.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.IO.Compression.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9D1A6CB2C1D19E15EB7B087D10AA655E"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Xceed.Wpf.AvalonDock, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_9D1A6CB2C1D19E15EB7B087D10AA655E"
-                    {
-                    "Name" = "8:Xceed.Wpf.AvalonDock.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Xceed.Wpf.AvalonDock.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_9FD6C6653DE50D31C1564326B2D5862C"
@@ -1290,6 +1656,11 @@
             "AssemblyAsmDisplayName" = "8:PolygonTriangulationLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_9FD6C6653DE50D31C1564326B2D5862C"
+                    {
+                    "Name" = "8:PolygonTriangulationLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:PolygonTriangulationLib.dll"
             "TargetName" = "8:"
@@ -1316,6 +1687,11 @@
             "AssemblyAsmDisplayName" = "8:ManifoldLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_A284D73F964FDCCD7F6DB65E4EFFDB8E"
+                    {
+                    "Name" = "8:ManifoldLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:ManifoldLib.dll"
             "TargetName" = "8:"
@@ -1335,6 +1711,66 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B4F2B94D877142CB8957AB360272172B"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\ChassisAssembly1_35.txt"
+            "TargetName" = "8:ChassisAssembly1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B7D7E74F97414E318B9B6AC9B42B1D81"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\WholeTankAssembly1_35.txt"
+            "TargetName" = "8:WholeTankAssembly1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B895D44683C748D3985F92E6B3E8EC09"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\blankmodel.txt"
+            "TargetName" = "8:blankmodel.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BAA09B1AEF4FDC664E017ECF39A952AD"
             {
             "AssemblyRegister" = "3:1"
@@ -1342,6 +1778,11 @@
             "AssemblyAsmDisplayName" = "8:MakerLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_BAA09B1AEF4FDC664E017ECF39A952AD"
+                    {
+                    "Name" = "8:MakerLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:MakerLib.dll"
             "TargetName" = "8:"
@@ -1368,6 +1809,11 @@
             "AssemblyAsmDisplayName" = "8:EarClipperLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_BC50A230FB333DA4B8FAC5D5E22D9A35"
+                    {
+                    "Name" = "8:EarClipperLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:EarClipperLib.dll"
             "TargetName" = "8:"
@@ -1387,6 +1833,97 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BCBCA8AE041A40D2A07F628BB864BB5A"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\TurretAssembly1_35.txt"
+            "TargetName" = "8:TurretAssembly1_35.txt"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_BE053BB5FA8D60F77A3ACE82848892AE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:TRUE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Compression, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_BE053BB5FA8D60F77A3ACE82848892AE"
+                    {
+                    "Name" = "8:System.IO.Compression.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.IO.Compression.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_BF3C3CF1D62E434C8956F603A0F0E3A4"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\TankBillOfMaterials.xlsx"
+            "TargetName" = "8:TankBillOfMaterials.xlsx"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C1A03C659BD745CCAAF9CC73CDECAC66"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\ZipProject.cmd"
+            "TargetName" = "8:ZipProject.cmd"
+            "Tag" = "8:"
+            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C7BA4C78340FD203257D55F20C9EB64B"
             {
             "AssemblyRegister" = "3:1"
@@ -1394,8 +1931,44 @@
             "AssemblyAsmDisplayName" = "8:Object3DLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_C7BA4C78340FD203257D55F20C9EB64B"
+                    {
+                    "Name" = "8:Object3DLib.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:Object3DLib.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_C9764B95519B979177EAB23CA27712D4"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.Windows.Controls.Ribbon, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                "ScatterAssemblies"
+                {
+                    "_C9764B95519B979177EAB23CA27712D4"
+                    {
+                    "Name" = "8:System.Windows.Controls.Ribbon.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.Windows.Controls.Ribbon.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -1420,6 +1993,11 @@
             "AssemblyAsmDisplayName" = "8:System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_D5F359677F504C052F5BC34AB95D366E"
+                    {
+                    "Name" = "8:System.Runtime.CompilerServices.Unsafe.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:System.Runtime.CompilerServices.Unsafe.dll"
             "TargetName" = "8:"
@@ -1439,18 +2017,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E44636EBB66336CD5D0F59E66F60AD70"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D93AECBD06764F66A7E1F9E56EE4821B"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                }
-            "SourcePath" = "8:netstandard.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\OpenAllExportSTLsInCura.cmd"
+            "TargetName" = "8:OpenAllExportSTLsInCura.cmd"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1462,7 +2034,47 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E34FD42752BC4FBF916E21436F5EFAC4"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\CopyLatestToPrint3D.cmd"
+            "TargetName" = "8:CopyLatestToPrint3D.cmd"
+            "Tag" = "8:"
+            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E6E6E31C0B4C477294E7013E7EB2F01B"
+            {
+            "SourcePath" = "8:..\\Make3D\\templates\\Tank\\TankBOM.docx"
+            "TargetName" = "8:TankBOM.docx"
+            "Tag" = "8:"
+            "Folder" = "8:_ABE76DA878F74A7CB17154024B220A11"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_ECB214592D29D3061568BB0772FCCEBD"
@@ -1472,6 +2084,11 @@
             "AssemblyAsmDisplayName" = "8:MeshDecimator, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
+                    "_ECB214592D29D3061568BB0772FCCEBD"
+                    {
+                    "Name" = "8:MeshDecimator.dll"
+                    "Attributes" = "3:512"
+                    }
                 }
             "SourcePath" = "8:MeshDecimator.dll"
             "TargetName" = "8:"
@@ -1491,23 +2108,12 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F0A57FCBB7D9A229A7BBC12B5F12D9CC"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F284D7C44BA746A9BFABD19C9107BB23"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:Xceed.Wpf.AvalonDock.Themes.VS2010, Version=4.0.0.0, Culture=neutral, PublicKeyToken=3e4669d2f30244f4, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_F0A57FCBB7D9A229A7BBC12B5F12D9CC"
-                    {
-                    "Name" = "8:Xceed.Wpf.AvalonDock.Themes.VS2010.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:Xceed.Wpf.AvalonDock.Themes.VS2010.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\WholeAircraftAssembly1_35.txt"
+            "TargetName" = "8:WholeAircraftAssembly1_35.txt"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1519,26 +2125,15 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_FBAA793F878989BB3A8D37230C75BB49"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F46D3C2BFE164844AF9792D5614B389A"
             {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:System.Runtime.Serialization.Xml, Version=4.0.10.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
-                "ScatterAssemblies"
-                {
-                    "_FBAA793F878989BB3A8D37230C75BB49"
-                    {
-                    "Name" = "8:System.Runtime.Serialization.Xml.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:System.Runtime.Serialization.Xml.dll"
-            "TargetName" = "8:"
+            "SourcePath" = "8:..\\Make3D\\templates\\BOM.docx"
+            "TargetName" = "8:BOM.docx"
             "Tag" = "8:"
-            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Folder" = "8:_23862707349949B195647F45758B8C14"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1550,7 +2145,7 @@
             "PackageAs" = "3:1"
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
         }
@@ -1624,6 +2219,61 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_23862707349949B195647F45758B8C14"
+                    {
+                    "Name" = "8:Templates"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_D535C24678E1404885CDF87C67943777"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_ABE76DA878F74A7CB17154024B220A11"
+                            {
+                            "Name" = "8:Tank"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_B5F1047D992C4CCD84DF80FF2E4B070A"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+                            {
+                            "Name" = "8:Commands"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_0DFAD5A4DE984FC39D03DCC3AFCA5C99"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_2C70B6009DE74DCFB8DFE47A597DF46D"
+                    {
+                    "Name" = "8:Data"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_FDDA47BF105D4F72BBA6A3F345DFF986"
+                        "Folders"
+                        {
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_157431C232B245B98AC66C0ED8C73037"
+                            {
+                            "Name" = "8:Links"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_022203B1F8084C7CB49D9964734F3E11"
+                                "Folders"
+                                {
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1643,7 +2293,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Barnacle"
         "ProductCode" = "8:{8DDF0B69-1626-4F27-BB47-A0158347038F}"
-        "PackageCode" = "8:{F8C54283-DD9B-404F-8439-B36A57D29706}"
+        "PackageCode" = "8:{5DEBB9D7-CB4E-4D15-ADF6-6F56180AF966}"
         "UpgradeCode" = "8:{6F2FD966-929F-4C74-8C4C-BF438CF79394}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -1763,6 +2413,20 @@
         }
         "Shortcut"
         {
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_C66CCF6F4E194C0FAAFBFA7A41B1D70D"
+            {
+            "Name" = "8:Barnacle"
+            "Arguments" = "8:"
+            "Description" = "8:"
+            "ShowCmd" = "3:1"
+            "IconIndex" = "3:0"
+            "Transitive" = "11:FALSE"
+            "Target" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+            "Folder" = "8:_28355668C38F4C75876B042246E7C4BC"
+            "WorkingFolder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Icon" = "8:"
+            "Feature" = "8:"
+            }
         }
         "UserInterface"
         {
@@ -2188,6 +2852,7 @@
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {
+                "ExcludeFilter" = "8:*.pdb"
                 }
             }
         }

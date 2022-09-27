@@ -310,8 +310,12 @@ namespace Barnacle.Dialogs.Slice
             if (!String.IsNullOrEmpty(selectedUserProfile))
             {
                 EditProfile dlg = new EditProfile();
-
-                String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
+                string fl = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles";
+                if ( !Directory.Exists(fl))
+                {
+                    Directory.CreateDirectory(fl);
+                }
+                String defProfile = fl+$"{selectedUserProfile}.profile";
                 if (File.Exists(defProfile))
                 {
                     dlg.LoadFile(defProfile);
@@ -367,7 +371,7 @@ G90 ;Absolute positioning";
             dlg.ShowDialog();
             // refresh profiles list
             Profiles = CuraEngineInterface.GetAvailableUserProfiles();
-
+            SelectedUserProfile = dlg.ProfileName;
         }
         private Bounds3D RecalculateAllBounds()
         {
@@ -442,7 +446,6 @@ G90 ;Absolute positioning";
             {
                 Profiles = CuraEngineInterface.GetAvailableUserProfiles();
                 SelectedPrinter = Properties.Settings.Default.SlicerPrinter;
-
                 SelectedUserProfile = Properties.Settings.Default.SlicerProfileName;
             }
 
@@ -477,7 +480,7 @@ G90 ;Absolute positioning";
                 MessageBoxResult res = MessageBox.Show("The profile will be permanently deleted", "Warning", MessageBoxButton.OKCancel);
                 if (res == MessageBoxResult.OK)
                 {
-                    String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
+                    String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
                     if (File.Exists(defProfile))
                     {
                         try

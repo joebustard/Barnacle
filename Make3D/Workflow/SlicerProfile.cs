@@ -12,7 +12,7 @@ namespace Workflow
 
         public SlicerProfile()
         {
-            string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\Ender3ProRaft.profile";
+            string fileName = AppDomain.CurrentDomain.BaseDirectory + @"Data\DefaultPrinter.profile";
             LoadOverrides(fileName);
         }
 
