@@ -34,7 +34,7 @@ namespace Barnacle.Dialogs
         public DualProfileDlg()
         {
             InitializeComponent();
-            ToolName = "DualProfile";
+            ToolName = "Dual";
             DataContext = this;
             frontProfile = "";
             frontXSize = 0;
@@ -181,6 +181,70 @@ namespace Barnacle.Dialogs
                     CubeMarcher cm = new CubeMarcher();
                     GridCell gc = new GridCell();
                     List<Triangle> triangles = new List<Triangle>();
+
+                    float dd = 0.025F;
+                    Functions.SphereRadius = 0.5F;
+                    for (float x = -0.6F; x <= 0.6; x += dd)
+                    {
+                        for (float y = -0.6F; y <= 0.6F; y += dd)
+                        {
+
+
+                            for (float z = -0.6F; z <= 0.6; z += dd)
+                            {
+                                gc.p[0] = new XYZ(x, y, z);
+
+                                gc.p[1] = new XYZ(x + dd, y, z);
+                                gc.p[2] = new XYZ(x + dd, y, z + dd);
+                                gc.p[3] = new XYZ(x, y, z + dd);
+                                gc.p[4] = new XYZ(x, y + dd, z);
+                                gc.p[5] = new XYZ(x + dd, y + dd, z);
+                                gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
+                                gc.p[7] = new XYZ(x, y + dd, z + dd);
+
+                                for (int i = 0; i < 8; i++)
+                                {
+                                    //gc.val[i] = Functions.Sphere(gc.p[i].x, gc.p[i].y, gc.p[i].z); ;
+                                    bool fin = InFront((float)gc.p[i].x, (float)gc.p[i].y);
+                                    float fd = FrontDist((float)gc.p[i].x, (float)gc.p[i].y, fin);
+                                    if (Math.Abs(fd) < 0.001) fin = true;
+
+                                    bool tin = InTop((float)gc.p[i].x, (float)gc.p[i].z);
+                                    float td = TopDist((float)gc.p[i].x, (float)gc.p[i].z, tin);
+                                    if (Math.Abs(td) < 0.001) tin = true;
+
+                                    gc.val[i] = GetDist(fin, fd, tin, td);
+                                    
+                                }
+                                triangles.Clear();
+
+                                cm.Polygonise(gc, 0, triangles);
+
+                                foreach (Triangle t in triangles)
+                                {
+                                    int p0 = AddVertice(t.p[0].x * frontXSize, -(t.p[0].y * frontYSize), t.p[0].z * topYSize);
+                                    int p1 = AddVertice(t.p[1].x * frontXSize, -(t.p[1].y * frontYSize), t.p[1].z * topYSize);
+                                    int p2 = AddVertice(t.p[2].x * frontXSize, -(t.p[2].y * frontYSize), t.p[2].z * topYSize);
+
+                                    Faces.Add(p0);
+                                    Faces.Add(p2);
+                                    Faces.Add(p1);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            /*
+
+            if (TopPathControl.PathClosed && FrontPathControl.PathClosed)
+            {
+                if (frontpnts.Count > 3 && toppnts.Count > 3)
+                {
+                    CubeMarcher cm = new CubeMarcher();
+                    GridCell gc = new GridCell();
+                    List<Triangle> triangles = new List<Triangle>();
                     bool[] ins = new bool[4];
                     float[] xyd = new float[4];
                     bool[] itop = new bool[4];
@@ -239,12 +303,12 @@ namespace Barnacle.Dialogs
                                 }
                                 xzd[2] = TopDist(x + dd, z + dd, itop[2]);
                                 xzd[3] = TopDist(x, z + dd, itop[3]);
-                                
+
                                 gc.val[0] = GetDist(ins[0], xyd[0], itop[0], xzd[0]);
                                 gc.val[1] = GetDist(ins[1], xyd[1], itop[1], xzd[1]);
                                 gc.val[2] = GetDist(ins[1], xyd[1], itop[2], xzd[2]);
                                 gc.val[3] = GetDist(ins[0], xyd[0], itop[3], xzd[3]);
-                                
+
                                 gc.val[4] = GetDist(ins[3], xyd[3], itop[0], xzd[0]);
                                 gc.val[5] = GetDist(ins[2], xyd[2], itop[1], xzd[1]);
                                 gc.val[6] = GetDist(ins[2], xyd[2], itop[2], xzd[2]);
@@ -271,20 +335,22 @@ namespace Barnacle.Dialogs
 
                 }
             }
+            */
         }
         private double GetDist(bool fin, float fid, bool tin, float ftop)
         {
             double res = Math.Abs(fid);
-            /*
+            
             if ( Math.Abs(ftop) > res)
             {
                 res = Math.Abs(ftop);
             }
-            */
+            /*
             res = fid * fid;
             res += ftop * ftop;
             res = Math.Sqrt(res);
-            if ( fin && tin)
+            */
+            if (fin && tin)
             {
                 res = -res;
             }
@@ -374,10 +440,11 @@ namespace Barnacle.Dialogs
                 if (d < v)
                 {
                     v = d;
+                    closest.X = cl2.X;
+                    closest.Y = cl2.Y;
                 }
             }
-            closest.X = cl2.X;
-            closest.Y = cl2.Y;
+
             return v;
         }
 
@@ -449,11 +516,16 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            string s = EditorParameters.Get("TopShape");
+            TopPathControl.SetPath(s);
+            s = EditorParameters.Get("FrontShape");
+            FrontPathControl.SetPath(s);
         }
 
         private void SaveEditorParmeters()
         {
-            // save the parameters for the tool
+            EditorParameters.Set("TopShape", TopPathControl.GetPath());
+            EditorParameters.Set("FrontShape", FrontPathControl.GetPath());
         }
 
         private void UpdateDisplay()
@@ -475,6 +547,7 @@ namespace Barnacle.Dialogs
             loaded = true;
 
             UpdateDisplay();
+           
         }
     }
 }

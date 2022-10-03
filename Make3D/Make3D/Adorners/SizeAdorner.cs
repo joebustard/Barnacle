@@ -195,6 +195,7 @@ namespace Barnacle.Models.Adorners
             thumbLabels.Add(l);
         }
 
+        [Obsolete]
         private void CreateAdornments(Point3D position, Point3D size, bool addSizeThumbs)
         {
             box = new Object3D();
@@ -258,6 +259,7 @@ namespace Barnacle.Models.Adorners
             Adornments.Add(GetMesh(thumb));
         }
 
+        [Obsolete]
         private void LabelThumbs(Point3D size, String name = "")
         {
             labelLocations.Clear();
@@ -283,8 +285,9 @@ namespace Barnacle.Models.Adorners
 
                         case "LeftThumb":
                             {
-                                FormattedText txt = new FormattedText(size.X.ToString(), System.Globalization.CultureInfo.CurrentCulture,
-                                   FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
+                                FormattedText formattedText = new FormattedText(size.X.ToString(), System.Globalization.CultureInfo.CurrentCulture,
+                                                                   FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
+                                FormattedText txt = formattedText;
 
                                 AddLabel(th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
                             }

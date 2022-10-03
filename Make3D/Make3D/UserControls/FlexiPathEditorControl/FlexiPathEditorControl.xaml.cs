@@ -17,7 +17,7 @@ namespace Barnacle.UserControls
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
         public FlexiPathChanged OnFlexiPathChanged;
         private FlexiPathEditorControlViewModel vm;
-
+        private string pathText = "";
         public FlexiPathEditorControl()
         {
             InitializeComponent();
@@ -496,11 +496,22 @@ namespace Barnacle.UserControls
 
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     ShowGridStatus();
+                    vm.SetPath(pathText);
                 }
             }
             UpdateDisplay();
         }
 
+        internal string GetPath()
+        {
+            return vm.AbsPathText();
+        }
+
+        internal void SetPath( string v)
+        {
+            pathText = v;
+                vm?.SetPath(v); 
+        }
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

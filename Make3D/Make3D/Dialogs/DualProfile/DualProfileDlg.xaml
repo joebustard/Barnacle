@@ -18,41 +18,7 @@
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="1" Grid.Row="0">
-<!-- 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-            -->
+
             <TabControl>
                 <TabItem Header="Front">
                     <ctrls:FlexiPathEditorControl x:Name="FrontPathControl"/>

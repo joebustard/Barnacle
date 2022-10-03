@@ -51,7 +51,9 @@ namespace MakerLib
                 fw = FontWeights.Bold;
             }
             var tf = new Typeface(ff, fs, fw, FontStretches.Normal);
+#pragma warning disable CS0618 // Type or member is obsolete
             var t = new FormattedText(text, ci, fd, tf, fontSize, System.Windows.Media.Brushes.Black);
+#pragma warning restore CS0618 // Type or member is obsolete
             var g = t.BuildGeometry(new Point(0, 0));
 
             PathGeometry p;

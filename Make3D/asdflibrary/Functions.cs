@@ -13,5 +13,10 @@ namespace asdflibrary
             float d = (float)Math.Sqrt(v) - SphereRadius;
             return d;
         }
+        public static float Sphere(double x, double y, double z)
+        {
+      
+            return Sphere( (float)x,(float)y,(float)z);
+        }
     }
 }

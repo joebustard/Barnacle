@@ -625,14 +625,31 @@ namespace Barnacle.UserControls
                 CanCNVDouble = false;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                 NotifyPropertyChanged("Points");
-                
+
             }
+        }
+
+        internal string AbsPathText()
+        {
+            return flexiPath.ToPath(true);
         }
 
         private void OnCopy(object obj)
         {
             PathText = flexiPath.ToPath();
             System.Windows.Clipboard.SetText(PathText);
+        }
+
+        internal void SetPath(string v)
+        {
+            if (v != "")
+            {
+                selectionMode = SelectionModeType.SelectSegmentAtPoint;
+            }
+
+            flexiPath.FromTextPath(v);
+            PathText = flexiPath.ToPath();
+            NotifyPropertyChanged("Points");
         }
 
         private void OnDeleteSegment(object obj)
