@@ -2105,7 +2105,14 @@ namespace Barnacle.ViewModels
 
             obj.Scale = new Scale3D(20, 20, 20);
             RecalculateAllBounds();
+            // default position of object is at right of everything
             obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
+            // if the user wants it placed at the marker AND there is a marker, put it there instead
+            if ( Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
+            {
+                obj.Position = floorMarker.Position;
+            }
+
             if (obType == "vaseloft" || obType == "shapeloft" || obType == "fuselageloft")
             {
                 added = Loft(obj, obType);

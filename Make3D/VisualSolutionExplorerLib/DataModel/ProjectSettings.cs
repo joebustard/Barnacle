@@ -23,8 +23,9 @@ namespace VisualSolutionExplorer
             AutoSaveScript = true;
             DefaultObjectColour = Colors.CadetBlue;
             SlicerPath = @"";
+            PlaceNewAtMarker = true;
         }
-
+        public bool PlaceNewAtMarker { get; set; }
         public bool AutoSaveScript { get; set; }
         public string BaseScale { get; set; }
         public bool ClearPreviousVersionsOnExport { get; set; }
@@ -82,6 +83,13 @@ namespace VisualSolutionExplorer
                 SlicerPath = ele.GetAttribute("SlicerPath");
                 
             }
+
+            if (ele.HasAttribute("PlaceNewAtMarker"))
+            {
+                string s  = ele.GetAttribute("PlaceNewAtMarker");
+                PlaceNewAtMarker = Convert.ToBoolean(s);
+
+            }
             if (ele.HasAttribute("VersionExport"))
             {
                 string s = ele.GetAttribute("VersionExport");
@@ -131,7 +139,8 @@ namespace VisualSolutionExplorer
 
             ele.SetAttribute("AutoSaveScript", AutoSaveScript.ToString());
             ele.SetAttribute("DefaultObjectColour", DefaultObjectColour.ToString());
-            
+            ele.SetAttribute("PlaceNewAtMarker", PlaceNewAtMarker.ToString());
+
             XmlElement rot = doc.CreateElement("Rotation");
             rot.SetAttribute("X", ExportRotation.X.ToString());
             rot.SetAttribute("Y", ExportRotation.Y.ToString());

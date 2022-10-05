@@ -32,6 +32,7 @@ namespace Barnacle.Views
                 BaseViewModel.Project.SharedProjectSettings.BaseScale = vm.SelectedScale;
                 BaseViewModel.Project.SharedProjectSettings.ExportScale = vm.ExportScale;
                 BaseViewModel.Project.SharedProjectSettings.AutoSaveScript = vm.AutoSaveScript;
+                BaseViewModel.Project.SharedProjectSettings.PlaceNewAtMarker = vm.PlaceNewAtMarker;
                 try
                 {
                     double x = Convert.ToDouble(vm.RotX);

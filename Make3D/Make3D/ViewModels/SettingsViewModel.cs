@@ -32,6 +32,7 @@ namespace Barnacle.ViewModels
 
         private bool versionExport;
         private string slicerPath;
+
         public string SlicerPath
         {
             get { return slicerPath; }
@@ -44,13 +45,14 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         private String sdCardName;
+
         public String SDCardName
         {
             get { return sdCardName; }
             set
             {
-
                 if (sdCardName != value)
                 {
                     sdCardName = value;
@@ -58,6 +60,22 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
+        private bool placeNewAtMarker;
+
+        public bool PlaceNewAtMarker
+        {
+            get { return placeNewAtMarker; }
+            set
+            {
+                if (placeNewAtMarker != value)
+                {
+                    placeNewAtMarker = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public SettingsViewModel()
         {
             AutoSaveScript = Project.SharedProjectSettings.AutoSaveScript;
@@ -75,10 +93,11 @@ namespace Barnacle.ViewModels
             ClearPreviousVersionsOnExport = Project.SharedProjectSettings.ClearPreviousVersionsOnExport;
             IgnoreEmpty = !Project.SharedProjectSettings.ExportEmptyFiles;
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
-            SlicerPath = Properties.Settings.Default.SlicerPath ;
+            SlicerPath = Properties.Settings.Default.SlicerPath;
             SDCardName = Properties.Settings.Default.SDCardLabel;
             SetAvailableColours();
             ObjectColour = FindAvailableColour(DefaultObjectColour);
+            PlaceNewAtMarker = Project.SharedProjectSettings.PlaceNewAtMarker;
         }
 
         private AvailableColour FindAvailableColour(Color color)
@@ -97,6 +116,7 @@ namespace Barnacle.ViewModels
             }
             return res;
         }
+
         private void SetAvailableColours()
         {
             string[] ignore =
@@ -132,7 +152,6 @@ namespace Barnacle.ViewModels
             AvailableColours = cls;
         }
 
-
         public List<AvailableColour> AvailableColours
         {
             get { return availableColours; }
@@ -160,11 +179,9 @@ namespace Barnacle.ViewModels
                     System.Drawing.Color tmp = System.Drawing.Color.FromName(objectColour.Name);
                     DefaultObjectColour = System.Windows.Media.Color.FromArgb(tmp.A, tmp.R, tmp.G, tmp.B);
                     NotifyPropertyChanged();
-
                 }
             }
         }
-
 
         public bool AutoSaveScript
         {
