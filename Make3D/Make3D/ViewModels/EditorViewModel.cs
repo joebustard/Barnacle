@@ -1519,6 +1519,10 @@ namespace Barnacle.ViewModels
                     if (allBounds.Upper.X > double.MinValue)
                     {
                         placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
+                        if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null )
+                        {
+                            placement = floorMarker.Position;
+                        }
                     }
                     else
                     {

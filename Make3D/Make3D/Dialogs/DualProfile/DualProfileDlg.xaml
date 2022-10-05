@@ -79,7 +79,7 @@
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True"/>
+            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2"  />
         </Grid>
     </Grid>
 </local:BaseModellerDialog> 

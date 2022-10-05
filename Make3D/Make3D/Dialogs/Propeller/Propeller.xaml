@@ -288,7 +288,7 @@
                 <Button Click="Ok_Click"
                         Content="Ok"
                         Grid.Column="2"
-                        Margin="2,2,2,2" IsDefault="True"/>
+                        Margin="2,2,2,2"  />
 
             </Grid>
         </Grid>
