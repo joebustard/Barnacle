@@ -1136,7 +1136,7 @@ namespace Barnacle.ViewModels
         private void CreateParametricMenu()
         {
             parametricToolsToShow = new List<ToolDef>();
-            parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
+            //parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
             //   parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
@@ -1156,7 +1156,7 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
 
 
-            parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
+            //parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             parametricToolsToShow.Add(new ToolDef("Curved Funnel", true, "CurvedFunnel", "Create a curved funnel"));
 
             SortMenu(parametricToolsToShow);
