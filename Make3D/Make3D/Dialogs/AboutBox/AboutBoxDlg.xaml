@@ -1,5 +1,5 @@
-<Window d:DesignHeight="450"
-        d:DesignWidth="600"
+<Window d:DesignHeight="300"
+        d:DesignWidth="300"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         x:Class="Barnacle.Dialogs.AboutBoxDlg"
@@ -23,7 +23,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="8*"/>
+            <RowDefinition Height="6*"/>
             <RowDefinition Height="1*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
