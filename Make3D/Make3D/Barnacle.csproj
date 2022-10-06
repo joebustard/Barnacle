@@ -53,6 +53,9 @@
   <PropertyGroup>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>appicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -992,6 +995,8 @@
     <Resource Include="Images\Buttons\SameZ.png" />
     <Resource Include="Images\Buttons\SameAll.png" />
     <Resource Include="Images\Buttons\ShowGrid.png" />
+    <Resource Include="Images\appicon.jpg" />
+    <Resource Include="appicon.ico" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

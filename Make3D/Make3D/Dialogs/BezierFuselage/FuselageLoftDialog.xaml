@@ -164,7 +164,7 @@
                         Content="Ok"
                         Grid.Column="2"
                         Margin="2,2,2,2"
-                        x:Name="OkButton" IsDefault="True"/>
+                        x:Name="OkButton" />
 
             </Grid>
         </Grid>

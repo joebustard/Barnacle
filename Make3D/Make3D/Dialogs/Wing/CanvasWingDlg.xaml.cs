@@ -733,8 +733,10 @@ namespace Barnacle.Dialogs
                     endT = 1.0;
                     close = true;
                 }
+                double theta = 0;
                 for (int strut = 0; strut < numSubStrats; strut++)
                 {
+
                     switch (shrinkle)
                     {
                         case 0:
@@ -772,6 +774,8 @@ namespace Barnacle.Dialogs
                     outerXo = innerXo + strutDx;
                     innerZ = strut * strutGap;
                     outerZ = innerZ + strutGap;
+                    theta = (Math.PI * dihedralAngle) / 180;
+                    double diy = 0;
                     List<Point> innerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, innerStrutLength, ref innerEdgeLength);
 
                     if (innerProfile.Count > 0)
@@ -817,28 +821,35 @@ namespace Barnacle.Dialogs
                                     {
                                         y = (y * innerDip) / 100.0;
                                     }
-                                    pd1 = new Point3D(p1.X * innerStrutLength + innerXo, y * innerStrutLength, innerZ);
+                                    diy = innerZ * Math.Sin(theta);
+
+                                    pd1 = new Point3D(p1.X * innerStrutLength + innerXo, y * innerStrutLength+diy , innerZ);
 
                                     y = p2.Y;
                                     if (y > 0)
                                     {
                                         y = (y * innerDip) / 100.0;
                                     }
-                                    pd2 = new Point3D(p2.X * innerStrutLength + innerXo, y * innerStrutLength, innerZ);
+                                    diy = innerZ * Math.Sin(theta);
+
+                                    pd2 = new Point3D(p2.X * innerStrutLength + innerXo, y * innerStrutLength + diy, innerZ);
 
                                     y = p3.Y;
                                     if (y > 0)
                                     {
                                         y = (y * outerDip) / 100.0;
                                     }
-                                    pd3 = new Point3D(p3.X * outerStrutLength + outerXo, y * outerStrutLength, outerZ);
+                                    diy = outerZ * Math.Sin(theta);
+
+                                    pd3 = new Point3D(p3.X * outerStrutLength + outerXo, y * outerStrutLength + diy, outerZ);
 
                                     y = p4.Y;
                                     if (y > 0)
                                     {
                                         y = (y * outerDip) / 100.0;
                                     }
-                                    pd4 = new Point3D(p4.X * outerStrutLength + outerXo, y * outerStrutLength, outerZ);
+                                    diy = outerZ * Math.Sin(theta);
+                                    pd4 = new Point3D(p4.X * outerStrutLength + outerXo, y * outerStrutLength + diy, outerZ);
 
                                     int v1 = AddVertice(pd1);
                                     int v2 = AddVertice(pd2);
