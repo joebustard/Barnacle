@@ -185,17 +185,16 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private void RenameRibs_Click(object sender, RoutedEventArgs e)
         {
             if (ribs.Count > 0)
             {
                 List<NameRec> nameRecs = new List<NameRec>();
 
-
                 int j = 1;
                 for (int i = 0; i < Ribs.Count; i++)
                 {
-
                     NameRec rec = new NameRec();
                     rec.ribIndex = i;
                     rec.originalName = Ribs[i].Header;
@@ -209,14 +208,13 @@ namespace Barnacle.Dialogs
                         j++;
                     }
                     nameRecs.Add(rec);
-
                 }
                 NextNameLetter = (char)('A' + Ribs.Count);
                 NextNameNumber = 0;
                 if (Ribs.Count > 26)
-                { 
+                {
                     NextNameLetter = 'Z';
-                    NextNameNumber= Ribs.Count - 26;
+                    NextNameNumber = Ribs.Count - 26;
                 }
 
                 // now rename the ribs locally
@@ -232,8 +230,8 @@ namespace Barnacle.Dialogs
                     OnRibsRenamed(nameRecs);
                 }
             }
-
         }
+
         private void AddRib_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dlg = new OpenFileDialog();
@@ -365,7 +363,7 @@ namespace Barnacle.Dialogs
         private void RenameRibs(string nameStart)
         {
             List<NameRec> nameRecs = new List<NameRec>();
-           
+
             int j = 0;
             for (int i = 0; i < Ribs.Count; i++)
             {
@@ -377,7 +375,6 @@ namespace Barnacle.Dialogs
                     if (j == 0)
                     {
                         rec.newName = nameStart;
-                       
                     }
                     else
                     {
@@ -413,6 +410,7 @@ namespace Barnacle.Dialogs
             public string originalName;
             public int ribIndex;
         }
+
         private int selectedRibIndex;
 
         public int SelectedRibIndex

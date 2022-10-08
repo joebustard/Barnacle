@@ -1,16 +1,10 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Barnacle.Object3DLib;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.BezierSurface
 {
-    class ControlPoint
+    internal class ControlPoint
     {
         private void SetModelMaterials()
         {
@@ -29,6 +23,7 @@ namespace Barnacle.Dialogs.BezierSurface
                 model.BackMaterial = BackMaterial;
             }
         }
+
         public ControlPoint(double x, double y, double z)
         {
             Position = new Point3D(x, y, z);
@@ -50,8 +45,10 @@ namespace Barnacle.Dialogs.BezierSurface
             res.Color = brush.Color;
             return res;
         }
+
         public Point3D Position { get; set; }
-        GeometryModel3D model;
+        private GeometryModel3D model;
+
         public GeometryModel3D Model
         {
             get { return model; }
@@ -127,7 +124,8 @@ namespace Barnacle.Dialogs.BezierSurface
             model.BackMaterial = BackMaterial;
             model.Material = UnselectedMaterial;
         }
-        bool selected;
+
+        private bool selected;
 
         public bool Selected
         {
@@ -163,7 +161,6 @@ namespace Barnacle.Dialogs.BezierSurface
             bool res = false;
             if (m == model)
             {
-
                 Selected = true;
 
                 res = true;

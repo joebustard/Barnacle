@@ -3,9 +3,6 @@ using EarClipperLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -117,19 +114,16 @@ namespace MakerLib
 
             bodyShape.AbsoluteToRelative();
 
-
             bool holesAdded = false;
-
-
 
             // Go through all the letter shapes
             foreach (TextPolygon pf in pfigures)
             {
-               // does it have any holes
+                // does it have any holes
                 if (pf.Holes.Count > 0)
                 {
                     holesAdded = true;
-                    
+
                     for (float py = (float)-holeOverlap / 2; py <= (float)(thickness + holeOverlap / 2); py += (float)(thickness + holeOverlap))
                     {
                         EarClipping earClipping = new EarClipping();
@@ -139,27 +133,22 @@ namespace MakerLib
                             TextPolygon hole = pf.Holes[holeIndex];
 
                             List<Vector3m> rootPoints = new List<Vector3m>();
-                     
-                                
-                                // turns out that if there are more than one holes, their orientaion alternates
-                                if (Math.Abs(py - (float)-holeOverlap / 2) <0.0001)
+
+                            // turns out that if there are more than one holes, their orientaion alternates
+                            if (Math.Abs(py - (float)-holeOverlap / 2) < 0.0001)
+                            {
+                                foreach (PointF rp in hole.Points)
                                 {
-                                    foreach (PointF rp in hole.Points)
-                                    {
-                                        rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
-                                    }
-                                    
+                                    rootPoints.Insert(0, new Vector3m(rp.X, py, rp.Y));
                                 }
-                                else
+                            }
+                            else
+                            {
+                                foreach (PointF rp in hole.Points)
                                 {
-                                    foreach (PointF rp in hole.Points)
-                                    {
-                                        rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
-                                    }
+                                    rootPoints.Add(new Vector3m(rp.X, py, rp.Y));
                                 }
-                                
-            
-                            
+                            }
 
                             earClipping.SetPoints(rootPoints);
 
@@ -170,21 +159,17 @@ namespace MakerLib
                                 int v1 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i].X, surface[i].Y, surface[i].Z);
                                 int v2 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 1].X, surface[i + 1].Y, surface[i + 1].Z);
                                 int v3 = AddVertice(holeShape.AbsoluteObjectVertices, surface[i + 2].X, surface[i + 2].Y, surface[i + 2].Z);
-                                
-                                    holeShape.TriangleIndices.Add(v1);
-                                    holeShape.TriangleIndices.Add(v2);
-                                    holeShape.TriangleIndices.Add(v3);
-                                
-                            }
 
+                                holeShape.TriangleIndices.Add(v1);
+                                holeShape.TriangleIndices.Add(v2);
+                                holeShape.TriangleIndices.Add(v3);
+                            }
                         }
                     }
                 }
             }
             if (holesAdded)
             {
-
-
                 holeShape.AbsoluteToRelative();
                 Group3D merged = new Group3D();
 

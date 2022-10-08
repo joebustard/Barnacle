@@ -15,10 +15,10 @@
         Height="200">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
         </Grid.ColumnDefinitions>
@@ -30,41 +30,39 @@
         <Label FontSize="16"
                Grid.Row="1"
                HorizontalAlignment="Center"
-               x:Name="PathLabel"/>
+               x:Name="PathLabel" />
 
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Button Click="OpenFileClick"
                     Content="Open File"
                     Grid.Column="1"
                     Margin="2,2,4,8"
-                    x:Name="OpenFileButton"/>
+                    x:Name="OpenFileButton" />
 
             <Button Click="OpenFolderClick"
                     Content="Open Folder"
                     Grid.Column="3"
-                    Margin="2,2,4,8"/>
-
+                    Margin="2,2,4,8" />
         </Grid>
         <Grid Grid.Row="3">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Button Click="CloseClick"
                     Content="Ok"
                     Grid.Column="2"
-                    Margin="4,2,4,8"/>
-
+                    Margin="4,2,4,8" />
         </Grid>
     </Grid>
 </Window>

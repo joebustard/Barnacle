@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 
 namespace ScriptLanguage
 {
@@ -47,6 +42,7 @@ namespace ScriptLanguage
             String result = "";
             return result;
         }
+
         public void ReportStatement()
         {
             Log.Instance().AddEntry($"{this.ToString()}");

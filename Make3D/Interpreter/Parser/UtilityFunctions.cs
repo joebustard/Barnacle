@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace ScriptLanguage
 {
     public class UtilityFunctions
     {
-
         public static void RemoveFile(string p)
         {
             if (System.IO.File.Exists(p))
@@ -22,9 +18,7 @@ namespace ScriptLanguage
         /// <param name="Seconds"></param>
         public static void Pause(double Seconds)
         {
-                Thread.Sleep((int)(1000 * Seconds));
+            Thread.Sleep((int)(1000 * Seconds));
         }
-
-
     }
 }

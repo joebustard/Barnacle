@@ -77,8 +77,8 @@ namespace ScriptLanguage
             }
             return result;
         }
-        
-            private bool AssignTopOfStackToVar(string VariableName)
+
+        private bool AssignTopOfStackToVar(string VariableName)
         {
             bool result = false;
             StackItem sti = ExecutionStack.Instance().Pull();

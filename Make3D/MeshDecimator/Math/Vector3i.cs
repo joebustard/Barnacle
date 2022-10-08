@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 using System;
@@ -35,28 +37,35 @@ namespace MeshDecimator.Math
     public struct Vector3i : IEquatable<Vector3i>
     {
         #region Static Read-Only
+
         /// <summary>
         /// The zero vector.
         /// </summary>
         public static readonly Vector3i zero = new Vector3i(0, 0, 0);
+
         #endregion
 
         #region Fields
+
         /// <summary>
         /// The x component.
         /// </summary>
         public int x;
+
         /// <summary>
         /// The y component.
         /// </summary>
         public int y;
+
         /// <summary>
         /// The z component.
         /// </summary>
         public int z;
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the magnitude of this vector.
         /// </summary>
@@ -85,10 +94,13 @@ namespace MeshDecimator.Math
                 {
                     case 0:
                         return x;
+
                     case 1:
                         return y;
+
                     case 2:
                         return z;
+
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3i index!");
                 }
@@ -100,20 +112,25 @@ namespace MeshDecimator.Math
                     case 0:
                         x = value;
                         break;
+
                     case 1:
                         y = value;
                         break;
+
                     case 2:
                         z = value;
                         break;
+
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3i index!");
                 }
             }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new vector with one value for all components.
         /// </summary>
@@ -137,9 +154,11 @@ namespace MeshDecimator.Math
             this.y = y;
             this.z = z;
         }
+
         #endregion
 
         #region Operators
+
         /// <summary>
         /// Adds two vectors.
         /// </summary>
@@ -244,10 +263,13 @@ namespace MeshDecimator.Math
         {
             return new Vector3i((int)v.x, (int)v.y, (int)v.z);
         }
+
         #endregion
 
         #region Public Methods
+
         #region Instance
+
         /// <summary>
         /// Set x, y and z components of an existing vector.
         /// </summary>
@@ -288,9 +310,11 @@ namespace MeshDecimator.Math
             if (z < min) z = min;
             else if (z > max) z = max;
         }
+
         #endregion
 
         #region Object
+
         /// <summary>
         /// Returns a hash code for this vector.
         /// </summary>
@@ -349,9 +373,11 @@ namespace MeshDecimator.Math
                 y.ToString(format, CultureInfo.InvariantCulture),
                 z.ToString(format, CultureInfo.InvariantCulture));
         }
+
         #endregion
 
         #region Static
+
         /// <summary>
         /// Multiplies two vectors component-wise.
         /// </summary>
@@ -362,7 +388,9 @@ namespace MeshDecimator.Math
         {
             result = new Vector3i(a.x * b.x, a.y * b.y, a.z * b.z);
         }
+
         #endregion
+
         #endregion
     }
 }

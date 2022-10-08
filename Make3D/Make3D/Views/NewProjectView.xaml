@@ -1,4 +1,4 @@
-<UserControl 
+<UserControl
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d"
@@ -12,44 +12,43 @@
     <UserControl.DataContext>
         <ViewModels:NewProjectViewModel />
     </UserControl.DataContext>
-    <Grid 
+    <Grid
 >
         <Grid.Background>
-            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png"/>
+            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png" />
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="50"/>
-            <RowDefinition Height="30"/>
-            <RowDefinition Height="45"/>
+            <RowDefinition Height="50" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="45" />
             <RowDefinition />
-            <RowDefinition Height="50"/>
+            <RowDefinition Height="50" />
         </Grid.RowDefinitions>
 
         <Border Background="White"
                 BorderThickness="4"
-                 Grid.Column="1"           
-                 Grid.ColumnSpan="4"  
+                 Grid.Column="1"
+                 Grid.ColumnSpan="4"
                Grid.Row="1"
                Grid.RowSpan="1"
                 Style="{StaticResource ControlBorder}">
 
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-
 
                 <Label FontSize="18"
                Grid.Column="0"
@@ -62,23 +61,22 @@
                  Grid.Column="1"
                  HorizontalAlignment="Stretch"
                  Text="{Binding ProjectName, UpdateSourceTrigger=PropertyChanged}"
-                 VerticalAlignment="Center"/>
+                 VerticalAlignment="Center" />
             </Grid>
         </Border>
 
-
         <Border Background="White"
                 BorderThickness="4"
-                Grid.Column="1"           
+                Grid.Column="1"
                 Grid.Row="3"
                 Grid.RowSpan="1"
-                Grid.ColumnSpan="4"  
+                Grid.ColumnSpan="4"
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Label FontSize="18"
                Grid.Column="0"
@@ -88,15 +86,12 @@
                 </Label>
 
                 <ComboBox Grid.Column="1"
-                  Grid.ColumnSpan="1"            
+                  Grid.ColumnSpan="1"
                   ItemsSource="{Binding TemplateNames}"
                   SelectedItem="{Binding SelectedTemplate}"
-                  x:Name="TemplateBox"/>
+                  x:Name="TemplateBox" />
             </Grid>
         </Border>
-
-        
-   
 
     <Border Background="White"
                 BorderThickness="4"
@@ -107,7 +102,7 @@
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="40"/>
+                    <RowDefinition Height="40" />
                     <RowDefinition />
                 </Grid.RowDefinitions>
             <Label FontSize="18"
@@ -116,41 +111,39 @@
                 Description
             </Label>
 
-      
-            <TextBox AcceptsReturn="True"             
+            <TextBox AcceptsReturn="True"
                  Grid.Row="1"
                  HorizontalAlignment="Stretch"
                  IsReadOnly="True"
                  FontSize="18"
                  Text="{Binding SelectedDescription}"
                  VerticalScrollBarVisibility="Visible"
-                 x:Name="DescriptionBox" TextChanged="DescriptionBox_TextChanged" >
+                 x:Name="DescriptionBox" TextChanged="DescriptionBox_TextChanged">
             </TextBox>
             </Grid>
         </Border>
-     
+
         <Grid Grid.Column="1"
               Grid.ColumnSpan="4"
               Grid.Row="7">
              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Button Command="{Binding BackCommand}"
                     Content="Back"
                     Grid.Column="1"
-                    Style="{StaticResource LargeButton}"/>
+                    Style="{StaticResource LargeButton}" />
 
             <Button Command="{Binding CreateCommand}"
                     Content="Create"
                     Grid.Column="3"
                     HorizontalAlignment="Right"
                     IsEnabled="{Binding OKEnabled}"
-                    Style="{StaticResource LargeButton}" IsDefault="True"/>
-
+                    Style="{StaticResource LargeButton}" IsDefault="True" />
         </Grid>
     </Grid>
 </UserControl>

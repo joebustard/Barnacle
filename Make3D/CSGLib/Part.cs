@@ -38,8 +38,8 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Windows.Input;
 using System.Windows.Media.Media3D;
+
 namespace CSGLib
 {
     /// <summary>
@@ -51,7 +51,8 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
-        private  CancellationToken cancelToken;
+        private CancellationToken cancelToken;
+
         public void SetCancelationToken(CancellationToken cancellationToken)
         {
             cancelToken = cancellationToken;
@@ -80,12 +81,14 @@ namespace CSGLib
         private List<Vertex> Vertices;
 
         private OctTree octTree;
+
         public enum PartState
         {
             Good,
             Bad,
             Interupted
         }
+
         /// <summary>
         /// Constructs a Object3d object based on a solid file.
         /// </summary>
@@ -98,12 +101,12 @@ namespace CSGLib
             var verticesTemp = new List<Vertex>();
 
             //create vertices
-   
+
             Vertices = new List<Vertex>();
-            octTree = new OctTree(Vertices,solid.Minimum,solid.Maximum,100);
+            octTree = new OctTree(Vertices, solid.Minimum, solid.Maximum, 100);
             for (int i = 0; i < verticesPoints.Length; i++)
             {
-                vertex = AddVertex(octTree,verticesPoints[i], Status.UNKNOWN);
+                vertex = AddVertex(octTree, verticesPoints[i], Status.UNKNOWN);
                 verticesTemp.Add(vertex);
             }
 
@@ -140,7 +143,6 @@ namespace CSGLib
             Face face;
             for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
             {
-               
                 face = GetFace(i);
                 face.V1.AddAdjacentVertex(face.V2);
                 face.V1.AddAdjacentVertex(face.V3);
@@ -154,14 +156,13 @@ namespace CSGLib
             for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
             {
                 face = GetFace(i);
-               
+
                 //if the face vertices aren't classified to make the simple classify
                 if (face.SimpleClassify() == false)
                 {
                     //makes the ray trace classification
                     if (face.RayTraceClassify(otherObject))
                     {
-
                         //mark the vertices
                         if (face.V1.Status == Status.UNKNOWN)
                         {
@@ -176,10 +177,9 @@ namespace CSGLib
                             face.V3.Mark(face.GetStatus());
                         }
                     }
-
                 }
             }
-            if ( cancelToken.IsCancellationRequested)
+            if (cancelToken.IsCancellationRequested)
             {
                 result = CSGState.Interrupted;
             }
@@ -265,7 +265,7 @@ namespace CSGLib
             int numFacesBefore = NumFaces;
             int numFacesStart = NumFaces + obj.NumFaces;
             int facesLimit = 50 * numFacesStart;
-            if ( facesLimit > 1000000)
+            if (facesLimit > 1000000)
             {
                 facesLimit = 1000000;
             }
@@ -275,7 +275,6 @@ namespace CSGLib
                 //for each object1 face...
                 for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
                 {
-
                     //if object1 face bound and object2 bound overlap ...
                     face1 = GetFace(i);
 
@@ -284,7 +283,6 @@ namespace CSGLib
                         //for each object2 face...
                         for (int j = 0; j < obj.NumFaces && !cancelToken.IsCancellationRequested; j++)
                         {
-                           
                             //if object1 face bound and object2 face bound overlap...
                             face2 = obj.GetFace(j);
                             if (face2.SplitLevel <= maxSplitLevel && face1.GetBound().Overlap(face2.GetBound()))
@@ -386,7 +384,7 @@ namespace CSGLib
                     }
                 }
             }
-            if ( cancelToken.IsCancellationRequested)
+            if (cancelToken.IsCancellationRequested)
             {
                 result = CSGState.Interrupted;
             }
@@ -438,7 +436,6 @@ namespace CSGLib
         /// <returns>The vertex inserted (if a similar vertex already exists, this is returned).</returns>
         private Vertex AddVertex(OctTree octTree, Vector3D pos, Status status)
         {
-        
             int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
@@ -474,7 +471,6 @@ namespace CSGLib
                 vertex.SetStatus(status);
                 return vertex;
             }
-            
         }
 
         /// <summary>
@@ -490,7 +486,7 @@ namespace CSGLib
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
-            Vertex vertex1 = AddVertex(octTree,newPos1, Status.BOUNDARY);
+            Vertex vertex1 = AddVertex(octTree, newPos1, Status.BOUNDARY);
             Vertex vertex2 = AddVertex(octTree, newPos2, Status.BOUNDARY);
 
             if (linedVertex == 1)

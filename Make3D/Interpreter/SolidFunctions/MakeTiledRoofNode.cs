@@ -18,7 +18,7 @@ namespace ScriptLanguage
 
         public MakeTiledRoofNode
             (
-            ExpressionNode length, ExpressionNode height, ExpressionNode width, ExpressionNode tileLength, ExpressionNode tileHeight, ExpressionNode tileWidth,  ExpressionNode overlap, ExpressionNode gapBetweenTiles
+            ExpressionNode length, ExpressionNode height, ExpressionNode width, ExpressionNode tileLength, ExpressionNode tileHeight, ExpressionNode tileWidth, ExpressionNode overlap, ExpressionNode gapBetweenTiles
             )
         {
             this.lengthExp = length;
@@ -42,7 +42,6 @@ namespace ScriptLanguage
             this.tileWidthExp = coll.Get(5);
             this.tileOverlapExp = coll.Get(6);
             this.gapBetweenTilesExp = coll.Get(7);
-
         }
 
         /// Execute this node
@@ -68,8 +67,8 @@ namespace ScriptLanguage
                        EvalExpression(tileHeightExp, ref valTileHeight, "TileHeight", "MakeTiledRoof") &&
                        EvalExpression(tileWidthExp, ref valTileWidth, "TileWidth", "MakeTiledRoof") &&
                        EvalExpression(tileOverlapExp, ref valOverlap, "TileOverlap", "MakeTiledRoof") &&
-                       EvalExpression(gapBetweenTilesExp, ref valGapBetweenTiles, "GapBetweenTiles", "MakeTiledRoof") 
-                       
+                       EvalExpression(gapBetweenTilesExp, ref valGapBetweenTiles, "GapBetweenTiles", "MakeTiledRoof")
+
                        )
             {
                 // check calculated values are in range
@@ -134,7 +133,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    TiledRoofMaker maker = new TiledRoofMaker(valLength, valHeight, valWidth, valTileLength, valTileHeight, valTileWidth, valOverlap,valGapBetweenTiles );
+                    TiledRoofMaker maker = new TiledRoofMaker(valLength, valHeight, valWidth, valTileLength, valTileHeight, valTileWidth, valOverlap, valGapBetweenTiles);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

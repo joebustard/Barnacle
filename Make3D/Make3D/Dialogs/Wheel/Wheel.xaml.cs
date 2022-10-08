@@ -1,5 +1,4 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -32,7 +31,6 @@ namespace Barnacle.Dialogs
         private string selectedTyreStyle;
 
         private bool showHubRing;
-       
 
         private double tyreDepth;
         private List<String> tyreStyles;

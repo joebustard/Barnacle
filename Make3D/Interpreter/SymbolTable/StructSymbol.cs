@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScriptLanguage
+﻿namespace ScriptLanguage
 {
     public class StructSymbol : Symbol
     {
-
         public StructDefinition Definition;
 
         // the symbol or a struct contains a symbol for each field in the struct definition
         public SymbolTable FieldValues;
+
         public StructSymbol()
         {
             FieldValues = new SymbolTable();

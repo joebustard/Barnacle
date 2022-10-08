@@ -2677,10 +2677,11 @@ namespace ScriptLanguage
                             break;
 
                         case "makecurvedfunnel":
-                        {
+                            {
                                 exp = ParseMakeCurvedFunnelFunction(parentName);
-                        }
+                            }
                             break;
+
                         case "maketube":
                             {
                                 exp = ParseMakeTubeFunction(parentName);
@@ -2834,6 +2835,7 @@ namespace ScriptLanguage
             }
             return resultNode;
         }
+
         private ExpressionNode ParseMakeCurvedFunnelFunction(string parentName)
         {
             ExpressionNode exp = null;

@@ -1,32 +1,31 @@
 ﻿<UserControl x:Class="Barnacle.UserControls.FlexiPathEditorControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.UserControls"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="UserControl_Loaded">
     <UserControl.DataContext>
-        <local:FlexiPathEditorControlViewModel/>
+        <local:FlexiPathEditorControlViewModel />
     </UserControl.DataContext>
-    <Border 
+    <Border
                 Style="{StaticResource ControlBorder}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
+                <RowDefinition Height="80" />
                 <RowDefinition />
-                <RowDefinition Height="25"/>
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <Border Grid.Row="0" Style="{StaticResource ControlBorder}">
-            <UniformGrid  Rows="2" Columns="9" VerticalAlignment="Top" >
+            <UniformGrid  Rows="2" Columns="9" VerticalAlignment="Top">
 
                 <Button Command="{Binding ShowAllPointsCommand}"
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Show all the control points on the path"
                                 x:Name="ShowAllPointsButton" Margin="4,4,4,4">
-                    <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path"/>
-
+                    <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
                 </Button>
 
                 <Border BorderThickness="4"
@@ -36,8 +35,7 @@
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Select a segment or point"
                                 x:Name="PickButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -47,8 +45,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Insert a straight segment"
                                 x:Name="AddSegButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -57,8 +54,8 @@
                     <Button Command="{Binding CNVDoubleSegCommand}"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert two selected straight segments into a Quadratic spline"
-                                x:Name="CNVSegButton" Visibility="{Binding CNVDoubleVisible}" >
-                        <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png"/>
+                                x:Name="CNVSegButton" Visibility="{Binding CNVDoubleVisible}">
+                        <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -68,8 +65,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert a straight segment to a cubic spline"
                                 x:Name="AddBezierButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -79,8 +75,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert a straight segment to a quadratic spline"
                                 x:Name="AddQuadBezierButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -90,8 +85,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Delete a segment"
                                 x:Name="DelSegButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -101,8 +95,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Move entire path to clicked point"
                                 x:Name="MovePathButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/MovePath.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
                     </Button>
                 </Border>
                 <Border BorderThickness="4"
@@ -112,19 +105,18 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Reset the entire path"
                                 x:Name="ResetPathButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
                     </Button>
                 </Border>
                     <Border BorderThickness="4"
                             CornerRadius="2"
                             x:Name="GridBorder">
                         <Button Command="{Binding GridCommand}"
-                             
+
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Turn off grid and snapping"
                                 x:Name="GridButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png"/>
+                            <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png" />
                         </Button>
                     </Border>
                     <Border BorderThickness="4"
@@ -135,7 +127,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Zoom Out"
                                 x:Name="ZoomOutButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png"/>
+                            <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png" />
                         </Button>
                     </Border>
                     <Border BorderThickness="4"
@@ -146,7 +138,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Zoom Reset"
                                 x:Name="ZoomResetButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/Zoom.png"/>
+                            <Image Source="/Barnacle;component/Images/Buttons/Zoom.png" />
                         </Button>
                     </Border>
                     <Border BorderThickness="4"
@@ -157,7 +149,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Zoom In"
                                 x:Name="ZoomInButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png"/>
+                            <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png" />
                         </Button>
                     </Border>
 
@@ -165,7 +157,7 @@
                             Content="Image"
                             Margin="2,2,2,2"
                             ToolTip="Set a background image to overlay the editing polygon on"
-                            x:Name="ImageButton"/>
+                            x:Name="ImageButton" />
                 </UniformGrid>
             </Border>
             <ScrollViewer Grid.Row="1"
@@ -179,17 +171,16 @@
                             MouseUp="MainCanvas_MouseUp"
                             x:Name="MainCanvas" SizeChanged="MainCanvas_SizeChanged">
                     <Canvas.LayoutTransform>
-                        <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}"/>
+                        <ScaleTransform ScaleX="{Binding Scale}" ScaleY="{Binding Scale}" />
                     </Canvas.LayoutTransform>
                 </Canvas>
             </ScrollViewer>
             <StackPanel Grid.Row="2"
                             Orientation="Horizontal">
                 <Label Content="Path" VerticalAlignment="Center" />
-                <TextBox  Text="{Binding PathText}" Width="300" Margin="2,2,2,2"/>
-                <Button  Content="Copy" Width="50" Command="{Binding CopyPathCommand}" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
-                <Button  Content="Paste" Width="50" Command="{Binding PastePathCommand}" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
-
+                <TextBox  Text="{Binding PathText}" Width="300" Margin="2,2,2,2" />
+                <Button  Content="Copy" Width="50" Command="{Binding CopyPathCommand}" Style="{StaticResource SmallButton}" Margin="2,2,2,2" />
+                <Button  Content="Paste" Width="50" Command="{Binding PastePathCommand}" Style="{StaticResource SmallButton}" Margin="2,2,2,2" />
             </StackPanel>
         </Grid>
     </Border>

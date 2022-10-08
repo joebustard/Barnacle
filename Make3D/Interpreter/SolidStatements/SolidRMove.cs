@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -20,49 +15,49 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            if (expressions != null)
             {
-                result = expressions.Execute();
-                if (result)
+                if (expressions != null)
                 {
-                    int objectIndex;
-                    if (!PullSolid(out objectIndex))
+                    result = expressions.Execute();
+                    if (result)
                     {
+                        int objectIndex;
+                        if (!PullSolid(out objectIndex))
+                        {
                             ReportStatement();
                             Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
-                    }
-                    else
-                    {
-                        if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
-                        {
-                            double xr;
-                            double yr;
-                            double zr;
-
-                            result = PullDouble(out xr);
-                            if (result)
-                            {
-                                result = PullDouble(out yr);
-                                if (result)
-                                {
-                                    result = PullDouble(out zr);
-                                    if (result)
-                                    {
-                                        Vector3D rel = new Vector3D(xr, yr, zr);
-                                        Script.ResultArtefacts[objectIndex].Position += rel;
-                                        Script.ResultArtefacts[objectIndex].Remesh();
-                                    }
-                                }
-                            }
                         }
                         else
                         {
-                            Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
+                            {
+                                double xr;
+                                double yr;
+                                double zr;
+
+                                result = PullDouble(out xr);
+                                if (result)
+                                {
+                                    result = PullDouble(out yr);
+                                    if (result)
+                                    {
+                                        result = PullDouble(out zr);
+                                        if (result)
+                                        {
+                                            Vector3D rel = new Vector3D(xr, yr, zr);
+                                            Script.ResultArtefacts[objectIndex].Position += rel;
+                                            Script.ResultArtefacts[objectIndex].Remesh();
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            }
                         }
                     }
                 }
-            }
             }
             catch (Exception ex)
             {

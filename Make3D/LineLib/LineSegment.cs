@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Barnacle.LineLib
@@ -129,7 +126,7 @@ namespace Barnacle.LineLib
             if (points[P1].X == ox)
             {
                 // relative vertical
-                res = $"RV {points[P1].Y - oy :F3} ";
+                res = $"RV {points[P1].Y - oy:F3} ";
             }
             else
             {

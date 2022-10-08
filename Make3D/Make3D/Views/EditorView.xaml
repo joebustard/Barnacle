@@ -34,7 +34,7 @@
             <ModelVisual3D>
                 <ModelVisual3D.Content>
                     <Model3DGroup>
-                        <AmbientLight Color="#FF808080"/>
+                        <AmbientLight Color="#FF808080" />
                         <DirectionalLight Color="White"
                                           Direction="-1,-1,-1"
                                           x:Name="dirLightMain">
@@ -55,7 +55,7 @@
                     <RotateTransform3D>
                         <RotateTransform3D.Rotation>
                             <AxisAngleRotation3D Axis="0 0 1"
-                                                 x:Name="rotate"/>
+                                                 x:Name="rotate" />
                         </RotateTransform3D.Rotation>
                     </RotateTransform3D>
                 </ModelVisual3D.Transform>
@@ -63,6 +63,6 @@
         </Viewport3D>
         <Canvas Name="overlayCanvas"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"/>
+                VerticalAlignment="Stretch" />
     </Grid>
 </UserControl>

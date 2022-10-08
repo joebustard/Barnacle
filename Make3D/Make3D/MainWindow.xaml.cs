@@ -1,15 +1,9 @@
-﻿using Barnacle.Dialogs;
-using Barnacle.LineLib;
-using Barnacle.Models;
+﻿using asdflibrary;
+using Barnacle.Dialogs;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Media3D;
-using asdflibrary;
 
 namespace Barnacle
 {
@@ -18,13 +12,13 @@ namespace Barnacle
     /// </summary>
     public partial class MainWindow : Window
     {
-        AdaptiveSignedDistanceField adfTest;
+        private AdaptiveSignedDistanceField adfTest;
+
         public MainWindow()
         {
             InitializeComponent();
             //  LineUtils.CoplanerTest();
             PrepareUndo();
-            
         }
 
         private void PrepareUndo()
@@ -77,8 +71,6 @@ namespace Barnacle
 
                         bool inside = LineUtils.IsPointInPolygon(new PointF(35, 55), poly);
                         */
-
-
         }
 
         private struct V3D

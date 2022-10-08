@@ -1,8 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -37,45 +35,45 @@ namespace ScriptLanguage
             bool result = false;
 
             try
-            { 
-            double ov = 0;
-            double r = 0;
-            double el = 0;
-            double g = 0;
-            double h = 0;
-
-            if (EvalExpression(radiusExp, ref r, "Radius", "MakeSquaredStadium") &&
-                EvalExpression(endLength, ref el, "EndSize", "MakeSquaredStadium") &&
-                EvalExpression(heightExp, ref h, "Height", "MakeSquaredStadium") &&
-                EvalExpression(overRunExp, ref ov, "OverRun", "MakeSquaredStadium") &&
-                EvalExpression(gapExp, ref g, "Gap", "MakeSquaredStadium")
-                )
             {
-                if (r > 0 && h > 0 && el > 0 && g >= 0 && ov >= 0)
+                double ov = 0;
+                double r = 0;
+                double el = 0;
+                double g = 0;
+                double h = 0;
+
+                if (EvalExpression(radiusExp, ref r, "Radius", "MakeSquaredStadium") &&
+                    EvalExpression(endLength, ref el, "EndSize", "MakeSquaredStadium") &&
+                    EvalExpression(heightExp, ref h, "Height", "MakeSquaredStadium") &&
+                    EvalExpression(overRunExp, ref ov, "OverRun", "MakeSquaredStadium") &&
+                    EvalExpression(gapExp, ref g, "Gap", "MakeSquaredStadium")
+                    )
                 {
-                    result = true;
+                    if (r > 0 && h > 0 && el > 0 && g >= 0 && ov >= 0)
+                    {
+                        result = true;
 
-                    Object3D obj = new Object3D();
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "SquaredStadium";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "SquaredStadium";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    SquaredStadiumMaker stadiumMaker = new SquaredStadiumMaker(r, g, el, h, ov);
-                    Point3DCollection tmp = new Point3DCollection(); ;
-                    stadiumMaker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                        obj.Position = new Point3D(0, 0, 0);
+                        SquaredStadiumMaker stadiumMaker = new SquaredStadiumMaker(r, g, el, h, ov);
+                        Point3DCollection tmp = new Point3DCollection(); ;
+                        stadiumMaker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeSquaredStadium : Illegal value");
+                    }
                 }
-                else
-                {
-                    Log.Instance().AddEntry("MakeSquaredStadium : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

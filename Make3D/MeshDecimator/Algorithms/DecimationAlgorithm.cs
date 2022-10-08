@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 using System;
@@ -34,6 +36,7 @@ namespace MeshDecimator.Algorithms
     public abstract class DecimationAlgorithm
     {
         #region Delegates
+
         /// <summary>
         /// A callback for decimation status reports.
         /// </summary>
@@ -42,17 +45,21 @@ namespace MeshDecimator.Algorithms
         /// <param name="currentTris">The current count of triangles.</param>
         /// <param name="targetTris">The target count of triangles.</param>
         public delegate void StatusReportCallback(int iteration, int originalTris, int currentTris, int targetTris);
+
         #endregion
 
         #region Fields
+
         private bool preserveBorders = false;
         private int maxVertexCount = 0;
         private bool verbose = false;
 
         private StatusReportCallback statusReportInvoker = null;
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets or sets if borders should be kept.
         /// Default value: false
@@ -104,9 +111,11 @@ namespace MeshDecimator.Algorithms
             get { return verbose; }
             set { verbose = value; }
         }
+
         #endregion
 
         #region Events
+
         /// <summary>
         /// An event for status reports for this algorithm.
         /// </summary>
@@ -115,9 +124,11 @@ namespace MeshDecimator.Algorithms
             add { statusReportInvoker += value; }
             remove { statusReportInvoker -= value; }
         }
+
         #endregion
 
         #region Protected Methods
+
         /// <summary>
         /// Reports the current status of the decimation.
         /// </summary>
@@ -133,9 +144,11 @@ namespace MeshDecimator.Algorithms
                 statusReportInvoker.Invoke(iteration, originalTris, currentTris, targetTris);
             }
         }
+
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Initializes the algorithm with the original mesh.
         /// </summary>
@@ -158,6 +171,7 @@ namespace MeshDecimator.Algorithms
         /// </summary>
         /// <returns>The resulting mesh.</returns>
         public abstract Mesh ToMesh();
+
         #endregion
     }
 }

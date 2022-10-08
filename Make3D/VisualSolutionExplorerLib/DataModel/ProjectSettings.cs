@@ -25,6 +25,7 @@ namespace VisualSolutionExplorer
             SlicerPath = @"";
             PlaceNewAtMarker = true;
         }
+
         public bool PlaceNewAtMarker { get; set; }
         public bool AutoSaveScript { get; set; }
         public string BaseScale { get; set; }
@@ -81,14 +82,12 @@ namespace VisualSolutionExplorer
             if (ele.HasAttribute("SlicerPath"))
             {
                 SlicerPath = ele.GetAttribute("SlicerPath");
-                
             }
 
             if (ele.HasAttribute("PlaceNewAtMarker"))
             {
-                string s  = ele.GetAttribute("PlaceNewAtMarker");
+                string s = ele.GetAttribute("PlaceNewAtMarker");
                 PlaceNewAtMarker = Convert.ToBoolean(s);
-
             }
             if (ele.HasAttribute("VersionExport"))
             {
@@ -120,9 +119,7 @@ namespace VisualSolutionExplorer
             {
                 Description = des.InnerText;
             }
-           
         }
-
 
         internal void Write(XmlDocument doc, XmlElement docNode)
         {

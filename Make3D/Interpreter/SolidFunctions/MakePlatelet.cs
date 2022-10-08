@@ -2,7 +2,6 @@
 using MakerLib;
 using System;
 using System.Collections.Generic;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -32,7 +31,6 @@ namespace ScriptLanguage
             bool result = false;
             try
             {
-
                 double[] coords = null;
                 double h = 0;
 
@@ -73,7 +71,6 @@ namespace ScriptLanguage
                         Log.Instance().AddEntry($"{label} : Illegal value");
                     }
                 }
-
             }
             catch (Exception ex)
             {

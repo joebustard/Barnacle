@@ -106,7 +106,6 @@ namespace CSGLib
             _Status = status;
         }
 
-
         /// <summary>
         /// Constructs a vertex with a definite status
         /// </summary>
@@ -202,11 +201,12 @@ namespace CSGLib
         *
         * @return vertex position
         */
+
         public Vector3D Position
         {
             get { return _Position; }
-            set {_Position = value; }
-       }
+            set { _Position = value; }
+        }
 
         /**
         * Gets an array with the adjacent vertices
@@ -267,7 +267,8 @@ namespace CSGLib
         *
         * @param status new status to be set
         */
-        const int depthLimit =25;
+        private const int depthLimit = 25;
+
         public void Mark(Status status, int depth = 0)
         {
             //mark vertex
@@ -279,7 +280,7 @@ namespace CSGLib
             {
                 v.Status = status;
             }
-            if (depth+1 < depthLimit)
+            if (depth + 1 < depthLimit)
             {
                 foreach (Vertex v in adjacentVerts)
                 {

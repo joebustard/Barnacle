@@ -20,6 +20,6 @@
         <ContentControl Content="{Binding SubView}"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        x:Name="SubViewControl"/>
+                        x:Name="SubViewControl" />
     </Grid>
 </Window>

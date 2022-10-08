@@ -50,8 +50,8 @@ namespace Barnacle.LineLib
 
         public override void DisplayPoints(List<Point> res, ObservableCollection<FlexiPoint> pnts)
         {
-           double dt = 0.05;
-            
+            double dt = 0.05;
+
             for (double t = 0; t <= 1; t += dt)
             {
                 res.Add(GetCoord(t, pnts));

@@ -1,11 +1,7 @@
-﻿using Barnacle.LineLib;
-using PolygonTriangulationLib;
+﻿using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -28,6 +24,7 @@ namespace Barnacle.Dialogs
          new System.Windows.Point(0.7,0.9),
          new System.Windows.Point(0.6,0.05),
      };
+
         private System.Windows.Point[] m1OuterLinkConnectorCoords =
       {
          new System.Windows.Point(0.8,-0.05),
@@ -40,6 +37,7 @@ namespace Barnacle.Dialogs
          new System.Windows.Point(0.9,0.7),
          new System.Windows.Point(0.8,0.05),
      };
+
         private System.Windows.Point[] m1MainPolyCoords =
     {
          new System.Windows.Point(0.0,-0.05),
@@ -417,21 +415,21 @@ namespace Barnacle.Dialogs
 
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness + guideSize);
                     partBackZ = trackWidth;
-                    partFrontZ = trackWidth* 1.1;
+                    partFrontZ = trackWidth * 1.1;
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1OuterLinkConnectorCoords, thickness + guideSize);
                     partBackZ = partFrontZ;
-                    partFrontZ = trackWidth *1.3;
+                    partFrontZ = trackWidth * 1.3;
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
 
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1LinkConnectorCoords, thickness + guideSize);
-                    partBackZ = -0.1*TrackWidth;
+                    partBackZ = -0.1 * TrackWidth;
                     partFrontZ = 0;
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
                     GetLinkPartProfile(p1, p2, ref linkProfile, m1OuterLinkConnectorCoords, thickness + guideSize);
                     partFrontZ = partBackZ;
-                    partBackZ = partFrontZ - 0.2*TrackWidth;
-                    
+                    partBackZ = partFrontZ - 0.2 * TrackWidth;
+
                     MakeFacesForLinkPart(linkProfile, partBackZ, partFrontZ, verts, facs);
                 }
             }

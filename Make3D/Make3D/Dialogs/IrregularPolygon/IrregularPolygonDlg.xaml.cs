@@ -570,7 +570,7 @@ namespace Barnacle.Dialogs
                 List<System.Windows.Point> points = flexiPath.DisplayPoints();
                 if (points != null && points.Count >= 2)
                 {
-                    for (int i = 0; i < points.Count-1; i++)
+                    for (int i = 0; i < points.Count - 1; i++)
                     {
                         DrawLine(i, i + 1, points);
                     }
@@ -1132,7 +1132,6 @@ namespace Barnacle.Dialogs
                 }
                 canCNVDouble = flexiPath.HasTwoConsecutiveLineSegmentsSelected();
             }
-
         }
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
@@ -1648,6 +1647,7 @@ namespace Barnacle.Dialogs
             }
             return added;
         }
+
         private double ToMM(double x)
         {
             double res = x;

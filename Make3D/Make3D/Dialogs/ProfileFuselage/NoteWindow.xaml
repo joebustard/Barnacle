@@ -16,7 +16,6 @@
     <Grid>
         <Label Content="{Binding Message}"
                HorizontalAlignment="Left"
-               VerticalAlignment="Center"/>
-
+               VerticalAlignment="Center" />
     </Grid>
 </Window>

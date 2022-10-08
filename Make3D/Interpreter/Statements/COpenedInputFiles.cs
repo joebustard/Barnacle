@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.IO;
 
 namespace ScriptLanguage
@@ -12,21 +10,25 @@ namespace ScriptLanguage
         {
             public StreamReader rdr;
             public String Path;
+
             public StreamId()
             {
                 rdr = null;
                 Path = "";
             }
-
         }
+
         private List<StreamId> OpenedFiles;
         private static COpenedInputFiles Singleton = null;
+
         #region ctors
+
         // Instance constructor
         private COpenedInputFiles()
         {
             OpenedFiles = new List<StreamId>();
         }
+
         public static COpenedInputFiles Instance()
         {
             if (Singleton == null)
@@ -35,7 +37,8 @@ namespace ScriptLanguage
             }
             return Singleton;
         }
-        #endregion
+
+        #endregion ctors
 
         public StreamReader OpenedFile(String Path)
         {
@@ -65,7 +68,6 @@ namespace ScriptLanguage
             {
             }
             OpenedFiles.Clear();
-
         }
 
         public bool ReadLine(String Path, out String Line)
@@ -78,7 +80,6 @@ namespace ScriptLanguage
                 if (reader.EndOfStream == false)
                 {
                     Line = reader.ReadLine();
-
                 }
                 result = true;
             }
@@ -95,7 +96,6 @@ namespace ScriptLanguage
                         OpenedFiles.Add(NewFile);
                         result = true;
                     }
-
                 }
             }
 
@@ -129,7 +129,6 @@ namespace ScriptLanguage
                     OpenedFiles.Add(NewFile);
                     result = true;
                 }
-
             }
 
             return result;

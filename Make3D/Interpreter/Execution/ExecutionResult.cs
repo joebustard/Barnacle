@@ -1,33 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ScriptLanguage
 {
     public class ExecutionResult
     {
         private static ExecutionResult Singleton = null;
+
         public enum CompletionStatus
         {
             Ignore,
             Failed,
             Passed,
-            Unknown, 
+            Unknown,
             Stopped,
             Chained,
             ChainSuite
         };
 
         private bool _zombie;
+
         public bool Zombie
         {
             get { return _zombie; }
             set { _zombie = value; }
         }
 
-
         private CompletionStatus _passed;
+
         public CompletionStatus Passed
         {
             get { return _passed; }
@@ -35,6 +34,7 @@ namespace ScriptLanguage
         }
 
         private String _ChainPath;
+
         public String ChainPath
         {
             get { return _ChainPath; }
@@ -47,6 +47,7 @@ namespace ScriptLanguage
             _passed = CompletionStatus.Failed;
             _zombie = false;
         }
+
         public static ExecutionResult Instance()
         {
             if (Singleton == null)
@@ -55,6 +56,5 @@ namespace ScriptLanguage
             }
             return Singleton;
         }
-
     }
 }

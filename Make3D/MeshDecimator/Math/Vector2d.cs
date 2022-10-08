@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 using System;
@@ -35,31 +37,39 @@ namespace MeshDecimator.Math
     public struct Vector2d : IEquatable<Vector2d>
     {
         #region Static Read-Only
+
         /// <summary>
         /// The zero vector.
         /// </summary>
         public static readonly Vector2d zero = new Vector2d(0, 0);
+
         #endregion
 
         #region Consts
+
         /// <summary>
         /// The vector epsilon.
         /// </summary>
         public const double Epsilon = double.Epsilon;
+
         #endregion
 
         #region Fields
+
         /// <summary>
         /// The x component.
         /// </summary>
         public double x;
+
         /// <summary>
         /// The y component.
         /// </summary>
         public double y;
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the magnitude of this vector.
         /// </summary>
@@ -101,8 +111,10 @@ namespace MeshDecimator.Math
                 {
                     case 0:
                         return x;
+
                     case 1:
                         return y;
+
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector2d index!");
                 }
@@ -114,17 +126,21 @@ namespace MeshDecimator.Math
                     case 0:
                         x = value;
                         break;
+
                     case 1:
                         y = value;
                         break;
+
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector2d index!");
                 }
             }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new vector with one value for all components.
         /// </summary>
@@ -145,9 +161,11 @@ namespace MeshDecimator.Math
             this.x = x;
             this.y = y;
         }
+
         #endregion
 
         #region Operators
+
         /// <summary>
         /// Adds two vectors.
         /// </summary>
@@ -252,10 +270,13 @@ namespace MeshDecimator.Math
         {
             return new Vector2d(v.x, v.y);
         }
+
         #endregion
 
         #region Public Methods
+
         #region Instance
+
         /// <summary>
         /// Set x and y components of an existing vector.
         /// </summary>
@@ -307,9 +328,11 @@ namespace MeshDecimator.Math
             if (y < min) y = min;
             else if (y > max) y = max;
         }
+
         #endregion
 
         #region Object
+
         /// <summary>
         /// Returns a hash code for this vector.
         /// </summary>
@@ -366,9 +389,11 @@ namespace MeshDecimator.Math
                 x.ToString(format, CultureInfo.InvariantCulture),
                 y.ToString(format, CultureInfo.InvariantCulture));
         }
+
         #endregion
 
         #region Static
+
         /// <summary>
         /// Dot Product of two vectors.
         /// </summary>
@@ -419,7 +444,9 @@ namespace MeshDecimator.Math
                 result = Vector2d.zero;
             }
         }
+
         #endregion
+
         #endregion
     }
 }

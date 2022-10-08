@@ -1,8 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -26,8 +24,6 @@ namespace ScriptLanguage
             this.italicExp = coll.Get(5);
         }
 
-       
-
         /// Execute this node
         /// returning false terminates the application
         ///
@@ -37,14 +33,12 @@ namespace ScriptLanguage
 
             try
             {
-                string txt="";
+                string txt = "";
                 string fname = "";
-                double fontSize = 0;               
+                double fontSize = 0;
                 double h = 0;
                 bool bold = false;
                 bool italic = false;
-
-
 
                 if (EvalExpression(textExp, ref txt, "Text", "MakeText") &&
                     EvalExpression(fontNameExp, ref fname, "FontName", "MakeText") &&
@@ -65,7 +59,7 @@ namespace ScriptLanguage
                         obj.Scale = new Scale3D(20, 20, 20);
 
                         obj.Position = new Point3D(0, 0, 0);
-                        TextMaker textMaker = new TextMaker(txt,fname,fontSize,h,true,bold,italic);
+                        TextMaker textMaker = new TextMaker(txt, fname, fontSize, h, true, bold, italic);
                         Point3DCollection tmp = new Point3DCollection(); ;
                         textMaker.Generate(tmp, obj.TriangleIndices);
                         PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

@@ -36,7 +36,7 @@ namespace ScriptLanguage
             {
                 ParseTreeNode.continueRunning = true;
                 result = parseTree.Execute();
-                foreach( Object3D ob in ResultArtefacts)
+                foreach (Object3D ob in ResultArtefacts)
                 {
                     if (ob != null)
                     {

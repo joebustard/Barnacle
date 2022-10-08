@@ -31,12 +31,15 @@ namespace Barnacle.ViewModels
 
         private Object3D selectedObject;
         private List<AvailableColour> availableColours;
+
         private void SuspendEditing(object param)
         {
             bool b = Convert.ToBoolean(param);
             EditingActive = !b;
         }
+
         private bool editingActive;
+
         public bool EditingActive
         {
             get
@@ -78,7 +81,7 @@ namespace Barnacle.ViewModels
             CanScale = false;
             SetAvailableColours();
         }
-        
+
         private void SetAvailableColours()
         {
             string[] ignore =
@@ -106,7 +109,7 @@ namespace Barnacle.ViewModels
             foreach (PropertyInfo info in colorInfo)
             {
                 var result = Array.Find(ignore, element => element == info.Name);
-                if (result == null || result==String.Empty)
+                if (result == null || result == String.Empty)
                 {
                     cls.Add(new AvailableColour(info.Name));
                 }
@@ -126,6 +129,7 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         public bool CanScale
         {
             get
@@ -185,7 +189,9 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         private bool controlsEnabled;
+
         public bool ControlsEnabled
         {
             get { return (controlsEnabled && editingActive); }
@@ -198,7 +204,6 @@ namespace Barnacle.ViewModels
                 }
             }
         }
-
 
         public ICommand MoveToCentreCommand { get; set; }
         public ICommand MoveToFloorCommand { get; set; }
@@ -678,7 +683,7 @@ namespace Barnacle.ViewModels
                 CanScale = selectedObject.IsSizable();
                 exportable = selectedObject.Exportable;
                 description = selectedObject.Description;
-                ControlsEnabled = true ;
+                ControlsEnabled = true;
             }
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");
@@ -711,7 +716,6 @@ namespace Barnacle.ViewModels
                     res = cl;
                     break;
                 }
-
             }
             return res;
         }

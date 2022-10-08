@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Windows.Input;
 
 namespace VisualSolutionExplorer
@@ -129,14 +125,16 @@ namespace VisualSolutionExplorer
                 OnRenameFolder();
             }
         }
+
         private bool valid;
 
         public bool Valid
         {
             get { return valid; }
-            set { valid = value;
+            set
+            {
+                valid = value;
                 NotifyPropertyChanged("Valid");
-
             }
         }
     }

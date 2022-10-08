@@ -1,5 +1,4 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,7 +8,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
-using Barnacle.LineLib;
 
 namespace Barnacle.Dialogs
 {

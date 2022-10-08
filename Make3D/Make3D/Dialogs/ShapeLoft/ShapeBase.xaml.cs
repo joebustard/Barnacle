@@ -25,15 +25,19 @@ namespace Barnacle.Dialogs
         private double maxRadius;
 
         private List<double> pointAngles;
+
         public List<double> PointAngles
         {
             get { return pointAngles; }
         }
+
         private List<double> pointDistance;
+
         public List<double> PointDistances
         {
             get { return pointDistance; }
         }
+
         private double rotation;
         private double rotationDegrees;
 
@@ -99,23 +103,24 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void Setup(int numPnts, double rot, List<double>pa, List<double>pd )
+        public void Setup(int numPnts, double rot, List<double> pa, List<double> pd)
         {
             NumberOfPoints = numPnts;
             rotation = rot;
             pointAngles.Clear();
-            foreach( double d in pa)
+            foreach (double d in pa)
             {
                 pointAngles.Add(d);
             }
             pointDistance.Clear();
-            foreach( double ds in pd)
+            foreach (double ds in pd)
             {
                 pointDistance.Add(ds);
             }
             GeneratePoints();
             Redraw();
         }
+
         private void Redraw()
         {
             maxRadius = PointCanvas.ActualWidth / 2;
@@ -195,7 +200,6 @@ namespace Barnacle.Dialogs
                 Points.Add(p);
             }
             maxRotation = (Math.PI * 2) / NumberOfPoints;
-           
         }
 
         private void DisplayPoints()

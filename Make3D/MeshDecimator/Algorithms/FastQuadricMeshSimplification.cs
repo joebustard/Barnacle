@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,9 +23,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 #region Original License
+
 /////////////////////////////////////////////
 //
 // Mesh Simplification Tutorial
@@ -35,12 +38,13 @@ SOFTWARE.
 // http://opensource.org/licenses/MIT
 //
 //https://github.com/sp4cerat/Fast-Quadric-Mesh-Simplification
+
 #endregion
 
-using System;
-using System.Collections.Generic;
 using MeshDecimator.Collections;
 using MeshDecimator.Math;
+using System;
+using System.Collections.Generic;
 
 namespace MeshDecimator.Algorithms
 {
@@ -50,14 +54,19 @@ namespace MeshDecimator.Algorithms
     public sealed class FastQuadricMeshSimplification : DecimationAlgorithm
     {
         #region Consts
+
         private const double DoubleEpsilon = 1.0E-3;
+
         #endregion
 
         #region Classes
+
         #region Triangle
+
         private struct Triangle
         {
             #region Fields
+
             public int v0;
             public int v1;
             public int v2;
@@ -75,9 +84,11 @@ namespace MeshDecimator.Algorithms
             public bool deleted;
             public bool dirty;
             public Vector3d n;
+
             #endregion
 
             #region Properties
+
             public int this[int index]
             {
                 get
@@ -91,20 +102,25 @@ namespace MeshDecimator.Algorithms
                         case 0:
                             v0 = value;
                             break;
+
                         case 1:
                             v1 = value;
                             break;
+
                         case 2:
                             v2 = value;
                             break;
+
                         default:
                             throw new IndexOutOfRangeException();
                     }
                 }
             }
+
             #endregion
 
             #region Constructor
+
             public Triangle(int v0, int v1, int v2, int subMeshIndex)
             {
                 this.v0 = v0;
@@ -120,9 +136,11 @@ namespace MeshDecimator.Algorithms
                 deleted = dirty = false;
                 n = new Vector3d();
             }
+
             #endregion
 
             #region Public Methods
+
             public void GetAttributeIndices(int[] attributeIndices)
             {
                 attributeIndices[0] = va0;
@@ -137,12 +155,15 @@ namespace MeshDecimator.Algorithms
                     case 0:
                         va0 = value;
                         break;
+
                     case 1:
                         va1 = value;
                         break;
+
                     case 2:
                         va2 = value;
                         break;
+
                     default:
                         throw new IndexOutOfRangeException();
                 }
@@ -154,11 +175,14 @@ namespace MeshDecimator.Algorithms
                 err[1] = err1;
                 err[2] = err2;
             }
+
             #endregion
         }
+
         #endregion
 
         #region Vertex
+
         private struct Vertex
         {
             public Vector3d p;
@@ -180,9 +204,11 @@ namespace MeshDecimator.Algorithms
                 this.foldover = false;
             }
         }
+
         #endregion
 
         #region Ref
+
         private struct Ref
         {
             public int tid;
@@ -194,9 +220,11 @@ namespace MeshDecimator.Algorithms
                 this.tvertex = tvertex;
             }
         }
+
         #endregion
 
         #region Border Vertex
+
         private struct BorderVertex
         {
             public int index;
@@ -208,9 +236,11 @@ namespace MeshDecimator.Algorithms
                 this.hash = hash;
             }
         }
+
         #endregion
 
         #region Border Vertex Comparer
+
         private class BorderVertexComparer : IComparer<BorderVertex>
         {
             public static readonly BorderVertexComparer instance = new BorderVertexComparer();
@@ -220,10 +250,13 @@ namespace MeshDecimator.Algorithms
                 return x.hash.CompareTo(y.hash);
             }
         }
+
         #endregion
+
         #endregion
 
         #region Fields
+
         private bool preserveSeams = false;
         private bool preserveFoldovers = false;
         private bool enableSmartLink = true;
@@ -248,10 +281,13 @@ namespace MeshDecimator.Algorithms
 
         // Pre-allocated buffers
         private double[] errArr = new double[3];
+
         private int[] attributeIndexArr = new int[3];
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets or sets if seams should be preserved.
         /// Default value: false
@@ -315,9 +351,11 @@ namespace MeshDecimator.Algorithms
             get { return vertexLinkDistanceSqr; }
             set { vertexLinkDistanceSqr = value; }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new fast quadric mesh simplification algorithm.
         /// </summary>
@@ -327,10 +365,13 @@ namespace MeshDecimator.Algorithms
             vertices = new ResizableArray<Vertex>(0);
             refs = new ResizableArray<Ref>(0);
         }
+
         #endregion
 
         #region Private Methods
+
         #region Initialize Vertex Attribute
+
         private ResizableArray<T> InitializeVertexAttribute<T>(T[] attributeValues, string attributeName)
         {
             if (attributeValues != null && attributeValues.Length == vertices.Length)
@@ -346,13 +387,15 @@ namespace MeshDecimator.Algorithms
             }
             return null;
         }
+
         #endregion
 
         #region Calculate Error
+
         private double VertexError(ref SymmetricMatrix q, double x, double y, double z)
         {
-            return  q.m0*x*x + 2*q.m1*x*y + 2*q.m2*x*z + 2*q.m3*x + q.m4*y*y
-                + 2*q.m5*y*z + 2*q.m6*y +     q.m7*z*z + 2*q.m8*z + q.m9;
+            return q.m0 * x * x + 2 * q.m1 * x * y + 2 * q.m2 * x * z + 2 * q.m3 * x + q.m4 * y * y
+                + 2 * q.m5 * y * z + 2 * q.m6 * y + q.m7 * z * z + 2 * q.m8 * z + q.m9;
         }
 
         private double CalculateError(ref Vertex vert0, ref Vertex vert1, out Vector3d result, out int resultIndex)
@@ -405,9 +448,11 @@ namespace MeshDecimator.Algorithms
             }
             return error;
         }
+
         #endregion
 
         #region Flipped
+
         /// <summary>
         /// Check if a triangle flips when this edge is removed
         /// </summary>
@@ -451,9 +496,11 @@ namespace MeshDecimator.Algorithms
 
             return false;
         }
+
         #endregion
 
         #region Update Triangles
+
         /// <summary>
         /// Update triangle connections and edge error after a edge is collapsed.
         /// </summary>
@@ -494,9 +541,11 @@ namespace MeshDecimator.Algorithms
                 refs.Add(r);
             }
         }
+
         #endregion
 
         #region Move/Merge Vertex Attributes
+
         private void MoveVertexAttributes(int i0, int i1)
         {
             if (vertNormals != null)
@@ -600,9 +649,11 @@ namespace MeshDecimator.Algorithms
 
             // TODO: Do we have to blend bone weights at all or can we just keep them as it is in this scenario?
         }
+
         #endregion
 
         #region Are UVs The Same
+
         private bool AreUVsTheSame(int channel, int indexA, int indexB)
         {
             if (vertUV2D != null)
@@ -640,9 +691,11 @@ namespace MeshDecimator.Algorithms
 
             return false;
         }
+
         #endregion
 
         #region Remove Vertex Pass
+
         /// <summary>
         /// Remove vertices and mark deleted triangles
         /// </summary>
@@ -759,9 +812,11 @@ namespace MeshDecimator.Algorithms
                     break;
             }
         }
+
         #endregion
 
         #region Update Mesh
+
         /// <summary>
         /// Compact triangles, compute edge error and build reference list.
         /// </summary>
@@ -996,9 +1051,11 @@ namespace MeshDecimator.Algorithms
                 }
             }
         }
+
         #endregion
 
         #region Update References
+
         private void UpdateReferences()
         {
             int triangleCount = this.triangles.Length;
@@ -1057,9 +1114,11 @@ namespace MeshDecimator.Algorithms
                 ++vertices[v2].tcount;
             }
         }
+
         #endregion
 
         #region Compact Mesh
+
         /// <summary>
         /// Finally compact mesh before exiting.
         /// </summary>
@@ -1207,11 +1266,15 @@ namespace MeshDecimator.Algorithms
             if (vertColors != null) this.vertColors.Resize(vertexCount, true);
             if (vertBoneWeights != null) this.vertBoneWeights.Resize(vertexCount, true);
         }
+
         #endregion
+
         #endregion
 
         #region Public Methods
+
         #region Initialize
+
         /// <summary>
         /// Initializes the algorithm with the original mesh.
         /// </summary>
@@ -1289,9 +1352,11 @@ namespace MeshDecimator.Algorithms
                 }
             }
         }
+
         #endregion
 
         #region Decimate Mesh
+
         /// <summary>
         /// Decimates the mesh.
         /// </summary>
@@ -1351,9 +1416,11 @@ namespace MeshDecimator.Algorithms
 
             CompactMesh();
         }
+
         #endregion
 
         #region Decimate Mesh Lossless
+
         /// <summary>
         /// Decimates the mesh without losing any quality.
         /// </summary>
@@ -1406,9 +1473,11 @@ namespace MeshDecimator.Algorithms
 
             CompactMesh();
         }
+
         #endregion
 
         #region To Mesh
+
         /// <summary>
         /// Returns the resulting mesh.
         /// </summary>
@@ -1534,7 +1603,9 @@ namespace MeshDecimator.Algorithms
 
             return newMesh;
         }
+
         #endregion
+
         #endregion
     }
 }

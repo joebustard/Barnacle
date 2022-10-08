@@ -28,15 +28,15 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Label Grid.Column="1" Grid.Row="1" Content="Printer" Margin="2,2,2,10" VerticalAlignment="Center" />
-        <ComboBox Grid.Column="2" Grid.Row="1" Margin="2,2,2,4" FontSize="14"  ItemsSource="{Binding BarnaclePrinterNames}" SelectedItem="{Binding SelectedPrinter}"/>
+        <ComboBox Grid.Column="2" Grid.Row="1" Margin="2,2,2,4" FontSize="14"  ItemsSource="{Binding BarnaclePrinterNames}" SelectedItem="{Binding SelectedPrinter}" />
         <Button Grid.Column="3" Grid.Row="1" Margin="2,2,2,4" Content="Edit" IsEnabled="{Binding IsEditPrinterEnabled}" Click="EditPrinterClicked" />
         <Button Grid.Column="4" Grid.Row="1" Margin="2,2,2,4" Content="New" Click="NewPrinterClicked" />
 
         <Label Grid.Column="1" Grid.Row="2" Margin="2,2,2,4" Content="Profile Overrides" VerticalAlignment="Center" />
-        <ComboBox Grid.Column="2" Grid.Row="2" Margin="2,2,2,4" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedUserProfile}" Style="{StaticResource LargeCombo}"/>
+        <ComboBox Grid.Column="2" Grid.Row="2" Margin="2,2,2,4" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedUserProfile}" Style="{StaticResource LargeCombo}" />
         <Button Grid.Column="3" Grid.Row="2" Margin="2,2,2,4" Content="Edit" Click="EditProfileClicked" IsEnabled="{Binding IsEditProfileEnabled}" />
         <Button Grid.Column="4" Grid.Row="2" Margin="2,2,2,4" Content="New" Click="NewProfileClicked" />
-        <Button Grid.Column="5" Grid.Row="2" Margin="2,2,2,4" Content="Del" Click="DelProfileClicked" ToolTip="Delete Current Profile" IsEnabled="{Binding IsEditProfileEnabled}"/>
+        <Button Grid.Column="5" Grid.Row="2" Margin="2,2,2,4" Content="Del" Click="DelProfileClicked" ToolTip="Delete Current Profile" IsEnabled="{Binding IsEditProfileEnabled}" />
         <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center" />
         <TextBox Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top"></TextBox>
 

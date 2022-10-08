@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ScriptLanguage
 {
-
-    class Indentor
+    internal class Indentor
     {
-        static private int Level = 0;
-        static public String Indentation()
+        private static int Level = 0;
+
+        public static String Indentation()
         {
             String result = "";
             for (int i = 0; i < Level; i++)
@@ -18,18 +15,21 @@ namespace ScriptLanguage
             }
             return result;
         }
-        static public void Indent()
+
+        public static void Indent()
         {
             Level++;
         }
-        static public void Outdent()
+
+        public static void Outdent()
         {
             if (Level > 0)
             {
                 Level--;
             }
         }
-        static public void Reset()
+
+        public static void Reset()
         {
             Level = 0;
         }

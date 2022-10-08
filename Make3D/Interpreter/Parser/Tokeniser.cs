@@ -375,7 +375,7 @@ namespace ScriptLanguage
                                         kType = TokenType.Addition;
                                         kToken = "+";
                                         GetBy();
-                                        if ( by == '=')
+                                        if (by == '=')
                                         {
                                             kType = TokenType.PlusEqual;
                                             kToken = "+=";

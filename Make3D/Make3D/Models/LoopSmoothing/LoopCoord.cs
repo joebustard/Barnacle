@@ -1,18 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Barnacle.Models.LoopSmoothing
+﻿namespace Barnacle.Models.LoopSmoothing
 {
-    class LoopCoord
+    internal class LoopCoord
     {
-
-
         public double X { get; set; }
         public double Y { get; set; }
         public double Z { get; set; }
+
         public LoopCoord()
         {
             X = 0;
@@ -27,7 +20,7 @@ namespace Barnacle.Models.LoopSmoothing
             Z = v3;
         }
 
-        public static LoopCoord operator + (LoopCoord a, LoopCoord b)
+        public static LoopCoord operator +(LoopCoord a, LoopCoord b)
         {
             LoopCoord res = new LoopCoord();
             res.X = a.X + b.X;

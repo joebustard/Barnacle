@@ -1,10 +1,9 @@
-﻿using CSGLib;
+﻿using Barnacle.EditorParameterLib;
+using CSGLib;
 using HullLibrary;
-using Barnacle.EditorParameterLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -225,18 +224,19 @@ namespace Barnacle.Object3DLib
         }
 
         private List<int> indices;
+
         public List<int> Indices
         {
-            get {
-               
+            get
+            {
                 return indices;
             }
             set
             {
                 indices = value;
             }
-            
         }
+
         protected String XmlType { get; set; }
 
         public static XmlElement FindExternalModel(string name, string path)
@@ -297,14 +297,15 @@ namespace Barnacle.Object3DLib
             }
         }
 
-        public virtual  void DeThread()
+        public virtual void DeThread()
         {
             Indices = new List<int>();
-            foreach ( int i in TriangleIndices)
+            foreach (int i in TriangleIndices)
             {
                 Indices.Add(i);
             }
         }
+
         public bool BuildPrimitive(string obType)
         {
             bool built = false;
@@ -428,9 +429,9 @@ namespace Barnacle.Object3DLib
 
                 case "pentagoncell":
                     {
-                        PrimitiveGenerator.GenerateCell(5,ref pnts, ref indices, ref normals);
+                        PrimitiveGenerator.GenerateCell(5, ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Chartreuse);
-                       
+
                         built = true;
                     }
                     break;
@@ -450,6 +451,7 @@ namespace Barnacle.Object3DLib
                         built = true;
                     }
                     break;
+
                 case "hexagoncell":
                     {
                         PrimitiveGenerator.GenerateCell(6, ref pnts, ref indices, ref normals);
@@ -457,6 +459,7 @@ namespace Barnacle.Object3DLib
                         built = true;
                     }
                     break;
+
                 case "octagoncell":
                     {
                         PrimitiveGenerator.GenerateCell(8, ref pnts, ref indices, ref normals);
@@ -464,6 +467,7 @@ namespace Barnacle.Object3DLib
                         built = true;
                     }
                     break;
+
                 default:
                     {
                         //   obj.LoadObject(pth + obType+".txt");
@@ -532,7 +536,6 @@ namespace Barnacle.Object3DLib
                 // THIS IS A HACK TO GET aroubd an async issue.
                 if (useIndices)
                 {
-                   
                     foreach (int i in this.Indices)
                     {
                         res.TriangleIndices.Add(i);
@@ -769,13 +772,12 @@ namespace Barnacle.Object3DLib
             List<P3D> pn = new List<P3D>();
             for (int i = 0; i < RelativeObjectVertices.Count; i++)
             {
-                
                 pn.Add(new P3D((float)RelativeObjectVertices[i].X + (float)dx,
                (float)RelativeObjectVertices[i].Y + (float)dy,
                (float)RelativeObjectVertices[i].Z + (float)dz));
             }
             RelativeObjectVertices.Clear();
-            
+
             RelativeObjectVertices = pn;
             Position = new Point3D(0, 0, 0);
             Remesh();

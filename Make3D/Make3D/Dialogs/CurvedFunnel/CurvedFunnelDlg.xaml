@@ -32,29 +32,23 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Radius</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding Radius}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding Radius}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Curve</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding FactorA}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding FactorA}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Wall Thickness</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallThickness}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Height</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ShapeHeight}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding ShapeHeight}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -114,4 +108,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

@@ -1,5 +1,4 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -811,17 +810,16 @@ namespace Barnacle.Dialogs.MeshEditor
                 tri.NeighbourP2P0 = null;
             }
             FindNeighbours();
-            
+
             foreach (MeshTriangle mt in needModels)
             {
-               mt.Selected = false;
+                mt.Selected = false;
                 SetupNewFace(mt);
             }
-            
         }
+
         public void DiagnosticSplitSelectedFaces()
         {
-
             List<MeshTriangle> trisToSmooth = new List<MeshTriangle>();
             foreach (MeshTriangle t in Faces)
             {
@@ -829,11 +827,9 @@ namespace Barnacle.Dialogs.MeshEditor
 
                 {
                     trisToSmooth.Add(t);
-
                 }
             }
             SmoothTriangles(trisToSmooth);
-
         }
     }
 }

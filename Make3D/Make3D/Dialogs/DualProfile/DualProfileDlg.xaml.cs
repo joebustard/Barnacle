@@ -1,11 +1,8 @@
 using asdflibrary;
-using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -188,8 +185,6 @@ namespace Barnacle.Dialogs
                     {
                         for (float y = -0.6F; y <= 0.6F; y += dd)
                         {
-
-
                             for (float z = -0.6F; z <= 0.6; z += dd)
                             {
                                 gc.p[0] = new XYZ(x, y, z);
@@ -214,7 +209,6 @@ namespace Barnacle.Dialogs
                                     if (Math.Abs(td) < 0.001) tin = true;
 
                                     gc.val[i] = GetDist(fin, fd, tin, td);
-                                    
                                 }
                                 triangles.Clear();
 
@@ -235,132 +229,30 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-
-            /*
-
-            if (TopPathControl.PathClosed && FrontPathControl.PathClosed)
-            {
-                if (frontpnts.Count > 3 && toppnts.Count > 3)
-                {
-                    CubeMarcher cm = new CubeMarcher();
-                    GridCell gc = new GridCell();
-                    List<Triangle> triangles = new List<Triangle>();
-                    bool[] ins = new bool[4];
-                    float[] xyd = new float[4];
-                    bool[] itop = new bool[4];
-                    float[] xzd = new float[4];
-                    float dd = 0.025F;
-                    for (float x = -0.6F; x <= 0.6; x += dd)
-                    {
-                        for (float y = -0.6F; y <= 0.6F; y += dd)
-                        {
-
-                            ins[0] = InFront(x, y);
-                            ins[1] = InFront(x + dd, y);
-                            ins[2] = InFront(x + dd, y + dd);
-                            ins[3] = InFront(x, y + dd);
-
-                            xyd[0] = FrontDist(x, y, ins[0]);
-                            xyd[1] = FrontDist(x + dd, y, ins[1]);
-                            xyd[2] = FrontDist(x + dd, y + dd, ins[2]);
-                            xyd[3] = FrontDist(x, y + dd, ins[3]);
-                            bool firstZ = true;
-                            for (float z = -0.6F; z <= 0.6; z += dd)
-                            {
-                                gc.p[0] = new XYZ(x, y, z);
-
-                                gc.p[1] = new XYZ(x + dd, y, z);
-                                gc.p[2] = new XYZ(x + dd, y, z + dd);
-                                gc.p[3] = new XYZ(x, y, z + dd);
-                                gc.p[4] = new XYZ(x, y + dd, z);
-                                gc.p[5] = new XYZ(x + dd, y + dd, z);
-                                gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
-                                gc.p[7] = new XYZ(x, y + dd, z + dd);
-
-                                if (firstZ)
-                                {
-                                    itop[0] = InTop(x, z);
-                                    itop[1] = InTop(x + dd, z);
-                                }
-                                else
-                                {
-                                    itop[0] = itop[2];
-                                    itop[1] = itop[3];
-                                }
-                                itop[2] = InTop(x + dd, z + dd);
-                                itop[3] = InTop(x, z + dd);
-
-                                if (firstZ)
-                                {
-                                    xzd[0] = TopDist(x, z, itop[0]);
-                                    xzd[1] = TopDist(x + dd, z, itop[1]);
-                                    //firstZ = false;
-                                }
-                                else
-                                {
-                                    xzd[0] = xzd[2];
-                                    xzd[1] = xzd[3];
-                                }
-                                xzd[2] = TopDist(x + dd, z + dd, itop[2]);
-                                xzd[3] = TopDist(x, z + dd, itop[3]);
-
-                                gc.val[0] = GetDist(ins[0], xyd[0], itop[0], xzd[0]);
-                                gc.val[1] = GetDist(ins[1], xyd[1], itop[1], xzd[1]);
-                                gc.val[2] = GetDist(ins[1], xyd[1], itop[2], xzd[2]);
-                                gc.val[3] = GetDist(ins[0], xyd[0], itop[3], xzd[3]);
-
-                                gc.val[4] = GetDist(ins[3], xyd[3], itop[0], xzd[0]);
-                                gc.val[5] = GetDist(ins[2], xyd[2], itop[1], xzd[1]);
-                                gc.val[6] = GetDist(ins[2], xyd[2], itop[2], xzd[2]);
-                                gc.val[7] = GetDist(ins[3], xyd[3], itop[3], xzd[3]);
-
-                                triangles.Clear();
-
-                                cm.Polygonise(gc, 0, triangles);
-
-                                foreach (Triangle t in triangles)
-                                {
-                                    int p0 = AddVertice(t.p[0].x * frontXSize, -(t.p[0].y * frontYSize), t.p[0].z * topYSize);
-                                    int p1 = AddVertice(t.p[1].x * frontXSize, - (t.p[1].y * frontYSize), t.p[1].z * topYSize);
-                                    int p2 = AddVertice(t.p[2].x * frontXSize, - (t.p[2].y * frontYSize), t.p[2].z * topYSize);
-
-                                    Faces.Add(p0);
-                                    Faces.Add(p2);
-                                    Faces.Add(p1);
-                                }
-                            }
-                        }
-                    }
-
-
-                }
-            }
-            */
         }
+
         private double GetDist(bool fin, float fid, bool tin, float ftop)
         {
             double res = Math.Abs(fid);
-            
-            if ( Math.Abs(ftop) > res)
+
+            if (Math.Abs(ftop) > res)
             {
                 res = Math.Abs(ftop);
             }
-            /*
-            res = fid * fid;
-            res += ftop * ftop;
-            res = Math.Sqrt(res);
-            */
+
             if (fin && tin)
             {
                 res = -res;
             }
             return res;
         }
+
         private bool InFront(float x, float y)
         {
             bool inFront = IsPointInPolygon(x, y, frontpnts);
             return inFront;
         }
+
         private float FrontDist(float x, float y, bool inside)
         {
             Point closest = new Point(0, 0);
@@ -371,11 +263,13 @@ namespace Barnacle.Dialogs
             }
             return frontDist;
         }
+
         private bool InTop(float x, float y)
         {
             bool inTop = IsPointInPolygon(x, y, toppnts);
             return inTop;
         }
+
         private float TopDist(float x, float y, bool inside)
         {
             Point closest = new Point(0, 0);
@@ -386,6 +280,7 @@ namespace Barnacle.Dialogs
             }
             return topDist;
         }
+
         private float CalculateFrontDistance(float x, float y, float z)
         {
             Point closest = new Point(0, 0);
@@ -547,7 +442,6 @@ namespace Barnacle.Dialogs
             loaded = true;
 
             UpdateDisplay();
-           
         }
     }
 }

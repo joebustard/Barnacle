@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -11,7 +6,6 @@ namespace Barnacle.Models
 {
     public class FloorMarker
     {
-
         private Point3D position;
         private double length = 10;
 
@@ -47,6 +41,7 @@ namespace Barnacle.Models
                 }
             }
         }
+
         private Model3DGroup group;
 
         public Model3DGroup Group
@@ -61,6 +56,7 @@ namespace Barnacle.Models
         {
             get { return group; }
         }
+
         public FloorMarker()
         {
             group = new Model3DGroup();
@@ -72,8 +68,7 @@ namespace Barnacle.Models
         {
             group.Children.Clear();
 
-
-            MeshGeometry3D xmesh = MakeCubeMesh(0, 0,0, 1);
+            MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
             xmesh.ApplyTransformation(new ScaleTransform3D(length, 0.1, 4));
             xmesh.ApplyTransformation(new TranslateTransform3D(position.X, 0, position.Z));
             Material xmaterial = new DiffuseMaterial(Brushes.Red);
@@ -86,7 +81,6 @@ namespace Barnacle.Models
             xmaterial = new DiffuseMaterial(Brushes.Red);
             xmodel = new GeometryModel3D(xmesh, xmaterial);
             group.Children.Add(xmodel);
-
         }
 
         // Make a mesh containing a cube centered at this point.

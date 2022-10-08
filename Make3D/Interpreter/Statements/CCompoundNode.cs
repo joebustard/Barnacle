@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace ScriptLanguage
 {
@@ -52,9 +50,8 @@ namespace ScriptLanguage
                 while ((i < Statements.Count) &&
                         (result == true) && !InBreakMode && ParseTreeNode.continueRunning)
                 {
-                   
                     result = Statements[i].Execute();
-                    if ( CancellationToken.IsCancellationRequested)
+                    if (CancellationToken.IsCancellationRequested)
                     {
                         ParseTreeNode.continueRunning = false;
                     }
@@ -65,17 +62,16 @@ namespace ScriptLanguage
             return result;
         }
 
-        private  bool CheckEscape()
+        private bool CheckEscape()
         {
-        
             Application.Current.Dispatcher.Invoke(() =>
             {
-                if ( Keyboard.IsKeyDown(Key.Escape))
+                if (Keyboard.IsKeyDown(Key.Escape))
                 {
                     InBreakMode = true;
                 }
             });
-            
+
             Thread.Sleep(1);
             return InBreakMode;
         }

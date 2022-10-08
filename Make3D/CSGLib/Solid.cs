@@ -84,16 +84,19 @@ namespace CSGLib
         }
 
         private Vertex min;
-        public Vertex Minimum 
+
+        public Vertex Minimum
         {
-        get { return min; }
+            get { return min; }
         }
 
         private Vertex max;
+
         public Vertex Maximum
         {
             get { return max; }
         }
+
         /**
         * Construct a solid based on data arrays. An exception may occur in the case of
         * abnormal arrays (indices making references to inexistent vertices, there are less
@@ -106,7 +109,6 @@ namespace CSGLib
 
         public Solid(Point3DCollection vertices, Int32Collection indices, bool switchWindingOrder) : this()
         {
-
             Vertices = new Vector3D[vertices.Count];
             Indices = new int[indices.Count];
             double minx = double.MaxValue;
@@ -117,15 +119,13 @@ namespace CSGLib
             double maxy = double.MinValue;
             double maxz = double.MinValue;
 
-
-
             if (indices.Count != 0)
             {
                 for (int i = 0; i < vertices.Count; i++)
                 {
                     Vertices[i] = new Vector3D(vertices[i].X, vertices[i].Y, vertices[i].Z);
-                    
-                    if ( Vertices[i].X <minx)
+
+                    if (Vertices[i].X < minx)
                     {
                         minx = Vertices[i].X;
                     }
@@ -133,7 +133,6 @@ namespace CSGLib
                     {
                         maxx = Vertices[i].X;
                     }
-
 
                     if (Vertices[i].Y < miny)
                     {
@@ -154,7 +153,7 @@ namespace CSGLib
                     }
                 }
                 min = new Vertex(minx, miny, minz);
-                max = new Vertex(maxx,maxy,maxz);
+                max = new Vertex(maxx, maxy, maxz);
                 int face = 0;
                 for (int i = 0; i < indices.Count; i += 3)
                 {
@@ -169,9 +168,8 @@ namespace CSGLib
                         Indices[i + 1] = indices[i + 1];
                         Indices[i + 2] = indices[i + 2];
                     }
-                     face++;
+                    face++;
                 }
-
             }
         }
 
@@ -248,13 +246,10 @@ namespace CSGLib
                     Vertices[i] = vertices[i];
                 }
                 Array.Copy(indices, 0, Indices, 0, indices.Length);
-
             }
         }
 
         //-------------------------GEOMETRICAL_TRANSFORMATIONS-------------------------//
-
-       
 
         /**
         * Applies a rotation into a solid
@@ -263,10 +258,7 @@ namespace CSGLib
         * @param dy rotation on the y axis
         */
 
-      
-
         //-----------------------------------PRIVATES--------------------------------//
-
 
         /**
         * Gets the solid mean

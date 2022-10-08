@@ -1,8 +1,6 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -18,7 +16,6 @@ namespace ScriptLanguage
         private ExpressionNode spokeRadiusExp;
         private ExpressionNode axleBoreExp;
 
-
         public MakeWagonWheelNode(ExpressionNode hubRadius, ExpressionNode hubThickness, ExpressionNode rimInnerRadius, ExpressionNode rimThickness, ExpressionNode rimDepth, ExpressionNode numberOfSpokes, ExpressionNode spokeRadius, ExpressionNode axleBore)
         {
             this.hubRadiusExp = hubRadius;
@@ -29,7 +26,6 @@ namespace ScriptLanguage
             this.numberOfSpokesExp = numberOfSpokes;
             this.spokeRadiusExp = spokeRadius;
             this.axleBoreExp = axleBore;
-
         }
 
         public MakeWagonWheelNode(ExpressionCollection coll)
@@ -42,7 +38,6 @@ namespace ScriptLanguage
             this.numberOfSpokesExp = coll.Get(5);
             this.spokeRadiusExp = coll.Get(6);
             this.axleBoreExp = coll.Get(7);
-
         }
 
         /// Execute this node
@@ -52,105 +47,105 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            double valHubRadius = 0; 
-            double valHubThickness = 0; 
-            double valRimInnerRadius = 0; 
-            double valRimThickness = 0; 
-            double valRimDepth = 0; 
-            double valNumberOfSpokes = 0; 
-            double valSpokeRadius = 0; 
-            double valAxleBore = 0;
-
-            if (
-                       EvalExpression(hubRadiusExp, ref valHubRadius, "HubRadius", "MakeWagonWheel") &&
-                       EvalExpression(hubThicknessExp, ref valHubThickness, "HubThickness", "MakeWagonWheel") &&
-                       EvalExpression(rimInnerRadiusExp, ref valRimInnerRadius, "RimInnerRadius", "MakeWagonWheel") &&
-                       EvalExpression(rimThicknessExp, ref valRimThickness, "RimThickness", "MakeWagonWheel") &&
-                       EvalExpression(rimDepthExp, ref valRimDepth, "RimDepth", "MakeWagonWheel") &&
-                       EvalExpression(numberOfSpokesExp, ref valNumberOfSpokes, "NumberOfSpokes", "MakeWagonWheel") &&
-                       EvalExpression(spokeRadiusExp, ref valSpokeRadius, "SpokeRadius", "MakeWagonWheel") &&
-                       EvalExpression(axleBoreExp, ref valAxleBore, "AxleBore", "MakeWagonWheel")
-               )
             {
-                // check calculated values are in range
-                bool inRange = true;
+                double valHubRadius = 0;
+                double valHubThickness = 0;
+                double valRimInnerRadius = 0;
+                double valRimThickness = 0;
+                double valRimDepth = 0;
+                double valNumberOfSpokes = 0;
+                double valSpokeRadius = 0;
+                double valAxleBore = 0;
 
-                if (valHubRadius < 1 || valHubRadius > 20)
+                if (
+                           EvalExpression(hubRadiusExp, ref valHubRadius, "HubRadius", "MakeWagonWheel") &&
+                           EvalExpression(hubThicknessExp, ref valHubThickness, "HubThickness", "MakeWagonWheel") &&
+                           EvalExpression(rimInnerRadiusExp, ref valRimInnerRadius, "RimInnerRadius", "MakeWagonWheel") &&
+                           EvalExpression(rimThicknessExp, ref valRimThickness, "RimThickness", "MakeWagonWheel") &&
+                           EvalExpression(rimDepthExp, ref valRimDepth, "RimDepth", "MakeWagonWheel") &&
+                           EvalExpression(numberOfSpokesExp, ref valNumberOfSpokes, "NumberOfSpokes", "MakeWagonWheel") &&
+                           EvalExpression(spokeRadiusExp, ref valSpokeRadius, "SpokeRadius", "MakeWagonWheel") &&
+                           EvalExpression(axleBoreExp, ref valAxleBore, "AxleBore", "MakeWagonWheel")
+                   )
                 {
-                    Log.Instance().AddEntry("MakeWagonWheel : HubRadius value out of range (1..20)");
-                    inRange = false;
+                    // check calculated values are in range
+                    bool inRange = true;
+
+                    if (valHubRadius < 1 || valHubRadius > 20)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : HubRadius value out of range (1..20)");
+                        inRange = false;
+                    }
+
+                    if (valHubThickness < 1 || valHubThickness > 20)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : HubThickness value out of range (1..20)");
+                        inRange = false;
+                    }
+
+                    if (valRimInnerRadius < 1 || valRimInnerRadius > 20)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : RimInnerRadius value out of range (1..20)");
+                        inRange = false;
+                    }
+
+                    if (valRimThickness < 1 || valRimThickness > 20)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : RimThickness value out of range (1..20)");
+                        inRange = false;
+                    }
+
+                    if (valRimDepth < 1 || valRimDepth > 20)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : RimDepth value out of range (1..20)");
+                        inRange = false;
+                    }
+
+                    if (valNumberOfSpokes < 4 || valNumberOfSpokes > 10)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : NumberOfSpokes value out of range (4..10)");
+                        inRange = false;
+                    }
+
+                    if (valSpokeRadius < 1 || valSpokeRadius > 10)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : SpokeRadius value out of range (1..10)");
+                        inRange = false;
+                    }
+
+                    if (valAxleBore < 1 || valAxleBore > 10)
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : AxleBore value out of range (1..10)");
+                        inRange = false;
+                    }
+
+                    if (inRange)
+                    {
+                        result = true;
+
+                        Object3D obj = new Object3D();
+
+                        obj.Name = "WagonWheel";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
+
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        WagonWheelMaker maker = new WagonWheelMaker(valHubRadius, valHubThickness, valRimInnerRadius, valRimThickness, valRimDepth, valNumberOfSpokes, valSpokeRadius, valAxleBore);
+
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeWagonWheel : Illegal value");
+                    }
                 }
-
-                if (valHubThickness < 1 || valHubThickness > 20)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : HubThickness value out of range (1..20)");
-                    inRange = false;
-                }
-
-                if (valRimInnerRadius < 1 || valRimInnerRadius > 20)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : RimInnerRadius value out of range (1..20)");
-                    inRange = false;
-                }
-
-                if (valRimThickness < 1 || valRimThickness > 20)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : RimThickness value out of range (1..20)");
-                    inRange = false;
-                }
-
-                if (valRimDepth < 1 || valRimDepth > 20)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : RimDepth value out of range (1..20)");
-                    inRange = false;
-                }
-
-                if (valNumberOfSpokes < 4 || valNumberOfSpokes > 10)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : NumberOfSpokes value out of range (4..10)");
-                    inRange = false;
-                }
-
-                if (valSpokeRadius < 1 || valSpokeRadius > 10)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : SpokeRadius value out of range (1..10)");
-                    inRange = false;
-                }
-
-                if (valAxleBore < 1 || valAxleBore > 10)
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : AxleBore value out of range (1..10)");
-                    inRange = false;
-                }
-
-                if (inRange)
-                {
-                    result = true;
-
-                    Object3D obj = new Object3D();
-
-                    obj.Name = "WagonWheel";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
-
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    WagonWheelMaker maker = new WagonWheelMaker(valHubRadius, valHubThickness, valRimInnerRadius, valRimThickness, valRimDepth, valNumberOfSpokes, valSpokeRadius, valAxleBore);
-
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                }
-                else
-                {
-                    Log.Instance().AddEntry("MakeWagonWheel : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

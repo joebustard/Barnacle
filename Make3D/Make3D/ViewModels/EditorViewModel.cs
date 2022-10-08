@@ -1,5 +1,4 @@
-﻿using asdflibrary;
-using Barnacle.Dialogs;
+﻿using Barnacle.Dialogs;
 using Barnacle.Dialogs.Slice;
 using Barnacle.EditorParameterLib;
 using Barnacle.Models;
@@ -27,7 +26,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Workflow;
 
 namespace Barnacle.ViewModels
 {
@@ -41,6 +39,7 @@ namespace Barnacle.ViewModels
         {
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
         };
+
         private Bounds3D allBounds;
 
         private Axies axies;
@@ -272,7 +271,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-
         /// <summary>
         /// Regenerate display in response to something outside this view model
         /// requesting it
@@ -351,13 +349,13 @@ namespace Barnacle.ViewModels
             */
             try
             {
-               // CountFaces();
+                // CountFaces();
                 allBounds = new Bounds3D();
                 allBounds.Zero();
                 modelItems.Clear();
 
-               // GeometryModel3D gmcb = GetMesh(cb);
-             //   modelItems.Add(gmcb);
+                // GeometryModel3D gmcb = GetMesh(cb);
+                //   modelItems.Add(gmcb);
                 if (showFloor)
                 {
                     modelItems.Add(floor.FloorMesh);
@@ -670,7 +668,7 @@ namespace Barnacle.ViewModels
             else
             {
                 // if editing is disable, ignore all keys except escape ( which may enale it again)
-                if ( key == Key.Escape)
+                if (key == Key.Escape)
                 {
                     if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
                     {
@@ -705,7 +703,7 @@ namespace Barnacle.ViewModels
             {
                 ctrlDown = true;
             }
-            if (  isEditingEnabled  && selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e, ctrlDown) == true)
+            if (isEditingEnabled && selectedObjectAdorner != null && selectedObjectAdorner.MouseMove(lastMouse, newPos, e, ctrlDown) == true)
             {
                 lastMouse = newPos;
             }
@@ -736,7 +734,7 @@ namespace Barnacle.ViewModels
 
         internal void MouseUp(System.Windows.Point lastMousePos, MouseButtonEventArgs e)
         {
-            if (isEditingEnabled &&  selectedObjectAdorner != null)
+            if (isEditingEnabled && selectedObjectAdorner != null)
             {
                 selectedObjectAdorner.MouseUp();
             }
@@ -1519,7 +1517,7 @@ namespace Barnacle.ViewModels
                     if (allBounds.Upper.X > double.MinValue)
                     {
                         placement = new Point3D(allBounds.Upper.X + editingObj.Scale.X / 2, editingObj.Scale.Y / 2, editingObj.Scale.Z / 2);
-                        if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null )
+                        if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
                         {
                             placement = floorMarker.Position;
                         }
@@ -2112,7 +2110,7 @@ namespace Barnacle.ViewModels
             // default position of object is at right of everything
             obj.Position = new Point3D(allBounds.Upper.X + obj.Scale.X / 2, obj.Scale.Y / 2, 0);
             // if the user wants it placed at the marker AND there is a marker, put it there instead
-            if ( Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
+            if (Project.SharedProjectSettings.PlaceNewAtMarker && floorMarker != null)
             {
                 obj.Position = floorMarker.Position;
             }
@@ -3182,8 +3180,7 @@ namespace Barnacle.ViewModels
                 dlg.SlicerPath = Properties.Settings.Default.SlicerPath;
                 // dlg.ExportDocument = Document;
                 dlg.ShowDialog();
-            }  
-            
+            }
         }
 
         private void OnSplit(object param)
@@ -3342,7 +3339,6 @@ namespace Barnacle.ViewModels
                 s = $"Faces {totalFaces} Vertices {totalFaces * 3}, Mem {mb.ToString("F3", CultureInfo.InvariantCulture)}Mb";
             }
             NotificationManager.Notify("SetStatusText3", s);
-            
         }
 
         private void ResetSelection()

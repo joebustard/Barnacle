@@ -364,6 +364,7 @@ namespace Barnacle.Views
         {
             vm.SwitchToView("Editor", false);
         }
+
         private void SetLibraryImageSource(string p)
         {
             BitmapImage bim = null;

@@ -32,29 +32,23 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">WallLength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallLength}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallLength}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">WallHeight</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallHeight}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallHeight}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">WallThickness</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallThickness}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallThickness}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Stone Size</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding StoneSize}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding StoneSize}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -111,7 +105,7 @@
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2"  />
+            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

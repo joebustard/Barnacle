@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media;
 
 namespace VisualSolutionExplorerLib
 {
     public static class Helper
     {
-
-
-
         public static T TryFindParent<T>(this DependencyObject child)
         where T : DependencyObject
         {

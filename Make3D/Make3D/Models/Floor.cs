@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows.Media;
+﻿using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Models
@@ -10,6 +9,7 @@ namespace Barnacle.Models
         {
             floorMesh = CreateMesh();
         }
+
         public Point3DCollection FloorPoints3D
         {
             get
@@ -139,8 +139,9 @@ namespace Barnacle.Models
 
         public GeometryModel3D FloorMesh
         {
-              get { return floorMesh; }
+            get { return floorMesh; }
         }
+
         public Point3DCollection FloorObjectVertices
         {
             get

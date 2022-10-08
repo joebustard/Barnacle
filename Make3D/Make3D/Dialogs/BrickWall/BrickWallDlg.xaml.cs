@@ -213,7 +213,7 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            BrickWallMaker maker = new BrickWallMaker( wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap);
+            BrickWallMaker maker = new BrickWallMaker(wallLength, wallHeight, wallWidth, brickLength, brickLength / 2, brickHeight, mortarGap);
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }

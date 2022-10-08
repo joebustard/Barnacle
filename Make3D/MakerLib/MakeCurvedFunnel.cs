@@ -1,4 +1,3 @@
-using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -8,7 +7,6 @@ namespace MakerLib
 {
     public class CurvedFunnelMaker : MakerBase
     {
-
         private double radius;
         private double factorA;
         private double wallThickness;
@@ -20,7 +18,6 @@ namespace MakerLib
             this.factorA = factorA;
             this.wallThickness = wallThickness;
             this.shapeHeight = shapeHeight;
-
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -119,7 +116,6 @@ namespace MakerLib
                 Faces.Add(outerBottom[i]);
                 Faces.Add(outerBottom[j]);
             }
-
 
             // close top
             for (int i = 0; i < innerBottom.Count; i++)

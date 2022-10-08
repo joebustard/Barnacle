@@ -1,8 +1,6 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -14,7 +12,6 @@ namespace ScriptLanguage
         private ExpressionNode wallThicknessExp;
         private ExpressionNode stoneSize;
 
-
         public MakeStoneWallNode
             (
             ExpressionNode wallLength, ExpressionNode wallHeight, ExpressionNode wallThickness, ExpressionNode stoneSize
@@ -24,7 +21,6 @@ namespace ScriptLanguage
             this.wallHeightExp = wallHeight;
             this.wallThicknessExp = wallThickness;
             this.stoneSize = stoneSize;
-
         }
 
         public MakeStoneWallNode
@@ -34,7 +30,6 @@ namespace ScriptLanguage
             this.wallHeightExp = coll.Get(1);
             this.wallThicknessExp = coll.Get(2);
             this.stoneSize = coll.Get(3);
-
         }
 
         /// Execute this node
@@ -47,8 +42,7 @@ namespace ScriptLanguage
             double valWallLength = 0;
             double valWallHeight = 0;
             double valWallThickness = 0;
-            int  valStoneSize = 0;
-
+            int valStoneSize = 0;
 
             if (
                        EvalExpression(wallLengthExp, ref valWallLength, "WallLength", "MakeStoneWall") &&

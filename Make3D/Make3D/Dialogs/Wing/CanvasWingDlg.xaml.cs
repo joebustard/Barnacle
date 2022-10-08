@@ -736,7 +736,6 @@ namespace Barnacle.Dialogs
                 double theta = 0;
                 for (int strut = 0; strut < numSubStrats; strut++)
                 {
-
                     switch (shrinkle)
                     {
                         case 0:
@@ -823,7 +822,7 @@ namespace Barnacle.Dialogs
                                     }
                                     diy = innerZ * Math.Sin(theta);
 
-                                    pd1 = new Point3D(p1.X * innerStrutLength + innerXo, y * innerStrutLength+diy , innerZ);
+                                    pd1 = new Point3D(p1.X * innerStrutLength + innerXo, y * innerStrutLength + diy, innerZ);
 
                                     y = p2.Y;
                                     if (y > 0)

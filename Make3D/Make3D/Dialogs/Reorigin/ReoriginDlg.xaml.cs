@@ -1,16 +1,11 @@
-﻿using EarClipperLib;
-using Barnacle.Models;
+﻿using Barnacle.Models;
 using Barnacle.Object3DLib;
-using PolygonTriangulationLib;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Xml;
 
 namespace Barnacle.Dialogs
 {

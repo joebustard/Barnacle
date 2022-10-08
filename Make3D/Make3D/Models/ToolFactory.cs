@@ -10,7 +10,6 @@ namespace Barnacle.Models
             BaseModellerDialog res = null;
             switch (name)
             {
-
                 case "Dual":
                     res = new DualProfileDlg();
                     break;
@@ -162,7 +161,6 @@ namespace Barnacle.Models
                 case "Pulley":
                     res = new PulleyDlg();
                     break;
-
 
                 case "DevTest":
                     res = new DevTest();

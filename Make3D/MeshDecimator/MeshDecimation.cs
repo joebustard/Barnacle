@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,14 +23,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
-using System;
 using MeshDecimator.Algorithms;
+using System;
 
 namespace MeshDecimator
 {
     #region Algorithm
+
     /// <summary>
     /// The decimation algorithms.
     /// </summary>
@@ -39,11 +42,13 @@ namespace MeshDecimator
         /// The default algorithm.
         /// </summary>
         Default,
+
         /// <summary>
         /// The fast quadric mesh simplification algorithm.
         /// </summary>
         FastQuadricMesh
     }
+
     #endregion
 
     /// <summary>
@@ -52,7 +57,9 @@ namespace MeshDecimator
     public static class MeshDecimation
     {
         #region Public Methods
+
         #region Create Algorithm
+
         /// <summary>
         /// Creates a specific decimation algorithm.
         /// </summary>
@@ -68,15 +75,18 @@ namespace MeshDecimator
                 case Algorithm.FastQuadricMesh:
                     alg = new FastQuadricMeshSimplification();
                     break;
+
                 default:
                     throw new ArgumentException("The specified algorithm is not supported.", "algorithm");
             }
 
             return alg;
         }
+
         #endregion
 
         #region Decimate Mesh
+
         /// <summary>
         /// Decimates a mesh.
         /// </summary>
@@ -128,9 +138,11 @@ namespace MeshDecimator
             algorithm.DecimateMesh(targetTriangleCount);
             return algorithm.ToMesh();
         }
+
         #endregion
 
         #region Decimate Mesh Lossless
+
         /// <summary>
         /// Decimates a mesh without losing any quality.
         /// </summary>
@@ -174,7 +186,9 @@ namespace MeshDecimator
             algorithm.DecimateMeshLossless();
             return algorithm.ToMesh();
         }
+
         #endregion
+
         #endregion
     }
 }

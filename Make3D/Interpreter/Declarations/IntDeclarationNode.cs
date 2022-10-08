@@ -1,16 +1,11 @@
-﻿using System;
-
-namespace ScriptLanguage
+﻿namespace ScriptLanguage
 {
     internal class IntDeclarationNode : DeclarationNode
     {
-
         // Instance constructor
         public IntDeclarationNode()
         {
             DeclarationType = "Int";
         }
-
-     
     }
 }

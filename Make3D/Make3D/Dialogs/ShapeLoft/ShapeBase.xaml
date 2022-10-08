@@ -15,13 +15,13 @@
             -->
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="2*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Label FontSize="14"
                Grid.Column="0"
@@ -33,27 +33,26 @@
         <Grid Grid.Column="1"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="1*"/>
-
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
             <Label Grid.Column="0"
                    Grid.Row="0"
                    VerticalAlignment="Center">
-             No. Of Points            
+             No. Of Points
             </Label>
             <local:NUDBox Grid.Column="1"
                           Grid.Row="0"
                           VerticalAlignment="Center"
-                          x:Name="NumberOfPointsBox"/>
+                          x:Name="NumberOfPointsBox" />
             <Label Grid.Column="0"
                    Grid.Row="1"
                    VerticalAlignment="Center">
@@ -62,30 +61,29 @@
             <Grid Grid.Column="1"
                   Grid.Row="1">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="4*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Button Click="RotateMinus_Click"
                         Content="-"
                         Grid.Column="0"
-                        Grid.Row="1" ToolTip="Rotate -1 degree"/>
+                        Grid.Row="1" ToolTip="Rotate -1 degree" />
 
                 <Button Click="RotateZero_Click"
                         Content="."
                         Grid.Column="1"
-                        Grid.Row="1" FontSize="20" ToolTip="Zero the rotation"/>
+                        Grid.Row="1" FontSize="20" ToolTip="Zero the rotation" />
 
                 <Button Click="RotatePlus_Click_1"
                         Content="+"
                         Grid.Column="2"
-                        Grid.Row="1" ToolTip="Rotate +1 degree"/>
-
+                        Grid.Row="1" ToolTip="Rotate +1 degree" />
             </Grid>
             <Label Grid.Column="0"
                    Grid.Row="2"
@@ -97,7 +95,7 @@
                       Grid.Row="2"
                       IsChecked="true"
                       Unchecked="CheckBox_Unchecked"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
             <Label Grid.Column="0"
                    Grid.Row="3"
                    VerticalAlignment="Center">
@@ -108,15 +106,14 @@
                       Grid.Row="3"
                       IsChecked="false"
                       Unchecked="LinkBox_Unchecked"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
             <Label Grid.Column="0"
                    Grid.Row="4">
 
 Distance            </Label>
             <Label Grid.Column="1"
                    Grid.Row="4"
-                   x:Name="DistanceLabel"/>
-
+                   x:Name="DistanceLabel" />
         </Grid>
         <Canvas Background="AntiqueWhite"
                 Grid.Column="2"
@@ -130,6 +127,6 @@ Distance            </Label>
                 MouseUp="PointCanvas_MouseUp"
                 SizeChanged="PointCanvas_SizeChanged"
                 VerticalAlignment="Stretch"
-                x:Name="PointCanvas"/>
+                x:Name="PointCanvas" />
     </Grid>
 </UserControl>

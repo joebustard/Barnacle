@@ -7,7 +7,8 @@ namespace PlacementLib
     {
         public bool Rotated { get; set; }
         private bool canBeRotated;
-        public bool CanBeRotated { get { return canBeRotated; } }
+        public bool CanBeRotated
+        { get { return canBeRotated; } }
 
         private System.Windows.Point position;
 

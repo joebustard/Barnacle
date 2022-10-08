@@ -120,7 +120,6 @@ namespace ScriptLanguage
                                 {
                                     ReportStatement();
                                     Log.Instance().AddEntry("Run Time Error : Type mismatch in assignment");
-                                    
                                 }
                             }
                         }
@@ -138,7 +137,7 @@ namespace ScriptLanguage
                                     case "*=": sym.DoubleValue *= sti.DoubleValue; break;
                                     case "/=": sym.DoubleValue /= sti.DoubleValue; break;
                                 }
-                                
+
                                 result = true;
                             }
                             else
@@ -153,7 +152,7 @@ namespace ScriptLanguage
                                         case "*=": sym.IntValue *= (int)Math.Floor(sti.DoubleValue); break;
                                         case "/=": sym.IntValue /= (int)Math.Floor(sti.DoubleValue); break;
                                     }
-                                    
+
                                     result = true;
                                 }
                                 else
@@ -164,8 +163,6 @@ namespace ScriptLanguage
                             }
                         }
                         break;
-
-                  
 
                     case StackItem.ItemType.sval:
                         {
@@ -185,10 +182,6 @@ namespace ScriptLanguage
                             }
                         }
                         break;
-
-                   
-
-                   
                 }
             }
             return result;

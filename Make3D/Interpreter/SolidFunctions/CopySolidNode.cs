@@ -1,9 +1,5 @@
 ﻿using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScriptLanguage
 {
@@ -51,7 +47,7 @@ namespace ScriptLanguage
                     }
                 }
             }
-            catch( Exception ex)
+            catch (Exception ex)
             {
                 Log.Instance().AddEntry($"Copy : {ex.Message}");
             }

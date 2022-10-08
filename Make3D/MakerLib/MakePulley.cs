@@ -31,7 +31,7 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
-            if ( extraRimThickness >0 && extraRimRadius >0 )
+            if (extraRimThickness > 0 && extraRimRadius > 0)
             {
                 GenerateWithRim();
             }
@@ -46,7 +46,7 @@ namespace MakerLib
             if (axleBoreRadius > 0)
             {
                 List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
-                if ( grooveDepth > mainThickness)
+                if (grooveDepth > mainThickness)
                 {
                     grooveDepth = mainThickness;
                 }
@@ -72,18 +72,17 @@ namespace MakerLib
 
                 double theta = 0;
                 double dt = Math.PI / 10;
-                for ( theta = Math.PI; theta <= 2* Math.PI; theta += dt)
+                for (theta = Math.PI; theta <= 2 * Math.PI; theta += dt)
                 {
-                    double x =cx + mainRadius + (grooveDepth * Math.Sin(theta));
-                    double y =grooveDepth * Math.Cos(theta);
+                    double x = cx + mainRadius + (grooveDepth * Math.Sin(theta));
+                    double y = grooveDepth * Math.Cos(theta);
 
                     p3d = new Point3D(x, 0, -y);
                     pcol = new PolarCoordinate(0, 0, 0);
                     pcol.SetPoint3D(p3d);
                     polarProfile.Add(pcol);
-
                 }
-                p3d = new Point3D(cx + mainRadius, 0, -halfheight );
+                p3d = new Point3D(cx + mainRadius, 0, -halfheight);
                 pcol = new PolarCoordinate(0, 0, 0);
                 pcol.SetPoint3D(p3d);
                 polarProfile.Add(pcol);
@@ -121,12 +120,12 @@ namespace MakerLib
                 pcol.SetPoint3D(p3d);
                 polarProfile.Add(pcol);
 
-                p3d = new Point3D(cx + mainRadius, 0, halfheight+extraRimThickness);
+                p3d = new Point3D(cx + mainRadius, 0, halfheight + extraRimThickness);
                 pcol = new PolarCoordinate(0, 0, 0);
                 pcol.SetPoint3D(p3d);
                 polarProfile.Add(pcol);
 
-                p3d = new Point3D(cx + mainRadius+extraRimRadius, 0, halfheight + extraRimThickness);
+                p3d = new Point3D(cx + mainRadius + extraRimRadius, 0, halfheight + extraRimThickness);
                 pcol = new PolarCoordinate(0, 0, 0);
                 pcol.SetPoint3D(p3d);
                 polarProfile.Add(pcol);
@@ -135,14 +134,13 @@ namespace MakerLib
                 double dt = Math.PI / 10;
                 for (theta = Math.PI; theta <= 2 * Math.PI; theta += dt)
                 {
-                    double x = cx + mainRadius +extraRimRadius +(grooveDepth * Math.Sin(theta));
+                    double x = cx + mainRadius + extraRimRadius + (grooveDepth * Math.Sin(theta));
                     double y = grooveDepth * Math.Cos(theta);
 
                     p3d = new Point3D(x, 0, -y);
                     pcol = new PolarCoordinate(0, 0, 0);
                     pcol.SetPoint3D(p3d);
                     polarProfile.Add(pcol);
-
                 }
 
                 p3d = new Point3D(cx + mainRadius + extraRimRadius, 0, -halfheight - extraRimThickness);
@@ -150,11 +148,10 @@ namespace MakerLib
                 pcol.SetPoint3D(p3d);
                 polarProfile.Add(pcol);
 
-                p3d = new Point3D(cx + mainRadius , 0, -halfheight - extraRimThickness);
+                p3d = new Point3D(cx + mainRadius, 0, -halfheight - extraRimThickness);
                 pcol = new PolarCoordinate(0, 0, 0);
                 pcol.SetPoint3D(p3d);
                 polarProfile.Add(pcol);
-
 
                 p3d = new Point3D(cx + mainRadius, 0, -halfheight);
                 pcol = new PolarCoordinate(0, 0, 0);

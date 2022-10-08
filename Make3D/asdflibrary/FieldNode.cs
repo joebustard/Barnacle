@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace asdflibrary
 {
-    class FieldNode
+    internal class FieldNode
     {
         // indices of field points in the corners
         public int[] Corners;
+
         public FieldNode[] SubNodes;
-        int centre;
+        private int centre;
+
         public FieldNode()
         {
             Corners = new int[8];
@@ -70,7 +70,6 @@ namespace asdflibrary
                     result = centre;
                 }
 
-
                 // if it doesn't belong to the current node maybe its in  one of the subnodes
 
                 int subnode = -1;
@@ -81,7 +80,6 @@ namespace asdflibrary
                     // is it front or behind the centre
                     if (z < AdaptiveSignedDistanceField.allFieldPoints[centre].z)
                     {
-
                         if (x < AdaptiveSignedDistanceField.allFieldPoints[centre].x)
                         {
                             // left
@@ -106,7 +104,6 @@ namespace asdflibrary
                             // right
                             subnode = 5;
                         }
-
                     }
                 }
                 else
@@ -115,7 +112,6 @@ namespace asdflibrary
                     // is it front or behind the centre
                     if (z < AdaptiveSignedDistanceField.allFieldPoints[centre].z)
                     {
-
                         if (x < AdaptiveSignedDistanceField.allFieldPoints[centre].x)
                         {
                             // left
@@ -140,7 +136,6 @@ namespace asdflibrary
                             // right
                             subnode = 7;
                         }
-
                     }
                 }
                 if (SubNodes[subnode] != null)
@@ -150,14 +145,14 @@ namespace asdflibrary
             }
             return result;
         }
+
         private const int MAX_DEPTH = 10;
+
         public void Subdivide(int depth = 0)
         {
-
             // cant subdivide if its already subdivided
             for (int i = 0; i < 8; i++)
             {
-
                 if (SubNodes[i] != null)
                 {
                     return;
@@ -190,7 +185,6 @@ namespace asdflibrary
             // and on the bottom in the middle
             nps[1, 0, 1] = SplitMidpoint(Corners[0], Corners[2]);
 
-
             // top ones
             nps[0, 2, 0] = Corners[4];
             nps[0, 2, 2] = Corners[5];
@@ -203,7 +197,6 @@ namespace asdflibrary
             nps[1, 2, 0] = SplitMidpoint(Corners[7], Corners[4]);
 
             nps[1, 2, 1] = SplitMidpoint(Corners[4], Corners[6]);
-
 
             // middle one
             nps[0, 1, 0] = SplitMidpoint(Corners[0], Corners[4]);
@@ -237,11 +230,9 @@ namespace asdflibrary
             {
                 for (int i = 0; i < 8; i++)
                 {
-
-
                     if (SubNodes[i] != null && !SubNodes[i].SignsSame())
                     {
-                        // a node which isn't all in or all out 
+                        // a node which isn't all in or all out
                         if (SubNodes[i].Differential() > 0.75)
                         {
                             SubNodes[i].Subdivide(depth + 1);
@@ -250,12 +241,14 @@ namespace asdflibrary
                 }
             }
         }
+
         public float Differential()
         {
-            float v =AdaptiveSignedDistanceField.allFieldPoints[Corners[0]].v;
+            float v = AdaptiveSignedDistanceField.allFieldPoints[Corners[0]].v;
             float v1 = AdaptiveSignedDistanceField.allFieldPoints[Corners[7]].v;
             return Math.Abs(v) + Math.Abs(v1);
         }
+
         public bool SignsSame()
         {
             bool res = true;
@@ -305,7 +298,6 @@ namespace asdflibrary
                 ci = AdaptiveSignedDistanceField.AddFieldPoint(cx, cy, cz);
             }
             return ci;
-
         }
 
         private FieldNode CreateSubNode(int l, int h)
@@ -384,6 +376,7 @@ namespace asdflibrary
             nd.SetCentre(ci);
             return nd;
         }
+
         public void Dump(int level = 0)
         {
             string insert = "";

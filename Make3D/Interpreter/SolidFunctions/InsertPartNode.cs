@@ -1,9 +1,5 @@
 ﻿using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace ScriptLanguage
@@ -134,7 +130,7 @@ namespace ScriptLanguage
         ///
         public override String ToRichText()
         {
-            String result = RichTextFormatter.KeyWord("InsertPart( ") ;
+            String result = RichTextFormatter.KeyWord("InsertPart( ");
 
             result += solid.ToRichText();
             result += " )";

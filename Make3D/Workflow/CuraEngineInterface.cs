@@ -119,7 +119,7 @@ exit 0
             System.IO.File.WriteAllText(File, txt);
         }
 
-        public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile,String startG, string endG)
+        public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
         {
             bool ok = false;
             try
@@ -172,25 +172,23 @@ exit 0
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
 
                 string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
-                
-
 
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
-                                  slicerPath+@"\resources\definitions\" + printer,
-                                  slicerPath+@"\resources\extruders\" + extruder,
+                                  slicerPath + @"\resources\definitions\" + printer,
+                                  slicerPath + @"\resources\extruders\" + extruder,
                                   settingoverrides,
                                   startG,
                                   endG,
                                   stlPath,
                                  tmpFile,
                                  logPath);
-               
+
                 ok = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
 
                 if (File.Exists(tmpCmdFile))
                 {
-              //      File.Delete(tmpCmdFile);
+                    //      File.Delete(tmpCmdFile);
                 }
 
                 if (File.Exists(tmpFile))
@@ -338,7 +336,5 @@ exit 0
 
             return result;
         }
-
-       
     }
 }

@@ -1,6 +1,5 @@
 using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -9,13 +8,13 @@ namespace MakerLib
 {
     public class StoneWallMaker : MakerBase
     {
-
         private double wallLength;
         private double wallHeight;
         private double wallThickness;
         private int stoneSize;
         private double cutDepth;
         private Random rand;
+
         public StoneWallMaker(double wallLength, double wallHeight, double wallThickness, int stoneSize)
         {
             this.wallLength = wallLength;
@@ -25,6 +24,7 @@ namespace MakerLib
             this.cutDepth = 1;
             rand = new Random();
         }
+
         /*
         private List<Point> cellQueue;
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -42,8 +42,7 @@ namespace MakerLib
                     cells[r, c] = 0;
                 }
             }
-            
-            
+
             int stones = numberOfStones;
             byte reserved = (byte) (stones + 1);
             cells[0, 0] = reserved;
@@ -82,10 +81,8 @@ namespace MakerLib
                             cellQueue.Add(p2);
                             done = true;
                         }
-
                     }
                     direction = (direction + 1) % 8;
-
                 }
                 cellQueue.RemoveAt(0);
             }
@@ -104,7 +101,6 @@ namespace MakerLib
                         z = 2;
                     }
 
-                   
                     if(cells[r, c] == 0 || cells[r, c] == reserved)
                     {
                         int v1 = AddVertice(x, y, 0);
@@ -120,10 +116,8 @@ namespace MakerLib
                     Faces.Add(v4);
                     Faces.Add(v2);
                     }
-
                     else
                     {
-                        
                         int v1 = AddVertice(x, y, 2);
                         int v2 = AddVertice(x + 1, y, 2);
                         int v3 = AddVertice(x, y - 1, 2);
@@ -143,11 +137,8 @@ namespace MakerLib
                         }
                         else
                         {
-                           
-
                             if ( r > 0)
                             {
-
                                 if ((cells[r - 1, c] == cells[r, c]))
                         {
                                     v1 = AddVertice(x, y, 2);
@@ -161,8 +152,6 @@ namespace MakerLib
                                 }
                                 else
                             {
-
-
                                     v1 = AddVertice(x, y, 0);
 
                                     v3 = AddVertice(x, y - 1, 0);
@@ -203,11 +192,10 @@ namespace MakerLib
                         }
                     }
                 }
-                
             }
-
         }
         */
+
         private enum stoneType
         {
             None,
@@ -218,8 +206,8 @@ namespace MakerLib
             VDouble,
             VTriple,
             Quad
-
         }
+
         public void Generate(Point3DCollection pnts, Int32Collection faces)
         {
             pnts.Clear();
@@ -237,8 +225,8 @@ namespace MakerLib
                     cells[r, c] = stoneType.None;
                 }
             }
-            
-            int maxSpace = l*h;
+
+            int maxSpace = l * h;
             int spaceLeft = maxSpace;
             while (spaceLeft > 0)
             {
@@ -248,7 +236,7 @@ namespace MakerLib
                 {
                     if (spaceLeft > 0.5 * maxSpace && rand.NextDouble() > 0.5)
                     {
-                        if (CellClear(rr, rc + 1, cells, l, h) && CellClear(rr + 1, rc, cells, l, h) && CellClear(rr +1, rc + 1, cells, l, h))
+                        if (CellClear(rr, rc + 1, cells, l, h) && CellClear(rr + 1, rc, cells, l, h) && CellClear(rr + 1, rc + 1, cells, l, h))
                         {
                             cells[rr, rc] = stoneType.Quad;
                             cells[rr, rc + 1] = stoneType.Used;
@@ -261,7 +249,6 @@ namespace MakerLib
                     {
                         if (spaceLeft > 0.25 * maxSpace)
                         {
-
                             if (CellClear(rr, rc + 1, cells, l, h) && CellClear(rr, rc + 2, cells, l, h))
                             {
                                 cells[rr, rc] = stoneType.HTriple;
@@ -280,19 +267,19 @@ namespace MakerLib
                                 }
                                 else
                                 {
-                                    if (CellClear(rr, rc + 1, cells, l, h) )
+                                    if (CellClear(rr, rc + 1, cells, l, h))
                                     {
                                         cells[rr, rc] = stoneType.HDouble;
                                         cells[rr, rc + 1] = stoneType.Used;
-                                        
+
                                         spaceLeft -= 2;
                                     }
                                     else
                                     {
-                                        if (CellClear(rr + 1, rc, cells, l, h) )
+                                        if (CellClear(rr + 1, rc, cells, l, h))
                                         {
                                             cells[rr, rc] = stoneType.VDouble;
-                                            cells[rr + 1, rc] = stoneType.Used;                                          
+                                            cells[rr + 1, rc] = stoneType.Used;
                                             spaceLeft -= 2;
                                         }
                                         else
@@ -303,7 +290,6 @@ namespace MakerLib
                                     }
                                 }
                             }
-
                         }
                         else
                         {
@@ -311,16 +297,15 @@ namespace MakerLib
                             spaceLeft -= 1;
                         }
                     }
-
                 }
             }
             /*
             cells[0, 0] = stoneType.Quad;
             cells[0, 2] = stoneType.Single;
             */
-            for ( int r = 0; r < h; r ++)
+            for (int r = 0; r < h; r++)
             {
-                for ( int c = 0; c < l; c ++)
+                for (int c = 0; c < l; c++)
                 {
                     double x = c * stoneSize;
                     double y = r * stoneSize;
@@ -329,7 +314,7 @@ namespace MakerLib
                     double dx;
                     double dy;
 
-                    if ( cells[r,c] == stoneType.Single )
+                    if (cells[r, c] == stoneType.Single)
                     {
                         sl = stoneSize;
                         sh = stoneSize;
@@ -338,7 +323,7 @@ namespace MakerLib
                     if (cells[r, c] == stoneType.HDouble)
                     {
                         sl = 2 * stoneSize;
-                        sh =stoneSize;
+                        sh = stoneSize;
                     }
                     else
                     if (cells[r, c] == stoneType.VDouble)
@@ -352,19 +337,18 @@ namespace MakerLib
                         sl = 3 * stoneSize;
                         sh = stoneSize;
                     }
-                    else if(cells[r, c] == stoneType.VTriple)
+                    else if (cells[r, c] == stoneType.VTriple)
                     {
                         sl = stoneSize;
                         sh = 3 * stoneSize;
                     }
-                    else if(cells[r, c] == stoneType.Quad)
+                    else if (cells[r, c] == stoneType.Quad)
                     {
                         sl = 2 * stoneSize;
                         sh = 2 * stoneSize;
                     }
                     else
                     {
-
                     }
                     if (sl != 0)
                     {
@@ -384,7 +368,7 @@ namespace MakerLib
                         int vc = Vertices.Count;
                         foreach (Point3D p in onePnts)
                         {
-                            Vertices.Add(new Point3D(p.X + x, p.Y + y+dy, p.Z+dz));
+                            Vertices.Add(new Point3D(p.X + x, p.Y + y + dy, p.Z + dz));
                         }
                         foreach (int index in oneTris)
                         {
@@ -395,16 +379,14 @@ namespace MakerLib
                         double backThickness = wallThickness - cutDepth;
                         foreach (Point3D p in backPnts)
                         {
-                            Vertices.Add(new Point3D((p.X*sl) + x+ ( sl/2), (sh*p.Y) + y + dy, (p.Z * backThickness)+backThickness/2));
+                            Vertices.Add(new Point3D((p.X * sl) + x + (sl / 2), (sh * p.Y) + y + dy, (p.Z * backThickness) + backThickness / 2));
                         }
                         foreach (int index in backTris)
                         {
                             Faces.Add(index + vc);
                         }
-                       
                     }
                 }
-               
             }
         }
 
@@ -447,7 +429,9 @@ namespace MakerLib
         {
             switch (direction)
             {
+#pragma warning disable CS0162 // Unreachable code detected
                 case 0: return new Point(0, -1); break;
+
                 case 1: return new Point(1, 0); break;
                 case 2: return new Point(0, 1); break;
                 case 3: return new Point(-1, 0); break;
@@ -456,8 +440,10 @@ namespace MakerLib
                 case 6: return new Point(-1, 1); break;
                 case 7: return new Point(1, 1); break;
                 default: return new Point(0, 0); break;
+#pragma warning restore CS0162 // Unreachable code detected
             }
         }
+
         private bool CheckGap(byte[,] cells, int r, int c, int v, byte ignore)
         {
             int tlx = c - v;

@@ -7,7 +7,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Ribbon;
@@ -69,6 +68,7 @@ namespace Barnacle.ViewModels
         private bool wingEnabled;
         private bool editingActive;
         private bool canSlice;
+
         public bool CanSlice
         {
             get { return canSlice; }
@@ -81,6 +81,7 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         public DefaultViewModel()
         {
             settingsLoaded = false;
@@ -254,6 +255,7 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         public bool BoldChecked
         {
             get
@@ -1020,8 +1022,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-
-
         public List<ToolDef> BuildingToolsToShow
         {
             get
@@ -1037,6 +1037,7 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         public ICommand ViewCommand { get; set; }
 
         public bool WingEnabled
@@ -1133,6 +1134,7 @@ namespace Barnacle.ViewModels
             SortMenu(buildingToolsToShow);
             NotifyPropertyChanged("BuildingToolsToShow");
         }
+
         private void CreateParametricMenu()
         {
             parametricToolsToShow = new List<ToolDef>();
@@ -1154,7 +1156,6 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Trapezoid", true, "Trapazoid", "Create a trapazoid."));
 
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
-
 
             //parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             parametricToolsToShow.Add(new ToolDef("Curved Funnel", true, "CurvedFunnel", "Create a curved funnel"));
@@ -1287,7 +1288,6 @@ namespace Barnacle.ViewModels
                 if (File.Exists(System.IO.Path.Combine(Properties.Settings.Default.SlicerPath, "cura.exe")))
                 {
                     CanSlice = true;
-
                 }
             }
         }
@@ -1321,6 +1321,7 @@ namespace Barnacle.ViewModels
         {
             NotificationManager.Notify("Bend", obj);
         }
+
         private void OnFold(object obj)
         {
             NotificationManager.Notify("Fold", obj);

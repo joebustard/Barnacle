@@ -44,7 +44,8 @@ using System.Windows.Media.Media3D;
 namespace CSGLib
 {
     [Flags]
-    public enum IntersectionType { None = 0, FrontFace = 1, BackFace = 2, Both = FrontFace | BackFace };
+    public enum IntersectionType
+    { None = 0, FrontFace = 1, BackFace = 2, Both = FrontFace | BackFace };
 
     /// <summary>
     /// a virtual ray that is casted from a begin Position in a certain Direction.
@@ -61,7 +62,8 @@ namespace CSGLib
         public bool IsShadowRay;
         public IntersectionType IntersectionType;
 
-        public enum RaySign { negative = 1, positive = 0 };
+        public enum RaySign
+        { negative = 1, positive = 0 };
 
         public RaySign[] Sign = new RaySign[3];
 

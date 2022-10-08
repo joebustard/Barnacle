@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,9 +23,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#endregion
 
-using System;
+#endregion
 
 namespace MeshDecimator.Math
 {
@@ -34,6 +34,7 @@ namespace MeshDecimator.Math
     public static class MathHelper
     {
         #region Consts
+
         /// <summary>
         /// The Pi constant.
         /// </summary>
@@ -63,9 +64,11 @@ namespace MeshDecimator.Math
         /// Radians to degrees constant.
         /// </summary>
         public const double Rad2Degd = 180.0 / PId;
+
         #endregion
 
         #region Min
+
         /// <summary>
         /// Returns the minimum of two values.
         /// </summary>
@@ -134,9 +137,11 @@ namespace MeshDecimator.Math
         {
             return (val1 < val2 ? (val1 < val3 ? val1 : val3) : (val2 < val3 ? val2 : val3));
         }
+
         #endregion
 
         #region Max
+
         /// <summary>
         /// Returns the maximum of two values.
         /// </summary>
@@ -205,9 +210,11 @@ namespace MeshDecimator.Math
         {
             return (val1 > val2 ? (val1 > val3 ? val1 : val3) : (val2 > val3 ? val2 : val3));
         }
+
         #endregion
 
         #region Clamping
+
         /// <summary>
         /// Clamps a value between a minimum and a maximum value.
         /// </summary>
@@ -251,9 +258,11 @@ namespace MeshDecimator.Math
         {
             return (value > 0.0 ? (value < 1.0 ? value : 1.0) : 0.0);
         }
+
         #endregion
 
         #region Triangle Area
+
         /// <summary>
         /// Calculates the area of a triangle.
         /// </summary>
@@ -281,6 +290,7 @@ namespace MeshDecimator.Math
             var dy = p2 - p0;
             return dx.Magnitude * (System.Math.Sin(Vector3d.Angle(ref dx, ref dy) * Deg2Radd) * dy.Magnitude) * 0.5f;
         }
+
         #endregion
     }
 }

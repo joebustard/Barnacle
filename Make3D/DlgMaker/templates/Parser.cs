@@ -7,34 +7,34 @@
     ExpressionCollection coll = new ExpressionCollection();
 int exprCount =//PARAMCOUNT;
 
-    for (int i = 0; i<exprCount && parsed; i++)
+    for (int i = 0; i < exprCount && parsed; i++)
     {
-        ExpressionNode paramExp = ParseExpressionNode(parentName);
-        if (paramExp != null)
+    ExpressionNode paramExp = ParseExpressionNode(parentName);
+    if (paramExp != null)
+    {
+        if (i < exprCount - 1)
         {
-            if (i<exprCount - 1)
+            if (CheckForComma() == false)
             {
-                if (CheckForComma() == false)
-                {
-                    ReportSyntaxError(commaError);
-parsed = false;
-                }
+                ReportSyntaxError(commaError);
+                parsed = false;
             }
-            coll.Add(paramExp);
         }
-        else
-        {
-            String expError = $"{label} error parsing parameter expression number {i + 1} ";
-ReportSyntaxError(expError);
-parsed = false;
-        }
+        coll.Add(paramExp);
     }
-    if (parsed && coll.Count() == exprCount)
+    else
     {
-        Make//TOOLNAMENode mn = new Make//TOOLNAMENode(coll);
-        mn.IsInLibrary = tokeniser.InIncludeFile();
-exp = mn;
+        String expError = $"{label} error parsing parameter expression number {i + 1} ";
+        ReportSyntaxError(expError);
+        parsed = false;
     }
+}
+if (parsed && coll.Count() == exprCount)
+{
+    Make//TOOLNAMENode mn = new Make//TOOLNAMENode(coll);
+        mn.IsInLibrary = tokeniser.InIncludeFile();
+    exp = mn;
+}
 
-    return exp;
+return exp;
 }

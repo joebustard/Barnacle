@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 using System;
@@ -35,35 +37,44 @@ namespace MeshDecimator.Math
     public struct Vector3d : IEquatable<Vector3d>
     {
         #region Static Read-Only
+
         /// <summary>
         /// The zero vector.
         /// </summary>
         public static readonly Vector3d zero = new Vector3d(0, 0, 0);
+
         #endregion
 
         #region Consts
+
         /// <summary>
         /// The vector epsilon.
         /// </summary>
         public const double Epsilon = double.Epsilon;
+
         #endregion
 
         #region Fields
+
         /// <summary>
         /// The x component.
         /// </summary>
         public double x;
+
         /// <summary>
         /// The y component.
         /// </summary>
         public double y;
+
         /// <summary>
         /// The z component.
         /// </summary>
         public double z;
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the magnitude of this vector.
         /// </summary>
@@ -105,10 +116,13 @@ namespace MeshDecimator.Math
                 {
                     case 0:
                         return x;
+
                     case 1:
                         return y;
+
                     case 2:
                         return z;
+
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3d index!");
                 }
@@ -120,20 +134,25 @@ namespace MeshDecimator.Math
                     case 0:
                         x = value;
                         break;
+
                     case 1:
                         y = value;
                         break;
+
                     case 2:
                         z = value;
                         break;
+
                     default:
                         throw new IndexOutOfRangeException("Invalid Vector3d index!");
                 }
             }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new vector with one value for all components.
         /// </summary>
@@ -168,9 +187,11 @@ namespace MeshDecimator.Math
             this.y = vector.y;
             this.z = vector.z;
         }
+
         #endregion
 
         #region Operators
+
         /// <summary>
         /// Adds two vectors.
         /// </summary>
@@ -275,10 +296,13 @@ namespace MeshDecimator.Math
         {
             return new Vector3d(v.x, v.y, v.z);
         }
+
         #endregion
 
         #region Public Methods
+
         #region Instance
+
         /// <summary>
         /// Set x, y and z components of an existing vector.
         /// </summary>
@@ -337,9 +361,11 @@ namespace MeshDecimator.Math
             if (z < min) z = min;
             else if (z > max) z = max;
         }
+
         #endregion
 
         #region Object
+
         /// <summary>
         /// Returns a hash code for this vector.
         /// </summary>
@@ -398,9 +424,11 @@ namespace MeshDecimator.Math
                 y.ToString(format, CultureInfo.InvariantCulture),
                 z.ToString(format, CultureInfo.InvariantCulture));
         }
+
         #endregion
 
         #region Static
+
         /// <summary>
         /// Dot Product of two vectors.
         /// </summary>
@@ -475,7 +503,9 @@ namespace MeshDecimator.Math
                 result = Vector3d.zero;
             }
         }
+
         #endregion
+
         #endregion
     }
 }

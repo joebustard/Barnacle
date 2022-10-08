@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScriptLanguage
+﻿namespace ScriptLanguage
 {
     internal class CBoolDeclarationNode : DeclarationNode
     {
@@ -9,6 +7,5 @@ namespace ScriptLanguage
         {
             DeclarationType = "Bool";
         }
-
     }
 }

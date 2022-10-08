@@ -12,35 +12,35 @@
                           Height="450">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0"
               Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="40"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="20" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="40" />
+                <RowDefinition Height="20" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="10"/>
-                <ColumnDefinition Width="4*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="3*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Column="1"
                    Grid.Row="1"
@@ -51,12 +51,12 @@
                      Grid.Row="1"
                      TextChanged="MainRadiusBox_TextChanged"
                      VerticalAlignment="Center"
-                     x:Name="MainRadiusBox"/>
+                     x:Name="MainRadiusBox" />
             <Grid Grid.Column="3"
                   Grid.Row="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Button Click="MainRadiusPlus_Click"
                         Grid.Row="0"
@@ -78,12 +78,12 @@
                      Grid.Row="3"
                      TextChanged="HorizontalRadiusBox_TextChanged"
                      VerticalAlignment="Center"
-                     x:Name="HorizontalRadiusBox"/>
+                     x:Name="HorizontalRadiusBox" />
             <Grid Grid.Column="3"
                   Grid.Row="3">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Button Click="HorizontalRadiusPlus_Click"
                         Grid.Row="0"
@@ -107,12 +107,12 @@
                      Grid.Row="5"
                      TextChanged="VerticalRadiusBox_TextChanged"
                      VerticalAlignment="Center"
-                     x:Name="VerticalRadiusBox"/>
+                     x:Name="VerticalRadiusBox" />
             <Grid Grid.Column="3"
                   Grid.Row="5">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1*"/>
-                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <Button Click="VerticalRadiusPlus_Click"
                         Grid.Row="0"
@@ -134,7 +134,7 @@
                      Grid.Row="7"
                      TextChanged="StretchBox_TextChanged"
                      VerticalAlignment="Center"
-                     x:Name="StretchBox"/>
+                     x:Name="StretchBox" />
             <Grid Grid.Column="3"
                   Grid.Row="7">
                 <Grid.RowDefinitions>
@@ -161,28 +161,28 @@
                   Grid.ColumnSpan="3"
                   Grid.Row="9">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
                 <RadioButton Checked="TypeAButton_Checked"
                              Content="A"
                              Grid.Column="0"
                              IsChecked="True"
-                             x:Name="TypeAButton"/>
+                             x:Name="TypeAButton" />
                 <RadioButton Checked="TypeBButton_Checked"
                              Content="B"
                              Grid.Column="1"
-                             x:Name="TypeBButton"/>
+                             x:Name="TypeBButton" />
                 <RadioButton Checked="TypeCButton_Checked"
                              Content="C"
                              Grid.Column="2"
-                             x:Name="TypeCButton"/>
+                             x:Name="TypeCButton" />
                 <RadioButton Checked="TypeDButton_Checked"
                              Content="D"
                              Grid.Column="3"
-                             x:Name="TypeDButton"/>
+                             x:Name="TypeDButton" />
             </Grid>
             <Label Grid.Column="1"
                    Grid.Row="10"
@@ -198,7 +198,7 @@
                     ValueChanged="LumpSlider_ValueChanged"
                     VerticalAlignment="Bottom"
                     x:Name="LumpSlider"
-                    Height="31"/>
+                    Height="31" />
         </Grid>
         <Border BorderThickness="4"
                 Grid.Column="1"
@@ -217,7 +217,7 @@
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#FF808080"/>
+                            <AmbientLight Color="#FF808080" />
                             <DirectionalLight Color="White"
                                               Direction="-1,-1,-1"
                                               x:Name="dirLightMain">
@@ -236,8 +236,8 @@
         <Grid Grid.ColumnSpan="3"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
@@ -247,32 +247,30 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor"
                           Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}"/>
+                          IsChecked="{Binding ShowFloor}" />
                 <CheckBox Content="Axies"
                           Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}"/>
+                          IsChecked="{Binding ShowAxies}" />
                 <Button Click="Home_Click"
                         Content="Home"
-                        Grid.Column="2"/>
-
+                        Grid.Column="2" />
             </Grid>
             <Grid Grid.Column="2">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="10" />
                 </Grid.ColumnDefinitions>
                 <Button Click="Cancel_Click"
                         Content="Cancel"
                         Grid.Column="1"
-                        Margin="2,2,2,2"/>
+                        Margin="2,2,2,2" />
 
                 <Button Click="Ok_Click"
                         Content="Ok"
                         Grid.Column="2"
-                        Margin="2,2,2,2"  />
-
+                        Margin="2,2,2,2" />
             </Grid>
         </Grid>
     </Grid>

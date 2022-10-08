@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 using System;
@@ -34,49 +36,61 @@ namespace MeshDecimator.Math
     public struct SymmetricMatrix
     {
         #region Fields
+
         /// <summary>
         /// The m11 component.
         /// </summary>
         public double m0;
+
         /// <summary>
         /// The m12 component.
         /// </summary>
         public double m1;
+
         /// <summary>
         /// The m13 component.
         /// </summary>
         public double m2;
+
         /// <summary>
         /// The m14 component.
         /// </summary>
         public double m3;
+
         /// <summary>
         /// The m22 component.
         /// </summary>
         public double m4;
+
         /// <summary>
         /// The m23 component.
         /// </summary>
         public double m5;
+
         /// <summary>
         /// The m24 component.
         /// </summary>
         public double m6;
+
         /// <summary>
         /// The m33 component.
         /// </summary>
         public double m7;
+
         /// <summary>
         /// The m34 component.
         /// </summary>
         public double m8;
+
         /// <summary>
         /// The m44 component.
         /// </summary>
         public double m9;
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the component value with a specific index.
         /// </summary>
@@ -90,32 +104,44 @@ namespace MeshDecimator.Math
                 {
                     case 0:
                         return m0;
+
                     case 1:
                         return m1;
+
                     case 2:
                         return m2;
+
                     case 3:
                         return m3;
+
                     case 4:
                         return m4;
+
                     case 5:
                         return m5;
+
                     case 6:
                         return m6;
+
                     case 7:
                         return m7;
+
                     case 8:
                         return m8;
+
                     case 9:
                         return m9;
+
                     default:
                         throw new IndexOutOfRangeException();
                 }
             }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a symmetric matrix with a value in each component.
         /// </summary>
@@ -185,9 +211,11 @@ namespace MeshDecimator.Math
 
             this.m9 = d * d;
         }
+
         #endregion
 
         #region Operators
+
         /// <summary>
         /// Adds two matrixes together.
         /// </summary>
@@ -203,9 +231,11 @@ namespace MeshDecimator.Math
                 a.m9 + b.m9
             );
         }
+
         #endregion
 
         #region Internal Methods
+
         /// <summary>
         /// Determinant(0, 1, 2, 1, 4, 5, 2, 5, 7)
         /// </summary>
@@ -269,9 +299,11 @@ namespace MeshDecimator.Math
                 m1 * m1 * m8;
             return det;
         }
+
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Computes the determinant of this matrix.
         /// </summary>
@@ -298,6 +330,7 @@ namespace MeshDecimator.Math
                 this[a12] * this[a21] * this[a33];
             return det;
         }
+
         #endregion
     }
 }

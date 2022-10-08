@@ -305,15 +305,14 @@ namespace Barnacle.LineLib
             //  We want a consistent orientaion of the final points, no matter how the user
             // has drawn his curve
             bool anticlockwise = SignedPolygonArea(res) > 0;
-            if ( anticlockwise)
+            if (anticlockwise)
             {
                 List<System.Drawing.PointF> tmp = new List<System.Drawing.PointF>();
-                for ( int i = 0; i <res.Count; i ++ )
+                for (int i = 0; i < res.Count; i++)
                 {
                     tmp.Insert(0, res[i]);
                 }
                 res = tmp;
-
             }
             return res;
         }
@@ -346,6 +345,7 @@ namespace Barnacle.LineLib
             // Return the result.
             return area;
         }
+
         public void FromString(string s)
         {
             string coordPart;
@@ -589,8 +589,6 @@ namespace Barnacle.LineLib
             }
             if (valid && pnts.Count > 2)
             {
-
-
                 points.Clear();
                 int i = 0;
                 foreach (FlexiPoint f in pnts)
@@ -631,7 +629,6 @@ namespace Barnacle.LineLib
                         }
                         else
                         {
-
                             // Delete the last dummy segment
                             segs.RemoveAt(segs.Count - 1);
                             // Append a new curve
@@ -665,7 +662,6 @@ namespace Barnacle.LineLib
                         }
                         else
                         {
-
                             // Delete the last dummy segment
                             segs.RemoveAt(segs.Count - 1);
                             // Append a new curve
@@ -797,6 +793,7 @@ namespace Barnacle.LineLib
             }
             return found;
         }
+
         public void MoveTo(Point position)
         {
             double cx = 0;
@@ -947,6 +944,7 @@ namespace Barnacle.LineLib
             }
             return res;
         }
+
         private void CoordsFromString(string coordPart)
         {
             points.Clear();

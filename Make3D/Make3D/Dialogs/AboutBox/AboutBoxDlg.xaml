@@ -14,18 +14,18 @@
     </Window.DataContext>
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png"/>
+            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png" />
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="8*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="8*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="6*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="6*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Label Content="{Binding AppIdentity}"
                FontSize="25"
@@ -35,12 +35,11 @@
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
-               VerticalContentAlignment="Stretch"/>
+               VerticalContentAlignment="Stretch" />
 
         <Button Click="OKButton_Click"
                 Content="OK"
                 Grid.Column="1"
-                Grid.Row="2" IsDefault="True"/>
-
+                Grid.Row="2" IsDefault="True" />
     </Grid>
 </Window>

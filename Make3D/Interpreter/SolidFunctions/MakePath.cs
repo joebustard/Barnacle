@@ -3,7 +3,6 @@ using Barnacle.Object3DLib;
 using MakerLib;
 using System;
 using System.Collections.Generic;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -32,43 +31,48 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            string pathText = "";
-            double h = 0;
-
-            if (EvalExpression(heightExp, ref h, "Height", "MakePath") &&
-                 EvalExpression(pathTextExp, ref pathText, "PathText", "MakePath"))
             {
-                if (pathText != "")
+                string pathText = "";
+                double h = 0;
+
+                if (EvalExpression(heightExp, ref h, "Height", "MakePath") &&
+                     EvalExpression(pathTextExp, ref pathText, "PathText", "MakePath"))
                 {
-                    FlexiPath flexiPath = new FlexiPath();
-                    if (flexiPath.FromTextPath(pathText))
+                    if (pathText != "")
                     {
-                        List<System.Windows.Point> points = flexiPath.DisplayPoints();
-
-                        if (points.Count >= 3 && h > 0)
+                        FlexiPath flexiPath = new FlexiPath();
+                        if (flexiPath.FromTextPath(pathText))
                         {
-                            result = true;
+                            List<System.Windows.Point> points = flexiPath.DisplayPoints();
 
-                            Object3D obj = new Object3D();
+                            if (points.Count >= 3 && h > 0)
+                            {
+                                result = true;
 
-                            obj.Name = "Platelet";
-                            obj.PrimType = "Mesh";
-                            obj.Scale = new Scale3D(20, 20, 20);
+                                Object3D obj = new Object3D();
 
-                            obj.Position = new Point3D(0, 0, 0);
-                            PolyMaker maker = new PolyMaker(points, h);
-                            Point3DCollection tmp = new Point3DCollection();
-                            maker.Generate(tmp, obj.TriangleIndices);
-                            PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-                            obj.CalcScale(false);
-                            obj.Remesh();
-                            Script.ResultArtefacts.Add(obj);
-                            ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                                obj.Name = "Platelet";
+                                obj.PrimType = "Mesh";
+                                obj.Scale = new Scale3D(20, 20, 20);
+
+                                obj.Position = new Point3D(0, 0, 0);
+                                PolyMaker maker = new PolyMaker(points, h);
+                                Point3DCollection tmp = new Point3DCollection();
+                                maker.Generate(tmp, obj.TriangleIndices);
+                                PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                                obj.CalcScale(false);
+                                obj.Remesh();
+                                Script.ResultArtefacts.Add(obj);
+                                ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                            }
+                            else
+                            {
+                                Log.Instance().AddEntry($"{label} : Not enough points to create object");
+                            }
                         }
                         else
                         {
-                            Log.Instance().AddEntry($"{label} : Not enough points to create object");
+                            Log.Instance().AddEntry($"{label} : Illegal value");
                         }
                     }
                     else
@@ -76,11 +80,6 @@ namespace ScriptLanguage
                         Log.Instance().AddEntry($"{label} : Illegal value");
                     }
                 }
-                else
-                {
-                    Log.Instance().AddEntry($"{label} : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

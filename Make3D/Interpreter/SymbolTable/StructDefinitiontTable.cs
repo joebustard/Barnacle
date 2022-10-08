@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ScriptLanguage
 {
-    class StructDefinitiontTable
+    internal class StructDefinitiontTable
     {
         private List<StructDefinition> Symbols;
-        static private StructDefinitiontTable Singleton;
+        private static StructDefinitiontTable Singleton;
 
         private StructDefinitiontTable()
         {
@@ -29,6 +25,7 @@ namespace ScriptLanguage
         {
             Symbols.Clear();
         }
+
         public StructDefinition FindStruct(string strName)
         {
             StructDefinition result = null;
@@ -47,9 +44,9 @@ namespace ScriptLanguage
         {
             StructDefinition def = new StructDefinition();
             def.StructName = stNode.Name;
-            foreach ( StatementNode nd in stNode.Body.Statements)
+            foreach (StatementNode nd in stNode.Body.Statements)
             {
-                if ( nd is DeclarationNode)
+                if (nd is DeclarationNode)
                 {
                     StructDefinition.StructField fld = new StructDefinition.StructField();
                     fld.FieldName = (nd as DeclarationNode).VarName;

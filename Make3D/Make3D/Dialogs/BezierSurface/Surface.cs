@@ -1,11 +1,5 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
+﻿using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -51,7 +45,6 @@ namespace Barnacle.Dialogs.BezierSurface
             }
             DateTime endTime = DateTime.Now;
             TimeSpan duration = endTime - startTime;
-           
         }
 
         public Point3D GetBezier3D(Point3D p1, Point3D p2, Point3D p3, Point3D p4, double t)

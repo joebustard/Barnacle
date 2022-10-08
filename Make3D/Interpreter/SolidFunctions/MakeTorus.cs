@@ -1,8 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -40,48 +38,48 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            double mr = 0;
-            double hr = 0;
-            double vr = 0;
-            int curve = 0;
-            double knobs = 0;
-            double h = 0;
-
-            if (EvalExpression(mainRadiusExp, ref mr, "Radius", "MakeTorus") &&
-                EvalExpression(ringRadiusExp, ref hr, "RingRadius", "MakeTorus") &&
-                EvalExpression(vRadiusExp, ref vr, "VerticalRadius", "MakeTorus") &&
-                 EvalExpression(curveExp, ref curve, "Curve", "MakeTorus") &&
-                  EvalExpression(knobExp, ref knobs, "Knobs", "MakeTorus") &&
-                  EvalExpression(heightExp, ref h, "Height", "MakeTorus")
-                )
             {
-                if (mr > 0 && h > 0 && hr >= 0 && vr >= 0 && curve >= 0 && curve < 4)
+                double mr = 0;
+                double hr = 0;
+                double vr = 0;
+                int curve = 0;
+                double knobs = 0;
+                double h = 0;
+
+                if (EvalExpression(mainRadiusExp, ref mr, "Radius", "MakeTorus") &&
+                    EvalExpression(ringRadiusExp, ref hr, "RingRadius", "MakeTorus") &&
+                    EvalExpression(vRadiusExp, ref vr, "VerticalRadius", "MakeTorus") &&
+                     EvalExpression(curveExp, ref curve, "Curve", "MakeTorus") &&
+                      EvalExpression(knobExp, ref knobs, "Knobs", "MakeTorus") &&
+                      EvalExpression(heightExp, ref h, "Height", "MakeTorus")
+                    )
                 {
-                    result = true;
+                    if (mr > 0 && h > 0 && hr >= 0 && vr >= 0 && curve >= 0 && curve < 4)
+                    {
+                        result = true;
 
-                    Object3D obj = new Object3D();
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "Torus";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "Torus";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    TorusMaker maker = new TorusMaker(mr, hr, vr, curve, knobs, h);
-                    Point3DCollection tmp = new Point3DCollection();
-                    //maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                        obj.Position = new Point3D(0, 0, 0);
+                        TorusMaker maker = new TorusMaker(mr, hr, vr, curve, knobs, h);
+                        Point3DCollection tmp = new Point3DCollection();
+                        //maker.Generate(obj.RelativeObjectVertices, obj.TriangleIndices);
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeTorus : Illegal value");
+                    }
                 }
-                else
-                {
-                    Log.Instance().AddEntry("MakeTorus : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

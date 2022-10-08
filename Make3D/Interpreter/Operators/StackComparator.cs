@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScriptLanguage
 {
-    class StackComparator
+    internal class StackComparator
     {
         public static bool Compare(StackItem it1, StackItem it2, out int result)
         {
@@ -107,7 +103,6 @@ namespace ScriptLanguage
                                 }
                             }
                         }
-
                     }
                     break;
 
@@ -135,7 +130,6 @@ namespace ScriptLanguage
                                 }
                             }
                         }
-
                     }
                     break;
             }
@@ -148,7 +142,6 @@ namespace ScriptLanguage
             result = 0;
             switch (it1.MyType)
             {
-
                 case StackItem.ItemType.bval:
                     {
                         if (it1.BooleanValue == it2.BooleanValue)
@@ -222,8 +215,6 @@ namespace ScriptLanguage
                     }
                     break;
 
-
-
                 case StackItem.ItemType.sldval:
                     {
                         if (it1.SolidValue == it2.SolidValue)
@@ -246,12 +237,9 @@ namespace ScriptLanguage
 
                 case StackItem.ItemType.sval:
                     {
-
                         result = String.Compare(it1.StringValue, it2.StringValue);
                     }
                     break;
-
-
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,13 +23,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#endregion
 
-using System;
+#endregion
 
 namespace MeshDecimator
 {
     #region ILogger
+
     /// <summary>
     /// A logger.
     /// </summary>
@@ -52,6 +53,7 @@ namespace MeshDecimator
         /// <param name="text">The text.</param>
         void LogError(string text);
     }
+
     #endregion
 
     /// <summary>
@@ -60,27 +62,33 @@ namespace MeshDecimator
     public static class Logging
     {
         #region Fields
+
         private static ILogger logger = null;
         private static object syncObj = new object();
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets or sets the active logger.
         /// </summary>
         public static ILogger Logger
         {
             get { return logger; }
-            set {
+            set
+            {
                 lock (syncObj)
                 {
                     logger = value;
                 }
             }
         }
+
         #endregion
 
         #region Static Initializer
+
         /// <summary>
         /// The static initializer.
         /// </summary>
@@ -88,10 +96,13 @@ namespace MeshDecimator
         {
             logger = new Loggers.ConsoleLogger();
         }
+
         #endregion
 
         #region Public Methods
+
         #region Verbose
+
         /// <summary>
         /// Logs a line of verbose text.
         /// </summary>
@@ -116,9 +127,11 @@ namespace MeshDecimator
         {
             LogVerbose(string.Format(format, args));
         }
+
         #endregion
 
         #region Warnings
+
         /// <summary>
         /// Logs a line of warning text.
         /// </summary>
@@ -143,9 +156,11 @@ namespace MeshDecimator
         {
             LogWarning(string.Format(format, args));
         }
+
         #endregion
 
         #region Errors
+
         /// <summary>
         /// Logs a line of error text.
         /// </summary>
@@ -170,7 +185,9 @@ namespace MeshDecimator
         {
             LogError(string.Format(format, args));
         }
+
         #endregion
+
         #endregion
     }
 }

@@ -12,7 +12,7 @@ namespace ScriptLanguage
     public class SymbolTable
     {
         public List<Symbol> Symbols;
-        static private SymbolTable Singleton;
+        private static SymbolTable Singleton;
 
         // Instance constructor
         public SymbolTable()

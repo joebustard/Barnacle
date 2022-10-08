@@ -21,10 +21,10 @@
 
             <TabControl>
                 <TabItem Header="Front">
-                    <ctrls:FlexiPathEditorControl x:Name="FrontPathControl"/>
+                    <ctrls:FlexiPathEditorControl x:Name="FrontPathControl" />
                 </TabItem>
                 <TabItem Header="Top">
-                    <ctrls:FlexiPathEditorControl x:Name="TopPathControl"/>
+                    <ctrls:FlexiPathEditorControl x:Name="TopPathControl" />
                 </TabItem>
             </TabControl>
         </Grid>
@@ -79,7 +79,7 @@
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2"  />
+            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

@@ -1,6 +1,5 @@
-﻿using EarClipperLib;
-using Barnacle.Models;
-using Barnacle.Object3DLib;
+﻿using Barnacle.Object3DLib;
+using EarClipperLib;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;

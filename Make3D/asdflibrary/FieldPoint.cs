@@ -72,7 +72,6 @@ namespace asdflibrary
             return result;
         }
 
-        
         public override bool Equals(object fp)
         {
             if (fp == null)
@@ -82,11 +81,13 @@ namespace asdflibrary
             var fp1 = (FieldPoint)fp;
             return (x == fp1.x) && (y == fp1.y) && (z == fp1.z);
         }
+
         public override int GetHashCode()
         {
             return ToString().GetHashCode();
         }
-        public bool At( float x, float y, float z)
+
+        public bool At(float x, float y, float z)
         {
             bool result = false;
             if (Math.Abs(this.x - x) < tol)
@@ -101,6 +102,7 @@ namespace asdflibrary
             }
             return result;
         }
+
         public void Dump(string insert = "")
         {
             System.Diagnostics.Debug.WriteLine($"{insert} x {x} ,y {y} ,z {z}, v {v}");

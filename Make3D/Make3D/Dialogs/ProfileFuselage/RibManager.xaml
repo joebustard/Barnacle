@@ -1,4 +1,4 @@
-<UserControl 
+<UserControl
              mc:Ignorable="d"
              x:Class="Barnacle.Dialogs.RibManager"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,30 +8,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="100"/>
+            <ColumnDefinition Width="100" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid Background="Azure"
               Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="30"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="2">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
             </Grid>
             <Label FontSize="14"
@@ -44,27 +44,27 @@
                     Grid.Row="2"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Add a new rib at the end"
-                    x:Name="AddRib"/>
+                    x:Name="AddRib" />
 
             <Button Click="CopyRib_Click"
                     Content="Copy"
                     Grid.Row="3"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Copy the selected rib and insert a copy immediatey after it"
-                    x:Name="CopyRib"/>
+                    x:Name="CopyRib" />
 
             <Button Click="DeleteRib_Click"
                     Content="Delete"
                     Grid.Row="4"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Delete the selected rib"
-                    x:Name="DeleteRib"/>
+                    x:Name="DeleteRib" />
             <Button Click="RenameRibs_Click"
                     Content="Rename"
                     Grid.Row="5"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Rename all the ribs starting at A. (Does not alter the file names)"
-                    x:Name="RenameRibsButton"/>
+                    x:Name="RenameRibsButton" />
 
             <Label FontSize="14"
                    Grid.Row="7"
@@ -76,25 +76,24 @@
                     Grid.Row="8"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Load a ribs definition file"
-                    x:Name="LoadRibs"/>
+                    x:Name="LoadRibs" />
 
             <Button Click="SaveRibs_Click"
                     Content="Save"
                     Grid.Row="9"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Save a ribs definition file"
-                    x:Name="SaveRibs"/>
-
+                    x:Name="SaveRibs" />
         </Grid>
         <Border Grid.Column="1"
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30" />
                     <ColumnDefinition />
-                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="30" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Height="30" Content="&lt;" Click="PreviousRib_CLicked"/>
+                <Button Grid.Column="0" Height="30" Content="&lt;" Click="PreviousRib_CLicked" />
                 <ListView Grid.Column="1" ItemsSource="{Binding Ribs}"
                       SelectedItem="{Binding SelectedRib}" SelectedIndex="{Binding SelectedRibIndex}" x:Name="RibList"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
 
@@ -105,7 +104,7 @@
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
             </ListView>
-                <Button Grid.Column="2" Height="30" Content="&gt;" Click="NextRib_Clicked"/>
+                <Button Grid.Column="2" Height="30" Content="&gt;" Click="NextRib_Clicked" />
             </Grid>
         </Border>
     </Grid>

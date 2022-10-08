@@ -12,41 +12,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="25" />
             <RowDefinition />
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Label GotFocus="UserControl_GotFocus"
                    Grid.Column="0"
                    HorizontalAlignment="Stretch"
                    VerticalContentAlignment="Center"
-                   x:Name="Number"/>
+                   x:Name="Number" />
 
             <TextBox GotFocus="UserControl_GotFocus"
                      Grid.Column="1"
                      HorizontalAlignment="Stretch"
                      TextChanged="PositionX_TextChanged"
                      VerticalContentAlignment="Center"
-                     x:Name="PositionX"/>
+                     x:Name="PositionX" />
             <TextBox GotFocus="UserControl_GotFocus"
                      Grid.Column="2"
                      HorizontalAlignment="Stretch"
                      TextChanged="PositionY_TextChanged"
                      VerticalContentAlignment="Center"
-                     x:Name="PositionY"/>
+                     x:Name="PositionY" />
             <TextBox GotFocus="UserControl_GotFocus"
                      Grid.Column="3"
                      HorizontalAlignment="Stretch"
                      TextChanged="PositionZ_TextChanged"
                      VerticalContentAlignment="Center"
-                     x:Name="PositionZ"/>
+                     x:Name="PositionZ" />
         </Grid>
         <Border Background="Transparent"
                 GotFocus="UserControl_GotFocus"
@@ -60,38 +60,38 @@
                     MouseMove="PointCanvas_MouseMove"
                     MouseUp="PointCanvas_MouseUp"
                     VerticalAlignment="Stretch"
-                    x:Name="PointCanvas"/>
+                    x:Name="PointCanvas" />
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Button Click="ResetButton_Click"
                     Content="Reset"
                     GotFocus="UserControl_GotFocus"
                     Grid.Column="0"
                     Margin="2,2,2,2"
-                    x:Name="ResetButton"/>
+                    x:Name="ResetButton" />
 
             <Button Click="ScaleMinus_Click"
                     Content="-"
                     GotFocus="UserControl_GotFocus"
                     Grid.Column="1"
                     Margin="2,2,2,2"
-                    x:Name="ScaleMinus"/>
+                    x:Name="ScaleMinus" />
 
             <Button Click="ScalePlus_Click"
                     Content="+"
                     GotFocus="UserControl_GotFocus"
                     Grid.Column="2"
                     Margin="2,2,2,2"
-                    x:Name="ScalePlus"/>
+                    x:Name="ScalePlus" />
 
             <Button Click="LeftRight_Click"
                     FontFamily="Marlett"
@@ -118,8 +118,7 @@
                     GotFocus="UserControl_GotFocus"
                     Grid.Column="6"
                     Margin="2,2,2,2"
-                    x:Name="CopyToNextButton"/>
-
+                    x:Name="CopyToNextButton" />
         </Grid>
     </Grid>
 </UserControl>

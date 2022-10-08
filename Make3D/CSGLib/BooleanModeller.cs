@@ -43,7 +43,6 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
-
 namespace CSGLib
 {
     public enum CSGState
@@ -68,6 +67,7 @@ namespace CSGLib
         private Part Object2;
 
         private Solid resultObject;
+
         public enum OperationType
         {
             Union,
@@ -75,6 +75,7 @@ namespace CSGLib
             Intersection,
             ReverseDifference
         }
+
         public BooleanModeller(Solid solid1, Solid solid2)
         {
             State = CSGState.Bad;
@@ -90,7 +91,6 @@ namespace CSGLib
             CSGState ps4 = CSGState.Good;
             if (ps1 == CSGState.Good)
             {
-
                 ps2 = Object2.SplitFaces(Object1);
                 if (ps2 == CSGState.Good)
                 {
@@ -115,11 +115,13 @@ namespace CSGLib
         public BooleanModeller()
         {
         }
+
         public struct OpResult
         {
             public CSGState OperationStatus;
             public Solid ResultObject;
         }
+
         public async Task<OpResult> DoModelOperationAsync(Point3DCollection lp, Int32Collection li,
                                     Point3DCollection rp, Int32Collection ri,
                                     OperationType op, CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
@@ -153,20 +155,21 @@ namespace CSGLib
                 OpResult res = btmp.DoModelOperation(lpnts, lint, rpnts, rint, op, progress);
                 return res;
             }, csgCancelation.Token).ConfigureAwait(true);
-
         }
+
         private static CancellationToken cancelToken;
+
         public void SetCancelationToken(CancellationToken cancellationToken)
         {
             cancelToken = cancellationToken;
         }
+
         private static CSGGroupProgress currentProgress = new CSGGroupProgress();
 
         public OpResult DoModelOperation(BlockingCollection<Point3D> blp, BlockingCollection<int> bli,
                                       BlockingCollection<Point3D> brp, BlockingCollection<int> bri,
                                       OperationType op, IProgress<CSGGroupProgress> progress)
         {
-
             ReportProgress("Initialising", 0, progress);
             OpResult opresult = new OpResult();
             opresult.ResultObject = null;
@@ -211,16 +214,13 @@ namespace CSGLib
                 Object1.SetCancelationToken(cancelToken);
                 if (!cancelToken.IsCancellationRequested)
                 {
-
                     Solid rightie = new Solid(rp, ri, false);
                     if (!cancelToken.IsCancellationRequested)
                     {
-
                         Object2 = new Part(rightie);
                         Object2.SetCancelationToken(cancelToken);
                         if (!cancelToken.IsCancellationRequested)
                         {
-
                             State = CSGState.Bad;
 
                             //split the faces so that none of them intercepts each other
@@ -239,7 +239,6 @@ namespace CSGLib
                                             ReportProgress("Classify Left Faces", 0, progress);
                                             if (!cancelToken.IsCancellationRequested)
                                             {
-
                                                 opresult.OperationStatus = Object1.ClassifyFaces(Object2);
                                                 if (opresult.OperationStatus == CSGState.Good)
                                                 {
@@ -258,18 +257,21 @@ namespace CSGLib
                                                                         resultObject = GetUnion();
                                                                     }
                                                                     break;
+
                                                                 case OperationType.Difference:
                                                                     {
                                                                         ReportProgress("DIfference", 0, progress);
                                                                         resultObject = GetDifference();
                                                                     }
                                                                     break;
+
                                                                 case OperationType.ReverseDifference:
                                                                     {
                                                                         ReportProgress("Reverse Difference", 0, progress);
                                                                         resultObject = GetReverseDifference();
                                                                     }
                                                                     break;
+
                                                                 case OperationType.Intersection:
                                                                     {
                                                                         ReportProgress("Intersection", 0, progress);
@@ -278,7 +280,6 @@ namespace CSGLib
                                                                     break;
                                                             }
                                                         }
-
                                                     }
                                                 }
                                             }
@@ -286,7 +287,6 @@ namespace CSGLib
                                     }
                                 }
                             }
-
                         }
                     }
                     if (resultObject != null)
@@ -312,8 +312,6 @@ namespace CSGLib
 
         public CSGState State { get; set; }
         //--------------------------------CONSTRUCTORS----------------------------------//
-
-
 
         //-------------------------------BOOLEAN_OPERATIONS-----------------------------//
 
@@ -353,7 +351,6 @@ namespace CSGLib
         {
             return ComposeSolid(Status.OUTSIDE, Status.SAME, Status.OUTSIDE);
         }
-
 
         //--------------------------PRIVATES--------------------------------------------//
 

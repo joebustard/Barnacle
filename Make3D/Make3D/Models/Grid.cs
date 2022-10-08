@@ -94,18 +94,18 @@ namespace Barnacle.Models
                 TextMaker mk = new TextMaker(text, "Tahoma", 14, 0.2, true, false, false);
                 Point3DCollection Vertices = new Point3DCollection();
                 Int32Collection Faces = new Int32Collection();
-               mk.Generate(Vertices, Faces);
+                mk.Generate(Vertices, Faces);
                 Vector3D v = new Vector3D(-26, 0.1, 85);
-                for ( int i = 0;i < Vertices.Count; i++)
-                               {
+                for (int i = 0; i < Vertices.Count; i++)
+                {
                     Vertices[i] += v;
                 }
-                GeometryModel3D gm = GetModel(Vertices,Faces);
+                GeometryModel3D gm = GetModel(Vertices, Faces);
                 group.Children.Add(gm);
             }
         }
 
-        protected GeometryModel3D GetModel( Point3DCollection Vertices, Int32Collection Faces)
+        protected GeometryModel3D GetModel(Point3DCollection Vertices, Int32Collection Faces)
         {
             MeshGeometry3D mesh = new MeshGeometry3D();
             mesh.Positions = Vertices;
@@ -127,7 +127,6 @@ namespace Barnacle.Models
             return gm;
         }
 
-        
         // Make a mesh containing a cube centered at this point.
         private MeshGeometry3D MakeCubeMesh(double x, double y, double z, double width)
         {
@@ -193,9 +192,9 @@ namespace Barnacle.Models
 
         internal bool Matches(GeometryModel3D geo)
         {
-            foreach( GeometryModel3D gm in group.Children)
+            foreach (GeometryModel3D gm in group.Children)
             {
-                if ( gm == geo)
+                if (gm == geo)
                 {
                     return true;
                 }

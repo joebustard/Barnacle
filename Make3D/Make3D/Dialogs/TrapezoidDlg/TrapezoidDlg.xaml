@@ -13,30 +13,30 @@
                           Height="450">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="1"
               Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1"
                         Orientation="Horizontal">
@@ -45,7 +45,7 @@
                 </Label>
                 <TextBox Margin="4,0,0,0"
                          Text="{Binding ShapeTopLength}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
@@ -54,7 +54,7 @@
                 </Label>
                 <TextBox Margin="4,0,0,0"
                          Text="{Binding ShapeHeight}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="5"
                         Orientation="Horizontal">
@@ -63,7 +63,7 @@
                 </Label>
                 <TextBox Margin="4,0,0,0"
                          Text="{Binding ShapeBottomLength}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="7"
                         Orientation="Horizontal">
@@ -72,7 +72,7 @@
                 </Label>
                 <TextBox Margin="4,0,0,0"
                          Text="{Binding ShapeWidth}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="9"
                         Orientation="Horizontal">
@@ -81,15 +81,14 @@
                 </Label>
                 <TextBox Margin="4,0,0,0"
                          Text="{Binding ShapeBevel}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="11"
                         Orientation="Horizontal">
                 <Label Content="{Binding WarningText}"
                        FontSize="18"
                        Foreground="{StaticResource WarningColour}"
-                       VerticalAlignment="Center"/>
-
+                       VerticalAlignment="Center" />
             </StackPanel>
         </Grid>
         <Border Grid.Column="2"
@@ -108,7 +107,7 @@
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#FF808080"/>
+                            <AmbientLight Color="#FF808080" />
                             <DirectionalLight Color="White"
                                               Direction="-1,-1,-1"
                                               x:Name="dirLightMain">
@@ -126,8 +125,8 @@
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
         <Grid Grid.Column="1"
@@ -140,33 +139,31 @@
             <CheckBox Content="Floor"
                       Grid.Column="0"
                       IsChecked="{Binding ShowFloor}"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
             <CheckBox Content="Axies"
                       Grid.Column="1"
                       IsChecked="{Binding ShowAxies}"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
             <Button Click="Home_Click"
                     Content="Home"
-                    Grid.Column="2"/>
-
+                    Grid.Column="2" />
         </Grid>
         <Grid Grid.Column="2"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Click="Cancel_Click"
                     Content="Cancel"
                     Grid.Column="1"
-                    Margin="2,2,2,2"/>
+                    Margin="2,2,2,2" />
 
             <Button Click="Ok_Click"
                     Content="Ok"
                     Grid.Column="2"
-                    Margin="2,2,2,2"  />
-
+                    Margin="2,2,2,2" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

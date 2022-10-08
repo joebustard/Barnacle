@@ -17,6 +17,6 @@
                  TextAlignment="Center"
                  VerticalAlignment="Center"
                  x:Name="TriggerText"
-                 Height="30"/>
+                 Height="30" />
     </Grid>
 </UserControl>

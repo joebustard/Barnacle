@@ -80,7 +80,7 @@ namespace Barnacle.Dialogs
 
         private int stoneSize;
 
-        public int  StoneSize
+        public int StoneSize
         {
             get
             {
@@ -111,7 +111,7 @@ namespace Barnacle.Dialogs
             wallLength = 100;
             wallHeight = 80;
             wallThickness = 4;
-            stoneSize = 5; 
+            stoneSize = 5;
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;

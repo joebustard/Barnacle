@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Barnacle.Dialogs.BezierSurface
+﻿namespace Barnacle.Dialogs.BezierSurface
 {
-    class Patch
+    internal class Patch
     {
         public int[,] Points;
 

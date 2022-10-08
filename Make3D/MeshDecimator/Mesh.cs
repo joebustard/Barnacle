@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,11 +23,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
+using MeshDecimator.Math;
 using System;
 using System.Collections.Generic;
-using MeshDecimator.Math;
 
 namespace MeshDecimator
 {
@@ -36,13 +38,16 @@ namespace MeshDecimator
     public sealed class Mesh
     {
         #region Consts
+
         /// <summary>
         /// The count of supported UV channels.
         /// </summary>
         public const int UVChannelCount = 4;
+
         #endregion
 
         #region Fields
+
         private Vector3d[] vertices = null;
         private int[][] indices = null;
         private Vector3[] normals = null;
@@ -54,9 +59,11 @@ namespace MeshDecimator
         private BoneWeight[] boneWeights = null;
 
         private static readonly int[] emptyIndices = new int[0];
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the count of vertices of this mesh.
         /// </summary>
@@ -248,9 +255,11 @@ namespace MeshDecimator
                 boneWeights = value;
             }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new mesh.
         /// </summary>
@@ -291,9 +300,11 @@ namespace MeshDecimator
             this.vertices = vertices;
             this.indices = indices;
         }
+
         #endregion
 
         #region Private Methods
+
         private void ClearVertexAttributes()
         {
             normals = null;
@@ -304,10 +315,13 @@ namespace MeshDecimator
             colors = null;
             boneWeights = null;
         }
+
         #endregion
 
         #region Public Methods
+
         #region Recalculate Normals
+
         /// <summary>
         /// Recalculates the normals for this mesh smoothly.
         /// </summary>
@@ -353,9 +367,11 @@ namespace MeshDecimator
 
             this.normals = normals;
         }
+
         #endregion
 
         #region Recalculate Tangents
+
         /// <summary>
         /// Recalculates the tangents for this mesh.
         /// </summary>
@@ -373,7 +389,7 @@ namespace MeshDecimator
                 return;
 
             int vertexCount = vertices.Length;
-            
+
             var tangents = new Vector4[vertexCount];
             var tan1 = new Vector3[vertexCount];
             var tan2 = new Vector3[vertexCount];
@@ -431,7 +447,6 @@ namespace MeshDecimator
                         t1 = w1.y - w0.y;
                         t2 = w2.y - w0.y;
                     }
-                    
 
                     float x1 = (float)(v1.x - v0.x);
                     float x2 = (float)(v2.x - v0.x);
@@ -470,9 +485,11 @@ namespace MeshDecimator
 
             this.tangents = tangents;
         }
+
         #endregion
 
         #region Triangles
+
         /// <summary>
         /// Returns the count of triangles for a specific sub-mesh in this mesh.
         /// </summary>
@@ -529,10 +546,13 @@ namespace MeshDecimator
 
             this.indices[subMeshIndex] = indices;
         }
+
         #endregion
 
         #region UV Sets
+
         #region Getting
+
         /// <summary>
         /// Returns the UV dimension for a specific channel.
         /// </summary>
@@ -689,9 +709,11 @@ namespace MeshDecimator
                 }
             }
         }
+
         #endregion
 
         #region Setting
+
         /// <summary>
         /// Sets the UVs (2D) for a specific channel.
         /// </summary>
@@ -937,10 +959,13 @@ namespace MeshDecimator
                 uvs3D[channel] = null;
             }
         }
+
         #endregion
+
         #endregion
 
         #region To String
+
         /// <summary>
         /// Returns the text-representation of this mesh.
         /// </summary>
@@ -949,7 +974,9 @@ namespace MeshDecimator
         {
             return string.Format("Vertices: {0}", vertices.Length);
         }
+
         #endregion
+
         #endregion
     }
 }

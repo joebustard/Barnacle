@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -17,7 +15,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "DevTest";
             DataContext = this;
-           // ModelGroup = MyModelGroup;
+            // ModelGroup = MyModelGroup;
         }
 
         public override bool ShowAxies
@@ -103,7 +101,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             GenerateShape();
             UpdateCameraPos();
-           // MyModelGroup.Children.Clear();
+            // MyModelGroup.Children.Clear();
             warningText = "";
             Redisplay();
         }

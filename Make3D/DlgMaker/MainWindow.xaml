@@ -11,28 +11,28 @@
         Height="500">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="10"/>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="10"/>
+            <RowDefinition Height="10" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="10" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Column="1"
                     Grid.Row="1"
@@ -43,7 +43,7 @@
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding ToolName}"
-                     Width="150"/>
+                     Width="150" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.Row="2"
@@ -54,8 +54,7 @@
             </Label>
             <Label Content="{Binding DialogName}"
                    Margin="8,0,0,0"
-                   Width="150"/>
-
+                   Width="150" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.Row="3"
@@ -66,8 +65,7 @@
             </Label>
             <Label Content="{Binding MakerName}"
                    Margin="8,0,0,0"
-                   Width="150"/>
-
+                   Width="150" />
         </StackPanel>
         <Label Background="AliceBlue"
                Grid.Column="1"
@@ -84,24 +82,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P1Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P1Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P1Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P1Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -109,24 +107,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P2Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P2Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P2Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P2Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -134,24 +132,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P3Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P3Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P3Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P3Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -159,24 +157,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P4Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P4Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P4Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P4Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -184,24 +182,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P5Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P5Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P5Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P5Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -209,24 +207,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P6Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P6Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P6Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P6Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -234,24 +232,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P7Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P7Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P7Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P7Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -259,24 +257,24 @@
                     Orientation="Horizontal">
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P8Name}"
-                     Width="150"/>
+                     Width="150" />
             <ComboBox ItemsSource="{Binding ParameterTypes}"
                       SelectedItem="{Binding P8Type}"
-                      Width="150"/>
+                      Width="150" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Min
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P8Min}"
-                     Width="100"/>
+                     Width="100" />
             <Label Margin="8,0,0,0"
                    Width="40">
             Max
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P8Max}"
-                     Width="100"/>
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="2"
                     Grid.Row="1"
@@ -286,7 +284,7 @@
             Export To
             </Label>
             <TextBox Text="{Binding ExportPath}"
-                     Width="250"/>
+                     Width="250" />
             <Button Click="Button_Click"
                     Width="30">
             . . .
@@ -300,7 +298,7 @@
             Export To
             </Label>
             <TextBox Text="{Binding ExportPath}"
-                     Width="250"/>
+                     Width="250" />
             <Button Click="Button_Click"
                     Width="30">
             . . .
@@ -323,12 +321,11 @@
                      Grid.Row="14">
             <Button Click="GenerateClicked"
                     Content="Generate"
-                    Width="80"/>
+                    Width="80" />
 
             <Button Click="CloseClicked"
                     Content="Close"
-                    Width="80"/>
-
+                    Width="80" />
         </UniformGrid>
     </Grid>
 </Window>

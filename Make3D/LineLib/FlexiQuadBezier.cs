@@ -46,7 +46,7 @@ namespace Barnacle.LineLib
         {
             double dt = 0.05;
 
-            for (double t =0; t <= 1; t += dt)
+            for (double t = 0; t <= 1; t += dt)
             {
                 res.Add(GetCoord(t, pnts));
             }

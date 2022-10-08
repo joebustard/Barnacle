@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace PlacementLib
 {
@@ -11,18 +6,20 @@ namespace PlacementLib
     {
         public Point Lower { get; set; }
         public Point Upper { get; set; }
-        double area;
+        private double area;
+
         public double Area
         {
             get { return area; }
         }
+
         public Boundary(Point l, Point u)
         {
-            Lower =l;
+            Lower = l;
             Upper = u;
-        
+
             area = 0;
-            if ( u != null && l != null )
+            if (u != null && l != null)
             {
                 area = (Upper.X - Lower.X) * (Upper.Y - Lower.Y);
             }

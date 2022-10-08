@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Barnacle.Models.SDCard
 {
@@ -41,7 +37,6 @@ namespace Barnacle.Models.SDCard
                 }
                 catch
                 {
-
                 }
             }
         }

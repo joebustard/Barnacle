@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Barnacle.LineLib
@@ -53,7 +49,6 @@ namespace Barnacle.LineLib
             return Math.Sqrt(dx * dx + dy * dy);
         }
 
-
         /// <summary>
         /// Find the t of the point relative to a line seqment
         /// </summary>
@@ -76,6 +71,7 @@ namespace Barnacle.LineLib
                 (dx * dx + dy * dy);
             return t;
         }
+
         public static double FindDistanceToLine(
            Point pt, Point p1, Point p2)
         {

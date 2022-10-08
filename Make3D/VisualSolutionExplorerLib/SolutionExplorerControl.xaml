@@ -14,7 +14,7 @@
                             <ControlTemplate>
                                 <Separator Background="Black"
                                            BorderBrush="Brown"
-                                           BorderThickness="4"/>
+                                           BorderThickness="4" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
@@ -24,41 +24,41 @@
         <Style TargetType="{x:Type TextBlock}"
                x:Key="NameTextBlock">
             <Setter Property="HorizontalAlignment"
-                    Value="Stretch"/>
+                    Value="Stretch" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsEditing}"
                              Value="False">
                     <Setter Property="Visibility"
-                            Value="Visible"/>
+                            Value="Visible" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsEditing}"
                              Value="True">
                     <Setter Property="Visibility"
-                            Value="Hidden"/>
+                            Value="Hidden" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
         <Style TargetType="{x:Type TextBox}"
                x:Key="NameTextBox">
             <Setter Property="HorizontalAlignment"
-                    Value="Stretch"/>
+                    Value="Stretch" />
             <Style.Triggers>
                 <DataTrigger Binding="{Binding IsEditing}"
                              Value="True">
                     <Setter Property="Visibility"
-                            Value="Visible"/>
+                            Value="Visible" />
                 </DataTrigger>
                 <DataTrigger Binding="{Binding IsEditing}"
                              Value="False">
                     <Setter Property="Visibility"
-                            Value="Hidden"/>
+                            Value="Hidden" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <DockPanel Grid.Row="0"
@@ -69,23 +69,20 @@
                             ToolTip="Collapse Tree">
                         <Image Source="Images\Minus.png"
                                Width="24"
-                               Height="24"/>
-
+                               Height="24" />
                     </Button>
                     <Button Command="{Binding ExpandTree}"
                             ToolTip="Expand Tree">
                         <Image Source="Images\Plus.png"
                                Width="24"
-                               Height="24"/>
-
+                               Height="24" />
                     </Button>
                     <Button Command="{Binding RefreshTree}"
                             ToolTip="Refresh"
                             Visibility="{Binding RefreshVisibility}">
                         <Image Source="Images\Refresh.png"
                                Width="24"
-                               Height="24"/>
-
+                               Height="24" />
                     </Button>
                 </ToolBar>
             </ToolBarTray>
@@ -107,16 +104,16 @@
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
                     <Setter Property="IsExpanded"
-                            Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                            Value="{Binding IsExpanded, Mode=TwoWay}" />
                     <Setter Property="IsSelected"
-                            Value="{Binding IsSelected, Mode=TwoWay}"/>
+                            Value="{Binding IsSelected, Mode=TwoWay}" />
                     <Setter Property="FontWeight"
-                            Value="Normal"/>
+                            Value="Normal" />
                     <Style.Triggers>
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter Property="FontWeight"
-                                    Value="Bold"/>
+                                    Value="Bold" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
@@ -126,34 +123,34 @@
                                           ItemsSource="{Binding Children}">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="22"/>
+                            <ColumnDefinition Width="22" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Image Grid.Column="0"
                                Margin="3,0"
                                Source="Images\Folder.png"
                                Width="16"
-                               Height="16"/>
+                               Height="16" />
 
                         <TextBlock Grid.Column="1"
                                    Text="{Binding FolderName}"
                                    ToolTip="{Binding FolderToolTip}">
                             <TextBlock.Style>
                                 <Style BasedOn="{StaticResource NameTextBlock}"
-                                       TargetType="{x:Type TextBlock}"/>
+                                       TargetType="{x:Type TextBlock}" />
                             </TextBlock.Style>
                             <TextBlock.ContextMenu>
                                 <ContextMenu IsEnabled="{Binding Valid}"
                                              ItemsSource="{Binding ContextMenu.ContextMenuActions}">
                                     <ContextMenu.ItemContainerStyle>
                                         <Style BasedOn="{StaticResource ContextMenuItem}"
-                                               TargetType="{x:Type MenuItem}"/>
+                                               TargetType="{x:Type MenuItem}" />
                                     </ContextMenu.ItemContainerStyle>
                                     <ContextMenu.ItemTemplate>
                                         <DataTemplate DataType="MenuItem">
                                             <MenuItem Command="{Binding MenuCommand}"
                                                       Header="{Binding HeaderText}"
-                                                      ToolTip="{Binding ToolTip}"/>
+                                                      ToolTip="{Binding ToolTip}" />
                                         </DataTemplate>
                                     </ContextMenu.ItemTemplate>
                                 </ContextMenu>
@@ -163,17 +160,17 @@
                                  Text="{Binding FolderName, UpdateSourceTrigger=LostFocus}">
                             <TextBox.Style>
                                 <Style BasedOn="{StaticResource NameTextBox}"
-                                       TargetType="{x:Type TextBox}"/>
+                                       TargetType="{x:Type TextBox}" />
                             </TextBox.Style>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
-                                    <local:CommandAction Command="{Binding StopEditing}"/>
+                                    <local:CommandAction Command="{Binding StopEditing}" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="LostKeyboardFocus">
-                                    <local:CommandAction Command="{Binding StopEditing}"/>
+                                    <local:CommandAction Command="{Binding StopEditing}" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="SourceUpdated">
-                                    <local:CommandAction Command="{Binding StopEditing}"/>
+                                    <local:CommandAction Command="{Binding StopEditing}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>
@@ -184,14 +181,14 @@
           <!-- <Image Width="16" Height="16" Margin="3,0" Source="Images\File.png" Grid.Column="0" /> -->
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="22"/>
+                            <ColumnDefinition Width="22" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
                         <Image Grid.Column="0"
                                Margin="3,0"
                                Source="{Binding Icon}"
                                Width="16"
-                               Height="16"/>
+                               Height="16" />
 
                         <TextBlock Grid.Column="1"
                                    Text="{Binding FileName}"
@@ -199,10 +196,10 @@
                             <TextBlock.InputBindings>
                                 <MouseBinding Command="{Binding FileDoubleClickCommand}"
                                               CommandParameter="{Binding }"
-                                              Gesture="LeftDoubleClick"/>
+                                              Gesture="LeftDoubleClick" />
                                 <MouseBinding Command="{Binding FileClickCommand}"
                                               CommandParameter="{Binding }"
-                                              Gesture="LeftClick"/>
+                                              Gesture="LeftClick" />
                             </TextBlock.InputBindings>
                             <TextBlock.ContextMenu>
                                 <ContextMenu ItemsSource="{Binding ContextMenu.ContextMenuActions}">
@@ -211,7 +208,7 @@
                                             <MenuItem Command="{Binding MenuCommand}"
                                                       CommandTarget="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                       Header="{Binding HeaderText}"
-                                                      ToolTip="{Binding ToolTip}"/>
+                                                      ToolTip="{Binding ToolTip}" />
                                         </DataTemplate>
                                     </ContextMenu.ItemTemplate>
                                 </ContextMenu>
@@ -221,17 +218,17 @@
                                  Text="{Binding FileName, UpdateSourceTrigger=LostFocus}">
                             <TextBox.Style>
                                 <Style BasedOn="{StaticResource NameTextBox}"
-                                       TargetType="{x:Type TextBox}"/>
+                                       TargetType="{x:Type TextBox}" />
                             </TextBox.Style>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
-                                    <local:CommandAction Command="{Binding StopEditing}"/>
+                                    <local:CommandAction Command="{Binding StopEditing}" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="LostKeyboardFocus">
-                                    <local:CommandAction Command="{Binding StopEditing}"/>
+                                    <local:CommandAction Command="{Binding StopEditing}" />
                                 </i:EventTrigger>
                                 <i:EventTrigger EventName="SourceUpdated">
-                                    <local:CommandAction Command="{Binding StopEditing}"/>
+                                    <local:CommandAction Command="{Binding StopEditing}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
                         </TextBox>

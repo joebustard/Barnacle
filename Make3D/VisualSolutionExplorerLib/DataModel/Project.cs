@@ -266,7 +266,6 @@ namespace VisualSolutionExplorer
             if (ProjectFilePath != String.Empty)
             {
                 SaveFile(ProjectFilePath);
-
             }
         }
 

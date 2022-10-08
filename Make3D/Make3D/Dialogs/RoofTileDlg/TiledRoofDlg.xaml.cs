@@ -317,7 +317,6 @@ namespace Barnacle.Dialogs
                 TileOverlap = EditorParameters.GetDouble("TileOverlap");
             }
 
-
             if (EditorParameters.Get("Chamfer") != "")
             {
                 Chamfer = EditorParameters.GetBoolean("Chamfer");

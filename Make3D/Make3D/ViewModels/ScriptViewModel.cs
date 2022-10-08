@@ -5,8 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +14,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Barnacle.ViewModels.Logging;
+
 namespace Barnacle.ViewModels
 {
     internal class ScriptViewModel : BaseViewModel, INotifyPropertyChanged
@@ -91,7 +89,6 @@ program ""Script Name""
             NotificationManager.Subscribe("Script", "LimpetLoaded", OnLimpetLoaded);
             NotificationManager.Subscribe("Script", "LimpetClosing", OnLimpetClosing);
             selectedTabIndex = 0;
-
         }
 
         private enum CameraModes
@@ -238,7 +235,9 @@ program ""Script Name""
                 }
             }
         }
+
         public bool enableRun;
+
         public bool EnableRun
         {
             get { return enableRun; }
@@ -367,7 +366,6 @@ program ""Script Name""
             {
                 if (s_cts != null && !s_cts.IsCancellationRequested)
                 {
-
                     s_cts.Cancel();
                     Logging.Log.Instance().AddEntry("Cancelled by user");
                 }
@@ -385,7 +383,6 @@ program ""Script Name""
 
         internal void MouseMove(System.Windows.Point newPos, MouseEventArgs e)
         {
-
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 if (cameraMode == CameraModes.CameraMove)
@@ -399,7 +396,6 @@ program ""Script Name""
                     LookToCenter();
                     lastMouse = newPos;
                 }
-
             }
         }
 
@@ -418,7 +414,9 @@ program ""Script Name""
                 ZoomOut(null);
             }
         }
-        static CancellationTokenSource s_cts;
+
+        private static CancellationTokenSource s_cts;
+
         internal async void RunScript()
         {
             EnableRun = false;
@@ -471,15 +469,16 @@ program ""Script Name""
             RegenerateDisplayList();
             EnableRun = true;
         }
-        struct RunRes
+
+        private struct RunRes
         {
             public bool Status { get; set; }
             public List<Object3D> Artefacts { get; set; }
             public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
         }
+
         private Task<RunRes> RunAsync(CancellationToken cancellationToken)
         {
-
             return Task.Run(() =>
                 {
                     RunRes result = new RunRes();
@@ -500,7 +499,6 @@ program ""Script Name""
                     return result;
                 });
         }
-
 
         internal bool ScriptText(string scriptText)
         {

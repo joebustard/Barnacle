@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 
 namespace ScriptLanguage
 {
     public class FunctionCache
     {
-        static private FunctionCache Singleton;
+        private static FunctionCache Singleton;
         private List<CFunctionNode> Functions;
 
         // Instance constructor

@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
-    class SpaceTreeNode
+    internal class SpaceTreeNode
     {
-
-
         public enum NodeColour
         {
             Red,
@@ -82,7 +76,9 @@ namespace Barnacle.Dialogs
         {
             get; set;
         }
+
         public int Id { get; set; }
+
         public int Present(Point3D v)
         {
             int result = -1;
@@ -94,7 +90,6 @@ namespace Barnacle.Dialogs
                 {
                     result = Left.Present(v);
                 }
-
             }
             else
             if (dx > tolerance)
@@ -121,6 +116,7 @@ namespace Barnacle.Dialogs
 
             return result;
         }
+
         public static SpaceTreeNode Create(Point3D v, int id)
         {
             SpaceTreeNode result = new SpaceTreeNode(v);
@@ -128,6 +124,7 @@ namespace Barnacle.Dialogs
             result.Colour = NodeColour.Red;
             return result;
         }
+
         public SpaceTreeNode Add(Point3D v, SpaceTreeNode node, int id)
         {
             SpaceTreeNode result = node;
@@ -175,7 +172,6 @@ namespace Barnacle.Dialogs
             }
             return result;
         }
-
 
         internal void AddToList(Point3DCollection tmp)
         {
@@ -244,4 +240,3 @@ namespace Barnacle.Dialogs
         }
     }
 }
-

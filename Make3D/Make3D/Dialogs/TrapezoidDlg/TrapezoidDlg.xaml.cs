@@ -1,8 +1,6 @@
 ﻿using MakerLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -212,7 +210,7 @@ namespace Barnacle.Dialogs
                 shapeBottomLength = EditorParameters.GetDouble("ShapeBottomLength");
                 shapeWidth = EditorParameters.GetDouble("ShapeWidth");
                 shapeHeight = EditorParameters.GetDouble("ShapeHeight");
-                
+
                 shapeBevel = EditorParameters.GetDouble("ShapeBevel");
             }
         }

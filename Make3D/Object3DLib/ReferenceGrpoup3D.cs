@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media.Media3D;
 using System.Xml;

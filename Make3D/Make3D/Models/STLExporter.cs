@@ -1,5 +1,5 @@
-﻿using CSGLib;
-using Barnacle.Object3DLib;
+﻿using Barnacle.Object3DLib;
+using CSGLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -66,7 +66,6 @@ namespace Barnacle.Models
                                 writer.Write((float)triangle.V1.Position.Z);
                             }
 
-                         
                             writer.Write((float)triangle.V2.Position.X);
                             if (swapAxis)
                             {
@@ -80,7 +79,6 @@ namespace Barnacle.Models
                                 writer.Write((float)triangle.V2.Position.Z);
                             }
 
-                        
                             writer.Write((float)triangle.V3.Position.X);
                             if (swapAxis)
                             {
@@ -141,7 +139,7 @@ namespace Barnacle.Models
             if (ft == "BinSTL")
             {
                 //ReadBinaryStl(filename, normals, pnts, tris, swapYZ);
-                ReadBinaryStl(filename,  normals, pnts, tris, swapYZ);
+                ReadBinaryStl(filename, normals, pnts, tris, swapYZ);
             }
             else if (ft == "AsciiSTL")
             {
@@ -149,7 +147,6 @@ namespace Barnacle.Models
                 ReadAsciiStl(filename, normals, pnts, tris, swapYZ);
             }
         }
-
 
         private static int AddVertex(Point3DCollection verts, Point3D pn)
         {
@@ -173,7 +170,6 @@ namespace Barnacle.Models
 
         private static int AddVertex(OctTree tree, List<P3D> verts, Point3D pn)
         {
-            
             int res = -1;
             /*
             for (int i = 0; i < verts.Count; i++)
@@ -189,7 +185,7 @@ namespace Barnacle.Models
             if (res == -1)
             {
                 verts.Add(new P3D(pn));
-                
+
                 res = verts.Count - 1;
                 tree.AddPoint(res, pn);
             }
@@ -270,6 +266,7 @@ namespace Barnacle.Models
                 stream.Close();
             }
         }
+
         private static void ReadAsciiStl(string filename, Vector3DCollection normals, List<P3D> pnts, Int32Collection tris, bool swap)
         {
             //            facet normal ni nj nk
@@ -284,7 +281,7 @@ namespace Barnacle.Models
             if (stream != null)
             {
                 Point3DCollection treePoints = new Point3DCollection();
-                OctTree octTree = new OctTree(treePoints,new Point3D(-1000,-1000,-1000), new Point3D(1000,1000,1000),50);
+                OctTree octTree = new OctTree(treePoints, new Point3D(-1000, -1000, -1000), new Point3D(1000, 1000, 1000), 50);
 
                 var reader = new StreamReader(stream);
                 string line = "";
@@ -299,17 +296,17 @@ namespace Barnacle.Models
                         // p0
                         line = reader.ReadLine().ToLower();
                         Point3D pnt = GetVFromLine(line, swap);
-                        int p0 = AddVertex(octTree,pnts, pnt);
+                        int p0 = AddVertex(octTree, pnts, pnt);
 
                         // p1
                         line = reader.ReadLine().ToLower();
                         pnt = GetVFromLine(line, swap);
-                        int p1 = AddVertex(octTree,pnts, pnt);
+                        int p1 = AddVertex(octTree, pnts, pnt);
 
                         // p2
                         line = reader.ReadLine().ToLower();
                         pnt = GetVFromLine(line, swap);
-                        int p2 = AddVertex(octTree,pnts, pnt);
+                        int p2 = AddVertex(octTree, pnts, pnt);
 
                         tris.Add(p0);
                         tris.Add(p1);

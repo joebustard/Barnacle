@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Barnacle.Dialogs
 {
@@ -28,10 +17,12 @@ namespace Barnacle.Dialogs
             IsClosed = false;
             Closed += InfoWindow_Closed;
         }
+
         private void InfoWindow_Closed(object sender, EventArgs e)
         {
             IsClosed = true;
         }
+
         public static InfoWindow Instance()
         {
             if (instance == null)
@@ -40,7 +31,7 @@ namespace Barnacle.Dialogs
             }
             else
             {
-                if ( instance.IsClosed)
+                if (instance.IsClosed)
                 {
                     instance = new InfoWindow();
                 }
@@ -63,7 +54,9 @@ namespace Barnacle.Dialogs
         {
             Instance().Show();
         }
+
         public bool IsClosed { get; set; } = false;
+
         public void ShowInfo(String title)
         {
             Instance().Title = title;
@@ -73,9 +66,9 @@ namespace Barnacle.Dialogs
             }
             catch
             {
-
             }
         }
+
         public void ShowText(String s)
         {
             instance.InfoLabel.Content = s;

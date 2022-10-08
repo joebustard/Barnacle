@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MeshDecimator.Collections
+﻿namespace MeshDecimator.Collections
 {
     /// <summary>
     /// A collection of UV channels.
@@ -9,11 +7,14 @@ namespace MeshDecimator.Collections
     internal sealed class UVChannels<TVec>
     {
         #region Fields
+
         private ResizableArray<TVec>[] channels = null;
         private TVec[][] channelsData = null;
-        #endregion
+
+        #endregion Fields
 
         #region Properties
+
         /// <summary>
         /// Gets the channel collection data.
         /// </summary>
@@ -45,9 +46,11 @@ namespace MeshDecimator.Collections
             get { return channels[index]; }
             set { channels[index] = value; }
         }
-        #endregion
+
+        #endregion Properties
 
         #region Constructor
+
         /// <summary>
         /// Creates a new collection of UV channels.
         /// </summary>
@@ -56,9 +59,11 @@ namespace MeshDecimator.Collections
             channels = new ResizableArray<TVec>[Mesh.UVChannelCount];
             channelsData = new TVec[Mesh.UVChannelCount][];
         }
-        #endregion
+
+        #endregion Constructor
 
         #region Public Methods
+
         /// <summary>
         /// Resizes all channels at once.
         /// </summary>
@@ -74,6 +79,7 @@ namespace MeshDecimator.Collections
                 }
             }
         }
-        #endregion
+
+        #endregion Public Methods
     }
 }

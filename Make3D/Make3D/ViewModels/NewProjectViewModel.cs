@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using TemplateLib;
 
 namespace Barnacle.ViewModels
 {
-    internal class        NewProjectViewModel : BaseViewModel, INotifyPropertyChanged
+    internal class NewProjectViewModel : BaseViewModel, INotifyPropertyChanged
     {
         private Dictionary<string, string> descriptions;
         private bool okEnabled;

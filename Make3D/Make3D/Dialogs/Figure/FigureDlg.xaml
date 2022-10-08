@@ -15,13 +15,13 @@
           MouseUp="Grid_MouseUp"
           VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="1"
               Grid.Row="0">
@@ -29,12 +29,12 @@
                 <TabItem Header="Figure">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
                             <RowDefinition />
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
                         <Label FontSize="16"
                                Grid.Row="1"
@@ -58,20 +58,20 @@
                 <TabItem Header="Skeleton">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
-                            <RowDefinition Height="25"/>
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
+                            <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
                         <Label Grid.Row="0"
                                Style="{StaticResource InverseLabel}">
@@ -84,7 +84,7 @@
                             </Label>
                             <ComboBox ItemsSource="{Binding AllBoneNames}"
                                       SelectedItem="{Binding SelectedBoneName}"
-                                      Width="200"/>
+                                      Width="200" />
                         </StackPanel>
                         <StackPanel Grid.Row="3"
                                     Orientation="Horizontal">
@@ -94,16 +94,16 @@
                             </Label>
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding SelectedXRot, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Button Click="XrMinus"
                                     Content="-"
                                     Style="{StaticResource SmallButton}"
-                                    Width="20"/>
+                                    Width="20" />
 
                             <Button Click="XrPlus"
                                     Content="+"
                                     Style="{StaticResource SmallButton}"
-                                    Width="20"/>
+                                    Width="20" />
 
                             <Label HorizontalContentAlignment="Right"
                                    Margin="10,0"
@@ -112,16 +112,16 @@
                             </Label>
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding SelectedYRot, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Button Click="YrMinus"
                                     Content="-"
                                     Style="{StaticResource SmallButton}"
-                                    Width="20"/>
+                                    Width="20" />
 
                             <Button Click="YrPlus"
                                     Content="+"
                                     Style="{StaticResource SmallButton}"
-                                    Width="20"/>
+                                    Width="20" />
 
                             <Label HorizontalContentAlignment="Right"
                                    Width="40">
@@ -129,17 +129,16 @@
                             </Label>
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding SelectedZRot}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Button Click="ZrMinus"
                                     Content="-"
                                     Style="{StaticResource SmallButton}"
-                                    Width="20"/>
+                                    Width="20" />
 
                             <Button Click="ZrPlus"
                                     Content="+"
                                     Style="{StaticResource SmallButton}"
-                                    Width="20"/>
-
+                                    Width="20" />
                         </StackPanel>
                         <StackPanel Grid.Row="4"
                                     Orientation="Horizontal">
@@ -149,21 +148,21 @@
                             </Label>
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding SelectedLength, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Label HorizontalContentAlignment="Right"
                                    Width="40">
                             W
                             </Label>
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding SelectedWidth, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Label HorizontalContentAlignment="Right"
                                    Width="40">
                             H
                             </Label>
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding SelectedHeight, UpdateSourceTrigger=PropertyChanged}"
-                                     Width="60"/>
+                                     Width="60" />
                         </StackPanel>
                         <StackPanel Grid.Row="5"
                                     Orientation="Horizontal">
@@ -182,7 +181,7 @@
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding MinimumXRot, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding LimitsVisible}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Label HorizontalContentAlignment="Right"
                                    Visibility="{Binding LimitsVisible}"
                                    Width="40">
@@ -191,7 +190,7 @@
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding MinimumYRot, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding LimitsVisible}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Label HorizontalContentAlignment="Right"
                                    Visibility="{Binding LimitsVisible}"
                                    Width="40">
@@ -200,7 +199,7 @@
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding MinimumZRot, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding LimitsVisible}"
-                                     Width="60"/>
+                                     Width="60" />
                         </StackPanel>
                         <StackPanel Grid.Row="7"
                                     Orientation="Horizontal">
@@ -212,7 +211,7 @@
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding MaximumXRot, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding LimitsVisible}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Label HorizontalContentAlignment="Right"
                                    Visibility="{Binding LimitsVisible}"
                                    Width="40">
@@ -221,7 +220,7 @@
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding MaxiumYRot, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding LimitsVisible}"
-                                     Width="60"/>
+                                     Width="60" />
                             <Label HorizontalContentAlignment="Right"
                                    Visibility="{Binding LimitsVisible}"
                                    Width="40">
@@ -230,7 +229,7 @@
                             <TextBox Margin="0,2,2,2"
                                      Text="{Binding MaximumZRot, UpdateSourceTrigger=PropertyChanged}"
                                      Visibility="{Binding LimitsVisible}"
-                                     Width="60"/>
+                                     Width="60" />
                         </StackPanel>
                         <Label Grid.Row="9"
                                Style="{StaticResource InverseLabel}">
@@ -277,7 +276,7 @@
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#FF808080"/>
+                            <AmbientLight Color="#FF808080" />
                             <DirectionalLight Color="White"
                                               Direction="-1,-1,-1"
                                               x:Name="dirLightMain">
@@ -295,8 +294,8 @@
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
         <Grid Grid.Column="1"
@@ -308,32 +307,30 @@
             </Grid.ColumnDefinitions>
             <CheckBox Content="Floor"
                       Grid.Column="0"
-                      IsChecked="{Binding ShowFloor}"/>
+                      IsChecked="{Binding ShowFloor}" />
             <CheckBox Content="Axies"
                       Grid.Column="1"
-                      IsChecked="{Binding ShowAxies}"/>
+                      IsChecked="{Binding ShowAxies}" />
             <Button Click="Home_Click"
                     Content="Home"
-                    Grid.Column="2"/>
-
+                    Grid.Column="2" />
         </Grid>
         <Grid Grid.Column="2"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Click="Cancel_Click"
                     Content="Cancel"
                     Grid.Column="1"
-                    Margin="2,2,2,2"/>
+                    Margin="2,2,2,2" />
 
             <Button Click="Ok_Click"
                     Content="Ok"
                     Grid.Column="2"
-                    Margin="2,2,2,2"  />
-
+                    Margin="2,2,2,2" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

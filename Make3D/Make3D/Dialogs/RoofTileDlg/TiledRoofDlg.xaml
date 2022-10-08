@@ -34,45 +34,38 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Length</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallLength}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallLength}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Height</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallHeight}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallHeight}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">Width</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WallWidth}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallWidth}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">TileLength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding TileLength}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding TileLength}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">TileHeight</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding TileHeight}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding TileHeight}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">TileWidth</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding TileWidth}" Width="150"/>
-
+                 <TextBox Margin="8,0,0,0" Text="{Binding TileWidth}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="Tile Gap" Width="100" />
-                <TextBox Margin="8,0,0,0" Text="{Binding TileGap}" Width="150"/>
+                <TextBox Margin="8,0,0,0" Text="{Binding TileGap}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="Tile Overlap" Width="100" />
-                <TextBox Margin="8,0,0,0" Text="{Binding TileOverlap}" Width="150"/>
+                <TextBox Margin="8,0,0,0" Text="{Binding TileOverlap}" Width="150" />
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <CheckBox VerticalAlignment="Center" Content="Chamfer" Width="100" IsChecked="{Binding Chamfer}"/>
-                
+                <CheckBox VerticalAlignment="Center" Content="Chamfer" Width="100" IsChecked="{Binding Chamfer}" />
             </StackPanel>
             <StackPanel Grid.Row="10" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -129,7 +122,7 @@
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2"  />
+            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

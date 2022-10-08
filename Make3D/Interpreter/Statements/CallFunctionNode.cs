@@ -52,7 +52,6 @@ namespace ScriptLanguage
                 }
                 else
                 {
-                   
                     Log.Instance().AddEntry("Run time error:Call failed");
                 }
             }

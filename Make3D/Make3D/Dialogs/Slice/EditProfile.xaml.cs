@@ -5,16 +5,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace Barnacle.Dialogs.Slice
 {
@@ -28,7 +19,7 @@ namespace Barnacle.Dialogs.Slice
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ObservableCollection<ProfileEntry>  Settings
+        public ObservableCollection<ProfileEntry> Settings
         {
             get
             {
@@ -36,7 +27,7 @@ namespace Barnacle.Dialogs.Slice
             }
             set
             {
-                if ( value != settings)
+                if (value != settings)
                 {
                     settings = value;
                 }
@@ -45,6 +36,7 @@ namespace Barnacle.Dialogs.Slice
         }
 
         private string profileName;
+
         public string ProfileName
         {
             get
@@ -54,7 +46,7 @@ namespace Barnacle.Dialogs.Slice
 
             set
             {
-                if ( value != profileName)
+                if (value != profileName)
                 {
                     profileName = value;
                     NotifyPropertyChanged();
@@ -79,30 +71,29 @@ namespace Barnacle.Dialogs.Slice
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
- 
         }
-        private  void CancelClick(object sender, RoutedEventArgs e)
+
+        private void CancelClick(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
         }
+
         private void OKClick(object sender, RoutedEventArgs e)
         {
-            
-
             String fileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PrinterProfiles";
-            if ( !Directory.Exists(fileName))
+            if (!Directory.Exists(fileName))
             {
                 Directory.CreateDirectory(fileName);
             }
-            fileName += "\\"+ProfileName;
+            fileName += "\\" + ProfileName;
             if (!fileName.ToLower().EndsWith(".profile"))
             {
                 fileName += ".profile";
             }
             if (CreatingNewProfile && File.Exists(fileName))
             {
-                MessageBox.Show($"Profile {ProfileName} already exists. Use a different name.","Error");
+                MessageBox.Show($"Profile {ProfileName} already exists. Use a different name.", "Error");
             }
             else
             {
@@ -110,7 +101,6 @@ namespace Barnacle.Dialogs.Slice
                 SaveFile(fileName);
                 Close();
             }
-            
         }
 
         private void SaveFile(string fName)

@@ -1,8 +1,6 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -13,13 +11,11 @@ namespace ScriptLanguage
         private ExpressionNode wallThicknessExp;
         private ExpressionNode pitchExp;
 
-
         public MakeParabolicDishNode(ExpressionNode radius, ExpressionNode wallThickness, ExpressionNode pitch)
         {
             this.radiusExp = radius;
             this.wallThicknessExp = wallThickness;
             this.pitchExp = pitch;
-
         }
 
         public MakeParabolicDishNode(ExpressionCollection coll)
@@ -27,7 +23,6 @@ namespace ScriptLanguage
             this.radiusExp = coll.Get(0);
             this.wallThicknessExp = coll.Get(1);
             this.pitchExp = coll.Get(2);
-
         }
 
         /// Execute this node

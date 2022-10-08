@@ -14,22 +14,22 @@
     </UserControl.DataContext>
     <Grid>
         <Grid.Background>
-            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png"/>
+            <ImageBrush ImageSource="/Barnacle;component/Images/Barnicle.png" />
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="24*"/>
-            <ColumnDefinition Width="565*"/>
-            <ColumnDefinition Width="211*"/>
+            <ColumnDefinition Width="24*" />
+            <ColumnDefinition Width="565*" />
+            <ColumnDefinition Width="211*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
         </Grid.RowDefinitions>
         <Label Content="{Binding AppIdentity}"
                FontSize="25"
@@ -39,21 +39,21 @@
                HorizontalAlignment="Center"
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
-               VerticalContentAlignment="Stretch"/>
+               VerticalContentAlignment="Stretch" />
 
         <Button Command="{Binding NewProjectCommand}"
                 Content="New Project"
                 Grid.Column="2"
                 Grid.Row="2"
                 Style="{StaticResource LargeButton}"
-                Visibility="{Binding NewProjectVisible}"/>
+                Visibility="{Binding NewProjectVisible}" />
 
         <Button Command="{Binding BrowseProjectCommand}"
                 Content="Browse"
                 Grid.Column="2"
                 Grid.Row="4"
                 Style="{StaticResource LargeButton}"
-                Visibility="{Binding BrowseProjectVisible}"/>
+                Visibility="{Binding BrowseProjectVisible}" />
 
         <Button Command="{Binding OpenProjectCommand}"
                 Content="Open Project"
@@ -73,8 +73,7 @@
                    HorizontalAlignment="Center"
                    HorizontalContentAlignment="Center"
                    VerticalAlignment="Center"
-                   VerticalContentAlignment="Stretch"/>
-
+                   VerticalContentAlignment="Stretch" />
         </Border>
         <Border Background="White"
                 BorderThickness="4"
@@ -100,7 +99,7 @@
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel ItemWidth="160"
-                                   MaxWidth="500"/>
+                                   MaxWidth="500" />
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
                 <ListView.ItemTemplate>
@@ -113,14 +112,13 @@
                                 <Image Source="/Barnacle;component/Images/Buttons/ExistingProject.png"
                                        ToolTip="{Binding Path}"
                                        Width="48"
-                                       Height="48"/>
+                                       Height="48" />
 
                                 <Label Content="{Binding Title}"
                                        FontSize="16"
                                        HorizontalContentAlignment="Center"
                                        ToolTip="{Binding Path}"
-                                       Width="160"/>
-
+                                       Width="160" />
                             </StackPanel>
                         </Border>
                     </DataTemplate>

@@ -40,10 +40,9 @@ namespace ScriptLanguage
             )
             {
                 // check calculated values are in range
-                
-                if ( !String.IsNullOrEmpty(valFront) && !String.IsNullOrEmpty(valTop))
+
+                if (!String.IsNullOrEmpty(valFront) && !String.IsNullOrEmpty(valTop))
                 {
-                
                     result = true;
 
                     Object3D obj = new Object3D();

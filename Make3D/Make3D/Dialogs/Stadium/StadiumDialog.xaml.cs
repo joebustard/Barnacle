@@ -1,12 +1,7 @@
 ﻿using MakerLib;
-using PolygonTriangulationLib;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.Windows;
-using System.Windows.Media.Media3D;
-using Point = System.Windows.Point;
 
 namespace Barnacle.Dialogs
 {

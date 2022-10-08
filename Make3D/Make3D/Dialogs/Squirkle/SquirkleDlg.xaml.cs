@@ -1,10 +1,8 @@
 ﻿using Barnacle.LineLib;
 using PolygonTriangulationLib;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 using PointF = System.Drawing.PointF;
 
 namespace Barnacle.Dialogs

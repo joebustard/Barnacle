@@ -1,5 +1,4 @@
 ﻿using Barnacle.EditorParameterLib;
-using Barnacle.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -26,6 +25,7 @@ namespace Barnacle.Dialogs
         private bool snap;
         private double gridX;
         private double gridY;
+
         public LinearLoftDialog()
         {
             InitializeComponent();
@@ -237,7 +237,6 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            
         }
 
         private void LineCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -245,11 +244,11 @@ namespace Barnacle.Dialogs
             if (selectedPoint != -1 && e.LeftButton == MouseButtonState.Pressed)
             {
                 System.Windows.Point position = e.GetPosition(LineCanvas);
-                double px= position.X / LineCanvas.ActualWidth;
-                if ( snap )
+                double px = position.X / LineCanvas.ActualWidth;
+                if (snap)
                 {
                     int ioff = (int)(px * 20);
-                    px  = (double)ioff / 20.0;
+                    px = (double)ioff / 20.0;
                 }
                 double py = line[selectedPoint].Y;
                 line[selectedPoint] = new Point(px, py);
@@ -271,15 +270,15 @@ namespace Barnacle.Dialogs
         private void RedrawLine()
         {
             LineCanvas.Children.Clear();
-             gridX = LineCanvas.ActualWidth / 20.0;
-             gridY = LineCanvas.ActualHeight / 20.0;
-            for ( int i = 0; i < 20; i ++)
+            gridX = LineCanvas.ActualWidth / 20.0;
+            gridY = LineCanvas.ActualHeight / 20.0;
+            for (int i = 0; i < 20; i++)
             {
-                for( int j = 0; j < 20; j ++)
+                for (int j = 0; j < 20; j++)
                 {
                     Ellipse el = new Ellipse();
                     Canvas.SetLeft(el, i * gridX - 3);
-                    Canvas.SetTop(el, (j+1) * gridY - 3);
+                    Canvas.SetTop(el, (j + 1) * gridY - 3);
                     el.Width = 6;
                     el.Height = 6;
                     el.Fill = Brushes.AliceBlue;
@@ -350,7 +349,7 @@ namespace Barnacle.Dialogs
                 numDivisions = Convert.ToInt16(s);
                 HDivSlide.Value = numDivisions;
                 s = EditorParameters.Get("Snap");
-                if ( s.ToLower()=="true")
+                if (s.ToLower() == "true")
                 {
                     snap = true;
                     SnapBox.IsChecked = true;

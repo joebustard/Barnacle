@@ -14,13 +14,13 @@
                           Height="450">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
@@ -54,18 +54,17 @@
                 Style="{StaticResource ControlBorder}">
             <TabControl>
                 <TabItem Header="Side">
-                    <ctrls:FlexiPathEditorControl/>
+                    <ctrls:FlexiPathEditorControl />
                 </TabItem>
                 <TabItem Header="Front">
-                    <ctrls:FlexiPathEditorControl/>
+                    <ctrls:FlexiPathEditorControl />
                 </TabItem>
             </TabControl>
-            
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
         <Grid Grid.Column="1"
@@ -78,33 +77,31 @@
             <CheckBox Content="Floor"
                       Grid.Column="0"
                       IsChecked="{Binding ShowFloor}"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
             <CheckBox Content="Axies"
                       Grid.Column="1"
                       IsChecked="{Binding ShowAxies}"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
             <Button Click="Home_Click"
                     Content="Home"
-                    Grid.Column="2"/>
-
+                    Grid.Column="2" />
         </Grid>
         <Grid Grid.Column="2"
               Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="80"/>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
             <Button Click="Cancel_Click"
                     Content="Cancel"
                     Grid.Column="1"
-                    Margin="2,2,2,2"/>
+                    Margin="2,2,2,2" />
 
             <Button Click="Ok_Click"
                     Content="Ok"
                     Grid.Column="2"
-                    Margin="2,2,2,2"  />
-
+                    Margin="2,2,2,2" />
         </Grid>
     </Grid>
 </local:BaseModellerDialog>

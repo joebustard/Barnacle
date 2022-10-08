@@ -1,5 +1,4 @@
-﻿using Barnacle.Models;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,6 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using System.Windows.Threading;
 using System.Xml;
 
 namespace Barnacle.Dialogs
@@ -37,6 +35,7 @@ namespace Barnacle.Dialogs
         private Point3DCollection vertices;
         private bool wholeBody;
         private bool autoFit;
+
         public bool AutoFit
         {
             get { return autoFit; }
@@ -49,9 +48,9 @@ namespace Barnacle.Dialogs
                     GenerateSkin();
                     Redisplay();
                 }
-
             }
         }
+
         private double zoomLevel;
 
         public ProfileFuselageDlg()
@@ -472,7 +471,7 @@ namespace Barnacle.Dialogs
                                 while (nx < x)
                                 {
                                     ImagePathControl nr = RibManager.Ribs[i].Clone(false);
-                                   // nr.GenerateProfilePoints();
+                                    // nr.GenerateProfilePoints();
                                     theRibs.Add(nr);
                                     ribXs.Add(nx);
                                     Dimension dp1 = TopView.GetUpperAndLowerPoints((int)nx);
@@ -492,7 +491,6 @@ namespace Barnacle.Dialogs
                     sideDims.Add(dp);
                     prevX = x;
                 }
-
 
                 for (int i = 0; i < theRibs.Count; i++)
                 {
@@ -516,10 +514,8 @@ namespace Barnacle.Dialogs
                     }
                     else
                     {
-
                         // work out the range of faces we are going to do based upon whether we
                         // are doing the whole model or just fron or back
-
 
                         // assume its whole model
                         int start = 0;
@@ -533,7 +529,6 @@ namespace Barnacle.Dialogs
                             start = facesPerRib / 2;
                         }
 
-
                         List<PointF> leftEdge = new List<PointF>();
                         List<PointF> rightEdge = new List<PointF>();
                         double x = TopView.GetXmm(ribXs[0]);
@@ -543,7 +538,6 @@ namespace Barnacle.Dialogs
                         int vindex = 0;
                         for (int i = 0; i < theRibs.Count; i++)
                         {
-
                             x = TopView.GetXmm(ribXs[i]);
                             //
                             if (i == theRibs.Count - 1)
@@ -561,7 +555,6 @@ namespace Barnacle.Dialogs
                                     double v = (double)pnt.X * (double)topDims[i].Height;
                                     double z = TopView.GetYmm(v + (double)topDims[i].P1.Y);
 
-
                                     v = (double)pnt.Y * (double)sideDims[i].Height;
                                     double y = -SideView.GetYmm(v + sideDims[i].P1.Y);
 
@@ -571,7 +564,6 @@ namespace Barnacle.Dialogs
                                     if (i == 0)
                                     {
                                         leftEdge.Add(new PointF((float)y, (float)z));
-
                                     }
                                     if (i == theRibs.Count - 1)
                                     {
@@ -1038,8 +1030,6 @@ namespace Barnacle.Dialogs
             docNode.AppendChild(sideNode);
             foreach (ImagePathControl ob in RibManager.Ribs)
             {
-
-
                 foreach (LetterMarker mk in markers)
                 {
                     if (mk.Letter == ob.Header)
@@ -1081,13 +1071,13 @@ namespace Barnacle.Dialogs
             TopView.SetScale(zoomLevel);
             SideView.SetScale(zoomLevel);
         }
+
         private void ZoomReset_Click(object sender, RoutedEventArgs e)
         {
             zoomLevel = 1;
             TopView.SetScale(zoomLevel);
             SideView.SetScale(zoomLevel);
         }
-
 
         private void OnPositionTabSelected(object sender, RoutedEventArgs e)
         {

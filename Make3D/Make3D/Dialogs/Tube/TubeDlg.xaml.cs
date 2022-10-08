@@ -1,12 +1,7 @@
-﻿using Barnacle.Models;
+﻿using MakerLib;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
-
-using Barnacle.Object3DLib;
-using MakerLib;
 
 namespace Barnacle.Dialogs
 {
@@ -185,7 +180,6 @@ namespace Barnacle.Dialogs
 
         private void GenerateRing()
         {
-            
             TubeMaker tm = new TubeMaker(innerRadius, TubeThickness, lowerBevel, upperBevel, tubeHeight, sweepDegrees);
             tm.Generate(Vertices, Faces);
             CentreVertices();

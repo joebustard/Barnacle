@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EarClipperLib
 {
@@ -14,7 +11,8 @@ namespace EarClipperLib
     internal class DynamicProperties
     {
         private Dictionary<PropertyConstants, object> _properties = new Dictionary<PropertyConstants, object>();
-        public int Count { get { return _properties.Count; } }
+        public int Count
+        { get { return _properties.Count; } }
 
         internal void AddProperty(PropertyConstants key, object value)
         {

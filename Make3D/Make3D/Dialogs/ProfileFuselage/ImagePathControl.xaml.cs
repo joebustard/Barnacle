@@ -114,7 +114,6 @@ namespace Barnacle.Dialogs
             MovePath
         };
 
-        
         public bool ShowPolyGrid
         {
             get { return showGrid; }
@@ -128,6 +127,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public bool CanCNVDouble
         {
             get { return canCNVDouble; }
@@ -212,6 +212,7 @@ namespace Barnacle.Dialogs
                 return res;
             }
         }
+
         public string Header
         {
             get
@@ -469,6 +470,7 @@ namespace Barnacle.Dialogs
 
             return bs;
         }
+
         public void Clear()
         {
             Dirty = true;
@@ -493,7 +495,6 @@ namespace Barnacle.Dialogs
             polyPoints = flexiPath.FlexiPoints;
             scrollX = 0;
             scrollY = 0;
-
         }
 
         public void FetchImage(bool forceReload = false)
@@ -652,6 +653,7 @@ namespace Barnacle.Dialogs
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
         public void SetImageSource()
         {
             if (workingImage != null)
@@ -672,7 +674,7 @@ namespace Barnacle.Dialogs
                 if (gridMarkers == null)
                 {
                     gridMarkers = new List<Shape>();
-                   BaseModellerDialog.CreateCanvasGrid(FlexiPathCanvas, out gridX, out gridY, 10.0, gridMarkers);
+                    BaseModellerDialog.CreateCanvasGrid(FlexiPathCanvas, out gridX, out gridY, 10.0, gridMarkers);
                 }
                 foreach (Shape sh in gridMarkers)
                 {
@@ -687,6 +689,7 @@ namespace Barnacle.Dialogs
             }
             PathText = flexiPath.ToPath();
         }
+
         public void UpdateHeaderLabel()
         {
             Dirty = true;
@@ -1023,7 +1026,6 @@ namespace Barnacle.Dialogs
 
             if (Math.Abs(position.X - flexiPath.Start.X) < 2 && Math.Abs(position.Y - flexiPath.Start.Y) < 2)
             {
-                
                 selectedPoint = -1;
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
                 flexiPath.ClosePath();
@@ -1035,7 +1037,6 @@ namespace Barnacle.Dialogs
                 selectionMode = SelectionModeType.AppendPoint;
                 selectedPoint = polyPoints.Count - 1;
                 moving = true;
-              
             }
             UpdateDisplay();
         }
@@ -1126,7 +1127,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private bool ConvertLineAtPointToBezier(MouseButtonEventArgs e, Line ln, bool cubic)
         {
             Dirty = true;
@@ -1146,7 +1146,6 @@ namespace Barnacle.Dialogs
                 }
                 if (added)
                 {
-
                     UpdateDisplay();
 
                     PathText = flexiPath.ToPath();
@@ -1155,6 +1154,7 @@ namespace Barnacle.Dialogs
 
             return added;
         }
+
         private void CopyPath_Click(object sender, RoutedEventArgs e)
         {
             PathText = flexiPath.ToPath();
@@ -1269,7 +1269,7 @@ namespace Barnacle.Dialogs
                 List<System.Windows.Point> points = flexiPath.DisplayPoints();
                 if (points != null && points.Count > 1)
                 {
-                    for (int i = 0; i < points.Count-1; i++)
+                    for (int i = 0; i < points.Count - 1; i++)
                     {
                         DrawLine(i, i + 1, points);
                     }
@@ -1421,6 +1421,7 @@ namespace Barnacle.Dialogs
                 FlexiPathCanvas.Children.Add(ln);
             }
         }
+
         private void FlexiPathCanvas_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (selectionMode == SelectionModeType.StartPoint)
@@ -1497,7 +1498,7 @@ namespace Barnacle.Dialogs
         private void FlexiPathCanvas_MouseMove(object sender, MouseEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(FlexiPathCanvas);
-            
+
             System.Windows.Point snappedPos = SnapPositionToMM(position);
             if (selectedPoint != -1)
             {
@@ -1589,7 +1590,6 @@ namespace Barnacle.Dialogs
         private void GeneratePointParams()
         {
             String s = flexiPath.ToString();
-
         }
 
         private void ImageButton_Click(object sender, RoutedEventArgs e)
@@ -1621,7 +1621,6 @@ namespace Barnacle.Dialogs
         {
             flexiPath.Clear();
             selectionMode = SelectionModeType.StartPoint;
-
         }
 
         private void InsertCurveSegment(int startIndex, System.Windows.Point position)
@@ -1844,6 +1843,7 @@ namespace Barnacle.Dialogs
         private void OnCNVDoublePath(object obj)
         {
         }
+
         private void OutButton_Click(object sender, RoutedEventArgs e)
         {
             scale *= 0.9;
@@ -1863,6 +1863,7 @@ namespace Barnacle.Dialogs
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
         }
+
         private System.Windows.Point Perpendicular(System.Windows.Point p1, System.Windows.Point p2, double t, double distanceFromLine)
         {
             double x;
@@ -1927,7 +1928,6 @@ namespace Barnacle.Dialogs
 
         private void ResetPathButton_Click(object sender, RoutedEventArgs e)
         {
-
             InitialisePoints();
 
             selectedPoint = -1;
@@ -2053,6 +2053,7 @@ namespace Barnacle.Dialogs
             }
             UpdateDisplay();
         }
+
         private void ShowCenters()
         {
             int topi = imageEdge.BackStart;
@@ -2135,6 +2136,7 @@ namespace Barnacle.Dialogs
             }
             return new System.Windows.Point(ToMMX(gx), ToMMY(gy));
         }
+
         private bool SplitLineAtPoint(MouseButtonEventArgs e, Line ln)
         {
             bool added = false;
@@ -2144,7 +2146,6 @@ namespace Barnacle.Dialogs
             {
                 if (flexiPath.SplitSelectedLineSegment(position))
                 {
-
                     UpdateDisplay();
                     added = true;
                     PathText = flexiPath.ToPath();
@@ -2190,6 +2191,7 @@ namespace Barnacle.Dialogs
             double res = sc.PixelsPerInchY * y / 25.4;
             return res;
         }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
@@ -2200,6 +2202,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
             loaded = true;
         }
+
         private void ZoomIn_Click(object sender, RoutedEventArgs e)
         {
             scale = 1.1 * scale;

@@ -13,20 +13,20 @@
                           Height="800">
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="200" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="30" />
         </Grid.RowDefinitions>
         <Grid Grid.Column="0"
               Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="160"/>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="60"/>
+                <RowDefinition Height="160" />
+                <RowDefinition Height="80" />
+                <RowDefinition Height="60" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Border Grid.Column="0"
@@ -34,18 +34,17 @@
                     Padding="2,2,2,2"
                     Style="{StaticResource ControlBorder}">
                 <StackPanel>
-  
+
                         <Button Click="ImageButton_Click"
                                 Content="Image"
                                 Margin="2,2,2,2"
                                 ToolTip="Load a background image to position the points over"
-                                x:Name="ImageButton" HorizontalAlignment="Left"/>
+                                x:Name="ImageButton" HorizontalAlignment="Left" />
 
                     <RadioButton GroupName="HollowGroup"
                                  IsChecked="{Binding SolidShape}" Content="Solid" Margin="2,2,2,2" />
                     <RadioButton GroupName="HollowGroup"
-                                 IsChecked="{Binding HollowShape}" Content="Hollow" Margin="2,2,2,2"/>
-
+                                 IsChecked="{Binding HollowShape}" Content="Hollow" Margin="2,2,2,2" />
 
                     <!--
                     <RadioButton GroupName="HollowGroup"
@@ -63,7 +62,7 @@
                         <TextBox Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}"
                                  VerticalContentAlignment="Center"
                                  Visibility="{Binding ShowWidth}"
-                                 Width="100"/>
+                                 Width="100" />
                     </StackPanel>
                     <CheckBox IsChecked="{Binding ShowOrtho}"
                               ToolTip="Show orthogononal guides and highlight orthogonal points">
@@ -77,23 +76,21 @@
                                 Content="+"
                                 Margin="2,2,2,2"
                                 ToolTip="Zoom in on polygon"
-                                x:Name="ZoomInButton"/>
+                                x:Name="ZoomInButton" />
                     <Button Click="ZoomReset_Click"
                                 Content="."
                                 Margin="2,2,2,2"
                                 ToolTip="Reset Zoom"
-                                x:Name="ZoomResetButton"/>
+                                x:Name="ZoomResetButton" />
 
                     <Button Click="OutButton_Click"
                                 Content="-"
                                 Margin="2,2,2,2"
                                 ToolTip="Zoom out on polygon"
-                                x:Name="ZoomOutButton"/> 
-
+                                x:Name="ZoomOutButton" />
                 </UniformGrid>
-                
             </Border>
-            
+
             <Border Grid.Column="0"
                     Grid.Row="3"
                     Padding="2,2,2,10"
@@ -105,7 +102,7 @@
                     <DataGrid.Columns>
                         <DataGridTextColumn Binding="{Binding Id}"
                                             Header="Id"
-                                            Width="0.2*"/>
+                                            Width="0.2*" />
                         <DataGridTextColumn Binding="{Binding X, StringFormat={}{0:n3}}"
                                             Header="X"
                                             Width="0.4*">
@@ -153,7 +150,7 @@
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#FF808080"/>
+                            <AmbientLight Color="#FF808080" />
                             <DirectionalLight Color="White"
                                               Direction="-1,-1,-1"
                                               x:Name="dirLightMain">
@@ -174,9 +171,9 @@
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="48"/>
+                    <RowDefinition Height="48" />
                     <RowDefinition />
-                    <RowDefinition Height="25"/>
+                    <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <Border Grid.Column="0"
                     Grid.Row="0"
@@ -186,13 +183,12 @@
                              Margin="-0.4,-0.4,0.4,0.4"
                              VerticalAlignment="Bottom"
                              Height="40">
-                        
+
                         <Button Click="ShowAllPointsButton_Click"
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Show all the control points on the path"
                                 x:Name="ShowAllPointsButton">
-                        <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path"/>
-
+                        <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
                         </Button>
 
                         <Border BorderThickness="4"
@@ -202,8 +198,7 @@
                                 Style="{StaticResource SmallButton }"
                                 ToolTip="Select a segment or point"
                                 x:Name="PickButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -213,8 +208,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Insert a straight segment"
                                 x:Name="AddSegButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -223,8 +217,8 @@
                             <Button Command="{Binding CNVDoubleSegCommand}"
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert two selected straight segments into a Quadratic spline"
-                                x:Name="CNVSegButton" Visibility="{Binding CNVDoubleVisible}" >
-                                <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png"/>
+                                x:Name="CNVSegButton" Visibility="{Binding CNVDoubleVisible}">
+                                <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -234,8 +228,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert a straight segment to a cubic spline"
                                 x:Name="AddBezierButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -245,8 +238,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Convert a straight segment to a quadratic spline"
                                 x:Name="AddQuadBezierButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -256,8 +248,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Delete a segment"
                                 x:Name="DelSegButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -267,8 +258,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Move entire path to clicked point"
                                 x:Name="MovePathButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/MovePath.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
                             </Button>
                         </Border>
                         <Border BorderThickness="4"
@@ -278,8 +268,7 @@
                                 Style="{StaticResource SmallButton}"
                                 ToolTip="Reset the entire path"
                                 x:Name="ResetPathButton">
-                                <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png"/>
-
+                                <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
                             </Button>
                         </Border>
                     </UniformGrid>
@@ -293,17 +282,16 @@
                             MouseUp="MainCanvas_MouseUp"
                             x:Name="MainCanvas" SizeChanged="MainCanvas_SizeChanged">
                         <Canvas.LayoutTransform>
-                            <ScaleTransform x:Name="MainScale"/>
+                            <ScaleTransform x:Name="MainScale" />
                         </Canvas.LayoutTransform>
                     </Canvas>
                 </ScrollViewer>
                 <StackPanel Grid.Row="2"
                             Orientation="Horizontal">
                     <Label Content="Path" VerticalAlignment="Center" />
-                    <TextBox  Text="{Binding PathText}" Width="300" Margin="2,2,2,2"/>
-                    <Button  Content="Copy" Width="50" Click="CopyPath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
-                    <Button  Content="Paste" Width="50" Click="PastePath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2"/>
-
+                    <TextBox  Text="{Binding PathText}" Width="300" Margin="2,2,2,2" />
+                    <Button  Content="Copy" Width="50" Click="CopyPath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2" />
+                    <Button  Content="Paste" Width="50" Click="PastePath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -311,7 +299,7 @@
               Grid.Row="2">
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="10" />
                     <ColumnDefinition />
                     <ColumnDefinition />
                     <ColumnDefinition />
@@ -322,47 +310,44 @@
                 <CheckBox Content="Floor"
                           Grid.Column="1"
                           IsChecked="{Binding ShowFloor}"
-                          VerticalAlignment="Center"/>
+                          VerticalAlignment="Center" />
                 <CheckBox Content="Axies"
                           Grid.Column="2"
                           IsChecked="{Binding ShowAxies}"
-                          VerticalAlignment="Center"/>
-                
-                
+                          VerticalAlignment="Center" />
+
                 <CheckBox Content="Grid"
                           Grid.Column="3"
                           IsChecked="{Binding ShowPolyGrid}"
-                          VerticalAlignment="Center"/>
+                          VerticalAlignment="Center" />
 
                 <CheckBox Content="Snap"
                           Grid.Column="4"
                           IsChecked="{Binding Snap}"
-                          VerticalAlignment="Center"/>
-                
+                          VerticalAlignment="Center" />
+
                 <Button Click="Home_Click"
                         Content="Home"
-                        Grid.Column="5"  Margin="2,2,2,2"/>
+                        Grid.Column="5"  Margin="2,2,2,2" />
 
                 <Label Grid.Column="6"
-                       x:Name="PositionLabel"/>
-
+                       x:Name="PositionLabel" />
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
                 </Grid.ColumnDefinitions>
                 <Button Click="Cancel_Click"
                         Content="Cancel"
                         Grid.Column="1"
-                        Margin="2,2,2,2"/>
+                        Margin="2,2,2,2" />
 
                 <Button Click="Ok_Click"
                         Content="Ok"
                         Grid.Column="2"
-                        Margin="2,2,2,2"  />
-
+                        Margin="2,2,2,2" />
             </Grid>
         </Grid>
     </Grid>

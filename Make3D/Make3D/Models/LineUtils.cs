@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Barnacle.Models
 {
     internal class LineUtils
     {
-        
         public static void CoplanerTest()
         {
             List<PointF> points = new List<PointF>();

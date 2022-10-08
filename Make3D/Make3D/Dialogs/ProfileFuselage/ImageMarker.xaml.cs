@@ -76,6 +76,7 @@ namespace Barnacle.Dialogs
         private Point upperPoint;
 
         private System.Drawing.Bitmap workingImage;
+
         public System.Drawing.Bitmap WorkingImage
         {
             get { return workingImage; }
@@ -85,10 +86,10 @@ namespace Barnacle.Dialogs
                 {
                     workingImage = value;
                     NotifyPropertyChanged();
-
                 }
             }
         }
+
         public ImageMarker()
         {
             InitializeComponent();
@@ -234,12 +235,12 @@ namespace Barnacle.Dialogs
         public void UpdateDisplay()
         {
             elements.Clear();
-            if (workingImage != null )
+            if (workingImage != null)
             {
                 Dimension pinDim = GetUpperAndLowerPoints(pinPos);
                 upperPoint = new Point(pinDim.P1.X, pinDim.P1.Y);
                 lowerPoint = new Point(pinDim.P2.X, pinDim.P2.Y);
-                Point midPoint  = new Point(pinDim.Mid.X, pinDim.Mid.Y);
+                Point midPoint = new Point(pinDim.Mid.X, pinDim.Mid.Y);
                 double size = lowerPoint.Y - upperPoint.Y;
                 AddTopPin(pinPos, size.ToString());
                 AddCenterMarker();
@@ -261,14 +262,14 @@ namespace Barnacle.Dialogs
                 // the others
                 foreach (LetterMarker mk in markers)
                 {
-                  //  if (selectedMarker != mk)
+                    //  if (selectedMarker != mk)
                     {
                         UpdateMarker(mk);
                     }
                 }
                 if (selectedMarker != null)
                 {
-           //         UpdateMarker(selectedMarker);
+                    //         UpdateMarker(selectedMarker);
                 }
             }
             UpdateCanvas();
@@ -365,7 +366,7 @@ namespace Barnacle.Dialogs
         private void AddLetter(int x, int y, string c, object tag, string s)
         {
             int by = bry + (2 * totalTopMargin);
-            AddLine(x, y, x, y + by,s);
+            AddLine(x, y, x, y + by, s);
             Typeface typeface = new Typeface("Arial");
             double txtWidth = new FormattedText(c, CultureInfo.CurrentUICulture,
         FlowDirection.LeftToRight,
@@ -388,7 +389,7 @@ namespace Barnacle.Dialogs
             br.ContextMenu = this.FindResource("cmLetter") as ContextMenu;
             br.ToolTip = s;
             elements.Add(br);
-            AddText(x - ((int)txtWidth / 2), y - 8, c, System.Windows.Media.Colors.Black, tag,s);
+            AddText(x - ((int)txtWidth / 2), y - 8, c, System.Windows.Media.Colors.Black, tag, s);
 
             br = new Border();
             Canvas.SetLeft(br, x - txtWidth / 2);
@@ -407,10 +408,10 @@ namespace Barnacle.Dialogs
 
             elements.Add(br);
             br.ToolTip = s;
-            AddText(x - ((int)txtWidth / 2) + 3, y - 8 + by, c, System.Windows.Media.Colors.Black, tag,s);
+            AddText(x - ((int)txtWidth / 2) + 3, y - 8 + by, c, System.Windows.Media.Colors.Black, tag, s);
         }
 
-        private void AddLine(int v1, int v2, int v3, int v4, string s="")
+        private void AddLine(int v1, int v2, int v3, int v4, string s = "")
         {
             Line l = new Line();
             l.Stroke = System.Windows.Media.Brushes.Black;
@@ -418,14 +419,14 @@ namespace Barnacle.Dialogs
             l.Y1 = v2;
             l.X2 = v3;
             l.Y2 = v4;
-            if ( s != "")
+            if (s != "")
             {
                 l.ToolTip = s;
             }
             elements.Add(l);
         }
 
-        private void AddText(int x, int y, string text, System.Windows.Media.Color color, object tag, string s="")
+        private void AddText(int x, int y, string text, System.Windows.Media.Color color, object tag, string s = "")
         {
             TextBlock textBlock = new TextBlock();
             textBlock.FontFamily = new FontFamily("Arial");
@@ -439,7 +440,7 @@ namespace Barnacle.Dialogs
             textBlock.MouseUp += Br_MouseUp;
             textBlock.MouseMove += Br_MouseMove;
             textBlock.Tag = tag;
-            if ( s !="")
+            if (s != "")
             {
                 textBlock.ToolTip = s;
             }
@@ -505,10 +506,8 @@ namespace Barnacle.Dialogs
                         notifyMoved = true;
                         selectedMarker.Position = new System.Drawing.Point((int)p.X, selectedMarker.Position.Y);
                         OnMarkerMoved(selectedMarker.Letter, selectedMarker.Position, false);
-                        
                     }
                 }
-                
             }
         }
 
@@ -551,9 +550,8 @@ namespace Barnacle.Dialogs
                 while (y < workingImage.Height && !found)
                 {
                     System.Drawing.Color c = workingImage.GetPixel(x, y);
-                    if (c.R <128)
+                    if (c.R < 128)
                     {
-
                         found = true;
                         up = new Point(x, y);
                         break;
@@ -568,7 +566,7 @@ namespace Barnacle.Dialogs
                     while (y > 0 && !found)
                     {
                         System.Drawing.Color c = workingImage.GetPixel(x, y);
-                        if (c.R <128)
+                        if (c.R < 128)
                         {
                             found = true;
                             down = new Point(x, y);
@@ -652,7 +650,7 @@ namespace Barnacle.Dialogs
                     tlx = 1;
                     bry -= tly;
                     tly = 1;
-                    SetupImage(workingImage,tlx,tly,brx,bry);
+                    SetupImage(workingImage, tlx, tly, brx, bry);
                     isValid = true;
                 }
                 UpdateDisplay();
@@ -703,6 +701,7 @@ namespace Barnacle.Dialogs
             pinSelected = true;
             selectedMarker = null;
         }
+
         public void Clear()
         {
             elements = new List<UIElement>();
@@ -718,6 +717,7 @@ namespace Barnacle.Dialogs
             rightLimit = double.MinValue;
             workingImage = null;
         }
+
         private void Ply_MouseMove(object sender, MouseEventArgs e)
         {
             if (pinSelected)
@@ -759,10 +759,9 @@ namespace Barnacle.Dialogs
 
         private void UpdateMarker(LetterMarker mk)
         {
-           
             Dimension dp = GetUpperAndLowerPoints(mk.Position.X);
             dimensions.Add(dp);
-            AddLetter(mk.Position.X, mk.Position.Y, mk.Letter, mk,$"Size at X={mk.Position.X} is {dp.Height}");
+            AddLetter(mk.Position.X, mk.Position.Y, mk.Letter, mk, $"Size at X={mk.Position.X} is {dp.Height}");
             AddCircle((int)dp.P1.X, (int)dp.P1.Y, mk);
             AddCircle((int)dp.P2.X, (int)dp.P2.Y, mk);
             AddCircle((int)dp.P1.X, (int)dp.Mid.Y, mk);
@@ -772,10 +771,10 @@ namespace Barnacle.Dialogs
         {
             mainCanvas.Background = System.Windows.Media.Brushes.Transparent;
             pinSelected = false;
-            
+
             upperPoint = new Point(-1, -1);
             pinPos = 150;
-            
+
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
             UpdateDisplay();

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
 namespace CSGLib
@@ -15,7 +12,7 @@ namespace CSGLib
         public OctTree(List<Vertex> pnts, Vertex minPnt, Vertex maxPnt, int maxTreeDepth)
         {
             root = new OctNode();
-            minPnt.Position = new Vector3D(minPnt.Position .X- 10, minPnt.Position.Y - 10, minPnt.Position.Z- 10);
+            minPnt.Position = new Vector3D(minPnt.Position.X - 10, minPnt.Position.Y - 10, minPnt.Position.Z - 10);
             maxPnt.Position = new Vector3D(maxPnt.Position.X + 10, maxPnt.Position.Y + 10, maxPnt.Position.Z + 10);
 
             OctNode.MaxTreeDepth = maxTreeDepth;
@@ -47,9 +44,9 @@ namespace CSGLib
             }
             catch (Exception ex)
             {
-                
             }
         }
+
         public int PointPresent(Vertex pnt)
         {
             int res = -1;

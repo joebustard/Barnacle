@@ -10,7 +10,6 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
-using VisualSolutionExplorer;
 using Workflow;
 using Path = System.IO.Path;
 
@@ -102,6 +101,7 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
+
         public bool IsEditProfileEnabled
         {
             get { return isEditProfileEnabled; }
@@ -114,6 +114,7 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
+
         /// <summary>
         /// Are we doing a single model or all the models in the project?
         /// </summary>
@@ -128,6 +129,7 @@ namespace Barnacle.Dialogs.Slice
                 NotifyPropertyChanged();
             }
         }
+
         public string ResultsText
         {
             get { return resultsText; }
@@ -140,8 +142,6 @@ namespace Barnacle.Dialogs.Slice
                 }
             }
         }
-
-
 
         public String SelectedPrinter
         {
@@ -157,7 +157,6 @@ namespace Barnacle.Dialogs.Slice
                 {
                     IsEditPrinterEnabled = false;
                 }
-
 
                 if (selectedPrinter != "")
                 {
@@ -266,7 +265,6 @@ namespace Barnacle.Dialogs.Slice
             Close();
         }
 
-
         private void ClearResults()
         {
             Application.Current.Dispatcher.BeginInvoke(
@@ -311,11 +309,11 @@ namespace Barnacle.Dialogs.Slice
             {
                 EditProfile dlg = new EditProfile();
                 string fl = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles";
-                if ( !Directory.Exists(fl))
+                if (!Directory.Exists(fl))
                 {
                     Directory.CreateDirectory(fl);
                 }
-                String defProfile = fl+$"{selectedUserProfile}.profile";
+                String defProfile = fl + $"{selectedUserProfile}.profile";
                 if (File.Exists(defProfile))
                 {
                     dlg.LoadFile(defProfile);
@@ -373,6 +371,7 @@ G90 ;Absolute positioning";
             Profiles = CuraEngineInterface.GetAvailableUserProfiles();
             SelectedUserProfile = dlg.ProfileName;
         }
+
         private Bounds3D RecalculateAllBounds()
         {
             Bounds3D allBounds = new Bounds3D();
@@ -460,7 +459,9 @@ G90 ;Absolute positioning";
             }
             CanCopyToSD = true;
         }
+
         private bool canCopyToSD;
+
         public bool CanCopyToSD
         {
             get { return canCopyToSD; }
@@ -473,6 +474,7 @@ G90 ;Absolute positioning";
                 }
             }
         }
+
         private void DelProfileClicked(object sender, RoutedEventArgs e)
         {
             if (!String.IsNullOrEmpty(selectedUserProfile))
@@ -491,12 +493,12 @@ G90 ;Absolute positioning";
                         }
                         catch
                         {
-
                         }
                     }
                 }
             }
         }
+
         private void SDClicked(object sender, RoutedEventArgs e)
         {
             string cardName = Properties.Settings.Default.SDCardLabel;
@@ -530,7 +532,6 @@ G90 ;Absolute positioning";
                         AppendResults("Copy " + name);
                         File.Copy(fn, trg, true);
                     }
-
                 }
                 else
                 {
@@ -540,9 +541,8 @@ G90 ;Absolute positioning";
             else
             {
                 MessageBox.Show("Sdcard label not defined in settings." +
-                "" );
+                "");
             }
-
         }
     }
 }

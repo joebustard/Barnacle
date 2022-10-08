@@ -105,6 +105,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
         public bool CanCNVDouble
         {
             get { return canCNVDouble; }
@@ -625,7 +626,6 @@ namespace Barnacle.UserControls
                 CanCNVDouble = false;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                 NotifyPropertyChanged("Points");
-
             }
         }
 
@@ -678,6 +678,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
         private void OnMovePath(object obj)
         {
             SelectionMode = SelectionModeType.MovePath;
@@ -741,6 +742,7 @@ namespace Barnacle.UserControls
                     break;
             }
         }
+
         private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
         {
             double gx = pos.X;

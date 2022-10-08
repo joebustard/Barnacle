@@ -10,7 +10,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="30"/>
+            <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -24,7 +24,7 @@
                  PreviewKeyDown="NUDTextBox_PreviewKeyDown"
                  PreviewKeyUp="NUDTextBox_PreviewKeyUp"
                  TextAlignment="Left"
-                 TextChanged="NUDTextBox_TextChanged"/>
+                 TextChanged="NUDTextBox_TextChanged" />
         <RepeatButton Name="NUDButtonUP"
                       Click="NUDButtonUP_Click"
                       FontFamily="Marlett"

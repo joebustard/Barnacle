@@ -1,19 +1,14 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Barnacle.Object3DLib;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.Figure
 {
     internal class JointMarker : Object3D
     {
-
         public delegate void BoneRotate(Bone bn);
+
         public BoneRotate OnBoneRotated { get; set; }
+
         public JointMarker()
         {
             Bone = null;

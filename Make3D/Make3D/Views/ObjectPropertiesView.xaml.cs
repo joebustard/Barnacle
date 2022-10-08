@@ -11,6 +11,5 @@ namespace Barnacle.Views
         {
             InitializeComponent();
         }
-
     }
 }

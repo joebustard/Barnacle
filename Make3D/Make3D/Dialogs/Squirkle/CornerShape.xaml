@@ -10,8 +10,7 @@
     <Grid>
         <Button Click="Button_Click"
                 Style="{StaticResource LargeImageButton}">
-            <Image Source="{Binding CurrentImage}"/>
-
+            <Image Source="{Binding CurrentImage}" />
         </Button>
     </Grid>
 </UserControl>

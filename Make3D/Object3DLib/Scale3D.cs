@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Barnacle.Object3DLib
+﻿namespace Barnacle.Object3DLib
 {
     public class Scale3D
     {

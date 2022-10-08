@@ -1,8 +1,6 @@
 using MakerLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -14,9 +12,8 @@ namespace Barnacle.Dialogs
         private string warningText;
         private bool loaded;
 
-
-
         private double radius;
+
         public double Radius
         {
             get
@@ -37,9 +34,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         private double wallThickness;
+
         public double WallThickness
         {
             get
@@ -60,9 +56,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         private int pitch;
+
         public int Pitch
         {
             get
@@ -83,8 +78,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-
-
         public ParabolicDishDlg()
         {
             InitializeComponent();
@@ -92,7 +85,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
             pitch = 5;
             radius = 10;
-            wallThickness = 1; 
+            wallThickness = 1;
             ModelGroup = MyModelGroup;
             loaded = false;
         }
@@ -179,7 +172,6 @@ namespace Barnacle.Dialogs
             {
                 Pitch = EditorParameters.GetInt("Pitch");
             }
-
         }
 
         private void SaveEditorParmeters()

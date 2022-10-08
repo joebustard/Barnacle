@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScriptLanguage
+﻿namespace ScriptLanguage
 {
     internal class DoubleDeclarationNode : DeclarationNode
     {

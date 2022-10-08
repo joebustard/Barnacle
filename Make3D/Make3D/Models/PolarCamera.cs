@@ -60,7 +60,8 @@ namespace Barnacle.Models
             Bottom
         }
 
-        public Point3D CameraPos { get { return cameraPos; } }
+        public Point3D CameraPos
+        { get { return cameraPos; } }
 
         public double Distance
         {

@@ -1,10 +1,5 @@
 ﻿using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -254,7 +249,7 @@ namespace ScriptLanguage
                     }
                 }
             }
-            catch (Exception ex )
+            catch (Exception ex)
             {
                 result = false;
                 Log.Instance().AddEntry($" {label} : {ex.Message}");

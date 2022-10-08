@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,10 +23,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
-using System;
 using MeshDecimator.Math;
+using System;
 
 namespace MeshDecimator
 {
@@ -35,18 +37,22 @@ namespace MeshDecimator
     public struct BoneWeight : IEquatable<BoneWeight>
     {
         #region Fields
+
         /// <summary>
         /// The first bone index.
         /// </summary>
         public int boneIndex0;
+
         /// <summary>
         /// The second bone index.
         /// </summary>
         public int boneIndex1;
+
         /// <summary>
         /// The third bone index.
         /// </summary>
         public int boneIndex2;
+
         /// <summary>
         /// The fourth bone index.
         /// </summary>
@@ -56,21 +62,26 @@ namespace MeshDecimator
         /// The first bone weight.
         /// </summary>
         public float boneWeight0;
+
         /// <summary>
         /// The second bone weight.
         /// </summary>
         public float boneWeight1;
+
         /// <summary>
         /// The third bone weight.
         /// </summary>
         public float boneWeight2;
+
         /// <summary>
         /// The fourth bone weight.
         /// </summary>
         public float boneWeight3;
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new bone weight.
         /// </summary>
@@ -94,9 +105,11 @@ namespace MeshDecimator
             this.boneWeight2 = boneWeight2;
             this.boneWeight3 = boneWeight3;
         }
+
         #endregion
 
         #region Operators
+
         /// <summary>
         /// Returns if two bone weights equals eachother.
         /// </summary>
@@ -119,9 +132,11 @@ namespace MeshDecimator
         {
             return !(lhs == rhs);
         }
+
         #endregion
 
         #region Private Methods
+
         private void MergeBoneWeight(int boneIndex, float weight)
         {
             if (boneIndex == boneIndex0)
@@ -140,7 +155,7 @@ namespace MeshDecimator
             {
                 boneWeight3 = (boneWeight3 + weight) * 0.5f;
             }
-            else if(boneWeight0 == 0f)
+            else if (boneWeight0 == 0f)
             {
                 boneIndex0 = boneIndex;
                 boneWeight0 = weight;
@@ -178,10 +193,13 @@ namespace MeshDecimator
                 boneWeight0 = boneWeight1 = boneWeight2 = boneWeight3 = 0f;
             }
         }
+
         #endregion
 
         #region Public Methods
+
         #region Object
+
         /// <summary>
         /// Returns a hash code for this vector.
         /// </summary>
@@ -228,9 +246,11 @@ namespace MeshDecimator
             return string.Format("({0}:{4:F1}, {1}:{5:F1}, {2}:{6:F1}, {3}:{7:F1})",
                 boneIndex0, boneIndex1, boneIndex2, boneIndex3, boneWeight0, boneWeight1, boneWeight2, boneWeight3);
         }
+
         #endregion
 
         #region Static
+
         /// <summary>
         /// Merges two bone weights and stores the merged result in the first parameter.
         /// </summary>
@@ -243,7 +263,9 @@ namespace MeshDecimator
             if (b.boneWeight2 > 0f) a.MergeBoneWeight(b.boneIndex2, b.boneWeight2);
             if (b.boneWeight3 > 0f) a.MergeBoneWeight(b.boneIndex3, b.boneWeight3);
         }
+
         #endregion
+
         #endregion
     }
 }

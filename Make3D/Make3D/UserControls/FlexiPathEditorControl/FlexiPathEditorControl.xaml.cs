@@ -15,18 +15,21 @@ namespace Barnacle.UserControls
     public partial class FlexiPathEditorControl : UserControl
     {
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
+
         public FlexiPathChanged OnFlexiPathChanged;
         private FlexiPathEditorControlViewModel vm;
         private string pathText = "";
+
         public FlexiPathEditorControl()
         {
             InitializeComponent();
             OnFlexiPathChanged = null;
         }
-         public bool PathClosed
-         {
-         get
-         {
+
+        public bool PathClosed
+        {
+            get
+            {
                 bool cl = false;
                 if (vm != null && vm.Points != null)
                 {
@@ -35,8 +38,9 @@ namespace Barnacle.UserControls
                               (vm.Points.Count > 3);
                 }
                 return cl;
-         }
-         }
+            }
+        }
+
         private void DashLine(double x1, double y1, double x2, double y2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -227,7 +231,6 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, DelSegBorder);
             DoButtonBorder(src, MovePathBorder);
         }
-
 
         private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
@@ -460,9 +463,7 @@ namespace Barnacle.UserControls
         private void UpdateDisplay()
         {
             MainCanvas.Children.Clear();
-            
-           
-            
+
             // this is the grid on the path edit
             if (vm != null)
             {
@@ -485,6 +486,7 @@ namespace Barnacle.UserControls
                 DisplayPoints();
             }
         }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -507,11 +509,12 @@ namespace Barnacle.UserControls
             return vm.AbsPathText();
         }
 
-        internal void SetPath( string v)
+        internal void SetPath(string v)
         {
             pathText = v;
-                vm?.SetPath(v); 
+            vm?.SetPath(v);
         }
+
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)

@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -48,7 +47,7 @@ namespace Barnacle.Dialogs
                 {
                     fontBold = value;
                     NotifyPropertyChanged();
-                    
+
                     UpdateDisplay();
                 }
             }
@@ -181,8 +180,7 @@ namespace Barnacle.Dialogs
                     text = value;
                     NotifyPropertyChanged();
 
-                        UpdateDisplay();
-                    
+                    UpdateDisplay();
                 }
             }
         }
@@ -259,7 +257,7 @@ namespace Barnacle.Dialogs
 
         private void LoadEditorParameters()
         {
-            if ( EditorParameters.Get("Text") != "")
+            if (EditorParameters.Get("Text") != "")
             {
                 Text = EditorParameters.Get("Text");
                 SelectedFont = EditorParameters.Get("FontName");
@@ -284,7 +282,7 @@ namespace Barnacle.Dialogs
         {
             // building shapes is time consuming,dont do until all
             // the default parameters are set
-            if (loaded )
+            if (loaded)
             {
                 if (SettingsValid())
                 {
@@ -301,19 +299,19 @@ namespace Barnacle.Dialogs
         private bool SettingsValid()
         {
             bool result = true;
-            if ( text == null || text == "")
+            if (text == null || text == "")
             {
                 result = false;
             }
-            if (selectedFont == null || selectedFont =="")
+            if (selectedFont == null || selectedFont == "")
             {
                 result = false;
             }
-            if ( fontSize < 4.0)
+            if (fontSize < 4.0)
             {
                 result = false;
             }
-            if ( thickness <= 0)
+            if (thickness <= 0)
             {
                 result = false;
             }

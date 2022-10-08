@@ -2,10 +2,6 @@
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -400,6 +396,7 @@ namespace MakerLib
                 Faces.Add(c2);
             }
         }
+
         protected void CopyShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
         {
             foreach (Point3D ps in bs.AbsoluteObjectVertices)
@@ -411,22 +408,21 @@ namespace MakerLib
                 faces.Add(i);
             }
         }
+
         protected void AppendShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
         {
             Int32Collection altFaces = new Int32Collection();
-            foreach( int org in bs.TriangleIndices)
+            foreach (int org in bs.TriangleIndices)
             {
                 Point3D p = bs.AbsoluteObjectVertices[org];
                 int apped = AddVertice(pnts, p.X, p.Y, p.Z);
                 altFaces.Add(apped);
             }
 
-           
             foreach (int i in altFaces)
             {
                 faces.Add(i);
             }
         }
-
     }
 }

@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace Barnacle
 {
     public delegate void RXMessage(object param);
+
     public delegate Task RXMessageTask(object param);
 
     public static class NotificationManager
     {
         private static List<ObserverDef> observers = new List<ObserverDef>();
 
-        public static  void Notify(string name, object param)
+        public static void Notify(string name, object param)
         {
             bool adjust = false;
             List<ObserverDef> tmp = new List<ObserverDef>();
@@ -39,7 +39,6 @@ namespace Barnacle
                             adjust = true;
                         }
                     }
-                   
                 }
             }
 
@@ -71,21 +70,19 @@ namespace Barnacle
                 ObserverDef df = tmp[i];
                 if (df.messageName == name)
                 {
-                   
-                        if (df.observerTask != null)
+                    if (df.observerTask != null)
+                    {
+                        try
                         {
-                            try
-                            {
-                                await df.observerTask(param);
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Debug.WriteLine(ex.Message);
-                                df.alive = false;
-                                adjust = true;
-                            }
+                            await df.observerTask(param);
                         }
-                    
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine(ex.Message);
+                            df.alive = false;
+                            adjust = true;
+                        }
+                    }
                 }
             }
 
@@ -102,6 +99,7 @@ namespace Barnacle
                 }
             }
         }
+
         public static void Subscribe(string name, RXMessage fnc)
         {
             Subscribe("", name, fnc);
@@ -116,6 +114,7 @@ namespace Barnacle
             df.alive = true;
             observers.Add(df);
         }
+
         public static void SubscribeTask(string subscriberName, string eventName, RXMessageTask fnc)
         {
             ObserverDef df = new ObserverDef();

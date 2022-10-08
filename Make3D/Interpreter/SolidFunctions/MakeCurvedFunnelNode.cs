@@ -1,8 +1,6 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -14,7 +12,6 @@ namespace ScriptLanguage
         private ExpressionNode wallThicknessExp;
         private ExpressionNode heightExp;
 
-
         public MakeCurvedFunnelNode
             (
             ExpressionNode radius, ExpressionNode factorA, ExpressionNode wallThickness, ExpressionNode height
@@ -24,7 +21,6 @@ namespace ScriptLanguage
             this.factorAExp = factorA;
             this.wallThicknessExp = wallThickness;
             this.heightExp = height;
-
         }
 
         public MakeCurvedFunnelNode
@@ -34,7 +30,6 @@ namespace ScriptLanguage
             this.factorAExp = coll.Get(1);
             this.wallThicknessExp = coll.Get(2);
             this.heightExp = coll.Get(3);
-
         }
 
         /// Execute this node
@@ -45,7 +40,6 @@ namespace ScriptLanguage
             bool result = false;
 
             double valRadius = 0; double valFactorA = 0; double valWallThickness = 0; double valHeight = 0;
-
 
             if (
                        EvalExpression(radiusExp, ref valRadius, "Radius", "MakeCurvedFunnel") &&

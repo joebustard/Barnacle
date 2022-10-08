@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -46,16 +42,19 @@ namespace MakerLib
                         GenerateBasicShape(5);
                     }
                     break;
+
                 case "overflat10":
                     {
                         GenerateBasicShape(10);
                     }
                     break;
+
                 case "overflat20":
                     {
                         GenerateBasicShape(20);
                     }
                     break;
+
                 case "sausage":
                     {
                         GenerateSausageShape();
@@ -64,14 +63,14 @@ namespace MakerLib
             }
         }
 
-        private void GenerateBasicShape(double over=0)
+        private void GenerateBasicShape(double over = 0)
         {
             double dx = gap / 2.0;
             //double cy1 = -dx - radius1;
             //double cy2 = dx + radius2;
 
             double cy1 = -dx;
-            double cy2 = dx ;
+            double cy2 = dx;
 
             double cx1 = 0;
             double cx2 = 0;
@@ -81,7 +80,7 @@ namespace MakerLib
             over = (Math.PI * over) / 180;
             List<Point> perimeter = new List<Point>();
             theta = over;
-            while (theta <= Math.PI-over)
+            while (theta <= Math.PI - over)
             {
                 double x = cx2 + radius2 * Math.Cos(theta);
                 double y = cy2 + radius2 * Math.Sin(theta);
@@ -90,7 +89,7 @@ namespace MakerLib
                 theta += dt;
             }
 
-            while (theta <= 2.0 * Math.PI+over)
+            while (theta <= 2.0 * Math.PI + over)
             {
                 double x = cx1 + radius1 * Math.Cos(theta);
                 double y = cy1 + radius1 * Math.Sin(theta);

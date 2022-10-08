@@ -12,7 +12,7 @@ namespace Barnacle.Dialogs
     public partial class BlankDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
-        private bool loaded ;
+        private bool loaded;
 
         //TOOLPROPS
 
@@ -116,11 +116,11 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-            
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            
+
             //SETPROPERTIES
 
             UpdateDisplay();

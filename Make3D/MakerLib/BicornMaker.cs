@@ -1,5 +1,4 @@
-﻿using Barnacle.Object3DLib;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;

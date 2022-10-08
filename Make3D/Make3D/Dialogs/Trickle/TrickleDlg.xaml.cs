@@ -1,8 +1,6 @@
 using MakerLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -12,78 +10,73 @@ namespace Barnacle.Dialogs
     public partial class TrickleDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
-        private bool loaded ;
+        private bool loaded;
 
-        
+        private double radius;
 
-private double radius;
-public double Radius
-{
-    get
-    {
-      return radius;
-    }
-    set
-    {
-        if ( radius != value )
+        public double Radius
         {
-            if (value >= 1 && value <= 100)
+            get
             {
-              radius = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return radius;
+            }
+            set
+            {
+                if (radius != value)
+                {
+                    if (value >= 1 && value <= 100)
+                    {
+                        radius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
+        private double side;
 
-
-private double side;
-public double Side
-{
-    get
-    {
-      return side;
-    }
-    set
-    {
-        if ( side != value )
+        public double Side
         {
-            if (value >= 1 && value <= 200)
+            get
             {
-              side = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return side;
+            }
+            set
+            {
+                if (side != value)
+                {
+                    if (value >= 1 && value <= 200)
+                    {
+                        side = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
+        private double thickness;
 
-
-private double thickness;
-public double Thickness
-{
-    get
-    {
-      return thickness;
-    }
-    set
-    {
-        if ( thickness != value )
+        public double Thickness
         {
-            if (value >= 0.1 && value <= 100)
+            get
             {
-              thickness = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return thickness;
+            }
+            set
+            {
+                if (thickness != value)
+                {
+                    if (value >= 0.1 && value <= 100)
+                    {
+                        thickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
-
-
 
         public TrickleDlg()
         {
@@ -163,31 +156,30 @@ public double Thickness
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            
-          if ( EditorParameters.Get("Radius") !="")
-          {
-              Radius= EditorParameters.GetDouble("Radius");
-          }
 
-          if ( EditorParameters.Get("Side") !="")
-          {
-              Side= EditorParameters.GetDouble("Side");
-          }
+            if (EditorParameters.Get("Radius") != "")
+            {
+                Radius = EditorParameters.GetDouble("Radius");
+            }
 
-          if ( EditorParameters.Get("Thickness") !="")
-          {
-              Thickness= EditorParameters.GetDouble("Thickness");
-          }
+            if (EditorParameters.Get("Side") != "")
+            {
+                Side = EditorParameters.GetDouble("Side");
+            }
 
+            if (EditorParameters.Get("Thickness") != "")
+            {
+                Thickness = EditorParameters.GetDouble("Thickness");
+            }
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            
-            EditorParameters.Set("Radius",Radius.ToString());
-            EditorParameters.Set("Side",Side.ToString());
-            EditorParameters.Set("Thickness",Thickness.ToString());
+
+            EditorParameters.Set("Radius", Radius.ToString());
+            EditorParameters.Set("Side", Side.ToString());
+            EditorParameters.Set("Thickness", Thickness.ToString());
         }
 
         private void UpdateDisplay()
@@ -206,7 +198,7 @@ public double Thickness
             Thickness = 5;
             Radius = 5;
             LoadEditorParameters();
-            
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;

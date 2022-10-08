@@ -1,10 +1,6 @@
 ﻿using Barnacle.Dialogs.WireFrame;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.BezierSurface
@@ -25,7 +21,8 @@ namespace Barnacle.Dialogs.BezierSurface
             ResetControlPoints();
         }
 
-        public ControlPoint[,] AllcontrolPoints { get { return allcontrolPoints; } }
+        public ControlPoint[,] AllcontrolPoints
+        { get { return allcontrolPoints; } }
 
         public List<GeometryModel3D> Models
         {

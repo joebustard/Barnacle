@@ -6,7 +6,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Xml;
-using Barnacle.LineLib;
 
 namespace Barnacle.Dialogs
 {

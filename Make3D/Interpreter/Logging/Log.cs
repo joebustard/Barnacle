@@ -7,7 +7,8 @@ namespace ScriptLanguage
     public class Log
     {
         protected List<LogEntry> logEntrys;
-        public List<LogEntry> LogEntrys { get { return logEntrys; } }
+        public List<LogEntry> LogEntrys
+        { get { return logEntrys; } }
         protected TextBox txtbox;
 
         private static Log singleton = null;

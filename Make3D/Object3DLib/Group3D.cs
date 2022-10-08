@@ -1,16 +1,14 @@
 ﻿using CSGLib;
-using HullLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Xml;
-
-using Vector3D = System.Windows.Media.Media3D.Vector3D;
 using Solid = CSGLib.Solid;
-using System.Threading.Tasks;
-using System.Threading;
+using Vector3D = System.Windows.Media.Media3D.Vector3D;
 
 namespace Barnacle.Object3DLib
 {
@@ -87,7 +85,8 @@ namespace Barnacle.Object3DLib
             leftObject.DeThread();
             rightObject.DeThread();
         }
-        public override Object3D Clone( bool useIndices = false)
+
+        public override Object3D Clone(bool useIndices = false)
         {
             Group3D res = new Group3D();
             res.Name = this.Name;
@@ -109,14 +108,13 @@ namespace Barnacle.Object3DLib
                 res.RelativeObjectVertices.Add(po);
             }
             res.AbsoluteObjectVertices = new Point3DCollection();
-  
+
             res.AbsoluteBounds = new Bounds3D();
             res.AbsoluteBounds.Lower = new Point3D(this.AbsoluteBounds.Lower.X, this.AbsoluteBounds.Lower.Y, this.AbsoluteBounds.Lower.Z);
             res.AbsoluteBounds.Upper = new Point3D(this.AbsoluteBounds.Upper.X, this.AbsoluteBounds.Upper.Y, this.AbsoluteBounds.Upper.Z);
             res.TriangleIndices = new Int32Collection();
             if (useIndices)
             {
-                
                 foreach (int i in this.Indices)
                 {
                     res.TriangleIndices.Add(i);
@@ -155,7 +153,7 @@ namespace Barnacle.Object3DLib
             return neo;
         }
 
-        public async Task<bool> InitAsync( CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
+        public async Task<bool> InitAsync(CancellationTokenSource csgCancelation, IProgress<CSGGroupProgress> progress)
         {
             bool result = false;
             if (leftObject != null && rightObject != null)
@@ -180,7 +178,6 @@ namespace Barnacle.Object3DLib
 
             return result;
         }
-
 
         public bool Init()
         {
@@ -208,13 +205,13 @@ namespace Barnacle.Object3DLib
             return result;
         }
 
-        public  bool PerformOperation()
+        public bool PerformOperation()
         {
             bool res = false;
             absoluteBounds = new Bounds3D();
             leftObject.RelativeToAbsolute();
             rightObject.RelativeToAbsolute();
-            
+
             Logger.Log($"Left Solid {leftObject.AbsoluteObjectVertices.Count} pnts\r\n============\r\n");
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
 
@@ -251,7 +248,6 @@ namespace Barnacle.Object3DLib
                         }
                         break;
                 }
-  
 
                 if (result != null)
                 {
@@ -343,9 +339,9 @@ namespace Barnacle.Object3DLib
             Solid result = null;
             modeller = new BooleanModeller();
             BooleanModeller.OpResult opRes = await modeller.DoModelOperationAsync(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices,
-                                      rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation,progress);
-            
-            if (opRes.OperationStatus ==CSGState.Good)
+                                      rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, op, csgCancelation, progress);
+
+            if (opRes.OperationStatus == CSGState.Good)
             {
                 result = opRes.ResultObject;
                 if (result != null)
@@ -381,7 +377,7 @@ namespace Barnacle.Object3DLib
                 }
             }
             else
-            if (opRes.OperationStatus ==CSGState.Interrupted)
+            if (opRes.OperationStatus == CSGState.Interrupted)
             {
                 System.Windows.Forms.MessageBox.Show("Operation aborted");
                 res = false;

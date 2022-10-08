@@ -1,8 +1,6 @@
 using MakerLib;
-using System;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -12,103 +10,95 @@ namespace Barnacle.Dialogs
     public partial class CurvedFunnelDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private string warningText;
-        private bool loaded ;
+        private bool loaded;
 
-        
+        private double radius = 10;
 
-private double radius=10;
-public double Radius
-{
-    get
-    {
-      return radius;
-    }
-    set
-    {
-        if ( radius != value )
+        public double Radius
         {
-            if (value >= 1 && value <= 100)
+            get
             {
-              radius = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-
+                return radius;
+            }
+            set
+            {
+                if (radius != value)
+                {
+                    if (value >= 1 && value <= 100)
+                    {
+                        radius = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
+        private double factorA = 0.75;
 
-
-private double factorA=0.75;
-public double FactorA
-{
-    get
-    {
-      return factorA;
-    }
-    set
-    {
-        if ( factorA != value )
+        public double FactorA
         {
-            if (value >= 0.1 && value <= 10)
+            get
             {
-              factorA = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return factorA;
+            }
+            set
+            {
+                if (factorA != value)
+                {
+                    if (value >= 0.1 && value <= 10)
+                    {
+                        factorA = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
+        private double wallThickness = 1;
 
-
-private double wallThickness=1;
-public double WallThickness
-{
-    get
-    {
-      return wallThickness;
-    }
-    set
-    {
-        if ( wallThickness != value )
+        public double WallThickness
         {
-            if (value >= 1 && value <= 10)
+            get
             {
-              wallThickness = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
-
+                return wallThickness;
+            }
+            set
+            {
+                if (wallThickness != value)
+                {
+                    if (value >= 1 && value <= 10)
+                    {
+                        wallThickness = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
 
+        private double shapeHeight = 20;
 
-
-private double shapeHeight=20;
-public double ShapeHeight
-{
-    get
-    {
-      return shapeHeight;
-    }
-    set
-    {
-        if ( shapeHeight != value )
+        public double ShapeHeight
         {
-            if (value >= 5 && value <= 100)
+            get
             {
-              shapeHeight = value;
-              NotifyPropertyChanged();
-              UpdateDisplay();
-           }
+                return shapeHeight;
+            }
+            set
+            {
+                if (shapeHeight != value)
+                {
+                    if (value >= 5 && value <= 100)
+                    {
+                        shapeHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
-    }
-}
-
-
 
         public CurvedFunnelDlg()
         {
@@ -186,7 +176,7 @@ public double ShapeHeight
             else
             {
                 WarningText = "";
-                CurvedFunnelMaker maker = new CurvedFunnelMaker( radius, factorA, wallThickness, shapeHeight );
+                CurvedFunnelMaker maker = new CurvedFunnelMaker(radius, factorA, wallThickness, shapeHeight);
                 maker.Generate(Vertices, Faces);
                 CentreVertices();
             }
@@ -195,37 +185,36 @@ public double ShapeHeight
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            
-          if ( EditorParameters.Get("Radius") !="")
-          {
-              Radius= EditorParameters.GetDouble("Radius");
-          }
 
-          if ( EditorParameters.Get("FactorA") !="")
-          {
-              FactorA= EditorParameters.GetDouble("FactorA");
-          }
+            if (EditorParameters.Get("Radius") != "")
+            {
+                Radius = EditorParameters.GetDouble("Radius");
+            }
 
-          if ( EditorParameters.Get("WallThickness") !="")
-          {
-              WallThickness= EditorParameters.GetDouble("WallThickness");
-          }
+            if (EditorParameters.Get("FactorA") != "")
+            {
+                FactorA = EditorParameters.GetDouble("FactorA");
+            }
 
-          if ( EditorParameters.Get("Height") !="")
-          {
-              ShapeHeight= EditorParameters.GetDouble("Height");
-          }
+            if (EditorParameters.Get("WallThickness") != "")
+            {
+                WallThickness = EditorParameters.GetDouble("WallThickness");
+            }
 
+            if (EditorParameters.Get("Height") != "")
+            {
+                ShapeHeight = EditorParameters.GetDouble("Height");
+            }
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            
-            EditorParameters.Set("Radius",Radius.ToString());
-            EditorParameters.Set("FactorA",FactorA.ToString());
-            EditorParameters.Set("WallThickness",WallThickness.ToString());
-            EditorParameters.Set("Height",ShapeHeight.ToString());
+
+            EditorParameters.Set("Radius", Radius.ToString());
+            EditorParameters.Set("FactorA", FactorA.ToString());
+            EditorParameters.Set("WallThickness", WallThickness.ToString());
+            EditorParameters.Set("Height", ShapeHeight.ToString());
         }
 
         private void UpdateDisplay()
@@ -241,12 +230,10 @@ public double ShapeHeight
         {
             WarningText = "";
             LoadEditorParameters();
-            
+
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;
-            
-            
 
             UpdateDisplay();
         }

@@ -446,7 +446,6 @@ namespace Barnacle.Models
             if (Content != null)
             {
                 Content.Clear();
-
             }
             Content = new List<Object3D>();
             ProjectSettings = new ProjectSettings();
@@ -465,7 +464,6 @@ namespace Barnacle.Models
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
         }
-
 
         public void SaveGlobalSettings()
         {
@@ -570,19 +568,17 @@ namespace Barnacle.Models
             {
                 STLExporter exp = new STLExporter();
 
-              
-                    String pth = exportFolderPath;
-                    if (!Directory.Exists(pth))
-                    {
-                        Directory.CreateDirectory(pth);
-                    }
-                    string expName = System.IO.Path.GetFileNameWithoutExtension(FilePath);
-                    
-                    expName = expName + ".stl";
-                    expName = System.IO.Path.Combine(pth, expName);
-                    exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
-                    res = expName;
-                
+                String pth = exportFolderPath;
+                if (!Directory.Exists(pth))
+                {
+                    Directory.CreateDirectory(pth);
+                }
+                string expName = System.IO.Path.GetFileNameWithoutExtension(FilePath);
+
+                expName = expName + ".stl";
+                expName = System.IO.Path.Combine(pth, expName);
+                exp.Export(expName, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
+                res = expName;
             }
             else if (v == "STLParts")
             {
@@ -639,7 +635,6 @@ namespace Barnacle.Models
                     {
                         clone.ScaleMesh(scalefactor, scalefactor, scalefactor);
                         clone.Position = new Point3D(clone.Position.X * scalefactor, clone.Position.Y * scalefactor, clone.Position.Z * scalefactor);
-                        
                     }
                     clone.MoveToCentre();
                     clone.MoveToFloor();
@@ -846,13 +841,13 @@ namespace Barnacle.Models
         internal void ImportStl(string fileName, bool swapYZ)
         {
             STLExporter exp = new STLExporter();
-          
+
             Object3D ob = new Object3D();
             Vector3DCollection normals = ob.Normals;
             List<P3D> pnts = ob.RelativeObjectVertices;
 
             Int32Collection tris = ob.TriangleIndices;
-            exp.Import(fileName, ref normals,ref pnts,ref tris, swapYZ);
+            exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
 
             ob.PrimType = "Mesh";
             ob.CalcScale();
@@ -868,6 +863,7 @@ namespace Barnacle.Models
             ob.Name = "Object_" + Content.Count.ToString();
             Dirty = true;
         }
+
         internal void InsertFile(string fileName)
         {
             Read(fileName, false);
@@ -1077,14 +1073,13 @@ namespace Barnacle.Models
                                 // so we should have already read the referenced files by now
                                 // meaning there should already be a referenced object which matches.
                                 // if there is then update its position to whatever this object says
-                                
+
                                 foreach (Object3D old in Content)
                                 {
                                     if (old is ReferenceObject3D)
                                     {
                                         if (old.Name == ob.Name && (old as ReferenceObject3D).Reference.Path == ob.Reference.Path)
                                         {
-                                           
                                             old.Position = ob.Position;
                                             old.Rotation = ob.Rotation;
                                             break;

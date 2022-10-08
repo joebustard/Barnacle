@@ -1,16 +1,10 @@
 ﻿using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScriptLanguage
 {
     internal class UnionAllNode : ExpressionNode
     {
-
-
         public UnionAllNode()
         {
         }
@@ -23,7 +17,6 @@ namespace ScriptLanguage
             bool result = false;
             try
             {
-
                 if (Script.ResultArtefacts.Count > 1)
                 {
                     result = true;

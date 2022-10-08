@@ -15,39 +15,40 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            if (expressions != null)
             {
-                result = expressions.Execute();
-                if (result)
+                if (expressions != null)
                 {
-                    int objectIndex;
-                    if (!PullSolid(out objectIndex))
+                    result = expressions.Execute();
+                    if (result)
                     {
+                        int objectIndex;
+                        if (!PullSolid(out objectIndex))
+                        {
                             ReportStatement();
                             Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
-                    }
-                    else
-                    {
-                        if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
+                        }
+                        else
                         {
-                            byte A;
-                            byte R;
-                            byte G;
-                            byte B;
-                            result = PullByte(out A);
-                            if (result)
+                            if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
                             {
-                                result = PullByte(out R);
+                                byte A;
+                                byte R;
+                                byte G;
+                                byte B;
+                                result = PullByte(out A);
                                 if (result)
                                 {
-                                    result = PullByte(out G);
+                                    result = PullByte(out R);
                                     if (result)
                                     {
-                                        result = PullByte(out B);
+                                        result = PullByte(out G);
                                         if (result)
                                         {
-                                            Script.ResultArtefacts[objectIndex].Color = Color.FromArgb(A, R, G, B);
+                                            result = PullByte(out B);
+                                            if (result)
+                                            {
+                                                Script.ResultArtefacts[objectIndex].Color = Color.FromArgb(A, R, G, B);
+                                            }
                                         }
                                     }
                                 }
@@ -55,7 +56,6 @@ namespace ScriptLanguage
                         }
                     }
                 }
-            }
             }
             catch (Exception ex)
             {

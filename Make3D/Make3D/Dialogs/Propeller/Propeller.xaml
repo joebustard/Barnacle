@@ -13,31 +13,31 @@
                           Height="450">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*"/>
-            <RowDefinition Height="25"/>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="25" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0"
               Grid.Row="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="25"/>
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1"
                         Orientation="Horizontal">
@@ -47,9 +47,9 @@
                 <Slider Maximum="8"
                         Minimum="2"
                         Value="{Binding NumberOfBlades}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding NumberOfBlades}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="2"
                         Orientation="Horizontal">
@@ -59,9 +59,9 @@
                 <Slider Maximum="100"
                         Minimum="10"
                         Value="{Binding BladeLength}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding BladeLength}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
@@ -71,9 +71,9 @@
                 <Slider Maximum="100"
                         Minimum="0"
                         Value="{Binding RootOffset}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding RootOffset}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="4"
                         Orientation="Horizontal">
@@ -83,9 +83,9 @@
                 <Slider Maximum="20"
                         Minimum="5"
                         Value="{Binding MidOffset}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding MidOffset}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="5"
                         Orientation="Horizontal">
@@ -95,9 +95,9 @@
                 <Slider Maximum="20"
                         Minimum="5"
                         Value="{Binding BladeRoot}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding BladeRoot}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="6"
                         Orientation="Horizontal">
@@ -107,9 +107,9 @@
                 <Slider Maximum="20"
                         Minimum="5"
                         Value="{Binding BladeMid}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding BladeMid}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="7"
                         Orientation="Horizontal">
@@ -119,9 +119,9 @@
                 <Slider Maximum="20"
                         Minimum="5"
                         Value="{Binding BladeTip}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding BladeTip}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="8"
                         Orientation="Horizontal">
@@ -131,9 +131,9 @@
                 <Slider Maximum="90"
                         Minimum="0"
                         Value="{Binding BladeAngle}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding BladeAngle}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="9"
                         Orientation="Horizontal">
@@ -144,12 +144,12 @@
                           Margin="0,0,10,0"
                           SelectedItem="{Binding RootGroup}"
                           VerticalAlignment="Center"
-                          Width="100"/>
+                          Width="100" />
                 <ComboBox ItemsSource="{Binding AirfoilNames}"
                           Margin="0,0,10,0"
                           SelectedItem="{Binding SelectedAirfoil}"
                           VerticalAlignment="Center"
-                          Width="100"/>
+                          Width="100" />
             </StackPanel>
             <StackPanel Grid.Row="10"
                         Orientation="Horizontal">
@@ -177,9 +177,9 @@
                 <Slider Maximum="100"
                         Minimum="0"
                         Value="{Binding HubRadius}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding HubRadius}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="12"
                         Orientation="Horizontal">
@@ -189,9 +189,9 @@
                 <Slider Maximum="100"
                         Minimum="0"
                         Value="{Binding HubHeight}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding HubHeight}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="13"
                         Orientation="Horizontal">
@@ -201,9 +201,9 @@
                 <Slider Maximum="10"
                         Minimum="-10"
                         Value="{Binding HubOffset}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding HubOffset}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="14"
                         Orientation="Horizontal">
@@ -213,9 +213,9 @@
                 <Slider Maximum="20"
                         Minimum="1"
                         Value="{Binding SpokeRadius}"
-                        Width="200"/>
+                        Width="200" />
                 <TextBox Text="{Binding SpokeRadius}"
-                         Width="50"/>
+                         Width="50" />
             </StackPanel>
         </Grid>
         <Border Grid.Column="1"
@@ -234,7 +234,7 @@
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
-                            <AmbientLight Color="#FF808080"/>
+                            <AmbientLight Color="#FF808080" />
                             <DirectionalLight Color="White"
                                               Direction="-1,-1,-1"
                                               x:Name="dirLightMain">
@@ -253,8 +253,8 @@
         <Grid Grid.ColumnSpan="2"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
@@ -264,32 +264,30 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Content="Floor"
                           Grid.Column="0"
-                          IsChecked="{Binding ShowFloor}"/>
+                          IsChecked="{Binding ShowFloor}" />
                 <CheckBox Content="Axies"
                           Grid.Column="1"
-                          IsChecked="{Binding ShowAxies}"/>
+                          IsChecked="{Binding ShowAxies}" />
                 <Button Click="Home_Click"
                         Content="Home"
-                        Grid.Column="2"/>
-
+                        Grid.Column="2" />
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition />
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="10" />
                 </Grid.ColumnDefinitions>
                 <Button Click="Cancel_Click"
                         Content="Cancel"
                         Grid.Column="1"
-                        Margin="2,2,2,2"/>
+                        Margin="2,2,2,2" />
 
                 <Button Click="Ok_Click"
                         Content="Ok"
                         Grid.Column="2"
-                        Margin="2,2,2,2"  />
-
+                        Margin="2,2,2,2" />
             </Grid>
         </Grid>
     </Grid>

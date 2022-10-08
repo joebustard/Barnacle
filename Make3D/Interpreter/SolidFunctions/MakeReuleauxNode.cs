@@ -1,8 +1,6 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -34,64 +32,64 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            int valNumberOfSides = 0; double valRadius = 0; double valThickness = 0;
-
-            if (
-
-                       EvalExpression(numberOfSidesExp, ref valNumberOfSides, "NumberOfSides", "MakeRuleaux") &&
-                       EvalExpression(radiusExp, ref valRadius, "Radius", "MakeRuleaux") &&
-                       EvalExpression(thicknessExp, ref valThickness, "Thickness", "MakeRuleaux")
-               )
             {
-                // check calculated values are in range
-                bool inRange = true;
+                int valNumberOfSides = 0; double valRadius = 0; double valThickness = 0;
 
-                if (valNumberOfSides < 3 || valNumberOfSides > 7)
+                if (
+
+                           EvalExpression(numberOfSidesExp, ref valNumberOfSides, "NumberOfSides", "MakeRuleaux") &&
+                           EvalExpression(radiusExp, ref valRadius, "Radius", "MakeRuleaux") &&
+                           EvalExpression(thicknessExp, ref valThickness, "Thickness", "MakeRuleaux")
+                   )
                 {
-                    Log.Instance().AddEntry("MakeReuleaux : NumberOfSides value out of range (3..7)");
-                    inRange = false;
+                    // check calculated values are in range
+                    bool inRange = true;
+
+                    if (valNumberOfSides < 3 || valNumberOfSides > 7)
+                    {
+                        Log.Instance().AddEntry("MakeReuleaux : NumberOfSides value out of range (3..7)");
+                        inRange = false;
+                    }
+
+                    if (valRadius < 1 || valRadius > 100)
+                    {
+                        Log.Instance().AddEntry("MakeReuleaux : Radius value out of range (1..100)");
+                        inRange = false;
+                    }
+
+                    if (valThickness < 0.1 || valThickness > 100)
+                    {
+                        Log.Instance().AddEntry("MakeReuleaux : Thickness value out of range (0.1..100)");
+                        inRange = false;
+                    }
+
+                    if (inRange)
+                    {
+                        result = true;
+
+                        Object3D obj = new Object3D();
+
+                        obj.Name = "Reuleaux";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
+
+                        obj.Position = new Point3D(0, 0, 0);
+                        Point3DCollection tmp = new Point3DCollection();
+                        ReuleauxMaker maker = new ReuleauxMaker(valNumberOfSides, valRadius, valThickness);
+
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeReuleaux : Illegal value");
+                    }
                 }
-
-                if (valRadius < 1 || valRadius > 100)
-                {
-                    Log.Instance().AddEntry("MakeReuleaux : Radius value out of range (1..100)");
-                    inRange = false;
-                }
-
-                if (valThickness < 0.1 || valThickness > 100)
-                {
-                    Log.Instance().AddEntry("MakeReuleaux : Thickness value out of range (0.1..100)");
-                    inRange = false;
-                }
-
-                if (inRange)
-                {
-                    result = true;
-
-                    Object3D obj = new Object3D();
-
-                    obj.Name = "Reuleaux";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
-
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    ReuleauxMaker maker = new ReuleauxMaker(valNumberOfSides, valRadius, valThickness);
-
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                }
-                else
-                {
-                    Log.Instance().AddEntry("MakeReuleaux : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

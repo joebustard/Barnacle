@@ -26,38 +26,38 @@
     <!-- Z -->
     <!-- reset rotation -->
         <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="25"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="22"/>
-            <RowDefinition Height="18"/>
+            <RowDefinition Height="20" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="25" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="20" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
+            <RowDefinition Height="22" />
+            <RowDefinition Height="18" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="30*"/>
-            <ColumnDefinition Width="55*"/>
-            <ColumnDefinition Width="25*"/>
+            <ColumnDefinition Width="30*" />
+            <ColumnDefinition Width="55*" />
+            <ColumnDefinition Width="25*" />
         </Grid.ColumnDefinitions>
         <Label Grid.ColumnSpan="3"
                Grid.Row="0"
@@ -69,7 +69,7 @@
         <TextBox FontSize="14"
                  Grid.ColumnSpan="3"
                  Grid.Row="1"
-                 Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
         <Grid Grid.ColumnSpan="3"
               Grid.Row="2">
             <Grid.ColumnDefinitions>
@@ -91,7 +91,7 @@
                       IsChecked="{Binding Exportable}"
                       Margin="4,0,0,0"
                       ToolTip="This object should be included in exports and references"
-                      VerticalAlignment="Center"/>
+                      VerticalAlignment="Center" />
         </Grid>
         <Label Grid.ColumnSpan="3"
                Grid.Row="3"
@@ -110,7 +110,7 @@
                  Grid.Column="1"
                  Grid.Row="4"
                  Grid.RowSpan="2"
-                 Text="{Binding PositionX,UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding PositionX,UpdateSourceTrigger=PropertyChanged}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="4"
@@ -118,13 +118,12 @@
             <Button Command="{Binding NudgeCommand}"
                     CommandParameter="X+"
                     Content="+"
-                    FontSize="9"/>
+                    FontSize="9" />
 
             <Button Command="{Binding NudgeCommand}"
                     CommandParameter="X-"
                     Content="-"
-                    FontSize="9"/>
-
+                    FontSize="9" />
         </UniformGrid>
         <Label FontSize="12"
                Foreground="Green"
@@ -138,7 +137,7 @@
                  Grid.Column="1"
                  Grid.Row="6"
                  Grid.RowSpan="2"
-                 Text="{Binding PositionY,UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding PositionY,UpdateSourceTrigger=PropertyChanged}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="6"
@@ -146,13 +145,12 @@
             <Button Command="{Binding NudgeCommand}"
                     CommandParameter="Y+"
                     Content="+"
-                    Style="{StaticResource SmallButton}"/>
+                    Style="{StaticResource SmallButton}" />
 
             <Button Command="{Binding NudgeCommand}"
                     CommandParameter="Y-"
                     Content="-"
-                    Style="{StaticResource SmallButton}"/>
-
+                    Style="{StaticResource SmallButton}" />
         </UniformGrid>
         <Label FontSize="12"
                Foreground="Blue"
@@ -166,7 +164,7 @@
                  Grid.Column="1"
                  Grid.Row="8"
                  Grid.RowSpan="2"
-                 Text="{Binding PositionZ,UpdateSourceTrigger=PropertyChanged}"/>
+                 Text="{Binding PositionZ,UpdateSourceTrigger=PropertyChanged}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="8"
@@ -174,13 +172,12 @@
             <Button Command="{Binding NudgeCommand}"
                     CommandParameter="Z+"
                     Content="+"
-                    Style="{StaticResource SmallButton}"/>
+                    Style="{StaticResource SmallButton}" />
 
             <Button Command="{Binding NudgeCommand}"
                     CommandParameter="Z-"
                     Content="-"
-                    Style="{StaticResource SmallButton}"/>
-
+                    Style="{StaticResource SmallButton}" />
         </UniformGrid>
         <UniformGrid Grid.ColumnSpan="3"
                      Grid.Row="10"
@@ -191,22 +188,21 @@
                     FontSize="10"
                     Style="{StaticResource SmallButton}"
                     ToolTip="Set object on the floor"
-                    x:Name="SetFloor"/>
+                    x:Name="SetFloor" />
 
             <Button Command="{Binding MoveToCentreCommand}"
                     Content="Centre"
                     FontSize="10"
                     Style="{StaticResource SmallButton}"
                     ToolTip="Move object to centre of the floor"
-                    x:Name="SetCentre"/>
+                    x:Name="SetCentre" />
 
             <Button Command="{Binding MoveToZeroCommand}"
                     Content="Zero"
                     FontSize="10"
                     Style="{StaticResource SmallButton}"
                     ToolTip="Move object to centre of the floor"
-                    x:Name="SetZero"/>
-
+                    x:Name="SetZero" />
         </UniformGrid>
         <Label Grid.ColumnSpan="3"
                Grid.Row="11"
@@ -226,7 +222,7 @@
                  Grid.ColumnSpan="2"
                  Grid.Row="12"
                  IsEnabled="{Binding CanScale}"
-                 Text="{Binding ScaleX }"/>
+                 Text="{Binding ScaleX }" />
         <Label FontSize="12"
                Foreground="Green"
                Grid.Row="13"
@@ -239,7 +235,7 @@
                  Grid.ColumnSpan="2"
                  Grid.Row="13"
                  IsEnabled="{Binding CanScale}"
-                 Text="{Binding ScaleY }"/>
+                 Text="{Binding ScaleY }" />
         <Label FontSize="12"
                Foreground="Blue"
                Grid.Row="14"
@@ -252,7 +248,7 @@
                  Grid.ColumnSpan="2"
                  Grid.Row="14"
                  IsEnabled="{Binding CanScale}"
-                 Text="{Binding ScaleZ }"/>
+                 Text="{Binding ScaleZ }" />
         <Label Grid.ColumnSpan="3"
                Grid.Row="15"
                HorizontalContentAlignment="Center"
@@ -265,7 +261,7 @@
                  Grid.Row="16"
                  Grid.RowSpan="2"
                  IsEnabled="{Binding CanScale}"
-                 Text="{Binding PercentScale}"/>
+                 Text="{Binding PercentScale}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="16"
@@ -274,14 +270,13 @@
                     CommandParameter="+"
                     Content="+"
                     IsEnabled="{Binding CanScale}"
-                    Style="{StaticResource SmallButton}"/>
+                    Style="{StaticResource SmallButton}" />
 
             <Button Command="{Binding ScaleByPercentCommand}"
                     CommandParameter="-"
                     Content="-"
                     IsEnabled="{Binding CanScale}"
-                    Style="{StaticResource SmallButton}"/>
-
+                    Style="{StaticResource SmallButton}" />
         </UniformGrid>
         <Label Grid.ColumnSpan="3"
                Grid.Row="18"
@@ -304,7 +299,7 @@
                  Grid.Column="1"
                  Grid.Row="19"
                  Grid.RowSpan="2"
-                 Text="{Binding RotationX}"/>
+                 Text="{Binding RotationX}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="19"
@@ -312,14 +307,12 @@
             <Button Command="{Binding RotateXCommand}"
                     CommandParameter="+"
                     Style="{StaticResource SmallButton}">
-                <Image Source="/images/buttons/X1.png"/>
-
+                <Image Source="/images/buttons/X1.png" />
             </Button>
             <Button Command="{Binding RotateXCommand}"
                     CommandParameter="-"
                     Style="{StaticResource SmallButton}">
-                <Image Source="/images/buttons/X2.png"/>
-
+                <Image Source="/images/buttons/X2.png" />
             </Button>
         </UniformGrid>
         <Label FontSize="12"
@@ -336,7 +329,7 @@
                  Grid.Column="1"
                  Grid.Row="21"
                  Grid.RowSpan="2"
-                 Text="{Binding RotationY}"/>
+                 Text="{Binding RotationY}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="21"
@@ -344,14 +337,12 @@
             <Button Command="{Binding RotateYCommand}"
                     CommandParameter="+"
                     Style="{StaticResource SmallButton}">
-                <Image Source="/images/buttons/Y1.png"/>
-
+                <Image Source="/images/buttons/Y1.png" />
             </Button>
             <Button Command="{Binding RotateYCommand}"
                     CommandParameter="-"
                     Style="{StaticResource SmallButton}">
-                <Image Source="/images/buttons/Y2.png"/>
-
+                <Image Source="/images/buttons/Y2.png" />
             </Button>
         </UniformGrid>
         <Label FontSize="12"
@@ -368,7 +359,7 @@
                  Grid.Column="1"
                  Grid.Row="23"
                  Grid.RowSpan="2"
-                 Text="{Binding RotationZ}"/>
+                 Text="{Binding RotationZ}" />
         <UniformGrid Columns="1"
                      Grid.Column="2"
                      Grid.Row="23"
@@ -376,14 +367,12 @@
             <Button Command="{Binding RotateZCommand}"
                     CommandParameter="+"
                     Style="{StaticResource SmallButton}">
-                <Image Source="/images/buttons/Z1.png"/>
-
+                <Image Source="/images/buttons/Z1.png" />
             </Button>
             <Button Command="{Binding RotateZCommand}"
                     CommandParameter="-"
                     Style="{StaticResource SmallButton}">
-                <Image Source="/images/buttons/Z2.png"/>
-
+                <Image Source="/images/buttons/Z2.png" />
             </Button>
         </UniformGrid>
         <Grid Grid.ColumnSpan="3"
@@ -399,34 +388,33 @@
                     Content="1"
                     Grid.Column="0"
                     Style="{StaticResource SmallButton}"
-                    ToolTip="Set rotation parameters to 1"/>
+                    ToolTip="Set rotation parameters to 1" />
 
             <Button Command="{Binding SetRotationCommand}"
                     CommandParameter="22.5"
                     Content="22.5"
                     Grid.Column="1"
                     Style="{StaticResource SmallButton}"
-                    ToolTip="Set rotation parameters to 22.5"/>
+                    ToolTip="Set rotation parameters to 22.5" />
 
             <Button Command="{Binding SetRotationCommand}"
                     CommandParameter="45"
                     Content="45"
                     Grid.Column="2"
                     Style="{StaticResource SmallButton}"
-                    ToolTip="Set rotation parameters to 45"/>
+                    ToolTip="Set rotation parameters to 45" />
 
             <Button Command="{Binding SetRotationCommand}"
                     CommandParameter="90"
                     Content="90"
                     Grid.Column="3"
                     Style="{StaticResource SmallButton}"
-                    ToolTip="Set rotation parameters to 90"/>
-
+                    ToolTip="Set rotation parameters to 90" />
         </Grid>
         <TextBox AcceptsReturn="True"
                  Grid.ColumnSpan="3"
                  Grid.Row="26"
                  Text="{Binding Description}"
-                 VerticalAlignment="Stretch"/>
+                 VerticalAlignment="Stretch" />
     </Grid>
 </UserControl>

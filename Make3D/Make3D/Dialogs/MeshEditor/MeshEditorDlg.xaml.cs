@@ -3,7 +3,6 @@ using Barnacle.Models;
 using Barnacle.Models.Adorners;
 using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
@@ -498,7 +497,6 @@ namespace Barnacle.Dialogs
                 editingPoints.Add(new Point3D(3, 2, 0));
                 editingPoints.Add(new Point3D(2, 4, 0));
 
-
                 editingPoints.Add(new Point3D(2, 0, 0));
                 editingPoints.Add(new Point3D(4, 4, 0));
                 editingPoints.Add(new Point3D(0, 4, 0));
@@ -527,9 +525,7 @@ namespace Barnacle.Dialogs
                 mesh.DiagnosticSplitSelectedFaces();
                 */
             }
-           CreateInitialMesh();
-
-
+            CreateInitialMesh();
 
             Redisplay();
         }

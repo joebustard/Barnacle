@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -12,7 +11,7 @@ namespace asdflibrary
 
         public static CalculateDistance OnCalculateDistance;
 
-        public static  List<FieldPoint> allFieldPoints;
+        public static List<FieldPoint> allFieldPoints;
         private FieldNode rootNode;
 
         public AdaptiveSignedDistanceField()
@@ -20,6 +19,7 @@ namespace asdflibrary
             allFieldPoints = new List<FieldPoint>();
             rootNode = new FieldNode();
         }
+
         public static int AddFieldPoint(float x, float y, float z)
         {
             int res = -1;
@@ -31,6 +31,7 @@ namespace asdflibrary
             }
             return res;
         }
+
         public void SetDimensions(float lowx, float lowy, float lowz, float highx, float highy, float highz)
         {
             if (OnCalculateDistance != null)
@@ -89,7 +90,7 @@ namespace asdflibrary
             faces.Clear();
 
             FieldNode fn = rootNode.SubNodes[v];
-            for ( int i = 0; i < 8; i ++)
+            for (int i = 0; i < 8; i++)
             {
                 Point3D p = new Point3D(allFieldPoints[fn.Corners[i]].x,
                 allFieldPoints[fn.Corners[i]].y,
@@ -104,7 +105,6 @@ namespace asdflibrary
             faces.Add(0);
             faces.Add(5);
             faces.Add(4);
-
 
             faces.Add(1);
             faces.Add(2);

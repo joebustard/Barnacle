@@ -1,6 +1,4 @@
-﻿using Barnacle.Models;
-using Barnacle.Object3DLib;
-using System;
+﻿using Barnacle.Object3DLib;
 using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -232,7 +230,6 @@ namespace Barnacle.Dialogs.MeshEditor
 
         internal void Subdivide(List<MeshVertex> vertices, List<MeshTriangle> faces, MeshOctTree octTree, List<MeshTriangle> needModels)
         {
-           
             int ind0 = octTree.PointPresent(P0P1Mid);
             if (ind0 == -1)
             {
@@ -269,7 +266,7 @@ namespace Barnacle.Dialogs.MeshEditor
             tri1.P0 = this.P0;
             tri1.P1 = ind0;
             tri1.P2 = ind2;
-       
+
             faces.Add(tri1);
             needModels.Add(tri1);
             tri1.MakeVerticesReferToThis(vertices);
@@ -278,7 +275,7 @@ namespace Barnacle.Dialogs.MeshEditor
             tri2.P0 = ind0;
             tri2.P1 = this.P1;
             tri2.P2 = ind1;
-            
+
             faces.Add(tri2);
             needModels.Add(tri2);
             tri2.MakeVerticesReferToThis(vertices);
@@ -287,7 +284,7 @@ namespace Barnacle.Dialogs.MeshEditor
             tri3.P0 = ind1;
             tri3.P1 = this.P2;
             tri3.P2 = ind2;
-            
+
             faces.Add(tri3);
             needModels.Add(tri3);
             tri3.MakeVerticesReferToThis(vertices);
@@ -297,13 +294,13 @@ namespace Barnacle.Dialogs.MeshEditor
             tri4.P1 = ind1;
             tri4.P2 = ind2;
             faces.Add(tri4);
-            
+
             needModels.Add(tri4);
             tri4.MakeVerticesReferToThis(vertices);
 
-           SplitSideTriangle(faces, NeighbourP0P1, P0, P1, ind0, vertices, needModels, tri1, tri2);
-           SplitSideTriangle(faces, NeighbourP1P2, P1, P2, ind1, vertices, needModels, tri2, tri3);
-           SplitSideTriangle(faces, NeighbourP2P0, P2, P0, ind2, vertices, needModels, tri3, tri1);
+            SplitSideTriangle(faces, NeighbourP0P1, P0, P1, ind0, vertices, needModels, tri1, tri2);
+            SplitSideTriangle(faces, NeighbourP1P2, P1, P2, ind1, vertices, needModels, tri2, tri3);
+            SplitSideTriangle(faces, NeighbourP2P0, P2, P0, ind2, vertices, needModels, tri3, tri1);
         }
 
         private int AddPoint(Point3DCollection positions, Point3D v)
@@ -369,7 +366,6 @@ namespace Barnacle.Dialogs.MeshEditor
 
         private void SplitSideTriangle(List<MeshTriangle> faces, MeshTriangle neighbour, int v0, int v1, int vn, List<MeshVertex> vertices, List<MeshTriangle> needModels, MeshTriangle tri1, MeshTriangle tri2)
         {
-           
             // Only split the neighbour if its NOT selected, Yes thats right
             if (!neighbour.Selected)
             {
@@ -413,7 +409,6 @@ namespace Barnacle.Dialogs.MeshEditor
                     n1.P2 = neighbour.P2;
                     faces.Add(n1);
                     needModels.Add(n1);
-                    
 
                     MeshTriangle n2 = new MeshTriangle();
                     n2.P0 = vn;
@@ -421,7 +416,6 @@ namespace Barnacle.Dialogs.MeshEditor
                     n2.P2 = neighbour.P2;
                     faces.Add(n2);
                     needModels.Add(n2);
-                    
                 }
                 else
                 if (splitSide == 1)
@@ -432,7 +426,6 @@ namespace Barnacle.Dialogs.MeshEditor
                     n1.P2 = neighbour.P0;
                     faces.Add(n1);
                     needModels.Add(n1);
-                    
 
                     MeshTriangle n2 = new MeshTriangle();
                     n2.P0 = vn;
@@ -440,7 +433,6 @@ namespace Barnacle.Dialogs.MeshEditor
                     n2.P2 = neighbour.P0;
                     faces.Add(n2);
                     needModels.Add(n2);
-                    
                 }
                 else
                 if (splitSide == 2)
@@ -459,7 +451,6 @@ namespace Barnacle.Dialogs.MeshEditor
                     n2.P2 = neighbour.P1;
                     faces.Add(n2);
                     needModels.Add(n2);
-                    
                 }
                 else
                 {

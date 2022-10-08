@@ -29,19 +29,17 @@
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Label Grid.Column="1" Grid.Row="1" Content="Name" Margin="2,2,2,10" VerticalAlignment="Center" FontSize="14" />
-        <TextBox  Grid.Column="2" Grid.Row="1"  Grid.ColumnSpan="2" Margin="2,2,2,2" Text="{Binding ProfileName}"  FontSize="14"/>
+        <TextBox  Grid.Column="2" Grid.Row="1"  Grid.ColumnSpan="2" Margin="2,2,2,2" Text="{Binding ProfileName}"  FontSize="14" />
 
         <DataGrid Grid.Column="2" Grid.Row="3" Grid.ColumnSpan="3" Grid.RowSpan="3" AutoGenerateColumns="False" AlternatingRowBackground="LightBlue"  FontSize="14"
          AlternationCount="2" ItemsSource="{Binding Settings}">
             <DataGrid.Columns>
 
-                <DataGridTextColumn Header="Setting" Binding="{Binding SettingName}" IsReadOnly="True" Width="200"/>
-                <DataGridTextColumn Header="Value"  Binding="{Binding SettingValue}" Width="200"/>
+                <DataGridTextColumn Header="Setting" Binding="{Binding SettingName}" IsReadOnly="True" Width="200" />
+                <DataGridTextColumn Header="Value"  Binding="{Binding SettingValue}" Width="200" />
             </DataGrid.Columns>
         </DataGrid>
-        
-        
-        
+
         <Button Grid.Column="3" Grid.Row="6" Content="Cancel" Margin="2,4,0,0" Click="CancelClick" />
         <Button Grid.Column="4" Grid.Row="6"  Content="OK" Margin="2,4,0,0" Click="OKClick" />
     </Grid>

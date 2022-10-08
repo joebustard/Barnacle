@@ -9,7 +9,6 @@ namespace Barnacle.Models
     {
         public async Task ExportAsync(String[] filePaths, String exportPath, bool versionExport, bool exportEmptyFiles = true, bool clearPrevious = true)
         {
-            
             InfoWindow.Instance().ShowInfo("Export");
             foreach (String f in filePaths)
             {
@@ -69,8 +68,6 @@ namespace Barnacle.Models
                 name = exportPath + "\\" + name;
                 doc.AutoExport(name, allBounds);
             }
-
-            
         }
     }
 }

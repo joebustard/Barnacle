@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 
 namespace Barnacle.ViewModels.Logging
@@ -62,7 +59,6 @@ namespace Barnacle.ViewModels.Logging
             {
                 UpdateText(le.DateStamp + " " + le.Text + "\r\n");
             }
-           
         }
 
         public virtual void AddEntry(string ts, String Line)
@@ -75,17 +71,18 @@ namespace Barnacle.ViewModels.Logging
             {
                 UpdateText(le.DateStamp + " " + le.Text + "\r\n");
             }
-
         }
+
         public String GetAll()
         {
             string result = "";
-            foreach( LogEntry le in logEntrys)
+            foreach (LogEntry le in logEntrys)
             {
                 result += le.DateStamp + " " + le.Text + "\r\n";
             }
             return result;
         }
+
         public void Clear()
         {
             logEntrys.Clear();

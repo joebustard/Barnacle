@@ -1,11 +1,9 @@
 ﻿using Barnacle.Dialogs.BezierSurface;
 using Barnacle.Models;
 using Barnacle.Models.Adorners;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Media3D;
 

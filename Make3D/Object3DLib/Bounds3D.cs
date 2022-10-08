@@ -30,9 +30,11 @@ namespace Barnacle.Object3DLib
             upper.Z = b.Upper.Z;
         }
 
-        public double Depth { get { return Upper.Z - Lower.Z; } }
+        public double Depth
+        { get { return Upper.Z - Lower.Z; } }
 
-        public double Height { get { return Upper.Y - Lower.Y; } }
+        public double Height
+        { get { return Upper.Y - Lower.Y; } }
 
         public Point3D Lower
         {

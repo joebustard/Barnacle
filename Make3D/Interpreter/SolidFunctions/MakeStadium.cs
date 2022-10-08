@@ -1,8 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -36,63 +34,63 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            if (shapeExp != null)
             {
-                result = shapeExp.Execute();
-                if (result)
+                if (shapeExp != null)
                 {
-                    result = false;
-                    StackItem sti = ExecutionStack.Instance().Pull();
-                    if (sti != null)
+                    result = shapeExp.Execute();
+                    if (result)
                     {
-                        if (sti.MyType == StackItem.ItemType.sval)
+                        result = false;
+                        StackItem sti = ExecutionStack.Instance().Pull();
+                        if (sti != null)
                         {
-                            string shape = sti.StringValue;
-                            double r1 = 0;
-                            double r2 = 0;
-                            double g = 0;
-                            double h = 0;
-
-                            if (EvalExpression(radius1Exp, ref r1, "Radius1", "MakeStadium") &&
-                                EvalExpression(radius2Exp, ref r2, "Radius2", "MakeStadium") &&
-                                EvalExpression(heightExp, ref h, "Height", "MakeStadium") &&
-                                EvalExpression(gapExp, ref g, "Gap", "MakeStadium")
-                                )
+                            if (sti.MyType == StackItem.ItemType.sval)
                             {
-                                if (r1 > 0 && r2 > 0 && h > 0 && (shape.ToLower() == "flat" || shape.ToLower().StartsWith("overflat") || (shape.ToLower() == "sausage")))
+                                string shape = sti.StringValue;
+                                double r1 = 0;
+                                double r2 = 0;
+                                double g = 0;
+                                double h = 0;
+
+                                if (EvalExpression(radius1Exp, ref r1, "Radius1", "MakeStadium") &&
+                                    EvalExpression(radius2Exp, ref r2, "Radius2", "MakeStadium") &&
+                                    EvalExpression(heightExp, ref h, "Height", "MakeStadium") &&
+                                    EvalExpression(gapExp, ref g, "Gap", "MakeStadium")
+                                    )
                                 {
-                                    result = true;
+                                    if (r1 > 0 && r2 > 0 && h > 0 && (shape.ToLower() == "flat" || shape.ToLower().StartsWith("overflat") || (shape.ToLower() == "sausage")))
+                                    {
+                                        result = true;
 
-                                    Object3D obj = new Object3D();
+                                        Object3D obj = new Object3D();
 
-                                    obj.Name = "Stadium";
-                                    obj.PrimType = "Mesh";
-                                    obj.Scale = new Scale3D(20, 20, 20);
+                                        obj.Name = "Stadium";
+                                        obj.PrimType = "Mesh";
+                                        obj.Scale = new Scale3D(20, 20, 20);
 
-                                    obj.Position = new Point3D(0, 0, 0);
-                                    StadiumMaker stadiumMaker = new StadiumMaker(shape, r1, r2, g, h);
-                                    Point3DCollection tmp = new Point3DCollection(); ;
-                                    stadiumMaker.Generate(tmp, obj.TriangleIndices);
-                                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-                                    obj.CalcScale(false);
-                                    obj.Remesh();
-                                    Script.ResultArtefacts.Add(obj);
-                                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
-                                }
-                                else
-                                {
-                                    Log.Instance().AddEntry("MakeStadium : Illegal value");
+                                        obj.Position = new Point3D(0, 0, 0);
+                                        StadiumMaker stadiumMaker = new StadiumMaker(shape, r1, r2, g, h);
+                                        Point3DCollection tmp = new Point3DCollection(); ;
+                                        stadiumMaker.Generate(tmp, obj.TriangleIndices);
+                                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                                        obj.CalcScale(false);
+                                        obj.Remesh();
+                                        Script.ResultArtefacts.Add(obj);
+                                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                                    }
+                                    else
+                                    {
+                                        Log.Instance().AddEntry("MakeStadium : Illegal value");
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            Log.Instance().AddEntry("MakeStadium : flat or sausage string expected ");
+                            else
+                            {
+                                Log.Instance().AddEntry("MakeStadium : flat or sausage string expected ");
+                            }
                         }
                     }
                 }
-            }
             }
             catch (Exception ex)
             {

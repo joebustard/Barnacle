@@ -1,8 +1,6 @@
 ﻿using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
@@ -37,47 +35,47 @@ namespace ScriptLanguage
         {
             bool result = false;
             try
-            { 
-            double r = 0;
-            double th = 0;
-            double upper = 0;
-            double lower = 0;
-            double sweep = 0;
-            double h = 0;
-
-            if (EvalExpression(radiusExp, ref r, "Radius", "MakeTube") &&
-                EvalExpression(thicknessExp, ref th, "Thickness", "MakeTube") &&
-                EvalExpression(heightExp, ref h, "Height", "MakeTube") &&
-                 EvalExpression(upperBevelExp, ref upper, "UpperBevel", "MakeTube") &&
-                  EvalExpression(lowerBevelExp, ref lower, "LowerBevel", "MakeTube") &&
-                  EvalExpression(sweepExp, ref sweep, "SweepAngle", "MakeTube")
-                )
             {
-                if (r > 0 && th > 0 && upper >= 0 && lower >= 0 && h > 0 && upper + lower <= h)
+                double r = 0;
+                double th = 0;
+                double upper = 0;
+                double lower = 0;
+                double sweep = 0;
+                double h = 0;
+
+                if (EvalExpression(radiusExp, ref r, "Radius", "MakeTube") &&
+                    EvalExpression(thicknessExp, ref th, "Thickness", "MakeTube") &&
+                    EvalExpression(heightExp, ref h, "Height", "MakeTube") &&
+                     EvalExpression(upperBevelExp, ref upper, "UpperBevel", "MakeTube") &&
+                      EvalExpression(lowerBevelExp, ref lower, "LowerBevel", "MakeTube") &&
+                      EvalExpression(sweepExp, ref sweep, "SweepAngle", "MakeTube")
+                    )
                 {
-                    result = true;
+                    if (r > 0 && th > 0 && upper >= 0 && lower >= 0 && h > 0 && upper + lower <= h)
+                    {
+                        result = true;
 
-                    Object3D obj = new Object3D();
+                        Object3D obj = new Object3D();
 
-                    obj.Name = "Tube";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
+                        obj.Name = "Tube";
+                        obj.PrimType = "Mesh";
+                        obj.Scale = new Scale3D(20, 20, 20);
 
-                    obj.Position = new Point3D(0, 0, 0);
-                    TubeMaker maker = new TubeMaker(r, th, lower, upper, h, sweep);
-                    Point3DCollection tmp = new Point3DCollection();
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                        obj.Position = new Point3D(0, 0, 0);
+                        TubeMaker maker = new TubeMaker(r, th, lower, upper, h, sweep);
+                        Point3DCollection tmp = new Point3DCollection();
+                        maker.Generate(tmp, obj.TriangleIndices);
+                        PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
+                        obj.CalcScale(false);
+                        obj.Remesh();
+                        Script.ResultArtefacts.Add(obj);
+                        ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    }
+                    else
+                    {
+                        Log.Instance().AddEntry("MakeTube : Illegal value");
+                    }
                 }
-                else
-                {
-                    Log.Instance().AddEntry("MakeTube : Illegal value");
-                }
-            }
             }
             catch (Exception ex)
             {

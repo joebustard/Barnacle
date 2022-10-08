@@ -21,12 +21,12 @@
                      x:Name="EditTab">
                 <Grid x:Name="ScriptGrid">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="25"/>
-                        <RowDefinition Height="75"/>
+                        <RowDefinition Height="25" />
+                        <RowDefinition Height="75" />
                         <RowDefinition />
-                        <RowDefinition Height="25"/>
+                        <RowDefinition Height="25" />
                     </Grid.RowDefinitions>
-  
+
                     <UniformGrid Columns="6"
                                  Grid.Row="0"
                                  Rows="1">
@@ -34,42 +34,38 @@
                         <Button Click="CheckClicked"
                                 Content="Check"
                                 Margin="2,2,2,2"
-                                ToolTip="Check the script for syntax errors but don't run it" IsEnabled="{Binding EnableRun}"/>
+                                ToolTip="Check the script for syntax errors but don't run it" IsEnabled="{Binding EnableRun}" />
 
                         <Button Click="RunClicked"
                                 Content="Run"
                                 Margin="2,2,2,2"
-                                ToolTip="Run the script" IsEnabled="{Binding EnableRun}"/>
+                                ToolTip="Run the script" IsEnabled="{Binding EnableRun}" />
 
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Clear"
                                 Content="Clear"
                                 Margin="2,2,2,2"
-                                ToolTip="Clear results log" IsEnabled="{Binding EnableRun}"/>
-                        
+                                ToolTip="Clear results log" IsEnabled="{Binding EnableRun}" />
+
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Save"
                                 Content="Save"
-                                x:Name="SaveBut" IsEnabled="{Binding EnableRun}"/>
-                     
+                                x:Name="SaveBut" IsEnabled="{Binding EnableRun}" />
+
                         <Button Command="{Binding ScriptCommand}"
                                 CommandParameter="Close"
                                 Content="Close"
-                                x:Name="CloseBut" IsEnabled="{Binding EnableRun}"/>
-                        
+                                x:Name="CloseBut" IsEnabled="{Binding EnableRun}" />
+
                         <StackPanel Orientation="Horizontal">
                             <TextBox Margin="2,2,0,2"
                                      Text="{Binding SearchText}"
                                      x:Name="SearchBox"
-                                     Width="100"/>
+                                     Width="100" />
                             <Button Command="{Binding FindCommand}"
                                     Content="Find"
-                                    x:Name="SearchBut" IsEnabled="{Binding EnableRun}"/>
-
+                                    x:Name="SearchBut" IsEnabled="{Binding EnableRun}" />
                         </StackPanel>
-                     
-  
-
                     </UniformGrid>
                     <TextBox Background="Black"
                              FontSize="18"
@@ -77,7 +73,7 @@
                              Grid.Row="1"
                              PreviewKeyDown="ScriptBox_PreviewKeyDown"
                              Text="{Binding ResultsText}"
-                             x:Name="ResultsBox"/>
+                             x:Name="ResultsBox" />
                     <RichTextBox Block.LineHeight="2"
                                  FontSize="32"
                                  Grid.Row="2"
@@ -90,21 +86,21 @@
                         <RichTextBox.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Command="ApplicationCommands.Cut"
-                                          Header="Cut"/>
+                                          Header="Cut" />
                                 <MenuItem Command="ApplicationCommands.Copy"
-                                          Header="Copy"/>
+                                          Header="Copy" />
                                 <MenuItem Command="ApplicationCommands.Paste"
-                                          Header="Paste"/>
+                                          Header="Paste" />
                                 <Separator />
                                 <MenuItem Command="{Binding ScriptCommand}"
                                           CommandParameter="InsSolidFunc"
-                                          Header="Insert Solid Func"/>
+                                          Header="Insert Solid Func" />
                                 <MenuItem Command="{Binding ScriptCommand}"
                                           CommandParameter="Procedure"
-                                          Header="Insert Procedure"/>
+                                          Header="Insert Procedure" />
                                 <MenuItem Command="{Binding ScriptCommand}"
                                           CommandParameter="FuncHead"
-                                          Header="Insert Func Header"/>
+                                          Header="Insert Func Header" />
                             </ContextMenu>
                         </RichTextBox.ContextMenu>
                     </RichTextBox>
@@ -130,7 +126,7 @@
                         <ModelVisual3D>
                             <ModelVisual3D.Content>
                                 <Model3DGroup>
-                                    <AmbientLight Color="#FF808080"/>
+                                    <AmbientLight Color="#FF808080" />
                                     <DirectionalLight Color="White"
                                                       Direction="-1,-1,-1"
                                                       x:Name="dirLightMain">
@@ -151,7 +147,7 @@
                                 <RotateTransform3D>
                                     <RotateTransform3D.Rotation>
                                         <AxisAngleRotation3D Axis="0 0 1"
-                                                             x:Name="rotate"/>
+                                                             x:Name="rotate" />
                                     </RotateTransform3D.Rotation>
                                 </RotateTransform3D>
                             </ModelVisual3D.Transform>
@@ -159,7 +155,7 @@
                     </Viewport3D>
                     <Canvas Name="overlayCanvas"
                             HorizontalAlignment="Stretch"
-                            VerticalAlignment="Stretch"/>
+                            VerticalAlignment="Stretch" />
                 </Grid>
             </TabItem>
         </TabControl>

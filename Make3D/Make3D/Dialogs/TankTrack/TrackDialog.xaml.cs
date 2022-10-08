@@ -1,12 +1,8 @@
 ﻿using Barnacle.LineLib;
-using Barnacle.Models;
 using Microsoft.Win32;
-using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -1152,7 +1148,6 @@ namespace Barnacle.Dialogs
 
         private void Ln_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-
         }
 
         private void LoadImage(string f)
@@ -1210,7 +1205,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            catch 
+            catch
             {
             }
         }

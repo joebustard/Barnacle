@@ -1,8 +1,6 @@
 using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -10,7 +8,6 @@ namespace MakerLib
 {
     public class ParabolicDishMaker : MakerBase
     {
-
         private double radius;
         private double wallThickness;
         private int pitch;
@@ -20,7 +17,6 @@ namespace MakerLib
             this.radius = radius;
             this.wallThickness = wallThickness;
             this.pitch = pitch;
-
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -38,24 +34,24 @@ namespace MakerLib
             // outter wall
             List<PolarCoordinate> profile = new List<PolarCoordinate>();
             double c = 0;
-            double my=0;
-            for (double x = 0.0; x < radius ; x += 1.0)
+            double my = 0;
+            for (double x = 0.0; x < radius; x += 1.0)
             {
-               double y =(x / pitch) * (x / pitch) + c ;
+                double y = (x / pitch) * (x / pitch) + c;
                 my = y;
                 PolarCoordinate pc = new PolarCoordinate(0, 0, 0);
                 pc.SetPoint3D(new Point3D(x, 0, y));
                 profile.Add(pc);
             }
 
-            SweepPolarProfile(profile, 360, numsegs,true, true);
+            SweepPolarProfile(profile, 360, numsegs, true, true);
             // outter wall
             profile = new List<PolarCoordinate>();
             c = wallThickness;
             for (double x = 0.0; x < radius; x += 1.0)
             {
                 double y = (x / pitch) * (x / pitch) + c;
-                if ( y>my)
+                if (y > my)
                 {
                     y = my;
                 }
@@ -69,10 +65,10 @@ namespace MakerLib
             double r1 = radius;
             double r2 = r1 - wallThickness;
 
-            for ( int i = 0; i < numsegs; i ++)
+            for (int i = 0; i < numsegs; i++)
             {
                 int j = i + 1;
-                if ( j == numsegs)
+                if (j == numsegs)
                 {
                     j = 0;
                 }
@@ -83,8 +79,6 @@ namespace MakerLib
 
                 double x2 = r2 * Math.Sin(theta1);
                 double z2 = r2 * Math.Cos(theta1);
-
-
 
                 double x3 = r1 * Math.Sin(theta2);
                 double z3 = r1 * Math.Cos(theta2);
@@ -110,7 +104,8 @@ namespace MakerLib
                 Faces.Add(v3);
             }
         }
-        internal void SweepPolarProfile(List<PolarCoordinate> polarProfile, double sweepRange, int numSegs, bool clear,  bool invert)
+
+        internal void SweepPolarProfile(List<PolarCoordinate> polarProfile, double sweepRange, int numSegs, bool clear, bool invert)
         {
             // now we have a lovely copy of the profile in polar coordinates.
             if (clear)
@@ -139,7 +134,7 @@ namespace MakerLib
                 }
                 double b = da * j;
 
-                for (int index = 0; index < polarProfile.Count-1; index++)
+                for (int index = 0; index < polarProfile.Count - 1; index++)
                 {
                     int index2 = index + 1;
                     if (index2 == polarProfile.Count)
@@ -186,83 +181,6 @@ namespace MakerLib
                     }
                 }
             }
-            /*
-            if (sweepRange != 360.0)
-            {
-                // both ends will be open.
-                Point3D centreOfProfile = new Point3D(cx, 0, cy);
-                for (int index = 0; index < polarProfile.Count; index++)
-                {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
-                    {
-                        index2 = 0;
-                    }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
-                    pc3.SetPoint3D(centreOfProfile);
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-                    if (invert)
-                    {
-                        Faces.Add(v1);
-                        Faces.Add(v2);
-                        Faces.Add(v3);
-                    }
-                    else
-                    {
-                        Faces.Add(v1);
-                        Faces.Add(v3);
-                        Faces.Add(v2);
-                    }
-                }
-
-                for (int index = 0; index < polarProfile.Count; index++)
-                {
-                    int index2 = index + 1;
-                    if (index2 == polarProfile.Count)
-                    {
-                        index2 = 0;
-                    }
-                    PolarCoordinate pc1 = polarProfile[index].Clone();
-                    PolarCoordinate pc2 = polarProfile[index2].Clone();
-                    PolarCoordinate pc3 = new PolarCoordinate(0, 0, 0);
-                    pc3.SetPoint3D(centreOfProfile);
-                    pc1.Theta -= sweep;
-                    pc2.Theta -= sweep;
-                    pc3.Theta -= sweep;
-
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-
-                    int v1 = AddVertice(p1);
-                    int v2 = AddVertice(p2);
-                    int v3 = AddVertice(p3);
-
-                    if (invert)
-                    {
-                        Faces.Add(v1);
-                        Faces.Add(v3);
-                        Faces.Add(v2);
-                    }
-                    else
-                    {
-                        Faces.Add(v1);
-                        Faces.Add(v2);
-                        Faces.Add(v3);
-                    }
-                }
-            }
-            */
         }
-
     }
 }

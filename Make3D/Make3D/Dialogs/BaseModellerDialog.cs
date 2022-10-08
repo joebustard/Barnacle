@@ -55,7 +55,7 @@ namespace Barnacle.Dialogs
             showFloor = true;
             showAxies = true;
             bounds = new Bounds3D();
-            spaceTreeRoot = null;   
+            spaceTreeRoot = null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -733,6 +733,7 @@ namespace Barnacle.Dialogs
             int res = AddVertice(new Point3D(x, y, z));
             return res;
         }
+
         private SpaceTreeNode spaceTreeRoot;
 
         protected int AddVertice(Point3DCollection verts, double x, double y, double z)
@@ -758,13 +759,11 @@ namespace Barnacle.Dialogs
         protected int AddVertice(Point3D v)
         {
             int res = -1;
-            if (spaceTreeRoot != null )
+            if (spaceTreeRoot != null)
             {
                 res = spaceTreeRoot.Present(v);
             }
 
-               
-            
             /*
             for (int i = 0; i < vertices.Count; i++)
             {
@@ -785,7 +784,7 @@ namespace Barnacle.Dialogs
                 }
                 else
                 {
-                    spaceTreeRoot.Add(v, spaceTreeRoot,res);
+                    spaceTreeRoot.Add(v, spaceTreeRoot, res);
                 }
             }
             return res;
@@ -1049,6 +1048,7 @@ namespace Barnacle.Dialogs
         {
             return x * 25.4;
         }
+
         public static void CreateGrid(DpiScale sc, double aw, double ah, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
         {
             double x = 0;
@@ -1078,15 +1078,14 @@ namespace Barnacle.Dialogs
                 x += gridX;
             }
         }
-        public static void CreateCanvasGrid( Canvas cnv, out double gridX, out double gridY, double gridSizeMM,List<Shape> markers)
-        {
-            DpiScale sc =VisualTreeHelper.GetDpi(cnv);
 
+        public static void CreateCanvasGrid(Canvas cnv, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(cnv);
 
             double aw = cnv.ActualWidth;
             double ah = cnv.ActualHeight;
             CreateGrid(sc, aw, ah, out gridX, out gridY, gridSizeMM, markers);
         }
     }
-
 }

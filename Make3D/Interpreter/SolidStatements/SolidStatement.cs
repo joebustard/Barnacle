@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScriptLanguage
 {
@@ -10,7 +6,8 @@ namespace ScriptLanguage
     {
         public ExpressionCollection expressions;
         public string label;
-        public int ExpressionCount { get { return expressions.Count(); } }
+        public int ExpressionCount
+        { get { return expressions.Count(); } }
 
         public void AddExpression(ExpressionNode exp)
         {

@@ -1,4 +1,5 @@
 ﻿#region License
+
 /*
 MIT License
 
@@ -22,6 +23,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
 #endregion
 
 using System;
@@ -35,13 +37,16 @@ namespace MeshDecimator.Collections
     internal sealed class ResizableArray<T>
     {
         #region Fields
+
         private T[] items = null;
         private int length = 0;
 
         private static T[] emptyArr = new T[0];
+
         #endregion
 
         #region Properties
+
         /// <summary>
         /// Gets the length of this array.
         /// </summary>
@@ -68,9 +73,11 @@ namespace MeshDecimator.Collections
             get { return items[index]; }
             set { items[index] = value; }
         }
+
         #endregion
 
         #region Constructor
+
         /// <summary>
         /// Creates a new resizable array.
         /// </summary>
@@ -78,7 +85,6 @@ namespace MeshDecimator.Collections
         public ResizableArray(int capacity)
             : this(capacity, 0)
         {
-
         }
 
         /// <summary>
@@ -100,18 +106,22 @@ namespace MeshDecimator.Collections
 
             this.length = length;
         }
+
         #endregion
 
         #region Private Methods
+
         private void IncreaseCapacity(int capacity)
         {
             T[] newItems = new T[capacity];
             Array.Copy(items, 0, newItems, 0, System.Math.Min(length, capacity));
             items = newItems;
         }
+
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Clears this array.
         /// </summary>
@@ -174,6 +184,7 @@ namespace MeshDecimator.Collections
 
             items[length++] = item;
         }
+
         #endregion
     }
 }

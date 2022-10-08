@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 
 namespace ScriptLanguage
 {
@@ -98,7 +93,7 @@ namespace ScriptLanguage
                         if (bRunTrueBody)
                         {
                             result = trueBody.Execute();
-                            if ( result )
+                            if (result)
                             {
                                 ParentCompound.InBreakMode = trueBody.InBreakMode;
                             }

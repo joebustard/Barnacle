@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Barnacle.Object3DLib;
+using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
-using Barnacle.Object3DLib;
 
 namespace Barnacle.Models
 {
@@ -48,28 +44,29 @@ namespace Barnacle.Models
                 OctNode.AllPoints.Add(position);
                 container?.Split();
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show("AddPoint() " + ex.Message);
             }
         }
-        public int PointPresent( Point3D pnt)
+
+        public int PointPresent(Point3D pnt)
         {
             int res = -1;
             try
             {
                 OctNode node = root?.FindNodeAround(pnt);
-            if (node != null)
-            {
-                foreach (int index in node.PointsInOctNode)
+                if (node != null)
                 {
-                    if ( PointUtils.equals(OctNode.AllPoints[index],pnt.X, pnt.Y,pnt.Z))
+                    foreach (int index in node.PointsInOctNode)
                     {
-                        res = index;
-                        break;
+                        if (PointUtils.equals(OctNode.AllPoints[index], pnt.X, pnt.Y, pnt.Z))
+                        {
+                            res = index;
+                            break;
+                        }
                     }
                 }
-            }
             }
             catch (Exception ex)
             {

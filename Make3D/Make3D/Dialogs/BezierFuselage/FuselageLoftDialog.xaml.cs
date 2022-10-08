@@ -1,5 +1,4 @@
-﻿using Barnacle.Models;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -525,7 +524,7 @@ namespace Barnacle.Dialogs
                 bhc.Redraw();
                 NotifyPropertyChanged("BulkHeads");
             }
-            //Camera.Distance = 300;
+
             UpdateCameraPos();
             Redraw();
         }

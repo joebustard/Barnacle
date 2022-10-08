@@ -8,12 +8,14 @@ namespace asdflibrary
         public double x;
         public double y;
         public double z;
+
         public XYZ()
         {
             this.x = 0;
             this.y = 0;
             this.z = 0;
         }
+
         public XYZ(double x, double y, double z)
         {
             this.x = x;
@@ -25,26 +27,28 @@ namespace asdflibrary
     public class Triangle
     {
         public XYZ[] p;
+
         public Triangle()
         {
             p = new XYZ[3];
-
         }
     };
+
     public class GridCell
     {
         public XYZ[] p;
         public double[] val;
+
         public GridCell()
         {
             p = new XYZ[8];
             val = new double[8];
         }
     }
+
     public class CubeMarcher
     {
-
-      private  int[] edgeTable ={
+        private int[] edgeTable ={
 0x0  , 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c,
 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
 0x190, 0x99 , 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c,
@@ -78,9 +82,8 @@ namespace asdflibrary
 0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c,
 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0   };
 
-
-    private int[,] triTable =
-    {
+        private int[,] triTable =
+        {
         { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { 0, 8, 3, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { 0, 1, 9, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
@@ -338,10 +341,11 @@ namespace asdflibrary
 { 0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1},
 { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}
     };
+
         public CubeMarcher()
         {
-
         }
+
         /*
            Given a grid cell and an isolevel, calculate the triangular
            facets required to represent the isosurface through the cell.
@@ -350,12 +354,12 @@ namespace asdflibrary
             0 will be returned if the grid cell is either totally above
            of totally below the isolevel.
         */
-      public int Polygonise(GridCell grid, double isolevel, List<Triangle> triangles)
+
+        public int Polygonise(GridCell grid, double isolevel, List<Triangle> triangles)
         {
             int i, ntriang;
             int cubeindex;
             XYZ[] vertlist = new XYZ[12];
-
 
             /*
                Determine the index into the edge table which
@@ -385,20 +389,19 @@ namespace asdflibrary
             if ((edgeTable[cubeindex] & 8) != 0) vertlist[3] = VertexInterp(isolevel, grid.p[3], grid.p[0], grid.val[3], grid.val[0]);
 
             if ((edgeTable[cubeindex] & 16) != 0) vertlist[4] = VertexInterp(isolevel, grid.p[4], grid.p[5], grid.val[4], grid.val[5]);
-        
+
             if ((edgeTable[cubeindex] & 32) != 0) vertlist[5] = VertexInterp(isolevel, grid.p[5], grid.p[6], grid.val[5], grid.val[6]);
-          
+
             if ((edgeTable[cubeindex] & 64) != 0) vertlist[6] = VertexInterp(isolevel, grid.p[6], grid.p[7], grid.val[6], grid.val[7]);
-          
+
             if ((edgeTable[cubeindex] & 128) != 0) vertlist[7] = VertexInterp(isolevel, grid.p[7], grid.p[4], grid.val[7], grid.val[4]);
-      
+
             if ((edgeTable[cubeindex] & 256) != 0) vertlist[8] = VertexInterp(isolevel, grid.p[0], grid.p[4], grid.val[0], grid.val[4]);
-     
-    
+
             if ((edgeTable[cubeindex] & 512) != 0) vertlist[9] = VertexInterp(isolevel, grid.p[1], grid.p[5], grid.val[1], grid.val[5]);
-    
+
             if ((edgeTable[cubeindex] & 1024) != 0) vertlist[10] = VertexInterp(isolevel, grid.p[2], grid.p[6], grid.val[2], grid.val[6]);
-      
+
             if ((edgeTable[cubeindex] & 2048) != 0) vertlist[11] = VertexInterp(isolevel, grid.p[3], grid.p[7], grid.val[3], grid.val[7]);
 
             /* Create the triangle */
@@ -420,7 +423,8 @@ namespace asdflibrary
            Linearly interpolate the position where an isosurface cuts
            an edge between two vertices, each with their own scalar value
         */
-        XYZ VertexInterp(double isolevel, XYZ p1, XYZ p2, double valp1, double valp2)
+
+        private XYZ VertexInterp(double isolevel, XYZ p1, XYZ p2, double valp1, double valp2)
         {
             double mu;
             XYZ p = new XYZ();
@@ -447,6 +451,5 @@ namespace asdflibrary
 
             return (p);
         }
-
     }
 }

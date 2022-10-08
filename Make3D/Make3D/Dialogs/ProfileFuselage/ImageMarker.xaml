@@ -11,18 +11,18 @@
     <UserControl.Resources>
         <ContextMenu x:Key="cmLetter">
             <MenuItem Click="CopyItem_Click"
-                      Header="Copy"/>
+                      Header="Copy" />
         </ContextMenu>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="30"/>
+            <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Label Content="{Binding HeaderText}"
                Grid.Row="0"
                HorizontalAlignment="Center"
-               x:Name="Header"/>
+               x:Name="Header" />
 
         <Border BorderBrush="DarkBlue"
                 BorderThickness="2"
@@ -36,11 +36,10 @@
                         Width="2000"
                         Height="1000">
                     <Canvas.LayoutTransform>
-                        <ScaleTransform x:Name="MainScale"/>
+                        <ScaleTransform x:Name="MainScale" />
                     </Canvas.LayoutTransform>
                     <Image Margin="20,20"
-                           x:Name="MyImage"/>
-
+                           x:Name="MyImage" />
                 </Canvas>
             </ScrollViewer>
         </Border>

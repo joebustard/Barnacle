@@ -36,14 +36,14 @@ Project: https://github.com/MatterHackers/agg-sharp (an included library)
 */
 
 using System;
-using System.Windows.Input;
 using System.Windows.Media.Media3D;
 
 //using OpenToolkit.Mathematics;
 
 namespace CSGLib
 {
-    public enum Status { UNKNOWN, INSIDE, OUTSIDE, SAME, OPPOSITE, BOUNDARY };
+    public enum Status
+    { UNKNOWN, INSIDE, OUTSIDE, SAME, OPPOSITE, BOUNDARY };
 
     /// <summary>
     /// Representation of a 3D face (triangle).
@@ -63,7 +63,8 @@ namespace CSGLib
         /** face status relative to a solid  */
         private static readonly double EqualityTolerance = 1e-8f;
 
-        private enum Side { UP, DOWN, ON, NONE };
+        private enum Side
+        { UP, DOWN, ON, NONE };
 
         private Bound BoundCache;
         private bool CachedBounds = false;
@@ -230,8 +231,6 @@ namespace CSGLib
                 //for each face from the other solid...
                 for (int faceIndex = 0; faceIndex < obj.NumFaces; faceIndex++)
                 {
-                    
-
                     Face face = obj.GetFace(faceIndex);
                     intersectionPoint = ray.ComputePlaneIntersection(face.GetPlane());
 

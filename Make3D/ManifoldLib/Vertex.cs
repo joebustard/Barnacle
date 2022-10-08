@@ -21,7 +21,9 @@ namespace ManifoldLib
         {
             System.Diagnostics.Debug.WriteLine($" {Pos.X},{Pos.Y},{Pos.Z}, original {OriginalNumber} Dup {DuplicateOf} new number {NewNumber}");
         }
-        const double tol = 0.000001;
+
+        private const double tol = 0.000001;
+
         internal bool GreaterOrEqual(Vertex v)
         {
             bool res = false;
@@ -55,7 +57,6 @@ namespace ManifoldLib
                     }
                 }
             }
-
 
             return res;
         }
