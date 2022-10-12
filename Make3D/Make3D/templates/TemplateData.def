@@ -11,7 +11,6 @@
       /images,  A place to save any image files that will be used to create the model
       /scripts, A place to save any limpet scripts
       /commands, A place for command files or batch files to help with the workflow
-      /backup,  A place to save backups of the project
       These folders are simply placeholders.
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -47,7 +46,6 @@
       /images,     A place to save any image files that will be used to create the model
       /scripts,    A place to save any limpet scripts.
       /commands,   A place for command files or batch files to help with the workflow
-      /backup,  A place to save backups of the project
     </Description>
 
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -85,7 +83,8 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">      
+    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
+      <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
       <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
     </Folder>
@@ -139,6 +138,7 @@
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
+      <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
       <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
     </Folder>
@@ -187,7 +187,8 @@
     <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">     
+    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
+      <File Name="ClearPrint3D.cmd" Source="templates/Commands/ClearPrint3D.cmd" />
       <File Name="ExtractThingiverseFiles.cmd" Source="templates/Commands/ExtractThingiverseFiles.cmd" />
       <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
     </Folder>
