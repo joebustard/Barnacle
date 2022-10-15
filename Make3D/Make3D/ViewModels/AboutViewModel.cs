@@ -11,9 +11,42 @@ namespace Barnacle.ViewModels
         public AboutViewModel()
         {
             AppIdentity = "Barnacle V" + SoftwareVersion;
+            EmailText = "Email: Barnacle3D@gmail.com";
             OKCommand = new RelayCommand(OnOk, null);
+            String fp = AppDomain.CurrentDomain.BaseDirectory + "Data\\ReadMe.txt";
+            if ( System.IO.File.Exists(fp))
+            {
+                ReadMeText = System.IO.File.ReadAllText(fp);
+            }
         }
 
+        private string readMeText;
+        public string ReadMeText
+        {
+            get { return readMeText; }
+            set
+            {
+                if (value != readMeText)
+                {
+                    readMeText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private string emailText;
+        public string EmailText
+        {
+            get { return emailText; }
+            set
+            {
+                if (value != emailText)
+                {
+                    emailText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public String AppIdentity
         {
             get

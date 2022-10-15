@@ -53,6 +53,10 @@ namespace Barnacle.Models
                 case "StoneWall":
                     res = new StoneWallDlg();
                     break;
+                
+                    case "PlankWall":
+                    res = new PlankWallDlg();
+                    break;
 
                 case "Trickle":
                     res = new TrickleDlg();

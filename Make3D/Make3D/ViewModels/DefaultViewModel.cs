@@ -1131,6 +1131,7 @@ namespace Barnacle.ViewModels
             buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a brick wall."));
             buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a stone wall."));
             buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
+            buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a plank wall."));
             SortMenu(buildingToolsToShow);
             NotifyPropertyChanged("BuildingToolsToShow");
         }
@@ -1157,7 +1158,7 @@ namespace Barnacle.ViewModels
 
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
 
-            //parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
+            parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             parametricToolsToShow.Add(new ToolDef("Curved Funnel", true, "CurvedFunnel", "Create a curved funnel"));
 
             SortMenu(parametricToolsToShow);

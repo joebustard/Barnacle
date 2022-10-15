@@ -159,6 +159,7 @@ public <pType> <PName>
 ";
 
         private string dialogName;
+        private string dialogTitle;
         private string exportPath;
         private String makerName;
         private String p1Max;
@@ -239,6 +240,23 @@ public <pType> <PName>
                 if (dialogName != value)
                 {
                     dialogName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        public string DialogTitle
+        {
+            get
+            {
+                return dialogTitle;
+            }
+            set
+            {
+                if (dialogTitle != value)
+                {
+                    dialogTitle = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -959,6 +977,7 @@ public <pType> <PName>
                     {
                         String l = fin.ReadLine();
                         l = l.Replace("Blank", ToolName);
+                        l = l.Replace("<DIALOGTITLE>", DialogTitle);
                         l = l.Replace("//TOOLPROPS", toolProps);
                         l = l.Replace("//MAKEPARAMETERS", makerParams);
                         l = l.Replace("<P1CONTROLS>", p1Controls);

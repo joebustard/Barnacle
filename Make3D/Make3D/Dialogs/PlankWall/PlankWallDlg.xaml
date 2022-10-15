@@ -1,11 +1,11 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.BlankDlg"
+<local:BaseModellerDialog x:Class="Barnacle.Dialogs.PlankWallDlg"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="<DIALOGTITLE>" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="Plank Wall" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -31,22 +31,34 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <P1CONTROLS>
+                                <Label VerticalAlignment="Center" Width="100">Wall Length</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallLength}" Width="150"/>
+
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <P2CONTROLS>
+                                <Label VerticalAlignment="Center" Width="100">Wall Height</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallHeight}" Width="150"/>
+
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <P3CONTROLS>
+                                <Label VerticalAlignment="Center" Width="100">Wall Width</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding WallWidth}" Width="150"/>
+
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <P4CONTROLS>
+                                <Label VerticalAlignment="Center" Width="100">Plank Width</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding PlankWidth}" Width="150"/>
+
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <P5CONTROLS>
+                                <Label VerticalAlignment="Center" Width="100">Gap</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding Gap}" Width="150"/>
+
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <P6CONTROLS>
+                                <Label VerticalAlignment="Center" Width="100">Gap Depth</Label>
+                 <TextBox Margin="8,0,0,0" Text="{Binding GapDepth}" Width="150"/>
+
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />

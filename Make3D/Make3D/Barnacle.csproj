@@ -159,6 +159,7 @@
     <Compile Include="Dialogs\PGramDlg\PGramDlg.xaml.cs">
       <DependentUpon>PGramDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\PlankWall\PlankWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageEdge.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageMarker.xaml.cs" />
@@ -478,6 +479,10 @@
     <Page Include="Dialogs\PGramDlg\PGramDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\PlankWall\PlankWallDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\ProfileFuselage\ImageMarker.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -997,6 +1002,7 @@
     <Resource Include="Images\Buttons\ShowGrid.png" />
     <Resource Include="Images\appicon.jpg" />
     <Resource Include="appicon.ico" />
+    <Resource Include="Data\ReadMe.txt" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
@@ -1021,7 +1027,7 @@ copy /Y $(SolutionDir)make3d\Dialogs\TankTrack\Links\*.* $(TargetDir)data\Links
 copy /Y $(SolutionDir)make3d\Data\*.* $(TargetDir)data
 copy /Y $(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs
 del   /q $(TargetDir)data\figure\*.txt
-copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
+rem copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
 
 Exit 0
 </PostBuildEvent>

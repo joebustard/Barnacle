@@ -77,6 +77,7 @@
     <Compile Include="SolidFunctions\MakeParabolicDishNode.cs" />
     <Compile Include="SolidFunctions\MakeParallelogram.cs" />
     <Compile Include="SolidFunctions\MakePath.cs" />
+    <Compile Include="SolidFunctions\MakePlankWallNode.cs" />
     <Compile Include="SolidFunctions\MakePulleyNode.cs" />
     <Compile Include="SolidFunctions\MakeRailWheelNode.cs" />
     <Compile Include="SolidFunctions\MakeReuleauxNode.cs" />

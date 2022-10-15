@@ -1,5 +1,5 @@
-<Window d:DesignHeight="300"
-        d:DesignWidth="300"
+<Window d:DesignHeight="500"
+        d:DesignWidth="600"
         mc:Ignorable="d"
         WindowStartupLocation="CenterOwner"
         x:Class="Barnacle.Dialogs.AboutBoxDlg"
@@ -23,9 +23,11 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="1*" />
             <RowDefinition Height="6*" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="1*" />
+
         </Grid.RowDefinitions>
         <Label Content="{Binding AppIdentity}"
                FontSize="25"
@@ -36,10 +38,43 @@
                HorizontalContentAlignment="Center"
                VerticalAlignment="Center"
                VerticalContentAlignment="Stretch" />
-
+        <Border Background="White"
+                BorderThickness="4"
+                Grid.Row="1"
+                Grid.Column="1"
+                Grid.RowSpan="2"
+                Style="{StaticResource ControlBorder}">
+            <TextBox        
+                 VerticalContentAlignment="center"
+                 HorizontalAlignment="Stretch"
+                 HorizontalContentAlignment="Center"
+                 IsReadOnly="True"
+                 FontSize="18"
+                 Text="{Binding EmailText}"
+                 VerticalScrollBarVisibility="Visible"
+                 x:Name="EmailBox">
+            </TextBox>
+        </Border>
+        <Border Background="White"
+                BorderThickness="4"
+Grid.Row="3"
+                 Grid.Column="1"
+              
+                Style="{StaticResource ControlBorder}">
+            <TextBox AcceptsReturn="True"        
+                 VerticalContentAlignment="Top"
+                 HorizontalAlignment="Stretch"
+                 HorizontalContentAlignment="Left"
+                 IsReadOnly="True"
+                 FontSize="16"
+                 Text="{Binding ReadMeText}"
+                 VerticalScrollBarVisibility="Visible"
+                 x:Name="ReadMeBox">
+            </TextBox>
+        </Border>
         <Button Click="OKButton_Click"
                 Content="OK"
                 Grid.Column="1"
-                Grid.Row="2" IsDefault="True" />
+                Grid.Row="4" IsDefault="True" VerticalAlignment="Center"/>
     </Grid>
 </Window>
