@@ -44,13 +44,8 @@ namespace Barnacle.UserControls
         private Visibility showWidth;
 
         private bool snap;
-        public enum GridStyle
-        {
-            Hidden,
-            Rectangular,
-            Polar
-        }
-        private GridStyle showGrid;
+
+        private GridSettings.GridStyle showGrid;
         public FlexiPathEditorControlViewModel()
         {
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
@@ -75,8 +70,9 @@ namespace Barnacle.UserControls
             scale = 1.0;
             lineShape = false;
             showOrtho = true;
-            ShowGrid = GridStyle.Rectangular;
+            ShowGrid = GridSettings.GridStyle.Rectangular;
             snap = true;
+            gridSettings = new GridSettings();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -158,11 +154,17 @@ namespace Barnacle.UserControls
 
         public List<Shape> GridMarkers
         {
-            get { return gridMarkers; }
-            set
+            get 
             {
-                gridMarkers = value;
+            if ( pointGrid != null)
+            {
+                    return pointGrid.GridMarkers;
             }
+            else{
+                    return null;
+            }
+            }
+
         }
 
         public double GridX
@@ -297,7 +299,7 @@ namespace Barnacle.UserControls
 
         public ICommand ShowAllPointsCommand { get; set; }
 
-        public GridStyle ShowGrid
+        public GridSettings.GridStyle ShowGrid
         {
             get { return showGrid; }
             set
@@ -451,12 +453,43 @@ namespace Barnacle.UserControls
             }
             return added;
         }
+        private PointGrid pointGrid;
+        private GridSettings gridSettings;
+        private void MakeGrid( double actualWidth, double actualHeight)
+        {
+            switch (ShowGrid)
+            {
+                case GridSettings.GridStyle.Hidden:
+                case GridSettings.GridStyle.Rectangular:
+                    {
+                        if (pointGrid == null || !(pointGrid is RectangularGrid))
+                        {
+                            pointGrid = new RectangularGrid();
+                            pointGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
+                        }
+                    }
+                    break;
 
+                case GridSettings.GridStyle.Polar:
+                    {
+                        if (pointGrid == null || !(pointGrid is PolarGrid))
+                        {
+                            pointGrid = new PolarGrid();
+                            pointGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
+                        }
+                    }
+                    break;
+            }
+            
+            pointGrid.SetActualSize(actualWidth, actualHeight);
+        }
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
         {
             ScreenDpi = dpiScale;
-            GridMarkers = new List<Shape>();
-            BaseModellerDialog.CreateGrid(dpiScale, actualWidth, actualHeight, out gridX, out gridY, 10.0, GridMarkers);
+            
+            MakeGrid(actualWidth,actualHeight);
+            pointGrid.CreateMarkers(dpiScale);
+           
         }
 
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
@@ -669,17 +702,17 @@ namespace Barnacle.UserControls
         {
             switch (showGrid)
             {
-                case GridStyle.Hidden:
-                case GridStyle.Polar:
+                case GridSettings.GridStyle.Hidden:
+                case GridSettings.GridStyle.Polar:
                     {
-                        ShowGrid = GridStyle.Rectangular;
+                        ShowGrid = GridSettings.GridStyle.Rectangular;
                         snap = true;
                     }
                     break;
 
-                case GridStyle.Rectangular:
+                case GridSettings.GridStyle.Rectangular:
                     {
-                        ShowGrid = GridStyle.Hidden;
+                        ShowGrid = GridSettings.GridStyle.Hidden;
                         snap = false;
                     }
                     break;
@@ -690,17 +723,17 @@ namespace Barnacle.UserControls
         {
             switch (showGrid)
             {
-                case GridStyle.Hidden:
-                case GridStyle.Rectangular:
+                case GridSettings.GridStyle.Hidden:
+                case GridSettings.GridStyle.Rectangular:
                     {
-                        ShowGrid = GridStyle.Polar;
+                        ShowGrid = GridSettings.GridStyle.Polar;
                         snap = true;
                     }
                     break;
 
-                case GridStyle.Polar:
+                case GridSettings.GridStyle.Polar:
                     {
-                        ShowGrid = GridStyle.Hidden;
+                        ShowGrid = GridSettings.GridStyle.Hidden;
                         snap = false;
                     }
                     break;

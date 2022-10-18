@@ -475,7 +475,7 @@ namespace Barnacle.UserControls
                     image.Height = vm.BackgroundImage.Height;
                     MainCanvas.Children.Add(image);
                 }
-                if (vm.ShowGrid == FlexiPathEditorControlViewModel.GridStyle.Rectangular)
+                if (vm.ShowGrid == GridSettings.GridStyle.Rectangular)
                 {
                     foreach (Shape sh in vm.GridMarkers)
                     {
@@ -552,7 +552,7 @@ namespace Barnacle.UserControls
 
         private void ShowGridStatus()
         {
-            if (vm.ShowGrid == FlexiPathEditorControlViewModel.GridStyle.Rectangular)
+            if (vm.ShowGrid == GridSettings.GridStyle.Rectangular)
             {
                 GridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
             }
@@ -561,7 +561,7 @@ namespace Barnacle.UserControls
                 GridBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
             }
 
-            if (vm.ShowGrid == FlexiPathEditorControlViewModel.GridStyle.Polar)
+            if (vm.ShowGrid == GridSettings.GridStyle.Polar)
             {
                 PolarGridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
             }
