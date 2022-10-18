@@ -121,6 +121,17 @@
                     </Border>
                     <Border BorderThickness="4"
                             CornerRadius="2"
+                            x:Name="PolarGridBorder">
+                        <Button Command="{Binding PolarGridCommand}"
+
+                                Style="{StaticResource SmallButton}"
+                                ToolTip="Turn off polar grid and snapping"
+                                x:Name="PolarGridButton">
+                            <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png" />
+                        </Button>
+                    </Border>
+                    <Border BorderThickness="4"
+                            CornerRadius="2"
                             x:Name="ZoomOutBorder">
                         <Button Command="{Binding ZoomCommand}"
                                 CommandParameter="Out"

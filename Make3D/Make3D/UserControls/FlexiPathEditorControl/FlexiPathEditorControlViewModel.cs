@@ -37,14 +37,20 @@ namespace Barnacle.UserControls
 
         private SelectionModeType selectionMode;
 
-        private bool showGrid;
+
 
         private bool showOrtho;
 
         private Visibility showWidth;
 
         private bool snap;
-
+        public enum GridStyle
+        {
+            Hidden,
+            Rectangular,
+            Polar
+        }
+        private GridStyle showGrid;
         public FlexiPathEditorControlViewModel()
         {
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
@@ -53,6 +59,7 @@ namespace Barnacle.UserControls
             CNVDoubleSegCommand = new RelayCommand(OnCnvDoubleSegment);
             DeleteSegmentCommand = new RelayCommand(OnDeleteSegment);
             GridCommand = new RelayCommand(OnGrid);
+            PolarGridCommand = new RelayCommand(OnPolarGrid);
             MovePathCommand = new RelayCommand(OnMovePath);
             PickCommand = new RelayCommand(OnPickSegment);
             ResetPathCommand = new RelayCommand(OnResetPath);
@@ -68,7 +75,7 @@ namespace Barnacle.UserControls
             scale = 1.0;
             lineShape = false;
             showOrtho = true;
-            ShowGrid = true;
+            ShowGrid = GridStyle.Rectangular;
             snap = true;
         }
 
@@ -147,6 +154,7 @@ namespace Barnacle.UserControls
         }
 
         public ICommand GridCommand { get; set; }
+        public ICommand PolarGridCommand { get; set; }
 
         public List<Shape> GridMarkers
         {
@@ -289,7 +297,7 @@ namespace Barnacle.UserControls
 
         public ICommand ShowAllPointsCommand { get; set; }
 
-        public bool ShowGrid
+        public GridStyle ShowGrid
         {
             get { return showGrid; }
             set
@@ -311,7 +319,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
-
+        /*
         public bool ShowPolyGrid
         {
             get { return showGrid; }
@@ -324,7 +332,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
-
+        */
         public bool Snap
         {
             get { return snap; }
@@ -659,10 +667,45 @@ namespace Barnacle.UserControls
 
         private void OnGrid(object obj)
         {
-            ShowGrid = !showGrid;
-            snap = showGrid;
+            switch (showGrid)
+            {
+                case GridStyle.Hidden:
+                case GridStyle.Polar:
+                    {
+                        ShowGrid = GridStyle.Rectangular;
+                        snap = true;
+                    }
+                    break;
+
+                case GridStyle.Rectangular:
+                    {
+                        ShowGrid = GridStyle.Hidden;
+                        snap = false;
+                    }
+                    break;
+            }
         }
 
+        private void OnPolarGrid(object obj)
+        {
+            switch (showGrid)
+            {
+                case GridStyle.Hidden:
+                case GridStyle.Rectangular:
+                    {
+                        ShowGrid = GridStyle.Polar;
+                        snap = true;
+                    }
+                    break;
+
+                case GridStyle.Polar:
+                    {
+                        ShowGrid = GridStyle.Hidden;
+                        snap = false;
+                    }
+                    break;
+            }
+        }
         private void OnLoadImage(object obj)
         {
             OpenFileDialog opDlg = new OpenFileDialog();
