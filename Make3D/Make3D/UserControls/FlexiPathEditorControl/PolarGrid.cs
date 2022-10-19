@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -16,26 +17,37 @@ namespace Barnacle.UserControls
             gridXPixels = (sc.PixelsPerInchX / 25.4) * gridXMM;
 
             gridYPixels = (sc.PixelsPerInchY / 25.4) * gridYMM;
-
-            while (x < actualWidth)
+            // make a largeish marker at the centre
+            MakeSingleMarker(centre.X, centre.Y, 5);
+            double theta;
+            double rad = 10;
+            double dt = Math.PI / 10;
+            while ( rad < centre.X)
             {
-                y = 0;
-                while (y < actualHeight)
+                theta = 0;
+                while ( theta < Math.PI * 2.0)
                 {
-                    Ellipse el = new Ellipse();
-                    Canvas.SetLeft(el, x - 1);
-                    Canvas.SetTop(el, y - 1);
-                    el.Width = 3;
-                    el.Height = 3;
-                    el.Fill = Brushes.AliceBlue;
-                    el.Stroke = Brushes.CadetBlue;
-                    if (gridMarkers != null)
-                    {
-                        gridMarkers.Add(el);
-                    }
-                    y += gridYPixels;
+                     x = (Math.Sin(theta) * rad);
+                     y = (Math.Cos(theta) * rad);
+                    MakeSingleMarker(x + centre.X, y + centre.Y,3);
+                    theta += dt;
                 }
-                x += gridXPixels;
+                rad += 10;
+            }
+        }
+
+        private void MakeSingleMarker(double x, double y, double sz)
+        {
+            Ellipse el = new Ellipse();
+            Canvas.SetLeft(el, x - 1);
+            Canvas.SetTop(el, y - 1);
+            el.Width = sz;
+            el.Height = sz;
+            el.Fill = Brushes.AliceBlue;
+            el.Stroke = Brushes.CadetBlue;
+            if (gridMarkers != null)
+            {
+                gridMarkers.Add(el);
             }
         }
 
@@ -54,9 +66,15 @@ namespace Barnacle.UserControls
         {
         }
 
-        public override Point Snap(Point p)
+        public override Point SnapPositionToMM(Point p)
         {
             return p;
+        }
+
+        private Point centre;
+        internal void SetPolarCentre(Point centre)
+        {
+            this.centre = centre;
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Barnacle.UserControls
 {
@@ -52,6 +53,18 @@ namespace Barnacle.UserControls
                     polarGridAngle = value;
                 }
             }
+        }
+
+        private Point centre;
+        public Point Centre
+        {
+            get { return centre; }
+            set {  centre = value; }
+        }
+
+        internal void SetPolarCentre(double v1, double v2)
+        {
+            centre = new Point(v1, v2);
         }
     }
 }

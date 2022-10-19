@@ -454,41 +454,33 @@ namespace Barnacle.UserControls
             return added;
         }
         private PointGrid pointGrid;
+        private RectangularGrid rectGrid;
+        private PolarGrid polarGrid;
         private GridSettings gridSettings;
         private void MakeGrid( double actualWidth, double actualHeight)
         {
-            switch (ShowGrid)
-            {
-                case GridSettings.GridStyle.Hidden:
-                case GridSettings.GridStyle.Rectangular:
-                    {
-                        if (pointGrid == null || !(pointGrid is RectangularGrid))
-                        {
-                            pointGrid = new RectangularGrid();
-                            pointGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
-                        }
-                    }
-                    break;
+            rectGrid = new RectangularGrid();
+            rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
+            rectGrid.SetActualSize(actualWidth, actualHeight);
 
-                case GridSettings.GridStyle.Polar:
-                    {
-                        if (pointGrid == null || !(pointGrid is PolarGrid))
-                        {
-                            pointGrid = new PolarGrid();
-                            pointGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
-                        }
-                    }
-                    break;
-            }
+            polarGrid = new PolarGrid();
+            polarGrid.SetGridIntervals(gridSettings.PolarGridAngle, gridSettings.PolarGridRadius);
+
+            gridSettings.SetPolarCentre(actualWidth / 2.0, actualHeight / 2.0);
+            polarGrid.SetPolarCentre(gridSettings.Centre);
+            polarGrid.SetActualSize(actualWidth, actualHeight);
+
+            pointGrid = rectGrid;
             
-            pointGrid.SetActualSize(actualWidth, actualHeight);
+            
         }
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
         {
             ScreenDpi = dpiScale;
             
             MakeGrid(actualWidth,actualHeight);
-            pointGrid.CreateMarkers(dpiScale);
+            rectGrid.CreateMarkers(dpiScale);
+            polarGrid.CreateMarkers(dpiScale);
            
         }
 
@@ -706,6 +698,7 @@ namespace Barnacle.UserControls
                 case GridSettings.GridStyle.Polar:
                     {
                         ShowGrid = GridSettings.GridStyle.Rectangular;
+                        pointGrid = rectGrid;
                         snap = true;
                     }
                     break;
@@ -726,6 +719,8 @@ namespace Barnacle.UserControls
                 case GridSettings.GridStyle.Hidden:
                 case GridSettings.GridStyle.Rectangular:
                     {
+
+                        pointGrid = polarGrid;
                         ShowGrid = GridSettings.GridStyle.Polar;
                         snap = true;
                     }
@@ -821,16 +816,12 @@ namespace Barnacle.UserControls
 
         private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
         {
-            double gx = pos.X;
-            double gy = pos.Y;
-            if (snap)
+            Point result = new Point(0, 0);
+             if ( pointGrid != null )
             {
-                gx = pos.X / gridX;
-                gx = Math.Round(gx) * gridX;
-                gy = pos.Y / gridY;
-                gy = Math.Round(gy) * gridY;
+                result = pointGrid.SnapPositionToMM(pos);
             }
-            return new System.Windows.Point(ToMMX(gx), ToMMY(gy));
+            return result;
         }
 
         private double ToMMX(double x)

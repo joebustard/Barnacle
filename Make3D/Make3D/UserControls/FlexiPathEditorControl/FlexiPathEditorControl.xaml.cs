@@ -14,11 +14,11 @@ namespace Barnacle.UserControls
     /// </summary>
     public partial class FlexiPathEditorControl : UserControl
     {
-        public delegate void FlexiPathChanged(List<System.Windows.Point> points);
-
         public FlexiPathChanged OnFlexiPathChanged;
-        private FlexiPathEditorControlViewModel vm;
+
         private string pathText = "";
+
+        private FlexiPathEditorControlViewModel vm;
 
         public FlexiPathEditorControl()
         {
@@ -26,6 +26,7 @@ namespace Barnacle.UserControls
             OnFlexiPathChanged = null;
         }
 
+        public delegate void FlexiPathChanged(List<System.Windows.Point> points);
         public bool PathClosed
         {
             get
@@ -39,6 +40,17 @@ namespace Barnacle.UserControls
                 }
                 return cl;
             }
+        }
+
+        internal string GetPath()
+        {
+            return vm.AbsPathText();
+        }
+
+        internal void SetPath(string v)
+        {
+            pathText = v;
+            vm?.SetPath(v);
         }
 
         private void DashLine(double x1, double y1, double x2, double y2)
@@ -387,6 +399,14 @@ namespace Barnacle.UserControls
             return p;
         }
 
+        private void NotifyPathPointsChanged()
+        {
+            if (OnFlexiPathChanged != null)
+            {
+                OnFlexiPathChanged(vm.DisplayPoints);
+            }
+        }
+
         private void SetSelectionModeBorderColours()
         {
             // put a clear border around the button associated with active state
@@ -429,6 +449,27 @@ namespace Barnacle.UserControls
                         EnableSelectionModeBorder(MovePathBorder);
                     }
                     break;
+            }
+        }
+
+        private void ShowGridStatus()
+        {
+            if (vm.ShowGrid == GridSettings.GridStyle.Rectangular)
+            {
+                GridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+            }
+            else
+            {
+                GridBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+            }
+
+            if (vm.ShowGrid == GridSettings.GridStyle.Polar)
+            {
+                PolarGridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+            }
+            else
+            {
+                PolarGridBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
             }
         }
 
@@ -475,7 +516,7 @@ namespace Barnacle.UserControls
                     image.Height = vm.BackgroundImage.Height;
                     MainCanvas.Children.Add(image);
                 }
-                if (vm.ShowGrid == GridSettings.GridStyle.Rectangular)
+                if (vm.ShowGrid != GridSettings.GridStyle.Hidden)
                 {
                     foreach (Shape sh in vm.GridMarkers)
                     {
@@ -503,18 +544,6 @@ namespace Barnacle.UserControls
             }
             UpdateDisplay();
         }
-
-        internal string GetPath()
-        {
-            return vm.AbsPathText();
-        }
-
-        internal void SetPath(string v)
-        {
-            pathText = v;
-            vm?.SetPath(v);
-        }
-
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -539,35 +568,6 @@ namespace Barnacle.UserControls
                         NotifyPathPointsChanged();
                     }
                     break;
-            }
-        }
-
-        private void NotifyPathPointsChanged()
-        {
-            if (OnFlexiPathChanged != null)
-            {
-                OnFlexiPathChanged(vm.DisplayPoints);
-            }
-        }
-
-        private void ShowGridStatus()
-        {
-            if (vm.ShowGrid == GridSettings.GridStyle.Rectangular)
-            {
-                GridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
-            }
-            else
-            {
-                GridBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
-            }
-
-            if (vm.ShowGrid == GridSettings.GridStyle.Polar)
-            {
-                PolarGridBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
-            }
-            else
-            {
-                PolarGridBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
             }
         }
     }

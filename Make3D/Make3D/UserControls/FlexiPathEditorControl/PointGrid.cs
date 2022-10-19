@@ -13,7 +13,8 @@ namespace Barnacle.UserControls
         protected double gridXPixels;
         protected double gridYMM;
         protected double gridYPixels;
-
+        protected double pixelsPerInchX;
+        protected double pixelsPerInchY;
         public PointGrid()
         {
             gridMarkers = new List<Shape>();
@@ -57,9 +58,21 @@ namespace Barnacle.UserControls
         {
         }
 
-        public virtual Point Snap(Point p)
+        public virtual Point SnapPositionToMM(Point p)
         {
             return p;
+        }
+
+        protected double ToMMX(double x)
+        {
+            double res = 25.4 * x / pixelsPerInchX;
+            return res;
+        }
+
+        protected double ToMMY(double y)
+        {
+            double res = 25.4 * y / pixelsPerInchY;
+            return res;
         }
     }
 }
