@@ -46,11 +46,11 @@ namespace Barnacle.UserControls
             double gx = pos.X;
             double gy = pos.Y;
 
-                gx = pos.X / gridXPixels;
-                gx = Math.Round(gx) * gridXPixels;
-                gy = pos.Y / gridYPixels;
-                gy = Math.Round(gy) * gridYPixels;
-            
+            gx = pos.X / gridXPixels;
+            gx = Math.Round(gx) * gridXPixels;
+            gy = pos.Y / gridYPixels;
+            gy = Math.Round(gy) * gridYPixels;
+
             return new Point(ToMMX(gx), ToMMY(gy));
         }
 

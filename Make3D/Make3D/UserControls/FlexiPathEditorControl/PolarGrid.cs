@@ -8,20 +8,25 @@ namespace Barnacle.UserControls
 {
     public class PolarGrid : PointGrid
     {
+        private Point centre;
+
         public override void CreateMarkers(DpiScale sc)
         {
             gridMarkers?.Clear();
+            pixelsPerInchX = sc.PixelsPerInchX;
+            pixelsPerInchY = sc.PixelsPerInchY;
             double x = 0;
             double y = 0;
-
+            double drad = 10 * (sc.PixelsPerInchX / 25.4);
+            double rad = drad;
             gridXPixels = (sc.PixelsPerInchX / 25.4) * gridXMM;
 
             gridYPixels = (sc.PixelsPerInchY / 25.4) * gridYMM;
             // make a largeish marker at the centre
             MakeSingleMarker(centre.X, centre.Y, 5);
             double theta;
-            double rad = 10;
-            double dt = Math.PI / 10;
+            
+            double dt = Math.PI / 18;
             while ( rad < centre.X)
             {
                 theta = 0;
@@ -32,22 +37,7 @@ namespace Barnacle.UserControls
                     MakeSingleMarker(x + centre.X, y + centre.Y,3);
                     theta += dt;
                 }
-                rad += 10;
-            }
-        }
-
-        private void MakeSingleMarker(double x, double y, double sz)
-        {
-            Ellipse el = new Ellipse();
-            Canvas.SetLeft(el, x - 1);
-            Canvas.SetTop(el, y - 1);
-            el.Width = sz;
-            el.Height = sz;
-            el.Fill = Brushes.AliceBlue;
-            el.Stroke = Brushes.CadetBlue;
-            if (gridMarkers != null)
-            {
-                gridMarkers.Add(el);
+                rad += drad;
             }
         }
 
@@ -66,15 +56,46 @@ namespace Barnacle.UserControls
         {
         }
 
-        public override Point SnapPositionToMM(Point p)
+        public override Point SnapPositionToMM(Point pos)
         {
-            return p;
+            double gx = pos.X;
+            double gy = pos.Y;
+            double minDist = double.MaxValue;
+            foreach (Shape sh in gridMarkers)
+            {
+                double x = Canvas.GetLeft(sh) + sh.Width / 2;
+                double y = Canvas.GetTop(sh) + sh.Height / 2;
+                double dist = Math.Sqrt((pos.X - x) * (pos.X - x) + (pos.Y - y) * (pos.Y - y));
+                if (dist < minDist)
+                {
+                    minDist = dist;
+                    gx = x;
+                    gy = y;
+                }
+            }
+
+            return new Point(ToMMX(gx), ToMMY(gy));
+
         }
 
-        private Point centre;
         internal void SetPolarCentre(Point centre)
         {
             this.centre = centre;
+        }
+
+        private void MakeSingleMarker(double x, double y, double sz)
+        {
+            Ellipse el = new Ellipse();
+            Canvas.SetLeft(el, x - 1);
+            Canvas.SetTop(el, y - 1);
+            el.Width = sz;
+            el.Height = sz;
+            el.Fill = Brushes.AliceBlue;
+            el.Stroke = Brushes.CadetBlue;
+            if (gridMarkers != null)
+            {
+                gridMarkers.Add(el);
+            }
         }
     }
 }
