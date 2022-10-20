@@ -817,9 +817,13 @@ namespace Barnacle.UserControls
         private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
         {
             Point result = new Point(0, 0);
-             if ( pointGrid != null )
+             if ( pointGrid != null && snap)
             {
                 result = pointGrid.SnapPositionToMM(pos);
+            }
+            else
+            {
+                result = new Point(ToMMX(pos.X), ToMMY(pos.Y));
             }
             return result;
         }

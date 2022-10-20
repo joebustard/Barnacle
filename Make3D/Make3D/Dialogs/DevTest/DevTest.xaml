@@ -22,7 +22,7 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Border Grid.Row ="0" Grid.Column="1" Style="{StaticResource ControlBorder}">
+        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -49,17 +49,13 @@
                 </ModelVisual3D>
             </Viewport3D>
         </Border>
-        <Border Grid.Column="2"
+        <Border Grid.Column="1"
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
-            <TabControl>
-                <TabItem Header="Side">
+
                     <ctrls:FlexiPathEditorControl />
-                </TabItem>
-                <TabItem Header="Front">
-                    <ctrls:FlexiPathEditorControl />
-                </TabItem>
-            </TabControl>
+                
+
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

@@ -24,10 +24,11 @@ namespace Barnacle.UserControls
             gridYPixels = (sc.PixelsPerInchY / 25.4) * gridYMM;
             // make a largeish marker at the centre
             MakeSingleMarker(centre.X, centre.Y, 5);
+            double maxrad = Math.Sqrt((centre.X * centre.X)+ (centre.Y*centre.Y));
             double theta;
             
             double dt = Math.PI / 18;
-            while ( rad < centre.X)
+            while ( rad < maxrad)
             {
                 theta = 0;
                 while ( theta < Math.PI * 2.0)

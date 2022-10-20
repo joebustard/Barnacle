@@ -114,7 +114,7 @@
                         <Button Command="{Binding GridCommand}"
 
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Turn off grid and snapping"
+                                ToolTip="Turn on/off grid and snapping"
                                 x:Name="GridButton">
                             <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png" />
                         </Button>
@@ -125,9 +125,9 @@
                         <Button Command="{Binding PolarGridCommand}"
 
                                 Style="{StaticResource SmallButton}"
-                                ToolTip="Turn off polar grid and snapping"
+                                ToolTip="Turn on/off polar grid and snapping"
                                 x:Name="PolarGridButton">
-                            <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png" />
+                            <Image Source="/Barnacle;component/Images/Buttons/ShowPolarGrid.png" />
                         </Button>
                     </Border>
                     <Border BorderThickness="4"
