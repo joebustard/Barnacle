@@ -459,19 +459,26 @@ namespace Barnacle.UserControls
         private GridSettings gridSettings;
         private void MakeGrid( double actualWidth, double actualHeight)
         {
-            rectGrid = new RectangularGrid();
+            if (rectGrid == null)
+            {
+                rectGrid = new RectangularGrid();
+            }
             rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
             rectGrid.SetActualSize(actualWidth, actualHeight);
 
-            polarGrid = new PolarGrid();
-            polarGrid.SetGridIntervals(gridSettings.PolarGridAngle, gridSettings.PolarGridRadius);
-
+            if (polarGrid == null)
+            {
+                polarGrid = new PolarGrid();
+                polarGrid.SetGridIntervals(gridSettings.PolarGridAngle, gridSettings.PolarGridRadius);
+            }
             gridSettings.SetPolarCentre(actualWidth / 2.0, actualHeight / 2.0);
             polarGrid.SetPolarCentre(gridSettings.Centre);
             polarGrid.SetActualSize(actualWidth, actualHeight);
 
-            pointGrid = rectGrid;
-            
+            if (pointGrid == null)
+            {
+                pointGrid = rectGrid;
+            }
             
         }
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)

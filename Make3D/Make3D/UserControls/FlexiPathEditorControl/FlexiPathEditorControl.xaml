@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Barnacle.UserControls"
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800"
-             Loaded="UserControl_Loaded">
+             Loaded="UserControl_Loaded" SizeChanged="MainCanvas_SizeChanged">
     <UserControl.DataContext>
         <local:FlexiPathEditorControlViewModel />
     </UserControl.DataContext>
@@ -165,18 +165,25 @@
                     </Border>
 
                     <Button Command="{Binding LoadImageCommand}"
-                            Content="Image"
+                            
                             Margin="2,2,2,2"
                             ToolTip="Set a background image to overlay the editing polygon on"
-                            x:Name="ImageButton" />
+                            x:Name="ImageButton">
+                        <Image Source="/Barnacle;component/Images/Buttons/Image.png" />
+                    </Button> 
+                
+                    <CheckBox IsChecked="{Binding ShowOrtho}" VerticalAlignment="Center" Margin="8,0,0,0"
+                              ToolTip="Show orthogononal guides and highlight orthogonal points">
+                        Show Ortho
+                    </CheckBox>
                 </UniformGrid>
             </Border>
             <ScrollViewer Grid.Row="1"
                               HorizontalScrollBarVisibility="Visible"
                               VerticalScrollBarVisibility="Visible">
                 <Canvas Background="Transparent"
-                         Width="800"
-                        Height="800"
+                         MinWidth="800"
+                        MinHeight="800"
                             MouseDown="MainCanvas_MouseDown"
                             MouseMove="MainCanvas_MouseMove"
                             MouseUp="MainCanvas_MouseUp"

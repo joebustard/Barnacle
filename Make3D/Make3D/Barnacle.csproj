@@ -1008,6 +1008,7 @@
     <Resource Include="appicon.ico" />
     <Resource Include="Data\ReadMe.txt" />
     <Resource Include="Images\Buttons\ShowPolarGrid.png" />
+    <Resource Include="Images\Buttons\Image.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
