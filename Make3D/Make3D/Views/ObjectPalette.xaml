@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <Label Grid.Row="0"
                HorizontalContentAlignment="Center"
-               Style="{StaticResource InverseLabel}">
+               Style="{StaticResource InverseLabel}" Foreground="AliceBlue">
         Primitive Objects
         </Label>
         <UniformGrid Columns="4"

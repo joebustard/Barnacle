@@ -184,8 +184,14 @@ namespace Barnacle.Models
                         i++; // Skips the midpoint
                     }
                 }
-                coplaner = IsCoPlanar(points[i], points[i + 1], points[0]);
-
+                if (i + 1 < points.Count)
+                {
+                    coplaner = IsCoPlanar(points[i], points[i + 1], points[0]);
+                }
+                else
+                {
+                    coplaner = true;
+                }
                 if (!coplaner)
                 {
                     res.Add(points[i]);

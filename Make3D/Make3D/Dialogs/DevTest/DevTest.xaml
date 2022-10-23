@@ -84,7 +84,7 @@
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
 
-                    <ctrls:FlexiPathEditorControl />
+                    <ctrls:FlexiPathEditorControl x:Name="PathEditor"/>
                 
 
         </Border>

@@ -63,7 +63,7 @@
                Grid.Row="0"
                Grid.RowSpan="2"
                HorizontalContentAlignment="Center"
-               Style="{StaticResource InverseLabel}">
+               Style="{StaticResource InverseLabel}" >
         Object
         </Label>
         <TextBox FontSize="14"
@@ -207,7 +207,7 @@
         <Label Grid.ColumnSpan="3"
                Grid.Row="11"
                HorizontalContentAlignment="Center"
-               Style="{StaticResource InverseLabel}">
+               Style="{StaticResource InverseLabel}" >
         Size
         </Label>
         <Label FontSize="12"
@@ -252,7 +252,7 @@
         <Label Grid.ColumnSpan="3"
                Grid.Row="15"
                HorizontalContentAlignment="Center"
-               Style="{StaticResource InverseLabel}">
+               Style="{StaticResource InverseLabel}" >
         Percent
         </Label>
         <TextBox FontSize="14"
@@ -282,7 +282,7 @@
                Grid.Row="18"
                Grid.RowSpan="1"
                HorizontalContentAlignment="Center"
-               Style="{StaticResource InverseLabel}">
+               Style="{StaticResource InverseLabel}" >
         Rotation
         </Label>
         <Label FontSize="12"

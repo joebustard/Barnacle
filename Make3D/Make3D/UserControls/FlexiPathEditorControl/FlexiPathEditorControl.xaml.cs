@@ -185,6 +185,11 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal DpiScale GetDpi()
+        {
+            throw new NotImplementedException();
+        }
+
         private void DoButtonBorder(Border src, Border trg)
         {
             if (src == trg)
@@ -473,28 +478,33 @@ namespace Barnacle.UserControls
             }
         }
 
-        private double ToMMX(double x)
+        public double ToMMX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
             double res = 25.4 * x / sc.PixelsPerInchX;
             return res;
         }
-
-        private double ToMMY(double y)
+        public double ToMM(double x)
+        {
+            DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
+            double res = 25.4 * x / sc.PixelsPerInchX;
+            return res;
+        }
+        public double ToMMY(double y)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
             double res = 25.4 * y / sc.PixelsPerInchY;
             return res;
         }
 
-        private double ToPixelX(double x)
+        public double ToPixelX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
             double res = sc.PixelsPerInchX * x / 25.4;
             return res;
         }
 
-        private double ToPixelY(double y)
+        public double ToPixelY(double y)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
             double res = sc.PixelsPerInchY * y / 25.4;
