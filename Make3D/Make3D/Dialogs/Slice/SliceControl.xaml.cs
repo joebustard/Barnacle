@@ -313,7 +313,7 @@ namespace Barnacle.Dialogs.Slice
                 {
                     Directory.CreateDirectory(fl);
                 }
-                String defProfile = fl + $"{selectedUserProfile}.profile";
+                String defProfile = fl + $"\\{selectedUserProfile}.profile";
                 if (File.Exists(defProfile))
                 {
                     dlg.LoadFile(defProfile);
