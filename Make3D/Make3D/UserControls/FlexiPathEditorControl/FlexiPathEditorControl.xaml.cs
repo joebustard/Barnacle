@@ -42,6 +42,25 @@ namespace Barnacle.UserControls
             }
         }
 
+        private string imagePath;
+        public string ImagePath 
+        {
+            get { return vm?.ImagePath ?? imagePath; }
+
+            set
+            {
+                if ( imagePath != value)
+                {
+                    imagePath = value;
+                    
+                }
+            }
+        }
+
+        public string PathString { 
+            get { return vm?.PathText ?? ""; }
+        }
+
         internal string GetPath()
         {
             return vm.AbsPathText();
@@ -190,6 +209,18 @@ namespace Barnacle.UserControls
             throw new NotImplementedException();
         }
 
+        private bool absolutePaths;
+        public bool AbsolutePaths {
+            get { return absolutePaths; }
+
+            set { absolutePaths = value;}
+        }
+
+        public object LocalImage
+        {
+            get { return vm?.BackgroundImage ?? null; }
+        }
+
         private void DoButtonBorder(Border src, Border trg)
         {
             if (src == trg)
@@ -334,6 +365,12 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal void FromString(string s)
+        {
+            pathText = s;
+            vm?.FromString(s);
+        }
+
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             vm?.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
@@ -412,6 +449,11 @@ namespace Barnacle.UserControls
             }
         }
 
+        public void LoadImage(String fileName)
+        {
+            vm?.LoadImage(fileName);
+            imagePath = fileName;
+        }
         private void SetSelectionModeBorderColours()
         {
             // put a clear border around the button associated with active state
@@ -549,9 +591,19 @@ namespace Barnacle.UserControls
 
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     ShowGridStatus();
+                    vm.AbsolutePaths = absolutePaths;
                     vm.SetPath(pathText);
+                    if ( imagePath != null )
+                    {
+                        vm.LoadImage(imagePath);
+                    }
+                    if ( pathText != null)
+                    {
+                        vm.FromString(pathText);
+                    }
+
                 }
-            }
+            } 
             UpdateDisplay();
         }
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

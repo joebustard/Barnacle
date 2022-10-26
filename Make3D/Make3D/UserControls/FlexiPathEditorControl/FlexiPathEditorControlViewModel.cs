@@ -37,7 +37,15 @@ namespace Barnacle.UserControls
 
         private SelectionModeType selectionMode;
 
-
+        private bool absolutePaths;
+        public bool AbsolutePaths
+        {
+            get { return absolutePaths; }
+            set
+            {
+                absolutePaths = value;
+            }
+        }
 
         private bool showOrtho;
 
@@ -73,6 +81,7 @@ namespace Barnacle.UserControls
             ShowGrid = GridSettings.GridStyle.Rectangular;
             snap = true;
             gridSettings = new GridSettings();
+            imagePath = "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -350,6 +359,9 @@ namespace Barnacle.UserControls
 
         public ICommand ZoomCommand { get; set; }
 
+        private string imagePath;
+        public string ImagePath { get { return imagePath; } }
+
         public bool ConvertLineAtPointToBezier(System.Windows.Point position, bool cubic)
         {
             bool added = false;
@@ -367,7 +379,7 @@ namespace Barnacle.UserControls
                 }
                 if (added)
                 {
-                    PathText = flexiPath.ToPath();
+                    PathText = flexiPath.ToPath(absolutePaths);
                     NotifyPropertyChanged("Points");
                 }
             }
@@ -386,7 +398,7 @@ namespace Barnacle.UserControls
 
                 if (deleted)
                 {
-                    PathText = flexiPath.ToPath();
+                    PathText = flexiPath.ToPath(absolutePaths);
                 }
             }
             // just in case the segment deletion means the point has gone
@@ -407,7 +419,7 @@ namespace Barnacle.UserControls
                     polyPoints[selectedPoint].X = position.X;
                     polyPoints[selectedPoint].Y = position.Y;
                     flexiPath.SetPointPos(selectedPoint, snappedPos);
-                    PathText = flexiPath.ToPath();
+                    PathText = flexiPath.ToPath(absolutePaths);
                     updateRequired = true;
                 }
                 else
@@ -447,12 +459,19 @@ namespace Barnacle.UserControls
                 if (flexiPath.SplitSelectedLineSegment(position))
                 {
                     added = true;
-                    PathText = flexiPath.ToPath();
+                    PathText = flexiPath.ToPath(absolutePaths);
                     NotifyPropertyChanged("Points");
                 }
             }
             return added;
         }
+
+        internal void FromString(string s)
+        {
+            flexiPath.FromString(s);
+            PathText = flexiPath.ToPath(absolutePaths);
+        }
+
         private PointGrid pointGrid;
         private RectangularGrid rectGrid;
         private PolarGrid polarGrid;
@@ -578,7 +597,7 @@ namespace Barnacle.UserControls
                 polyPoints[selectedPoint].Y = position.Y;
 
                 flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
-                PathText = flexiPath.ToPath();
+                PathText = flexiPath.ToPath(absolutePaths);
                 updateRequired = true;
                 selectedPoint = -1;
                 NotifyPropertyChanged("Points");
@@ -627,7 +646,7 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void LoadImage(string f)
+        public void LoadImage(string f)
         {
             Uri fileUri = new Uri(f);
             BitmapImage bmi = new BitmapImage();
@@ -635,6 +654,7 @@ namespace Barnacle.UserControls
             bmi.UriSource = fileUri;
             bmi.EndInit();
             BackgroundImage = bmi;
+            imagePath = f;
         }
 
         private void MoveWholePath(System.Windows.Point position)
@@ -662,7 +682,7 @@ namespace Barnacle.UserControls
             if (canCNVDouble)
             {
                 flexiPath.ConvertTwoLineSegmentsToQuadraticBezier();
-                PathText = flexiPath.ToPath();
+                PathText = flexiPath.ToPath(absolutePaths);
                 CanCNVDouble = false;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                 NotifyPropertyChanged("Points");
@@ -676,7 +696,7 @@ namespace Barnacle.UserControls
 
         private void OnCopy(object obj)
         {
-            PathText = flexiPath.ToPath();
+            PathText = flexiPath.ToPath(absolutePaths);
             System.Windows.Clipboard.SetText(PathText);
         }
 
@@ -688,7 +708,7 @@ namespace Barnacle.UserControls
             }
 
             flexiPath.FromTextPath(v);
-            PathText = flexiPath.ToPath();
+            PathText = flexiPath.ToPath(absolutePaths);
             NotifyPropertyChanged("Points");
         }
 
