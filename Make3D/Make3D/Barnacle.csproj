@@ -110,8 +110,8 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\DevTest\DevTest.xaml.cs">
-      <DependentUpon>DevTest.xaml</DependentUpon>
+    <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
+      <DependentUpon>Platelet.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\DualProfile\DualProfileDlg.xaml.cs" />
     <Compile Include="Dialogs\Exporting\ExportSelectedDialog.xaml.cs">
@@ -137,10 +137,6 @@
     <Compile Include="Dialogs\InfoWindow.xaml.cs">
       <DependentUpon>InfoWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml.cs">
-      <DependentUpon>IrregularPolygonDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Dialogs\IrregularPolygon\PolyPoint.cs" />
     <Compile Include="Dialogs\LinearLoft\LinearLoftDialog.xaml.cs" />
     <Compile Include="Dialogs\MeshEditor\Mesh.cs" />
     <Compile Include="Dialogs\MeshEditor\MeshEditorDlg.xaml.cs">
@@ -424,7 +420,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\DevTest\DevTest.xaml">
+    <Page Include="Dialogs\Platelet\Platelet.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -453,10 +449,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\InfoWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Dialogs\IrregularPolygon\IrregularPolygonDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -34,7 +34,8 @@ namespace Barnacle.LineLib
         {
             if (P1 < pnts.Count())
             {
-                res.Add(new Point(pnts[P1].X, pnts[P1].Y));
+                AddDisplayPoint(res, pnts[P1].X, pnts[P1].Y);
+                //  res.Add(new Point(pnts[P1].X, pnts[P1].Y));
             }
         }
 

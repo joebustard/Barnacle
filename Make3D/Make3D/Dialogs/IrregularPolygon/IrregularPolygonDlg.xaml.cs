@@ -22,7 +22,7 @@ namespace Barnacle.Dialogs
     /// <summary>
     /// Interaction logic for IrregularPolygonDlg.xaml
     /// </summary>
-    public partial class PlateletDlg : BaseModellerDialog
+    public partial class Platelet : BaseModellerDialog
     {
         private bool canCNVDouble;
 
@@ -47,7 +47,7 @@ namespace Barnacle.Dialogs
         private bool solidShape;
         private int wallWidth;
 
-        public PlateletDlg()
+        public Platelet()
         {
             InitializeComponent();
 

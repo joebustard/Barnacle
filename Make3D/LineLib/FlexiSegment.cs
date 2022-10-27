@@ -20,6 +20,24 @@ namespace Barnacle.LineLib
         {
         }
 
+        protected void AddDisplayPoint(List<Point> res, double x, double y)
+        {
+            if (res != null)
+            {
+                if (res.Count > 0)
+                {
+                    if (x != res[res.Count - 1].X || y != res[res.Count - 1].Y)
+                    {
+                        res.Add(new Point(x, y));
+                    }
+                }
+                else
+                {
+                    res.Add(new Point(x, y));
+                }
+            }
+        }
+
         public virtual void DisplayPointsF(List<System.Drawing.PointF> res, ObservableCollection<FlexiPoint> pnts)
         {
         }

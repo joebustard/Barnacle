@@ -161,45 +161,61 @@ namespace Barnacle.Models
 
         public static List<PointF> RemoveCoplanarSegments(List<PointF> points)
         {
+            bool found = true;
             List<PointF> res = new List<PointF>();
-            if (points.Count < 3)
-            {
-                res = points;
-            }
-            else
-            {
-                bool coplaner = false;
-                int i;
-                for (i = 0; i < points.Count - 2; i += 1)
-                {
-                    coplaner = IsCoPlanar(points[i], points[i + 1], points[i + 2]);
 
+            while (found)
+            {
+                found = false;
+                res.Clear();
+                if (points.Count < 3)
+                {
+                    res = points;
+                }
+                else
+                {
+                    bool coplaner = false;
+                    int i;
+                    for (i = 0; i < points.Count - 2; i += 1)
+                    {
+                        coplaner = IsCoPlanar(points[i], points[i + 1], points[i + 2]);
+
+                        if (!coplaner)
+                        {
+                            res.Add(points[i]);
+                        }
+                        else
+                        {
+                            res.Add(points[i]);
+                            i++; // Skips the midpoint
+                            found = true;
+                        }
+                    }
+                    if (i + 1 < points.Count)
+                    {
+                        coplaner = IsCoPlanar(points[i], points[i + 1], points[0]);
+                    }
+                    else
+                    {
+                        coplaner = true;
+                    }
                     if (!coplaner)
                     {
                         res.Add(points[i]);
+                        res.Add(points[i + 1]);
                     }
                     else
                     {
                         res.Add(points[i]);
-                        i++; // Skips the midpoint
                     }
                 }
-                if (i + 1 < points.Count)
+                if (found)
                 {
-                    coplaner = IsCoPlanar(points[i], points[i + 1], points[0]);
-                }
-                else
-                {
-                    coplaner = true;
-                }
-                if (!coplaner)
-                {
-                    res.Add(points[i]);
-                    res.Add(points[i + 1]);
-                }
-                else
-                {
-                    res.Add(points[i]);
+                    points.Clear();
+                    foreach (PointF p in res)
+                    {
+                        points.Add(p);
+                    }
                 }
             }
             return res;

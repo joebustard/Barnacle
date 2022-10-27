@@ -38,6 +38,7 @@ namespace Barnacle.UserControls
         private SelectionModeType selectionMode;
 
         private bool absolutePaths;
+
         public bool AbsolutePaths
         {
             get { return absolutePaths; }
@@ -54,6 +55,7 @@ namespace Barnacle.UserControls
         private bool snap;
 
         private GridSettings.GridStyle showGrid;
+
         public FlexiPathEditorControlViewModel()
         {
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
@@ -163,17 +165,17 @@ namespace Barnacle.UserControls
 
         public List<Shape> GridMarkers
         {
-            get 
+            get
             {
-            if ( pointGrid != null)
-            {
+                if (pointGrid != null)
+                {
                     return pointGrid.GridMarkers;
-            }
-            else{
+                }
+                else
+                {
                     return null;
+                }
             }
-            }
-
         }
 
         public double GridX
@@ -330,6 +332,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
         /*
         public bool ShowPolyGrid
         {
@@ -344,6 +347,7 @@ namespace Barnacle.UserControls
             }
         }
         */
+
         public bool Snap
         {
             get { return snap; }
@@ -360,7 +364,8 @@ namespace Barnacle.UserControls
         public ICommand ZoomCommand { get; set; }
 
         private string imagePath;
-        public string ImagePath { get { return imagePath; } }
+        public string ImagePath
+        { get { return imagePath; } }
 
         public bool ConvertLineAtPointToBezier(System.Windows.Point position, bool cubic)
         {
@@ -476,7 +481,8 @@ namespace Barnacle.UserControls
         private RectangularGrid rectGrid;
         private PolarGrid polarGrid;
         private GridSettings gridSettings;
-        private void MakeGrid( double actualWidth, double actualHeight)
+
+        private void MakeGrid(double actualWidth, double actualHeight)
         {
             if (rectGrid == null)
             {
@@ -498,16 +504,15 @@ namespace Barnacle.UserControls
             {
                 pointGrid = rectGrid;
             }
-            
         }
+
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
         {
             ScreenDpi = dpiScale;
-            
-            MakeGrid(actualWidth,actualHeight);
+
+            MakeGrid(actualWidth, actualHeight);
             rectGrid.CreateMarkers(dpiScale);
             polarGrid.CreateMarkers(dpiScale);
-           
         }
 
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
@@ -589,7 +594,7 @@ namespace Barnacle.UserControls
         internal bool MouseUp(MouseButtonEventArgs e, Point position)
         {
             bool updateRequired = false;
-            if (selectedPoint != -1 && moving && snap)
+            if (selectedPoint != -1 && moving)
             {
                 System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
 
@@ -746,7 +751,6 @@ namespace Barnacle.UserControls
                 case GridSettings.GridStyle.Hidden:
                 case GridSettings.GridStyle.Rectangular:
                     {
-
                         pointGrid = polarGrid;
                         ShowGrid = GridSettings.GridStyle.Polar;
                         snap = true;
@@ -761,6 +765,7 @@ namespace Barnacle.UserControls
                     break;
             }
         }
+
         private void OnLoadImage(object obj)
         {
             OpenFileDialog opDlg = new OpenFileDialog();
@@ -844,7 +849,7 @@ namespace Barnacle.UserControls
         private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
         {
             Point result = new Point(0, 0);
-             if ( pointGrid != null && snap)
+            if (pointGrid != null && snap)
             {
                 result = pointGrid.SnapPositionToMM(pos);
             }

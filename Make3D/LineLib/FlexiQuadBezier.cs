@@ -48,7 +48,9 @@ namespace Barnacle.LineLib
 
             for (double t = 0; t <= 1; t += dt)
             {
-                res.Add(GetCoord(t, pnts));
+                Point p = GetCoord(t, pnts);
+                AddDisplayPoint(res, p.X, p.Y);
+                //  res.Add(GetCoord(t, pnts));
             }
         }
 

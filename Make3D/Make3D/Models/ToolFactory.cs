@@ -53,8 +53,8 @@ namespace Barnacle.Models
                 case "StoneWall":
                     res = new StoneWallDlg();
                     break;
-                
-                    case "PlankWall":
+
+                case "PlankWall":
                     res = new PlankWallDlg();
                     break;
 
@@ -83,7 +83,7 @@ namespace Barnacle.Models
                     break;
 
                 case "Platelet":
-                    res = new PlateletDlg();
+                    res = new Platelet();
                     break;
 
                 case "Parallelogram":
@@ -167,7 +167,7 @@ namespace Barnacle.Models
                     break;
 
                 case "DevTest":
-                    res = new DevTest();
+                    //   res = new Platelet();
                     break;
 
                 case "CurvedFunnel":

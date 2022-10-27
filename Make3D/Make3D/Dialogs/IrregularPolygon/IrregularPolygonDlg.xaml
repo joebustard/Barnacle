@@ -3,7 +3,7 @@
                           mc:Ignorable="d"
                           PreviewKeyDown="MainCanvas_PreviewKeyDown"
                           Title="Platelet"
-                          x:Class="Barnacle.Dialogs.PlateletDlg"
+                          x:Class="Barnacle.Dialogs.Platelet"
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:local="clr-namespace:Barnacle.Dialogs"

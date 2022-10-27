@@ -9,9 +9,9 @@ using System.Windows;
 namespace Barnacle.Dialogs
 {
     /// <summary>
-    /// Interaction logic for Blank.xaml
+    /// Interaction logic for Devtest.xaml
     /// </summary>
-    public partial class DevTest : BaseModellerDialog, INotifyPropertyChanged
+    public partial class Platelet : BaseModellerDialog, INotifyPropertyChanged
     {
         private List<System.Windows.Point> displayPoints;
         private bool hollowShape;
@@ -20,10 +20,11 @@ namespace Barnacle.Dialogs
         private bool solidShape;
         private double wallWidth;
         private string warningText;
-        public DevTest()
+
+        public Platelet()
         {
             InitializeComponent();
-            ToolName = "DevTest";
+            ToolName = "Platelet";
             DataContext = this;
             // ModelGroup = MyModelGroup;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
@@ -32,7 +33,6 @@ namespace Barnacle.Dialogs
             solidShape = true;
             ModelGroup = MyModelGroup;
             loaded = false;
-
         }
 
         public bool HollowShape
@@ -60,6 +60,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public override bool ShowAxies
         {
             get
@@ -109,6 +110,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public bool SolidShape
         {
             get
@@ -125,6 +127,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public double WallWidth
         {
             get { return wallWidth; }
@@ -191,13 +194,6 @@ namespace Barnacle.Dialogs
             Faces.Add(c2);
         }
 
-        private void PathPointsChanged(List<System.Windows.Point> pnts)
-        {
-            displayPoints = pnts;
-            GenerateShape();
-            Redisplay();
-        }
-
         private void GenerateHollow()
         {
             List<System.Windows.Point> points = displayPoints;
@@ -219,7 +215,7 @@ namespace Barnacle.Dialogs
                 {
                     // flipping coordinates so have to reverse polygon too
                     //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                    tmp.Add( new System.Windows.Point(points[i].X, top - points[i].Y));
+                    tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
                 else
                 {
@@ -229,18 +225,17 @@ namespace Barnacle.Dialogs
                 }
             }
 
-            for (int i = 0; i < tmp.Count-1; i++)
+            for (int i = 0; i < tmp.Count - 1; i++)
             {
                 outerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
-                innerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
             }
-            
             outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
-            innerPolygon = LineUtils.RemoveCoplanarSegments(innerPolygon);
-            // outerPolygon = LineUtils.GetEnlargedPolygon(outerPolygon, (float)wallWidth / 2.0F);
+
+            for (int i = 0; i < outerPolygon.Count; i++)
+            {
+                innerPolygon.Add(new PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
+            }
             innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)wallWidth);
-            
-            //innerPolygon = ShrinkPolygon(outerPolygon, wallWidth); 
 
             tmp.Clear();
             for (int i = outerPolygon.Count - 1; i >= 0; i--)
@@ -279,13 +274,9 @@ namespace Barnacle.Dialogs
                 Faces.Add(c2);
                 Faces.Add(c1);
 
-
-
                 Faces.Add(c0);
                 Faces.Add(c3);
                 Faces.Add(c2);
-
-
 
                 c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, wallWidth);
                 c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, wallWidth);
@@ -295,47 +286,12 @@ namespace Barnacle.Dialogs
                 Faces.Add(c1);
                 Faces.Add(c2);
 
-
-
                 Faces.Add(c0);
                 Faces.Add(c2);
                 Faces.Add(c3);
-
-
             }
 
             CentreVertices();
-        }
-
-        private List<PointF> ShrinkPolygon(List<PointF> ply, double offset)
-        {
-            List<PointF> res = new List<PointF>();
-            float  cX=0.0F;
-            float cY=0.0F;
-            foreach ( PointF pf in ply)
-            {
-                cX += pf.X;
-                cY += pf.Y;
-            }
-            cX /= ply.Count;
-            cY /= ply.Count;
-
-            float dx;
-            float dy;
-            foreach (PointF pf in ply)
-            {
-                dx = pf.X - cX;
-                dy = pf.Y - cY;
-                double dist = Math.Sqrt((dx * dx) + (dy * dy));
-                double theta = Math.Atan2(dy, dx);
-                if ( dist > offset)
-                {
-                    dist -= offset;
-                }
-                PointF np = new PointF((float)(dist * Math.Cos(theta)) + cX, (float)(dist*Math.Sin(theta)) + cY);
-                res.Add(np);
-            }
-            return res;
         }
 
         private void GenerateShape()
@@ -377,13 +333,13 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < points.Count; i++)
                 {
-                        if (PathEditor.LocalImage == null)
-                        {
-                            // flipping coordinates so have to reverse polygon too
-                            tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        }
-                        else
-                        
+                    if (PathEditor.LocalImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                    }
+                    else
+
                     {
                         double x = PathEditor.ToMM(points[i].X);
                         double y = PathEditor.ToMM(top - points[i].Y);
@@ -424,6 +380,7 @@ namespace Barnacle.Dialogs
                 CentreVertices();
             }
         }
+
         private void LoadEditorParameters()
         {
             string imageName = EditorParameters.Get("ImagePath");
@@ -437,7 +394,17 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.FromString(s);
             }
-            WallWidth = EditorParameters.GetDouble("WallWidth", 10);
+            WallWidth = EditorParameters.GetDouble("WallWidth", 2);
+        }
+
+        private void PathPointsChanged(List<System.Windows.Point> pnts)
+        {
+            displayPoints = pnts;
+            if (PathEditor.PathClosed)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         private void SaveEditorParmeters()
@@ -445,6 +412,37 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
             EditorParameters.Set("Path", PathEditor.PathString);
             EditorParameters.Set("WallWidth", WallWidth.ToString());
+        }
+
+        private List<PointF> ShrinkPolygon(List<PointF> ply, double offset)
+        {
+            List<PointF> res = new List<PointF>();
+            float cX = 0.0F;
+            float cY = 0.0F;
+            foreach (PointF pf in ply)
+            {
+                cX += pf.X;
+                cY += pf.Y;
+            }
+            cX /= ply.Count;
+            cY /= ply.Count;
+
+            float dx;
+            float dy;
+            foreach (PointF pf in ply)
+            {
+                dx = pf.X - cX;
+                dy = pf.Y - cY;
+                double dist = Math.Sqrt((dx * dx) + (dy * dy));
+                double theta = Math.Atan2(dy, dx);
+                if (dist > offset)
+                {
+                    dist -= offset;
+                }
+                PointF np = new PointF((float)(dist * Math.Cos(theta)) + cX, (float)(dist * Math.Sin(theta)) + cY);
+                res.Add(np);
+            }
+            return res;
         }
 
         private void UpdateDisplay()
