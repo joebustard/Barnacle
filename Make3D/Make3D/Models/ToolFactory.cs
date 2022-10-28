@@ -167,7 +167,7 @@ namespace Barnacle.Models
                     break;
 
                 case "DevTest":
-                    //   res = new Platelet();
+                    res = new DevTestDlg();
                     break;
 
                 case "CurvedFunnel":

@@ -9,8 +9,8 @@ namespace Barnacle.LineLib
     {
         private const double selectionDistance = 2;
         private bool closed;
-        private ObservableCollection<FlexiPoint> points;
-        private List<FlexiSegment> segs;
+        protected ObservableCollection<FlexiPoint> points;
+        protected List<FlexiSegment> segs;
 
         public FlexiPath()
         {
@@ -108,7 +108,7 @@ namespace Barnacle.LineLib
             AddQCurve(new Point(cx1, cy1), fp.ToPoint());
         }
 
-        public void Clear()
+        public virtual void Clear()
         {
             segs.Clear();
             points.Clear();
@@ -758,7 +758,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public bool SplitSelectedLineSegment(Point position)
+        public virtual bool SplitSelectedLineSegment(Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
@@ -794,7 +794,7 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public void MoveTo(Point position)
+        public virtual void MoveTo(Point position)
         {
             double cx = 0;
             double cy = 0;

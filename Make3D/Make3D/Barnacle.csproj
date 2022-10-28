@@ -110,6 +110,7 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\DevTest\DevTestDlg.xaml.cs" />
     <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
       <DependentUpon>Platelet.xaml</DependentUpon>
     </Compile>
@@ -419,6 +420,10 @@
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DevTest\DevTestDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Platelet\Platelet.xaml">
       <SubType>Designer</SubType>

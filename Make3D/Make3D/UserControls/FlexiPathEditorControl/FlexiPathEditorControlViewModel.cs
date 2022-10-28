@@ -73,6 +73,7 @@ namespace Barnacle.UserControls
             PastePathCommand = new RelayCommand(OnPaste);
             ZoomCommand = new RelayCommand(OnZoom);
             LoadImageCommand = new RelayCommand(OnLoadImage);
+            fixedEndPath = false;
             flexiPath = new FlexiPath();
             polyPoints = flexiPath.FlexiPoints;
             selectedPoint = -1;
@@ -84,6 +85,30 @@ namespace Barnacle.UserControls
             snap = true;
             gridSettings = new GridSettings();
             imagePath = "";
+        }
+
+        private bool fixedEndPath = false;
+
+        public bool FixedEndPath
+        {
+            get { return fixedEndPath; }
+            set
+            {
+                if (fixedEndPath != value)
+                {
+                    fixedEndPath = value;
+                    if (fixedEndPath)
+                    {
+                        FixedEndFlexiPath fep = new FixedEndFlexiPath();
+                        if (fixedPathStartPoint != null)
+                        {
+                            fep.SetBaseSegment(fixedPathStartPoint, fixedPathEndPoint);
+                        }
+                        flexiPath = fep;
+                        polyPoints = flexiPath.FlexiPoints;
+                    }
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -364,6 +389,7 @@ namespace Barnacle.UserControls
         public ICommand ZoomCommand { get; set; }
 
         private string imagePath;
+
         public string ImagePath
         { get { return imagePath; } }
 
@@ -722,6 +748,15 @@ namespace Barnacle.UserControls
             SelectionMode = SelectionModeType.DeleteSegment;
         }
 
+        private Point fixedPathStartPoint;
+        private Point fixedPathEndPoint;
+
+        internal void SetFixedEnds(Point fixedPathStartPoint, Point fixedPathEndPoint)
+        {
+            this.fixedPathStartPoint = fixedPathStartPoint;
+            this.fixedPathEndPoint = fixedPathEndPoint;
+        }
+
         private void OnGrid(object obj)
         {
             switch (showGrid)
@@ -807,7 +842,14 @@ namespace Barnacle.UserControls
         private void OnResetPath(object obj)
         {
             flexiPath.Clear();
-            SelectionMode = SelectionModeType.StartPoint;
+            if (!fixedEndPath)
+            {
+                SelectionMode = SelectionModeType.StartPoint;
+            }
+            else
+            {
+                SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+            }
             PathText = "";
             NotifyPropertyChanged("Points");
         }

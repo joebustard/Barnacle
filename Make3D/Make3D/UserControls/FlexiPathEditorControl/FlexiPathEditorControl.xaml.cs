@@ -20,13 +20,59 @@ namespace Barnacle.UserControls
 
         private FlexiPathEditorControlViewModel vm;
 
+        private bool fixedEndPath = false;
+
+        public bool FixedEndPath
+        {
+            get { return fixedEndPath; }
+            set
+            {
+                if (fixedEndPath != value)
+                {
+                    fixedEndPath = value;
+                }
+            }
+        }
+
+        private Point fixedPathStartPoint;
+
+        public Point FixedPathStartPoint
+        {
+            get { return fixedPathStartPoint; }
+            set
+            {
+                if (value != fixedPathStartPoint)
+                {
+                    fixedPathStartPoint = value;
+                }
+            }
+        }
+
+        private Point fixedPathEndPoint;
+
+        public Point FixedPathEndPoint
+        {
+            get { return fixedPathEndPoint; }
+            set
+            {
+                if (value != fixedPathEndPoint)
+                {
+                    fixedPathEndPoint = value;
+                }
+            }
+        }
+
         public FlexiPathEditorControl()
         {
             InitializeComponent();
             OnFlexiPathChanged = null;
+            fixedEndPath = false;
+            fixedPathStartPoint = new Point(0, 10);
+            fixedPathEndPoint = new Point(0, 20);
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
+
         public bool PathClosed
         {
             get
@@ -43,21 +89,22 @@ namespace Barnacle.UserControls
         }
 
         private string imagePath;
-        public string ImagePath 
+
+        public string ImagePath
         {
             get { return vm?.ImagePath ?? imagePath; }
 
             set
             {
-                if ( imagePath != value)
+                if (imagePath != value)
                 {
                     imagePath = value;
-                    
                 }
             }
         }
 
-        public string PathString { 
+        public string PathString
+        {
             get { return vm?.PathText ?? ""; }
         }
 
@@ -210,10 +257,12 @@ namespace Barnacle.UserControls
         }
 
         private bool absolutePaths;
-        public bool AbsolutePaths {
+
+        public bool AbsolutePaths
+        {
             get { return absolutePaths; }
 
-            set { absolutePaths = value;}
+            set { absolutePaths = value; }
         }
 
         public object LocalImage
@@ -454,6 +503,7 @@ namespace Barnacle.UserControls
             vm?.LoadImage(fileName);
             imagePath = fileName;
         }
+
         private void SetSelectionModeBorderColours()
         {
             // put a clear border around the button associated with active state
@@ -526,12 +576,14 @@ namespace Barnacle.UserControls
             double res = 25.4 * x / sc.PixelsPerInchX;
             return res;
         }
+
         public double ToMM(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
             double res = 25.4 * x / sc.PixelsPerInchX;
             return res;
         }
+
         public double ToMMY(double y)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
@@ -588,24 +640,25 @@ namespace Barnacle.UserControls
                 if (vm != null)
                 {
                     vm.PropertyChanged += Vm_PropertyChanged;
-
+                    vm.SetFixedEnds(fixedPathStartPoint, fixedPathEndPoint);
+                    vm.FixedEndPath = fixedEndPath;
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     ShowGridStatus();
                     vm.AbsolutePaths = absolutePaths;
                     vm.SetPath(pathText);
-                    if ( imagePath != null )
+                    if (imagePath != null)
                     {
                         vm.LoadImage(imagePath);
                     }
-                    if ( pathText != null)
+                    if (pathText != null)
                     {
                         vm.FromString(pathText);
                     }
-
                 }
-            } 
+            }
             UpdateDisplay();
         }
+
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
