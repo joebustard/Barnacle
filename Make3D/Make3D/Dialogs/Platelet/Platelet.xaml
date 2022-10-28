@@ -55,7 +55,12 @@
                 </Viewport3D>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
-
+                    <Label VerticalAlignment="Center">
+                        Width
+                    </Label>
+                    <TextBox Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center"
+                                 Width="100" Margin="4,0,0,0" />
                     <RadioButton GroupName="HollowGroup"
                                  IsChecked="{Binding SolidShape}" Content="Solid" Margin="2,2,8,2"  VerticalAlignment="Center" />
                     <RadioButton GroupName="HollowGroup"
@@ -66,7 +71,7 @@
                         <Label
                                VerticalContentAlignment="Center"
                                Visibility="{Binding ShowWidth}">
-                            Width
+                            Wall
                         </Label>
                         <TextBox Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}"
                                  VerticalContentAlignment="Center"

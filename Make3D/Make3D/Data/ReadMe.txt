@@ -1,7 +1,13 @@
 ﻿v1.0.1
 ===========
-Added tool for a 
-simple plank wall.
+Simple plank wall tool.
+   Created.
+
+Platelet Tool
+   Replaced by one with common flexipath control
+   Added polar grid
+   Corrected issues with hollow shapes
+
 
 V1.0.0
 ===========
