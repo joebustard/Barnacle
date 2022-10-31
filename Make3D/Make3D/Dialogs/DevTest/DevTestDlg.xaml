@@ -24,31 +24,48 @@
             <ctrls:FlexiPathEditorControl x:Name="PathEditor" FixedEndPath="True" />
         </Border>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove" Grid.Row="0"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
+                    <Viewport3D.Camera>
+                        <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                        </PerspectiveCamera>
+                    </Viewport3D.Camera>
 
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
+                    <ModelVisual3D>
+                        <ModelVisual3D.Content>
+                            <Model3DGroup>
+                                <AmbientLight Color="#FF808080" />
+                                <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                                </DirectionalLight>
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
 
-                <ModelVisual3D x:Name = "MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
+                    <ModelVisual3D x:Name = "MyModel">
+                        <ModelVisual3D.Content>
+                            <Model3DGroup x:Name="MyModelGroup">
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
+                </Viewport3D>
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <Label VerticalAlignment="Center">
+                        Divisions
+                    </Label>
+                    <TextBox Text="{Binding NumDivisions, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalContentAlignment="Center"
+                                 Width="100" Margin="4,0,0,0" />
+                    <TextBox Text="{Binding WarningText}" VerticalContentAlignment="Center"
+                                 Margin="4,0,0,0" Foreground="Red" FontSize="18"/>
+                </StackPanel>
+
+            </Grid>
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>

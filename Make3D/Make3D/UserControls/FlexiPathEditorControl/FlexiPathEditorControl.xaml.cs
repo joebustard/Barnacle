@@ -68,7 +68,7 @@ namespace Barnacle.UserControls
             OnFlexiPathChanged = null;
             fixedEndPath = false;
             fixedPathStartPoint = new Point(0, 10);
-            fixedPathEndPoint = new Point(0, 20);
+            fixedPathEndPoint = new Point(0, 50);
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
@@ -80,9 +80,17 @@ namespace Barnacle.UserControls
                 bool cl = false;
                 if (vm != null && vm.Points != null)
                 {
-                    cl = (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) &&
-                              (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.StartPoint) &&
-                              (vm.Points.Count > 3);
+                    if (fixedEndPath)
+                    {
+
+                        cl = (vm.Points.Count > 2);
+                    }
+                    else
+                    {
+                        cl = (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) &&
+                                  (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.StartPoint) &&
+                                  (vm.Points.Count > 3);
+                    }
                 }
                 return cl;
             }
@@ -139,6 +147,10 @@ namespace Barnacle.UserControls
             MainCanvas.Children.Add(ln);
         }
 
+        public List<Point> GetPoints()
+        {
+            return vm?.DisplayPoints;
+        }
         private void DisplayLines()
         {
             List<System.Windows.Point> points = vm.DisplayPoints;
@@ -315,6 +327,7 @@ namespace Barnacle.UserControls
                 ln.Y2 = ToPixelY(points[v].Y);
                 ln.MouseLeftButtonDown += Ln_MouseLeftButtonDown;
                 ln.MouseRightButtonDown += Ln_MouseRightButtonDown;
+                ln.MouseUp += MainCanvas_MouseUp;
                 MainCanvas.Children.Add(ln);
             }
         }
