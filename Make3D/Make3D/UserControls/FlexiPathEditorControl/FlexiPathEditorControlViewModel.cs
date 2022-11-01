@@ -102,7 +102,7 @@ namespace Barnacle.UserControls
                         FixedEndFlexiPath fep = new FixedEndFlexiPath();
                         if (fixedPathStartPoint != null)
                         {
-                            fep.SetBaseSegment(fixedPathStartPoint, fixedPathEndPoint);
+                            fep.SetBaseSegment(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
                         }
                         flexiPath = fep;
                         polyPoints = flexiPath.FlexiPoints;
@@ -460,8 +460,8 @@ namespace Barnacle.UserControls
             {
                 if (e.LeftButton == MouseButtonState.Pressed && moving)
                 {
-                    polyPoints[selectedPoint].X = position.X;
-                    polyPoints[selectedPoint].Y = position.Y;
+                    // polyPoints[selectedPoint].X = position.X;
+                    // polyPoints[selectedPoint].Y = position.Y;
                     flexiPath.SetPointPos(selectedPoint, snappedPos);
                     PathText = flexiPath.ToPath(absolutePaths);
                     updateRequired = true;
@@ -477,43 +477,39 @@ namespace Barnacle.UserControls
 
         private bool FixedEndPathMove(MouseEventArgs e, Point position, bool updateRequired)
         {
-
             if (selectedPoint != -1)
             {
                 if (e.LeftButton == MouseButtonState.Pressed && moving)
                 {
                     if (selectedPoint == 0)
                     {
-                        if (position.Y > polyPoints[polyPoints.Count - 1].Y)
+                        if (position.Y > ToPixelY(polyPoints[polyPoints.Count - 1].Y))
                         {
-                            position.Y = polyPoints[polyPoints.Count - 1].Y;
+                            position.Y = ToPixelY(polyPoints[polyPoints.Count - 1].Y);
                         }
-                        position.X = polyPoints[selectedPoint].X;
-                        polyPoints[selectedPoint].Y = position.Y;
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else if (selectedPoint == polyPoints.Count - 1)
                     {
-                        position.X = polyPoints[selectedPoint].X;
-                        if (position.Y < polyPoints[0].Y)
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+                        if (position.Y < ToPixelY(polyPoints[0].Y))
                         {
-                            position.Y = polyPoints[0].Y;
+                            position.Y = ToPixelY(polyPoints[0].Y);
                         }
-                        polyPoints[selectedPoint].Y = position.Y;
+
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else
                     {
-                        polyPoints[selectedPoint].X = position.X;
-                        polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
 
                     PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
-
 
                     PathText = flexiPath.ToPath(absolutePaths);
                     updateRequired = true;
@@ -526,7 +522,6 @@ namespace Barnacle.UserControls
 
             return updateRequired;
         }
-
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -717,32 +712,31 @@ namespace Barnacle.UserControls
             return updateRequired;
         }
 
-
         private bool FixedEndMouseUp(Point position, bool updateRequired)
         {
             if (selectedPoint != -1)
             {
-                if ( moving)
+                if (moving)
                 {
                     if (selectedPoint == 0)
                     {
-                        if (position.Y > polyPoints[polyPoints.Count - 1].Y)
+                        if (position.Y > ToPixelY(polyPoints[polyPoints.Count - 1].Y))
                         {
-                            position.Y = polyPoints[polyPoints.Count - 1].Y;
+                            position.Y = ToPixelY(polyPoints[polyPoints.Count - 1].Y);
                         }
-                        position.X = polyPoints[selectedPoint].X;
-                        polyPoints[selectedPoint].Y = position.Y;
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+                        //polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else if (selectedPoint == polyPoints.Count - 1)
                     {
-                        position.X = polyPoints[selectedPoint].X;
-                        if (position.Y < polyPoints[0].Y)
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+                        if (position.Y < ToPixelY(polyPoints[0].Y))
                         {
-                            position.Y = polyPoints[0].Y;
+                            position.Y = ToPixelY(polyPoints[0].Y);
                         }
-                        polyPoints[selectedPoint].Y = position.Y;
+                        //  polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
@@ -760,12 +754,9 @@ namespace Barnacle.UserControls
                     selectedPoint = -1;
                     NotifyPropertyChanged("Points");
                 }
-                
             }
             moving = false;
             return updateRequired;
-
-
         }
 
         private void AddAnotherPointToPoly(System.Windows.Point position)
@@ -880,11 +871,13 @@ namespace Barnacle.UserControls
         }
 
         private Point fixedPathStartPoint;
+        private Point fixedPathMidPoint;
         private Point fixedPathEndPoint;
 
-        internal void SetFixedEnds(Point fixedPathStartPoint, Point fixedPathEndPoint)
+        internal void SetFixedEnds(Point fixedPathStartPoint, Point fixedPathMidPoint, Point fixedPathEndPoint)
         {
             this.fixedPathStartPoint = fixedPathStartPoint;
+            this.fixedPathMidPoint = fixedPathMidPoint;
             this.fixedPathEndPoint = fixedPathEndPoint;
         }
 

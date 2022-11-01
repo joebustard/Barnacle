@@ -48,6 +48,20 @@ namespace Barnacle.UserControls
             }
         }
 
+        private Point fixedPathMidPoint;
+
+        public Point FixedPathMidPoint
+        {
+            get { return fixedPathMidPoint; }
+            set
+            {
+                if (value != fixedPathMidPoint)
+                {
+                    fixedPathMidPoint = value;
+                }
+            }
+        }
+
         private Point fixedPathEndPoint;
 
         public Point FixedPathEndPoint
@@ -68,6 +82,7 @@ namespace Barnacle.UserControls
             OnFlexiPathChanged = null;
             fixedEndPath = false;
             fixedPathStartPoint = new Point(0, 10);
+            fixedPathMidPoint = new Point(20, 30);
             fixedPathEndPoint = new Point(0, 50);
         }
 
@@ -82,7 +97,6 @@ namespace Barnacle.UserControls
                 {
                     if (fixedEndPath)
                     {
-
                         cl = (vm.Points.Count > 2);
                     }
                     else
@@ -151,6 +165,7 @@ namespace Barnacle.UserControls
         {
             return vm?.DisplayPoints;
         }
+
         private void DisplayLines()
         {
             List<System.Windows.Point> points = vm.DisplayPoints;
@@ -175,7 +190,7 @@ namespace Barnacle.UserControls
                     oy = vm.Points[vm.SelectedPoint].Y;
                 }
 
-                double rad = 3;
+                double rad = 6;
                 System.Windows.Media.Brush br = null;
                 for (int i = 0; i < vm.Points.Count; i++)
                 {
@@ -184,12 +199,12 @@ namespace Barnacle.UserControls
                     System.Windows.Point p = vm.Points[i].ToPoint();
                     if (vm.SelectedPoint == i)
                     {
-                        rad = 6;
+                        rad = 8;
                         br = System.Windows.Media.Brushes.LightGreen;
                     }
                     else
                     {
-                        rad = 3;
+                        rad = 6;
                         br = System.Windows.Media.Brushes.Red;
                         if (ox != double.NaN)
                         {
@@ -231,7 +246,7 @@ namespace Barnacle.UserControls
                 {
                     br = System.Windows.Media.Brushes.Red;
                     var p = vm.Points[0].ToPoint();
-                    MakeEllipse(6, br, p);
+                    MakeEllipse(8, br, p);
                 }
                 // now draw any control connectors
                 for (int i = 0; i < vm.Points.Count; i++)
@@ -653,7 +668,7 @@ namespace Barnacle.UserControls
                 if (vm != null)
                 {
                     vm.PropertyChanged += Vm_PropertyChanged;
-                    vm.SetFixedEnds(fixedPathStartPoint, fixedPathEndPoint);
+                    vm.SetFixedEnds(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
                     vm.FixedEndPath = fixedEndPath;
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     ShowGridStatus();
@@ -667,6 +682,7 @@ namespace Barnacle.UserControls
                     {
                         vm.FromString(pathText);
                     }
+                    vm.SelectedPoint = -1;
                 }
             }
             UpdateDisplay();

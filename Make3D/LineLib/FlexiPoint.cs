@@ -10,6 +10,7 @@ namespace Barnacle.LineLib
             Y = p.Y;
             Mode = PointMode.Data;
             Visible = false;
+            Selected = false;
         }
 
         public FlexiPoint(double x, double y)
@@ -18,6 +19,7 @@ namespace Barnacle.LineLib
             Y = y;
             Mode = PointMode.Data;
             Visible = false;
+            Selected = false;
         }
 
         public FlexiPoint(System.Windows.Point p, int i)
@@ -27,12 +29,14 @@ namespace Barnacle.LineLib
             Id = i;
             Mode = PointMode.Data;
             Visible = false;
+            Selected = false;
         }
 
         public FlexiPoint(Point p, int i, PointMode m) : this(p, i)
         {
             Mode = m;
             Visible = false;
+            Selected = false;
         }
 
         public enum PointMode

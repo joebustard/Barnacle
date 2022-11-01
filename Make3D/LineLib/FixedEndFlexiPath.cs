@@ -27,6 +27,24 @@ namespace Barnacle.LineLib
             }
         }
 
+        public FlexiPoint fixedMidPoint;
+
+        public FlexiPoint FixedMidPoint
+        {
+            get
+            {
+                return fixedMidPoint;
+            }
+
+            set
+            {
+                if (fixedMidPoint != value)
+                {
+                    fixedMidPoint = value;
+                }
+            }
+        }
+
         public FlexiPoint fixedEndPoint;
 
         public FlexiPoint FixedEndPoint
@@ -45,9 +63,10 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void SetBaseSegment(Point st, Point ed)
+        public void SetBaseSegment(Point st, Point md, Point ed)
         {
             fixedStartPoint = new FlexiPoint(st);
+            fixedMidPoint = new FlexiPoint(md);
             fixedEndPoint = new FlexiPoint(ed);
             Clear();
         }
@@ -59,6 +78,10 @@ namespace Barnacle.LineLib
             if (fixedStartPoint != null)
             {
                 Start = fixedStartPoint;
+            }
+            if (fixedMidPoint != null)
+            {
+                AddLineToFlexipoint(fixedMidPoint);
             }
             if (fixedEndPoint != null)
             {

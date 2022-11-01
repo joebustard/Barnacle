@@ -15,6 +15,7 @@ namespace Barnacle.Dialogs
         private bool loaded;
         private int numDivisions;
         private string warningText;
+
         public DevTestDlg()
         {
             InitializeComponent();
@@ -25,6 +26,7 @@ namespace Barnacle.Dialogs
             numDivisions = 80;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
         }
+
         public int NumDivisions
         {
             get { return numDivisions; }
@@ -35,12 +37,12 @@ namespace Barnacle.Dialogs
                     WarningText = "Number of divisions must be >= 3 and <= 360";
                 }
                 else
-                    if (value != numDivisions)
+                if (value != numDivisions)
                 {
                     WarningText = "";
                     numDivisions = value;
                     NotifyPropertyChanged();
-                    Redisplay();
+                    UpdateDisplay();
                 }
             }
         }
@@ -201,7 +203,7 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.FromString(s);
             }
-            NumDivisions = EditorParameters.GetInt("NumDivisions", 80);            
+            NumDivisions = EditorParameters.GetInt("NumDivisions", 80);
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -213,6 +215,7 @@ namespace Barnacle.Dialogs
                 Redisplay();
             }
         }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool

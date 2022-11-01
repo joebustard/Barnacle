@@ -55,16 +55,28 @@
                     </ModelVisual3D>
                 </Viewport3D>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <!--
                     <Label VerticalAlignment="Center">
                         Divisions
                     </Label>
                     <TextBox Text="{Binding NumDivisions, UpdateSourceTrigger=PropertyChanged}"
                                  VerticalContentAlignment="Center"
                                  Width="100" Margin="4,0,0,0" />
+                    -->
+                    <Label Grid.Column="0" VerticalAlignment="Center">
+                        Divisions
+                    </Label>
+                    <Slider AutoToolTipPlacement="TopLeft"
+                    AutoToolTipPrecision="0"
+                            MinWidth="300"
+                    Maximum="360"
+                    Minimum="3"
+                    Value="{Binding NumDivisions}"
+                    VerticalAlignment="Center"
+                    x:Name="HDivSlide" />
                     <TextBox Text="{Binding WarningText}" VerticalContentAlignment="Center"
-                                 Margin="4,0,0,0" Foreground="Red" FontSize="18"/>
+                                 Margin="4,0,0,0" Foreground="Red" FontSize="18" />
                 </StackPanel>
-
             </Grid>
         </Border>
         <Grid Grid.Row="2">
