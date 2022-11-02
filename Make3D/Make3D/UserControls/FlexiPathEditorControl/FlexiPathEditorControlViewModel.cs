@@ -64,6 +64,7 @@ namespace Barnacle.UserControls
             CNVDoubleSegCommand = new RelayCommand(OnCnvDoubleSegment);
             DeleteSegmentCommand = new RelayCommand(OnDeleteSegment);
             GridCommand = new RelayCommand(OnGrid);
+            GridSettingsCommand = new RelayCommand(OnGridSettings);
             PolarGridCommand = new RelayCommand(OnPolarGrid);
             MovePathCommand = new RelayCommand(OnMovePath);
             PickCommand = new RelayCommand(OnPickSegment);
@@ -85,6 +86,10 @@ namespace Barnacle.UserControls
             snap = true;
             gridSettings = new GridSettings();
             imagePath = "";
+        }
+
+        private void OnGridSettings(object obj)
+        {
         }
 
         private bool fixedEndPath = false;
@@ -186,6 +191,7 @@ namespace Barnacle.UserControls
         }
 
         public ICommand GridCommand { get; set; }
+        public ICommand GridSettingsCommand { get; set; }
         public ICommand PolarGridCommand { get; set; }
 
         public List<Shape> GridMarkers
