@@ -1,0 +1,50 @@
+﻿<Window x:Class="Barnacle.UserControls.GridSettingsDlg"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Barnacle.UserControls"
+        mc:Ignorable="d"
+        Title="Grid Settings" Height="320" Width="250" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="150"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <GroupBox Grid.Row="0" Header="Rectangular Grid" Margin="8,4,8,0">
+            <UniformGrid Margin="8,8,8,8" Rows="2" Columns="2" >
+                <RadioButton x:Name="But5" GroupName="RectGrid" Content="5mm" VerticalAlignment="Center" IsChecked="{Binding Rect5Checked}"/>
+                <RadioButton x:Name="But10" GroupName="RectGrid" Content="10mm" VerticalAlignment="Center" IsChecked="{Binding Rect10Checked}"/>
+                <RadioButton x:Name="But15" GroupName="RectGrid" Content="15mm" VerticalAlignment="Center" IsChecked="{Binding Rect15Checked}"/>
+                <RadioButton x:Name="But20" GroupName="RectGrid" Content="20mm" VerticalAlignment="Center" IsChecked="{Binding Rect20Checked}"/>
+            </UniformGrid>
+        </GroupBox>
+        <GroupBox Grid.Row="1" Header="Polar Grid" Margin="8,8,8,8">
+            <StackPanel Orientation="Vertical">
+            <UniformGrid Margin="8,8,8,0" Rows="2" Columns="2"  MinHeight="80">
+                <RadioButton x:Name="PBut5" GroupName="PolarGrid" Content="5mm" VerticalAlignment="Center" IsChecked="{Binding Polar5Checked}"/>
+                    <RadioButton x:Name="PBut10" GroupName="PolarGrid" Content="10mm" VerticalAlignment="Center" IsChecked="{Binding Polar10Checked}"/>
+                    <RadioButton x:Name="PBut15" GroupName="PolarGrid" Content="15mm" VerticalAlignment="Center" IsChecked="{Binding Polar15Checked}"/>
+                    <RadioButton x:Name="PBut20" GroupName="PolarGrid" Content="20mm" VerticalAlignment="Center" IsChecked="{Binding Polar20Checked}"/>
+            </UniformGrid>
+                <StackPanel Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Content="Angle"/>
+                    <TextBox Margin="8,0,0,0" MinWidth="120" Text="{Binding PolarRadius}"/>
+                </StackPanel>
+            </StackPanel>
+        </GroupBox>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="Default" Margin="4,2,4,2" Click="DefaultButton_Click"/>
+            <Button Grid.Column="1" Content="Cancel" Margin="4,2,4,2" Click="CancelButton_Click"/>
+            <Button Grid.Column="2" Content="OK" Margin="4,2,4,2" Click="OKButton_Click"/>
+        </Grid>
+    </Grid>
+</Window>

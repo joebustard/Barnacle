@@ -1,5 +1,6 @@
 ﻿using Barnacle.Dialogs;
 using Barnacle.LineLib;
+
 using Barnacle.ViewModels;
 using Microsoft.Win32;
 using System;
@@ -90,6 +91,11 @@ namespace Barnacle.UserControls
 
         private void OnGridSettings(object obj)
         {
+            GridSettingsDlg dlg = new GridSettingsDlg();
+            if ( dlg.ShowDialog() == true)
+            {
+
+            }
         }
 
         private bool fixedEndPath = false;
