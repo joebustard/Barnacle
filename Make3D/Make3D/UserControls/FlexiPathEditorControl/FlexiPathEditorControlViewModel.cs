@@ -119,11 +119,26 @@ namespace Barnacle.UserControls
                         if (fixedPathStartPoint != null)
                         {
                             fep.SetBaseSegment(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
+                            gridSettings.SetPolarCentre(fixedPolarGridCentre.X, fixedPolarGridCentre.Y);
                         }
                         flexiPath = fep;
                         polyPoints = flexiPath.FlexiPoints;
                         SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                     }
+                }
+            }
+        }
+
+        private Point fixedPolarGridCentre;
+
+        public Point FixedPolarGridCentre
+        {
+            get { return FixedPolarGridCentre; }
+            set
+            {
+                if (value != fixedPolarGridCentre)
+                {
+                    fixedPolarGridCentre = value;
                 }
             }
         }
@@ -599,17 +614,20 @@ namespace Barnacle.UserControls
             {
                 rectGrid = new RectangularGrid();
             }
+            rectGrid.SetActualSize(ScreenDpi, actualWidth, actualHeight);
             rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
-            rectGrid.SetActualSize(actualWidth, actualHeight);
 
             if (polarGrid == null)
             {
                 polarGrid = new PolarGrid();
                 polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
             }
-            gridSettings.SetPolarCentre(actualWidth / 2.0, actualHeight / 2.0);
+            if (!fixedEndPath)
+            {
+                gridSettings.Centre = new Point(ToMMX(actualWidth / 2), ToMMY(actualHeight / 2));
+            }
+            polarGrid.SetActualSize(ScreenDpi, actualWidth, actualHeight);
             polarGrid.SetPolarCentre(gridSettings.Centre);
-            polarGrid.SetActualSize(actualWidth, actualHeight);
 
             if (pointGrid == null)
             {
@@ -622,6 +640,7 @@ namespace Barnacle.UserControls
             this.ScreenDpi = dpiScale;
             this.gridWidth = actualWidth;
             this.gridHeight = actualHeight;
+
             CreateGridMarkers();
         }
 
@@ -788,6 +807,11 @@ namespace Barnacle.UserControls
             }
             moving = false;
             return updateRequired;
+        }
+
+        internal void SetPolarGridCentre(Point fixedPolarGridCentre)
+        {
+            throw new NotImplementedException();
         }
 
         private void AddAnotherPointToPoly(System.Windows.Point position)

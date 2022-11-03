@@ -9,22 +9,21 @@ namespace Barnacle.UserControls
     public class PolarGrid : PointGrid
     {
         private Point centre;
+        private DpiScale dpiScale;
 
         public override void CreateMarkers(DpiScale sc)
         {
+            dpiScale = sc;
             gridMarkers?.Clear();
-            pixelsPerInchX = sc.PixelsPerInchX;
-            pixelsPerInchY = sc.PixelsPerInchY;
+
             double x = 0;
             double y = 0;
-            double drad = polarRadius * (sc.PixelsPerInchX / 25.4);
+            double drad = polarRadius;
             double rad = drad;
-            gridXPixels = (sc.PixelsPerInchX / 25.4) * gridXMM;
 
-            gridYPixels = (sc.PixelsPerInchY / 25.4) * gridYMM;
             // make a largeish marker at the centre
-            MakeSingleMarker(centre.X, centre.Y, 9);
-            double maxrad = Math.Sqrt((centre.X * centre.X) + (centre.Y * centre.Y));
+            MakeSingleMarker(ToPixelX(centre.X), ToPixelY(centre.Y), 9);
+            double maxrad = 2 * Math.Sqrt((actualWidth * actualWidth) + (actualHeight * actualHeight));
             double theta;
 
             double dt = (polarAngle / 360.0) * Math.PI * 2.0;
@@ -35,7 +34,12 @@ namespace Barnacle.UserControls
                 {
                     x = (Math.Sin(theta) * rad);
                     y = (Math.Cos(theta) * rad);
-                    MakeSingleMarker(x + centre.X, y + centre.Y, 5);
+                    double px = ToPixelX((x + centre.X));
+                    double py = ToPixelY((y + centre.Y));
+                    if (px >= 0 && px <= actualWidth && py >= 0 && py <= actualHeight)
+                    {
+                        MakeSingleMarker(px, py, 5);
+                    }
                     theta += dt;
                 }
                 rad += drad;
@@ -83,7 +87,7 @@ namespace Barnacle.UserControls
 
         internal void SetPolarCentre(Point centre)
         {
-            this.centre = centre;
+            this.centre = new Point(centre.X, centre.Y);
         }
 
         private void MakeSingleMarker(double x, double y, double sz)

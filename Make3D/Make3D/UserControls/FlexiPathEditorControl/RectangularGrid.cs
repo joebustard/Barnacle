@@ -13,11 +13,10 @@ namespace Barnacle.UserControls
             gridMarkers?.Clear();
             double x = 0;
             double y = 0;
-            pixelsPerInchX = sc.PixelsPerInchX;
-            pixelsPerInchY = sc.PixelsPerInchY;
-            gridXPixels = (sc.PixelsPerInchX / 25.4) * gridXMM;
 
-            gridYPixels = (sc.PixelsPerInchY / 25.4) * gridYMM;
+            gridXPixels = (pixelsPerInchX / 25.4) * gridXMM;
+
+            gridYPixels = (pixelsPerInchY / 25.4) * gridYMM;
 
             while (x < actualWidth)
             {

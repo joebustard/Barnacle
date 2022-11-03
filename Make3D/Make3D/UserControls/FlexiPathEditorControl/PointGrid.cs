@@ -15,6 +15,7 @@ namespace Barnacle.UserControls
         protected double gridYPixels;
         protected double pixelsPerInchX;
         protected double pixelsPerInchY;
+
         public PointGrid()
         {
             gridMarkers = new List<Shape>();
@@ -34,15 +35,20 @@ namespace Barnacle.UserControls
             gridMarkers.Clear();
         }
 
+        protected DpiScale screenDpi;
+
         /// <summary>
         /// Sets the bounds of the gr
         /// </summary>
         /// <param name="v1"></param>
         /// <param name="v2"></param>
-        public void SetActualSize(double aw, double ah)
+        public void SetActualSize(DpiScale dpi, double aw, double ah)
         {
             actualWidth = aw;
             actualHeight = ah;
+            screenDpi = dpi;
+            pixelsPerInchX = dpi.PixelsPerInchX;
+            pixelsPerInchY = dpi.PixelsPerInchY;
         }
 
         public virtual void SetGridIntervals(double v1, double v2)
@@ -72,6 +78,18 @@ namespace Barnacle.UserControls
         protected double ToMMY(double y)
         {
             double res = 25.4 * y / pixelsPerInchY;
+            return res;
+        }
+
+        protected double ToPixelX(double x)
+        {
+            double res = pixelsPerInchX * x / 25.4;
+            return res;
+        }
+
+        protected double ToPixelY(double y)
+        {
+            double res = pixelsPerInchY * y / 25.4;
             return res;
         }
     }

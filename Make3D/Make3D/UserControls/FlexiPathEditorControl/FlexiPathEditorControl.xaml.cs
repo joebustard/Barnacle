@@ -82,8 +82,9 @@ namespace Barnacle.UserControls
             OnFlexiPathChanged = null;
             fixedEndPath = false;
             fixedPathStartPoint = new Point(0, 10);
-            fixedPathMidPoint = new Point(20, 30);
-            fixedPathEndPoint = new Point(0, 50);
+            fixedPathMidPoint = new Point(20, 50);
+            fixedPathEndPoint = new Point(0, 90);
+            fixedPolarGridCentre = new Point(0, 50);
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
@@ -663,6 +664,20 @@ namespace Barnacle.UserControls
             }
         }
 
+        private Point fixedPolarGridCentre;
+
+        public Point FixedPolarGridCentre
+        {
+            get { return FixedPolarGridCentre; }
+            set
+            {
+                if (value != fixedPolarGridCentre)
+                {
+                    fixedPolarGridCentre = value;
+                }
+            }
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -672,6 +687,7 @@ namespace Barnacle.UserControls
                 {
                     vm.PropertyChanged += Vm_PropertyChanged;
                     vm.SetFixedEnds(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
+                    vm.FixedPolarGridCentre = fixedPolarGridCentre;
                     vm.FixedEndPath = fixedEndPath;
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     ShowGridStatus();
