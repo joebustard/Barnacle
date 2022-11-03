@@ -27,10 +27,10 @@ namespace Barnacle.UserControls
                     Ellipse el = new Ellipse();
                     Canvas.SetLeft(el, x - 1);
                     Canvas.SetTop(el, y - 1);
-                    el.Width = 3;
-                    el.Height = 3;
-                    el.Fill = Brushes.AliceBlue;
-                    el.Stroke = Brushes.CadetBlue;
+                    el.Width = 5;
+                    el.Height = 5;
+                    el.Fill = Brushes.CadetBlue;
+                    el.Stroke = Brushes.Black;
                     if (gridMarkers != null)
                     {
                         gridMarkers.Add(el);
@@ -54,13 +54,10 @@ namespace Barnacle.UserControls
             return new Point(ToMMX(gx), ToMMY(gy));
         }
 
-
-
         public override void SetGridIntervals(double gridXMM, double gridYMM)
         {
             this.gridXMM = gridXMM;
             this.gridYMM = gridYMM;
         }
-
     }
 }

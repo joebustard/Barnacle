@@ -17,6 +17,7 @@ namespace Barnacle.UserControls
         }
 
         private double rectangularGridSize = 10;
+
         public double RectangularGridSize
         {
             get { return rectangularGridSize; }
@@ -30,6 +31,7 @@ namespace Barnacle.UserControls
         }
 
         private double polarGridRadius = 10;
+
         public double PolarGridRadius
         {
             get { return polarGridRadius; }
@@ -42,7 +44,8 @@ namespace Barnacle.UserControls
             }
         }
 
-        private double polarGridAngle = 10;
+        private double polarGridAngle = 36;
+
         public double PolarGridAngle
         {
             get { return polarGridAngle; }
@@ -56,10 +59,11 @@ namespace Barnacle.UserControls
         }
 
         private Point centre;
+
         public Point Centre
         {
             get { return centre; }
-            set {  centre = value; }
+            set { centre = value; }
         }
 
         internal void SetPolarCentre(double v1, double v2)

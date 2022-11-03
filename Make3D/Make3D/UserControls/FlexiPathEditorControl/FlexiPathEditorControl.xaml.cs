@@ -241,12 +241,15 @@ namespace Barnacle.UserControls
                         }
                     }
                 }
-                // If we are appending points to the polygon then always draw the start point
-                if ((vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.StartPoint || vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) && vm.Points.Count > 0)
+                if (!vm.FixedEndPath)
                 {
-                    br = System.Windows.Media.Brushes.Red;
-                    var p = vm.Points[0].ToPoint();
-                    MakeEllipse(8, br, p);
+                    // If we are appending points to the polygon then always draw the start point
+                    if ((vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.StartPoint || vm.SelectionMode == FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) && vm.Points.Count > 0)
+                    {
+                        br = System.Windows.Media.Brushes.Red;
+                        var p = vm.Points[0].ToPoint();
+                        MakeEllipse(8, br, p);
+                    }
                 }
                 // now draw any control connectors
                 for (int i = 0; i < vm.Points.Count; i++)

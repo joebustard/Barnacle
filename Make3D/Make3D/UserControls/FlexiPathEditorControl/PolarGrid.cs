@@ -17,35 +17,38 @@ namespace Barnacle.UserControls
             pixelsPerInchY = sc.PixelsPerInchY;
             double x = 0;
             double y = 0;
-            double drad = 10 * (sc.PixelsPerInchX / 25.4);
+            double drad = polarRadius * (sc.PixelsPerInchX / 25.4);
             double rad = drad;
             gridXPixels = (sc.PixelsPerInchX / 25.4) * gridXMM;
 
             gridYPixels = (sc.PixelsPerInchY / 25.4) * gridYMM;
             // make a largeish marker at the centre
-            MakeSingleMarker(centre.X, centre.Y, 5);
-            double maxrad = Math.Sqrt((centre.X * centre.X)+ (centre.Y*centre.Y));
+            MakeSingleMarker(centre.X, centre.Y, 9);
+            double maxrad = Math.Sqrt((centre.X * centre.X) + (centre.Y * centre.Y));
             double theta;
-            
-            double dt = Math.PI / 18;
-            while ( rad < maxrad)
+
+            double dt = (polarAngle / 360.0) * Math.PI * 2.0;
+            while (rad < maxrad)
             {
                 theta = 0;
-                while ( theta < Math.PI * 2.0)
+                while (theta < Math.PI * 2.0)
                 {
-                     x = (Math.Sin(theta) * rad);
-                     y = (Math.Cos(theta) * rad);
-                    MakeSingleMarker(x + centre.X, y + centre.Y,3);
+                    x = (Math.Sin(theta) * rad);
+                    y = (Math.Cos(theta) * rad);
+                    MakeSingleMarker(x + centre.X, y + centre.Y, 5);
                     theta += dt;
                 }
                 rad += drad;
             }
         }
 
-        public override void SetGridIntervals(double gridXMM, double gridYMM)
+        private double polarRadius = 10;
+        private double polarAngle = 36;
+
+        public override void SetGridIntervals(double rad, double angle)
         {
-            this.gridXMM = gridXMM;
-            this.gridYMM = gridYMM;
+            polarRadius = rad;
+            polarAngle = angle;
         }
 
         /// <summary>
@@ -76,7 +79,6 @@ namespace Barnacle.UserControls
             }
 
             return new Point(ToMMX(gx), ToMMY(gy));
-
         }
 
         internal void SetPolarCentre(Point centre)
@@ -91,8 +93,8 @@ namespace Barnacle.UserControls
             Canvas.SetTop(el, y - 1);
             el.Width = sz;
             el.Height = sz;
-            el.Fill = Brushes.AliceBlue;
-            el.Stroke = Brushes.CadetBlue;
+            el.Fill = Brushes.CadetBlue;
+            el.Stroke = Brushes.Black;
             if (gridMarkers != null)
             {
                 gridMarkers.Add(el);

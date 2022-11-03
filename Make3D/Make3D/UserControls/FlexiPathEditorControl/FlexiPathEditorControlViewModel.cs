@@ -92,9 +92,14 @@ namespace Barnacle.UserControls
         private void OnGridSettings(object obj)
         {
             GridSettingsDlg dlg = new GridSettingsDlg();
-            if ( dlg.ShowDialog() == true)
+            dlg.Settings = gridSettings;
+            if (dlg.ShowDialog() == true)
             {
-
+                rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
+                polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
+                CreateGridMarkers();
+                // force a screen refresh
+                NotifyPropertyChanged("Points");
             }
         }
 
@@ -117,6 +122,7 @@ namespace Barnacle.UserControls
                         }
                         flexiPath = fep;
                         polyPoints = flexiPath.FlexiPoints;
+                        SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                     }
                 }
             }
@@ -303,6 +309,9 @@ namespace Barnacle.UserControls
                 screenDpi = value;
             }
         }
+
+        private double gridWidth;
+        private double gridHeight;
 
         public int SelectedPoint
         {
@@ -502,6 +511,7 @@ namespace Barnacle.UserControls
                         position.X = ToPixelX(polyPoints[selectedPoint].X);
 
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else if (selectedPoint == polyPoints.Count - 1)
@@ -513,6 +523,7 @@ namespace Barnacle.UserControls
                         }
 
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else
@@ -594,7 +605,7 @@ namespace Barnacle.UserControls
             if (polarGrid == null)
             {
                 polarGrid = new PolarGrid();
-                polarGrid.SetGridIntervals(gridSettings.PolarGridAngle, gridSettings.PolarGridRadius);
+                polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
             }
             gridSettings.SetPolarCentre(actualWidth / 2.0, actualHeight / 2.0);
             polarGrid.SetPolarCentre(gridSettings.Centre);
@@ -608,11 +619,17 @@ namespace Barnacle.UserControls
 
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
         {
-            ScreenDpi = dpiScale;
+            this.ScreenDpi = dpiScale;
+            this.gridWidth = actualWidth;
+            this.gridHeight = actualHeight;
+            CreateGridMarkers();
+        }
 
-            MakeGrid(actualWidth, actualHeight);
-            rectGrid.CreateMarkers(dpiScale);
-            polarGrid.CreateMarkers(dpiScale);
+        private void CreateGridMarkers()
+        {
+            MakeGrid(gridWidth, gridHeight);
+            rectGrid.CreateMarkers(ScreenDpi);
+            polarGrid.CreateMarkers(ScreenDpi);
         }
 
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
@@ -739,6 +756,7 @@ namespace Barnacle.UserControls
                         position.X = ToPixelX(polyPoints[selectedPoint].X);
                         //polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else if (selectedPoint == polyPoints.Count - 1)
@@ -750,6 +768,7 @@ namespace Barnacle.UserControls
                         }
                         //  polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
                     }
                     else

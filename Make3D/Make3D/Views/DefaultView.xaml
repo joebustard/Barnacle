@@ -311,7 +311,7 @@
                                              SmallImageSource="/Barnacle;component/Images/Buttons/export.png"
                                              x:Name="Slice" IsEnabled="{Binding EditingActive}">
 
-                            <Custom:RibbonButton x:Name="SliceProject" Label="Project" Command="{Binding SliceCommand}" CommandParameter="SliceProject" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export all files to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
+                        <Custom:RibbonButton x:Name="SliceProject" Label="Project" Command="{Binding SliceCommand}" CommandParameter="SliceProject" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export all files to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
 
                         <Custom:RibbonButton x:Name="SliceOneModel" Label="Model" Command="{Binding SliceCommand}" CommandParameter="SliceModel" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export current file to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
 
