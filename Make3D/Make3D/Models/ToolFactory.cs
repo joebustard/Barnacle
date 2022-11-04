@@ -70,10 +70,6 @@ namespace Barnacle.Models
                     res = new ScribbleDlg();
                     break;
 
-                case "LinearLoft":
-                    res = new LinearLoftDialog();
-                    break;
-
                 case "TwoShape":
                     res = new ShapeLoftDialog();
                     break;
@@ -166,8 +162,8 @@ namespace Barnacle.Models
                     res = new PulleyDlg();
                     break;
 
-                case "DevTest":
-                    res = new DevTestDlg();
+                case "VaseLoft":
+                    res = new VaseLoftDlg();
                     break;
 
                 case "CurvedFunnel":

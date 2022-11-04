@@ -11,8 +11,8 @@
         xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
         xmlns:Views="clr-namespace:Barnacle.Views"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="800"
-        Height="450" WindowState="Maximized">
+        Width="900"
+        Height="550">
     <Window.DataContext>
         <ViewModels:MainWindowViewModel />
     </Window.DataContext>

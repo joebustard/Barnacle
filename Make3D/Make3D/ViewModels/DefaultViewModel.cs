@@ -1117,7 +1117,7 @@ namespace Barnacle.ViewModels
         private void CreateLoftingMenu()
         {
             loftedToolsToShow = new List<ToolDef>();
-            loftedToolsToShow.Add(new ToolDef("Vertical", true, "LinearLoft", "Create an object by vertical lofting."));
+            loftedToolsToShow.Add(new ToolDef("Vase", true, "VaseLoft", "Create an object by vase lofting."));
             loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
             loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
             //  loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
@@ -1158,7 +1158,7 @@ namespace Barnacle.ViewModels
 
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
 
-            parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
+            //  parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             parametricToolsToShow.Add(new ToolDef("Curved Funnel", true, "CurvedFunnel", "Create a curved funnel"));
 
             SortMenu(parametricToolsToShow);

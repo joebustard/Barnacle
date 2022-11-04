@@ -131,6 +131,11 @@ namespace Barnacle.UserControls
             get { return vm?.PathText ?? ""; }
         }
 
+        public string AbsolutePathString
+        {
+            get { return vm?.AbsPathText() ?? ""; }
+        }
+
         internal string GetPath()
         {
             return vm.AbsPathText();

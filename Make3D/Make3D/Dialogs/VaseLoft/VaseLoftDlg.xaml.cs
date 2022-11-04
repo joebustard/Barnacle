@@ -9,17 +9,17 @@ namespace Barnacle.Dialogs
     /// <summary>
     /// Interaction logic for DevTest.xaml
     /// </summary>
-    public partial class DevTestDlg : BaseModellerDialog, INotifyPropertyChanged
+    public partial class VaseLoftDlg : BaseModellerDialog, INotifyPropertyChanged
     {
         private List<Point> displayPoints;
         private bool loaded;
         private int numDivisions;
         private string warningText;
 
-        public DevTestDlg()
+        public VaseLoftDlg()
         {
             InitializeComponent();
-            ToolName = "DevTest";
+            ToolName = "VaseLoft";
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
@@ -219,7 +219,7 @@ namespace Barnacle.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-            EditorParameters.Set("Path", PathEditor.PathString);
+            EditorParameters.Set("Path", PathEditor.AbsolutePathString);
             EditorParameters.Set("NumDivisions", NumDivisions.ToString());
         }
 
