@@ -48,6 +48,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DlgMaker", "DlgMaker\DlgMak
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "asdflibrary", "asdflibrary\asdflibrary.csproj", "{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonLibrary", "PolygonLibrary\PolygonLibrary.csproj", "{61EE0E20-98E3-430F-BE43-CB1F19E829A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -132,6 +134,10 @@ Global
 		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61EE0E20-98E3-430F-BE43-CB1F19E829A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61EE0E20-98E3-430F-BE43-CB1F19E829A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61EE0E20-98E3-430F-BE43-CB1F19E829A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61EE0E20-98E3-430F-BE43-CB1F19E829A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

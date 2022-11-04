@@ -8,6 +8,9 @@ Platelet Tool
    Added polar grid
    Corrected issues with hollow shapes
 
+Linear Loft Tool
+   Replaced by VaseLoft with common flexipath control
+   Gives greater control over the sahpe of turned objects.
 
 V1.0.0
 ===========

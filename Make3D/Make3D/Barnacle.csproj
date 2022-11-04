@@ -110,6 +110,7 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\VaseLoft\VaseLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
       <DependentUpon>Platelet.xaml</DependentUpon>
@@ -422,6 +423,10 @@
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\VaseLoft\VaseLoftDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
