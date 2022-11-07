@@ -1128,10 +1128,11 @@ namespace Barnacle.ViewModels
         private void CreateBuildingMenu()
         {
             buildingToolsToShow = new List<ToolDef>();
-            buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a brick wall."));
-            buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a stone wall."));
+            buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a rectangular brick wall."));
+            buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a rectangular stone wall."));
             buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
-            buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a plank wall."));
+            buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a rectangular plank wall."));
+            buildingToolsToShow.Add(new ToolDef("Shaped Brick Wall", true, "ShapedBrickWall", "Create a brick wall defined by a path."));
             SortMenu(buildingToolsToShow);
             NotifyPropertyChanged("BuildingToolsToShow");
         }

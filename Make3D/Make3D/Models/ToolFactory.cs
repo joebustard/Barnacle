@@ -18,6 +18,10 @@ namespace Barnacle.Models
                     res = new BrickWallDlg();
                     break;
 
+                case "ShapedBrickWall":
+                    res = new ShapedBrickWallDlg();
+                    break;
+
                 case "WagonWheel":
                     res = new WagonWheelDlg();
                     break;

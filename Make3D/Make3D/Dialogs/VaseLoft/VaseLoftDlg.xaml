@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                          xmlns:ctrls="clr-namespace:Barnacle.UserControls"
+        xmlns:ctrls="clr-namespace:Barnacle.UserControls"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
         Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">

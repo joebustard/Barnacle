@@ -1,5 +1,6 @@
 using MakerLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -13,7 +14,7 @@ namespace Barnacle.Dialogs
     {
         private string warningText;
         private bool loaded;
-
+        private List<Point> displayPoints;
         private double brickLength;
 
         public double BrickLength
@@ -58,6 +59,29 @@ namespace Barnacle.Dialogs
             }
         }
 
+
+        private double brickDepth;
+
+        public double BrickDepth
+        {
+            get
+            {
+                return brickDepth;
+            }
+            set
+            {
+                if (brickDepth != value)
+                {
+                    if (value >= 1 && value <= 50)
+                    {
+                        brickDepth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         private double mortarGap;
 
         public double MortarGap
@@ -87,6 +111,21 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+            PathEditor.OnFlexiPathChanged += PathPointsChanged;
+            brickLength = 8;
+            brickHeight = 4;
+            brickDepth = 1;
+            mortarGap = 2;
+        }
+
+        private void PathPointsChanged(List<System.Windows.Point> pnts)
+        {
+            displayPoints = pnts;
+            if (PathEditor.PathClosed)
+            {
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         public override bool ShowAxies
@@ -149,29 +188,23 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            string path = "";
-            ShapedBrickWallMaker maker = new ShapedBrickWallMaker(path, brickLength, brickHeight, mortarGap);
-            maker.Generate(Vertices, Faces);
+            if (displayPoints != null)
+            {
+                string path = PathEditor.GetPath();
+                ShapedBrickWallMaker maker = new ShapedBrickWallMaker(path, brickLength, brickHeight, brickDepth, mortarGap);
+                maker.Generate(Vertices, Faces);
+            }
+            CentreVertices();
         }
 
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            BrickLength = EditorParameters.GetDouble("BrickLength", 8);
+            BrickHeight = EditorParameters.GetDouble("BrickHeight", 4);
+            BrickDepth = EditorParameters.GetDouble("BrickDepth", 2);
+            MortarGap = EditorParameters.GetDouble("MortarGap", 2);
 
-            if (EditorParameters.Get("BrickLength") != "")
-            {
-                BrickLength = EditorParameters.GetDouble("BrickLength");
-            }
-
-            if (EditorParameters.Get("BrickHeight") != "")
-            {
-                BrickHeight = EditorParameters.GetDouble("BrickHeight");
-            }
-
-            if (EditorParameters.Get("MortarGap") != "")
-            {
-                MortarGap = EditorParameters.GetDouble("MortarGap");
-            }
         }
 
         private void SaveEditorParmeters()
@@ -180,7 +213,9 @@ namespace Barnacle.Dialogs
 
             EditorParameters.Set("BrickLength", BrickLength.ToString());
             EditorParameters.Set("BrickHeight", BrickHeight.ToString());
+            EditorParameters.Set("BrickDepth", MortarGap.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
+
         }
 
         private void UpdateDisplay()

@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
+        xmlns:ctrls="clr-namespace:Barnacle.UserControls"
         mc:Ignorable="d"
         Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
@@ -16,49 +17,18 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Border Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource ControlBorder}">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">BrickLength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding BrickLength}" Width="150"/>
-
-            </StackPanel>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">BrickHeight</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding BrickHeight}" Width="150"/>
-
-            </StackPanel>
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">MortarGap</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding MortarGap}" Width="150"/>
-
-            </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
-            </StackPanel>
-        </Grid>
+            <ctrls:FlexiPathEditorControl x:Name="PathEditor"  />
+        </Border>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
@@ -84,12 +54,26 @@
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
+                <StackPanel Orientation="Horizontal" Grid.Row="1">
+                    <Label VerticalAlignment="Center" Content="Brick" Margin="2,0,0,0"/>
+                    <Label VerticalAlignment="Center" Content="Length" Margin="8,0,0,0"/>
+                    <TextBox Margin="4,0,0,0" Text="{Binding BrickLength}" Width="50"/>
+                    <Label VerticalAlignment="Center" Content="Height" Margin="4,0,0,0"/>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BrickHeight}" Width="50"/>
+                    <Label VerticalAlignment="Center" Content="Depth" Margin="4,0,0,0"/>
+                    <TextBox Margin="8,0,0,0" Text="{Binding BrickDepth}" Width="50"/>
+                    <Label VerticalAlignment="Center" Content="Gap" Margin="4,0,0,0"/>
+                    <TextBox Margin="8,0,0,0" Text="{Binding MortarGap}" Width="50"/>
+
+                </StackPanel>
+            </Grid>
         </Border>
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
+            
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>

@@ -12,17 +12,20 @@ namespace ScriptLanguage
         private ExpressionNode pathExp;
         private ExpressionNode brickLengthExp;
         private ExpressionNode brickHeightExp;
+        private ExpressionNode brickDepthExp;
+
         private ExpressionNode mortarGapExp;
 
         public MakeShapedBrickWallNode
             (
             ExpressionNode pth,
-            ExpressionNode brickLength, ExpressionNode brickHeight, ExpressionNode mortarGap
+            ExpressionNode brickLength, ExpressionNode brickHeight, ExpressionNode brickDepth, ExpressionNode mortarGap
             )
         {
             this.pathExp = pth;
             this.brickLengthExp = brickLength;
             this.brickHeightExp = brickHeight;
+            this.brickDepthExp = brickDepth;
             this.mortarGapExp = mortarGap;
         }
 
@@ -32,7 +35,8 @@ namespace ScriptLanguage
             this.pathExp = coll.Get(0);
             this.brickLengthExp = coll.Get(1);
             this.brickHeightExp = coll.Get(2);
-            this.mortarGapExp = coll.Get(3);
+            this.brickDepthExp = coll.Get(3);
+            this.mortarGapExp = coll.Get(4);
         }
 
         /// Execute this node
@@ -44,11 +48,13 @@ namespace ScriptLanguage
 
             double valBrickLength = 0;
             double valBrickHeight = 0;
+            double valBrickDepth = 0;
             double valMortarGap = 0;
             string valPath = "";
             if (EvalExpression(pathExp, ref valPath, "Path", "MakeShapedBrickWall") &&
                EvalExpression(brickLengthExp, ref valBrickLength, "BrickLength", "MakeShapedBrickWall") &&
                EvalExpression(brickHeightExp, ref valBrickHeight, "BrickHeight", "MakeShapedBrickWall") &&
+               EvalExpression(brickDepthExp, ref valBrickDepth, "BrickDepth", "MakeShapedBrickWall") &&
                EvalExpression(mortarGapExp, ref valMortarGap, "MortarGap", "MakeShapedBrickWall"))
             {
                 // check calculated values are in range
@@ -71,6 +77,13 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
+
+                if (valBrickDepth < 1 || valBrickDepth > 50)
+                {
+                    Log.Instance().AddEntry("MakeShapedBrickWall : BrickDepth value out of range (1..50)");
+                    inRange = false;
+                }
+
                 if (valMortarGap < 1 || valMortarGap > 50)
                 {
                     Log.Instance().AddEntry("MakeShapedBrickWall : MortarGap value out of range (1..50)");
@@ -89,7 +102,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    ShapedBrickWallMaker maker = new ShapedBrickWallMaker(valBrickLength, valBrickHeight, valMortarGap);
+                    ShapedBrickWallMaker maker = new ShapedBrickWallMaker(valPath,valBrickLength, valBrickHeight, valBrickDepth, valMortarGap);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

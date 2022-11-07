@@ -87,6 +87,10 @@
       <Project>{5f92b002-b820-4a56-a2b1-482c252ba8be}</Project>
       <Name>Object3DLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PolygonLibrary\PolygonLibrary.csproj">
+      <Project>{61ee0e20-98e3-430f-be43-cb1f19e829a5}</Project>
+      <Name>PolygonLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PolygonTriangulationLib\PolygonTriangulationLib.csproj">
       <Project>{bf1d777e-df33-4c03-80a6-9ecb741746f1}</Project>
       <Name>PolygonTriangulationLib</Name>
