@@ -21,50 +21,55 @@
                 Grid.Row="0"
                 Style="{StaticResource ControlBorder}">
 
-            <ctrls:FlexiPathEditorControl x:Name="PathEditor"  />
+            <ctrls:FlexiPathEditorControl x:Name="PathEditor" />
         </Border>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+                <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
-                <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
-                </Viewport3D.Camera>
+                    <Viewport3D.Camera>
+                        <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
+                        </PerspectiveCamera>
+                    </Viewport3D.Camera>
 
-                <ModelVisual3D>
-                    <ModelVisual3D.Content>
-                        <Model3DGroup>
-                            <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
+                    <ModelVisual3D>
+                        <ModelVisual3D.Content>
+                            <Model3DGroup>
+                                <AmbientLight Color="#FF808080" />
+                                <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
+                                </DirectionalLight>
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
 
-                <ModelVisual3D x:Name = "MyModel">
-                    <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
-                    </ModelVisual3D.Content>
-                </ModelVisual3D>
-            </Viewport3D>
+                    <ModelVisual3D x:Name = "MyModel">
+                        <ModelVisual3D.Content>
+                            <Model3DGroup x:Name="MyModelGroup">
+                            </Model3DGroup>
+                        </ModelVisual3D.Content>
+                    </ModelVisual3D>
+                </Viewport3D>
                 <StackPanel Orientation="Horizontal" Grid.Row="1">
-                    <Label VerticalAlignment="Center" Content="Brick" Margin="2,0,0,0"/>
-                    <Label VerticalAlignment="Center" Content="Length" Margin="8,0,0,0"/>
-                    <TextBox Margin="4,0,0,0" Text="{Binding BrickLength}" Width="50"/>
-                    <Label VerticalAlignment="Center" Content="Height" Margin="4,0,0,0"/>
-                    <TextBox Margin="8,0,0,0" Text="{Binding BrickHeight}" Width="50"/>
-                    <Label VerticalAlignment="Center" Content="Depth" Margin="4,0,0,0"/>
-                    <TextBox Margin="8,0,0,0" Text="{Binding BrickDepth}" Width="50"/>
-                    <Label VerticalAlignment="Center" Content="Gap" Margin="4,0,0,0"/>
-                    <TextBox Margin="8,0,0,0" Text="{Binding MortarGap}" Width="50"/>
-
+                    <Label VerticalAlignment="Center" Content="Brick" Margin="2,0,0,0" />
+                    <Label VerticalAlignment="Center" Content="Length" Margin="8,0,0,0" />
+                    <TextBox Margin="4,0,0,0" Text="{Binding BrickLength}" Width="50" />
+                    <Label VerticalAlignment="Center" Content="Height" Margin="4,0,0,0" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding BrickHeight}" Width="50" />
+                    <Label VerticalAlignment="Center" Content="Depth" Margin="4,0,0,0" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding BrickDepth}" Width="50" />
+                    <Label VerticalAlignment="Center" Content="Gap" Margin="4,0,0,0" />
+                    <TextBox Margin="8,0,0,0" Text="{Binding MortarGap}" Width="50" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2">
+                    <Label VerticalAlignment="Center" Content="Wall" Margin="2,0,0,0" />
+                    <Label VerticalAlignment="Center" Content="Width" Margin="8,0,2,0" />
+                    <TextBox Margin="10,0,0,0" Text="{Binding WallWidth}" Width="50" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -73,7 +78,6 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.ColumnDefinitions>
@@ -96,4 +100,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

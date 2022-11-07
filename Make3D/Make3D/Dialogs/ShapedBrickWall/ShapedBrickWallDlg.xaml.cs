@@ -59,7 +59,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private double brickDepth;
 
         public double BrickDepth
@@ -104,6 +103,28 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private double wallWidth;
+
+        public double WallWidth
+        {
+            get
+            {
+                return wallWidth;
+            }
+            set
+            {
+                if (wallWidth != value)
+                {
+                    if (value >= 1 && value <= 50)
+                    {
+                        wallWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         public ShapedBrickWallDlg()
         {
             InitializeComponent();
@@ -116,6 +137,7 @@ namespace Barnacle.Dialogs
             brickHeight = 4;
             brickDepth = 1;
             mortarGap = 2;
+            wallWidth = 5;
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -191,7 +213,7 @@ namespace Barnacle.Dialogs
             if (displayPoints != null)
             {
                 string path = PathEditor.GetPath();
-                ShapedBrickWallMaker maker = new ShapedBrickWallMaker(path, brickLength, brickHeight, brickDepth, mortarGap);
+                ShapedBrickWallMaker maker = new ShapedBrickWallMaker(path, brickLength, brickHeight, brickDepth, wallWidth, mortarGap);
                 maker.Generate(Vertices, Faces);
             }
             CentreVertices();
@@ -204,7 +226,7 @@ namespace Barnacle.Dialogs
             BrickHeight = EditorParameters.GetDouble("BrickHeight", 4);
             BrickDepth = EditorParameters.GetDouble("BrickDepth", 2);
             MortarGap = EditorParameters.GetDouble("MortarGap", 2);
-
+            WallWidth = EditorParameters.GetDouble("WallWidth", 5);
         }
 
         private void SaveEditorParmeters()
@@ -215,7 +237,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("BrickHeight", BrickHeight.ToString());
             EditorParameters.Set("BrickDepth", MortarGap.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
-
+            EditorParameters.Set("WallWidth", WallWidth.ToString());
         }
 
         private void UpdateDisplay()

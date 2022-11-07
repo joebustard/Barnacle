@@ -13,19 +13,20 @@ namespace ScriptLanguage
         private ExpressionNode brickLengthExp;
         private ExpressionNode brickHeightExp;
         private ExpressionNode brickDepthExp;
-
+        private ExpressionNode wallWidthExp;
         private ExpressionNode mortarGapExp;
 
         public MakeShapedBrickWallNode
             (
             ExpressionNode pth,
-            ExpressionNode brickLength, ExpressionNode brickHeight, ExpressionNode brickDepth, ExpressionNode mortarGap
+            ExpressionNode brickLength, ExpressionNode brickHeight, ExpressionNode brickDepth, ExpressionNode wallWidthExp, ExpressionNode mortarGap
             )
         {
             this.pathExp = pth;
             this.brickLengthExp = brickLength;
             this.brickHeightExp = brickHeight;
             this.brickDepthExp = brickDepth;
+            this.wallWidthExp = wallWidthExp;
             this.mortarGapExp = mortarGap;
         }
 
@@ -36,7 +37,8 @@ namespace ScriptLanguage
             this.brickLengthExp = coll.Get(1);
             this.brickHeightExp = coll.Get(2);
             this.brickDepthExp = coll.Get(3);
-            this.mortarGapExp = coll.Get(4);
+            this.wallWidthExp = coll.Get(4);
+            this.mortarGapExp = coll.Get(5);
         }
 
         /// Execute this node
@@ -50,11 +52,13 @@ namespace ScriptLanguage
             double valBrickHeight = 0;
             double valBrickDepth = 0;
             double valMortarGap = 0;
+            double valWallWidth = 0;
             string valPath = "";
             if (EvalExpression(pathExp, ref valPath, "Path", "MakeShapedBrickWall") &&
                EvalExpression(brickLengthExp, ref valBrickLength, "BrickLength", "MakeShapedBrickWall") &&
                EvalExpression(brickHeightExp, ref valBrickHeight, "BrickHeight", "MakeShapedBrickWall") &&
                EvalExpression(brickDepthExp, ref valBrickDepth, "BrickDepth", "MakeShapedBrickWall") &&
+                EvalExpression(wallWidthExp, ref valWallWidth, "WallWidth", "MakeShapedBrickWall") &&
                EvalExpression(mortarGapExp, ref valMortarGap, "MortarGap", "MakeShapedBrickWall"))
             {
                 // check calculated values are in range
@@ -77,7 +81,11 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-
+                if (valWallWidth < 1 || valWallWidth > 50)
+                {
+                    Log.Instance().AddEntry("MakeShapedBrickWall : WallWidth value out of range (1..50)");
+                    inRange = false;
+                }
                 if (valBrickDepth < 1 || valBrickDepth > 50)
                 {
                     Log.Instance().AddEntry("MakeShapedBrickWall : BrickDepth value out of range (1..50)");
@@ -102,7 +110,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    ShapedBrickWallMaker maker = new ShapedBrickWallMaker(valPath,valBrickLength, valBrickHeight, valBrickDepth, valMortarGap);
+                    ShapedBrickWallMaker maker = new ShapedBrickWallMaker(valPath, valBrickLength, valBrickHeight, valBrickDepth, valWallWidth, valMortarGap);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -131,6 +139,8 @@ namespace ScriptLanguage
             result += pathExp.ToRichText() + ", ";
             result += brickLengthExp.ToRichText() + ", ";
             result += brickHeightExp.ToRichText() + ", ";
+            result += brickDepthExp.ToRichText() + ", ";
+            result += wallWidthExp.ToRichText() + ", ";
             result += mortarGapExp.ToRichText();
             result += " )";
             return result;
@@ -143,6 +153,8 @@ namespace ScriptLanguage
             result += pathExp.ToString() + ", ";
             result += brickLengthExp.ToString() + ", ";
             result += brickHeightExp.ToString() + ", ";
+            result += brickDepthExp.ToString() + ", ";
+            result += wallWidthExp.ToString() + ", ";
             result += mortarGapExp.ToString();
             result += " )";
             return result;

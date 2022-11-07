@@ -252,7 +252,7 @@ namespace PolygonTriangulationLib
                 // Remove an ear from the polygon.
                 more = pgon.RemoveEar(triangles);
             }
-            if (pgon.Points.Length > 0)
+            if (pgon.Points.Length == 3)
             {
                 // Copy the last three points into their own triangle.
                 triangles.Add(new Triangle(pgon.Points[0], pgon.Points[1], pgon.Points[2]));
