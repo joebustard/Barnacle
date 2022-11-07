@@ -86,15 +86,15 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakeShapedBrickWall : WallWidth value out of range (1..50)");
                     inRange = false;
                 }
-                if (valBrickDepth < 1 || valBrickDepth > 50)
+                if (valBrickDepth < 0.1 || valBrickDepth > 50)
                 {
-                    Log.Instance().AddEntry("MakeShapedBrickWall : BrickDepth value out of range (1..50)");
+                    Log.Instance().AddEntry("MakeShapedBrickWall : BrickDepth value out of range (0.1 .. 50)");
                     inRange = false;
                 }
 
-                if (valMortarGap < 1 || valMortarGap > 50)
+                if (valMortarGap < 0.11 || valMortarGap > 50)
                 {
-                    Log.Instance().AddEntry("MakeShapedBrickWall : MortarGap value out of range (1..50)");
+                    Log.Instance().AddEntry("MakeShapedBrickWall : MortarGap value out of range (0.1 .. 50)");
                     inRange = false;
                 }
 

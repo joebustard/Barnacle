@@ -1676,6 +1676,7 @@ namespace Barnacle.ViewModels
             string s = param.ToString();
 
             SetActive(s, parametricToolsToShow);
+            SetActive(s, buildingToolsToShow);
             SetActive(s, loftedToolsToShow);
             SetActive(s, vehicleToolsToShow);
             SetActive(s, aircraftToolsToShow);

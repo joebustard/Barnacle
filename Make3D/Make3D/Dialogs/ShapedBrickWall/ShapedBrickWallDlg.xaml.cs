@@ -71,7 +71,7 @@ namespace Barnacle.Dialogs
             {
                 if (brickDepth != value)
                 {
-                    if (value >= 1 && value <= 50)
+                    if (value >= 0.1 && value <= 50)
                     {
                         brickDepth = value;
                         NotifyPropertyChanged();
@@ -93,7 +93,7 @@ namespace Barnacle.Dialogs
             {
                 if (mortarGap != value)
                 {
-                    if (value >= 1 && value <= 50)
+                    if (value >= 0.1 && value <= 50)
                     {
                         mortarGap = value;
                         NotifyPropertyChanged();
@@ -133,10 +133,11 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
+            PathEditor.AbsolutePaths = true;
             brickLength = 8;
             brickHeight = 4;
             brickDepth = 1;
-            mortarGap = 2;
+            mortarGap = 1;
             wallWidth = 5;
         }
 
@@ -224,9 +225,10 @@ namespace Barnacle.Dialogs
             // load back the tool specific parameters
             BrickLength = EditorParameters.GetDouble("BrickLength", 8);
             BrickHeight = EditorParameters.GetDouble("BrickHeight", 4);
-            BrickDepth = EditorParameters.GetDouble("BrickDepth", 2);
-            MortarGap = EditorParameters.GetDouble("MortarGap", 2);
+            BrickDepth = EditorParameters.GetDouble("BrickDepth", 1);
+            MortarGap = EditorParameters.GetDouble("MortarGap", 1);
             WallWidth = EditorParameters.GetDouble("WallWidth", 5);
+            PathEditor.SetPath(EditorParameters.Get("Path"));
         }
 
         private void SaveEditorParmeters()
@@ -238,6 +240,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("BrickDepth", MortarGap.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
             EditorParameters.Set("WallWidth", WallWidth.ToString());
+            EditorParameters.Set("Path", PathEditor.GetPath()); ;
         }
 
         private void UpdateDisplay()
