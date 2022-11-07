@@ -1,9 +1,7 @@
 using MakerLib;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
-using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
@@ -12,54 +10,29 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ShapedBrickWallDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
-        private bool loaded;
-        private List<Point> displayPoints;
-        private double brickLength;
-
-        public double BrickLength
-        {
-            get
-            {
-                return brickLength;
-            }
-            set
-            {
-                if (brickLength != value)
-                {
-                    if (value >= 1 && value <= 50)
-                    {
-                        brickLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private double brickHeight;
-
-        public double BrickHeight
-        {
-            get
-            {
-                return brickHeight;
-            }
-            set
-            {
-                if (brickHeight != value)
-                {
-                    if (value >= 1 && value <= 50)
-                    {
-                        brickHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
         private double brickDepth;
+        private double brickHeight;
+        private double brickLength;
+        private List<Point> displayPoints;
+        private bool loaded;
+        private double mortarGap;
+        private double wallWidth;
+        private string warningText;
+        public ShapedBrickWallDlg()
+        {
+            InitializeComponent();
+            ToolName = "ShapedBrickWall";
+            DataContext = this;
+            ModelGroup = MyModelGroup;
+            loaded = false;
+            PathEditor.OnFlexiPathChanged += PathPointsChanged;
+            PathEditor.AbsolutePaths = true;
+            brickLength = 8;
+            brickHeight = 4;
+            brickDepth = 1;
+            mortarGap = 1;
+            wallWidth = 5;
+        }
 
         public double BrickDepth
         {
@@ -81,8 +54,45 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double mortarGap;
+        public double BrickHeight
+        {
+            get
+            {
+                return brickHeight;
+            }
+            set
+            {
+                if (brickHeight != value)
+                {
+                    if (value >= 1 && value <= 50)
+                    {
+                        brickHeight = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
 
+        public double BrickLength
+        {
+            get
+            {
+                return brickLength;
+            }
+            set
+            {
+                if (brickLength != value)
+                {
+                    if (value >= 1 && value <= 50)
+                    {
+                        brickLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
         public double MortarGap
         {
             get
@@ -102,55 +112,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private double wallWidth;
-
-        public double WallWidth
-        {
-            get
-            {
-                return wallWidth;
-            }
-            set
-            {
-                if (wallWidth != value)
-                {
-                    if (value >= 1 && value <= 50)
-                    {
-                        wallWidth = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public ShapedBrickWallDlg()
-        {
-            InitializeComponent();
-            ToolName = "ShapedBrickWall";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-            PathEditor.OnFlexiPathChanged += PathPointsChanged;
-            PathEditor.AbsolutePaths = true;
-            brickLength = 8;
-            brickHeight = 4;
-            brickDepth = 1;
-            mortarGap = 1;
-            wallWidth = 5;
-        }
-
-        private void PathPointsChanged(List<System.Windows.Point> pnts)
-        {
-            displayPoints = pnts;
-            if (PathEditor.PathClosed)
-            {
-                GenerateShape();
-                Redisplay();
-            }
-        }
-
         public override bool ShowAxies
         {
             get
@@ -185,6 +146,25 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double WallWidth
+        {
+            get
+            {
+                return wallWidth;
+            }
+            set
+            {
+                if (wallWidth != value)
+                {
+                    if (value >= 1 && value <= 50)
+                    {
+                        wallWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
         public string WarningText
         {
             get
@@ -231,6 +211,15 @@ namespace Barnacle.Dialogs
             PathEditor.SetPath(EditorParameters.Get("Path"));
         }
 
+        private void PathPointsChanged(List<System.Windows.Point> pnts)
+        {
+            displayPoints = pnts;
+            if (PathEditor.PathClosed)
+            {
+                GenerateShape();
+                Redisplay();
+            }
+        }
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool

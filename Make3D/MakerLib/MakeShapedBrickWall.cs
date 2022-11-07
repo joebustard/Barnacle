@@ -1,5 +1,4 @@
 using Barnacle.LineLib;
-using Barnacle.Object3DLib;
 using PolygonLibrary;
 using PolygonTriangulationLib;
 using System;
@@ -12,18 +11,17 @@ namespace MakerLib
 {
     public class ShapedBrickWallMaker : MakerBase
     {
-        private String path;
-        private double brickLength;
-        private double brickHeight;
         private double brickDepth;
-        private double wallWidth;
-        private double mortarGap;
+        private double brickHeight;
+        private double brickLength;
         private double lx;
         private double ly;
+        private double mortarGap;
+        private String path;
+        private List<Point> pathPoints;
         private double rx;
         private double ry;
-        private List<Point> pathPoints;
-
+        private double wallWidth;
         public ShapedBrickWallMaker(string path, double brickLength, double brickHeight, double brickDepth, double wallWidth, double mortarGap)
         {
             this.path = path;
@@ -161,6 +159,29 @@ namespace MakerLib
             }
         }
 
+        public bool IsPointInPolygon(Point point, List<Point> polygon)
+        {
+            int polyCorners = polygon.Count;
+            int i = 0;
+            int j = polyCorners - 1;
+            bool oddNodes = false;
+
+            for (i = 0; i < polyCorners; i++)
+            {
+                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
+                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
+                {
+                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
+                    {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        }
+
         private Point Centroid(Point[] crns)
         {
             double x = 0;
@@ -195,30 +216,6 @@ namespace MakerLib
 
             return new ConvexPolygon2D(rct);
         }
-
-        public bool IsPointInPolygon(Point point, List<Point> polygon)
-        {
-            int polyCorners = polygon.Count;
-            int i = 0;
-            int j = polyCorners - 1;
-            bool oddNodes = false;
-
-            for (i = 0; i < polyCorners; i++)
-            {
-                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
-                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
-                {
-                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
-                    {
-                        oddNodes = !oddNodes;
-                    }
-                }
-                j = i;
-            }
-
-            return oddNodes;
-        }
-
         private void TriangulateSurface(Point[] points, double z, bool reverse = false)
         {
             TriangulationPolygon ply = new TriangulationPolygon();

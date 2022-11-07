@@ -1,21 +1,18 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
     internal class MakeShapedBrickWallNode : ExpressionNode
     {
-        private ExpressionNode pathExp;
-        private ExpressionNode brickLengthExp;
-        private ExpressionNode brickHeightExp;
         private ExpressionNode brickDepthExp;
-        private ExpressionNode wallWidthExp;
+        private ExpressionNode brickHeightExp;
+        private ExpressionNode brickLengthExp;
         private ExpressionNode mortarGapExp;
-
+        private ExpressionNode pathExp;
+        private ExpressionNode wallWidthExp;
         public MakeShapedBrickWallNode
             (
             ExpressionNode pth,
@@ -58,7 +55,7 @@ namespace ScriptLanguage
                EvalExpression(brickLengthExp, ref valBrickLength, "BrickLength", "MakeShapedBrickWall") &&
                EvalExpression(brickHeightExp, ref valBrickHeight, "BrickHeight", "MakeShapedBrickWall") &&
                EvalExpression(brickDepthExp, ref valBrickDepth, "BrickDepth", "MakeShapedBrickWall") &&
-                EvalExpression(wallWidthExp, ref valWallWidth, "WallWidth", "MakeShapedBrickWall") &&
+               EvalExpression(wallWidthExp, ref valWallWidth, "WallWidth", "MakeShapedBrickWall") &&
                EvalExpression(mortarGapExp, ref valMortarGap, "MortarGap", "MakeShapedBrickWall"))
             {
                 // check calculated values are in range
