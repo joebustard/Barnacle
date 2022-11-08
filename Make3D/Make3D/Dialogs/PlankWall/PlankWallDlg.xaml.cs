@@ -42,7 +42,7 @@ namespace Barnacle.Dialogs
             {
                 if (gap != value)
                 {
-                    if (value >= 1 && value <= 300)
+                    if (value >= 0.1 && value <= 300)
                     {
                         gap = value;
                         NotifyPropertyChanged();
@@ -62,7 +62,7 @@ namespace Barnacle.Dialogs
             {
                 if (gapDepth != value)
                 {
-                    if (value >= 1 && value <= 300)
+                    if (value >= 0.11 && value <= 300)
                     {
                         gapDepth = value;
                         NotifyPropertyChanged();

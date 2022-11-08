@@ -88,13 +88,13 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-                if (valGap < 1 || valGap > 300)
+                if (valGap < 0.1 || valGap > 300)
                 {
                     Log.Instance().AddEntry("MakePlankWall : Gap value out of range (1..300)");
                     inRange = false;
                 }
 
-                if (valGapDepth < 1 || valGapDepth > 300)
+                if (valGapDepth < 0.1 || valGapDepth > 300)
                 {
                     Log.Instance().AddEntry("MakePlankWall : GapDepth value out of range (1..300)");
                     inRange = false;

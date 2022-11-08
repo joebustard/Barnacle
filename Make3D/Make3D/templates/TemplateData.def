@@ -196,4 +196,47 @@
     </Folder>
   </ProjectDefinition>
 
+
+
+   <!--   Model Building Template -->
+  <ProjectDefinition Name="Model Building">
+    <Description>
+      Creates a basic folder structure with empty model files for a simple model railway building .
+      You can add as many more models as you like.
+      The folders are
+      /assemblies,   A place to store assembly models
+      /export,  A place to save any STL files exported from the project
+      /printer, A place to save 3D Printer files created by the external slicer.
+      /docs,    A place to store documentation such as design notes and build instructions
+      /images,  A place to save any image files that will be used to create the model
+      /scripts, A place to save any limpet scripts
+      /commands, A place for command files or batch files to help with the workflow
+      These folders are simply placeholders.
+    </Description>
+    <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
+      <File Name="FrontWall.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="BackWall.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="EndWalls.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Roof.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="RoofRidge.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Chimneys.txt" Source="templates/blankmodel1_35.txt" />
+      <File Name="Guttering.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
+    <Folder Name="Assemblies" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True">
+    <File Name="AssembledBuilding.txt" Source="templates/blankmodel1_35.txt" />
+    </Folder>
+    <Folder Name="Backup" AddSubs="True" AddFiles="True" Explorer="True" Clean="False" Export="False" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+    <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
+    <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
+    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
+      <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
+    </Folder>
+    <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
+    </Folder>
+    <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
+      <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
+    </Folder>
+  </ProjectDefinition>
+
 </Defs>

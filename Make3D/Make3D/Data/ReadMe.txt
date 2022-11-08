@@ -1,7 +1,11 @@
-﻿v1.0.1
+﻿v1.0.2
 ===========
-Simple plank wall tool.
-   Created.
+Added a project template for a model building
+
+v1.0.1
+===========
+Added simple Plank Wall Tool.
+   
 
 Platelet Tool
    Replaced by one with common flexipath control
@@ -10,7 +14,11 @@ Platelet Tool
 
 Linear Loft Tool
    Replaced by VaseLoft with common flexipath control
-   Gives greater control over the sahpe of turned objects.
+   Gives greater control over the shape of turned objects.
+
+Added Shaped Brick Wall Tool
+   Allows the user to draw an outline using the common flexipath tool
+   and creates a brick wall
 
 V1.0.0
 ===========
