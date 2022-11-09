@@ -57,6 +57,7 @@
     <Compile Include="MakerBase.cs" />
     <Compile Include="MakeReuleaux.cs" />
     <Compile Include="MakeShapedBrickWall.cs" />
+    <Compile Include="MakeShapedTiledRoof.cs" />
     <Compile Include="MakeSquirkle.cs" />
     <Compile Include="MakeStoneWall.cs" />
     <Compile Include="MakeTiledRoof.cs" />

@@ -70,6 +70,10 @@ namespace Barnacle.Models
                     res = new TiledRoofDlg();
                     break;
 
+                case "ShapedTiledRoof":
+                    res = new ShapedTiledRoofDlg();
+                    break;
+
                 case "Scribble":
                     res = new ScribbleDlg();
                     break;

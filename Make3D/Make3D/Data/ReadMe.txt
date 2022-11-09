@@ -1,6 +1,7 @@
 ﻿v1.0.2
 ===========
 Added a project template for a model building
+Fixed bug where platelet tool "forgot" that a previously created plate was hollow
 
 v1.0.1
 ===========
