@@ -1,13 +1,15 @@
 ﻿v1.0.2
 ===========
+Added Shaped Tiled Roof Tool
 Added a project template for a model building
+
 Fixed bug where platelet tool "forgot" that a previously created plate was hollow
+Fixed bug in Shaped Wall tool which prevented triangular walls
 
 v1.0.1
 ===========
 Added simple Plank Wall Tool.
    
-
 Platelet Tool
    Replaced by one with common flexipath control
    Added polar grid

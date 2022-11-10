@@ -28,9 +28,10 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             loaded = false;
-            tileLength = 8;
-            tileHeight = 4;
-            tileDepth = 1;
+            tileLength = 3.486;
+            tileHeight = 2.17;
+            tileDepth = 0.5;
+            mortarGap = 0.25;
             roofWidth = 2;
         }
 
@@ -211,10 +212,10 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            TileLength = EditorParameters.GetDouble("TileLength", 8);
-            TileHeight = EditorParameters.GetDouble("TileHeight", 4);
-            TileDepth = EditorParameters.GetDouble("TileDepth", 1);
-            MortarGap = EditorParameters.GetDouble("MortarGap", 1);
+            TileLength = EditorParameters.GetDouble("TileLength", 3.486);
+            TileHeight = EditorParameters.GetDouble("TileHeight", 2.17);
+            TileDepth = EditorParameters.GetDouble("TileDepth", 0.5);
+            MortarGap = EditorParameters.GetDouble("MortarGap", 0.2);
             RoofWidth = EditorParameters.GetDouble("RoofWidth", 2);
             PathEditor.SetPath(EditorParameters.Get("Path"));
         }

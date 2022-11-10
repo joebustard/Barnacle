@@ -102,15 +102,23 @@ namespace MakerLib
                     if (crns.GetLength(0) >= 3)
                     {
                         TriangulateSlopingSurface(px, py, crns, tileHeight, tileDepth);
-                        /*
+                        int l = crns.GetLength(0);
+                        double[] zeds = new double[l];
+                        for (int i = 0; i < l; i++)
+                        {
+                            double rely = crns[i].Y - py;
+
+                            zeds[i] = tileDepth - ((rely / tileHeight) * tileDepth);
+                        }
+
                         for (int i = 0; i < crns.GetLength(0); i++)
                         {
                             int j = (i + 1) % crns.GetLength(0);
 
                             int v0 = AddVertice(crns[i].X, crns[i].Y, 0);
                             int v1 = AddVertice(crns[j].X, crns[j].Y, 0);
-                            int v2 = AddVertice(crns[i].X, crns[i].Y, tileDepth);
-                            int v3 = AddVertice(crns[j].X, crns[j].Y, tileDepth);
+                            int v2 = AddVertice(crns[i].X, crns[i].Y, zeds[i]);
+                            int v3 = AddVertice(crns[j].X, crns[j].Y, zeds[j]);
 
                             Faces.Add(v0);
                             Faces.Add(v1);
@@ -120,19 +128,7 @@ namespace MakerLib
                             Faces.Add(v3);
                             Faces.Add(v2);
                         }
-                        */
                     }
-                    /*
-                    // horizontal gap running top length of brick
-                    ConvexPolygon2D rect2 = RectPoly(px, py + tileHeight, tileLength + mortarGap, mortarGap);
-                    ConvexPolygon2D intercept2 = interceptor.GetIntersectionOfPolygons(path, rect2);
-                    crns = intercept2.Corners;
-                    Point mid2 = Centroid(crns);
-                    if (IsPointInPolygon(mid2, tmp))
-                    {
-                        TriangulateSurface(crns, 0);
-                    }
-                    */
 
                     px += tileLength;
 
@@ -147,7 +143,7 @@ namespace MakerLib
                         Point mid = Centroid(crns);
                         if (IsPointInPolygon(mid, tmp))
                         {
-                            //              TriangulateSurface(crns, 0);
+                            TriangulateSurface(crns, 0);
                         }
                     }
                     px += mortarGap;
@@ -156,7 +152,7 @@ namespace MakerLib
             }
 
             // do the back
-            /*
+
             TriangulateSurface(tmp.ToArray(), -backWall, true);
 
             // sides
@@ -176,7 +172,6 @@ namespace MakerLib
                 Faces.Add(v2);
                 Faces.Add(v3);
             }
-            */
         }
 
         protected void TriangulateSlopingSurface(double px, double py, Point[] points, double height, double depth, bool reverse = false)
