@@ -1018,6 +1018,9 @@
     <Resource Include="Data\ReadMe.txt" />
     <Resource Include="Images\Buttons\ShowPolarGrid.png" />
     <Resource Include="Images\Buttons\Image.png" />
+    <Resource Include="Data\Textures\DeckPlate1.png" />
+    <Resource Include="Data\Textures\stone1.jpg" />
+    <Resource Include="Data\Textures\StoneWall1.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

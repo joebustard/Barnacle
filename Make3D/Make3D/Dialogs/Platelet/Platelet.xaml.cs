@@ -17,7 +17,9 @@ namespace Barnacle.Dialogs
         private bool hollowShape;
         private bool loaded;
         private Visibility showWidth;
+        private Visibility showTextures;
         private bool solidShape;
+        private bool texturedShape;
         private double wallWidth;
         private string warningText;
 
@@ -30,9 +32,12 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             wallWidth = 2;
+            textureDepth = 1;
             solidShape = true;
             hollowShape = false;
+            texturedShape = false;
             showWidth = Visibility.Hidden;
+            showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
             loaded = false;
         }
@@ -51,10 +56,58 @@ namespace Barnacle.Dialogs
                     if (hollowShape == true)
                     {
                         ShowWidth = Visibility.Visible;
+                        ShowTextures = Visibility.Hidden;
                     }
                     else
                     {
                         ShowWidth = Visibility.Hidden;
+                    }
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private double textureDepth;
+
+        public double TextureDepth
+        {
+            get
+            {
+                return textureDepth;
+            }
+            set
+            {
+                if (textureDepth != value)
+                {
+                    textureDepth = value;
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool TexturedShape
+        {
+            get
+            {
+                return texturedShape;
+            }
+            set
+            {
+                if (texturedShape != value)
+                {
+                    texturedShape = value;
+                    if (texturedShape == true)
+                    {
+                        ShowWidth = Visibility.Hidden;
+                        ShowTextures = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowTextures = Visibility.Hidden;
                     }
 
                     NotifyPropertyChanged();
@@ -113,6 +166,22 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public Visibility ShowTextures
+        {
+            get
+            {
+                return showTextures;
+            }
+            set
+            {
+                if (showTextures != value)
+                {
+                    showTextures = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public bool SolidShape
         {
             get
@@ -124,6 +193,11 @@ namespace Barnacle.Dialogs
                 if (solidShape != value)
                 {
                     solidShape = value;
+                    if (solidShape)
+                    {
+                        ShowWidth = Visibility.Hidden;
+                        ShowTextures = Visibility.Hidden;
+                    }
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
