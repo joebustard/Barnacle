@@ -17,7 +17,9 @@ namespace Barnacle.Dialogs
         private bool hollowShape;
         private bool loaded;
         private Visibility showWidth;
+        private Visibility showTextures;
         private bool solidShape;
+        private bool texturedShape;
         private double wallWidth;
         private string warningText;
 
@@ -30,9 +32,12 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             wallWidth = 2;
+            textureDepth = 1;
             solidShape = true;
             hollowShape = false;
+            texturedShape = false;
             showWidth = Visibility.Hidden;
+            showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
             loaded = false;
         }
@@ -51,10 +56,58 @@ namespace Barnacle.Dialogs
                     if (hollowShape == true)
                     {
                         ShowWidth = Visibility.Visible;
+                        ShowTextures = Visibility.Hidden;
                     }
                     else
                     {
                         ShowWidth = Visibility.Hidden;
+                    }
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private double textureDepth;
+
+        public double TextureDepth
+        {
+            get
+            {
+                return textureDepth;
+            }
+            set
+            {
+                if (textureDepth != value)
+                {
+                    textureDepth = value;
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool TexturedShape
+        {
+            get
+            {
+                return texturedShape;
+            }
+            set
+            {
+                if (texturedShape != value)
+                {
+                    texturedShape = value;
+                    if (texturedShape == true)
+                    {
+                        ShowWidth = Visibility.Hidden;
+                        ShowTextures = Visibility.Visible;
+                    }
+                    else
+                    {
+                        ShowTextures = Visibility.Hidden;
                     }
 
                     NotifyPropertyChanged();
@@ -113,6 +166,22 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public Visibility ShowTextures
+        {
+            get
+            {
+                return showTextures;
+            }
+            set
+            {
+                if (showTextures != value)
+                {
+                    showTextures = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public bool SolidShape
         {
             get
@@ -124,6 +193,11 @@ namespace Barnacle.Dialogs
                 if (solidShape != value)
                 {
                     solidShape = value;
+                    if (solidShape)
+                    {
+                        ShowWidth = Visibility.Hidden;
+                        ShowTextures = Visibility.Hidden;
+                    }
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -231,124 +305,127 @@ namespace Barnacle.Dialogs
             double rx = double.MinValue;
             double ty = double.MinValue;
             double by = double.MaxValue;
-            for (int i = 0; i < points.Count; i++)
+            if (points != null)
             {
-                if (points[i].X < lx)
+                for (int i = 0; i < points.Count; i++)
                 {
-                    lx = points[i].X;
+                    if (points[i].X < lx)
+                    {
+                        lx = points[i].X;
+                    }
+                    if (points[i].X > rx)
+                    {
+                        rx = points[i].X;
+                    }
+                    if (points[i].Y > ty)
+                    {
+                        ty = points[i].Y;
+                    }
+                    if (points[i].Y < by)
+                    {
+                        by = points[i].Y;
+                    }
                 }
-                if (points[i].X > rx)
+
+                // user may ahve chosen a wallwidth that means the inside walls overlap
+                // DOnt allow that.
+                double actualWallWidth = wallWidth;
+                double d = ((rx - lx) / 2) - 0.1;
+                if (d < actualWallWidth)
                 {
-                    rx = points[i].X;
+                    actualWallWidth = d;
                 }
-                if (points[i].Y > ty)
+                d = ((ty - by) / 2) - 0.1;
+                if (d <= actualWallWidth)
                 {
-                    ty = points[i].Y;
+                    actualWallWidth = d;
                 }
-                if (points[i].Y < by)
+
+                top = ty;
+                for (int i = 0; i < points.Count; i++)
                 {
-                    by = points[i].Y;
+                    if (PathEditor.LocalImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                        tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                    }
+                    else
+                    {
+                        double x = PathEditor.ToMM(points[i].X);
+                        double y = PathEditor.ToMM(top - points[i].Y);
+                        tmp.Insert(0, new System.Windows.Point(x, y));
+                    }
                 }
-            }
 
-            // user may ahve chosen a wallwidth that means the inside walls overlap
-            // DOnt allow that.
-            double actualWallWidth = wallWidth;
-            double d = ((rx - lx) / 2) - 0.1;
-            if (d < actualWallWidth)
-            {
-                actualWallWidth = d;
-            }
-            d = ((ty - by) / 2) - 0.1;
-            if (d <= actualWallWidth)
-            {
-                actualWallWidth = d;
-            }
-
-            top = ty;
-            for (int i = 0; i < points.Count; i++)
-            {
-                if (PathEditor.LocalImage == null)
+                for (int i = 0; i < tmp.Count - 1; i++)
                 {
-                    // flipping coordinates so have to reverse polygon too
-                    //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                    tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                    outerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
                 }
-                else
+                outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
+
+                for (int i = 0; i < outerPolygon.Count; i++)
                 {
-                    double x = PathEditor.ToMM(points[i].X);
-                    double y = PathEditor.ToMM(top - points[i].Y);
-                    tmp.Insert(0, new System.Windows.Point(x, y));
+                    innerPolygon.Add(new PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
                 }
-            }
+                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)actualWallWidth);
 
-            for (int i = 0; i < tmp.Count - 1; i++)
-            {
-                outerPolygon.Add(new PointF((float)tmp[i].X, (float)tmp[i].Y));
-            }
-            outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
-
-            for (int i = 0; i < outerPolygon.Count; i++)
-            {
-                innerPolygon.Add(new PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
-            }
-            innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)actualWallWidth);
-
-            tmp.Clear();
-            for (int i = outerPolygon.Count - 1; i >= 0; i--)
-            {
-                tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
-            }
-            // generate side triangles so original points are already in list
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                CreateSideFace(tmp, i);
-            }
-
-            tmp.Clear();
-            for (int i = 0; i < innerPolygon.Count; i++)
-            {
-                tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
-            }
-            // generate side triangles so original points are already in list
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                CreateSideFace(tmp, i);
-            }
-
-            for (int i = 0; i < outerPolygon.Count; i++)
-            {
-                int j = i + 1;
-                if (j == outerPolygon.Count)
+                tmp.Clear();
+                for (int i = outerPolygon.Count - 1; i >= 0; i--)
                 {
-                    j = 0;
+                    tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
                 }
-                int c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
-                int c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
-                int c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
-                int c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
+                // generate side triangles so original points are already in list
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
 
-                Faces.Add(c0);
-                Faces.Add(c3);
-                Faces.Add(c2);
+                tmp.Clear();
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
+                }
+                // generate side triangles so original points are already in list
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
 
-                c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
-                c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
-                c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
-                c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    int j = i + 1;
+                    if (j == outerPolygon.Count)
+                    {
+                        j = 0;
+                    }
+                    int c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
+                    int c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
+                    int c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
+                    int c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
 
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c3);
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+
+                    c0 = AddVertice(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
+                    c1 = AddVertice(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
+                    c2 = AddVertice(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
+                    c3 = AddVertice(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+
+                CentreVertices();
             }
-
-            CentreVertices();
         }
 
         private void GenerateShape()
@@ -453,6 +530,8 @@ namespace Barnacle.Dialogs
             }
             WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
+            HollowShape = EditorParameters.GetBoolean("Hollow", false);
+            SolidShape = !HollowShape;
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -471,6 +550,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Path", PathEditor.PathString);
             EditorParameters.Set("WallWidth", WallWidth.ToString());
             EditorParameters.Set("PlateWidth", PlateWidth.ToString());
+            EditorParameters.Set("Hollow", HollowShape.ToString());
         }
 
         private List<PointF> ShrinkPolygon(List<PointF> ply, double offset)

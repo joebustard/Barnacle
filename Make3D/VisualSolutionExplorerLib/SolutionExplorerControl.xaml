@@ -1,57 +1,45 @@
-<UserControl x:Class="VisualSolutionExplorer.SolutionExplorerControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:local="clr-namespace:VisualSolutionExplorer"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<UserControl
+    x:Class="VisualSolutionExplorer.SolutionExplorerControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:local="clr-namespace:VisualSolutionExplorer">
     <UserControl.Resources>
-        <Style TargetType="{x:Type MenuItem}"
-               x:Key="ContextMenuItem">
+        <Style x:Key="ContextMenuItem" TargetType="{x:Type MenuItem}">
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSeparator}"
-                             Value="True">
+                <DataTrigger Binding="{Binding IsSeparator}" Value="True">
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate>
-                                <Separator Background="Black"
-                                           BorderBrush="Brown"
-                                           BorderThickness="4" />
+                                <Separator
+                                    Background="Black"
+                                    BorderBrush="Brown"
+                                    BorderThickness="4" />
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="{x:Type TextBlock}"
-               x:Key="NameTextBlock">
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
+        <Style x:Key="NameTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsEditing}"
-                             Value="False">
-                    <Setter Property="Visibility"
-                            Value="Visible" />
+                <DataTrigger Binding="{Binding IsEditing}" Value="False">
+                    <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsEditing}"
-                             Value="True">
-                    <Setter Property="Visibility"
-                            Value="Hidden" />
+                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                    <Setter Property="Visibility" Value="Hidden" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
-        <Style TargetType="{x:Type TextBox}"
-               x:Key="NameTextBox">
-            <Setter Property="HorizontalAlignment"
-                    Value="Stretch" />
+        <Style x:Key="NameTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Style.Triggers>
-                <DataTrigger Binding="{Binding IsEditing}"
-                             Value="True">
-                    <Setter Property="Visibility"
-                            Value="Visible" />
+                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                    <Setter Property="Visibility" Value="Visible" />
                 </DataTrigger>
-                <DataTrigger Binding="{Binding IsEditing}"
-                             Value="False">
-                    <Setter Property="Visibility"
-                            Value="Hidden" />
+                <DataTrigger Binding="{Binding IsEditing}" Value="False">
+                    <Setter Property="Visibility" Value="Hidden" />
                 </DataTrigger>
             </Style.Triggers>
         </Style>
@@ -61,106 +49,100 @@
             <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="0"
-                   x:Name="MainDocPanel">
+        <DockPanel x:Name="MainDocPanel" Grid.Row="0">
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
-                    <Button Command="{Binding CollapseTree}"
-                            ToolTip="Collapse Tree">
-                        <Image Source="Images\Minus.png"
-                               Width="24"
-                               Height="24" />
+                    <Button Command="{Binding CollapseTree}" ToolTip="Collapse Tree">
+                        <Image
+                            Width="24"
+                            Height="24"
+                            Source="Images\Minus.png" />
                     </Button>
-                    <Button Command="{Binding ExpandTree}"
-                            ToolTip="Expand Tree">
-                        <Image Source="Images\Plus.png"
-                               Width="24"
-                               Height="24" />
+                    <Button Command="{Binding ExpandTree}" ToolTip="Expand Tree">
+                        <Image
+                            Width="24"
+                            Height="24"
+                            Source="Images\Plus.png" />
                     </Button>
-                    <Button Command="{Binding RefreshTree}"
-                            ToolTip="Refresh"
-                            Visibility="{Binding RefreshVisibility}">
-                        <Image Source="Images\Refresh.png"
-                               Width="24"
-                               Height="24" />
+                    <Button
+                        Command="{Binding RefreshTree}"
+                        ToolTip="Refresh"
+                        Visibility="{Binding RefreshVisibility}">
+                        <Image
+                            Width="24"
+                            Height="24"
+                            Source="Images\Refresh.png" />
                     </Button>
                 </ToolBar>
             </ToolBarTray>
         </DockPanel>
-        <TreeView AllowDrop="True"
-                  DragEnter="DropTree_DragEnter"
-                  Drop="DropTree_Drop"
-                  Grid.Row="1"
-                  ItemsSource="{Binding Folders}"
-                  Focusable="False"
-                  PreviewMouseLeftButtonDown="Tree_PreviewMouseLeftButtonDown"
-                  PreviewMouseMove="Tree_MouseMove"
-                  SelectedItemChanged="TreeView_SelectedItemChanged"
-                  VerticalAlignment="Stretch"
-                  x:Name="SolutionTreeView">
-      <!--
-        This Style binds a TreeViewItem to a TreeViewItemViewModel.
-        -->
+        <TreeView
+            x:Name="SolutionTreeView"
+            Grid.Row="1"
+            VerticalAlignment="Stretch"
+            AllowDrop="True"
+            DragEnter="DropTree_DragEnter"
+            Drop="DropTree_Drop"
+            Focusable="False"
+            ItemsSource="{Binding Folders}"
+            PreviewMouseLeftButtonDown="Tree_PreviewMouseLeftButtonDown"
+            PreviewMouseMove="Tree_MouseMove"
+            SelectedItemChanged="TreeView_SelectedItemChanged">
+            <!--
+                This Style binds a TreeViewItem to a TreeViewItemViewModel.
+            -->
             <TreeView.ItemContainerStyle>
                 <Style TargetType="{x:Type TreeViewItem}">
-                    <Setter Property="IsExpanded"
-                            Value="{Binding IsExpanded, Mode=TwoWay}" />
-                    <Setter Property="IsSelected"
-                            Value="{Binding IsSelected, Mode=TwoWay}" />
-                    <Setter Property="FontWeight"
-                            Value="Normal" />
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                    <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                    <Setter Property="FontWeight" Value="Normal" />
                     <Style.Triggers>
-                        <Trigger Property="IsSelected"
-                                 Value="True">
-                            <Setter Property="FontWeight"
-                                    Value="Bold" />
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
                         </Trigger>
                     </Style.Triggers>
                 </Style>
             </TreeView.ItemContainerStyle>
             <TreeView.Resources>
-                <HierarchicalDataTemplate DataType="{x:Type local:ProjectFolderViewModel}"
-                                          ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate DataType="{x:Type local:ProjectFolderViewModel}" ItemsSource="{Binding Children}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="22" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Margin="3,0"
-                               Source="Images\Folder.png"
-                               Width="16"
-                               Height="16" />
+                        <Image
+                            Grid.Column="0"
+                            Width="16"
+                            Height="16"
+                            Margin="3,0"
+                            Source="Images\Folder.png" />
 
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding FolderName}"
-                                   ToolTip="{Binding FolderToolTip}">
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding FolderName}"
+                            ToolTip="{Binding FolderToolTip}">
                             <TextBlock.Style>
-                                <Style BasedOn="{StaticResource NameTextBlock}"
-                                       TargetType="{x:Type TextBlock}" />
+                                <Style BasedOn="{StaticResource NameTextBlock}" TargetType="{x:Type TextBlock}" />
                             </TextBlock.Style>
                             <TextBlock.ContextMenu>
-                                <ContextMenu IsEnabled="{Binding Valid}"
-                                             ItemsSource="{Binding ContextMenu.ContextMenuActions}">
+                                <ContextMenu IsEnabled="{Binding Valid}" ItemsSource="{Binding ContextMenu.ContextMenuActions}">
                                     <ContextMenu.ItemContainerStyle>
-                                        <Style BasedOn="{StaticResource ContextMenuItem}"
-                                               TargetType="{x:Type MenuItem}" />
+                                        <Style BasedOn="{StaticResource ContextMenuItem}" TargetType="{x:Type MenuItem}" />
                                     </ContextMenu.ItemContainerStyle>
                                     <ContextMenu.ItemTemplate>
                                         <DataTemplate DataType="MenuItem">
-                                            <MenuItem Command="{Binding MenuCommand}"
-                                                      Header="{Binding HeaderText}"
-                                                      ToolTip="{Binding ToolTip}" />
+                                            <MenuItem
+                                                Command="{Binding MenuCommand}"
+                                                Header="{Binding HeaderText}"
+                                                ToolTip="{Binding ToolTip}" />
                                         </DataTemplate>
                                     </ContextMenu.ItemTemplate>
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
                         </TextBlock>
-                        <TextBox Grid.Column="1"
-                                 Text="{Binding FolderName, UpdateSourceTrigger=LostFocus}">
+                        <TextBox Grid.Column="1" Text="{Binding FolderName, UpdateSourceTrigger=LostFocus}">
                             <TextBox.Style>
-                                <Style BasedOn="{StaticResource NameTextBox}"
-                                       TargetType="{x:Type TextBox}" />
+                                <Style BasedOn="{StaticResource NameTextBox}" TargetType="{x:Type TextBox}" />
                             </TextBox.Style>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">
@@ -176,49 +158,51 @@
                         </TextBox>
                     </Grid>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type local:ProjectFileViewModel}"
-                                          ItemsSource="{Binding Children}">
-          <!-- <Image Width="16" Height="16" Margin="3,0" Source="Images\File.png" Grid.Column="0" /> -->
+                <HierarchicalDataTemplate DataType="{x:Type local:ProjectFileViewModel}" ItemsSource="{Binding Children}">
+                    <!-- <Image Width="16" Height="16" Margin="3,0" Source="Images\File.png" Grid.Column="0" /> -->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="22" />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
-                        <Image Grid.Column="0"
-                               Margin="3,0"
-                               Source="{Binding Icon}"
-                               Width="16"
-                               Height="16" />
+                        <Image
+                            Grid.Column="0"
+                            Width="16"
+                            Height="16"
+                            Margin="3,0"
+                            Source="{Binding Icon}" />
 
-                        <TextBlock Grid.Column="1"
-                                   Text="{Binding FileName}"
-                                   ToolTip="{Binding FileToolTip}">
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{Binding FileName}"
+                            ToolTip="{Binding FileToolTip}">
                             <TextBlock.InputBindings>
-                                <MouseBinding Command="{Binding FileDoubleClickCommand}"
-                                              CommandParameter="{Binding }"
-                                              Gesture="LeftDoubleClick" />
-                                <MouseBinding Command="{Binding FileClickCommand}"
-                                              CommandParameter="{Binding }"
-                                              Gesture="LeftClick" />
+                                <MouseBinding
+                                    Command="{Binding FileDoubleClickCommand}"
+                                    CommandParameter="{Binding}"
+                                    Gesture="LeftDoubleClick" />
+                                <MouseBinding
+                                    Command="{Binding FileClickCommand}"
+                                    CommandParameter="{Binding}"
+                                    Gesture="LeftClick" />
                             </TextBlock.InputBindings>
                             <TextBlock.ContextMenu>
                                 <ContextMenu ItemsSource="{Binding ContextMenu.ContextMenuActions}">
                                     <ContextMenu.ItemTemplate>
                                         <DataTemplate DataType="MenuItem">
-                                            <MenuItem Command="{Binding MenuCommand}"
-                                                      CommandTarget="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
-                                                      Header="{Binding HeaderText}"
-                                                      ToolTip="{Binding ToolTip}" />
+                                            <MenuItem
+                                                Command="{Binding MenuCommand}"
+                                                CommandTarget="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                Header="{Binding HeaderText}"
+                                                ToolTip="{Binding ToolTip}" />
                                         </DataTemplate>
                                     </ContextMenu.ItemTemplate>
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
                         </TextBlock>
-                        <TextBox Grid.Column="1"
-                                 Text="{Binding FileName, UpdateSourceTrigger=LostFocus}">
+                        <TextBox Grid.Column="1" Text="{Binding FileName, UpdateSourceTrigger=LostFocus}">
                             <TextBox.Style>
-                                <Style BasedOn="{StaticResource NameTextBox}"
-                                       TargetType="{x:Type TextBox}" />
+                                <Style BasedOn="{StaticResource NameTextBox}" TargetType="{x:Type TextBox}" />
                             </TextBox.Style>
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="LostFocus">

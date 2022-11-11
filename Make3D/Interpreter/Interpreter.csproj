@@ -82,6 +82,7 @@
     <Compile Include="SolidFunctions\MakeRailWheelNode.cs" />
     <Compile Include="SolidFunctions\MakeReuleauxNode.cs" />
     <Compile Include="SolidFunctions\MakeShapedBrickWallNode.cs" />
+    <Compile Include="SolidFunctions\MakeShapedTiledRoofNode.cs" />
     <Compile Include="SolidFunctions\MakeSquaredStadium.cs" />
     <Compile Include="SolidFunctions\MakeSquirkle.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />

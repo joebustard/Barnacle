@@ -17,24 +17,19 @@ namespace DlgMaker
 ";
 
         private static string ldrb = @"
-          if ( EditorParameters.Get(""<pName>"") !="""")
-          {
-              <pName>= EditorParameters.GetBool(""<pName>"");
-          }
+           <pName>= EditorParameters.GetBool(""<pName>"",true);
+
 ";
 
         private static string ldrd = @"
-          if ( EditorParameters.Get(""<pName>"") !="""")
-          {
-              <pName>= EditorParameters.GetDouble(""<pName>"");
-          }
+            <pName>= EditorParameters.GetDouble(""<pName>"",5);
+
 ";
 
         private static string ldri = @"
-          if ( EditorParameters.Get(""<pName>"") !="""")
-          {
-              <pName>= EditorParameters.GetInt(""<pName>"");
-          }
+
+              <pName>= EditorParameters.GetInt(""<pName>"",1);
+
 ";
 
         private static string propTemplate = @"
@@ -52,7 +47,7 @@ public <pType> <PName>
         {
            <pName> = value;
            NotifyPropertyChanged();
-              UpdateDisplay();
+           UpdateDisplay();
         }
     }
 }
@@ -244,7 +239,6 @@ public <pType> <PName>
                 }
             }
         }
-
 
         public string DialogTitle
         {

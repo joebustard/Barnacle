@@ -104,7 +104,7 @@ namespace Barnacle.UserControls
                     {
                         cl = (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.AppendPoint) &&
                                   (vm.SelectionMode != FlexiPathEditorControlViewModel.SelectionModeType.StartPoint) &&
-                                  (vm.Points.Count > 3);
+                                  (vm.Points.Count >= 3);
                     }
                 }
                 return cl;

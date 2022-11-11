@@ -111,6 +111,7 @@
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
+    <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\VaseLoft\VaseLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
       <DependentUpon>Platelet.xaml</DependentUpon>
@@ -425,6 +426,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1013,6 +1018,9 @@
     <Resource Include="Data\ReadMe.txt" />
     <Resource Include="Images\Buttons\ShowPolarGrid.png" />
     <Resource Include="Images\Buttons\Image.png" />
+    <Resource Include="Data\Textures\DeckPlate1.png" />
+    <Resource Include="Data\Textures\stone1.jpg" />
+    <Resource Include="Data\Textures\StoneWall1.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -22,6 +22,7 @@ namespace MakerLib
         private double rx;
         private double ry;
         private double wallWidth;
+
         public ShapedBrickWallMaker(string path, double brickLength, double brickHeight, double brickDepth, double wallWidth, double mortarGap)
         {
             this.path = path;
@@ -156,93 +157,6 @@ namespace MakerLib
                 Faces.Add(v1);
                 Faces.Add(v2);
                 Faces.Add(v3);
-            }
-        }
-
-        public bool IsPointInPolygon(Point point, List<Point> polygon)
-        {
-            int polyCorners = polygon.Count;
-            int i = 0;
-            int j = polyCorners - 1;
-            bool oddNodes = false;
-
-            for (i = 0; i < polyCorners; i++)
-            {
-                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
-                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
-                {
-                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
-                    {
-                        oddNodes = !oddNodes;
-                    }
-                }
-                j = i;
-            }
-
-            return oddNodes;
-        }
-
-        private Point Centroid(Point[] crns)
-        {
-            double x = 0;
-            double y = 0;
-            if (crns.GetLength(0) > 0)
-            {
-                foreach (Point p in crns)
-                {
-                    x += p.X;
-                    y += p.Y;
-                }
-                x /= crns.GetLength(0);
-                y /= crns.GetLength(0);
-            }
-            return new Point(x, y);
-        }
-
-        private ConvexPolygon2D RectPoly(double px, double py, double l, double h)
-        {
-            Point[] rct = new Point[4];
-            rct[0].X = px;
-            rct[0].Y = py;
-
-            rct[1].X = px;
-            rct[1].Y = py + h;
-
-            rct[2].X = px + l;
-            rct[2].Y = py + h;
-
-            rct[3].X = px + l;
-            rct[3].Y = py;
-
-            return new ConvexPolygon2D(rct);
-        }
-        private void TriangulateSurface(Point[] points, double z, bool reverse = false)
-        {
-            TriangulationPolygon ply = new TriangulationPolygon();
-            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-            foreach (Point p in points)
-            {
-                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-            }
-            ply.Points = pf.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, z);
-                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, z);
-                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, z);
-                if (reverse)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
             }
         }
     }

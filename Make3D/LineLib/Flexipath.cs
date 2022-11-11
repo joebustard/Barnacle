@@ -369,7 +369,7 @@ namespace Barnacle.LineLib
 
         public void ClosePath()
         {
-            if (segs.Count > 2)
+            if (segs.Count >= 2)
             {
                 // create a separate segment that goes back to point zero
                 LineSegment sq = new LineSegment(points.Count - 1, 0);

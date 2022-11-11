@@ -1133,6 +1133,7 @@ namespace Barnacle.ViewModels
             buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
             buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a rectangular plank wall."));
             buildingToolsToShow.Add(new ToolDef("Shaped Brick Wall", true, "ShapedBrickWall", "Create a brick wall defined by a path."));
+            buildingToolsToShow.Add(new ToolDef("Shaped Tiled Roof", true, "ShapedTiledRoof", "Create a tiled reoof defined by a path."));
             SortMenu(buildingToolsToShow);
             NotifyPropertyChanged("BuildingToolsToShow");
         }

@@ -1,4 +1,5 @@
 ﻿using Barnacle.Object3DLib;
+using PolygonLibrary;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
@@ -336,9 +337,95 @@ namespace MakerLib
             return res;
         }
 
+        protected void AppendShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
+        {
+            Int32Collection altFaces = new Int32Collection();
+            foreach (int org in bs.TriangleIndices)
+            {
+                Point3D p = bs.AbsoluteObjectVertices[org];
+                int apped = AddVertice(pnts, p.X, p.Y, p.Z);
+                altFaces.Add(apped);
+            }
+
+            foreach (int i in altFaces)
+            {
+                faces.Add(i);
+            }
+        }
+
+        protected Point Centroid(Point[] crns)
+        {
+            double x = 0;
+            double y = 0;
+            if (crns.GetLength(0) > 0)
+            {
+                foreach (Point p in crns)
+                {
+                    x += p.X;
+                    y += p.Y;
+                }
+                x /= crns.GetLength(0);
+                y /= crns.GetLength(0);
+            }
+            return new Point(x, y);
+        }
+
+        protected void CopyShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
+        {
+            foreach (Point3D ps in bs.AbsoluteObjectVertices)
+            {
+                pnts.Add(new Point3D(ps.X, ps.Y, ps.Z));
+            }
+            foreach (int i in bs.TriangleIndices)
+            {
+                faces.Add(i);
+            }
+        }
+
         protected void FlipAxies(ref Point3D p1)
         {
             p1 = new Point3D(p1.X, p1.Z, p1.Y);
+        }
+
+        protected bool IsPointInPolygon(Point point, List<Point> polygon)
+        {
+            int polyCorners = polygon.Count;
+            int i = 0;
+            int j = polyCorners - 1;
+            bool oddNodes = false;
+
+            for (i = 0; i < polyCorners; i++)
+            {
+                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
+                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
+                {
+                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
+                    {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        }
+
+        protected ConvexPolygon2D RectPoly(double px, double py, double l, double h)
+        {
+            Point[] rct = new Point[4];
+            rct[0].X = px;
+            rct[0].Y = py;
+
+            rct[1].X = px;
+            rct[1].Y = py + h;
+
+            rct[2].X = px + l;
+            rct[2].Y = py + h;
+
+            rct[3].X = px + l;
+            rct[3].Y = py;
+
+            return new ConvexPolygon2D(rct);
         }
 
         protected void TriangulatePerimiter(List<Point> points, double thickness)
@@ -397,31 +484,33 @@ namespace MakerLib
             }
         }
 
-        protected void CopyShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
+        protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
         {
-            foreach (Point3D ps in bs.AbsoluteObjectVertices)
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (Point p in points)
             {
-                pnts.Add(new Point3D(ps.X, ps.Y, ps.Z));
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
             }
-            foreach (int i in bs.TriangleIndices)
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
             {
-                faces.Add(i);
-            }
-        }
-
-        protected void AppendShape(Object3D bs, Point3DCollection pnts, Int32Collection faces)
-        {
-            Int32Collection altFaces = new Int32Collection();
-            foreach (int org in bs.TriangleIndices)
-            {
-                Point3D p = bs.AbsoluteObjectVertices[org];
-                int apped = AddVertice(pnts, p.X, p.Y, p.Z);
-                altFaces.Add(apped);
-            }
-
-            foreach (int i in altFaces)
-            {
-                faces.Add(i);
+                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, z);
+                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, z);
+                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, z);
+                if (reverse)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
             }
         }
     }
