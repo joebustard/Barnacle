@@ -847,6 +847,10 @@
       <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>
       <Name>PlacementLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PolygonLibrary\PolygonLibrary.csproj">
+      <Project>{61ee0e20-98e3-430f-be43-cb1f19e829a5}</Project>
+      <Name>PolygonLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PolygonTriangulationLib\PolygonTriangulationLib.csproj">
       <Project>{BF1D777E-DF33-4C03-80A6-9ECB741746F1}</Project>
       <Name>PolygonTriangulationLib</Name>
@@ -1035,14 +1039,17 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)templates
 mkdir $(TargetDir)data
+mkdir $(TargetDir)data\Textures
 mkdir $(TargetDir)data\figure
 mkdir $(TargetDir)data\Links
+mkdir $(TargetDir)data\Textures
 del   /q $(TargetDir)data\Links\*.txt
 mkdir $(TargetDir)libs
 xcopy $(SolutionDir)make3d\templates\*.* $(TargetDir)templates /q /s /y
 copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
 copy /Y $(SolutionDir)make3d\Dialogs\TankTrack\Links\*.* $(TargetDir)data\Links
 copy /Y $(SolutionDir)make3d\Data\*.* $(TargetDir)data
+copy /Y $(SolutionDir)make3d\Data\Textures\*.* $(TargetDir)data\textures
 copy /Y $(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs
 del   /q $(TargetDir)data\figure\*.txt
 rem copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure

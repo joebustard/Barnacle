@@ -572,10 +572,8 @@ namespace Barnacle.UserControls
         public bool SelectLineFromPoint(System.Windows.Point position, bool shift)
         {
             bool found;
-
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             found = flexiPath.SelectAtPoint(position, !shift);
-
             CanCNVDouble = flexiPath.HasTwoConsecutiveLineSegmentsSelected();
             return found;
         }

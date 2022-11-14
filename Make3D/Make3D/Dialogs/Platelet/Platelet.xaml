@@ -30,7 +30,8 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="100" />
+                    
                 </Grid.RowDefinitions>
                 <Viewport3D
                     Name="viewport3D1"
@@ -64,65 +65,80 @@
                         </ModelVisual3D.Content>
                     </ModelVisual3D>
                 </Viewport3D>
-
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center">
-                        Width
-                    </Label>
-                    <TextBox
-                        Width="100"
-                        Margin="4,0,0,0"
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" MaxWidth="80"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*"/>
+                        
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+                    <Label VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Content="Width"/>
+                    <TextBox  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
+                        Width="50" Margin="0,2,0,0"
+                        
                         VerticalContentAlignment="Center"
                         Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
+
                     <RadioButton
-                        Margin="2,2,8,2"
-                        VerticalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Grid.Column="0" Grid.Row="1"
                         Content="Solid"
                         GroupName="HollowGroup"
                         IsChecked="{Binding SolidShape}" />
-                    <RadioButton
-                        Margin="2,2,10,2"
+
+                    <RadioButton     
+                    Grid.Column="0" Grid.Row="2"
+                    
                         VerticalAlignment="Center"
                         Content="Hollow"
                         GroupName="HollowGroup"
                         IsChecked="{Binding HollowShape}" />
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
+                    <Label VerticalAlignment="Center" Content="Wall"  
+Margin="0,0,4,0"
+HorizontalAlignment="Right" Visibility="{Binding ShowWidth}"/>
+
+                    <TextBox
+                           Width="100"
+                            HorizontalAlignment="Left"
+                    Visibility="{Binding ShowWidth}"
+                            VerticalAlignment="Center"
+                            Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}" />
+                    </StackPanel>
                     <RadioButton
-                        Margin="2,2,10,2"
+                    Grid.Column="0" Grid.Row="3"
                         VerticalAlignment="Center"
                         Content="Textured"
                         GroupName="HollowGroup"
                         IsChecked="{Binding TexturedShape}" />
-                    <StackPanel HorizontalAlignment="Left"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal"
-                        Visibility="{Binding ShowWidth}">
-                        <Label VerticalAlignment="Center" Content="Wall" />
 
-                        <TextBox
-                            Width="80"
-                            Margin="4,0,0,0"
-                            VerticalAlignment="Center"
-                            Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                    <StackPanel HorizontalAlignment="Left" Margin="-130,0,0,0"
-                        VerticalAlignment="Center"
-                        Orientation="Horizontal"
-                        Visibility="{Binding ShowTextures}">
-                        <Label VerticalAlignment="Center" Content="Texture" />
-                        <ComboBox
+                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3">
+                    <ComboBox 
+                    HorizontalAlignment="Left"
                             Width="100"
-                            Margin="4,0,8,0"
+                    
                             VerticalContentAlignment="Center"
-                            Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                            ItemsSource="{Binding TextureNames}"
+                            SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
                             Visibility="{Binding ShowTextures}" />
-                        <Label VerticalAlignment="Center" Content="Depth" />
-                        <TextBox
-                            Width="80"
-                            Margin="4,0,0,0"
+                    <Label VerticalAlignment="Center" Content="Depth"  
+HorizontalAlignment="Right" Margin="4,0,4,0"
+Visibility="{Binding ShowTextures}"/>
+                    <TextBox 
+                            Width="40"
+                    Visibility="{Binding ShowTextures}"
                             VerticalAlignment="Center"
                             Text="{Binding TextureDepth, UpdateSourceTrigger=PropertyChanged}" />
                     </StackPanel>
-                </StackPanel>
+                </Grid>
+
             </Grid>
         </Border>
         <Border
