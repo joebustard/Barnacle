@@ -54,6 +54,7 @@ namespace Barnacle.Dialogs
             textureFiles = new Dictionary<string, string>();
             loadedImageName = "";
         }
+
         public bool HollowShape
         {
             get
@@ -577,15 +578,21 @@ namespace Barnacle.Dialogs
                 CentreVertices();
             }
         }
-        private const int back = 0;
-        private const int front = 1;
-        private const int mixed = 2;
 
-        private double minTriSize = 1;
+        private enum PixelColour
+        {
+            Unknown,
+            Back,
+            Front,
+            Mixed
+        }
+
+        private double minTriSize = 0.2;
 
         internal List<TextureTriangle> triangleQueue;
         internal List<TextureTriangle> backgroundTriangles;
         internal List<TextureTriangle> frontTriangles;
+
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
@@ -597,14 +604,14 @@ namespace Barnacle.Dialogs
 
                     List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                     double top = 0;
-                    for (int i = 0; i < points.Count-1; i++)
+                    for (int i = 0; i < points.Count - 1; i++)
                     {
                         if (points[i].Y > top)
                         {
                             top = points[i].Y;
                         }
                     }
-                    for (int i = 0; i < points.Count-1; i++)
+                    for (int i = 0; i < points.Count - 1; i++)
                     {
                         if (PathEditor.LocalImage == null)
                         {
@@ -630,7 +637,7 @@ namespace Barnacle.Dialogs
                         by = Math.Min(tmp[i].Y, by);
                         ty = Math.Max(tmp[i].Y, ty);
                     }
-                    double sz = 0.1;
+                    double sz = 0.2;
                     double xspan = (rx - lx) / sz;
                     double yspan = (ty - by) / sz;
                     // generate side triangles so original points are already in list
@@ -659,100 +666,39 @@ namespace Barnacle.Dialogs
                         Faces.Add(c1);
                     }
 
+                    ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
+                    ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
                     LoadTextureImage();
-
-
-
-                    triangleQueue = new List<TextureTriangle>();
-                    frontTriangles = new List<TextureTriangle>();
-                    backgroundTriangles = new List<TextureTriangle>();
-
-                    // seed the queue with the original triangles
-                    Point3DCollection vt = new Point3DCollection();
-                    Int32Collection fc = new Int32Collection();
-                    foreach (Triangle t in tris)
+                    PlateletSurface surface = new PlateletSurface();
+                    for (double px = lx; px < rx; px++)
                     {
-                        int c0 = AddVertice(vt, t.Points[0].X, t.Points[0].Y, 0);
-                        int c1 = AddVertice(vt, t.Points[1].X, t.Points[1].Y, 0);
-                        int c2 = AddVertice(vt, t.Points[2].X, t.Points[2].Y, 0);
-                        fc.Add(c0);
-                        fc.Add(c1);
-                        fc.Add(c2);
-                        TextureTriangle tt = new TextureTriangle(c0,c1,c2);
-                        triangleQueue.Add(tt);
-                    }
-                    while (triangleQueue.Count > 0)
-                    {
-                        TextureTriangle tt = triangleQueue[0];
-                        triangleQueue.RemoveAt(0);
-                        int cl = ClassifyTriangle(vt, tt, lx, by);
-                        switch (cl)
+                        for (double py = by; py < ty; py++)
                         {
-                            case back:
-                                backgroundTriangles.Add(tt);
-                                break;
-
-                            case front:
-                                frontTriangles.Add(tt);
-                                break;
-
-                            case mixed:
+                            ConvexPolygon2D rect = RectPoly(px, py, sz);
+                            ConvexPolygon2D interception = interceptor.GetIntersectionOfPolygons(rect, boundary);
+                            if (interception.Corners.GetLength(0) > 2)
+                            {
+                                if (interception.Corners.GetLength(0) == 4)
                                 {
-                                    // if the triangle is bigger than our minimum size
-                                    // split it into 4 smaller ones
-                                    double area = AreaOfTriangle(vt, tt.p0, tt.p1, tt.p2);
-                                    if (area > minTriSize)
+                                    // assume its a rect
+                                    surface.AddFaces(px, py, px + sz, py + sz);
+                                }
+                                else
+                                {
+                                    ply = new TriangulationPolygon();
+                                    List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
+                                    foreach (System.Windows.Point p in interception.Corners)
                                     {
-                                        // add them to the end of the queue
-                                        int m0 = Midpoint(vt, tt.p0, tt.p1);
-                                        int m1 = Midpoint(vt, tt.p1, tt.p2);
-                                        int m2 = Midpoint(vt, tt.p2, tt.p0);
-
-                                        TextureTriangle tn = new TextureTriangle(tt.p0,m0,m2);
-                                        triangleQueue.Add(tn);
-
-                                        tn = new TextureTriangle( m0, tt.p1,m1);
-                                        triangleQueue.Add(tn);
-
-                                        tn = new TextureTriangle(m1, tt.p2, m2);
-                                        triangleQueue.Add(tn);
-
-                                        tn = new TextureTriangle(m0, m1, m2);
-                                        triangleQueue.Add(tn);
+                                        pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
                                     }
-                                    else
+                                    tris = ply.Triangulate();
+                                    foreach (Triangle t in tris)
                                     {
-                                        // shove on the background list 
-                                        backgroundTriangles.Add(tt);
+                                        surface.AddFace(t.Points);
                                     }
                                 }
-                                break;
+                            }
                         }
-                    }
-                    foreach (TextureTriangle ff in frontTriangles)
-                    {
-                        vt[ff.p0] = new Point3D(vt[ff.p0].X, vt[ff.p0].Y, vt[ff.p0].Z + textureDepth);
-                        vt[ff.p1] = new Point3D(vt[ff.p1].X, vt[ff.p1].Y, vt[ff.p1].Z + textureDepth);
-                        vt[ff.p2] = new Point3D(vt[ff.p2].X, vt[ff.p2].Y, vt[ff.p2].Z + textureDepth);
-                    }                        
-                    int[] newIndices = new int[vt.Count];
-                    for ( int pIndex = 0; pIndex < vt.Count; pIndex++)
-                    {
-                        int nv = AddPoint(Vertices,vt[pIndex]);
-                        newIndices[pIndex] =  nv;
-                    }
-
-                    for( int iface =0; iface < backgroundTriangles.Count; iface ++)
-                    {
-                        Faces.Add(newIndices[backgroundTriangles[iface].p0]);
-                        Faces.Add(newIndices[backgroundTriangles[iface].p1]);
-                        Faces.Add(newIndices[backgroundTriangles[iface].p2]);
-                    }
-                    for (int iface = 0; iface < frontTriangles.Count; iface++)
-                    {
-                        Faces.Add(newIndices[frontTriangles[iface].p0]);
-                        Faces.Add(newIndices[frontTriangles[iface].p1]);
-                        Faces.Add(newIndices[frontTriangles[iface].p2]);
                     }
                     CentreVertices();
                 }
@@ -761,10 +707,22 @@ namespace Barnacle.Dialogs
 
         private int Midpoint(Point3DCollection vt, int p0, int p1)
         {
-            Point3D mid = new Point3D ( vt[p0].X +(vt[p1].X - vt[p0].X)/2.0,
+            Point3D mid = new Point3D(vt[p0].X + (vt[p1].X - vt[p0].X) / 2.0,
                                         vt[p0].Y + (vt[p1].Y - vt[p0].Y) / 2.0,
                                         vt[p0].Z + (vt[p1].Z - vt[p0].Z) / 2.0);
-            return AddPoint(vt, mid);                                      
+            return AddPoint(vt, mid);
+        }
+
+        private int CentroidPoint(Point3DCollection vt, TextureTriangle tt)
+        {
+            double x = 0;
+            double y = 0;
+            double z = 0;
+            x = vt[tt.p0].X + vt[tt.p1].X + vt[tt.p2].X;
+            y = vt[tt.p0].Y + vt[tt.p1].Y + vt[tt.p2].Y;
+            z = vt[tt.p0].Z + vt[tt.p1].Z + vt[tt.p2].Z;
+            Point3D mid = new Point3D(x / 3.0, y / 3.0, z / 3.0);
+            return AddPoint(vt, mid);
         }
 
         public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
@@ -779,10 +737,11 @@ namespace Barnacle.Dialogs
             double s = (a + b + c) / 2;
             return Math.Sqrt(s * (s - a) * (s - b) * (s - c));
         }
-        private int ClassifyTriangle(Point3DCollection vt, TextureTriangle tt, double lx, double by)
+
+        private PixelColour ClassifyTriangle(Point3DCollection vt, TextureTriangle tt, double lx, double by)
         {
             bool first = true;
-            int firstPixel = -1;
+            PixelColour firstPixel = PixelColour.Unknown;
             Rect bnds = GetTriBounds(vt, tt.p0, tt.p1, tt.p2);
 
             for (double px = bnds.Left; px <= bnds.Right; px++)
@@ -791,7 +750,7 @@ namespace Barnacle.Dialogs
                 {
                     if (PtInTriangle(px, py, vt, tt.p0, tt.p1, tt.p2))
                     {
-                        int pixel = GetTexturePixel(px, py);
+                        PixelColour pixel = GetTexturePixel(px, py);
                         if (first)
                         {
                             firstPixel = pixel;
@@ -801,22 +760,21 @@ namespace Barnacle.Dialogs
                         {
                             if (pixel != firstPixel)
                             {
-                                return mixed;  // mixed
+                                return PixelColour.Mixed;  // mixed
                             }
                         }
                     }
-
                 }
             }
             return firstPixel;
         }
 
-        double sign(Point p1, Point p2, Point p3)
+        private double sign(Point p1, Point p2, Point p3)
         {
             return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
         }
 
-        bool PointInTriangle(Point pt, Point v1, Point v2, Point v3)
+        private bool PointInTriangle(Point pt, Point v1, Point v2, Point v3)
         {
             double d1, d2, d3;
             bool has_neg, has_pos;
@@ -830,6 +788,7 @@ namespace Barnacle.Dialogs
 
             return !(has_neg && has_pos);
         }
+
         private bool PtInTriangle(double px, double py, Point3DCollection vt, int p0, int p1, int p2)
         {
             bool res = PointInTriangle(new Point(px, py),
@@ -861,7 +820,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private int GetTexturePixel(double cx, double cy)
+        private PixelColour GetTexturePixel(double cx, double cy)
         {
             double px = cx % textureImageWidth;
             double py = cy % textureImageHeight;
@@ -871,10 +830,10 @@ namespace Barnacle.Dialogs
 
                 if (col.R < 128)
                 {
-                    return 1;
+                    return PixelColour.Front;
                 }
             }
-            return 0;
+            return PixelColour.Back;
         }
 
         protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
@@ -906,6 +865,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         protected Point Centroid(Point[] crns)
         {
             double x = 0;
@@ -1000,6 +960,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private void LoadTextureNames()
         {
             try
@@ -1086,7 +1047,6 @@ namespace Barnacle.Dialogs
             warningText = "";
             Redisplay();
         }
-
     }
 
     public class TextureTriangle
@@ -1103,5 +1063,4 @@ namespace Barnacle.Dialogs
             p2 = c2;
         }
     }
-
 }

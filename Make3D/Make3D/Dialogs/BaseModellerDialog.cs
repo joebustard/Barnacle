@@ -764,16 +764,6 @@ namespace Barnacle.Dialogs
                 res = spaceTreeRoot.Present(v);
             }
 
-            /*
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                if (PointUtils.equals(vertices[i], v.X, v.Y, v.Z))
-                {
-                    res = i;
-                    break;
-                }
-            }
-            */
             if (res == -1)
             {
                 vertices.Add(new Point3D(v.X, v.Y, v.Z));
