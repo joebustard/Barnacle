@@ -637,7 +637,7 @@ namespace Barnacle.Dialogs
                         by = Math.Min(tmp[i].Y, by);
                         ty = Math.Max(tmp[i].Y, ty);
                     }
-                    double sz = 0.2;
+                    double sz = 0.25;
                     double xspan = (rx - lx) / sz;
                     double yspan = (ty - by) / sz;
                     // generate side triangles so original points are already in list
@@ -670,9 +670,9 @@ namespace Barnacle.Dialogs
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
                     LoadTextureImage();
                     PlateletSurface surface = new PlateletSurface();
-                    for (double px = lx; px < rx; px++)
+                    for (double px = lx; px < rx; px += sz)
                     {
-                        for (double py = by; py < ty; py++)
+                        for (double py = by; py < ty; py += sz)
                         {
                             ConvexPolygon2D rect = RectPoly(px, py, sz);
                             ConvexPolygon2D interception = interceptor.GetIntersectionOfPolygons(rect, boundary);
@@ -681,7 +681,7 @@ namespace Barnacle.Dialogs
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
                                     // assume its a rect
-                                    surface.AddFaces(px, py, px + sz, py + sz);
+                                    surface.AddFaces(px, py, sz, sz);
                                 }
                                 else
                                 {
@@ -700,6 +700,8 @@ namespace Barnacle.Dialogs
                             }
                         }
                     }
+                    surface.ClassifyFaces(workingImage);
+
                     CentreVertices();
                 }
             }

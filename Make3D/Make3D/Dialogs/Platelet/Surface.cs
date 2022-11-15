@@ -1,7 +1,7 @@
 ﻿using Barnacle.Object3DLib;
 using System;
+using System.Windows;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,7 +66,7 @@ namespace Barnacle.Dialogs
             return Edges.Count - 1;
         }
 
-        internal void AddFace(PointF[] points)
+        internal void AddFace(System.Drawing.PointF[] points)
         {
             int v0 = AddVertice((double)points[0].X, (double)points[0].Y, 0.0);
             int v1 = AddVertice((double)points[1].X, (double)points[1].Y, 0.0);
@@ -96,6 +96,47 @@ namespace Barnacle.Dialogs
             fc.Edges[0] = AddEdge(v0, v2, Faces.Count - 1);
             fc.Edges[1] = AddEdge(v2, v3, Faces.Count - 1);
             fc.Edges[2] = AddEdge(v3, v0, Faces.Count - 1);
+        }
+        double imageWidth=1;
+        double imageHeight = 1;
+        private enum PixelColour
+        {
+            Unknown,
+            Back,
+            Front,
+            Mixed
+        }
+        internal void ClassifyFaces(System.Drawing.Bitmap workingImage)
+        {
+            imageWidth = workingImage.Width;
+            imageHeight = workingImage.Height;
+            foreach( Face f in Faces)
+            {
+                Point mid = f.GetFlatCentroid(Vertices, Edges);
+                PixelColour pc = GetTexturePixel(workingImage, mid.X, mid.Y);
+                f.Mode = (int) pc;
+                if ( pc == PixelColour.Front)
+                {
+                    f.MoveForward(Vertices,Edges);
+                }
+
+            }
+        }
+        private PixelColour GetTexturePixel(System.Drawing.Bitmap workingImage, double cx, double cy)
+        {
+           
+            double px = cx % imageWidth;
+            double py = cy % imageHeight;
+            if ((px >= 0 && px < imageWidth) && (py >= 0 && py < imageHeight))
+            {
+                System.Drawing.Color col = workingImage.GetPixel((int)px, (int)py);
+
+                if (col.R < 128)
+                {
+                    return PixelColour.Front;
+                }
+            }
+            return PixelColour.Back;
         }
     }
 }
