@@ -30,8 +30,8 @@ namespace Barnacle.Dialogs
         private Dictionary<string, string> textureFiles;
         private double wallWidth;
         private string warningText;
-        private double textureImageWidth;
-        private double textureImageHeight;
+        private int textureImageWidth;
+        private int textureImageHeight;
         private System.Drawing.Bitmap workingImage;
 
         public Platelet()
@@ -637,7 +637,7 @@ namespace Barnacle.Dialogs
                         by = Math.Min(tmp[i].Y, by);
                         ty = Math.Max(tmp[i].Y, ty);
                     }
-                    double sz = 0.25;
+                    double sz = 1;
                     double xspan = (rx - lx) / sz;
                     double yspan = (ty - by) / sz;
                     // generate side triangles so original points are already in list
@@ -670,6 +670,7 @@ namespace Barnacle.Dialogs
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
                     LoadTextureImage();
                     PlateletSurface surface = new PlateletSurface();
+                    double z;
                     for (double px = lx; px < rx; px += sz)
                     {
                         for (double py = by; py < ty; py += sz)
@@ -681,10 +682,60 @@ namespace Barnacle.Dialogs
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
                                     // assume its a rect
-                                    surface.AddFaces(px, py, sz, sz);
+                                    // surface.AddFaces(px, py, sz, sz);
+                                    byte mask = GetTextureMask((int)px, (int)py);
+                                    if (mask > 15)
+                                    {
+                                        z = textureDepth;
+                                    }
+                                    else
+                                    {
+                                        z = 0;
+                                        if ( (byte)(mask & leftMask) != 0)
+                                        {
+                                            int s0 = AddVertice(px, py, 0);
+                                            int s1 = AddVertice(px, py, textureDepth);
+                                            int s2 = AddVertice(px, py + sz, textureDepth);
+                                            int s3 = AddVertice(px, py + sz, z);
+                                            Faces.Add(s0);
+                                            Faces.Add(s2);
+                                            Faces.Add(s1);
+
+                                            Faces.Add(s0);
+                                            Faces.Add(s3);
+                                            Faces.Add(s2);
+                                        }
+
+                                        if ((byte)(mask & rightMask) != 0)
+                                        {
+                                            int s0 = AddVertice(px+sz, py, 0);
+                                            int s1 = AddVertice(px + sz, py, textureDepth);
+                                            int s2 = AddVertice(px + sz, py + sz, textureDepth);
+                                            int s3 = AddVertice(px + sz, py + sz, z);
+                                            Faces.Add(s0);
+                                            Faces.Add(s1);
+                                            Faces.Add(s2);
+
+                                            Faces.Add(s0);
+                                            Faces.Add(s2);
+                                            Faces.Add(s3);
+                                        }
+                                    }
+                                    int v0 = AddVertice(px, py, z);
+                                    int v1 = AddVertice(px + sz, py, z);
+                                    int v2 = AddVertice(px + sz, py + sz, z);
+                                    int v3 = AddVertice(px, py + sz, z);
+                                    Faces.Add(v0);
+                                    Faces.Add(v1);
+                                    Faces.Add(v2);
+
+                                    Faces.Add(v0);
+                                    Faces.Add(v2);
+                                    Faces.Add(v3);
                                 }
                                 else
                                 {
+                                /*
                                     ply = new TriangulationPolygon();
                                     List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
                                     foreach (System.Windows.Point p in interception.Corners)
@@ -696,15 +747,23 @@ namespace Barnacle.Dialogs
                                     {
                                         surface.AddFace(t.Points);
                                     }
+                                    */
                                 }
                             }
                         }
                     }
-                    surface.ClassifyFaces(workingImage);
+                    //surface.ClassifyFaces(workingImage);
 
                     CentreVertices();
                 }
             }
+        }
+
+        private byte GetTextureMask(int px, int py)
+        {
+            px = px % textureImageWidth;
+            py = py % textureImageHeight;
+            return textureMap[px, py];
         }
 
         private int Midpoint(Point3DCollection vt, int p0, int p1)
@@ -944,7 +1003,12 @@ namespace Barnacle.Dialogs
             HollowShape = EditorParameters.GetBoolean("Hollow", false);
             SolidShape = !HollowShape;
         }
-
+        private byte[,] textureMap;
+        private const byte leftMask = 0x01;
+        private const byte rightMask = 0x02;
+        private const byte topMask = 0x04;
+        private const byte bottomMask = 0x08;
+        private const byte frontMask = 0x10;
         private void LoadTextureImage()
         {
             if (selectedTexture != "")
@@ -958,6 +1022,62 @@ namespace Barnacle.Dialogs
                         loadedImageName = selectedTexture;
                         textureImageWidth = workingImage.Width;
                         textureImageHeight = workingImage.Height;
+                        textureMap = new byte[workingImage.Width, workingImage.Height];
+                        for (int x = 0; x < workingImage.Width; x++)
+                        {
+                            for (int y = 0; y < workingImage.Height; y++)
+                            {
+
+                                byte mask = 0;
+                                System.Drawing.Color col = workingImage.GetPixel(x, y);
+
+                                if (col.R < 128)
+                                {
+                                    mask = frontMask;
+                                }
+                                else
+                                {
+                                    // its the back, do we need to raise the sides
+                                    if (x > 0)
+                                    {
+                                        col = workingImage.GetPixel(x - 1, y);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | leftMask);
+                                        }
+                                    }
+                                    if (x < workingImage.Width - 1)
+                                    {
+                                        col = workingImage.GetPixel(x + 1, y);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | rightMask);
+                                        }
+                                    }
+
+                                    if (y > 0)
+                                    {
+                                        col = workingImage.GetPixel(x, y - 1);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | bottomMask);
+                                        }
+                                    }
+                                    if (y < workingImage.Height - 1)
+                                    {
+                                        col = workingImage.GetPixel(x, y + 1);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | topMask);
+                                        }
+                                    }
+
+                                }
+                                textureMap[x, y] = mask;
+                            }
+                        }
+
+
                     }
                 }
             }
