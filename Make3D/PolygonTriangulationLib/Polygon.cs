@@ -231,31 +231,32 @@ namespace PolygonTriangulationLib
         // http://www-cgrl.cs.mcgill.ca/~godfried/teaching/cg-projects/97/Ian/cutting_ears.html
         public List<Triangle> Triangulate()
         {
-            // Copy the points into a scratch array.
-            PointF[] pts = new PointF[Points.Length];
-            Array.Copy(Points, pts, Points.Length);
-
-            // Make a scratch polygon.
-            TriangulationPolygon pgon = new TriangulationPolygon(pts);
-
-            // Orient the polygon clockwise.
-            pgon.OrientPolygonClockwise();
-
-            // Make room for the triangles.
             List<Triangle> triangles = new List<Triangle>();
+            if (Points != null)
+            {
+                // Copy the points into a scratch array.
+                PointF[] pts = new PointF[Points.Length];
+                Array.Copy(Points, pts, Points.Length);
 
-            // While the copy of the polygon has more than
-            // three points, remove an ear.
-            bool more = true;
-            while (pgon.Points.Length > 3 && more)
-            {
-                // Remove an ear from the polygon.
-                more = pgon.RemoveEar(triangles);
-            }
-            if (pgon.Points.Length == 3)
-            {
-                // Copy the last three points into their own triangle.
-                triangles.Add(new Triangle(pgon.Points[0], pgon.Points[1], pgon.Points[2]));
+                // Make a scratch polygon.
+                TriangulationPolygon pgon = new TriangulationPolygon(pts);
+
+                // Orient the polygon clockwise.
+                pgon.OrientPolygonClockwise();
+
+                // While the copy of the polygon has more than
+                // three points, remove an ear.
+                bool more = true;
+                while (pgon.Points.Length > 3 && more)
+                {
+                    // Remove an ear from the polygon.
+                    more = pgon.RemoveEar(triangles);
+                }
+                if (pgon.Points.Length == 3)
+                {
+                    // Copy the last three points into their own triangle.
+                    triangles.Add(new Triangle(pgon.Points[0], pgon.Points[1], pgon.Points[2]));
+                }
             }
             return triangles;
         }

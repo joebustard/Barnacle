@@ -691,7 +691,7 @@ namespace Barnacle.Dialogs
                                     else
                                     {
                                         z = 0;
-                                        if ( (byte)(mask & leftMask) != 0)
+                                        if ((byte)(mask & leftMask) != 0)
                                         {
                                             int s0 = AddVertice(px, py, 0);
                                             int s1 = AddVertice(px, py, textureDepth);
@@ -708,10 +708,40 @@ namespace Barnacle.Dialogs
 
                                         if ((byte)(mask & rightMask) != 0)
                                         {
-                                            int s0 = AddVertice(px+sz, py, 0);
+                                            int s0 = AddVertice(px + sz, py, 0);
                                             int s1 = AddVertice(px + sz, py, textureDepth);
                                             int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                                            int s3 = AddVertice(px + sz, py + sz, z);
+                                            int s3 = AddVertice(px + sz, py + sz, 0);
+                                            Faces.Add(s0);
+                                            Faces.Add(s1);
+                                            Faces.Add(s2);
+
+                                            Faces.Add(s0);
+                                            Faces.Add(s2);
+                                            Faces.Add(s3);
+                                        }
+
+                                        if ((byte)(mask & topMask) != 0)
+                                        {
+                                            int s0 = AddVertice(px, py + sz, 0);
+                                            int s1 = AddVertice(px + sz, py + sz, 0);
+                                            int s2 = AddVertice(px + sz, py + sz, textureDepth);
+                                            int s3 = AddVertice(px, py + sz, textureDepth);
+                                            Faces.Add(s0);
+                                            Faces.Add(s2);
+                                            Faces.Add(s1);
+
+                                            Faces.Add(s0);
+                                            Faces.Add(s3);
+                                            Faces.Add(s2);
+                                        }
+
+                                        if ((byte)(mask & bottomMask) != 0)
+                                        {
+                                            int s0 = AddVertice(px, py, 0);
+                                            int s1 = AddVertice(px + sz, py, 0);
+                                            int s2 = AddVertice(px + sz, py, textureDepth);
+                                            int s3 = AddVertice(px, py, textureDepth);
                                             Faces.Add(s0);
                                             Faces.Add(s1);
                                             Faces.Add(s2);
@@ -735,7 +765,6 @@ namespace Barnacle.Dialogs
                                 }
                                 else
                                 {
-                                /*
                                     ply = new TriangulationPolygon();
                                     List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
                                     foreach (System.Windows.Point p in interception.Corners)
@@ -745,9 +774,14 @@ namespace Barnacle.Dialogs
                                     tris = ply.Triangulate();
                                     foreach (Triangle t in tris)
                                     {
-                                        surface.AddFace(t.Points);
+                                        int v0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0);
+                                        int v1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0);
+                                        int v2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0);
+
+                                        Faces.Add(v0);
+                                        Faces.Add(v1);
+                                        Faces.Add(v2);
                                     }
-                                    */
                                 }
                             }
                         }
@@ -1003,12 +1037,14 @@ namespace Barnacle.Dialogs
             HollowShape = EditorParameters.GetBoolean("Hollow", false);
             SolidShape = !HollowShape;
         }
+
         private byte[,] textureMap;
         private const byte leftMask = 0x01;
         private const byte rightMask = 0x02;
         private const byte topMask = 0x04;
         private const byte bottomMask = 0x08;
         private const byte frontMask = 0x10;
+
         private void LoadTextureImage()
         {
             if (selectedTexture != "")
@@ -1027,7 +1063,6 @@ namespace Barnacle.Dialogs
                         {
                             for (int y = 0; y < workingImage.Height; y++)
                             {
-
                                 byte mask = 0;
                                 System.Drawing.Color col = workingImage.GetPixel(x, y);
 
@@ -1071,13 +1106,10 @@ namespace Barnacle.Dialogs
                                             mask = (byte)(mask | topMask);
                                         }
                                     }
-
                                 }
                                 textureMap[x, y] = mask;
                             }
                         }
-
-
                     }
                 }
             }
