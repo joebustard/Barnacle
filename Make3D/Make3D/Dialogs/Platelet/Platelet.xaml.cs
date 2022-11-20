@@ -47,6 +47,7 @@ namespace Barnacle.Dialogs
             solidShape = true;
             hollowShape = false;
             texturedShape = false;
+            largeTexture = true;
             showWidth = Visibility.Hidden;
             showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
@@ -578,21 +579,30 @@ namespace Barnacle.Dialogs
                 CentreVertices();
             }
         }
-
-        private enum PixelColour
+        private bool largeTexture;
+        public bool LargeTexture
         {
-            Unknown,
-            Back,
-            Front,
-            Mixed
+            get
+            {
+                return largeTexture;
+            }
+            set
+            {
+                if (value != largeTexture)
+                {
+                    largeTexture = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+
         }
-
-        private double minTriSize = 0.2;
-
-        internal List<TextureTriangle> triangleQueue;
-        internal List<TextureTriangle> backgroundTriangles;
-        internal List<TextureTriangle> frontTriangles;
-
+        internal struct TextureEdge
+        {
+            internal int startVertex;
+            internal int endVertex;
+        }
+        private List<TextureEdge> mayNeedToClose;
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
@@ -638,8 +648,11 @@ namespace Barnacle.Dialogs
                         ty = Math.Max(tmp[i].Y, ty);
                     }
                     double sz = 1;
-                    double xspan = (rx - lx) / sz;
-                    double yspan = (ty - by) / sz;
+                    if ( !largeTexture)
+                    {
+                        sz = 0.5;
+                    }
+ 
                     // generate side triangles so original points are already in list
                     for (int i = 0; i < tmp.Count; i++)
                     {
@@ -669,21 +682,27 @@ namespace Barnacle.Dialogs
                     ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
                     LoadTextureImage();
+                    mayNeedToClose = new List<TextureEdge>();
                     PlateletSurface surface = new PlateletSurface();
                     double z;
                     for (double px = lx; px < rx; px += sz)
                     {
                         for (double py = by; py < ty; py += sz)
                         {
+                            z = 0;
+                            
                             ConvexPolygon2D rect = RectPoly(px, py, sz);
                             ConvexPolygon2D interception = interceptor.GetIntersectionOfPolygons(rect, boundary);
                             if (interception.Corners.GetLength(0) > 2)
                             {
+                                bool insidepixel = false;
+                                byte mask = GetTextureMask(px, py, sz);
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
-                                    // assume its a rect
-                                    // surface.AddFaces(px, py, sz, sz);
-                                    byte mask = GetTextureMask((int)px, (int)py);
+                                    insidepixel = IsItAnInsidePixel(interception.Corners, px, py, sz);
+                                }
+                                if (insidepixel)
+                                {
                                     if (mask > 15)
                                     {
                                         z = textureDepth;
@@ -728,12 +747,12 @@ namespace Barnacle.Dialogs
                                             int s2 = AddVertice(px + sz, py + sz, textureDepth);
                                             int s3 = AddVertice(px, py + sz, textureDepth);
                                             Faces.Add(s0);
-                                            Faces.Add(s2);
                                             Faces.Add(s1);
+                                            Faces.Add(s2);
 
                                             Faces.Add(s0);
-                                            Faces.Add(s3);
                                             Faces.Add(s2);
+                                            Faces.Add(s3);
                                         }
 
                                         if ((byte)(mask & bottomMask) != 0)
@@ -743,12 +762,12 @@ namespace Barnacle.Dialogs
                                             int s2 = AddVertice(px + sz, py, textureDepth);
                                             int s3 = AddVertice(px, py, textureDepth);
                                             Faces.Add(s0);
-                                            Faces.Add(s1);
                                             Faces.Add(s2);
+                                            Faces.Add(s1);
 
                                             Faces.Add(s0);
-                                            Faces.Add(s2);
                                             Faces.Add(s3);
+                                            Faces.Add(s2);
                                         }
                                     }
                                     int v0 = AddVertice(px, py, z);
@@ -762,63 +781,184 @@ namespace Barnacle.Dialogs
                                     Faces.Add(v0);
                                     Faces.Add(v2);
                                     Faces.Add(v3);
+                                    if (z != 0)
+                                    {
+                                        AddEdgeToClose(mayNeedToClose, v0, v1);
+                                        AddEdgeToClose(mayNeedToClose, v1, v2);
+                                        AddEdgeToClose(mayNeedToClose, v2, v0);
+
+                                        AddEdgeToClose(mayNeedToClose, v2, v3);
+                                        AddEdgeToClose(mayNeedToClose, v3, v0);
+                                    }
                                 }
                                 else
                                 {
-                                    ply = new TriangulationPolygon();
-                                    List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
-                                    foreach (System.Windows.Point p in interception.Corners)
+                                    if (interception.Corners.GetLength(0) == 3)
                                     {
-                                        pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-                                    }
-                                    tris = ply.Triangulate();
-                                    foreach (Triangle t in tris)
-                                    {
-                                        int v0 = AddVertice(t.Points[0].X, t.Points[0].Y, 0);
-                                        int v1 = AddVertice(t.Points[1].X, t.Points[1].Y, 0);
-                                        int v2 = AddVertice(t.Points[2].X, t.Points[2].Y, 0);
+                                        z = 0;
+                                        if (mask > 15)
+                                        {
+                                            //z = textureDepth;
+                                        }
+                                        int v0 = AddVertice(interception.Corners[0].X, interception.Corners[0].Y, z);
+                                        int v1 = AddVertice(interception.Corners[1].X, interception.Corners[1].Y, z);
+                                        int v2 = AddVertice(interception.Corners[2].X, interception.Corners[2].Y, z);
 
                                         Faces.Add(v0);
                                         Faces.Add(v1);
                                         Faces.Add(v2);
+                                        AddEdgeToClose(mayNeedToClose, v0, v1);
+                                        AddEdgeToClose(mayNeedToClose, v1, v2);
+                                        AddEdgeToClose(mayNeedToClose, v2, v0);
+                                    }
+                                    else
+                                    {
+                                        z = 0;
+                                        if (mask > 15)
+                                        {
+                                            //z = textureDepth;
+                                        }
+                                        ply = new TriangulationPolygon();
+                                        List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
+                                        foreach (System.Windows.Point p in interception.Corners)
+                                        {
+                                            pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                                        }
+                                        ply.Points = pf.ToArray();
+                                        tris = ply.Triangulate();
+                                        foreach (Triangle t in tris)
+                                        {
+                                            int v0 = AddVertice(t.Points[0].X, t.Points[0].Y, z);
+                                            int v1 = AddVertice(t.Points[1].X, t.Points[1].Y, z);
+                                            int v2 = AddVertice(t.Points[2].X, t.Points[2].Y, z);
+
+                                            Faces.Add(v0);
+                                            Faces.Add(v1);
+                                            Faces.Add(v2);
+                                            if (z > 0)
+                                            {
+                                                AddEdgeToClose(mayNeedToClose, v0, v1);
+                                                AddEdgeToClose(mayNeedToClose, v1, v2);
+                                                AddEdgeToClose(mayNeedToClose, v2, v0);
+                                            }
+                                        }
                                     }
                                 }
                             }
+
                         }
                     }
-                    //surface.ClassifyFaces(workingImage);
+                    foreach (TextureEdge te in mayNeedToClose)
+                    {
+                        int startMatch = FindVertexAtZero(tmp, te.startVertex);
+                        if (startMatch != -1)
+                        {
+                            Faces.Add(te.startVertex);
+                            Faces.Add(startMatch);
+                            Faces.Add(te.endVertex);
+                            int endMatch = FindVertexAtZero(tmp, te.endVertex);
+                            if (endMatch != -1)
+                            {
+                                Faces.Add(startMatch);
+                                Faces.Add(endMatch);
+                                Faces.Add(te.endVertex);
+
+                            }
+                        }
+
+                    }
 
                     CentreVertices();
                 }
             }
         }
 
-        private byte GetTextureMask(int px, int py)
+        private int FindVertexAtZero(List<Point> boundary, int sm)
         {
+            Point testPoint = new Point(Vertices[sm].X, Vertices[sm].Y);
+            if (PointOnBoundary(testPoint, boundary))
+            {
+                Point3D pAtZero = new Point3D(Vertices[sm].X, Vertices[sm].Y, 0.0);
+                return AddVertice(pAtZero);
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        private bool PointOnBoundary(Point testPoint, List<Point> boundary)
+        {
+            bool result = false;
+            for (int i = 0; i < boundary.Count; i++)
+            {
+                int j = (i + 1) % boundary.Count;
+                if (PointOnLineSegment(boundary[i], boundary[j], testPoint))
+                {
+                    return true;
+                }
+            }
+            return result;
+        }
+
+        public bool PointOnLineSegment(Point pt1, Point pt2, Point pt, double epsilon = 0.00001)
+        {
+            if (pt.X - Math.Max(pt1.X, pt2.X) > epsilon ||
+                Math.Min(pt1.X, pt2.X) - pt.X > epsilon ||
+                pt.Y - Math.Max(pt1.Y, pt2.Y) > epsilon ||
+                Math.Min(pt1.Y, pt2.Y) - pt.Y > epsilon)
+                return false;
+
+            if (Math.Abs(pt2.X - pt1.X) < epsilon)
+                return Math.Abs(pt1.X - pt.X) < epsilon || Math.Abs(pt2.X - pt.X) < epsilon;
+            if (Math.Abs(pt2.Y - pt1.Y) < epsilon)
+                return Math.Abs(pt1.Y - pt.Y) < epsilon || Math.Abs(pt2.Y - pt.Y) < epsilon;
+
+            double x = pt1.X + (pt.Y - pt1.Y) * (pt2.X - pt1.X) / (pt2.Y - pt1.Y);
+            double y = pt1.Y + (pt.X - pt1.X) * (pt2.Y - pt1.Y) / (pt2.X - pt1.X);
+
+            return Math.Abs(pt.X - x) < epsilon || Math.Abs(pt.Y - y) < epsilon;
+        }
+        private void AddEdgeToClose(List<TextureEdge> mayNeedToClose, int v0, int v1)
+        {
+            TextureEdge te = new TextureEdge();
+            te.startVertex = v0;
+            te.endVertex = v1;
+
+            mayNeedToClose.Add(te);
+        }
+
+        private bool IsItAnInsidePixel(Point[] c, double px, double py, double sz)
+        {
+            bool result = false;
+            if (c[0].X == px && c[0].Y == py)
+            {
+                if (c[1].X == px + sz && c[1].Y == py)
+                {
+                    if (c[2].X == px + sz && c[2].Y == py + sz)
+                    {
+                        if (c[3].X == px && c[3].Y == py + sz)
+                        {
+                            result = true;
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+
+        private byte GetTextureMask(double px, double py, double sz)
+        {
+            px = px / sz;
+            py = py / sz; 
             px = px % textureImageWidth;
             py = py % textureImageHeight;
-            return textureMap[px, py];
+            return textureMap[(int)px, (int)py];
         }
 
-        private int Midpoint(Point3DCollection vt, int p0, int p1)
-        {
-            Point3D mid = new Point3D(vt[p0].X + (vt[p1].X - vt[p0].X) / 2.0,
-                                        vt[p0].Y + (vt[p1].Y - vt[p0].Y) / 2.0,
-                                        vt[p0].Z + (vt[p1].Z - vt[p0].Z) / 2.0);
-            return AddPoint(vt, mid);
-        }
+       
 
-        private int CentroidPoint(Point3DCollection vt, TextureTriangle tt)
-        {
-            double x = 0;
-            double y = 0;
-            double z = 0;
-            x = vt[tt.p0].X + vt[tt.p1].X + vt[tt.p2].X;
-            y = vt[tt.p0].Y + vt[tt.p1].Y + vt[tt.p2].Y;
-            z = vt[tt.p0].Z + vt[tt.p1].Z + vt[tt.p2].Z;
-            Point3D mid = new Point3D(x / 3.0, y / 3.0, z / 3.0);
-            return AddPoint(vt, mid);
-        }
+     
 
         public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
         {
@@ -832,37 +972,14 @@ namespace Barnacle.Dialogs
             double s = (a + b + c) / 2;
             return Math.Sqrt(s * (s - a) * (s - b) * (s - c));
         }
-
-        private PixelColour ClassifyTriangle(Point3DCollection vt, TextureTriangle tt, double lx, double by)
+        public enum PixelColour
         {
-            bool first = true;
-            PixelColour firstPixel = PixelColour.Unknown;
-            Rect bnds = GetTriBounds(vt, tt.p0, tt.p1, tt.p2);
-
-            for (double px = bnds.Left; px <= bnds.Right; px++)
-            {
-                for (double py = bnds.Top; py <= bnds.Bottom; py++)
-                {
-                    if (PtInTriangle(px, py, vt, tt.p0, tt.p1, tt.p2))
-                    {
-                        PixelColour pixel = GetTexturePixel(px, py);
-                        if (first)
-                        {
-                            firstPixel = pixel;
-                            first = false;
-                        }
-                        else
-                        {
-                            if (pixel != firstPixel)
-                            {
-                                return PixelColour.Mixed;  // mixed
-                            }
-                        }
-                    }
-                }
-            }
-            return firstPixel;
+            Unknown,
+            Back,
+            Front,
+            Mixed
         }
+     
 
         private double sign(Point p1, Point p2, Point p3)
         {
@@ -893,43 +1010,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private Rect GetTriBounds(Point3DCollection vt, int p0, int p1, int p2)
-        {
-            double lx = double.MaxValue;
-            double ly = double.MaxValue;
-            double rx = double.MinValue;
-            double ry = double.MinValue;
-            lx = Math.Min(vt[p0].X, vt[p1].X);
-            lx = Math.Min(lx, vt[p2].X);
-
-            ly = Math.Min(vt[p0].Y, vt[p1].Y);
-            ly = Math.Min(ly, vt[p2].Y);
-
-            rx = Math.Max(vt[p0].X, vt[p1].X);
-            rx = Math.Max(rx, vt[p2].X);
-
-            ry = Math.Max(vt[p0].Y, vt[p1].Y);
-            ry = Math.Max(ry, vt[p2].Y);
-
-            Rect res = new Rect(lx, ly, rx - lx, ry - ly);
-            return res;
-        }
-
-        private PixelColour GetTexturePixel(double cx, double cy)
-        {
-            double px = cx % textureImageWidth;
-            double py = cy % textureImageHeight;
-            if ((px >= 0 && px < textureImageWidth) && (py >= 0 && py < textureImageHeight))
-            {
-                System.Drawing.Color col = workingImage.GetPixel((int)px, (int)py);
-
-                if (col.R < 128)
-                {
-                    return PixelColour.Front;
-                }
-            }
-            return PixelColour.Back;
-        }
+      
 
         protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
         {
@@ -1034,8 +1115,11 @@ namespace Barnacle.Dialogs
             }
             WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
-            HollowShape = EditorParameters.GetBoolean("Hollow", false);
-            SolidShape = !HollowShape;
+            TextureDepth = EditorParameters.GetDouble("TextureDepth", 1);
+            HollowShape = EditorParameters.GetBoolean("Hollow", false);            
+            TexturedShape = EditorParameters.GetBoolean("Textured", false);
+            SolidShape = EditorParameters.GetBoolean("Solid", true);
+            LargeTexture = EditorParameters.GetBoolean("LargeTexture", false);
         }
 
         private byte[,] textureMap;
@@ -1149,7 +1233,11 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Path", PathEditor.PathString);
             EditorParameters.Set("WallWidth", WallWidth.ToString());
             EditorParameters.Set("PlateWidth", PlateWidth.ToString());
+            EditorParameters.Set("TextureDepth", TextureDepth.ToString());
             EditorParameters.Set("Hollow", HollowShape.ToString());
+            EditorParameters.Set("Solid", SolidShape.ToString());
+            EditorParameters.Set("Textured", TexturedShape.ToString());
+            EditorParameters.Set("LargeTexture", LargeTexture.ToString());
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)

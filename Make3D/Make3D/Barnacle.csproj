@@ -1029,6 +1029,11 @@
     <Resource Include="Data\Textures\stone1.jpg" />
     <Resource Include="Data\Textures\StoneWall1.png" />
     <Resource Include="Data\Textures\Squirkle1.png" />
+    <Resource Include="Data\Textures\Checker1.png" />
+    <Resource Include="Data\Textures\Circle.png" />
+    <Resource Include="Data\Textures\Hex1.png" />
+    <Resource Include="Data\Textures\Ring1.png" />
+    <Resource Include="Data\Textures\StoneFloor1.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

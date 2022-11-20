@@ -1156,7 +1156,7 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Thread", true, "Thread", "Create a thread for a bolt or nut."));
             parametricToolsToShow.Add(new ToolDef("Torus", true, "Torus", "Create a torus."));
 
-            parametricToolsToShow.Add(new ToolDef("Trapezoid", true, "Trapazoid", "Create a trapazoid."));
+            parametricToolsToShow.Add(new ToolDef("Trapezoid", true, "Trapezoid", "Create a trapezoid."));
 
             parametricToolsToShow.Add(new ToolDef("Tube", true, "Tube", "Create a partial or full tube with bevelled ends."));
 

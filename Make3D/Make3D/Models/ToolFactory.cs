@@ -130,7 +130,7 @@ namespace Barnacle.Models
                     res = new TrackDialog();
                     break;
 
-                case "Trapazoid":
+                case "Trapezoid":
                     res = new TrapezoidDlg();
                     break;
 
