@@ -277,6 +277,7 @@
     <Compile Include="Adorners\Adorner.cs" />
     <Compile Include="Dialogs\WireFrame\WireFrameSegment.cs" />
     <Compile Include="Models\Axies.cs" />
+    <Compile Include="Models\CohenSutherland.cs" />
     <Compile Include="Models\OctTree\OctNode.cs" />
     <Compile Include="Models\OctTree\OctTree.cs" />
     <Compile Include="Models\PrinterPlate.cs" />

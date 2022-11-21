@@ -54,6 +54,7 @@ namespace Barnacle.Dialogs
             loaded = false;
             textureFiles = new Dictionary<string, string>();
             loadedImageName = "";
+            selectedTexture = "";
         }
 
         public bool HollowShape
@@ -579,7 +580,9 @@ namespace Barnacle.Dialogs
                 CentreVertices();
             }
         }
+
         private bool largeTexture;
+
         public bool LargeTexture
         {
             get
@@ -595,14 +598,27 @@ namespace Barnacle.Dialogs
                     UpdateDisplay();
                 }
             }
+        }
 
-        }
-        internal struct TextureEdge
+        private bool smallTexture;
+
+        public bool SmallTexture
         {
-            internal int startVertex;
-            internal int endVertex;
+            get
+            {
+                return smallTexture;
+            }
+            set
+            {
+                if (value != smallTexture)
+                {
+                    smallTexture = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
         }
-        private List<TextureEdge> mayNeedToClose;
+
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
@@ -648,11 +664,11 @@ namespace Barnacle.Dialogs
                         ty = Math.Max(tmp[i].Y, ty);
                     }
                     double sz = 1;
-                    if ( !largeTexture)
+                    if (!largeTexture)
                     {
                         sz = 0.5;
                     }
- 
+
                     // generate side triangles so original points are already in list
                     for (int i = 0; i < tmp.Count; i++)
                     {
@@ -682,15 +698,16 @@ namespace Barnacle.Dialogs
                     ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
                     LoadTextureImage();
-                    mayNeedToClose = new List<TextureEdge>();
-                    PlateletSurface surface = new PlateletSurface();
+                    // mayNeedToClose = new List<TextureEdge>();
+                    // PlateletSurface surface = new PlateletSurface();
                     double z;
+                    double off = sz / 2;
                     for (double px = lx; px < rx; px += sz)
                     {
                         for (double py = by; py < ty; py += sz)
                         {
                             z = 0;
-                            
+
                             ConvexPolygon2D rect = RectPoly(px, py, sz);
                             ConvexPolygon2D interception = interceptor.GetIntersectionOfPolygons(rect, boundary);
                             if (interception.Corners.GetLength(0) > 2)
@@ -712,62 +729,74 @@ namespace Barnacle.Dialogs
                                         z = 0;
                                         if ((byte)(mask & leftMask) != 0)
                                         {
-                                            int s0 = AddVertice(px, py, 0);
-                                            int s1 = AddVertice(px, py, textureDepth);
-                                            int s2 = AddVertice(px, py + sz, textureDepth);
-                                            int s3 = AddVertice(px, py + sz, z);
-                                            Faces.Add(s0);
-                                            Faces.Add(s2);
-                                            Faces.Add(s1);
+                                            if (IsPointInPolygon(new Point(px - off, py), tmp))
+                                            {
+                                                int s0 = AddVertice(px, py, 0);
+                                                int s1 = AddVertice(px, py, textureDepth);
+                                                int s2 = AddVertice(px, py + sz, textureDepth);
+                                                int s3 = AddVertice(px, py + sz, 0);
+                                                Faces.Add(s0);
+                                                Faces.Add(s2);
+                                                Faces.Add(s1);
 
-                                            Faces.Add(s0);
-                                            Faces.Add(s3);
-                                            Faces.Add(s2);
+                                                Faces.Add(s0);
+                                                Faces.Add(s3);
+                                                Faces.Add(s2);
+                                            }
                                         }
 
                                         if ((byte)(mask & rightMask) != 0)
                                         {
-                                            int s0 = AddVertice(px + sz, py, 0);
-                                            int s1 = AddVertice(px + sz, py, textureDepth);
-                                            int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                                            int s3 = AddVertice(px + sz, py + sz, 0);
-                                            Faces.Add(s0);
-                                            Faces.Add(s1);
-                                            Faces.Add(s2);
+                                            if (IsPointInPolygon(new Point(px + sz + off, py), tmp))
+                                            {
+                                                int s0 = AddVertice(px + sz, py, 0);
+                                                int s1 = AddVertice(px + sz, py, textureDepth);
+                                                int s2 = AddVertice(px + sz, py + sz, textureDepth);
+                                                int s3 = AddVertice(px + sz, py + sz, 0);
+                                                Faces.Add(s0);
+                                                Faces.Add(s1);
+                                                Faces.Add(s2);
 
-                                            Faces.Add(s0);
-                                            Faces.Add(s2);
-                                            Faces.Add(s3);
+                                                Faces.Add(s0);
+                                                Faces.Add(s2);
+                                                Faces.Add(s3);
+                                            }
                                         }
 
                                         if ((byte)(mask & topMask) != 0)
                                         {
-                                            int s0 = AddVertice(px, py + sz, 0);
-                                            int s1 = AddVertice(px + sz, py + sz, 0);
-                                            int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                                            int s3 = AddVertice(px, py + sz, textureDepth);
-                                            Faces.Add(s0);
-                                            Faces.Add(s1);
-                                            Faces.Add(s2);
+                                            if (IsPointInPolygon(new Point(px + off, py + sz + off), tmp))
+                                            {
+                                                int s0 = AddVertice(px, py + sz, 0);
+                                                int s1 = AddVertice(px + sz, py + sz, 0);
+                                                int s2 = AddVertice(px + sz, py + sz, textureDepth);
+                                                int s3 = AddVertice(px, py + sz, textureDepth);
+                                                Faces.Add(s0);
+                                                Faces.Add(s1);
+                                                Faces.Add(s2);
 
-                                            Faces.Add(s0);
-                                            Faces.Add(s2);
-                                            Faces.Add(s3);
+                                                Faces.Add(s0);
+                                                Faces.Add(s2);
+                                                Faces.Add(s3);
+                                            }
                                         }
 
                                         if ((byte)(mask & bottomMask) != 0)
                                         {
-                                            int s0 = AddVertice(px, py, 0);
-                                            int s1 = AddVertice(px + sz, py, 0);
-                                            int s2 = AddVertice(px + sz, py, textureDepth);
-                                            int s3 = AddVertice(px, py, textureDepth);
-                                            Faces.Add(s0);
-                                            Faces.Add(s2);
-                                            Faces.Add(s1);
+                                            if (IsPointInPolygon(new Point(px + off, py - off), tmp))
+                                            {
+                                                int s0 = AddVertice(px, py, 0);
+                                                int s1 = AddVertice(px + sz, py, 0);
+                                                int s2 = AddVertice(px + sz, py, textureDepth);
+                                                int s3 = AddVertice(px, py, textureDepth);
+                                                Faces.Add(s0);
+                                                Faces.Add(s2);
+                                                Faces.Add(s1);
 
-                                            Faces.Add(s0);
-                                            Faces.Add(s3);
-                                            Faces.Add(s2);
+                                                Faces.Add(s0);
+                                                Faces.Add(s3);
+                                                Faces.Add(s2);
+                                            }
                                         }
                                     }
                                     int v0 = AddVertice(px, py, z);
@@ -781,15 +810,6 @@ namespace Barnacle.Dialogs
                                     Faces.Add(v0);
                                     Faces.Add(v2);
                                     Faces.Add(v3);
-                                    if (z != 0)
-                                    {
-                                        AddEdgeToClose(mayNeedToClose, v0, v1);
-                                        AddEdgeToClose(mayNeedToClose, v1, v2);
-                                        AddEdgeToClose(mayNeedToClose, v2, v0);
-
-                                        AddEdgeToClose(mayNeedToClose, v2, v3);
-                                        AddEdgeToClose(mayNeedToClose, v3, v0);
-                                    }
                                 }
                                 else
                                 {
@@ -798,7 +818,7 @@ namespace Barnacle.Dialogs
                                         z = 0;
                                         if (mask > 15)
                                         {
-                                            //z = textureDepth;
+                                            z = textureDepth;
                                         }
                                         int v0 = AddVertice(interception.Corners[0].X, interception.Corners[0].Y, z);
                                         int v1 = AddVertice(interception.Corners[1].X, interception.Corners[1].Y, z);
@@ -807,24 +827,21 @@ namespace Barnacle.Dialogs
                                         Faces.Add(v0);
                                         Faces.Add(v1);
                                         Faces.Add(v2);
-                                        AddEdgeToClose(mayNeedToClose, v0, v1);
-                                        AddEdgeToClose(mayNeedToClose, v1, v2);
-                                        AddEdgeToClose(mayNeedToClose, v2, v0);
                                     }
                                     else
                                     {
                                         z = 0;
                                         if (mask > 15)
                                         {
-                                            //z = textureDepth;
+                                            z = textureDepth;
                                         }
                                         ply = new TriangulationPolygon();
                                         List<System.Drawing.PointF> pfr = new List<System.Drawing.PointF>();
                                         foreach (System.Windows.Point p in interception.Corners)
                                         {
-                                            pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                                            pfr.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
                                         }
-                                        ply.Points = pf.ToArray();
+                                        ply.Points = pfr.ToArray();
                                         tris = ply.Triangulate();
                                         foreach (Triangle t in tris)
                                         {
@@ -835,40 +852,56 @@ namespace Barnacle.Dialogs
                                             Faces.Add(v0);
                                             Faces.Add(v1);
                                             Faces.Add(v2);
-                                            if (z > 0)
-                                            {
-                                                AddEdgeToClose(mayNeedToClose, v0, v1);
-                                                AddEdgeToClose(mayNeedToClose, v1, v2);
-                                                AddEdgeToClose(mayNeedToClose, v2, v0);
-                                            }
                                         }
                                     }
                                 }
                             }
-
                         }
                     }
-                    foreach (TextureEdge te in mayNeedToClose)
-                    {
-                        int startMatch = FindVertexAtZero(tmp, te.startVertex);
-                        if (startMatch != -1)
-                        {
-                            Faces.Add(te.startVertex);
-                            Faces.Add(startMatch);
-                            Faces.Add(te.endVertex);
-                            int endMatch = FindVertexAtZero(tmp, te.endVertex);
-                            if (endMatch != -1)
-                            {
-                                Faces.Add(startMatch);
-                                Faces.Add(endMatch);
-                                Faces.Add(te.endVertex);
 
+                    CloseEdge(lx, by, rx, ty, tmp, sz);
+                    CentreVertices();
+                }
+            }
+        }
+
+        private void CloseEdge(double lx, double by, double rx, double ty, List<Point> tmp, double sz)
+        {
+            Extents ext = new Extents();
+            for (double px = lx; px < rx; px += sz)
+            {
+                for (double py = by; py < ty; py += sz)
+                {
+                    if (GetTextureMask(px, py, sz) > 15)
+                    {
+                        ext.Left = px;
+                        ext.Bottom = py;
+                        ext.Right = px + sz;
+                        ext.Top = py + sz;
+                        for (int i = 0; i < tmp.Count; i++)
+                        {
+                            int j = (i + 1) % tmp.Count;
+                            Tuple<Point, Point> seg = CohenSutherland.CohenSutherlandLineClip(ext, tmp[i], tmp[j]);
+                            if (seg != null)
+                            {
+                                // if (seg.Item1.X != seg.Item2.X || seg.Item1.Y != seg.Item2.Y)
+                                {
+                                    int v0 = AddVertice(seg.Item1.X, seg.Item1.Y, 0);
+                                    int v1 = AddVertice(seg.Item2.X, seg.Item2.Y, 0);
+                                    int v2 = AddVertice(seg.Item2.X, seg.Item2.Y, textureDepth);
+                                    int v3 = AddVertice(seg.Item1.X, seg.Item1.Y, textureDepth);
+
+                                    Faces.Add(v0);
+                                    Faces.Add(v1);
+                                    Faces.Add(v2);
+
+                                    Faces.Add(v0);
+                                    Faces.Add(v2);
+                                    Faces.Add(v3);
+                                }
                             }
                         }
-
                     }
-
-                    CentreVertices();
                 }
             }
         }
@@ -919,14 +952,6 @@ namespace Barnacle.Dialogs
 
             return Math.Abs(pt.X - x) < epsilon || Math.Abs(pt.Y - y) < epsilon;
         }
-        private void AddEdgeToClose(List<TextureEdge> mayNeedToClose, int v0, int v1)
-        {
-            TextureEdge te = new TextureEdge();
-            te.startVertex = v0;
-            te.endVertex = v1;
-
-            mayNeedToClose.Add(te);
-        }
 
         private bool IsItAnInsidePixel(Point[] c, double px, double py, double sz)
         {
@@ -950,15 +975,11 @@ namespace Barnacle.Dialogs
         private byte GetTextureMask(double px, double py, double sz)
         {
             px = px / sz;
-            py = py / sz; 
+            py = py / sz;
             px = px % textureImageWidth;
             py = py % textureImageHeight;
             return textureMap[(int)px, (int)py];
         }
-
-       
-
-     
 
         public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
         {
@@ -972,6 +993,7 @@ namespace Barnacle.Dialogs
             double s = (a + b + c) / 2;
             return Math.Sqrt(s * (s - a) * (s - b) * (s - c));
         }
+
         public enum PixelColour
         {
             Unknown,
@@ -979,7 +1001,6 @@ namespace Barnacle.Dialogs
             Front,
             Mixed
         }
-     
 
         private double sign(Point p1, Point p2, Point p3)
         {
@@ -1009,8 +1030,6 @@ namespace Barnacle.Dialogs
             new Point(vt[p2].X, vt[p2].Y));
             return res;
         }
-
-      
 
         protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
         {
@@ -1116,10 +1135,12 @@ namespace Barnacle.Dialogs
             WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
             TextureDepth = EditorParameters.GetDouble("TextureDepth", 1);
-            HollowShape = EditorParameters.GetBoolean("Hollow", false);            
+            HollowShape = EditorParameters.GetBoolean("Hollow", false);
             TexturedShape = EditorParameters.GetBoolean("Textured", false);
             SolidShape = EditorParameters.GetBoolean("Solid", true);
-            LargeTexture = EditorParameters.GetBoolean("LargeTexture", false);
+            LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
+            SmallTexture = EditorParameters.GetBoolean("SmallTexture", true);
+            SelectedTexture = EditorParameters.Get("SelectedTexture");
         }
 
         private byte[,] textureMap;
@@ -1238,6 +1259,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Solid", SolidShape.ToString());
             EditorParameters.Set("Textured", TexturedShape.ToString());
             EditorParameters.Set("LargeTexture", LargeTexture.ToString());
+            EditorParameters.Set("SmallTexture", SmallTexture.ToString());
+            EditorParameters.Set("SelectedTexture", SelectedTexture);
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)
