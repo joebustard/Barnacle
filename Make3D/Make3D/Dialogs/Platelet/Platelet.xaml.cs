@@ -214,9 +214,13 @@ namespace Barnacle.Dialogs
                 if (textureDepth != value)
                 {
                     textureDepth = value;
+                    if (textureDepth >= 0.1)
+                    {
+                        
 
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -663,10 +667,10 @@ namespace Barnacle.Dialogs
                         by = Math.Min(tmp[i].Y, by);
                         ty = Math.Max(tmp[i].Y, ty);
                     }
-                    double sz = 1;
+                    double sz = 0.5;
                     if (!largeTexture)
                     {
-                        sz = 0.5;
+                        sz = 0.25;
                     }
 
                     // generate side triangles so original points are already in list
@@ -1398,7 +1402,7 @@ namespace Barnacle.Dialogs
             loaded = true;
             GenerateShape();
             UpdateCameraPos();
-            // MyModelGroup.Children.Clear();
+           
             warningText = "";
             Redisplay();
         }

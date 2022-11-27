@@ -220,6 +220,8 @@ namespace Barnacle.Dialogs.Slice
                 new Action(() =>
                 {
                     ResultsText += s + "\n";
+                    ResultsBox.CaretIndex = ResultsBox.Text.Length;
+                    ResultsBox.ScrollToEnd();
                 }));
         }
 
@@ -255,6 +257,7 @@ namespace Barnacle.Dialogs.Slice
             NotificationManager.Notify("ExportRefresh", null);
             CanClose = true;
             CanSlice = true;
+            AppendResults("Slice complete");
         }
 
         private void CloseClicked(object sender, RoutedEventArgs e)
@@ -532,6 +535,7 @@ G90 ;Absolute positioning";
                         AppendResults("Copy " + name);
                         File.Copy(fn, trg, true);
                     }
+                    AppendResults("Copy complete");
                 }
                 else
                 {
@@ -540,8 +544,7 @@ G90 ;Absolute positioning";
             }
             else
             {
-                MessageBox.Show("Sdcard label not defined in settings." +
-                "");
+                MessageBox.Show("Sdcard label not defined in settings.");
             }
         }
     }

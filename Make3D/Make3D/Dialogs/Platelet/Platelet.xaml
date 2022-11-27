@@ -133,7 +133,8 @@ Visibility="{Binding ShowTextures}" />
                             Width="40"
                     Visibility="{Binding ShowTextures}"
                             VerticalAlignment="Center"
-                            Text="{Binding TextureDepth, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{Binding TextureDepth}"
+                            />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup" IsChecked="{Binding LargeTexture}" Content="Large" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup"  IsChecked="{Binding SmallTexture}" Content="Small" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
                     </StackPanel>
