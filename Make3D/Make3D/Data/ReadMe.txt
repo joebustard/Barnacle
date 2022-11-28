@@ -3,7 +3,8 @@
 Added Shaped Tiled Roof Tool
 Added a project template for a model building
 Added Home key as short cut for Home Camera
-Added some texture processing to platelet tool
+Added F5/F6 key as short cuts for Camera rotation
+Added some texture processing to platelet tool (still has some issues with holes)
 
 Fixed bug where platelet tool "forgot" that a previously created plate was hollow
 Fixed bug in Shaped Wall tool which prevented triangular walls

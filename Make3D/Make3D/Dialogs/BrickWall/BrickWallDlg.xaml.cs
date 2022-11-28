@@ -278,13 +278,13 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
-            wallLength = 200;
-            wallHeight = 100;
-            wallWidth = 8;
-            brickLength = 12;
+            wallLength = 50;
+            wallHeight = 50;
+            wallWidth = 2;
+            brickLength = 3.3;
 
-            brickHeight = 6;
-            mortarGap = 2;
+            brickHeight = 1.1;
+            mortarGap = 0.25;
             LoadEditorParameters();
 
             UpdateCameraPos();

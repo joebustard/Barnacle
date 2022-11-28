@@ -13,6 +13,7 @@ namespace ScriptLanguage
         private ExpressionNode mortarGapExp;
         private ExpressionNode pathExp;
         private ExpressionNode wallWidthExp;
+
         public MakeShapedBrickWallNode
             (
             ExpressionNode pth,
@@ -89,7 +90,7 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-                if (valMortarGap < 0.11 || valMortarGap > 50)
+                if (valMortarGap < 0.1 || valMortarGap > 50)
                 {
                     Log.Instance().AddEntry("MakeShapedBrickWall : MortarGap value out of range (0.1 .. 50)");
                     inRange = false;

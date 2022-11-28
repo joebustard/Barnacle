@@ -18,6 +18,7 @@ namespace Barnacle.Dialogs
         private double mortarGap;
         private double wallWidth;
         private string warningText;
+
         public ShapedBrickWallDlg()
         {
             InitializeComponent();
@@ -27,11 +28,11 @@ namespace Barnacle.Dialogs
             loaded = false;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
-            brickLength = 8;
-            brickHeight = 4;
-            brickDepth = 1;
-            mortarGap = 1;
-            wallWidth = 5;
+            brickLength = 3;
+            brickHeight = 1.1;
+            brickDepth = 0.25;
+            mortarGap = 0.25;
+            wallWidth = 2;
         }
 
         public double BrickDepth
@@ -93,6 +94,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public double MortarGap
         {
             get
@@ -112,6 +114,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public override bool ShowAxies
         {
             get
@@ -165,6 +168,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public string WarningText
         {
             get
@@ -203,11 +207,11 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-            BrickLength = EditorParameters.GetDouble("BrickLength", 8);
-            BrickHeight = EditorParameters.GetDouble("BrickHeight", 4);
-            BrickDepth = EditorParameters.GetDouble("BrickDepth", 1);
-            MortarGap = EditorParameters.GetDouble("MortarGap", 1);
-            WallWidth = EditorParameters.GetDouble("WallWidth", 5);
+            BrickLength = EditorParameters.GetDouble("BrickLength", 3);
+            BrickHeight = EditorParameters.GetDouble("BrickHeight", 1.1);
+            BrickDepth = EditorParameters.GetDouble("BrickDepth", 0.25);
+            MortarGap = EditorParameters.GetDouble("MortarGap", 0.25);
+            WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PathEditor.SetPath(EditorParameters.Get("Path"));
         }
 
@@ -220,6 +224,7 @@ namespace Barnacle.Dialogs
                 Redisplay();
             }
         }
+
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool

@@ -17,7 +17,6 @@ namespace Barnacle
         public MainWindow()
         {
             InitializeComponent();
-            //  LineUtils.CoplanerTest();
             PrepareUndo();
         }
 
