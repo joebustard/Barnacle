@@ -670,6 +670,18 @@ namespace Barnacle.ViewModels
                             }
                         }
                         break;
+
+                    case Key.F5:
+                    {
+                            RotateCamera(-0.5);
+                    }
+                        break;
+                    case Key.F6:
+                        {
+                            RotateCamera(0.5);
+                        }
+                        break;
+
                 }
             }
             else
@@ -1923,7 +1935,7 @@ namespace Barnacle.ViewModels
         {
             if (selectedItems.Count == 1)
             {
-                //ResetSelectionColours();
+              
                 Object3D sel = selectedItems[0];
                 CameraLookObject = sel.Position;
                 camera.LookAt(CameraLookObject);
@@ -2039,6 +2051,15 @@ namespace Barnacle.ViewModels
             double dz = newPos.X - lastMouse.X;
 
             camera.Move(dx, dy);
+            ReportCameraPosition();
+            NotifyPropertyChanged("CameraPos");
+        }
+
+        private void RotateCamera(double dt)
+        {
+
+            camera.RotateDegrees(dt);
+            LookToCenter();
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
         }
