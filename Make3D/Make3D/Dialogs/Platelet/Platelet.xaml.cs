@@ -1,13 +1,12 @@
 ﻿using Barnacle.Models;
+using PolygonLibrary;
 using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
-using PolygonLibrary;
 using System.Windows.Media.Media3D;
-using System.Windows.Media;
 
 namespace Barnacle.Dialogs
 {
@@ -16,22 +15,30 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class Platelet : BaseModellerDialog, INotifyPropertyChanged
     {
+        private const byte bottomMask = 0x08;
+        private const byte frontMask = 0x10;
+        private const byte leftMask = 0x01;
+        private const byte rightMask = 0x02;
+        private const byte topMask = 0x04;
         private List<System.Windows.Point> displayPoints;
         private bool hollowShape;
+        private bool largeTexture;
         private bool loaded;
         private string loadedImageName;
         private double plateWidth;
         private string selectedTexture;
         private Visibility showTextures;
         private Visibility showWidth;
+        private bool smallTexture;
         private bool solidShape;
         private double textureDepth;
         private bool texturedShape;
         private Dictionary<string, string> textureFiles;
+        private int textureImageHeight;
+        private int textureImageWidth;
+        private byte[,] textureMap;
         private double wallWidth;
         private string warningText;
-        private int textureImageWidth;
-        private int textureImageHeight;
         private System.Drawing.Bitmap workingImage;
 
         public Platelet()
@@ -39,7 +46,6 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "Platelet";
             DataContext = this;
-            // ModelGroup = MyModelGroup;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             wallWidth = 2;
@@ -55,6 +61,14 @@ namespace Barnacle.Dialogs
             textureFiles = new Dictionary<string, string>();
             loadedImageName = "";
             selectedTexture = "";
+        }
+
+        public enum PixelColour
+        {
+            Unknown,
+            Back,
+            Front,
+            Mixed
         }
 
         public bool HollowShape
@@ -78,6 +92,23 @@ namespace Barnacle.Dialogs
                         ShowWidth = Visibility.Hidden;
                     }
 
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        public bool LargeTexture
+        {
+            get
+            {
+                return largeTexture;
+            }
+            set
+            {
+                if (value != largeTexture)
+                {
+                    largeTexture = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -181,6 +212,23 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool SmallTexture
+        {
+            get
+            {
+                return smallTexture;
+            }
+            set
+            {
+                if (value != smallTexture)
+                {
+                    smallTexture = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         public bool SolidShape
         {
             get
@@ -216,8 +264,6 @@ namespace Barnacle.Dialogs
                     textureDepth = value;
                     if (textureDepth >= 0.1)
                     {
-                        
-
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -293,11 +339,172 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
+        {
+            Point pt0 = new Point(vt[p0].X, vt[p0].Y);
+            Point pt1 = new Point(vt[p1].X, vt[p1].Y);
+            Point pt2 = new Point(vt[p2].X, vt[p2].Y);
+
+            double a = Distance(pt0, pt1);
+            double b = Distance(pt1, pt2);
+            double c = Distance(pt2, pt0);
+            double s = (a + b + c) / 2;
+            return Math.Sqrt(s * (s - a) * (s - b) * (s - c));
+        }
+
+        public bool PointOnLineSegment(Point pt1, Point pt2, Point pt, double epsilon = 0.00001)
+        {
+            if (pt.X - Math.Max(pt1.X, pt2.X) > epsilon ||
+                Math.Min(pt1.X, pt2.X) - pt.X > epsilon ||
+                pt.Y - Math.Max(pt1.Y, pt2.Y) > epsilon ||
+                Math.Min(pt1.Y, pt2.Y) - pt.Y > epsilon)
+                return false;
+
+            if (Math.Abs(pt2.X - pt1.X) < epsilon)
+                return Math.Abs(pt1.X - pt.X) < epsilon || Math.Abs(pt2.X - pt.X) < epsilon;
+            if (Math.Abs(pt2.Y - pt1.Y) < epsilon)
+                return Math.Abs(pt1.Y - pt.Y) < epsilon || Math.Abs(pt2.Y - pt.Y) < epsilon;
+
+            double x = pt1.X + (pt.Y - pt1.Y) * (pt2.X - pt1.X) / (pt2.Y - pt1.Y);
+            double y = pt1.Y + (pt.X - pt1.X) * (pt2.Y - pt1.Y) / (pt2.X - pt1.X);
+
+            return Math.Abs(pt.X - x) < epsilon || Math.Abs(pt.Y - y) < epsilon;
+        }
+
+        protected Point Centroid(Point[] crns)
+        {
+            double x = 0;
+            double y = 0;
+            if (crns.GetLength(0) > 0)
+            {
+                foreach (Point p in crns)
+                {
+                    x += p.X;
+                    y += p.Y;
+                }
+                x /= crns.GetLength(0);
+                y /= crns.GetLength(0);
+            }
+            return new Point(x, y);
+        }
+
+        protected bool IsPointInPolygon(Point point, List<Point> polygon)
+        {
+            int polyCorners = polygon.Count;
+            int i = 0;
+            int j = polyCorners - 1;
+            bool oddNodes = false;
+
+            for (i = 0; i < polyCorners; i++)
+            {
+                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
+                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
+                {
+                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
+                    {
+                        oddNodes = !oddNodes;
+                    }
+                }
+                j = i;
+            }
+
+            return oddNodes;
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
             DialogResult = true;
             Close();
+        }
+
+        protected ConvexPolygon2D RectPoly(double px, double py, double sz)
+        {
+            System.Windows.Point[] rct = new System.Windows.Point[4];
+            rct[0].X = px;
+            rct[0].Y = py;
+
+            rct[1].X = px;
+            rct[1].Y = py + sz;
+
+            rct[2].X = px + sz;
+            rct[2].Y = py + sz;
+
+            rct[3].X = px + sz;
+            rct[3].Y = py;
+
+            return new ConvexPolygon2D(rct);
+        }
+
+        protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (Point p in points)
+            {
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, z);
+                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, z);
+                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, z);
+                if (reverse)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
+
+        private void CloseEdge(double lx, double by, double rx, double ty, List<Point> tmp, double sz)
+        {
+            Extents ext = new Extents();
+            for (double px = lx; px < rx; px += sz)
+            {
+                for (double py = by; py < ty; py += sz)
+                {
+                    if (GetTextureMask(px, py, sz) > 15)
+                    {
+                        ext.Left = px;
+                        ext.Bottom = py;
+                        ext.Right = px + sz;
+                        ext.Top = py + sz;
+                        for (int i = 0; i < tmp.Count; i++)
+                        {
+                            int j = (i + 1) % tmp.Count;
+                            Tuple<Point, Point> seg = CohenSutherland.CohenSutherlandLineClip(ext, tmp[i], tmp[j]);
+                            if (seg != null)
+                            {
+                                // if (seg.Item1.X != seg.Item2.X || seg.Item1.Y != seg.Item2.Y)
+                                {
+                                    int v0 = AddVertice(seg.Item1.X, seg.Item1.Y, 0);
+                                    int v1 = AddVertice(seg.Item2.X, seg.Item2.Y, 0);
+                                    int v2 = AddVertice(seg.Item2.X, seg.Item2.Y, textureDepth);
+                                    int v3 = AddVertice(seg.Item1.X, seg.Item1.Y, textureDepth);
+
+                                    Faces.Add(v0);
+                                    Faces.Add(v1);
+                                    Faces.Add(v2);
+
+                                    Faces.Add(v0);
+                                    Faces.Add(v2);
+                                    Faces.Add(v3);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void CreateReversedSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
@@ -358,6 +565,44 @@ namespace Barnacle.Dialogs
             Faces.Add(c0);
             Faces.Add(c3);
             Faces.Add(c2);
+        }
+
+        private void CreateTheBack(List<Point> tmp)
+        {
+            // triangulate the basic polygon
+            List<Triangle> tris;
+            TriangulationPolygon ply = new TriangulationPolygon();
+            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+            foreach (System.Windows.Point p in tmp)
+            {
+                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+            }
+            ply.Points = pf.ToArray();
+
+            tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, -plateWidth);
+                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, -plateWidth);
+                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, -plateWidth);
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c1);
+            }
+        }
+
+        private int FindVertexAtZero(List<Point> boundary, int sm)
+        {
+            Point testPoint = new Point(Vertices[sm].X, Vertices[sm].Y);
+            if (PointOnBoundary(testPoint, boundary))
+            {
+                Point3D pAtZero = new Point3D(Vertices[sm].X, Vertices[sm].Y, 0.0);
+                return AddVertice(pAtZero);
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         private void GenerateHollow()
@@ -584,45 +829,6 @@ namespace Barnacle.Dialogs
                 CentreVertices();
             }
         }
-
-        private bool largeTexture;
-
-        public bool LargeTexture
-        {
-            get
-            {
-                return largeTexture;
-            }
-            set
-            {
-                if (value != largeTexture)
-                {
-                    largeTexture = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        private bool smallTexture;
-
-        public bool SmallTexture
-        {
-            get
-            {
-                return smallTexture;
-            }
-            set
-            {
-                if (value != smallTexture)
-                {
-                    smallTexture = value;
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
@@ -717,29 +923,183 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private void CreateTheBack(List<Point> tmp)
+        private byte GetTextureMask(double px, double py, double sz)
         {
-            // triangulate the basic polygon
-            List<Triangle> tris;
-            TriangulationPolygon ply = new TriangulationPolygon();
-            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-            foreach (System.Windows.Point p in tmp)
-            {
-                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-            }
-            ply.Points = pf.ToArray();
+            px = px / sz;
+            py = py / sz;
+            px = px % textureImageWidth;
+            py = py % textureImageHeight;
+            return textureMap[(int)px, (int)py];
+        }
 
-            tris = ply.Triangulate();
-            foreach (Triangle t in tris)
+        private bool IsItAnInsidePixel(Point[] c, double px, double py, double sz)
+        {
+            bool result = false;
+            if (c[0].X == px && c[0].Y == py)
             {
-                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, -plateWidth);
-                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, -plateWidth);
-                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, -plateWidth);
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
+                if (c[1].X == px + sz && c[1].Y == py)
+                {
+                    if (c[2].X == px + sz && c[2].Y == py + sz)
+                    {
+                        if (c[3].X == px && c[3].Y == py + sz)
+                        {
+                            result = true;
+                        }
+                    }
+                }
             }
+            return result;
+        }
+
+        private void LoadEditorParameters()
+        {
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                PathEditor.LoadImage(imageName);
+            }
+
+            String s = EditorParameters.Get("Path");
+            if (s != "")
+            {
+                PathEditor.FromString(s);
+            }
+            WallWidth = EditorParameters.GetDouble("WallWidth", 2);
+            PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
+            TextureDepth = EditorParameters.GetDouble("TextureDepth", 1);
+            HollowShape = EditorParameters.GetBoolean("Hollow", false);
+            TexturedShape = EditorParameters.GetBoolean("Textured", false);
+            SolidShape = EditorParameters.GetBoolean("Solid", true);
+            LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
+            SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
+            SelectedTexture = EditorParameters.Get("SelectedTexture");
+        }
+
+        private void LoadTextureImage()
+        {
+            if (selectedTexture != "")
+            {
+                if (selectedTexture != loadedImageName)
+                {
+                    string imagePath = textureFiles[selectedTexture];
+                    if (File.Exists(imagePath))
+                    {
+                        workingImage = new System.Drawing.Bitmap(imagePath);
+                        loadedImageName = selectedTexture;
+                        textureImageWidth = workingImage.Width;
+                        textureImageHeight = workingImage.Height;
+                        textureMap = new byte[workingImage.Width, workingImage.Height];
+                        for (int x = 0; x < workingImage.Width; x++)
+                        {
+                            for (int y = 0; y < workingImage.Height; y++)
+                            {
+                                byte mask = 0;
+                                System.Drawing.Color col = workingImage.GetPixel(x, y);
+
+                                if (col.R < 128)
+                                {
+                                    mask = frontMask;
+                                }
+                                else
+                                {
+                                    // its the back, do we need to raise the sides
+                                    if (x > 0)
+                                    {
+                                        col = workingImage.GetPixel(x - 1, y);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | leftMask);
+                                        }
+                                    }
+                                    if (x < workingImage.Width - 1)
+                                    {
+                                        col = workingImage.GetPixel(x + 1, y);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | rightMask);
+                                        }
+                                    }
+
+                                    if (y > 0)
+                                    {
+                                        col = workingImage.GetPixel(x, y - 1);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | bottomMask);
+                                        }
+                                    }
+                                    if (y < workingImage.Height - 1)
+                                    {
+                                        col = workingImage.GetPixel(x, y + 1);
+                                        if (col.R < 128)
+                                        {
+                                            mask = (byte)(mask | topMask);
+                                        }
+                                    }
+                                }
+                                textureMap[x, y] = mask;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadTextureNames()
+        {
+            try
+            {
+                String appFolder = AppDomain.CurrentDomain.BaseDirectory + "Data\\Textures";
+                string[] txtFiles = Directory.GetFiles(appFolder, "*.png");
+                foreach (string s in txtFiles)
+                {
+                    string fName = System.IO.Path.GetFileNameWithoutExtension(s);
+                    textureFiles[fName] = s;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void PathPointsChanged(List<System.Windows.Point> pnts)
+        {
+            displayPoints = pnts;
+            if (PathEditor.PathClosed)
+            {
+                GenerateShape();
+                Redisplay();
+            }
+        }
+
+        private bool PointInTriangle(Point pt, Point v1, Point v2, Point v3)
+        {
+            double d1, d2, d3;
+            bool has_neg, has_pos;
+
+            d1 = sign(pt, v1, v2);
+            d2 = sign(pt, v2, v3);
+            d3 = sign(pt, v3, v1);
+
+            has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+            has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+            return !(has_neg && has_pos);
+        }
+
+        private bool PointOnBoundary(Point testPoint, List<Point> boundary)
+        {
+            bool result = false;
+            for (int i = 0; i < boundary.Count; i++)
+            {
+                int j = (i + 1) % boundary.Count;
+                if (PointOnLineSegment(boundary[i], boundary[j], testPoint))
+                {
+                    return true;
+                }
+            }
+            return result;
         }
 
         private void PolygonInside(List<Point> tmp, double sz, double off, double px, double py, byte mask)
@@ -958,164 +1318,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private void CloseEdge(double lx, double by, double rx, double ty, List<Point> tmp, double sz)
-        {
-            Extents ext = new Extents();
-            for (double px = lx; px < rx; px += sz)
-            {
-                for (double py = by; py < ty; py += sz)
-                {
-                    if (GetTextureMask(px, py, sz) > 15)
-                    {
-                        ext.Left = px;
-                        ext.Bottom = py;
-                        ext.Right = px + sz;
-                        ext.Top = py + sz;
-                        for (int i = 0; i < tmp.Count; i++)
-                        {
-                            int j = (i + 1) % tmp.Count;
-                            Tuple<Point, Point> seg = CohenSutherland.CohenSutherlandLineClip(ext, tmp[i], tmp[j]);
-                            if (seg != null)
-                            {
-                                // if (seg.Item1.X != seg.Item2.X || seg.Item1.Y != seg.Item2.Y)
-                                {
-                                    int v0 = AddVertice(seg.Item1.X, seg.Item1.Y, 0);
-                                    int v1 = AddVertice(seg.Item2.X, seg.Item2.Y, 0);
-                                    int v2 = AddVertice(seg.Item2.X, seg.Item2.Y, textureDepth);
-                                    int v3 = AddVertice(seg.Item1.X, seg.Item1.Y, textureDepth);
-
-                                    Faces.Add(v0);
-                                    Faces.Add(v1);
-                                    Faces.Add(v2);
-
-                                    Faces.Add(v0);
-                                    Faces.Add(v2);
-                                    Faces.Add(v3);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private int FindVertexAtZero(List<Point> boundary, int sm)
-        {
-            Point testPoint = new Point(Vertices[sm].X, Vertices[sm].Y);
-            if (PointOnBoundary(testPoint, boundary))
-            {
-                Point3D pAtZero = new Point3D(Vertices[sm].X, Vertices[sm].Y, 0.0);
-                return AddVertice(pAtZero);
-            }
-            else
-            {
-                return -1;
-            }
-        }
-
-        private bool PointOnBoundary(Point testPoint, List<Point> boundary)
-        {
-            bool result = false;
-            for (int i = 0; i < boundary.Count; i++)
-            {
-                int j = (i + 1) % boundary.Count;
-                if (PointOnLineSegment(boundary[i], boundary[j], testPoint))
-                {
-                    return true;
-                }
-            }
-            return result;
-        }
-
-        public bool PointOnLineSegment(Point pt1, Point pt2, Point pt, double epsilon = 0.00001)
-        {
-            if (pt.X - Math.Max(pt1.X, pt2.X) > epsilon ||
-                Math.Min(pt1.X, pt2.X) - pt.X > epsilon ||
-                pt.Y - Math.Max(pt1.Y, pt2.Y) > epsilon ||
-                Math.Min(pt1.Y, pt2.Y) - pt.Y > epsilon)
-                return false;
-
-            if (Math.Abs(pt2.X - pt1.X) < epsilon)
-                return Math.Abs(pt1.X - pt.X) < epsilon || Math.Abs(pt2.X - pt.X) < epsilon;
-            if (Math.Abs(pt2.Y - pt1.Y) < epsilon)
-                return Math.Abs(pt1.Y - pt.Y) < epsilon || Math.Abs(pt2.Y - pt.Y) < epsilon;
-
-            double x = pt1.X + (pt.Y - pt1.Y) * (pt2.X - pt1.X) / (pt2.Y - pt1.Y);
-            double y = pt1.Y + (pt.X - pt1.X) * (pt2.Y - pt1.Y) / (pt2.X - pt1.X);
-
-            return Math.Abs(pt.X - x) < epsilon || Math.Abs(pt.Y - y) < epsilon;
-        }
-
-        private bool IsItAnInsidePixel(Point[] c, double px, double py, double sz)
-        {
-            bool result = false;
-            if (c[0].X == px && c[0].Y == py)
-            {
-                if (c[1].X == px + sz && c[1].Y == py)
-                {
-                    if (c[2].X == px + sz && c[2].Y == py + sz)
-                    {
-                        if (c[3].X == px && c[3].Y == py + sz)
-                        {
-                            result = true;
-                        }
-                    }
-                }
-            }
-            return result;
-        }
-
-        private byte GetTextureMask(double px, double py, double sz)
-        {
-            px = px / sz;
-            py = py / sz;
-            px = px % textureImageWidth;
-            py = py % textureImageHeight;
-            return textureMap[(int)px, (int)py];
-        }
-
-        public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
-        {
-            Point pt0 = new Point(vt[p0].X, vt[p0].Y);
-            Point pt1 = new Point(vt[p1].X, vt[p1].Y);
-            Point pt2 = new Point(vt[p2].X, vt[p2].Y);
-
-            double a = Distance(pt0, pt1);
-            double b = Distance(pt1, pt2);
-            double c = Distance(pt2, pt0);
-            double s = (a + b + c) / 2;
-            return Math.Sqrt(s * (s - a) * (s - b) * (s - c));
-        }
-
-        public enum PixelColour
-        {
-            Unknown,
-            Back,
-            Front,
-            Mixed
-        }
-
-        private double sign(Point p1, Point p2, Point p3)
-        {
-            return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
-        }
-
-        private bool PointInTriangle(Point pt, Point v1, Point v2, Point v3)
-        {
-            double d1, d2, d3;
-            bool has_neg, has_pos;
-
-            d1 = sign(pt, v1, v2);
-            d2 = sign(pt, v2, v3);
-            d3 = sign(pt, v3, v1);
-
-            has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
-            has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
-
-            return !(has_neg && has_pos);
-        }
-
         private bool PtInTriangle(double px, double py, Point3DCollection vt, int p0, int p1, int p2)
         {
             bool res = PointInTriangle(new Point(px, py),
@@ -1123,223 +1325,6 @@ namespace Barnacle.Dialogs
             new Point(vt[p1].X, vt[p1].Y),
             new Point(vt[p2].X, vt[p2].Y));
             return res;
-        }
-
-        protected void TriangulateSurface(Point[] points, double z, bool reverse = false)
-        {
-            TriangulationPolygon ply = new TriangulationPolygon();
-            List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-            foreach (Point p in points)
-            {
-                pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
-            }
-            ply.Points = pf.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(t.Points[0].X, t.Points[0].Y, z);
-                int c1 = AddVertice(t.Points[1].X, t.Points[1].Y, z);
-                int c2 = AddVertice(t.Points[2].X, t.Points[2].Y, z);
-                if (reverse)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
-            }
-        }
-
-        protected Point Centroid(Point[] crns)
-        {
-            double x = 0;
-            double y = 0;
-            if (crns.GetLength(0) > 0)
-            {
-                foreach (Point p in crns)
-                {
-                    x += p.X;
-                    y += p.Y;
-                }
-                x /= crns.GetLength(0);
-                y /= crns.GetLength(0);
-            }
-            return new Point(x, y);
-        }
-
-        protected bool IsPointInPolygon(Point point, List<Point> polygon)
-        {
-            int polyCorners = polygon.Count;
-            int i = 0;
-            int j = polyCorners - 1;
-            bool oddNodes = false;
-
-            for (i = 0; i < polyCorners; i++)
-            {
-                if (polygon[i].Y < point.Y && polygon[j].Y >= point.Y
-                || polygon[j].Y < point.Y && polygon[i].Y >= point.Y)
-                {
-                    if (polygon[i].X + (point.Y - polygon[i].Y) / (polygon[j].Y - polygon[i].Y) * (polygon[j].X - polygon[i].X) < point.X)
-                    {
-                        oddNodes = !oddNodes;
-                    }
-                }
-                j = i;
-            }
-
-            return oddNodes;
-        }
-
-        protected ConvexPolygon2D RectPoly(double px, double py, double sz)
-        {
-            System.Windows.Point[] rct = new System.Windows.Point[4];
-            rct[0].X = px;
-            rct[0].Y = py;
-
-            rct[1].X = px;
-            rct[1].Y = py + sz;
-
-            rct[2].X = px + sz;
-            rct[2].Y = py + sz;
-
-            rct[3].X = px + sz;
-            rct[3].Y = py;
-
-            return new ConvexPolygon2D(rct);
-        }
-
-        private void LoadEditorParameters()
-        {
-            string imageName = EditorParameters.Get("ImagePath");
-            if (imageName != "")
-            {
-                PathEditor.LoadImage(imageName);
-            }
-
-            String s = EditorParameters.Get("Path");
-            if (s != "")
-            {
-                PathEditor.FromString(s);
-            }
-            WallWidth = EditorParameters.GetDouble("WallWidth", 2);
-            PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
-            TextureDepth = EditorParameters.GetDouble("TextureDepth", 1);
-            HollowShape = EditorParameters.GetBoolean("Hollow", false);
-            TexturedShape = EditorParameters.GetBoolean("Textured", false);
-            SolidShape = EditorParameters.GetBoolean("Solid", true);
-            LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
-            SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
-            SelectedTexture = EditorParameters.Get("SelectedTexture");
-        }
-
-        private byte[,] textureMap;
-        private const byte leftMask = 0x01;
-        private const byte rightMask = 0x02;
-        private const byte topMask = 0x04;
-        private const byte bottomMask = 0x08;
-        private const byte frontMask = 0x10;
-
-        private void LoadTextureImage()
-        {
-            if (selectedTexture != "")
-            {
-                if (selectedTexture != loadedImageName)
-                {
-                    string imagePath = textureFiles[selectedTexture];
-                    if (File.Exists(imagePath))
-                    {
-                        workingImage = new System.Drawing.Bitmap(imagePath);
-                        loadedImageName = selectedTexture;
-                        textureImageWidth = workingImage.Width;
-                        textureImageHeight = workingImage.Height;
-                        textureMap = new byte[workingImage.Width, workingImage.Height];
-                        for (int x = 0; x < workingImage.Width; x++)
-                        {
-                            for (int y = 0; y < workingImage.Height; y++)
-                            {
-                                byte mask = 0;
-                                System.Drawing.Color col = workingImage.GetPixel(x, y);
-
-                                if (col.R < 128)
-                                {
-                                    mask = frontMask;
-                                }
-                                else
-                                {
-                                    // its the back, do we need to raise the sides
-                                    if (x > 0)
-                                    {
-                                        col = workingImage.GetPixel(x - 1, y);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | leftMask);
-                                        }
-                                    }
-                                    if (x < workingImage.Width - 1)
-                                    {
-                                        col = workingImage.GetPixel(x + 1, y);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | rightMask);
-                                        }
-                                    }
-
-                                    if (y > 0)
-                                    {
-                                        col = workingImage.GetPixel(x, y - 1);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | bottomMask);
-                                        }
-                                    }
-                                    if (y < workingImage.Height - 1)
-                                    {
-                                        col = workingImage.GetPixel(x, y + 1);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | topMask);
-                                        }
-                                    }
-                                }
-                                textureMap[x, y] = mask;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void LoadTextureNames()
-        {
-            try
-            {
-                String appFolder = AppDomain.CurrentDomain.BaseDirectory + "Data\\Textures";
-                string[] txtFiles = Directory.GetFiles(appFolder, "*.png");
-                foreach (string s in txtFiles)
-                {
-                    string fName = System.IO.Path.GetFileNameWithoutExtension(s);
-                    textureFiles[fName] = s;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void PathPointsChanged(List<System.Windows.Point> pnts)
-        {
-            displayPoints = pnts;
-            if (PathEditor.PathClosed)
-            {
-                GenerateShape();
-                Redisplay();
-            }
         }
 
         private void SaveEditorParmeters()
@@ -1388,6 +1373,10 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        private double sign(Point p1, Point p2, Point p3)
+        {
+            return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
+        }
         private void UpdateDisplay()
         {
             GenerateShape();
@@ -1402,7 +1391,6 @@ namespace Barnacle.Dialogs
             loaded = true;
             GenerateShape();
             UpdateCameraPos();
-           
             warningText = "";
             Redisplay();
         }

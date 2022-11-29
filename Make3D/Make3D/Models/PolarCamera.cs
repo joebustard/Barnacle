@@ -171,12 +171,14 @@ namespace Barnacle.Models
             polarOrigin = new Point3D(0, 0, 0);
             ConvertPolarTo3D();
         }
+
         internal void RotateDegrees(double dt)
         {
             polarPos.Theta += (dt * Math.PI) / 180.0;
 
             ConvertPolarTo3D();
         }
+
         internal void Move(double dx, double dy)
         {
             double dt = 0;

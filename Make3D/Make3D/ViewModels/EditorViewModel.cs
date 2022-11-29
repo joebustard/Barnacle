@@ -661,7 +661,6 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
-
                     case Key.Escape:
                         {
                             if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
@@ -672,16 +671,16 @@ namespace Barnacle.ViewModels
                         break;
 
                     case Key.F5:
-                    {
+                        {
                             RotateCamera(-0.5);
-                    }
+                        }
                         break;
+
                     case Key.F6:
                         {
                             RotateCamera(0.5);
                         }
                         break;
-
                 }
             }
             else
@@ -883,11 +882,11 @@ namespace Barnacle.ViewModels
         private static void RemoveUnrefVertices(Object3D ob)
         {
             ManifoldChecker checker = new ManifoldChecker();
-            
+
             PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
             checker.Indices = ob.TriangleIndices;
             checker.RemoveUnreferencedVertices();
-            
+
             PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Indices;
             ob.Remesh();
@@ -907,7 +906,7 @@ namespace Barnacle.ViewModels
                 double midY = bns.MidPoint().Y;
                 double midZ = bns.MidPoint().Z;
                 // adorner  should already have the bounds of the selected objects
-             
+
                 for (int i = 1; i < selectedObjectAdorner.SelectedObjects.Count; i++)
                 {
                     Object3D ob = selectedObjectAdorner.SelectedObjects[i];
@@ -918,7 +917,6 @@ namespace Barnacle.ViewModels
                     {
                         case "Left":
                             {
-                                
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.Lower.X - bns.Lower.X);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
                                 ob.Remesh();
@@ -927,7 +925,6 @@ namespace Barnacle.ViewModels
 
                         case "Right":
                             {
-                                
                                 dAbsX = ob.Position.X + (bns.Upper.X - ob.AbsoluteBounds.Upper.X);
                                 ob.Position = new Point3D(dAbsX, ob.Position.Y, ob.Position.Z);
                                 ob.Remesh();
@@ -936,7 +933,6 @@ namespace Barnacle.ViewModels
 
                         case "Top":
                             {
-                                
                                 dAbsY = ob.Position.Y + (bns.Upper.Y - ob.AbsoluteBounds.Upper.Y);
                                 ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
                                 ob.Remesh();
@@ -945,7 +941,6 @@ namespace Barnacle.ViewModels
 
                         case "Bottom":
                             {
-                                
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Lower.Y);
                                 ob.Position = new Point3D(ob.Position.X, dAbsY, ob.Position.Z);
                                 ob.Remesh();
@@ -954,7 +949,6 @@ namespace Barnacle.ViewModels
 
                         case "Back":
                             {
-                                
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - bns.Lower.Z);
                                 ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
                                 ob.Remesh();
@@ -962,7 +956,7 @@ namespace Barnacle.ViewModels
                             break;
 
                         case "Front":
-                            {                                
+                            {
                                 dAbsZ = ob.Position.Z + (bns.Upper.Z - ob.AbsoluteBounds.Upper.Z);
                                 ob.Position = new Point3D(ob.Position.X, ob.Position.Y, dAbsZ);
                                 ob.Remesh();
@@ -1002,7 +996,6 @@ namespace Barnacle.ViewModels
 
                         case "StackRight":
                             {
-                             
                                 dAbsX = bns.Upper.X + ob.AbsoluteBounds.Width / 2 - 0.001;
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
@@ -1014,7 +1007,6 @@ namespace Barnacle.ViewModels
 
                         case "StackLeft":
                             {
-
                                 dAbsX = bns.Lower.X - ob.AbsoluteBounds.Width / 2 + 0.001;
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - midZ);
@@ -1026,7 +1018,6 @@ namespace Barnacle.ViewModels
 
                         case "StackZ":
                             {
-
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - midX);
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.Lower.Z - bns.Upper.Z) - 0.001;
@@ -1038,7 +1029,6 @@ namespace Barnacle.ViewModels
 
                         case "StackBehind":
                             {
-
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - midX);
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
 
@@ -1935,7 +1925,6 @@ namespace Barnacle.ViewModels
         {
             if (selectedItems.Count == 1)
             {
-              
                 Object3D sel = selectedItems[0];
                 CameraLookObject = sel.Position;
                 camera.LookAt(CameraLookObject);
@@ -2057,7 +2046,6 @@ namespace Barnacle.ViewModels
 
         private void RotateCamera(double dt)
         {
-
             camera.RotateDegrees(dt);
             LookToCenter();
             ReportCameraPosition();
