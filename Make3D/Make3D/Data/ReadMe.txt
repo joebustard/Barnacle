@@ -3,11 +3,14 @@
 Added Shaped Tiled Roof Tool
 Added a project template for a model building
 Added Home key as short cut for Home Camera
-Added F5/F6 key as short cuts for Camera rotation
+Added F5/F6 key as short cuts for left/right Camera rotation
 Added some texture processing to platelet tool (still has some issues with holes)
+Added Spring tool, which makes springs
 
 Fixed bug where platelet tool "forgot" that a previously created plate was hollow
 Fixed bug in Shaped Wall tool which prevented triangular walls
+
+Changed textbox on slice dialog to autoscroll to bottom as each file is sliced
 
 v1.0.1
 ===========

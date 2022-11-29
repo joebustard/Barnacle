@@ -1260,7 +1260,7 @@ namespace Barnacle.ViewModels
             {
                 PartLibraryProject = new VisualSolutionExplorer.Project();
                 PartLibraryProject.Open(pth);
-                PartLibraryProject.MarkAsReadOnly();
+                PartLibraryProject.MarkAsLibrary();
                 LibraryVisibility = Visibility.Visible;
             }
         }

@@ -10,6 +10,23 @@ namespace VisualSolutionExplorer
         public static string ProjectFilePath;
         private ObservableCollection<ProjectFolderViewModel> folders;
         private System.Windows.Visibility refreshVisibility;
+        private bool libraryAdd;
+
+        public bool LibraryAdd
+        {
+            get { return libraryAdd; }
+            set
+            {
+                if (value != libraryAdd)
+                {
+                    libraryAdd = value;
+                    if (Project != null)
+                    {
+                        Project.LibraryAdd = libraryAdd;
+                    }
+                }
+            }
+        }
 
         public ProjectViewModel()
         {

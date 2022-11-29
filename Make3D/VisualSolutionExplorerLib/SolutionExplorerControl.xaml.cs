@@ -13,15 +13,25 @@ namespace VisualSolutionExplorer
         private Point startPoint;
         private ProjectViewModel viewModel;
 
+        public bool LibraryAdd
+        {
+            get { return viewModel.LibraryAdd; }
+            set
+            {
+                viewModel.LibraryAdd = value;
+            }
+        }
+
         public SolutionExplorerControl()
         {
             InitializeComponent();
 
             //  Folders = Database.GetFolders("");
             viewModel = new ProjectViewModel();
-            //   viewModel.SetContent(folders);
+
             base.DataContext = viewModel;
             viewModel.SolutionChanged = NotifySolutionChanged;
+            LibraryAdd = false;
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -84,6 +94,10 @@ namespace VisualSolutionExplorer
         public void Refresh()
         {
             viewModel.Refresh();
+        }
+
+        public void Reload()
+        {
         }
 
         private void DropTree_DragEnter(object sender, DragEventArgs e)

@@ -139,7 +139,7 @@ namespace VisualSolutionExplorer
             root.AppendChild(fe);
         }
 
-        internal void MarkAsReadOnly()
+        internal void MarkAsLibrary()
         {
             Backup = false;
             Export = false;

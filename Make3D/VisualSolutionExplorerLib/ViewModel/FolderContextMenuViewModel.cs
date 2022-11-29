@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
 
@@ -10,7 +11,9 @@ namespace VisualSolutionExplorer
 
         private ObservableCollection<ContextMenuAction> contextMenuActions;
 
-        public FolderContextMenuViewModel(bool addFolder, bool addFile, bool renFolder, bool offerExplorer)
+        private bool valid;
+
+        public FolderContextMenuViewModel(bool addFolder, bool addFile, bool renFolder, bool offerExplorer, bool offerAddToLibrary)
         {
             Valid = false;
             contextMenuActions = new ObservableCollection<ContextMenuAction>();
@@ -42,9 +45,19 @@ namespace VisualSolutionExplorer
                 contextMenuActions.Add(new ContextMenuAction("Add Existing File", addExistingFileCommand, "Add an existing file to the project"));
                 Valid = true;
             }
+            if (offerAddToLibrary)
+            {
+                contextMenuActions.Add(new ContextMenuSeparator());
+                ICommand addLibraryCommand = new RelayCommand(HandleAddToLibrary);
+                contextMenuActions.Add(new ContextMenuAction("Add Selected Object To Library", addLibraryCommand, "Add the selected object to the library"));
+
+                Valid = true;
+            }
         }
 
         public delegate void AddExistingFile();
+
+        public delegate void AddObjectToLibrary();
 
         public delegate void CreateFile();
 
@@ -73,12 +86,26 @@ namespace VisualSolutionExplorer
         }
 
         public AddExistingFile OnAddExistingFile { get; set; }
+
+        public AddObjectToLibrary OnAddObjectToLibrary { get; set; }
+
         public CreateFile OnCreateFile { get; set; }
 
         public CreateFolder OnCreateFolder { get; set; }
 
         public ExploreFolder OnExploreFolder { get; set; }
+
         public RenameFolder OnRenameFolder { get; set; }
+
+        public bool Valid
+        {
+            get { return valid; }
+            set
+            {
+                valid = value;
+                NotifyPropertyChanged("Valid");
+            }
+        }
 
         protected virtual void NotifyPropertyChanged(string propertyName)
         {
@@ -110,6 +137,14 @@ namespace VisualSolutionExplorer
             }
         }
 
+        private void HandleAddToLibrary(object obj)
+        {
+            if (OnAddObjectToLibrary != null)
+            {
+                OnAddObjectToLibrary();
+            }
+        }
+
         private void HandleExploreFolder(object obj)
         {
             if (OnExploreFolder != null)
@@ -123,18 +158,6 @@ namespace VisualSolutionExplorer
             if (OnRenameFolder != null)
             {
                 OnRenameFolder();
-            }
-        }
-
-        private bool valid;
-
-        public bool Valid
-        {
-            get { return valid; }
-            set
-            {
-                valid = value;
-                NotifyPropertyChanged("Valid");
             }
         }
     }

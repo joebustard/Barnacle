@@ -825,6 +825,10 @@
       <Project>{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}</Project>
       <Name>EditorParameterLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ImageUtils\ImageUtils.csproj">
+      <Project>{3a96f5c2-0c0d-4c85-99b7-1f47bd843a5b}</Project>
+      <Name>ImageUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Interpreter\Interpreter.csproj">
       <Project>{B650D680-AB32-4F89-A012-E72F59E4AF22}</Project>
       <Name>Interpreter</Name>

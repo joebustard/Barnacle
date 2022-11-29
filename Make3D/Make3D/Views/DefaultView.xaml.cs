@@ -39,7 +39,21 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("ImportRefresh", RefreshAfterImport);
             NotificationManager.Subscribe("ScriptEditorClosed", ScriptEditorClosed);
             NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
+            NotificationManager.Subscribe("ObjectSelected", SelectedObjectChanged);
             vm = DataContext as DefaultViewModel;
+        }
+
+        private void SelectedObjectChanged(object param)
+        {
+            if (param == null)
+            {
+                LibraryExplorer.LibraryAdd = false;
+            }
+            else
+            {
+                LibraryExplorer.LibraryAdd = true;
+            }
+            LibraryExplorer.Reload();
         }
 
         public void CheckPoint()
@@ -455,7 +469,6 @@ namespace Barnacle.Views
 
                         string p = vm.GetPartsLibraryPath();
                         p = System.IO.Path.GetDirectoryName(p);
-                        //p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
                         // is it a model file.
@@ -526,11 +539,30 @@ namespace Barnacle.Views
                     {
                         String fName = parameter1;
                         string p = Project.BaseFolder;
+
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
                         try
                         {
                             Directory.CreateDirectory(p);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    break;
+
+                case "NewLibraryFolder":
+                    {
+                        String fName = parameter1;
+                        string p = vm.GetPartsLibraryPath();
+
+                        p = System.IO.Path.GetDirectoryName(p);
+                        p = p + fName;
+                        try
+                        {
+                            Directory.CreateDirectory(p);
+                            BaseViewModel.PartLibraryProject.Save();
                         }
                         catch (Exception)
                         {
@@ -544,7 +576,7 @@ namespace Barnacle.Views
                         string p = Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         string old = p + fName;
-                        // string ren = System.IO.Path.GetFileName( parameter2);
+
                         string renamed = p + parameter2;
                         try
                         {
@@ -552,6 +584,25 @@ namespace Barnacle.Views
                             // if so we need to tell the document to sort itself out
                             BaseViewModel.Document.RenameFolder(old, renamed);
                             Directory.Move(old, renamed);
+                        }
+                        catch (Exception)
+                        {
+                        }
+                    }
+                    break;
+
+                case "RenameLibraryFolder":
+                    {
+                        String fName = parameter1;
+                        string p = vm.GetPartsLibraryPath();
+                        p = System.IO.Path.GetDirectoryName(p);
+                        string old = p + fName;
+
+                        string renamed = p + parameter2;
+                        try
+                        {
+                            Directory.Move(old, renamed);
+                            BaseViewModel.PartLibraryProject.Save();
                         }
                         catch (Exception)
                         {

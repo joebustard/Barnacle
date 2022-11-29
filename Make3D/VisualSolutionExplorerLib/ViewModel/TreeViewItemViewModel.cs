@@ -106,7 +106,7 @@ namespace VisualSolutionExplorer
             get { return _parent; }
         }
 
-        public static void Reload()
+        public void Reload()
         {
             if (Root != null)
             {

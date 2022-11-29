@@ -9,9 +9,13 @@ namespace VisualSolutionExplorer
     public class ProjectFolder : IComparable<ProjectFolder>
     {
         private List<ProjectFile> _projectFiles = new List<ProjectFile>();
+
+        public ProjectFolderViewModel Vm { get; internal set; }
+
         private List<ProjectFolder> _projectFolders = null;
         private bool supportsFiles;
         private bool supportsSubFolders;
+        private bool isInLibrary;
 
         public ProjectFolder(string name)
         {
@@ -61,6 +65,18 @@ namespace VisualSolutionExplorer
             set { _projectFolders = value; }
         }
 
+        internal void UpdateMenu()
+        {
+            if (Vm != null)
+            {
+                Vm.UpdateMenu();
+            }
+            foreach (ProjectFolder pf in ProjectFolders)
+            {
+                pf.UpdateMenu();
+            }
+        }
+
         // should the files added here show "Run"
         public bool RunFile { get; set; }
 
@@ -78,7 +94,28 @@ namespace VisualSolutionExplorer
             set { supportsSubFolders = value; }
         }
 
+        public bool IsInLibrary
+        {
+            get { return isInLibrary; }
+            set { isInLibrary = value; }
+        }
+
         public string TimeDependency { get; set; }
+        public bool libraryAdd;
+
+        public bool LibraryAdd
+        {
+            get { return libraryAdd; }
+            internal set
+            {
+                libraryAdd = value;
+
+                foreach (ProjectFolder pf in ProjectFolders)
+                {
+                    pf.LibraryAdd = libraryAdd;
+                }
+            }
+        }
 
         public int CompareTo(ProjectFolder comparePart)
         {
@@ -126,6 +163,9 @@ namespace VisualSolutionExplorer
             fo.RunFile = RunFile;
             fo.FileTemplate = FileTemplate;
             fo.CanBeRenamed = true;
+            fo.AutoLoad = AutoLoad;
+            fo.Explorer = Explorer;
+            fo.IsInLibrary = IsInLibrary;
             _projectFolders.Add(fo);
             _projectFolders.Sort();
             fo.FolderPath = FolderPath + "\\" + folderName;
@@ -165,6 +205,7 @@ namespace VisualSolutionExplorer
                 Export = GetBoolean(ele, "Export");
                 RunFile = GetBoolean(ele, "Run");
                 EditFile = GetBoolean(ele, "Edit");
+                IsInLibrary = GetBoolean(ele, "IsInLibrary");
                 XmlNodeList fileNodes = ele.SelectNodes("File");
                 foreach (XmlNode filn in fileNodes)
                 {
@@ -217,6 +258,10 @@ namespace VisualSolutionExplorer
             if (EditFile)
             {
                 el.SetAttribute("Edit", EditFile.ToString());
+            }
+            if (IsInLibrary)
+            {
+                el.SetAttribute("IsInLibrary", IsInLibrary.ToString());
             }
             if (TimeDependency != "")
             {
@@ -364,24 +409,25 @@ namespace VisualSolutionExplorer
             }
         }
 
-        internal void MarkAsReadOnly()
+        internal void MarkAsLibrary()
         {
             foreach (ProjectFile pfi in ProjectFiles)
             {
-                pfi.MarkAsReadOnly();
+                pfi.MarkAsLibrary();
             }
             foreach (ProjectFolder pfo in ProjectFolders)
             {
-                pfo.MarkAsReadOnly();
+                pfo.MarkAsLibrary();
             }
-            SupportsSubFolders = false;
+            SupportsSubFolders = true;
             SupportsFiles = false;
             Clean = false;
             Explorer = false;
             Export = false;
             RunFile = false;
             EditFile = false;
-            CanBeRenamed = false;
+            CanBeRenamed = true;
+            isInLibrary = true;
         }
 
         internal void RecordOldName()
@@ -576,6 +622,7 @@ namespace VisualSolutionExplorer
             TimeDependency = "";
             RunFile = false;
             EditFile = false;
+            isInLibrary = false;
         }
 
         private void SetSubPaths()

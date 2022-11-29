@@ -50,6 +50,25 @@ namespace VisualSolutionExplorer
         public String ProjectName { get; set; }
         public ProjectSettings SharedProjectSettings { get; set; }
 
+        public bool libraryAdd;
+
+        public bool LibraryAdd
+        {
+            get { return libraryAdd; }
+            internal set
+            {
+                libraryAdd = value;
+                foreach (ProjectFolder pf in ProjectFolders)
+                {
+                    pf.LibraryAdd = libraryAdd;
+                }
+                foreach (ProjectFolder pf in ProjectFolders)
+                {
+                    pf.UpdateMenu();
+                }
+            }
+        }
+
         public static string AbsPathToProjectPath(string rf)
         {
             String folderRoot = System.IO.Path.GetDirectoryName(BaseFolder);
@@ -210,12 +229,13 @@ namespace VisualSolutionExplorer
             pfo.RepathSubFolders("");
         }
 
-        public void MarkAsReadOnly()
+        public void MarkAsLibrary()
         {
-            ProjectFolders[0].MarkAsReadOnly();
+            ProjectFolders[0].MarkAsLibrary();
+
             foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
             {
-                fld.MarkAsReadOnly();
+                fld.MarkAsLibrary();
             }
         }
 

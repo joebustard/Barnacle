@@ -18,19 +18,30 @@ namespace VisualSolutionExplorer
                     : base(null, true)
         {
             _folder = folder;
+            _folder.Vm = this;
+            MakeContextMenu(folder);
 
+            isEditing = false;
+            StopEditing = new RelayCommand(OnStopEditing);
+        }
+
+        private void MakeContextMenu(ProjectFolder folder)
+        {
             contextMenu = new FolderContextMenuViewModel(folder.SupportsSubFolders,
                                                             folder.SupportsFiles,
                                                             folder.CanBeRenamed,
-                                                            folder.Explorer);
-
+                                                            folder.Explorer, folder.LibraryAdd && folder.IsInLibrary);
+            contextMenu.OnAddExistingFile = AddExistingFile;
             contextMenu.OnCreateFolder = CreateNewFolder;
             contextMenu.OnCreateFile = CreateNewFile;
             contextMenu.OnRenameFolder = RenameFolder;
             contextMenu.OnExploreFolder = ExploreFolder;
-            contextMenu.OnAddExistingFile = AddExistingFile;
-            isEditing = false;
-            StopEditing = new RelayCommand(OnStopEditing);
+            contextMenu.OnAddObjectToLibrary = AddObjectToLibrary;
+        }
+
+        private void AddObjectToLibrary()
+        {
+            NotifySolutionChanged("AddObjectToLibrary", FolderPath, "");
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -92,6 +103,11 @@ namespace VisualSolutionExplorer
             }
         }
 
+        internal void UpdateMenu()
+        {
+            MakeContextMenu(_folder);
+        }
+
         public bool IsEditing
         {
             get
@@ -151,7 +167,14 @@ namespace VisualSolutionExplorer
         public void CreateNewFolder()
         {
             string f = _folder.CreateNewFolder();
-            NotifySolutionChanged("NewFolder", f, "");
+            if (_folder.IsInLibrary)
+            {
+                NotifySolutionChanged("NewLibraryFolder", f, "");
+            }
+            else
+            {
+                NotifySolutionChanged("NewFolder", f, "");
+            }
             IsExpanded = true;
             LoadChildren();
         }
@@ -286,7 +309,14 @@ namespace VisualSolutionExplorer
             {
                 string oldPath = _folder.FolderPath;
                 _folder.UpdatePath();
-                NotifySolutionChanged("RenameFolder", oldPath, _folder.FolderPath);
+                if (_folder.IsInLibrary)
+                {
+                    NotifySolutionChanged("RenameLibraryFolder", oldPath, _folder.FolderPath);
+                }
+                else
+                {
+                    NotifySolutionChanged("RenameFolder", oldPath, _folder.FolderPath);
+                }
             }
         }
 
