@@ -17,18 +17,21 @@ namespace DlgMaker
 ";
 
         private static string ldrb = @"
-           <pName>= EditorParameters.GetBool(""<pName>"",true);
+           <pName>= EditorParameters.GetBool(""<pName>"",<pinitial>);
 
 ";
+        private static string ldrs = @"
+           <pName>= EditorParameters.Get(""<pName>"");
 
+";
         private static string ldrd = @"
-            <pName>= EditorParameters.GetDouble(""<pName>"",5);
+            <pName>= EditorParameters.GetDouble(""<pName>"",<pinitial>);
 
 ";
 
         private static string ldri = @"
 
-              <pName>= EditorParameters.GetInt(""<pName>"",1);
+              <pName>= EditorParameters.GetInt(""<pName>"",<pinitial>);
 
 ";
 
@@ -161,6 +164,7 @@ public <pType> <PName>
         private String p1Min;
         private String p1Name;
         private String p1Type;
+        private string p1Initial;
 
         //
         private String p2Max;
@@ -168,6 +172,7 @@ public <pType> <PName>
         private String p2Min;
         private String p2Name;
         private String p2Type;
+        private string p2Initial;
 
         //
         private String p3Max;
@@ -175,6 +180,7 @@ public <pType> <PName>
         private String p3Min;
         private String p3Name;
         private String p3Type;
+        private string p3Initial;
 
         //
         private String p4Max;
@@ -182,6 +188,7 @@ public <pType> <PName>
         private String p4Min;
         private String p4Name;
         private String p4Type;
+        private string p4Initial;
 
         //
         private String p5Max;
@@ -189,6 +196,7 @@ public <pType> <PName>
         private String p5Min;
         private String p5Name;
         private String p5Type;
+        private string p5Initial;
 
         //
         private String p6Max;
@@ -196,6 +204,7 @@ public <pType> <PName>
         private String p6Min;
         private String p6Name;
         private String p6Type;
+        private string p6Initial;
 
         //
         private String p7Max;
@@ -203,6 +212,7 @@ public <pType> <PName>
         private String p7Min;
         private String p7Name;
         private String p7Type;
+        private string p7Initial;
 
         //
         private String p8Max;
@@ -210,6 +220,7 @@ public <pType> <PName>
         private String p8Min;
         private String p8Name;
         private String p8Type;
+        private string p8Initial;
 
         //
         private List<String> parameterTypes;
@@ -299,6 +310,134 @@ public <pType> <PName>
                 if (p1Max != value)
                 {
                     p1Max = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P1Initial
+        {
+            get
+            {
+                return p1Initial;
+            }
+            set
+            {
+                if (p1Initial != value)
+                {
+                    p1Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P8Initial
+        {
+            get
+            {
+                return p8Initial;
+            }
+            set
+            {
+                if (p8Initial != value)
+                {
+                    p8Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P7Initial
+        {
+            get
+            {
+                return p7Initial;
+            }
+            set
+            {
+                if (p7Initial != value)
+                {
+                    p7Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P2Initial
+        {
+            get
+            {
+                return p2Initial;
+            }
+            set
+            {
+                if (p2Initial != value)
+                {
+                    p2Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P3Initial
+        {
+            get
+            {
+                return p3Initial;
+            }
+            set
+            {
+                if (p3Initial != value)
+                {
+                    p3Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P4Initial
+        {
+            get
+            {
+                return p4Initial;
+            }
+            set
+            {
+                if (p4Initial != value)
+                {
+                    p4Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P5Initial
+        {
+            get
+            {
+                return p5Initial;
+            }
+            set
+            {
+                if (p5Initial != value)
+                {
+                    p5Initial = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String P6Initial
+        {
+            get
+            {
+                return p6Initial;
+            }
+            set
+            {
+                if (p6Initial != value)
+                {
+                    p6Initial = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -876,6 +1015,7 @@ public <pType> <PName>
                 res1 = res1.Replace("<pType>", t);
                 res1 = res1.Replace("<pMin>", l);
                 res1 = res1.Replace("<pMax>", h);
+                
             }
             return res1;
         }
@@ -931,14 +1071,14 @@ public <pType> <PName>
             saveParams += GetSaveParams(p8Name);
 
             string loadParams = "";
-            loadParams += GetLoadParams(p1Name, p1Type);
-            loadParams += GetLoadParams(p2Name, p2Type);
-            loadParams += GetLoadParams(p3Name, p3Type);
-            loadParams += GetLoadParams(p4Name, p4Type);
-            loadParams += GetLoadParams(p5Name, p5Type);
-            loadParams += GetLoadParams(p6Name, p6Type);
-            loadParams += GetLoadParams(p7Name, p7Type);
-            loadParams += GetLoadParams(p8Name, p8Type);
+            loadParams += GetLoadParams(p1Name, p1Type, p1Initial);
+            loadParams += GetLoadParams(p2Name, p2Type, p2Initial);
+            loadParams += GetLoadParams(p3Name, p3Type, p3Initial);
+            loadParams += GetLoadParams(p4Name, p4Type, p4Initial);
+            loadParams += GetLoadParams(p5Name, p5Type, p5Initial);
+            loadParams += GetLoadParams(p6Name, p6Type, p6Initial);
+            loadParams += GetLoadParams(p7Name, p7Type, p7Initial);
+            loadParams += GetLoadParams(p8Name, p8Type, p8Initial);
             string p1Controls = GetControls(P1Name);
             string p2Controls = GetControls(P2Name);
             string p3Controls = GetControls(P3Name);
@@ -947,16 +1087,17 @@ public <pType> <PName>
             string p6Controls = GetControls(P6Name);
             string p7Controls = GetControls(P7Name);
             string p8Controls = GetControls(P8Name);
-
-            string pSet = GetInitialSettings(p1Name, p1Min, p1Type);
-            pSet = GetInitialSettings(p2Name, p2Min, p2Type);
-            pSet = GetInitialSettings(p3Name, p3Min, p3Type);
-            pSet = GetInitialSettings(p4Name, p4Min, p4Type);
-            pSet = GetInitialSettings(p5Name, p5Min, p5Type);
-            pSet = GetInitialSettings(p6Name, p6Min, p6Type);
-            pSet = GetInitialSettings(p7Name, p7Min, p7Type);
-            pSet = GetInitialSettings(p8Name, p8Min, p8Type);
-
+            /*
+                        string pSet = GetInitialSettings(p1Name, p1Min, p1Type);
+                        pSet = GetInitialSettings(p2Name, p2Min, p2Type);
+                        pSet = GetInitialSettings(p3Name, p3Min, p3Type);
+                        pSet = GetInitialSettings(p4Name, p4Min, p4Type);
+                        pSet = GetInitialSettings(p5Name, p5Min, p5Type);
+                        pSet = GetInitialSettings(p6Name, p6Min, p6Type);
+                        pSet = GetInitialSettings(p7Name, p7Min, p7Type);
+                        pSet = GetInitialSettings(p8Name, p8Min, p8Type);
+                        */
+            string pSet = "";
             System.IO.Directory.CreateDirectory(targetFolder);
             string[] files = System.IO.Directory.GetFiles(templateRoot, "Blank*.*");
             foreach (string fn in files)
@@ -1351,7 +1492,7 @@ public <pType> <PName>
             return res;
         }
 
-        private string GetLoadParams(String n, string t)
+        private string GetLoadParams(String n, string t, string init)
         {
             string res = "";
             if (n != "")
@@ -1369,7 +1510,13 @@ public <pType> <PName>
                 {
                     r = ldrb;
                 }
-                res += r.Replace("<pName>", n);
+                if (t == "string")
+                {
+                    r = ldrs;
+                }
+                r = r.Replace("<pName>", n);
+
+                res += r.Replace("<pinitial>", init);
             }
             return res;
         }
@@ -1635,45 +1782,56 @@ public <pType> <PName>
             parameterTypes.Add("double");
             parameterTypes.Add("int");
             parameterTypes.Add("bool");
+            parameterTypes.Add("string");
             NotifyPropertyChanged("ParameterTypes");
             P1Name = "";
             P1Max = "10";
             P1Min = "0";
+            P1Initial = "1";
             P1Type = "double";
 
             P2Name = "";
             P2Max = "10";
             P2Min = "0";
+            P2Initial = "1";
             P2Type = "double";
 
             P3Name = "";
             P3Max = "10";
             P3Min = "0";
+            P3Initial = "1";
             P3Type = "double";
 
             P4Name = "";
             P4Max = "10";
             P4Min = "0";
+            P4Initial = "1";
             P4Type = "double";
 
             P5Name = "";
             P5Max = "10";
             P5Min = "0";
+            P5Initial = "1";
             P5Type = "double";
 
             P6Name = "";
             P6Max = "10";
             P6Min = "0";
+            P6Initial = "1";
             P6Type = "double";
+
             P7Name = "";
             P7Max = "10";
             P7Min = "0";
+            P7Initial = "1";
             P7Type = "double";
 
             P8Name = "";
             P8Max = "10";
             P8Min = "0";
+            P8Initial = "1";
             P8Type = "double";
+
             ExportPath = Properties.Settings.Default.lastExportPath;
             if (exportPath.Trim() == "")
             {

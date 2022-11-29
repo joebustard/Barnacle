@@ -110,8 +110,6 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\Platelet\Edge.cs" />
-    <Compile Include="Dialogs\Platelet\Face.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\VaseLoft\VaseLoftDlg.xaml.cs" />

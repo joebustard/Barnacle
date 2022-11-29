@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:DlgMaker"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="800"
+        Width="1000"
         Height="500">
     <Grid>
         <Grid.ColumnDefinitions>
@@ -111,6 +111,13 @@
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P1Max}"
                      Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P1Initial}"
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -135,6 +142,13 @@
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P2Max}"
+                     Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P2Initial}"
                      Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
@@ -161,6 +175,13 @@
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P3Max}"
                      Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P3Initial}"
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -185,6 +206,13 @@
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P4Max}"
+                     Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P4Initial}"
                      Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
@@ -211,6 +239,13 @@
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P5Max}"
                      Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P5Initial}"
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -235,6 +270,13 @@
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P6Max}"
+                     Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P6Initial}"
                      Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
@@ -261,6 +303,13 @@
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P7Max}"
                      Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P7Initial}"
+                     Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.ColumnSpan="2"
@@ -285,6 +334,13 @@
             </Label>
             <TextBox Margin="8,0,0,0"
                      Text="{Binding P8Max}"
+                     Width="100" />
+            <Label Margin="8,0,0,0"
+                   Width="40">
+                Initial
+            </Label>
+            <TextBox Margin="8,0,0,0"
+                     Text="{Binding P8Initial}"
                      Width="100" />
         </StackPanel>
         <StackPanel Grid.Column="2"
