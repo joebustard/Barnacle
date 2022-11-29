@@ -114,6 +114,7 @@
     <Compile Include="Dialogs\Platelet\Face.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
+    <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
     <Compile Include="Dialogs\VaseLoft\VaseLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
       <DependentUpon>Platelet.xaml</DependentUpon>
@@ -433,6 +434,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\Spring\SpringDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

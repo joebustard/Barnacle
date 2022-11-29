@@ -1162,7 +1162,7 @@ namespace Barnacle.ViewModels
 
             //  parametricToolsToShow.Add(new ToolDef("DevTest", true, "DevTest", "Test dialog"));
             parametricToolsToShow.Add(new ToolDef("Curved Funnel", true, "CurvedFunnel", "Create a curved funnel"));
-
+            parametricToolsToShow.Add(new ToolDef("Spring", true, "Spring", "Create a spring"));
             SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
         }

@@ -88,6 +88,7 @@ namespace ScriptLanguage
                 "makepulley",
                 "makereuleaux",
                 "makeshapedbrickwall",
+                "makespring",
                 "makestadium",
                 "makesquaredstadium",
                 "makesquirkle",
@@ -2677,6 +2678,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makespring":
+                            {
+                                exp = ParseMakeSpringFunction(parentName);
+                            }
+                            break;
+
                         case "makestadium":
                             {
                                 exp = ParseMakeStadiumFunction(parentName);
@@ -2966,6 +2973,47 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeBrickWallNode mn = new MakeBrickWallNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeSpringFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeSpring";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 6;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeSpringNode mn = new MakeSpringNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }
