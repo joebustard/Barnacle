@@ -172,6 +172,9 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ObjectXRotationChange", XRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectYRotationChange", YRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
+
+            NotificationManager.Subscribe("Editor", "AddObjectToLibrary", OnAddObjectToLibrary);
+
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -185,6 +188,38 @@ namespace Barnacle.ViewModels
             isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void OnAddObjectToLibrary(object param)
+        {
+            string libPath = (param as string);
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                if (ob != null)
+                {
+                    Object3D ob2 = ob.Clone();
+                    if (ob2.PrimType != "Mesh")
+                    {
+                        ob2 = ob2.ConvertToMesh();
+                    }
+                    ob2.Color = Colors.SkyBlue;
+                    ob2.MoveToCentre();
+                    ob2.MoveToFloor();
+                    LibrarySnapShotDlg dlg = new LibrarySnapShotDlg();
+                    dlg.Part = ob2;
+                    string pth = System.IO.Path.GetDirectoryName(GetPartsLibraryPath()) + libPath;
+                    dlg.PartPath = pth;
+                    dlg.PartProjectSection = libPath;
+                    if (dlg.ShowDialog() == true)
+                    {
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Must have a single object selected", "Error");
+                }
+            }
         }
 
         private enum CameraModes
@@ -1398,7 +1433,7 @@ namespace Barnacle.ViewModels
         {
             if (MessageBox.Show("Delete all exported stl and printer files", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                String pth = BaseViewModel.Project.BaseFolder;
                 string[] files = Directory.GetFiles(pth + "\\export", "*.stl");
                 foreach (string f in files)
                 {
@@ -1572,10 +1607,10 @@ namespace Barnacle.ViewModels
             else
             {
                 string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
-                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                String pth = BaseViewModel.Project.BaseFolder;
 
                 ProjectExporter pe = new ProjectExporter();
-                pe.ExportAsync(filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles, BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport);
+                pe.ExportAsync(BaseViewModel.Project, filenames, pth + "\\export", Project.SharedProjectSettings.VersionExport, BaseViewModel.Project.SharedProjectSettings.ExportEmptyFiles, BaseViewModel.Project.SharedProjectSettings.ClearPreviousVersionsOnExport);
                 NotificationManager.Notify("ExportRefresh", null);
             }
         }
@@ -1821,7 +1856,7 @@ namespace Barnacle.ViewModels
         {
             string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
 
-            string targetPath = VisualSolutionExplorer.Project.ProjectPathToAbsPath(rootName + ".txt");
+            string targetPath = BaseViewModel.Project.ProjectPathToAbsPath(rootName + ".txt");
             if (!File.Exists(targetPath))
             {
                 try
@@ -2535,7 +2570,7 @@ namespace Barnacle.ViewModels
                         }
                     }
                     string exportedPath = "";
-                    String exportFolderPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+                    String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
                     Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
                     if (all)
                     {
@@ -2558,7 +2593,7 @@ namespace Barnacle.ViewModels
 
         private void OnExportParts(object param)
         {
-            String exportFolderPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+            String exportFolderPath = BaseViewModel.Project.BaseFolder + "\\export";
             string exportedPath = Document.ExportAllPartsSeperately(param.ToString(), allBounds, exportFolderPath);
 
             STLExportedPartsConfirmation dlg = new STLExportedPartsConfirmation();

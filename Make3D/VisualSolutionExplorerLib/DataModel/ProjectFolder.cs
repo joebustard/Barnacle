@@ -126,12 +126,14 @@ namespace VisualSolutionExplorer
                 return this.FolderName.CompareTo(comparePart.FolderName);
         }
 
+        public Project ParentProject { get; set; }
+
         public string CreateNewFile()
         {
             string fileName = GetNextFileName("New File", SupportedFileExtension);
             ConfirmName dlg = new ConfirmName();
             dlg.FileName = fileName;
-            dlg.FolderPath = Project.ProjectPathToAbsPath(FolderPath);
+            dlg.FolderPath = ParentProject.ProjectPathToAbsPath(FolderPath);
             dlg.Extension = SupportedFileExtension;
             if (dlg.ShowDialog() == true)
             {
@@ -300,6 +302,7 @@ namespace VisualSolutionExplorer
             {
                 found = true;
                 ProjectFile pfi = new ProjectFile();
+                pfi.IsLibraryFile = IsInLibrary;
                 pfi.FileName = fName;
                 _projectFiles.Add(pfi);
                 SetSubPaths();
@@ -597,7 +600,7 @@ namespace VisualSolutionExplorer
             {
                 string cn = noext + " (" + i.ToString() + ")" + ext;
 
-                if (!File.Exists(Project.ProjectPathToAbsPath(cn)))
+                if (!File.Exists(ParentProject.ProjectPathToAbsPath(cn)))
                 {
                     found = true;
                     res = cn;

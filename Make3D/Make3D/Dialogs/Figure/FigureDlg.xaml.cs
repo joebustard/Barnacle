@@ -87,6 +87,7 @@ namespace Barnacle.Dialogs
             skeletonMeshs = new List<Object3D>();
             figureMeshs = new List<Object3D>();
             document = new Document();
+
             adorner = null;
             EditLimits = false;
             LimitsVisible = Visibility.Hidden;

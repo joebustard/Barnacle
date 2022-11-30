@@ -49,7 +49,7 @@ namespace VisualSolutionExplorer
             {
                 contextMenuActions.Add(new ContextMenuSeparator());
                 ICommand addLibraryCommand = new RelayCommand(HandleAddToLibrary);
-                contextMenuActions.Add(new ContextMenuAction("Add Selected Object To Library", addLibraryCommand, "Add the selected object to the library"));
+                contextMenuActions.Add(new ContextMenuAction("Add Selected Part To Library", addLibraryCommand, "Add the selected object to the library"));
 
                 Valid = true;
             }

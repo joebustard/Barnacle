@@ -74,7 +74,7 @@ namespace Barnacle.Views
                 Verb = "open"
             };
             startInfo.EnvironmentVariables.Add("BarnacleProject", BaseViewModel.Project.ProjectName);
-            startInfo.EnvironmentVariables.Add("BarnacleFolder", Project.BaseFolder);
+            startInfo.EnvironmentVariables.Add("BarnacleFolder", BaseViewModel.Project.BaseFolder);
             string currentFile = System.IO.Path.GetFileName(BaseViewModel.Document.FileName);
             startInfo.EnvironmentVariables.Add("BarnacleFile", currentFile);
             startInfo.EnvironmentVariables.Add("BarnacleSlicer", Properties.Settings.Default.SlicerPath);
@@ -170,7 +170,7 @@ namespace Barnacle.Views
 
         private void LoadFileLastOpenedInProject()
         {
-            string p = Project.BaseFolder;
+            string p = BaseViewModel.Project.BaseFolder;
             p = System.IO.Path.GetDirectoryName(p);
             p = p + BaseViewModel.Project.FirstFile;
 
@@ -400,7 +400,7 @@ namespace Barnacle.Views
                 case "EditFile":
                     {
                         string fName = parameter1;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
@@ -443,7 +443,7 @@ namespace Barnacle.Views
                 case "RunFile":
                     {
                         string fName = parameter2;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
@@ -487,7 +487,7 @@ namespace Barnacle.Views
                 case "SelectFile":
                     {
                         string fName = parameter1;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
@@ -538,7 +538,7 @@ namespace Barnacle.Views
                 case "NewFolder":
                     {
                         String fName = parameter1;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
 
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
@@ -573,7 +573,7 @@ namespace Barnacle.Views
                 case "RenameFolder":
                     {
                         String fName = parameter1;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         string old = p + fName;
 
@@ -614,7 +614,7 @@ namespace Barnacle.Views
                     {
                         string fName = parameter1;
                         string fileTemplate = parameter2;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         p = p + fName;
 
@@ -657,7 +657,7 @@ namespace Barnacle.Views
 
                 case "CopyFile":
                     {
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         string fname1 = p + parameter1;
                         string fname2 = p + parameter2;
@@ -673,7 +673,7 @@ namespace Barnacle.Views
                 case "RenameFile":
                     {
                         String fName = parameter1;
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         string old = p + fName;
                         // string ren = System.IO.Path.GetFileName( parameter2);
@@ -713,7 +713,7 @@ namespace Barnacle.Views
 
                 case "DeleteFile":
                     {
-                        string p = Project.BaseFolder;
+                        string p = BaseViewModel.Project.BaseFolder;
                         p = System.IO.Path.GetDirectoryName(p);
                         String fName = p + parameter1;
                         try
@@ -792,7 +792,6 @@ namespace Barnacle.Views
                                         BaseViewModel.Document.Clear();
                                         BaseViewModel.Document.Load(open);
                                         NotificationManager.Notify("Refresh", null);
-                                        //  UndoManager.Clear();
                                     }
                                 }
                             }
@@ -802,7 +801,12 @@ namespace Barnacle.Views
                             }
                         }
                     }
+                    break;
 
+                case "AddObjectToLibrary":
+                    {
+                        NotificationManager.Notify("AddObjectToLibrary", parameter1);
+                    }
                     break;
             }
             BaseViewModel.Project.Save();

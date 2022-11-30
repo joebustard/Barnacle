@@ -174,6 +174,8 @@ namespace Barnacle.Models
             }
         }
 
+        public Project ParentProject { get; set; }
+
         public virtual void Read(string file, bool clearFirst)
         {
             try
@@ -210,7 +212,7 @@ namespace Barnacle.Models
                     if (ndname == "fileref")
                     {
                         string fn = (nd as XmlElement).GetAttribute("Name");
-                        fn = Project.ProjectPathToAbsPath(fn);
+                        fn = ParentProject.ProjectPathToAbsPath(fn);
                         referencedFiles.Add(fn);
                     }
                 }
@@ -364,7 +366,7 @@ namespace Barnacle.Models
 
             foreach (String rf in referencedFiles)
             {
-                string fn = Project.AbsPathToProjectPath(rf);
+                string fn = ParentProject.AbsPathToProjectPath(rf);
                 XmlElement fileRef = doc.CreateElement("FileRef");
                 fileRef.SetAttribute("Name", fn);
                 docNode.AppendChild(fileRef);
@@ -387,7 +389,7 @@ namespace Barnacle.Models
                 writer.Write(referencedFiles.Count);
                 foreach (String rf in referencedFiles)
                 {
-                    string fn = Project.AbsPathToProjectPath(rf);
+                    string fn = ParentProject.AbsPathToProjectPath(rf);
                     writer.Write(fn);
                 }
                 writer.Write(Content.Count);
@@ -1020,7 +1022,7 @@ namespace Barnacle.Models
                 for (int i = 0; i < count; i++)
                 {
                     string fn = reader.ReadString();
-                    fn = Project.ProjectPathToAbsPath(fn);
+                    fn = ParentProject.ProjectPathToAbsPath(fn);
                     referencedFiles.Add(fn);
                 }
 

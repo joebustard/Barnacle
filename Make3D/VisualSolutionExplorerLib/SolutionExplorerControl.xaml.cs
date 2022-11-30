@@ -71,9 +71,12 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public Project ParentProject { get; set; }
+
         public void ProjectChanged(Project prj, bool showRefreshButton = true)
         {
             viewModel.Project = prj;
+            ParentProject = prj;
             if (prj != null)
             {
                 if (prj.ProjectFolders != null)
@@ -82,7 +85,7 @@ namespace VisualSolutionExplorer
 
                     Folders = fldrs;
                     viewModel.SetContent(Folders);
-                    ProjectViewModel.ProjectFilePath = Project.BaseFolder;
+                    ProjectViewModel.ProjectFilePath = ParentProject.BaseFolder;
                     if (!showRefreshButton)
                     {
                         viewModel.RefreshVisibility = Visibility.Hidden;
@@ -127,9 +130,9 @@ namespace VisualSolutionExplorer
                         // move the file
                         string src = fileViewModel.ProjectFile.FilePath;
 
-                        src = Project.ProjectPathToAbsPath(src);
+                        src = ParentProject.ProjectPathToAbsPath(src);
                         string target = dropTarget.FolderPath;
-                        target = Project.ProjectPathToAbsPath(target);
+                        target = ParentProject.ProjectPathToAbsPath(target);
                         NotifySolutionChanged("DragFile", src, target);
                         viewModel.Folders[0].IsExpanded = true;
                     }

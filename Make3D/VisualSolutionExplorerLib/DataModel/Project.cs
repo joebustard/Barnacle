@@ -7,7 +7,7 @@ namespace VisualSolutionExplorer
 {
     public class Project
     {
-        public static string ProjectFilePath;
+        public string ProjectFilePath;
         public List<ProjectFolder> folders;
         private DateTime creationDate;
 
@@ -23,7 +23,7 @@ namespace VisualSolutionExplorer
             SharedProjectSettings = new ProjectSettings();
         }
 
-        public static String BaseFolder { get; set; }
+        public String BaseFolder { get; set; }
         public String Description { get; set; }
 
         public string FirstFile
@@ -69,7 +69,7 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public static string AbsPathToProjectPath(string rf)
+        public string AbsPathToProjectPath(string rf)
         {
             String folderRoot = System.IO.Path.GetDirectoryName(BaseFolder);
             if (rf.StartsWith(folderRoot))
@@ -79,7 +79,7 @@ namespace VisualSolutionExplorer
             return rf;
         }
 
-        public static string ProjectPathToAbsPath(string rf)
+        public string ProjectPathToAbsPath(string rf)
         {
             string t = "\\" + System.IO.Path.GetFileName(BaseFolder);
             if (rf.StartsWith(t))

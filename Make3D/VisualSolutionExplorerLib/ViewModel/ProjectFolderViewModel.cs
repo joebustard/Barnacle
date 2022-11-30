@@ -11,7 +11,7 @@ namespace VisualSolutionExplorer
         private readonly ProjectFolder _folder;
         private List<ProjectFolderViewModel> _folders;
         private FolderContextMenuViewModel contextMenu;
-
+        public Project ParentProject { get; set; }
         private bool isEditing;
 
         public ProjectFolderViewModel(ProjectFolder folder)
@@ -139,7 +139,7 @@ namespace VisualSolutionExplorer
                     string ren = System.IO.Path.GetFileName(fName);
                     string ext = System.IO.Path.GetExtension(fName);
 
-                    string p = Project.BaseFolder;
+                    string p = ParentProject.BaseFolder;
                     p = System.IO.Path.GetDirectoryName(p);
 
                     string target = p + _folder.FolderPath + "\\" + ren;
@@ -276,12 +276,7 @@ namespace VisualSolutionExplorer
         internal void Sort()
         {
             _folder.ProjectFiles.Sort();
-            /*
-            foreach (ProjectFolder fld in _folder.ProjectFolders)
-            {
-                fld.ProjectFiles.Sort();
-            }
-            */
+
             LoadChildren();
         }
 

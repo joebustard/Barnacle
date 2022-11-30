@@ -230,12 +230,12 @@ namespace Barnacle.Dialogs.Slice
             CanClose = false;
             CanSlice = false;
             ClearResults();
-            String exportPath = VisualSolutionExplorer.Project.BaseFolder + "\\export";
+            String exportPath = BaseViewModel.Project.BaseFolder + "\\export";
             if (!Directory.Exists(exportPath))
             {
                 Directory.CreateDirectory(exportPath);
             }
-            string printerPath = VisualSolutionExplorer.Project.BaseFolder + "\\printer";
+            string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
             if (!Directory.Exists(printerPath))
             {
                 Directory.CreateDirectory(printerPath);
@@ -248,7 +248,7 @@ namespace Barnacle.Dialogs.Slice
             else
             {
                 string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
-                String pth = VisualSolutionExplorer.Project.BaseFolder;
+                String pth = BaseViewModel.Project.BaseFolder;
                 foreach (string fullPath in filenames)
                 {
                     await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
@@ -395,6 +395,7 @@ G90 ;Absolute positioning";
         private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
         {
             exportDoc = new Document();
+            exportDoc.ParentProject = BaseViewModel.Project;
             exportDoc.Load(fullPath);
 
             string modelName = Path.GetFileNameWithoutExtension(fullPath);
@@ -526,7 +527,7 @@ G90 ;Absolute positioning";
                     {
                         SDCardUtils.ClearFolder(sdPath);
                     }
-                    string printerPath = VisualSolutionExplorer.Project.BaseFolder + "\\printer";
+                    string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
                     string[] fileNames = Directory.GetFiles(printerPath, "*.gcode");
                     foreach (string fn in fileNames)
                     {

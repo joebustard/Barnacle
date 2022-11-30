@@ -1016,7 +1016,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void SetCameraDistance(bool sideView = false)
+        protected void SetCameraDistance(bool sideView = false)
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
             Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);

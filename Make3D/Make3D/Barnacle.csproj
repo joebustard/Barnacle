@@ -110,6 +110,9 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\LibrarySnapShot\LibrarySnapShotDlg.xaml.cs">
+      <DependentUpon>LibrarySnapShotDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
@@ -424,6 +427,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\DecimatorSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\LibrarySnapShot\LibrarySnapShotDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
