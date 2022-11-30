@@ -37,6 +37,7 @@ namespace VisualSolutionExplorer
             contextMenu.OnRenameFolder = RenameFolder;
             contextMenu.OnExploreFolder = ExploreFolder;
             contextMenu.OnAddObjectToLibrary = AddObjectToLibrary;
+            OnPropertyChanged("ContextMenu");
         }
 
         private void AddObjectToLibrary()
