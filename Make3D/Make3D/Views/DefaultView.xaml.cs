@@ -806,6 +806,7 @@ namespace Barnacle.Views
                 case "AddObjectToLibrary":
                     {
                         NotificationManager.Notify("AddObjectToLibrary", parameter1);
+                        LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
                     }
                     break;
             }

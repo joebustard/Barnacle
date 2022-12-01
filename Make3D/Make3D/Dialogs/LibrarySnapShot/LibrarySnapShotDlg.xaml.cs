@@ -1,6 +1,7 @@
 ﻿using Barnacle.Models;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModels;
+using ImageUtils;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -135,9 +137,10 @@ namespace Barnacle.Dialogs
         public string PartPath { get; internal set; }
         public string PartProjectSection { get; internal set; }
 
+        private DispatcherTimer snapShotTimer;
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = true;
             if (NameIsValid())
             {
                 Part.Name = PartName;
@@ -154,6 +157,22 @@ namespace Barnacle.Dialogs
             localDoc.Save(PartPath + "\\" + PartName + ".txt");
             BaseViewModel.PartLibraryProject.AddFileToFolder(PartProjectSection, PartName + ".txt");
             BaseViewModel.PartLibraryProject.Save();
+            showFloor = false;
+            showAxies = false;
+            Redisplay();
+            // need to give GUI a chance to repaint.
+            TimeSpan interval = new TimeSpan(0, 0, 0, 0, 500);
+            snapShotTimer = new DispatcherTimer();
+            snapShotTimer.Interval = interval;
+            snapShotTimer.Tick += SnapShotTImer_Tick;
+            snapShotTimer.Start();
+        }
+
+        private void SnapShotTImer_Tick(object sender, EventArgs e)
+        {
+            snapShotTimer.Stop();
+            ImageCapture.ScreenCaptureElement(viewport3D1, PartPath + "\\" + PartName + ".png");
+            DialogResult = true;
             Close();
         }
 

@@ -1252,16 +1252,35 @@ namespace Barnacle.ViewModels
 
         private void LoadPartLibrary()
         {
-            string pth = GetPartsLibraryPath() + "//BarnaclePartsLibrary.bmf";
-
-            // hide the parts library tab incase we fail to load it
+            // hide the parts library tab in case we fail to load it
             LibraryVisibility = Visibility.Hidden;
-            if (File.Exists(pth))
+            try
             {
+                string pth = GetPartsLibraryPath() + "//BarnaclePartsLibrary.bmf";
+
                 PartLibraryProject = new VisualSolutionExplorer.Project();
-                PartLibraryProject.Open(pth);
+                if (File.Exists(pth))
+                {
+                    PartLibraryProject.Open(pth);
+                }
+                else
+                {
+                    PartLibraryProject.BaseFolder = GetPartsLibraryPath();
+                    if (!Directory.Exists(PartLibraryProject.BaseFolder))
+                    {
+                        Directory.CreateDirectory(PartLibraryProject.BaseFolder);
+                        Directory.CreateDirectory(PartLibraryProject.BaseFolder + "\\Parts");
+                    }
+                    PartLibraryProject.CreateLibraryProject("Parts");
+                    PartLibraryProject.ProjectFilePath = pth;
+                    PartLibraryProject.Save();
+                }
                 PartLibraryProject.MarkAsLibrary();
                 LibraryVisibility = Visibility.Visible;
+            }
+            catch
+            {
+                MessageBox.Show("Unable to access parts library. Library functions turned off.");
             }
         }
 

@@ -213,6 +213,8 @@ namespace Barnacle.ViewModels
                     dlg.PartProjectSection = libPath;
                     if (dlg.ShowDialog() == true)
                     {
+                        // reminder the contents of the partslibrary that they are in a library
+                        BaseViewModel.PartLibraryProject.LibraryAdd = true;
                     }
                 }
                 else

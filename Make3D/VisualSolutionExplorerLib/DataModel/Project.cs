@@ -55,7 +55,7 @@ namespace VisualSolutionExplorer
         public bool LibraryAdd
         {
             get { return libraryAdd; }
-            internal set
+            set
             {
                 libraryAdd = value;
                 foreach (ProjectFolder pf in ProjectFolders)
@@ -122,6 +122,38 @@ namespace VisualSolutionExplorer
             pfo.RepathSubFolders("");
             FirstFile = pfi.FilePath;
             creationDate = DateTime.Now;
+        }
+
+        public void CreateLibraryProject(String name)
+        {
+            ProjectName = "BarnaclePartsLibrary";
+
+            // create a root folder entry with the project name
+            ProjectFolder pfo = new ProjectFolder();
+            pfo.FolderName = ProjectName;
+            pfo.Clean = false;
+            pfo.SupportsSubFolders = true;
+            pfo.SupportsFiles = true;
+            pfo.Export = true;
+            pfo.CanBeRenamed = false;
+            ProjectFolders.Add(pfo);
+
+            creationDate = DateTime.Now;
+            /*
+                        // create a sub folder
+                        pfo = new ProjectFolder();
+                        pfo.FolderName = name;
+                        pfo.Clean = false;
+                        pfo.SupportsSubFolders = true;
+                        pfo.SupportsFiles = true;
+                        pfo.Export = false;
+                        pfo.CanBeRenamed = false;
+                        pfo.AutoLoad = false;
+                        pfo.EditFile = false;
+                        pfo.RunFile = false;
+
+                        ProjectFolders[0].ProjectFolders.Add(pfo);
+            */
         }
 
         public void CreateNewFile()
@@ -231,11 +263,14 @@ namespace VisualSolutionExplorer
 
         public void MarkAsLibrary()
         {
-            ProjectFolders[0].MarkAsLibrary();
-
-            foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
+            if (ProjectFolders != null && ProjectFolders.Count > 0)
             {
-                fld.MarkAsLibrary();
+                ProjectFolders[0].MarkAsLibrary();
+
+                foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
+                {
+                    fld.MarkAsLibrary();
+                }
             }
         }
 
@@ -308,13 +343,16 @@ namespace VisualSolutionExplorer
             solutionDoc.AppendChild(root);
             // The first project folder is a dummy one
             // Save its contents rather than it
-            foreach (ProjectFile pfi in ProjectFolders[0].ProjectFiles)
+            if (ProjectFolders != null && ProjectFolders.Count > 0)
             {
-                pfi.Save(solutionDoc, root);
-            }
-            foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
-            {
-                fld.Save(solutionDoc, root);
+                foreach (ProjectFile pfi in ProjectFolders[0].ProjectFiles)
+                {
+                    pfi.Save(solutionDoc, root);
+                }
+                foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
+                {
+                    fld.Save(solutionDoc, root);
+                }
             }
 
             solutionDoc.Save(solutionPath);
