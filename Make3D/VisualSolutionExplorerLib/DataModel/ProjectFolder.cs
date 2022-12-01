@@ -109,7 +109,10 @@ namespace VisualSolutionExplorer
             internal set
             {
                 libraryAdd = value;
-
+                foreach (ProjectFile pfi in ProjectFiles)
+                {
+                    pfi.IsLibraryFile = libraryAdd;
+                }
                 foreach (ProjectFolder pf in ProjectFolders)
                 {
                     pf.LibraryAdd = libraryAdd;
