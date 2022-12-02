@@ -171,7 +171,7 @@ namespace Barnacle.ViewModels
             if (pth == "")
             {
                 pth = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-                pth += "//Barnacle//BarnaclePartsLibrary";
+                pth += "//Barnacle//Library";
             }
             return pth;
         }

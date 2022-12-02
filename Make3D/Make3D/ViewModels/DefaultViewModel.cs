@@ -1269,7 +1269,7 @@ namespace Barnacle.ViewModels
                     if (!Directory.Exists(PartLibraryProject.BaseFolder))
                     {
                         Directory.CreateDirectory(PartLibraryProject.BaseFolder);
-                        Directory.CreateDirectory(PartLibraryProject.BaseFolder + "\\Parts");
+                        // Directory.CreateDirectory(PartLibraryProject.BaseFolder + "\\Parts");
                     }
                     PartLibraryProject.CreateLibraryProject("Parts");
                     PartLibraryProject.ProjectFilePath = pth;

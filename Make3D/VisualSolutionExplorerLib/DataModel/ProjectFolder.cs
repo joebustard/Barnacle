@@ -298,23 +298,38 @@ namespace VisualSolutionExplorer
             }
         }
 
-        internal bool AddFileToProject(string folderPath, string fName)
+        internal bool AddFileToProject(string folderPath, string fName, bool allowDuplicates = true)
         {
             bool found = false;
             if (folderPath == FolderPath || folderPath == FolderPath + "\\")
             {
                 found = true;
-                ProjectFile pfi = new ProjectFile();
-                pfi.IsLibraryFile = IsInLibrary;
-                pfi.FileName = fName;
-                _projectFiles.Add(pfi);
-                SetSubPaths();
+                bool add = true;
+                if (allowDuplicates == false)
+                {
+                    foreach (ProjectFile oldFile in _projectFiles)
+                    {
+                        if (oldFile.FileName.ToLower() == fName.ToLower())
+                        {
+                            add = false;
+                            break;
+                        }
+                    }
+                }
+                if (add)
+                {
+                    ProjectFile pfi = new ProjectFile();
+                    pfi.IsLibraryFile = IsInLibrary;
+                    pfi.FileName = fName;
+                    _projectFiles.Add(pfi);
+                    SetSubPaths();
+                }
             }
             else
             {
                 foreach (ProjectFolder pfo in ProjectFolders)
                 {
-                    found = pfo.AddFileToProject(folderPath, fName);
+                    found = pfo.AddFileToProject(folderPath, fName, allowDuplicates);
                 }
             }
             return found;

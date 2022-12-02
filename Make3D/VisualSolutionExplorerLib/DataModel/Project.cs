@@ -94,12 +94,12 @@ namespace VisualSolutionExplorer
             return rf;
         }
 
-        public void AddFileToFolder(string folderPath, string fName)
+        public void AddFileToFolder(string folderPath, string fName, bool allowDuplicates = true)
         {
             folderPath = AbsPathToProjectPath(folderPath);
             foreach (ProjectFolder pf in ProjectFolders)
             {
-                pf.AddFileToProject(folderPath, fName);
+                pf.AddFileToProject(folderPath, fName, allowDuplicates);
             }
         }
 
@@ -126,7 +126,7 @@ namespace VisualSolutionExplorer
 
         public void CreateLibraryProject(String name)
         {
-            ProjectName = "BarnaclePartsLibrary";
+            ProjectName = "Library";
 
             // create a root folder entry with the project name
             ProjectFolder pfo = new ProjectFolder();
@@ -134,7 +134,7 @@ namespace VisualSolutionExplorer
             pfo.Clean = false;
             pfo.SupportsSubFolders = true;
             pfo.SupportsFiles = true;
-            pfo.Export = true;
+            pfo.Export = false;
             pfo.CanBeRenamed = false;
             ProjectFolders.Add(pfo);
 
@@ -266,6 +266,9 @@ namespace VisualSolutionExplorer
             if (ProjectFolders != null && ProjectFolders.Count > 0)
             {
                 ProjectFolders[0].MarkAsLibrary();
+                // Library folders all get marked as renameable BUT the root one can't be
+                // It will cause all sorts of iccy problems.
+                ProjectFolders[0].CanBeRenamed = false;
 
                 foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
                 {
