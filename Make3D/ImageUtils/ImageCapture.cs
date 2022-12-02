@@ -9,6 +9,15 @@ namespace ImageUtils
 {
     public static class ImageCapture
     {
+        public static BitmapSource ConvertBitmap(Bitmap source)
+        {
+            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
+                          source.GetHbitmap(),
+                          IntPtr.Zero,
+                          Int32Rect.Empty,
+                          BitmapSizeOptions.FromEmptyOptions());
+        }
+
         public static void ScreenCaptureElement(FrameworkElement element, String fileName, bool cropped = false)
 
         {
@@ -47,15 +56,11 @@ namespace ImageUtils
 
         private static void CroppedImage(String fileName, FrameworkElement element, int borderWidth, int borderHeight)
         {
-            RenderTargetBitmap res;
-
             MemoryStream stream = new MemoryStream();
             PngBitmapEncoder encoder = new PngBitmapEncoder();
             RenderTargetBitmap bmp = new RenderTargetBitmap((int)element.ActualWidth, (int)element.ActualHeight, 96, 96, PixelFormats.Pbgra32);
             bmp.Render(element);
             encoder.Frames.Add(BitmapFrame.Create(bmp));
-
-            // Save to memory stream and create Bitamp from stream
             encoder.Save(stream);
             Bitmap bitmap = new Bitmap(stream);
             stream.Close();
@@ -110,17 +115,7 @@ namespace ImageUtils
             encoder.Frames.Add(BitmapFrame.Create(ConvertBitmap(outbmp)));
             // Save to memory stream and create Bitamp from stream
             encoder.Save(fs);
-
             fs.Close();
-        }
-
-        public static BitmapSource ConvertBitmap(Bitmap source)
-        {
-            return System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                          source.GetHbitmap(),
-                          IntPtr.Zero,
-                          Int32Rect.Empty,
-                          BitmapSizeOptions.FromEmptyOptions());
         }
     }
 }

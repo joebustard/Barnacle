@@ -8,14 +8,13 @@ namespace VisualSolutionExplorer
 {
     public class ProjectFolder : IComparable<ProjectFolder>
     {
+        public bool canAddToLibrary;
         private List<ProjectFile> _projectFiles = new List<ProjectFile>();
 
-        public ProjectFolderViewModel Vm { get; internal set; }
-
         private List<ProjectFolder> _projectFolders = null;
+        private bool isInLibrary;
         private bool supportsFiles;
         private bool supportsSubFolders;
-        private bool isInLibrary;
 
         public ProjectFolder(string name)
         {
@@ -47,12 +46,34 @@ namespace VisualSolutionExplorer
         public bool Export { get; set; }
 
         public string FileTemplate { get; set; }
-
         public string FolderName { get; set; }
-
         public string FolderPath { get; set; }
 
+        public bool IsInLibrary
+        {
+            get { return isInLibrary; }
+            set { isInLibrary = value; }
+        }
+
+        public bool CanAddToLibrary
+        {
+            get { return canAddToLibrary; }
+            internal set
+            {
+                canAddToLibrary = value;
+                foreach (ProjectFile pfi in ProjectFiles)
+                {
+                    pfi.IsLibraryFile = canAddToLibrary;
+                }
+                foreach (ProjectFolder pf in ProjectFolders)
+                {
+                    pf.CanAddToLibrary = canAddToLibrary;
+                }
+            }
+        }
+
         public string OldName { get; set; }
+        public Project ParentProject { get; set; }
 
         public List<ProjectFile> ProjectFiles
         {
@@ -63,18 +84,6 @@ namespace VisualSolutionExplorer
         {
             get { return _projectFolders; }
             set { _projectFolders = value; }
-        }
-
-        internal void UpdateMenu()
-        {
-            if (Vm != null)
-            {
-                Vm.UpdateMenu();
-            }
-            foreach (ProjectFolder pf in ProjectFolders)
-            {
-                pf.UpdateMenu();
-            }
         }
 
         // should the files added here show "Run"
@@ -94,31 +103,8 @@ namespace VisualSolutionExplorer
             set { supportsSubFolders = value; }
         }
 
-        public bool IsInLibrary
-        {
-            get { return isInLibrary; }
-            set { isInLibrary = value; }
-        }
-
         public string TimeDependency { get; set; }
-        public bool libraryAdd;
-
-        public bool LibraryAdd
-        {
-            get { return libraryAdd; }
-            internal set
-            {
-                libraryAdd = value;
-                foreach (ProjectFile pfi in ProjectFiles)
-                {
-                    pfi.IsLibraryFile = libraryAdd;
-                }
-                foreach (ProjectFolder pf in ProjectFolders)
-                {
-                    pf.LibraryAdd = libraryAdd;
-                }
-            }
-        }
+        public ProjectFolderViewModel Vm { get; internal set; }
 
         public int CompareTo(ProjectFolder comparePart)
         {
@@ -128,8 +114,6 @@ namespace VisualSolutionExplorer
             else
                 return this.FolderName.CompareTo(comparePart.FolderName);
         }
-
-        public Project ParentProject { get; set; }
 
         public string CreateNewFile()
         {
@@ -204,6 +188,7 @@ namespace VisualSolutionExplorer
                     FileTemplate = ele.GetAttribute("Template");
                 }
                 SupportsSubFolders = GetBoolean(ele, "AddSubs");
+                CanBeRenamed = GetBoolean(ele, "CanBeRenamed");
                 SupportsFiles = GetBoolean(ele, "AddFiles");
                 Clean = GetBoolean(ele, "Clean");
                 Explorer = GetBoolean(ele, "Explorer");
@@ -267,6 +252,10 @@ namespace VisualSolutionExplorer
             if (IsInLibrary)
             {
                 el.SetAttribute("IsInLibrary", IsInLibrary.ToString());
+            }
+            if (CanBeRenamed)
+            {
+                el.SetAttribute("CanBeRenamed", CanBeRenamed.ToString());
             }
             if (TimeDependency != "")
             {
@@ -519,6 +508,18 @@ namespace VisualSolutionExplorer
                 }
             }
             return found;
+        }
+
+        internal void UpdateMenu()
+        {
+            if (Vm != null)
+            {
+                Vm.UpdateMenu();
+            }
+            foreach (ProjectFolder pf in ProjectFolders)
+            {
+                pf.UpdateMenu();
+            }
         }
 
         internal void UpdatePath()

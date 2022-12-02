@@ -60,7 +60,7 @@ namespace VisualSolutionExplorer
                 libraryAdd = value;
                 foreach (ProjectFolder pf in ProjectFolders)
                 {
-                    pf.LibraryAdd = libraryAdd;
+                    pf.CanAddToLibrary = libraryAdd;
                 }
                 foreach (ProjectFolder pf in ProjectFolders)
                 {

@@ -30,7 +30,7 @@ namespace VisualSolutionExplorer
             contextMenu = new FolderContextMenuViewModel(folder.SupportsSubFolders,
                                                             folder.SupportsFiles,
                                                             folder.CanBeRenamed,
-                                                            folder.Explorer, folder.LibraryAdd && folder.IsInLibrary);
+                                                            folder.Explorer, folder.CanAddToLibrary && folder.IsInLibrary);
             contextMenu.OnAddExistingFile = AddExistingFile;
             contextMenu.OnCreateFolder = CreateNewFolder;
             contextMenu.OnCreateFile = CreateNewFile;
