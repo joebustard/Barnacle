@@ -722,13 +722,23 @@ namespace Barnacle.ViewModels
             }
             else
             {
-                // if editing is disable, ignore all keys except escape ( which may enale it again)
-                if (key == Key.Escape)
+                switch (key)
                 {
-                    if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
-                    {
-                        csgCancelation.Cancel();
-                    }
+                    // if editing is disable, ignore all keys except escape ( which may enale it again)
+                    case Key.Escape:
+                        {
+                            if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                            {
+                                csgCancelation.Cancel();
+                            }
+                        }
+                        break;
+
+                    case Key.Home:
+                        {
+                            HomeCamera();
+                        }
+                        break;
                 }
             }
         }

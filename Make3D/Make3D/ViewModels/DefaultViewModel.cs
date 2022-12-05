@@ -1262,6 +1262,7 @@ namespace Barnacle.ViewModels
                 if (File.Exists(pth))
                 {
                     PartLibraryProject.Open(pth);
+                    PartLibraryProject.MarkAsLibrary();
                 }
                 else
                 {

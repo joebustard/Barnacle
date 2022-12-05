@@ -121,9 +121,16 @@ namespace VisualSolutionExplorer
         {
             XmlElement fe = solutionDoc.CreateElement("File");
             fe.SetAttribute("Name", FileName);
-
-            fe.SetAttribute("Backup", Backup.ToString());
-            fe.SetAttribute("Export", Export.ToString());
+            // only write the attributes that are true
+            // to reduce the xml file size
+            if (Backup)
+            {
+                fe.SetAttribute("Backup", "True");
+            }
+            if (Export)
+            {
+                fe.SetAttribute("Export", "True");
+            }
             if (EditFile)
             {
                 fe.SetAttribute("Edit", "True");

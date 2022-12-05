@@ -155,6 +155,7 @@ namespace VisualSolutionExplorer
             fo.AutoLoad = AutoLoad;
             fo.Explorer = Explorer;
             fo.IsInLibrary = IsInLibrary;
+            fo.ParentProject = this.ParentProject;
             _projectFolders.Add(fo);
             _projectFolders.Sort();
             fo.FolderPath = FolderPath + "\\" + folderName;
@@ -210,6 +211,7 @@ namespace VisualSolutionExplorer
                     if (fel != null && fel.HasAttribute("Name"))
                     {
                         ProjectFolder nf = new ProjectFolder();
+                        nf.ParentProject = ParentProject;
                         ProjectFolders.Add(nf);
                         nf.Load(doc, fel);
                     }
@@ -227,12 +229,30 @@ namespace VisualSolutionExplorer
         {
             XmlElement el = solutionDoc.CreateElement("Folder");
             el.SetAttribute("Name", FolderName);
-            el.SetAttribute("AddSubs", SupportsSubFolders.ToString());
-            el.SetAttribute("AddFiles", SupportsFiles.ToString());
-            el.SetAttribute("Explorer", Explorer.ToString());
-            el.SetAttribute("Clean", Clean.ToString());
-            el.SetAttribute("Extension", SupportedFileExtension.ToString());
-            el.SetAttribute("Template", FileTemplate.ToString());
+            if (SupportsSubFolders)
+            {
+                el.SetAttribute("AddSubs", "True");
+            }
+            if (SupportsFiles)
+            {
+                el.SetAttribute("AddFiles", "True");
+            }
+            if (Explorer)
+            {
+                el.SetAttribute("Explorer", Explorer.ToString());
+            }
+            if (Clean)
+            {
+                el.SetAttribute("Clean", Clean.ToString());
+            }
+            if (SupportedFileExtension != "")
+            {
+                el.SetAttribute("Extension", SupportedFileExtension.ToString());
+            }
+            if (FileTemplate != "")
+            {
+                el.SetAttribute("Template", FileTemplate);
+            }
             if (AutoLoad)
             {
                 el.SetAttribute("AutoLoad", AutoLoad.ToString());

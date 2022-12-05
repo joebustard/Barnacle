@@ -218,7 +218,7 @@ namespace VisualSolutionExplorer
             pfo.CanBeRenamed = false;
             pfo.SupportsSubFolders = true;
             pfo.Export = true;
-
+            pfo.ParentProject = this;
             // CANT just use a single folder as the root, it has to be a list so treeview can work
             ProjectFolders.Add(pfo);
 
@@ -251,7 +251,9 @@ namespace VisualSolutionExplorer
                 {
                     ProjectFolder nf = new ProjectFolder();
                     pfo.ProjectFolders.Add(nf);
+                    nf.ParentProject = this;
                     nf.Load(doc, fel);
+                   
                     if (FirstFile == "" && nf.ProjectFiles.Count > 0)
                     {
                         FirstFile = nf.ProjectFiles[0].FilePath;
@@ -269,6 +271,7 @@ namespace VisualSolutionExplorer
                 // Library folders all get marked as renameable BUT the root one can't be
                 // It will cause all sorts of iccy problems.
                 ProjectFolders[0].CanBeRenamed = false;
+                ProjectFolders[0].SupportsFiles = false;
 
                 foreach (ProjectFolder fld in ProjectFolders[0].ProjectFolders)
                 {
