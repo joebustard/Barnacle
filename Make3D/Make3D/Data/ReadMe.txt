@@ -7,7 +7,7 @@ Added F5/F6 key as short cuts for left/right Camera rotation
 Added some texture processing to platelet tool (still has some issues with holes)
 Added Spring tool, which makes springs
 Added automatic creation of empty library
-Added ability to add selected object in project to the library
+Added ability to copy selected object in project to the library
 
 Fixed bug where platelet tool "forgot" that a previously created plate was hollow
 Fixed bug in Shaped Wall tool which prevented triangular walls

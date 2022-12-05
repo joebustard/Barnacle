@@ -101,7 +101,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        internal void KeyDown(Key key, bool shift, bool ctrl)
+        internal void HandleKeyDown(Key key, bool shift, bool ctrl)
         {
             switch (key)
             {
@@ -349,7 +349,7 @@ namespace Barnacle.Dialogs
 
         private void MeshGrid_KeyDown(object sender, KeyEventArgs e)
         {
-            KeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
+            HandleKeyDown(e.Key, Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift), Keyboard.IsKeyDown(Key.LeftCtrl));
         }
 
         private void MoveBox(double deltaX, double deltaY, double deltaZ)

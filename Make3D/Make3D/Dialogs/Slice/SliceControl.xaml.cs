@@ -22,6 +22,7 @@ namespace Barnacle.Dialogs.Slice
     {
         private List<String> barnaclePrinterNames;
         private bool canClose;
+        private bool canCopyToSD;
         private bool canSlice;
         private Document exportDoc;
 
@@ -60,6 +61,19 @@ namespace Barnacle.Dialogs.Slice
             {
                 canClose = value;
                 NotifyPropertyChanged();
+            }
+        }
+
+        public bool CanCopyToSD
+        {
+            get { return canCopyToSD; }
+            set
+            {
+                if (value != canCopyToSD)
+                {
+                    canCopyToSD = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -225,47 +239,18 @@ namespace Barnacle.Dialogs.Slice
                 }));
         }
 
-        private async void SliceClicked(object sender, RoutedEventArgs e)
+        private void CheckIfSDCopyShouldBeEnabled()
         {
-            CanClose = false;
-            CanSlice = false;
-            ClearResults();
-            String exportPath = BaseViewModel.Project.BaseFolder + "\\export";
-            if (!Directory.Exists(exportPath))
+            CanCopyToSD = false;
+            string cardName = Properties.Settings.Default.SDCardLabel;
+            if (!String.IsNullOrEmpty(cardName))
             {
-                Directory.CreateDirectory(exportPath);
-            }
-            string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
-            if (!Directory.Exists(printerPath))
-            {
-                Directory.CreateDirectory(printerPath);
-            }
-            if (ModelMode == "SliceModel")
-            {
-                string fullPath = modelPath;
-                await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
-            }
-            else
-            {
-                string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
-                String pth = BaseViewModel.Project.BaseFolder;
-                foreach (string fullPath in filenames)
+                string root = SDCardUtils.FindSDCard(cardName);
+                if (!String.IsNullOrEmpty(root))
                 {
-                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                    CanCopyToSD = true;
                 }
             }
-            NotificationManager.Notify("ExportRefresh", null);
-            CanClose = true;
-            CanSlice = true;
-            AppendResults("Slice complete");
-        }
-
-        private void CloseClicked(object sender, RoutedEventArgs e)
-        {
-            Properties.Settings.Default.SlicerPrinter = SelectedPrinter;
-
-            Properties.Settings.Default.SlicerProfileName = SelectedUserProfile;
-            Close();
         }
 
         private void ClearResults()
@@ -276,6 +261,44 @@ namespace Barnacle.Dialogs.Slice
                 {
                     ResultsText = "";
                 }));
+        }
+
+        private void CloseClicked(object sender, RoutedEventArgs e)
+        {
+            Properties.Settings.Default.SlicerPrinter = SelectedPrinter;
+
+            Properties.Settings.Default.SlicerProfileName = SelectedUserProfile;
+            Properties.Settings.Default.Save();
+            Close();
+        }
+
+        private void CopySingleFile(string fn, string trg, string name)
+        {
+            File.Copy(fn, trg, true);
+        }
+
+        private void DelProfileClicked(object sender, RoutedEventArgs e)
+        {
+            if (!String.IsNullOrEmpty(selectedUserProfile))
+            {
+                MessageBoxResult res = MessageBox.Show("The profile will be permanently deleted", "Warning", MessageBoxButton.OKCancel);
+                if (res == MessageBoxResult.OK)
+                {
+                    String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
+                    if (File.Exists(defProfile))
+                    {
+                        try
+                        {
+                            File.Delete(defProfile);
+                            // refresh profiles list
+                            Profiles = CuraEngineInterface.GetAvailableUserProfiles();
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+            }
         }
 
         private void EditPrinterClicked(object sender, RoutedEventArgs e)
@@ -347,11 +370,18 @@ G1 Z2.0 F3000; Move Z Axis up little to prevent scratching of Heat Bed
 G1 X5 Y20 Z0.3 F5000.0; Move over to prevent blob squish";
             dlg.EndGCode =
 @"G91 ;Relative positioning
-G1 E-2 F2700 ;Retract a bit
+G1 E-3 F2700 ;Retract filament a bit to prevent oozing
 G1 E-2 Z0.2 F2400 ;Retract and raise Z
 G1 X5 Y5 F3000 ;Wipe out
 G1 Z10 ;Raise Z more
-G90 ;Absolute positioning";
+G90 ;Absolute positioning
+G1 X10 Y220 F1000 ; offer part for removal
+M106 S0 ; Turn off cooling fan
+M104 S0 ; Turn off extruder
+M140 S0 ; Turn off bed
+M107 ; Turn off Fan
+M84 ; Disable stepper motors
+";
 
             if (dlg.ShowDialog() == true)
             {
@@ -392,6 +422,92 @@ G90 ;Absolute positioning";
             return allBounds;
         }
 
+        private async void SDClicked(object sender, RoutedEventArgs e)
+        {
+            string cardName = Properties.Settings.Default.SDCardLabel;
+            if (!String.IsNullOrEmpty(cardName))
+            {
+                string root = SDCardUtils.FindSDCard(cardName);
+                if (!String.IsNullOrEmpty(root))
+                {
+                    string projName = BaseViewModel.Project.ProjectName;
+                    string sdPath = System.IO.Path.Combine(root, projName);
+                    if (!Directory.Exists(sdPath))
+                    {
+                        try
+                        {
+                            Directory.CreateDirectory(sdPath);
+                        }
+                        catch
+                        {
+                        }
+                    }
+                    else
+                    {
+                        SDCardUtils.ClearFolder(sdPath);
+                    }
+                    string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
+                    string[] fileNames = Directory.GetFiles(printerPath, "*.gcode");
+                    foreach (string fn in fileNames)
+                    {
+                        string name = Path.GetFileName(fn);
+                        AppendResults("Copy " + name);
+                        string trg = Path.Combine(sdPath, name);
+                        await Task.Run(() => CopySingleFile(fn, trg, name));
+                    }
+                    AppendResults("Copy complete");
+                }
+                else
+                {
+                    MessageBox.Show("Couldn't find sdcard labelled " + cardName);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Sdcard label not defined in settings.");
+            }
+        }
+
+        private async void SliceClicked(object sender, RoutedEventArgs e)
+        {
+            CanClose = false;
+            CanSlice = false;
+            CanCopyToSD = false;
+            ClearResults();
+            String exportPath = BaseViewModel.Project.BaseFolder + "\\export";
+            if (!Directory.Exists(exportPath))
+            {
+                Directory.CreateDirectory(exportPath);
+            }
+            string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
+            if (!Directory.Exists(printerPath))
+            {
+                Directory.CreateDirectory(printerPath);
+            }
+            if (ModelMode == "SliceModel")
+            {
+                string fullPath = modelPath;
+                await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+            }
+            else
+            {
+                string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
+                String pth = BaseViewModel.Project.BaseFolder;
+                foreach (string fullPath in filenames)
+                {
+                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                }
+            }
+            // Make the solution show the newly exported stl & g-code
+            NotificationManager.Notify("ExportRefresh", null);
+
+            CanClose = true;
+            CanSlice = true;
+            // re-enable the sdcopy button if appropriate
+            CheckIfSDCopyShouldBeEnabled();
+            AppendResults("Slice complete");
+        }
+
         private async Task SliceSingleModel(string fullPath, string exportPath, string printerPath)
         {
             exportDoc = new Document();
@@ -417,7 +533,7 @@ G90 ;Absolute positioning";
             curaPrinterName = bp.CuraPrinterFile + ".def.json";
             curaExtruderName = bp.CuraExtruderFile + ".def.json";
 
-            // start and end gcode may have a mcro $NAME in it.
+            // start and end gcode may have a macro $NAME in it.
             //Both must be a single line of text when passed to cura engine
             string sg = bp.StartGCode.Replace("$NAME", modelName);
             sg = sg.Replace("\r\n", "\\n");
@@ -461,92 +577,7 @@ G90 ;Absolute positioning";
             {
                 CanSlice = false;
             }
-            CanCopyToSD = true;
-        }
-
-        private bool canCopyToSD;
-
-        public bool CanCopyToSD
-        {
-            get { return canCopyToSD; }
-            set
-            {
-                if (value != canCopyToSD)
-                {
-                    canCopyToSD = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private void DelProfileClicked(object sender, RoutedEventArgs e)
-        {
-            if (!String.IsNullOrEmpty(selectedUserProfile))
-            {
-                MessageBoxResult res = MessageBox.Show("The profile will be permanently deleted", "Warning", MessageBoxButton.OKCancel);
-                if (res == MessageBoxResult.OK)
-                {
-                    String defProfile = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + $"\\Barnacle\\PrinterProfiles\\{selectedUserProfile}.profile";
-                    if (File.Exists(defProfile))
-                    {
-                        try
-                        {
-                            File.Delete(defProfile);
-                            // refresh profiles list
-                            Profiles = CuraEngineInterface.GetAvailableUserProfiles();
-                        }
-                        catch
-                        {
-                        }
-                    }
-                }
-            }
-        }
-
-        private void SDClicked(object sender, RoutedEventArgs e)
-        {
-            string cardName = Properties.Settings.Default.SDCardLabel;
-            if (!String.IsNullOrEmpty(cardName))
-            {
-                string root = SDCardUtils.FindSDCard(cardName);
-                if (!String.IsNullOrEmpty(root))
-                {
-                    string projName = BaseViewModel.Project.ProjectName;
-                    string sdPath = System.IO.Path.Combine(root, projName);
-                    if (!Directory.Exists(sdPath))
-                    {
-                        try
-                        {
-                            Directory.CreateDirectory(sdPath);
-                        }
-                        catch
-                        {
-                        }
-                    }
-                    else
-                    {
-                        SDCardUtils.ClearFolder(sdPath);
-                    }
-                    string printerPath = BaseViewModel.Project.BaseFolder + "\\printer";
-                    string[] fileNames = Directory.GetFiles(printerPath, "*.gcode");
-                    foreach (string fn in fileNames)
-                    {
-                        string name = Path.GetFileName(fn);
-                        string trg = Path.Combine(sdPath, name);
-                        AppendResults("Copy " + name);
-                        File.Copy(fn, trg, true);
-                    }
-                    AppendResults("Copy complete");
-                }
-                else
-                {
-                    MessageBox.Show("Couldn't find sdcard labelled " + cardName);
-                }
-            }
-            else
-            {
-                MessageBox.Show("Sdcard label not defined in settings.");
-            }
+            CheckIfSDCopyShouldBeEnabled();
         }
     }
 }

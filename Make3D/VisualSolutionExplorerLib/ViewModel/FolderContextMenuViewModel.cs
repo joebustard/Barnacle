@@ -7,10 +7,9 @@ namespace VisualSolutionExplorer
 {
     public class FolderContextMenuViewModel : INotifyPropertyChanged
     {
-        private ICommand addFolderCommand;
-
+#pragma warning disable CS0169
         private ObservableCollection<ContextMenuAction> contextMenuActions;
-
+#pragma warning restore CS0169
         private bool valid;
 
         public FolderContextMenuViewModel(bool addFolder, bool addFile, bool renFolder, bool offerExplorer, bool offerAddToLibrary)
