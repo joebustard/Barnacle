@@ -54,6 +54,7 @@ namespace Barnacle.Dialogs
             hollowShape = false;
             texturedShape = false;
             largeTexture = true;
+            invertTexture = false;
             showWidth = Visibility.Hidden;
             showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
@@ -829,6 +830,7 @@ namespace Barnacle.Dialogs
                 CentreVertices();
             }
         }
+
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
@@ -889,7 +891,7 @@ namespace Barnacle.Dialogs
 
                     ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
-                    LoadTextureImage();
+                    LoadTextureImage(invertTexture);
 
                     double off = sz / 2;
                     for (double px = lx; px < rx; px += sz)
@@ -923,6 +925,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private byte GetTextureMask(double px, double py, double sz)
         {
             px = px / sz;
@@ -972,15 +975,36 @@ namespace Barnacle.Dialogs
             SolidShape = EditorParameters.GetBoolean("Solid", true);
             LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
             SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
+            InvertTexture = EditorParameters.GetBoolean("InvertTexture", false);
             SelectedTexture = EditorParameters.Get("SelectedTexture");
         }
 
-        private void LoadTextureImage()
+        private bool invertTexture;
+
+        public bool InvertTexture
+        {
+            get { return invertTexture; }
+            set
+            {
+                if (value != invertTexture)
+                {
+                    invertTexture = value;
+                    LoadTextureImage(invertTexture);
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private bool lastInvert;
+
+        private void LoadTextureImage(bool invert = false)
         {
             if (selectedTexture != "")
             {
-                if (selectedTexture != loadedImageName)
+                if (selectedTexture != loadedImageName || lastInvert != invert)
                 {
+                    lastInvert = invert;
                     string imagePath = textureFiles[selectedTexture];
                     if (File.Exists(imagePath))
                     {
@@ -995,7 +1019,10 @@ namespace Barnacle.Dialogs
                             {
                                 byte mask = 0;
                                 System.Drawing.Color col = workingImage.GetPixel(x, y);
-
+                                if (invert)
+                                {
+                                    col = System.Drawing.Color.FromArgb(col.A, 255 - col.R, col.G, col.B);
+                                }
                                 if (col.R < 128)
                                 {
                                     mask = frontMask;
@@ -1318,6 +1345,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private bool PtInTriangle(double px, double py, Point3DCollection vt, int p0, int p1, int p2)
         {
             bool res = PointInTriangle(new Point(px, py),
@@ -1340,6 +1368,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LargeTexture", LargeTexture.ToString());
             EditorParameters.Set("SmallTexture", SmallTexture.ToString());
             EditorParameters.Set("SelectedTexture", SelectedTexture);
+            EditorParameters.Set("InvertTexture", InvertTexture.ToString());
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)
@@ -1377,6 +1406,7 @@ namespace Barnacle.Dialogs
         {
             return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
         }
+
         private void UpdateDisplay()
         {
             GenerateShape();

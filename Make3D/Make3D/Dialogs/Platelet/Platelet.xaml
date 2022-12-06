@@ -99,11 +99,11 @@
                         GroupName="HollowGroup"
                         IsChecked="{Binding HollowShape}" />
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
-                    <Label VerticalAlignment="Center" Content="Wall"
+                        <Label VerticalAlignment="Center" Content="Wall"
 Margin="0,0,4,0"
 HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
 
-                    <TextBox
+                        <TextBox
                            Width="100"
                             HorizontalAlignment="Left"
                     Visibility="{Binding ShowWidth}"
@@ -118,7 +118,7 @@ HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
                         IsChecked="{Binding TexturedShape}" />
 
                     <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3">
-                    <ComboBox
+                        <ComboBox
                     HorizontalAlignment="Left"
                             Width="100"
 
@@ -126,16 +126,17 @@ HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
                             ItemsSource="{Binding TextureNames}"
                             SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
                             Visibility="{Binding ShowTextures}" />
-                    <Label VerticalAlignment="Center" Content="Depth"
+                        <Label VerticalAlignment="Center" Content="Depth"
 HorizontalAlignment="Right" Margin="4,0,4,0"
 Visibility="{Binding ShowTextures}" />
-                    <TextBox
+                        <TextBox
                             Width="40"
                     Visibility="{Binding ShowTextures}"
                             VerticalAlignment="Center"
                             Text="{Binding TextureDepth}" />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup" IsChecked="{Binding LargeTexture}" Content="Large" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup"  IsChecked="{Binding SmallTexture}" Content="Small" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
+                        <!-- <CheckBox Margin="4,0,0,0" IsChecked="{Binding InvertTexture}" Content="Invert" /> -->
                     </StackPanel>
                 </Grid>
             </Grid>
