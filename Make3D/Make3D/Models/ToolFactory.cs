@@ -26,6 +26,10 @@ namespace Barnacle.Models
                     res = new BicornDlg();
                     break;
 
+                case "BrickTower":
+                    res = new BrickTowerDlg();
+                    break;
+
                 case "BrickWall":
                     res = new BrickWallDlg();
                     break;

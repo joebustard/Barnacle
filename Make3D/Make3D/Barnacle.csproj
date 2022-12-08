@@ -102,6 +102,7 @@
     <Compile Include="Dialogs\Blank\Blank.xaml.cs">
       <DependentUpon>Blank.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\BrickTower\BrickTowerDlg.xaml.cs" />
     <Compile Include="Dialogs\BrickWall\BrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
@@ -413,6 +414,10 @@
     <Page Include="Dialogs\Blank\Blank.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\BrickTower\BrickTowerDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\BrickWall\BrickWallDlg.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -1129,6 +1129,7 @@ namespace Barnacle.ViewModels
         {
             buildingToolsToShow = new List<ToolDef>();
             buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a rectangular brick wall."));
+            buildingToolsToShow.Add(new ToolDef("Brick Tower", true, "BrickTower", "Create a circular tower from bricks."));
             buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a rectangular stone wall."));
             buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
             buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a rectangular plank wall."));
