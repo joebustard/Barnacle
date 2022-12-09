@@ -13,17 +13,19 @@ namespace DlgMaker
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private static string ctrString = @"                <Label VerticalAlignment=""Center"" Width=""100""><pName></Label>
-                 <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150""/>
+                 <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip""/>
 ";
 
         private static string ldrb = @"
            <pName>= EditorParameters.GetBool(""<pName>"",<pinitial>);
 
 ";
+
         private static string ldrs = @"
            <pName>= EditorParameters.Get(""<pName>"");
 
 ";
+
         private static string ldrd = @"
             <pName>= EditorParameters.GetDouble(""<pName>"",<pinitial>);
 
@@ -58,7 +60,7 @@ public <pType> <PName>
 ";
 
         private static string propTemplateh = @"
-
+private const <pType> max<pName> = <pMax>;
 private <pType> <pName>;
 public <pType> <PName>
 {
@@ -70,20 +72,27 @@ public <pType> <PName>
     {
         if ( <pName> != value )
         {
-            if ( value <= <pMax>)
+            if ( value <= max<pName>)
             {
               <pName> = value;
               NotifyPropertyChanged();
               UpdateDisplay();
            }
         }
+    }
+}
+public String <pName>ToolTip
+{
+    get
+    {
+return $""<pName> must be <= {max<pName>}"";
     }
 }
 
 ";
 
         private static string propTemplatel = @"
-
+private const <pType> min<pName> = <pMin>;
 private <pType> <pName>;
 public <pType> <PName>
 {
@@ -95,7 +104,7 @@ public <pType> <PName>
     {
         if ( <pName> != value )
         {
-            if ( value >= <pMin>)
+            if ( value >= min<pName>)
             {
               <pName> = value;
               NotifyPropertyChanged();
@@ -104,11 +113,18 @@ public <pType> <PName>
         }
     }
 }
-
+public String <pName>ToolTip
+{
+    get
+    {
+        return $""<pName> must be >= {min<pName>}"";
+    }
+}
 ";
 
         private static string propTemplatelh = @"
-
+private const <pType> min<pName> = <pMin>;
+private const <pType> max<pName> = <pMax>;
 private <pType> <pName>;
 public <pType> <PName>
 {
@@ -120,13 +136,20 @@ public <pType> <PName>
     {
         if ( <pName> != value )
         {
-            if (value >= <pMin> && value <= <pMax>)
+            if (value >= min<pName> && value <= max<pName>)
             {
               <pName> = value;
               NotifyPropertyChanged();
               UpdateDisplay();
            }
         }
+    }
+}
+public String <pName>ToolTip
+{
+    get
+    {
+        return $""<pName> must be in the range {min<pName>} to {max<pName>}"";
     }
 }
 
@@ -1015,7 +1038,6 @@ public <pType> <PName>
                 res1 = res1.Replace("<pType>", t);
                 res1 = res1.Replace("<pMin>", l);
                 res1 = res1.Replace("<pMax>", h);
-                
             }
             return res1;
         }

@@ -277,6 +277,13 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public void AddFace(int c0, int c1, int c2)
+        {
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+        }
+
         public void HitTest(Viewport3D viewport3D1, Point mouseposition)
         {
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);

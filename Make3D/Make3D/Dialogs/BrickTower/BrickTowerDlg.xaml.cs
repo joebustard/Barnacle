@@ -124,6 +124,8 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private const double minTowerRadius = 5;
+        private const double maxTowerRadius = 200;
         private double towerRadius;
 
         public double TowerRadius
@@ -136,7 +138,7 @@ namespace Barnacle.Dialogs
             {
                 if (towerRadius != value)
                 {
-                    if (value >= 10 && value <= 200)
+                    if (value >= minTowerRadius && value <= maxTowerRadius)
                     {
                         towerRadius = value;
                         NotifyPropertyChanged();
@@ -146,6 +148,16 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public String TowerRadiusToolTip
+        {
+            get
+            {
+                return $"Tower Radius must be in the range {minTowerRadius} to {maxTowerRadius}";
+            }
+        }
+
+        private const double minTowerHeight = 5;
+        private const double maxTowerHeight = 500;
         private double towerHeight;
 
         public double TowerHeight
@@ -158,13 +170,21 @@ namespace Barnacle.Dialogs
             {
                 if (towerHeight != value)
                 {
-                    if (value >= 10 && value <= 500)
+                    if (value >= minTowerHeight && value <= maxTowerHeight)
                     {
                         towerHeight = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
                 }
+            }
+        }
+
+        public String TowerHeightToolTip
+        {
+            get
+            {
+                return $"Tower Height must be in the range {minTowerHeight} to {maxTowerHeight}";
             }
         }
 
@@ -246,11 +266,11 @@ namespace Barnacle.Dialogs
         {
             // load back the tool specific parameters
 
-            BrickLength = EditorParameters.GetDouble("BrickLength", 2);
+            BrickLength = EditorParameters.GetDouble("BrickLength", 4.5);
 
-            BrickHeight = EditorParameters.GetDouble("BrickHeight", 1);
+            BrickHeight = EditorParameters.GetDouble("BrickHeight", 2);
 
-            BrickWidth = EditorParameters.GetDouble("BrickWidth", 1);
+            BrickWidth = EditorParameters.GetDouble("BrickWidth", 2);
 
             GapLength = EditorParameters.GetDouble("GapLength", 1);
 
@@ -258,7 +278,7 @@ namespace Barnacle.Dialogs
 
             TowerRadius = EditorParameters.GetDouble("TowerRadius", 10);
 
-            TowerHeight = EditorParameters.GetDouble("TowerHeight", 75);
+            TowerHeight = EditorParameters.GetDouble("TowerHeight", 35);
         }
 
         private void SaveEditorParmeters()

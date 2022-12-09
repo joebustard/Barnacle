@@ -44,6 +44,13 @@ namespace MakerLib
             }
         }
 
+        public void AddFace(int c0, int c1, int c2)
+        {
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+        }
+
         internal static double Distance3D(Point3D p1, Point3D p2)
         {
             double dx = p2.X - p1.X;

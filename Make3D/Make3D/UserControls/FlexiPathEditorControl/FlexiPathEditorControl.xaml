@@ -212,10 +212,10 @@
                     </Button>
 
                     <CheckBox
+                        Grid.ColumnSpan="2"
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
                         IsChecked="{Binding ShowOrtho}"
-                        Grid.ColumnSpan="2"
                         ToolTip="Show orthogononal guides and highlight orthogonal points">
                         Ortho Lines
                     </CheckBox>
