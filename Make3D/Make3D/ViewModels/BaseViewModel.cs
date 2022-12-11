@@ -39,6 +39,7 @@ namespace Barnacle.ViewModels
             {
                 document = new Document();
                 document.ProjectSettings = project.SharedProjectSettings;
+                document.ParentProject = project;
             }
             if (recentlyUsedManager == null)
             {

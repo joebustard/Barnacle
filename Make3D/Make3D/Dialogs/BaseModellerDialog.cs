@@ -792,7 +792,16 @@ namespace Barnacle.Dialogs
             DialogResult = false;
             Close();
         }
+        protected string defaultImagePath;
+        public string DefaultImagePath
+        {
+            get { return defaultImagePath; }
+            set
+            {
+                defaultImagePath = value;
 
+            }
+        }
         protected void CentreVertices()
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);

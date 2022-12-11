@@ -559,6 +559,7 @@ M84 ; Disable stepper motors
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
+            
             printerManager = new BarnaclePrinterManager();
             BarnaclePrinterNames = printerManager.GetPrinterNames();
             if (SlicerPath != null && SlicerPath != "")

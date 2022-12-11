@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
@@ -35,7 +36,15 @@ namespace Barnacle.UserControls
         private DpiScale screenDpi;
 
         private int selectedPoint;
-
+        private string defaultImagePath;
+        public string DefaultImagePath
+        {
+            get { return defaultImagePath; }
+            set
+            {
+                defaultImagePath = value;
+            }
+        }
         private SelectionModeType selectionMode;
 
         private bool absolutePaths;
@@ -980,7 +989,14 @@ namespace Barnacle.UserControls
 
         private void OnLoadImage(object obj)
         {
-            OpenFileDialog opDlg = new OpenFileDialog();
+             OpenFileDialog opDlg = new OpenFileDialog();
+            if (!String.IsNullOrEmpty(defaultImagePath))
+            {
+                if (Directory.Exists(defaultImagePath))
+                {
+                    opDlg.InitialDirectory = defaultImagePath;
+                }
+            }
             opDlg.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.png) | *.jpg; *.jpeg; *.jpe; *.png";
             if (opDlg.ShowDialog() == true)
             {

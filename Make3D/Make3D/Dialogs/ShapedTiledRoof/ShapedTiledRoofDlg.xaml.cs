@@ -27,6 +27,7 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
+            PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = false;
             tileLength = 3.486;
             tileHeight = 2.17;
@@ -257,6 +258,7 @@ namespace Barnacle.Dialogs
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
+            PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = true;
 
             UpdateDisplay();

@@ -25,6 +25,7 @@ namespace Barnacle.Dialogs
             loaded = false;
             numDivisions = 80;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
+            PathEditor.DefaultImagePath = DefaultImagePath;
         }
 
         public int NumDivisions
@@ -239,6 +240,7 @@ namespace Barnacle.Dialogs
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
+            PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = true;
 
             UpdateDisplay();

@@ -146,7 +146,19 @@ namespace Barnacle.UserControls
             pathText = v;
             vm?.SetPath(v);
         }
-
+        private string defaultImagePath;
+        public string DefaultImagePath
+        {
+            get { return defaultImagePath; }
+            set
+            {
+                defaultImagePath = value;
+                if ( vm != null)
+                {
+                    vm.DefaultImagePath = DefaultImagePath;
+                }
+            }
+        }
         private void DashLine(double x1, double y1, double x2, double y2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -698,6 +710,7 @@ namespace Barnacle.UserControls
                     ShowGridStatus();
                     vm.AbsolutePaths = absolutePaths;
                     vm.SetPath(pathText);
+                    vm.DefaultImagePath = defaultImagePath;
                     if (imagePath != null)
                     {
                         vm.LoadImage(imagePath);

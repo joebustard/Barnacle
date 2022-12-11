@@ -1517,6 +1517,7 @@ namespace Barnacle.ViewModels
         private void DisplayModeller(BaseModellerDialog dlg)
         {
             CheckPoint();
+            dlg.DefaultImagePath = BaseViewModel.Project.ProjectPathToAbsPath("Images");
             dlg.MeshColour = Project.SharedProjectSettings.DefaultObjectColour;
             EditorParameters pm = new EditorParameters();
             Object3D editingObj = null;

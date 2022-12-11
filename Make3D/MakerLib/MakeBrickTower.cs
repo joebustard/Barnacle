@@ -70,9 +70,13 @@ namespace MakerLib
                 y += gapLength;
                 offsetSweep = (brickSweep / 2) - offsetSweep;
             }
+            if ( y  > towerHeight)
+            {
+                towerHeight = y;
+            }
             MakeInnerGapRing(numberOfWholeBricknGaps, brickSweep, gapSweep, 0, towerRadius - halfBrickWidth + gapDepth, towerHeight, offsetSweep);
             MakeOuterGapRing(numberOfWholeBricknGaps, brickSweep, gapSweep, 0, towerRadius + halfBrickWidth - gapDepth, towerHeight, offsetSweep);
-            CloseEnd(y, towerRadius, halfBrickWidth, gapDepth, false);
+            CloseEnd(towerHeight, towerRadius, halfBrickWidth, gapDepth, false);
             CloseEnd(0, towerRadius, halfBrickWidth, gapDepth, true);
         }
 

@@ -28,6 +28,7 @@ namespace Barnacle.Dialogs
             loaded = false;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
+            PathEditor.DefaultImagePath = DefaultImagePath;
             brickLength = 3;
             brickHeight = 1.1;
             brickDepth = 0.25;
@@ -207,6 +208,11 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                PathEditor.LoadImage(imageName);
+            }
             BrickLength = EditorParameters.GetDouble("BrickLength", 3);
             BrickHeight = EditorParameters.GetDouble("BrickHeight", 1.1);
             BrickDepth = EditorParameters.GetDouble("BrickDepth", 0.25);
@@ -228,7 +234,7 @@ namespace Barnacle.Dialogs
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
+            EditorParameters.Set("ImagePath", PathEditor.ImagePath);
             EditorParameters.Set("BrickLength", BrickLength.ToString());
             EditorParameters.Set("BrickHeight", BrickHeight.ToString());
             EditorParameters.Set("BrickDepth", MortarGap.ToString());
@@ -253,6 +259,7 @@ namespace Barnacle.Dialogs
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
+            PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = true;
 
             UpdateDisplay();
