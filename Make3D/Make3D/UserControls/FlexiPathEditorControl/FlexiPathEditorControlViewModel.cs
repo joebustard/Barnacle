@@ -37,6 +37,7 @@ namespace Barnacle.UserControls
 
         private int selectedPoint;
         private string defaultImagePath;
+
         public string DefaultImagePath
         {
             get { return defaultImagePath; }
@@ -45,6 +46,7 @@ namespace Barnacle.UserControls
                 defaultImagePath = value;
             }
         }
+
         private SelectionModeType selectionMode;
 
         private bool absolutePaths;
@@ -84,6 +86,7 @@ namespace Barnacle.UserControls
             PastePathCommand = new RelayCommand(OnPaste);
             ZoomCommand = new RelayCommand(OnZoom);
             LoadImageCommand = new RelayCommand(OnLoadImage);
+            OrthoLockCommand = new RelayCommand(OnToggleOrthoLock);
             fixedEndPath = false;
             flexiPath = new FlexiPath();
             polyPoints = flexiPath.FlexiPoints;
@@ -96,6 +99,11 @@ namespace Barnacle.UserControls
             snap = true;
             gridSettings = new GridSettings();
             imagePath = "";
+        }
+
+        private void OnToggleOrthoLock(object obj)
+        {
+            OrthoLocked = !OrthoLocked;
         }
 
         private void OnGridSettings(object obj)
@@ -257,7 +265,27 @@ namespace Barnacle.UserControls
             set { gridY = value; }
         }
 
+        private bool orthoLocked;
+
+        public bool OrthoLocked
+        {
+            get
+            {
+                return orthoLocked;
+            }
+
+            set
+            {
+                if (orthoLocked != value)
+                {
+                    orthoLocked = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public RelayCommand LoadImageCommand { get; }
+        public RelayCommand OrthoLockCommand { get; set; }
 
         public ICommand MovePathCommand { get; set; }
 
@@ -834,11 +862,17 @@ namespace Barnacle.UserControls
             }
             else
             {
-                flexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
-
+                if (orthoLocked)
+                {
+                    flexiPath.AddOrthoLockedLine(new System.Windows.Point(position.X, position.Y));
+                }
+                else
+                {
+                    flexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
+                }
                 selectionMode = SelectionModeType.AppendPoint;
                 selectedPoint = polyPoints.Count - 1;
-                moving = true;
+                moving = false;
             }
         }
 
@@ -989,7 +1023,7 @@ namespace Barnacle.UserControls
 
         private void OnLoadImage(object obj)
         {
-             OpenFileDialog opDlg = new OpenFileDialog();
+            OpenFileDialog opDlg = new OpenFileDialog();
             if (!String.IsNullOrEmpty(defaultImagePath))
             {
                 if (Directory.Exists(defaultImagePath))

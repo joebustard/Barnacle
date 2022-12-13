@@ -146,19 +146,22 @@ namespace Barnacle.UserControls
             pathText = v;
             vm?.SetPath(v);
         }
+
         private string defaultImagePath;
+
         public string DefaultImagePath
         {
             get { return defaultImagePath; }
             set
             {
                 defaultImagePath = value;
-                if ( vm != null)
+                if (vm != null)
                 {
                     vm.DefaultImagePath = DefaultImagePath;
                 }
             }
         }
+
         private void DashLine(double x1, double y1, double x2, double y2)
         {
             SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(255, 255, 0, 0));
@@ -619,6 +622,18 @@ namespace Barnacle.UserControls
             }
         }
 
+        private void ShowOrthoLockedStatus()
+        {
+            if (vm.OrthoLocked == true)
+            {
+                OrthoLockBorder.BorderBrush = System.Windows.Media.Brushes.CadetBlue;
+            }
+            else
+            {
+                OrthoLockBorder.BorderBrush = System.Windows.Media.Brushes.AliceBlue;
+            }
+        }
+
         public double ToMMX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
@@ -739,6 +754,13 @@ namespace Barnacle.UserControls
                     {
                         ShowGridStatus();
                         UpdateDisplay();
+                    }
+                    break;
+
+                case "OrthoLocked":
+                    {
+                        ShowOrthoLockedStatus();
+                        //UpdateDisplay();
                     }
                     break;
 
