@@ -75,6 +75,26 @@ namespace Barnacle.LineLib
             segs.Add(ls);
         }
 
+        public void AddOrthoLockedLine(Point p1)
+        {
+            int i = points.Count - 1;
+            double oldX = points[i].X;
+            double oldY = points[i].Y;
+            double dx = Math.Abs(p1.X - oldX);
+            double dy = Math.Abs(p1.Y - oldY);
+            if (dx >= dy)
+            {
+                p1.Y = oldY;
+            }
+            else
+            {
+                p1.X = oldX;
+            }
+            points.Add(new FlexiPoint(p1, i + 1));
+            LineSegment ls = new LineSegment(i, i + 1);
+            segs.Add(ls);
+        }
+
         public void AddQCurve(Point p1, Point p2)
         {
             int i = points.Count - 1;
@@ -609,6 +629,11 @@ namespace Barnacle.LineLib
                 segs.AddRange(segments);
             }
             return valid;
+        }
+
+        public int FindSegmentThatEndsOnPointIndex(int selectedPoint)
+        {
+            throw new NotImplementedException();
         }
 
         public bool ConvertToQuadQuadAtSelected(Point position)

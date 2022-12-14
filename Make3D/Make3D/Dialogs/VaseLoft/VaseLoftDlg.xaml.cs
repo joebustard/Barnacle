@@ -205,6 +205,11 @@ namespace Barnacle.Dialogs
                 PathEditor.FromString(s);
             }
             NumDivisions = EditorParameters.GetInt("NumDivisions", 80);
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                PathEditor.LoadImage(imageName);
+            }
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -222,6 +227,7 @@ namespace Barnacle.Dialogs
             // save the parameters for the tool
             EditorParameters.Set("Path", PathEditor.AbsolutePathString);
             EditorParameters.Set("NumDivisions", NumDivisions.ToString());
+            EditorParameters.Set("ImagePath", PathEditor.ImagePath);
         }
 
         private void UpdateDisplay()

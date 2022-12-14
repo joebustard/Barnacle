@@ -89,6 +89,7 @@ namespace Barnacle.Dialogs
                 //MAKEPARAMETERS
                 );
             maker.Generate(Vertices, Faces);
+            CentreVertices();
         }
 
         private void LoadEditorParameters()

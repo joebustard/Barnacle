@@ -219,6 +219,11 @@ namespace Barnacle.Dialogs
             MortarGap = EditorParameters.GetDouble("MortarGap", 0.2);
             RoofWidth = EditorParameters.GetDouble("RoofWidth", 2);
             PathEditor.SetPath(EditorParameters.Get("Path"));
+            string imageName = EditorParameters.Get("ImagePath");
+            if (imageName != "")
+            {
+                PathEditor.LoadImage(imageName);
+            }
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -239,7 +244,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("TileDepth", TileDepth.ToString());
             EditorParameters.Set("MortarGap", MortarGap.ToString());
             EditorParameters.Set("RoofWidth", RoofWidth.ToString());
-            EditorParameters.Set("Path", PathEditor.GetPath()); ;
+            EditorParameters.Set("Path", PathEditor.GetPath());
+            EditorParameters.Set("ImagePath", PathEditor.ImagePath);
         }
 
         private void UpdateDisplay()
