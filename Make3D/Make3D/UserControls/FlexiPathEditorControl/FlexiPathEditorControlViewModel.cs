@@ -865,14 +865,15 @@ namespace Barnacle.UserControls
                 if (orthoLocked)
                 {
                     flexiPath.AddOrthoLockedLine(new System.Windows.Point(position.X, position.Y));
+                    moving = false;
                 }
                 else
                 {
                     flexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
+                    moving = true;
                 }
                 selectionMode = SelectionModeType.AppendPoint;
                 selectedPoint = polyPoints.Count - 1;
-                moving = false;
             }
         }
 
