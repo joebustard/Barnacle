@@ -436,7 +436,23 @@ namespace Barnacle.Models
 
             exp.Export(name, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
         }
-
+        public void Empty()
+        {
+            if (Content != null)
+            {
+                foreach (Object3D ob in Content)
+                {
+                    ob.RelativeObjectVertices?.Clear();
+                    ob.AbsoluteObjectVertices?.Clear();
+                    ob.TriangleIndices?.Clear();
+                }
+                Content.Clear();
+            }
+            Content = null;
+            referencedFiles?.Clear();
+            referencedFiles = null;
+            ProjectSettings = null;
+        }
         internal void Clear()
         {
             FilePath = "";
@@ -447,6 +463,12 @@ namespace Barnacle.Models
             Caption = "untitled";
             if (Content != null)
             {
+                foreach (Object3D ob in Content)
+                {
+                    ob.RelativeObjectVertices.Clear();
+                    ob.AbsoluteObjectVertices.Clear();
+                    ob.TriangleIndices.Clear();
+                }
                 Content.Clear();
             }
             Content = new List<Object3D>();
@@ -465,6 +487,10 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
+            if (Properties.Settings.Default.SDCardLabel != null )
+            {
+                ProjectSettings.SDCardName = Properties.Settings.Default.SDCardLabel;
+            }
         }
 
         public void SaveGlobalSettings()
@@ -473,6 +499,7 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
+            Properties.Settings.Default.SDCardLabel = ProjectSettings.SDCardName;
             Properties.Settings.Default.Save();
         }
 
@@ -841,7 +868,7 @@ namespace Barnacle.Models
                     ob.MoveToFloor();
                 }
             }
-            catch ( Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }

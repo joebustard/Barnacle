@@ -1,0 +1,313 @@
+﻿using Barnacle.Models;
+using Barnacle.Object3DLib;
+using Barnacle.ViewModels;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace Barnacle.Dialogs
+{
+    /// <summary>
+    /// Interaction logic for MultiImport.xaml
+    /// </summary>
+    public partial class MultiImport : Window, INotifyPropertyChanged
+    {
+        private static bool overWrite = false;
+        private bool closeEnabled;
+        private string importPath;
+
+        private int maxModelsPerFile;
+
+        private string resultsText;
+
+        private bool startEnabled;
+        private double xRotation;
+
+        private double yRotation;
+
+        private double zRotation;
+
+        public MultiImport()
+        {
+            InitializeComponent();
+            DataContext = this;
+            MaxModelsPerFile = 1;
+            XRotation = 0;
+            YRotation = 0;
+            ZRotation = 0;
+            CloseEnabled = true;
+            StartEnabled = true;
+            OverWrite = false;
+            if (Properties.Settings.Default.LastImportFolder != "")
+            {
+                ImportPath = Properties.Settings.Default.LastImportFolder;
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool CloseEnabled
+        {
+            get { return closeEnabled; }
+            set
+            {
+                if (closeEnabled != value)
+                {
+                    closeEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string ImportPath
+        {
+            get { return importPath; }
+            set
+            {
+                if (importPath != value)
+                {
+                    importPath = value;
+                }
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int MaxModelsPerFile
+        {
+            get { return maxModelsPerFile; }
+            set
+            {
+                if (maxModelsPerFile != value)
+                {
+                    maxModelsPerFile = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool OverWrite
+        {
+            get { return overWrite; }
+            set
+            {
+                if (overWrite != value)
+                {
+                    overWrite = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string ResultsText
+        {
+            get { return resultsText; }
+            set
+            {
+                if (resultsText != value)
+                {
+                    resultsText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool StartEnabled
+        {
+            get { return startEnabled; }
+            set
+            {
+                if (startEnabled != value)
+                {
+                    startEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double XRotation
+        {
+            get { return xRotation; }
+            set
+            {
+                if (xRotation != value)
+                {
+                    xRotation = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double YRotation
+        {
+            get { return yRotation; }
+            set
+            {
+                if (yRotation != value)
+                {
+                    yRotation = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double ZRotation
+        {
+            get { return zRotation; }
+            set
+            {
+                if (zRotation != value)
+                {
+                    zRotation = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        private double progressValue;
+
+        public double ProgressValue
+        {
+            get { return progressValue; }
+            set {
+                if (progressValue != value)
+                {
+                    progressValue = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private static Task<bool> ImportOneOfMany(string fpath, double xRot, double yRot, double zRot)
+        {
+            bool result = false;
+            string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
+
+            string targetPath = BaseViewModel.Project.ProjectPathToAbsPath(rootName + ".txt");
+            if (!File.Exists(targetPath) || overWrite)
+            {
+                Document localDoc = null;
+                try
+                {
+                    localDoc = new Document();
+                    string fldr = System.IO.Path.GetDirectoryName(targetPath);
+
+                    localDoc.ImportStl(fpath, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                    int numObs = 0;
+                    foreach (Object3D ob in localDoc.Content)
+                    {
+                        ob.Name = rootName;
+                        if (numObs > 0)
+                        {
+                            ob.Name += "_" + numObs.ToString();
+                        }
+                        // ob.FlipInside();
+                        ob.FlipX();
+                        ob.Color = BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour;
+                        ob.MoveOriginToCentroid();
+
+                        if (xRot != 0 || yRot != 0 || zRot != 0)
+                        {
+                            ob.Rotate(new System.Windows.Media.Media3D.Point3D(xRot, yRot, zRot));
+                        }
+                        ob.MoveToFloor();
+                        ob.MoveToCentre();
+                        numObs++;
+                    }
+
+                    localDoc.Save(targetPath);
+                    // Add this file to project but don't allow duplicates
+                    BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt", false);
+                    localDoc.Empty();
+                    result = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+                localDoc?.Empty();
+                localDoc = null;
+                GC.Collect();
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
+            }
+
+            return Task.FromResult<bool>(result);
+        }
+
+        private void AppendResults(string v)
+        {
+            ResultsText += v;
+            ResultsText += "\n";
+            ResultsBox.CaretIndex = ResultsBox.Text.Length;
+            ResultsBox.ScrollToEnd();
+        }
+
+        private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            if (Properties.Settings.Default.LastImportFolder != "")
+            {
+                dialog.SelectedPath = Properties.Settings.Default.LastImportFolder;
+            }
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                ImportPath = dialog.SelectedPath;
+            }
+        }
+
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
+            Close();
+        }
+
+        private async void StartButton_Click(object sender, RoutedEventArgs e)
+        {
+            ProgressValue = 0;
+            if (Directory.Exists(ImportPath))
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    CloseEnabled = false;
+                    StartEnabled = false;
+                });
+
+                Properties.Settings.Default.LastImportFolder = ImportPath;
+                Properties.Settings.Default.Save();
+                ResultsText = "";
+                string[] files = System.IO.Directory.GetFiles(ImportPath, "*.stl");
+                double prog = 0;
+                int numFiles = files.GetLength(0);
+                foreach (string fpath in files)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                   {
+                       ProgressValue = (prog * 100.0) / numFiles;
+                       
+                       AppendResults("Importing " + System.IO.Path.GetFileName(fpath));
+                   });
+
+                    await Task.Run(() => ImportOneOfMany(fpath, xRotation, yRotation, zRotation));
+                    prog++;
+                }
+                AppendResults("Import Complete");
+                GC.Collect();
+                CloseEnabled = true;
+                StartEnabled = true;
+            }
+        }
+    }
+}

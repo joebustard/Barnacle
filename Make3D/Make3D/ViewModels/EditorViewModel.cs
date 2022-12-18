@@ -2728,30 +2728,23 @@ namespace Barnacle.ViewModels
 
                 case "multistl":
                     {
-                        var dialog = new System.Windows.Forms.FolderBrowserDialog();
-                        if (Properties.Settings.Default.LastImportFolder != "")
+                        try
                         {
-                            dialog.SelectedPath = Properties.Settings.Default.LastImportFolder;
-                        }
-                        System.Windows.Forms.DialogResult result = dialog.ShowDialog();
-                        if (result == System.Windows.Forms.DialogResult.OK)
-                        {
-                            string pth = dialog.SelectedPath;
-                            Properties.Settings.Default.LastImportFolder = pth;
-                            Properties.Settings.Default.Save();
-
-                            string[] files = System.IO.Directory.GetFiles(pth, "*.stl");
-                            InfoWindow.Instance().ShowInfo("Import Multiple");
-                            foreach (string fpath in files)
+                            var mi = new MultiImport();
+                            if (mi.ShowDialog() == true)
                             {
-                                InfoWindow.Instance().ShowText(System.IO.Path.GetFileName(fpath));
-                                await Task.Run(() => ImportOneOfMany(fpath));
+                                GC.Collect();
+                                BaseViewModel.Project.Save();
+                                BaseViewModel.Document.SaveGlobalSettings();
+                                NotificationManager.Notify("ImportRefresh", null);
                             }
                         }
-                        InfoWindow.Instance().CloseInfo();
-                        BaseViewModel.Project.Save();
-                        BaseViewModel.Document.SaveGlobalSettings();
-                        NotificationManager.Notify("ImportRefresh", null);
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        
+                       
                     }
                     break;
             }
