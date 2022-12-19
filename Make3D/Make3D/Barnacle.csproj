@@ -60,6 +60,8 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Controls.Ribbon" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -288,6 +290,7 @@
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="Models\ZipUtils.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControlViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml.cs">
       <DependentUpon>FlexiPathEditorControl.xaml</DependentUpon>

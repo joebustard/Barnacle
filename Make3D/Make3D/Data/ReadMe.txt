@@ -15,6 +15,10 @@ Fixed bug in Shaped Wall tool which prevented triangular walls
 Changed textbox on slice dialog to autoscroll to bottom as each file is sliced
 Made flexipath control open the image selection dialog in the project Images folder
 
+Changed multi STL import to use a dialog that allows rotations around the axies,
+	better manages problems if the STLs cause out of memory exceptions
+	Added a progress bar.
+
 v1.0.1
 ===========
 Added simple Plank Wall Tool.

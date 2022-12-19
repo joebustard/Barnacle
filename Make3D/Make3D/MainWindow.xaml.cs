@@ -43,8 +43,6 @@ namespace Barnacle
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // check if we have been opened with a project file name on the command line
-            //string filter = BaseViewModel.Document.ProjectFilter;
-
             string[] args = Environment.GetCommandLineArgs();
             string startProject = "";
             foreach (string s in args)
@@ -61,22 +59,6 @@ namespace Barnacle
             }
 
             InfoWindow.Instance().Owner = this;
-            /*
-                        List<PointF> poly = new List<PointF>();
-                        poly.Add(new PointF(10, 10));
-                        poly.Add(new PointF(10, 20));
-                        poly.Add(new PointF(50, 80));
-                        poly.Add(new PointF(20, 10));
-
-                        bool inside = LineUtils.IsPointInPolygon(new PointF(35, 55), poly);
-                        */
-        }
-
-        private struct V3D
-        {
-            public float X;
-            public float Y;
-            public float Z;
         }
     }
 }
