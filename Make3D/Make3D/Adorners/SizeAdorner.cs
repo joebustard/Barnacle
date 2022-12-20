@@ -17,7 +17,10 @@ namespace Barnacle.Models.Adorners
         private bool boxSelected;
         private List<Point3D> labelLocations;
         private Object3D selectedThumb;
-        private List<Label> thumbLabels;
+
+        //private List<Label> thumbLabels;
+        private List<Control> thumbLabels;
+
         private List<Object3D> thumbs;
 
         public SizeAdorner(PolarCamera camera)
@@ -31,7 +34,8 @@ namespace Barnacle.Models.Adorners
             boxSelected = false;
             bounds = new Bounds3D();
             labelLocations = new List<Point3D>();
-            thumbLabels = new List<Label>();
+            //thumbLabels = new List<Label>();
+            thumbLabels = new List<Control>();
             ViewPort = null;
             NotificationManager.Subscribe("SizeAdorner", "ScaleRefresh", OnScaleRefresh);
         }
@@ -183,6 +187,7 @@ namespace Barnacle.Models.Adorners
             return handled;
         }
 
+        /*
         private void AddLabel(double x, double y, double z, string v2)
         {
             labelLocations.Add(new Point3D(x, y, z));
@@ -192,6 +197,103 @@ namespace Barnacle.Models.Adorners
             l.FontWeight = FontWeights.Bold;
             l.FontSize = 18;
             thumbLabels.Add(l);
+        }
+        */
+
+        private void AddLabel(string name, double x, double y, double z, string v2)
+        {
+            labelLocations.Add(new Point3D(x, y, z));
+            TextBox l = new TextBox();
+            l.Text = v2;
+            l.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
+            l.FontWeight = FontWeights.Bold;
+            l.FontSize = 18;
+            l.Tag = name;
+            l.TextChanged += L_TextChanged;
+            thumbLabels.Add(l);
+        }
+
+        private void L_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox)
+            {
+                TextBox tx = (sender as TextBox);
+                double dim = 0;
+                if (ValidDimension(tx.Text, out dim))
+                {
+                    Point3D scaleChange = new Point3D(1, 1, 1);
+                    Point3D positionChange = new Point3D(0, 0, 0);
+                    string name = tx.Tag.ToString();
+                    switch (name)
+                    {
+                        case "rightthumb":
+                        case "leftthumb":
+                            {
+                                scaleChange.X = dim / box.Scale.X;
+                            }
+                            break;
+
+                        default:
+                            break;
+                    }
+                    foreach (Object3D obj in SelectedObjects)
+                    {
+                        Bounds3D before = obj.AbsoluteBounds;
+                        obj.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
+                        obj.Position = new Point3D(obj.Position.X + positionChange.X,
+                        obj.Position.Y + positionChange.Y,
+                        obj.Position.Z + positionChange.Z);
+                        obj.Remesh();
+                        obj.Scale = new Scale3D(obj.AbsoluteBounds.Width, obj.AbsoluteBounds.Height, obj.AbsoluteBounds.Depth);
+                    }
+                    if (box.Scale.X * scaleChange.X > 0)
+                    {
+                        box.Scale.X *= scaleChange.X;
+                    }
+                    if (box.Scale.Y * scaleChange.Y > 0)
+                    {
+                        box.Scale.Y *= scaleChange.Y;
+                    }
+                    if (box.Scale.Z * scaleChange.Z > 0)
+                    {
+                        box.Scale.Z *= scaleChange.Z;
+                    }
+                    box.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
+                    box.Position = new Point3D(box.Position.X + positionChange.X,
+                    box.Position.Y + positionChange.Y,
+                    box.Position.Z + positionChange.Z);
+                    box.Remesh();
+                    box.CalcScale();
+                    MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
+                    MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
+                    MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
+                    MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
+                    MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
+                    MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
+
+                    // LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
+                    NotificationManager.Notify("DocDirty", null);
+                    NotificationManager.Notify("ScaleUpdated", null);
+                }
+            }
+        }
+
+        private bool ValidDimension(string text, out double dim)
+        {
+            bool valid = false;
+            dim = 0;
+            if (!String.IsNullOrEmpty(text))
+            {
+                if (text.Contains("."))
+                {
+                    dim = Convert.ToDouble(text);
+                    if (dim > 0.0)
+                    {
+                        valid = true;
+                    }
+                }
+            }
+            return valid;
         }
 
         [Obsolete]
@@ -215,6 +317,7 @@ namespace Barnacle.Models.Adorners
 
             box.Color = Color.FromArgb(150, 64, 64, 64);
             box.Remesh();
+            box.CalcScale();
             Adornments.Add(GetMesh(box));
 
             if (addSizeThumbs)
@@ -272,13 +375,13 @@ namespace Barnacle.Models.Adorners
                     {
                         case "TopThumb":
                             {
-                                AddLabel(th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
+                                AddLabel("topthumb", th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
                             }
                             break;
 
                         case "BottomThumb":
                             {
-                                AddLabel(th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
+                                AddLabel("bottomthumb", th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
                             }
                             break;
 
@@ -288,13 +391,13 @@ namespace Barnacle.Models.Adorners
                                                                    FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
                                 FormattedText txt = formattedText;
 
-                                AddLabel(th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
+                                AddLabel("leftthumb", th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
                             }
                             break;
 
                         case "RightThumb":
                             {
-                                AddLabel(th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
+                                AddLabel("rightthumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
                             }
                             break;
 
@@ -302,7 +405,7 @@ namespace Barnacle.Models.Adorners
                             {
                                 if (Camera.Orientation != PolarCamera.Orientations.Back)
                                 {
-                                    AddLabel(th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
+                                    AddLabel("frontthumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
                                 }
                             }
                             break;
@@ -311,7 +414,7 @@ namespace Barnacle.Models.Adorners
                             {
                                 if (Camera.Orientation != PolarCamera.Orientations.Front)
                                 {
-                                    AddLabel(th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
+                                    AddLabel("backthumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
                                 }
                             }
                             break;
@@ -524,6 +627,7 @@ namespace Barnacle.Models.Adorners
             box.Position.Y + positionChange.Y,
             box.Position.Z + positionChange.Z);
             box.Remesh();
+            box.CalcScale();
             MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
             MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
             MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");

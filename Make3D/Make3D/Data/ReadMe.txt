@@ -16,8 +16,10 @@ Changed textbox on slice dialog to autoscroll to bottom as each file is sliced
 Made flexipath control open the image selection dialog in the project Images folder
 
 Changed multi STL import to use a dialog that allows rotations around the axies,
+    Added options to import from a folder (as before) or from a zip
 	better manages problems if the STLs cause out of memory exceptions
 	Added a progress bar.
+	Removed ExtractThingiverseFiles.cmd as it can now access a zip directly
 
 v1.0.1
 ===========
