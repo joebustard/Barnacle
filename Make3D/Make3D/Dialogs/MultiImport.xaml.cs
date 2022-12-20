@@ -18,6 +18,8 @@ namespace Barnacle.Dialogs
     {
         private static bool overWrite = false;
         private bool closeEnabled;
+        private Visibility folderVisible;
+        private Visibility zipVisible;
         private bool importFolderChecked;
         private string importPath;
         private bool importZipChecked;
@@ -38,10 +40,12 @@ namespace Barnacle.Dialogs
             XRotation = 0;
             YRotation = 0;
             ZRotation = 0;
+            MaxProgress = 100;
             CloseEnabled = true;
             StartEnabled = true;
             OverWrite = false;
             ImportFolderChecked = true;
+            
             if (Properties.Settings.Default.LastImportFolder != "")
             {
                 ImportPath = Properties.Settings.Default.LastImportFolder;
@@ -49,6 +53,32 @@ namespace Barnacle.Dialogs
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public Visibility FolderVisibility
+        {
+            get { return folderVisible; }
+            set
+            {
+                if (folderVisible != value)
+                {
+                    folderVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Visibility ZipVisibility
+        {
+            get { return zipVisible; }
+            set
+            {
+                if (zipVisible != value)
+                {
+                    zipVisible = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public bool CloseEnabled
         {
@@ -66,7 +96,20 @@ namespace Barnacle.Dialogs
         public bool ImportFolderChecked
         {
             get { return importFolderChecked; }
-            set { importFolderChecked = value; }
+            set 
+            {
+                if (importFolderChecked != value)
+                {
+                    importFolderChecked = value;
+                    NotifyPropertyChanged();
+                    if (importFolderChecked)
+                    {
+                        FolderVisibility = Visibility.Visible;
+                        ZipVisibility = Visibility.Hidden;
+                    }
+
+                }
+            }
         }
 
         public string ImportPath
@@ -85,7 +128,19 @@ namespace Barnacle.Dialogs
         public bool ImportZipChecked
         {
             get { return importZipChecked; }
-            set { importZipChecked = value; }
+            set 
+            {
+                if (importZipChecked != value)
+                {
+                    importZipChecked = value;
+                    NotifyPropertyChanged();
+                    if (importZipChecked)
+                    {
+                        FolderVisibility = Visibility.Hidden;
+                        ZipVisibility = Visibility.Visible;
+                    }
+                }
+            }
         }
 
         public string ImportZipPath
@@ -292,6 +347,7 @@ namespace Barnacle.Dialogs
             {
                 ImportPath = dialog.SelectedPath;
             }
+            ProgressValue = 0;
         }
 
         private void BrowseZipButton_Click(object sender, RoutedEventArgs e)
@@ -307,6 +363,7 @@ namespace Barnacle.Dialogs
             {
                 ImportZipPath = dialog.FileName;
             }
+            ProgressValue = 0;
         }
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -344,11 +401,16 @@ namespace Barnacle.Dialogs
                 string[] files = System.IO.Directory.GetFiles(ImportPath, "*.stl");
                 double prog = 0;
                 int numFiles = files.GetLength(0);
+                if (numFiles > 0)
+                {
+                    MaxProgress = numFiles-1;
+                }
+
                 foreach (string fpath in files)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        ProgressValue = (prog * 100.0) / numFiles;
+                        ProgressValue = prog;
 
                         AppendResults("Importing " + System.IO.Path.GetFileName(fpath));
                     });
@@ -360,6 +422,90 @@ namespace Barnacle.Dialogs
                 GC.Collect();
                 CloseEnabled = true;
                 StartEnabled = true;
+            }
+        }
+        public static string GetTempFilePathWithExtension(string extension)
+        {
+            var path = Path.GetTempPath();
+            var fileName = Path.ChangeExtension(Guid.NewGuid().ToString(), extension);
+            return Path.Combine(path, fileName);
+        }
+        private static Task<bool> ImportOneFromZip(string zipPath,string fpath, double xRot, double yRot, double zRot)
+        {
+            bool result = false;
+            if (File.Exists(zipPath))
+            {
+                string tmpFile = GetTempFilePathWithExtension(".stl");
+                if (ZipUtils.ExtractFileFromZip(zipPath, fpath, tmpFile))
+                {
+                    string rootName = System.IO.Path.GetFileNameWithoutExtension(fpath);
+                    string targetPath = BaseViewModel.Project.ProjectPathToAbsPath(rootName + ".txt");
+                    if (!File.Exists(targetPath) || overWrite)
+                    {
+                        Document localDoc = null;
+                        try
+                        {
+                            localDoc = new Document();
+                            string fldr = System.IO.Path.GetDirectoryName(targetPath);
+
+                            localDoc.ImportStl(tmpFile, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
+                            int numObs = 0;
+                            foreach (Object3D ob in localDoc.Content)
+                            {
+                                ob.Name = rootName;
+                                if (numObs > 0)
+                                {
+                                    ob.Name += "_" + numObs.ToString();
+                                }
+                                // ob.FlipInside();
+                                ob.FlipX();
+                                ob.Color = BaseViewModel.Project.SharedProjectSettings.DefaultObjectColour;
+                                ob.MoveOriginToCentroid();
+
+                                if (xRot != 0 || yRot != 0 || zRot != 0)
+                                {
+                                    ob.Rotate(new System.Windows.Media.Media3D.Point3D(xRot, yRot, zRot));
+                                }
+                                ob.MoveToFloor();
+                                ob.MoveToCentre();
+                                numObs++;
+                            }
+
+                            localDoc.Save(targetPath);
+                            // Add this file to project but don't allow duplicates
+                            BaseViewModel.Project.AddFileToFolder(fldr, rootName + ".txt", false);
+                            localDoc.Empty();
+                            File.Delete(tmpFile);
+                            result = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                        localDoc?.Empty();
+                        localDoc = null;
+                        GC.Collect();
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("File already exists: " + targetPath, "Error");
+                    }
+                }
+            }
+            return Task.FromResult<bool>(result);
+        }
+        private int maxProgress;
+
+        public int MaxProgress
+        {
+            get { return maxProgress; }
+            set 
+            {
+                if (maxProgress != value )
+                {
+                    maxProgress = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -379,16 +525,20 @@ namespace Barnacle.Dialogs
                 List<string> files = ZipUtils.ListFilesInZip(importZipPath, ".stl");
                 double prog = 0;
                 int numFiles = files.Count;
+                if ( numFiles>0)
+                {
+                    MaxProgress = numFiles-1;
+                }
                 foreach (string fpath in files)
                 {
                     Application.Current.Dispatcher.Invoke(() =>
                     {
-                        ProgressValue = (prog * 100.0) / numFiles;
+                        ProgressValue = prog;
 
                         AppendResults("Importing " + System.IO.Path.GetFileName(fpath));
                     });
 
-                    //     await Task.Run(() => ImportOneOfMany(fpath, xRotation, yRotation, zRotation));
+                    await Task.Run(() => ImportOneFromZip(importZipPath, fpath, xRotation, yRotation, zRotation));
                     prog++;
                 }
                 AppendResults("Import Complete");

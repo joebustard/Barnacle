@@ -37,5 +37,36 @@ namespace Barnacle.Models
             }
             return res;
         }
+
+
+
+        public static bool ExtractFileFromZip(string zipPath, string fileName, string targetFile)
+        {
+            bool res = false;
+            try
+            {
+                fileName = fileName.ToLower();
+                if (File.Exists(zipPath))
+                {
+
+                    ZipArchive zipArchive = ZipFile.OpenRead(zipPath);
+                    var ets = zipArchive.Entries;
+                    foreach (ZipArchiveEntry et in ets)
+                    {
+                        if (et.FullName.ToLower() == fileName)
+                        {
+                            et.ExtractToFile(targetFile);
+                            res = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            return res;
+        }
     }
 }
