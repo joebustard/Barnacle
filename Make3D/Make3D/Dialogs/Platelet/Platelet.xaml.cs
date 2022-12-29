@@ -33,7 +33,7 @@ namespace Barnacle.Dialogs
         private bool solidShape;
         private double textureDepth;
         private bool texturedShape;
-        private Dictionary<string, string> textureFiles;
+        private SortedList<string, string> textureFiles;
         private int textureImageHeight;
         private int textureImageWidth;
         private byte[,] textureMap;
@@ -60,7 +60,7 @@ namespace Barnacle.Dialogs
             showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
             loaded = false;
-            textureFiles = new Dictionary<string, string>();
+            textureFiles = new SortedList<string, string>();
             loadedImageName = "";
             selectedTexture = "";
         }
@@ -1078,16 +1078,27 @@ namespace Barnacle.Dialogs
             try
             {
                 String appFolder = AppDomain.CurrentDomain.BaseDirectory + "Data\\Textures";
+                GetTexturesFromFolder(appFolder);
+
+                appFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Barnacle\\Textures";
+                GetTexturesFromFolder(appFolder);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void GetTexturesFromFolder(string appFolder)
+        {
+            if (Directory.Exists(appFolder))
+            {
                 string[] txtFiles = Directory.GetFiles(appFolder, "*.png");
                 foreach (string s in txtFiles)
                 {
                     string fName = System.IO.Path.GetFileNameWithoutExtension(s);
                     textureFiles[fName] = s;
                 }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
             }
         }
 

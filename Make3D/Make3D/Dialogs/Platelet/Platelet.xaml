@@ -121,7 +121,7 @@ HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
                         <ComboBox
                     HorizontalAlignment="Left"
                             Width="100"
-
+                            
                             VerticalContentAlignment="Center"
                             ItemsSource="{Binding TextureNames}"
                             SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"

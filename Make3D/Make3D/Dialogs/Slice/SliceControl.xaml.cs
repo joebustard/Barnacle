@@ -424,12 +424,17 @@ M84 ; Disable stepper motors
 
         private async void SDClicked(object sender, RoutedEventArgs e)
         {
+
             string cardName = Properties.Settings.Default.SDCardLabel;
             if (!String.IsNullOrEmpty(cardName))
             {
+
                 string root = SDCardUtils.FindSDCard(cardName);
                 if (!String.IsNullOrEmpty(root))
                 {
+                    CanClose = false;
+                    CanSlice = false;
+                    CanCopyToSD = false;
                     string projName = BaseViewModel.Project.ProjectName;
                     string sdPath = System.IO.Path.Combine(root, projName);
                     if (!Directory.Exists(sdPath))
@@ -461,6 +466,10 @@ M84 ; Disable stepper motors
                 {
                     MessageBox.Show("Couldn't find sdcard labelled " + cardName);
                 }
+                CanClose = true;
+                CanSlice = true;
+                // re-enable the sdcopy button if appropriate
+                CheckIfSDCopyShouldBeEnabled();
             }
             else
             {

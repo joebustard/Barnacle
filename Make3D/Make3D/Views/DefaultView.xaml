@@ -60,9 +60,11 @@
                     <Custom:RibbonButton Command="{Binding UndoCommand}"
                                          SmallImageSource="/images/buttons/edit_undo.png"
                                          x:Name="Undo" IsEnabled="{Binding EditingActive}" />
+                                         <!--
                     <Custom:RibbonButton Command="{Binding RedoCommand}"
                                          SmallImageSource="/images/buttons/edit_redo.png"
                                          x:Name="Redo" IsEnabled="{Binding EditingActive}" />
+                                         -->
                 </Custom:RibbonQuickAccessToolBar>
             </Custom:Ribbon.QuickAccessToolBar>
             <Custom:Ribbon.ApplicationMenu>

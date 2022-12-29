@@ -548,26 +548,25 @@ namespace Barnacle.Models.Adorners
 
         private void FocusChanged()
         {
-            keyboardTimer.Stop();
-            if (scaleChange.X != 1 || scaleChange.Y != 1 || scaleChange.Z != 1)
-            {
-                UpdateScale();
-
-                refreshTimer?.Start();
-            }
-            scaleChange = new Point3D(1, 1, 1);
+            AutomaticScaleUpdate();
         }
 
-        private void KeyboardTimer_Tick(object sender, EventArgs e)
+        private void AutomaticScaleUpdate()
         {
             keyboardTimer.Stop();
             if (scaleChange.X != 1 || scaleChange.Y != 1 || scaleChange.Z != 1)
             {
                 UpdateScale();
-
                 refreshTimer?.Start();
             }
+
             scaleChange = new Point3D(1, 1, 1);
+           
+        }
+
+        private void KeyboardTimer_Tick(object sender, EventArgs e)
+        {
+            AutomaticScaleUpdate();
         }
 
         private void L_GotFocus(object sender, RoutedEventArgs e)

@@ -1,4 +1,16 @@
-﻿v1.0.2
+﻿v1.0.3
+===========
+Fixed
+  Slicing dialog background not using style resource
+
+Changed
+  Disable slice controls while copying to SD card
+  Sort texture names in platelet tool
+
+Added 
+  Folder for user platelet textures. C:\programdata\barnacle\textures
+
+v1.0.2
 ===========
 Added Shaped Tiled Roof Tool
 Added a project template for a model building

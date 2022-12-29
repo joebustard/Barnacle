@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs.Slice"
         mc:Ignorable="d"
-        Title="Slice Control" Height="450" Width="650" Loaded="Window_Loaded">
+        Title="Slice Control" Height="450" Width="650" Loaded="Window_Loaded" Background="{StaticResource WindowBackBrush }">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="10" />
