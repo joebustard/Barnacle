@@ -355,7 +355,7 @@ namespace Barnacle.Dialogs
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
+            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
             switch (ori)
             {
                 case PolarCamera.Orientations.Front:
@@ -400,7 +400,7 @@ namespace Barnacle.Dialogs
         private void MovePoint(int pindex, double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
+            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
             switch (ori)
             {
                 case PolarCamera.Orientations.Front:

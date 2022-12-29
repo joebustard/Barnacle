@@ -499,7 +499,7 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
-            Properties.Settings.Default.SDCardLabel = ProjectSettings.SDCardName;
+           // Properties.Settings.Default.SDCardLabel = ProjectSettings.SDCardName;
             Properties.Settings.Default.Save();
         }
 

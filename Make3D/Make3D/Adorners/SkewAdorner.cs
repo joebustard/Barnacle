@@ -23,6 +23,7 @@ namespace Barnacle.Models.Adorners
 
         public SkewAdorner(PolarCamera camera)
         {
+            NotificationManager.ViewUnsubscribe("SkewAdorner");
             Camera = camera;
             Adornments = new Model3DCollection();
             SelectedObjects = new List<Object3D>();

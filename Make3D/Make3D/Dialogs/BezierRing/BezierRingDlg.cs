@@ -625,19 +625,55 @@ Brushes.Green
         private void UserControl_GotFocus(object sender, RoutedEventArgs e)
         {
         }
-
+        bool loaded;
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            loaded = false;
+            LoadEditorParameters();
             MyModelGroup.Children.Clear();
             maxRadius = (PointCanvas.ActualWidth / 2) - padding;
             if (PointCanvas.ActualHeight / 2 < maxRadius)
             {
                 maxRadius = (PointCanvas.ActualHeight / 2) - padding;
             }
+            loaded = true;
             GenerateRing();
             Redraw();
             Redisplay();
             UpdateCameraPos();
+        }
+
+        private void LoadEditorParameters()
+        {
+            SweepDegrees = EditorParameters.GetDouble("SweepDegrees", 360);
+            RotDivisions = EditorParameters.GetInt("RotDivisions", 20);
+            BezierDivisions = EditorParameters.GetInt("BezierDivisions", 20);
+            string s = EditorParameters.Get("L0");
+            if ( s != "")
+            {
+                bzlines[0].FromString(s);
+                bzlines[1].FromString(EditorParameters.Get("L1"));
+                bzlines[2].FromString(EditorParameters.Get("L2"));
+                bzlines[3].FromString(EditorParameters.Get("L3"));
+            }
+        }
+
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            SaveEditorParameters();
+
+            DialogResult = true;
+            Close();
+        }
+        private void SaveEditorParameters()
+        {
+            EditorParameters.Set("SweepDegrees", SweepDegrees.ToString());
+            EditorParameters.Set("RotDivisions", RotDivisions.ToString());
+            EditorParameters.Set("BezierDivisions", BezierDivisions.ToString());
+            EditorParameters.Set("L0", bzlines[0].ToString());
+            EditorParameters.Set("L1", bzlines[1].ToString());
+            EditorParameters.Set("L2", bzlines[2].ToString());
+            EditorParameters.Set("L3", bzlines[3].ToString());
         }
     }
 }

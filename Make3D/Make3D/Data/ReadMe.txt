@@ -8,9 +8,11 @@ Added some texture processing to platelet tool (still has some issues with holes
 Added Spring tool, which makes springs
 Added automatic creation of empty library
 Added ability to copy selected object from project to the library
+added 2.5 and 25 mm to flexipath grid settings
 
 Fixed bug where platelet tool "forgot" that a previously created plate was hollow
 Fixed bug in Shaped Wall tool which prevented triangular walls
+Fixed bug where lofted bezier ring did not remember editorparameters
 
 Changed textbox on slice dialog to autoscroll to bottom as each file is sliced
 Made flexipath control open the image selection dialog in the project Images folder
@@ -19,7 +21,7 @@ Changed multi STL import to use a dialog that allows rotations around the axies,
     Added options to import from a folder (as before) or from a zip
 	better manages problems if the STLs cause out of memory exceptions
 	Added a progress bar.
-	Removed ExtractThingiverseFiles.cmd as it can now access a zip directly
+	Removed ExtractThingiverseFiles.cmd as program can now access a zip directly
 
 v1.0.1
 ===========

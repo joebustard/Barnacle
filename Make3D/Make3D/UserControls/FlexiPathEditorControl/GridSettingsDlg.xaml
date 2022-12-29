@@ -14,11 +14,13 @@
         </Grid.RowDefinitions>
 
         <GroupBox Grid.Row="0" Header="Rectangular Grid" Margin="8,4,8,0">
-            <UniformGrid Margin="8,8,8,8" Rows="2" Columns="2">
+            <UniformGrid Margin="8,8,8,8" Rows="2" Columns="3">
+                <RadioButton x:Name="But2Point5" GroupName="RectGrid" Content="2.5mm" VerticalAlignment="Center" IsChecked="{Binding Rect2Point5Checked}" />
                 <RadioButton x:Name="But5" GroupName="RectGrid" Content="5mm" VerticalAlignment="Center" IsChecked="{Binding Rect5Checked}" />
                 <RadioButton x:Name="But10" GroupName="RectGrid" Content="10mm" VerticalAlignment="Center" IsChecked="{Binding Rect10Checked}" />
                 <RadioButton x:Name="But15" GroupName="RectGrid" Content="15mm" VerticalAlignment="Center" IsChecked="{Binding Rect15Checked}" />
                 <RadioButton x:Name="But20" GroupName="RectGrid" Content="20mm" VerticalAlignment="Center" IsChecked="{Binding Rect20Checked}" />
+                <RadioButton x:Name="But25" GroupName="RectGrid" Content="25mm" VerticalAlignment="Center" IsChecked="{Binding Rect25Checked}" />
             </UniformGrid>
         </GroupBox>
         <GroupBox Grid.Row="1" Header="Polar Grid" Margin="8,8,8,8">

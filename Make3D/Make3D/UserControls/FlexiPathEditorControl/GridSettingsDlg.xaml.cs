@@ -54,10 +54,12 @@ namespace Barnacle.UserControls
         {
             if (Settings != null)
             {
+                if (Rect2Point5Checked) Settings.RectangularGridSize = 2.5;
                 if (Rect5Checked) Settings.RectangularGridSize = 5;
                 if (Rect10Checked) Settings.RectangularGridSize = 10;
                 if (Rect15Checked) Settings.RectangularGridSize = 15;
                 if (Rect20Checked) Settings.RectangularGridSize = 20;
+                if (Rect25Checked) Settings.RectangularGridSize = 25;
                 if (Polar5Checked) Settings.PolarGridRadius = 5;
                 if (Polar10Checked) Settings.PolarGridRadius = 10;
                 if (Polar15Checked) Settings.PolarGridRadius = 15;
@@ -87,6 +89,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
 
         private bool polar10Checked;
 
@@ -133,6 +136,21 @@ namespace Barnacle.UserControls
             }
         }
 
+        private bool rect2Point5Checked;
+
+        public bool Rect2Point5Checked
+        {
+            get { return rect2Point5Checked; }
+            set
+            {
+                if (value != rect2Point5Checked)
+                {
+                    rect2Point5Checked = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private bool rect5Checked;
 
         public bool Rect5Checked
@@ -147,7 +165,6 @@ namespace Barnacle.UserControls
                 }
             }
         }
-
         private bool rect10Checked;
 
         public bool Rect10Checked
@@ -193,6 +210,20 @@ namespace Barnacle.UserControls
             }
         }
 
+        private bool rect25Checked;
+
+        public bool Rect25Checked
+        {
+            get { return rect25Checked; }
+            set
+            {
+                if (value != rect25Checked)
+                {
+                    rect25Checked = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         private double polarAngle;
 
         public double PolarAngle

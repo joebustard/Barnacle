@@ -1369,12 +1369,7 @@ namespace Barnacle.Object3DLib
             absoluteBounds.Upper = u;
         }
 
-        private Point3D RotateMesh(Point3D cp)
-        {
-            Point3D res = new Point3D();
 
-            return res;
-        }
 
         private Point3DCollection RotatePoints(Point3DCollection pnts, double r1, double r2, double r3)
         {

@@ -19,6 +19,7 @@ namespace Barnacle.Models.Adorners
 
         public RotationAdorner(PolarCamera camera)
         {
+            NotificationManager.ViewUnsubscribe("RotationAdorner");
             Camera = camera;
             Adornments = new Model3DCollection();
             SelectedObjects = new List<Object3D>();
@@ -171,7 +172,7 @@ namespace Barnacle.Models.Adorners
         private void Rotate(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
+            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
             switch (ori)
             {
                 case PolarCamera.Orientations.Front:

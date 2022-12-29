@@ -7,24 +7,36 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Models.Adorners
 {
     public class SizeAdorner : Adorner
     {
+        private const double tbMargin = 10;
+        private const double textBoxHeight = 25;
+        private const double textBoxWidth = 50;
         private Bounds3D bounds;
         private Object3D box;
         private bool boxSelected;
-        private List<Point3D> labelLocations;
+
+        private DispatcherTimer keyboardTimer;
+
+        private Dictionary<string, Point3D> label3DOffsets;
+
+        private Dictionary<string, Point3D> labelLocations;
+
+        private DispatcherTimer refreshTimer;
+        private Point3D scaleChange = new Point3D(1, 1, 1);
         private Object3D selectedThumb;
 
-        //private List<Label> thumbLabels;
-        private List<Control> thumbLabels;
+        private Dictionary<string, Control> thumbLabels;
 
         private List<Object3D> thumbs;
-
         public SizeAdorner(PolarCamera camera)
         {
+            NotificationManager.ViewUnsubscribe("SizeAdorner");
+    
             Camera = camera;
             Adornments = new Model3DCollection();
             SelectedObjects = new List<Object3D>();
@@ -33,11 +45,39 @@ namespace Barnacle.Models.Adorners
             box = null;
             boxSelected = false;
             bounds = new Bounds3D();
-            labelLocations = new List<Point3D>();
+
+            labelLocations = new Dictionary<string, Point3D>();
+            label3DOffsets = new Dictionary<string, Point3D>();
             //thumbLabels = new List<Label>();
-            thumbLabels = new List<Control>();
+            thumbLabels = new Dictionary<string, Control>();
             ViewPort = null;
+            refreshTimer = new DispatcherTimer();
+            refreshTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000);
+            refreshTimer.Tick += RefreshTimer_Tick;
+
+            keyboardTimer = new DispatcherTimer();
+            keyboardTimer.Interval = new TimeSpan(0, 0, 5);
+            keyboardTimer.Tick += KeyboardTimer_Tick;
+
             NotificationManager.Subscribe("SizeAdorner", "ScaleRefresh", OnScaleRefresh);
+            NotificationManager.Subscribe("SizeAdorner", "CameraMoved", OnCameraMoved);
+            NotificationManager.Subscribe("SizeAdorner", "CameraOrientation", OnCameraOrientation);
+        }
+
+        private void OnCameraOrientation(object param)
+        {
+            if (labelLocations.Count > 0)
+            {
+                UpdateLabelVisibility();
+            }
+        }
+
+        private void OnCameraMoved(object param)
+        {
+            if (labelLocations.Count > 0)
+            {
+                UpdateLabelVisibility();
+            }
         }
 
         public Bounds3D Bounds
@@ -66,25 +106,27 @@ namespace Barnacle.Models.Adorners
             boxSelected = false;
             bounds = new Bounds3D();
             Overlay?.Children.Clear();
+            labelLocations.Clear();
+            label3DOffsets.Clear();
         }
 
         internal override void GenerateAdornments()
         {
             Adornments.Clear();
             thumbs.Clear();
+            labelLocations.Clear();
+            label3DOffsets.Clear();
             Overlay?.Children.Clear();
             bool addSizeThumbs = true;
-            bounds = new Bounds3D();
             foreach (Object3D obj in SelectedObjects)
             {
-                bounds += obj.AbsoluteBounds;
                 if (!obj.IsSizable())
                 {
                     addSizeThumbs = false;
                 }
             }
-            Point3D midp = bounds.MidPoint();
-            Point3D size = bounds.Size();
+            Point3D midp, size;
+            CaclBoxSize(out midp, out size);
             CreateAdornments(midp, size, addSizeThumbs);
         }
 
@@ -107,8 +149,146 @@ namespace Barnacle.Models.Adorners
                         MouseMoveThumb(lastPos, newPos);
                     }
                 }
+                if (labelLocations.Count > 0)
+                {
+                    UpdateLabelVisibility();
+                }
             }
             return handled;
+        }
+
+        private void UpdateLabelVisibility()
+        {
+            switch (Camera.VerticalOrientation)
+            {
+                case PolarCamera.Orientations.Top:
+                    {
+                        TopLabelVisibility();
+                    }
+                    break;
+                case PolarCamera.Orientations.Bottom:
+                    {
+                        BottomLabelVisibility();
+                    }
+                    break;
+
+            }
+        }
+
+        private void BottomLabelVisibility()
+        {
+            switch (Camera.HorizontalOrientation)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+                case PolarCamera.Orientations.Left:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+                case PolarCamera.Orientations.Right:
+                    {
+                        SetLabelVisibility("TopThumb", false);
+                        SetLabelVisibility("BottomThumb", true);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+            }
+        }
+
+        private void TopLabelVisibility()
+        {
+            switch (Camera.HorizontalOrientation)
+            {
+                case PolarCamera.Orientations.Front:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+
+                case PolarCamera.Orientations.Back:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+                case PolarCamera.Orientations.Left:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", true);
+                        SetLabelVisibility("RightThumb", false);
+                        SetLabelVisibility("FrontThumb", true);
+                        SetLabelVisibility("BackThumb", false);
+                    }
+                    break;
+                case PolarCamera.Orientations.Right:
+                    {
+                        SetLabelVisibility("TopThumb", true);
+                        SetLabelVisibility("BottomThumb", false);
+                        SetLabelVisibility("LeftThumb", false);
+                        SetLabelVisibility("RightThumb", true);
+                        SetLabelVisibility("FrontThumb", false);
+                        SetLabelVisibility("BackThumb", true);
+                    }
+                    break;
+            }
+
+        }
+
+        private void SetLabelVisibility(string v1, bool v2)
+        {
+            if (thumbLabels.ContainsKey(v1))
+            {
+                Visibility vs;
+                if (v2)
+                {
+                    vs = Visibility.Visible;
+                }
+                else
+                {
+                    vs = Visibility.Hidden;
+                }
+                thumbLabels[v1].Visibility = vs;
+                PositionLabel(v1);
+            }
+
         }
 
         internal override void MouseUp()
@@ -187,149 +367,131 @@ namespace Barnacle.Models.Adorners
             return handled;
         }
 
-        /*
-        private void AddLabel(double x, double y, double z, string v2)
+        private void AddLabel(string name, double x, double y, double z, string v2, HorizontalAlignment ha)
         {
-            labelLocations.Add(new Point3D(x, y, z));
-            Label l = new Label();
-            l.Content = v2;
-            l.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
-            l.FontWeight = FontWeights.Bold;
-            l.FontSize = 18;
-            thumbLabels.Add(l);
-        }
-        */
-
-        private void AddLabel(string name, double x, double y, double z, string v2)
-        {
-            labelLocations.Add(new Point3D(x, y, z));
+            labelLocations[name] = new Point3D(x, y, z);
             TextBox l = new TextBox();
             l.Text = v2;
             l.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
             l.FontWeight = FontWeights.Bold;
             l.FontSize = 18;
             l.Tag = name;
+            l.Name = name;
+            l.MinWidth = textBoxWidth;
+            l.Height = textBoxHeight;
             l.TextChanged += L_TextChanged;
-            thumbLabels.Add(l);
+            l.HorizontalAlignment = ha;
+            l.GotFocus += L_GotFocus;
+
+            thumbLabels[name] = l;
         }
 
-        private void L_TextChanged(object sender, TextChangedEventArgs e)
+        private void CaclBoxSize(out Point3D midp, out Point3D size)
         {
-            if (sender is TextBox)
+            bounds = new Bounds3D();
+            foreach (Object3D obj in SelectedObjects)
             {
-                TextBox tx = (sender as TextBox);
-                double dim = 0;
-                if (ValidDimension(tx.Text, out dim))
-                {
-                    Point3D scaleChange = new Point3D(1, 1, 1);
-                    Point3D positionChange = new Point3D(0, 0, 0);
-                    string name = tx.Tag.ToString();
-                    switch (name)
-                    {
-                        case "rightthumb":
-                        case "leftthumb":
-                            {
-                                scaleChange.X = dim / box.Scale.X;
-                            }
-                            break;
-
-                        default:
-                            break;
-                    }
-                    foreach (Object3D obj in SelectedObjects)
-                    {
-                        Bounds3D before = obj.AbsoluteBounds;
-                        obj.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
-                        obj.Position = new Point3D(obj.Position.X + positionChange.X,
-                        obj.Position.Y + positionChange.Y,
-                        obj.Position.Z + positionChange.Z);
-                        obj.Remesh();
-                        obj.Scale = new Scale3D(obj.AbsoluteBounds.Width, obj.AbsoluteBounds.Height, obj.AbsoluteBounds.Depth);
-                    }
-                    if (box.Scale.X * scaleChange.X > 0)
-                    {
-                        box.Scale.X *= scaleChange.X;
-                    }
-                    if (box.Scale.Y * scaleChange.Y > 0)
-                    {
-                        box.Scale.Y *= scaleChange.Y;
-                    }
-                    if (box.Scale.Z * scaleChange.Z > 0)
-                    {
-                        box.Scale.Z *= scaleChange.Z;
-                    }
-                    box.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
-                    box.Position = new Point3D(box.Position.X + positionChange.X,
-                    box.Position.Y + positionChange.Y,
-                    box.Position.Z + positionChange.Z);
-                    box.Remesh();
-                    box.CalcScale();
-                    MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
-                    MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
-                    MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
-                    MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
-                    MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
-                    MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
-
-                    // LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
-                    NotificationManager.Notify("DocDirty", null);
-                    NotificationManager.Notify("ScaleUpdated", null);
-                }
+                bounds += obj.AbsoluteBounds;
             }
+            midp = bounds.MidPoint();
+            size = bounds.Size();
         }
 
-        private bool ValidDimension(string text, out double dim)
+        private void Create3DLabelOffset(string name, double x, double y, double z)
         {
-            bool valid = false;
-            dim = 0;
-            if (!String.IsNullOrEmpty(text))
-            {
-                if (text.Contains("."))
-                {
-                    dim = Convert.ToDouble(text);
-                    if (dim > 0.0)
-                    {
-                        valid = true;
-                    }
-                }
-            }
-            return valid;
+            label3DOffsets[name] = new Point3D(x, y,z);
         }
 
-        [Obsolete]
         private void CreateAdornments(Point3D position, Point3D size, bool addSizeThumbs)
         {
-            box = new Object3D();
-
-            // create the main semi transparent part of of the adorner
-            Point3DCollection pnts = new Point3DCollection();
-            Int32Collection indices = new Int32Collection();
-            Vector3DCollection normals = new Vector3DCollection();
-            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
-            List<P3D> tmp = new List<P3D>();
-            PointUtils.PointCollectionToP3D(pnts, tmp);
-
-            box.RelativeObjectVertices = tmp;
-            box.TriangleIndices = indices;
-            box.Normals = normals;
-            box.Position = position;
-            box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
-
-            box.Color = Color.FromArgb(150, 64, 64, 64);
-            box.Remesh();
-            box.CalcScale();
+            CreateTransparentBox(position, size);
             Adornments.Add(GetMesh(box));
 
             if (addSizeThumbs)
             {
                 double thumbSize = 4;
                 CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
+                Create3DLabelOffset("RightThumb", tbMargin, 0,0);
+
                 CreateThumb(position, thumbSize, -box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "LeftThumb");
+                Create3DLabelOffset("LeftThumb", -tbMargin, 0,0);
+
                 CreateThumb(position, thumbSize, 0, box.AbsoluteBounds.Height / 2, 0, Colors.White, "TopThumb");
+                Create3DLabelOffset("TopThumb", 0,  tbMargin ,0);
+
                 CreateThumb(position, thumbSize, 0, -box.AbsoluteBounds.Height / 2, 0, Colors.White, "BottomThumb");
+                Create3DLabelOffset("BottomThumb", 0, -tbMargin,0);
+
                 CreateThumb(position, thumbSize, 0, 0, box.AbsoluteBounds.Depth / 2, Colors.White, "FrontThumb");
+                Create3DLabelOffset("FrontThumb", 0, 0,tbMargin);
+
                 CreateThumb(position, thumbSize, 0, 0, -box.AbsoluteBounds.Depth / 2, Colors.White, "BackThumb");
-                LabelThumbs(size);
+                Create3DLabelOffset("BackThumb", 0, 0,-tbMargin);
+
+                CreateTextLabels(size);
+                UpdateLabelVisibility();
+            }
+        }
+
+        private void CreateTextLabels(Point3D size, String name = "")
+        {
+            labelLocations.Clear();
+            thumbLabels.Clear();
+            Overlay.Children.Clear();
+            foreach (Object3D th in thumbs)
+            {
+                if (name == "" || th.Name == name)
+                {
+                    switch (th.Name)
+                    {
+                        case "TopThumb":
+                            {
+                                AddLabel("TopThumb", th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"), HorizontalAlignment.Center);
+                            }
+                            break;
+
+                        case "BottomThumb":
+                            {
+                                AddLabel("BottomThumb", th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"), HorizontalAlignment.Center);
+                            }
+                            break;
+
+                        case "LeftThumb":
+                            {
+                                FormattedText formattedText = new FormattedText(size.X.ToString("F3"), System.Globalization.CultureInfo.CurrentCulture,
+                                                                   FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
+                                FormattedText txt = formattedText;
+                               // label3DOffsets["LeftThumb"] = new Point(-100, -textBoxHeight / 2);
+                                AddLabel("LeftThumb", th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"), HorizontalAlignment.Right);
+                            }
+                            break;
+
+                        case "RightThumb":
+                            {
+                                AddLabel("RightThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"), HorizontalAlignment.Left);
+                            }
+                            break;
+
+                        case "FrontThumb":
+                            {
+                               
+                                    AddLabel("FrontThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"), HorizontalAlignment.Center);
+                                
+                            }
+                            break;
+
+                        case "BackThumb":
+                            {
+                                    AddLabel("BackThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"), HorizontalAlignment.Center);
+                            }
+                            break;
+                    }
+                }
+            }
+
+            if (labelLocations.Count > 0)
+            {
+                PositionLabels();
             }
         }
 
@@ -361,70 +523,117 @@ namespace Barnacle.Models.Adorners
             Adornments.Add(GetMesh(thumb));
         }
 
-        [Obsolete]
-        private void LabelThumbs(Point3D size, String name = "")
+        private void CreateTransparentBox(Point3D position, Point3D size)
         {
-            labelLocations.Clear();
-            thumbLabels.Clear();
-            Overlay.Children.Clear();
-            foreach (Object3D th in thumbs)
+            // create the main semi transparent part of of the adorner
+            box = new Object3D();
+
+            Point3DCollection pnts = new Point3DCollection();
+            Int32Collection indices = new Int32Collection();
+            Vector3DCollection normals = new Vector3DCollection();
+            PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
+            List<P3D> tmp = new List<P3D>();
+            PointUtils.PointCollectionToP3D(pnts, tmp);
+
+            box.RelativeObjectVertices = tmp;
+            box.TriangleIndices = indices;
+            box.Normals = normals;
+            box.Position = position;
+            box.ScaleMesh(size.X + 0.01, size.Y + 0.01, size.Z + 0.01);
+
+            box.Color = Color.FromArgb(150, 64, 64, 64);
+            box.Remesh();
+            box.CalcScale(false);
+        }
+
+        private void FocusChanged()
+        {
+            keyboardTimer.Stop();
+            if (scaleChange.X != 1 || scaleChange.Y != 1 || scaleChange.Z != 1)
             {
-                if (name == "" || th.Name == name)
+                UpdateScale();
+
+                refreshTimer?.Start();
+            }
+            scaleChange = new Point3D(1, 1, 1);
+        }
+
+        private void KeyboardTimer_Tick(object sender, EventArgs e)
+        {
+            keyboardTimer.Stop();
+            if (scaleChange.X != 1 || scaleChange.Y != 1 || scaleChange.Z != 1)
+            {
+                UpdateScale();
+
+                refreshTimer?.Start();
+            }
+            scaleChange = new Point3D(1, 1, 1);
+        }
+
+        private void L_GotFocus(object sender, RoutedEventArgs e)
+        {
+            FocusChanged();
+        }
+
+        private void L_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (sender is TextBox)
+            {
+                keyboardTimer.Stop();
+                TextBox tx = (sender as TextBox);
+                double dim = 0;
+                if (ValidDimension(tx.Text, out dim))
                 {
-                    switch (th.Name)
+                    string name = tx.Tag.ToString();
+                    switch (name)
                     {
-                        case "TopThumb":
-                            {
-                                AddLabel("topthumb", th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
-                            }
-                            break;
-
-                        case "BottomThumb":
-                            {
-                                AddLabel("bottomthumb", th.Position.X, th.Position.Y, th.Position.Z, size.Y.ToString("F3"));
-                            }
-                            break;
-
+                        case "RightThumb":
                         case "LeftThumb":
                             {
-                                FormattedText formattedText = new FormattedText(size.X.ToString(), System.Globalization.CultureInfo.CurrentCulture,
-                                                                   FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
-                                FormattedText txt = formattedText;
-
-                                AddLabel("leftthumb", th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
+                                if (SelectedObjects.Count > 1)
+                                {
+                                    scaleChange.X = dim / box.Scale.X;
+                                }
+                                else
+                                {
+                                    scaleChange.X = dim / SelectedObjects[0].Scale.X;
+                                }
                             }
                             break;
 
-                        case "RightThumb":
+                        case "TopThumb":
+                        case "BottomThumb":
                             {
-                                AddLabel("rightthumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"));
+                                if (SelectedObjects.Count > 1)
+                                {
+                                    scaleChange.Y = dim / box.Scale.Y;
+                                }
+                                else
+                                {
+                                    scaleChange.Y = dim / SelectedObjects[0].Scale.Y;
+                                }
                             }
                             break;
 
                         case "FrontThumb":
+                        case "BackThumb":
                             {
-                                if (Camera.Orientation != PolarCamera.Orientations.Back)
+                                if (SelectedObjects.Count > 1)
                                 {
-                                    AddLabel("frontthumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
+                                    scaleChange.Z = dim / box.Scale.Z;
+                                }
+                                else
+                                {
+                                    scaleChange.Z = dim / SelectedObjects[0].Scale.Z;
                                 }
                             }
                             break;
 
-                        case "BackThumb":
-                            {
-                                if (Camera.Orientation != PolarCamera.Orientations.Front)
-                                {
-                                    AddLabel("backthumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"));
-                                }
-                            }
+                        default:
                             break;
                     }
                 }
-            }
-
-            if (labelLocations.Count > 0)
-            {
-                PositionLabels();
+                keyboardTimer.Start();
             }
         }
 
@@ -474,16 +683,18 @@ namespace Barnacle.Models.Adorners
                     {
                         if (deltaX != 0)
                         {
-                            if (Camera.Orientation == PolarCamera.Orientations.Front)
+                            if (Camera.HorizontalOrientation == PolarCamera.Orientations.Front)
                             {
-                                scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
+                                //scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
+                                scaleChange.X = (1 + mmx);
                                 positionChange.X += ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
                             }
                             else
                             {
-                                if (Camera.Orientation == PolarCamera.Orientations.Back)
+                                if (Camera.HorizontalOrientation == PolarCamera.Orientations.Back)
                                 {
-                                    scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
+                                    //scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
+                                    scaleChange.X = (1 - mmx);
                                     positionChange.X += ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
                                 }
                             }
@@ -499,16 +710,18 @@ namespace Barnacle.Models.Adorners
                     {
                         if (deltaX != 0)
                         {
-                            if (Camera.Orientation == PolarCamera.Orientations.Front)
+                            if (Camera.HorizontalOrientation == PolarCamera.Orientations.Front)
                             {
-                                scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
+                                //scaleChange.X = ((box.Scale.X - (mmx)) / box.Scale.X);
+                                scaleChange.X = (1 - mmx);
                                 positionChange.X -= ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
                             }
                             else
                             {
-                                if (Camera.Orientation == PolarCamera.Orientations.Back)
+                                if (Camera.HorizontalOrientation == PolarCamera.Orientations.Back)
                                 {
-                                    scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
+                                    // scaleChange.X = ((box.Scale.X + (mmx)) / box.Scale.X);
+                                    scaleChange.X = (1 + mmx);
                                     positionChange.X -= ((box.AbsoluteBounds.Width * scaleChange.X) - box.AbsoluteBounds.Width) / 2.0;
                                 }
                             }
@@ -524,7 +737,8 @@ namespace Barnacle.Models.Adorners
                     {
                         if (deltaY != 0)
                         {
-                            scaleChange.Y = ((box.Scale.Y - (mmy)) / box.Scale.Y);
+                            //scaleChange.Y = ((box.Scale.Y - (mmy)) / box.Scale.Y);
+                            scaleChange.Y = (1 - mmy);
                             positionChange.Y += ((box.AbsoluteBounds.Height * scaleChange.Y) - box.AbsoluteBounds.Height) / 2.0;
                         }
                         if (scaleChange.Y <= 0)
@@ -538,7 +752,8 @@ namespace Barnacle.Models.Adorners
                     {
                         if (deltaY != 0)
                         {
-                            scaleChange.Y = ((box.Scale.Y + (mmy)) / box.Scale.Y);
+                            //scaleChange.Y = ((box.Scale.Y + (mmy)) / box.Scale.Y);
+                            scaleChange.Y = (1 + mmy);
                             positionChange.Y -= ((box.AbsoluteBounds.Height * scaleChange.Y) - box.AbsoluteBounds.Height) / 2.0;
                         }
                         if (scaleChange.Y <= 0)
@@ -552,16 +767,18 @@ namespace Barnacle.Models.Adorners
                     {
                         if (deltaX != 0)
                         {
-                            if (Camera.Orientation == PolarCamera.Orientations.Left)
+                            if (Camera.HorizontalOrientation == PolarCamera.Orientations.Left)
                             {
-                                scaleChange.Z = ((box.Scale.Z + (mmx)) / box.Scale.Z);
+                                //scaleChange.Z = ((box.Scale.Z + (mmx)) / box.Scale.Z);
+                                scaleChange.Z = (1 + mmx);
                                 positionChange.Z += ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                             }
                             else
                             {
-                                if (Camera.Orientation == PolarCamera.Orientations.Right)
+                                if (Camera.HorizontalOrientation == PolarCamera.Orientations.Right)
                                 {
-                                    scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
+                                    //scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
+                                    scaleChange.Z = (1 - mmx);
                                     positionChange.Z = ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                                 }
                             }
@@ -578,16 +795,18 @@ namespace Barnacle.Models.Adorners
                     {
                         if (deltaX != 0)
                         {
-                            if (Camera.Orientation == PolarCamera.Orientations.Left)
+                            if (Camera.HorizontalOrientation == PolarCamera.Orientations.Left)
                             {
-                                scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
+                                //scaleChange.Z = ((box.Scale.Z - (mmx)) / box.Scale.Z);
+                                scaleChange.Z = (1 - mmx);
                                 positionChange.Z -= ((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                             }
                             else
                             {
-                                if (Camera.Orientation == PolarCamera.Orientations.Right)
+                                if (Camera.HorizontalOrientation == PolarCamera.Orientations.Right)
                                 {
-                                    scaleChange.Z = ((box.Scale.Z + (mmx)) / box.Scale.Z);
+                                    //scaleChange.Z = ((box.Scale.Z + (mmx)) / box.Scale.Z);
+                                    scaleChange.Z = (1 + mmx);
                                     positionChange.Z = -((box.AbsoluteBounds.Depth * scaleChange.Z) - box.AbsoluteBounds.Depth) / 2.0;
                                 }
                             }
@@ -627,7 +846,7 @@ namespace Barnacle.Models.Adorners
             box.Position.Y + positionChange.Y,
             box.Position.Z + positionChange.Z);
             box.Remesh();
-            box.CalcScale();
+            box.CalcScale(false);
             MoveThumb(box.Position, box.AbsoluteBounds.Width / 2, 0, 0, "RightThumb");
             MoveThumb(box.Position, -box.AbsoluteBounds.Width / 2, 0, 0, "LeftThumb");
             MoveThumb(box.Position, 0, box.AbsoluteBounds.Height / 2, 0, "TopThumb");
@@ -635,7 +854,7 @@ namespace Barnacle.Models.Adorners
             MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
             MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
 
-            LabelThumbs(box.AbsoluteBounds.Size(), selectedThumb.Name);
+            CreateTextLabels(box.AbsoluteBounds.Size(), selectedThumb.Name);
             NotificationManager.Notify("DocDirty", null);
             NotificationManager.Notify("ScaleUpdated", null);
         }
@@ -643,7 +862,7 @@ namespace Barnacle.Models.Adorners
         private void MoveBox(double deltaX, double deltaY, double deltaZ)
         {
             Point3D positionChange = new Point3D(0, 0, 0);
-            PolarCamera.Orientations ori = Camera.Orientation;
+            PolarCamera.Orientations ori = Camera.HorizontalOrientation;
             switch (ori)
             {
                 case PolarCamera.Orientations.Front:
@@ -693,7 +912,7 @@ namespace Barnacle.Models.Adorners
                     MoveThumb(box.Position, 0, -box.AbsoluteBounds.Height / 2, 0, "BottomThumb");
                     MoveThumb(box.Position, 0, 0, box.AbsoluteBounds.Depth / 2, "FrontThumb");
                     MoveThumb(box.Position, 0, 0, -box.AbsoluteBounds.Depth / 2, "BackThumb");
-                    LabelThumbs(box.AbsoluteBounds.Size());
+                    CreateTextLabels(box.AbsoluteBounds.Size());
                     NotificationManager.Notify("DocDirty", null);
                 }
             }
@@ -716,20 +935,95 @@ namespace Barnacle.Models.Adorners
         {
             Object3D ob = param as Object3D;
             GenerateAdornments();
+            NotificationManager.Notify("RefreshAdorners", null);
+        }
+
+        private void PositionLabel(string v)
+        {
+            if (labelLocations.ContainsKey(v))
+            {
+                Point3D loc = Location(labelLocations[v], label3DOffsets[v]);
+                Point point = CameraUtils.Convert3DPoint(loc, ViewPort);
+
+                Canvas.SetLeft(thumbLabels[v], point.X );
+                Canvas.SetTop(thumbLabels[v], point.Y );
+                if (!Overlay.Children.Contains(thumbLabels[v]))
+                {
+                    Overlay.Children.Add(thumbLabels[v]);
+                }
+            }
+        }
+
+        private Point3D Location(Point3D p1,Point3D p2)
+        {
+            return new Point3D(p1.X + p2.X,
+                                p1.Y + p2.Y,
+                                p1.Z + p2.Z);
         }
 
         private void PositionLabels()
         {
             if (ViewPort != null)
             {
-                List<Point> points = CameraUtils.Convert3DPoints(labelLocations, ViewPort);
-                for (int i = 0; i < labelLocations.Count; i++)
+                PositionLabel("TopThumb");
+                PositionLabel("BottomThumb");
+                PositionLabel("RightThumb");
+                PositionLabel("LeftThumb");
+                PositionLabel("FrontThumb");
+                PositionLabel("BackThumb");
+            }
+        }
+
+        private void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            refreshTimer?.Stop();
+            GenerateAdornments();
+            NotificationManager.Notify("DocDirty", null);
+            NotificationManager.Notify("ScaleUpdated", null);
+        }
+
+        private void UpdateScale()
+        {
+            foreach (Object3D obj in SelectedObjects)
+            {
+                Bounds3D before = obj.AbsoluteBounds;
+                obj.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
+                obj.Remesh();
+                obj.CalcScale(false);
+            }
+            Point3D midp;
+            Point3D size;
+            CaclBoxSize(out midp, out size);
+            if (box != null)
+            {
+                box.ScaleMesh(scaleChange.X, scaleChange.Y, scaleChange.Z);
+                box.Remesh();
+                box.CalcScale(false);
+            }
+        }
+        private bool ValidDimension(string text, out double dim)
+        {
+            bool valid = false;
+            dim = 0;
+            if (!String.IsNullOrEmpty(text))
+            {
+                if (text.Contains("."))
                 {
-                    Canvas.SetLeft(thumbLabels[i], points[i].X);
-                    Canvas.SetTop(thumbLabels[i], points[i].Y);
-                    Overlay.Children.Add(thumbLabels[i]);
+                    try
+                    {
+                        dim = Convert.ToDouble(text);
+                        if (dim > 0.0)
+                        {
+                            valid = true;
+                        }
+                    }
+                    catch
+                    {
+
+                    }
                 }
             }
+            return valid;
         }
     }
 }

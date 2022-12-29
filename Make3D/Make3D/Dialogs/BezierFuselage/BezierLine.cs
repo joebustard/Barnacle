@@ -76,5 +76,26 @@ namespace Barnacle.Dialogs
             P2 = new Point(x2, y2);
             P3 = new Point(x3, y3);
         }
+        public override string ToString()
+        {
+            string res = "";
+            res = P0.X.ToString() + "," + P0.Y.ToString() + ",";
+            res += P1.X.ToString() + "," + P1.Y.ToString() + ",";
+            res += P2.X.ToString() + "," + P2.Y.ToString() + ",";
+            res += P3.X.ToString() + "," + P3.Y.ToString();
+            return res;
+        }
+
+        public void FromString( string s)
+        {
+            string []res = s.Split(',');
+            if (res.GetLength(0) == 8)
+            {
+                P0 = new Point(Convert.ToDouble(res[0]), Convert.ToDouble(res[1]));
+                P1 = new Point(Convert.ToDouble(res[2]), Convert.ToDouble(res[3]));
+                P2 = new Point(Convert.ToDouble(res[4]), Convert.ToDouble(res[5]));
+                P3 = new Point(Convert.ToDouble(res[6]), Convert.ToDouble(res[7]));
+            }
+        }
     }
 }

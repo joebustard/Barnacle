@@ -8,6 +8,7 @@ namespace Barnacle.Models
 {
     public class PolarCamera
     {
+        private const double piBy2 = Math.PI / 2.0;
         private Point3D cameraPos;
 
         private double distance;
@@ -16,23 +17,16 @@ namespace Barnacle.Models
 
         private double homeDistance;
 
-        private Orientations orientation;
-
+        private Orientations horizontalOrientation;
         private PolarCoordinate polarBackHome;
-
         private PolarCoordinate polarBottomHome;
-
         private PolarCoordinate polarFrontHome;
-
         private PolarCoordinate polarLeftHome;
-
         private Point3D polarOrigin;
-
         private PolarCoordinate polarPos;
-
         private PolarCoordinate polarRightHome;
-
         private PolarCoordinate polarTopHome;
+        private Orientations verticalOrientation;
 
         public PolarCamera()
         {
@@ -57,7 +51,8 @@ namespace Barnacle.Models
             Left,
             Right,
             Top,
-            Bottom
+            Bottom,
+            Unknown
         }
 
         public Point3D CameraPos
@@ -91,12 +86,21 @@ namespace Barnacle.Models
                 }
             }
         }
-
-        public Orientations Orientation
+        private Orientations oldHorizontalOrientation=Orientations.Unknown;
+        public Orientations HorizontalOrientation
         {
             get
             {
-                return orientation;
+                return horizontalOrientation;
+            }
+        }
+
+        private Orientations oldVerticalOrientation = Orientations.Unknown;
+        public Orientations VerticalOrientation
+        {
+            get
+            {
+                return verticalOrientation;
             }
         }
 
@@ -172,13 +176,6 @@ namespace Barnacle.Models
             ConvertPolarTo3D();
         }
 
-        internal void RotateDegrees(double dt)
-        {
-            polarPos.Theta += (dt * Math.PI) / 180.0;
-
-            ConvertPolarTo3D();
-        }
-
         internal void Move(double dx, double dy)
         {
             double dt = 0;
@@ -207,7 +204,15 @@ namespace Barnacle.Models
                 polarPos.Phi += dp;
 
                 ConvertPolarTo3D();
+               
             }
+        }
+
+        internal void RotateDegrees(double dt)
+        {
+            polarPos.Theta += (dt * Math.PI) / 180.0;
+
+            ConvertPolarTo3D();
         }
 
         internal void Zoom(double v)
@@ -219,6 +224,7 @@ namespace Barnacle.Models
             }
             distance = polarPos.Rho;
             ConvertPolarTo3D();
+            NotificationManager.Notify("CameraMoved", null);
         }
 
         private void ConvertPolarTo3D()
@@ -227,7 +233,8 @@ namespace Barnacle.Models
             double z = polarPos.Rho * Math.Sin(polarPos.Phi) * Math.Sin(polarPos.Theta);
             double y = polarPos.Rho * Math.Cos(polarPos.Phi);
             cameraPos = new Point3D(x + polarOrigin.X, y + polarOrigin.Y, z + polarOrigin.Z);
-            distance = polarPos.Rho;
+            distance = polarPos.Rho; 
+            NotificationManager.Notify("CameraMoved", null);
             SetOrientation();
         }
 
@@ -244,9 +251,7 @@ namespace Barnacle.Models
             polarFrontHome = new PolarCoordinate(1.53, 1.243, homeDistance);
             polarBackHome = new PolarCoordinate(4.568, 1.243, homeDistance);
             polarRightHome = new PolarCoordinate(0.0, 1.243, homeDistance);
-
             polarLeftHome = new PolarCoordinate(3.130, 1.243, homeDistance);
-
             polarTopHome = new PolarCoordinate(1.571, 0.01, homeDistance);
             polarBottomHome = new PolarCoordinate(4.728, 3.067, homeDistance);
 
@@ -254,43 +259,57 @@ namespace Barnacle.Models
             polarPos = new PolarCoordinate(0, 0, 0);
             Copy(polarFrontHome);
             ConvertPolarTo3D();
-            orientation = Orientations.Front;
+            horizontalOrientation = Orientations.Front;
+            verticalOrientation = Orientations.Top;
         }
 
         // calculates the direction that move drags on the GUI should move objects
         // based roughly on where the camera is.
         private void SetOrientation()
         {
+            horizontalOrientation = Orientations.Unknown;
             if ((polarPos.Theta >= 0.76) && (polarPos.Theta < 2.35))
             {
                 // Front
-
-                orientation = Orientations.Front;
+                horizontalOrientation = Orientations.Front;
             }
             if ((polarPos.Theta >= 2.35) && (polarPos.Theta < 4))
             {
                 // Left
-
-                orientation = Orientations.Left;
+                horizontalOrientation = Orientations.Left;
             }
 
             if ((polarPos.Theta >= 4) && (polarPos.Theta < 5.54))
             {
                 // Back
-
-                orientation = Orientations.Back;
+                horizontalOrientation = Orientations.Back;
             }
             if ((polarPos.Theta >= 5.54) && (polarPos.Theta <= 6.2831856))
             {
                 // Right
-                orientation = Orientations.Right;
+                horizontalOrientation = Orientations.Right;
             }
             if ((polarPos.Theta >= 0) && (polarPos.Theta < 0.76))
             {
                 // Right
-
-                orientation = Orientations.Right;
+                horizontalOrientation = Orientations.Right;
             }
+
+            verticalOrientation = Orientations.Unknown;
+            if ((polarPos.Phi >= 0) && (polarPos.Phi <= piBy2))
+            {
+                verticalOrientation = Orientations.Top;
+            }
+            else
+            {
+                verticalOrientation = Orientations.Bottom;
+            }
+            if ( ( oldHorizontalOrientation != horizontalOrientation) || (oldVerticalOrientation != verticalOrientation))
+            {
+                NotificationManager.Notify("CameraOrientation", null);
+            }
+            oldHorizontalOrientation = horizontalOrientation;
+            oldVerticalOrientation = verticalOrientation;
         }
     }
 }
