@@ -21,6 +21,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0B679B070CFE47DBB8111E6130EEE76F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_0F28C8236978406CBD2B73C6B8626638"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -33,8 +39,26 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_137C49805BA38099805481B2EB16E8D1"
-        "OwnerKey" = "8:_B13474E6BE234098BD9E8856654EDEBF"
+        "MsmKey" = "8:_13BECADFF11E4E018136435772F35BB4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_14FE7ECFB4204B57AE31FE3D72398423"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_186E8C30875C7F833E8FDBE97FFED7E2"
+        "OwnerKey" = "8:_AF6BB32167322A24471665C8877C6412"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_186E8C30875C7F833E8FDBE97FFED7E2"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -69,6 +93,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_32FB4827867B47C2A71D74F3BF1DFAE4"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_331B67E8BEC1C9CB6E157230630C9D55"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_34440A071E234A2789D955871BDAEC16"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_3BAD130B09344F949489D0821585387D"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -76,6 +118,18 @@
         "Entry"
         {
         "MsmKey" = "8:_3F865547F63A4347A2AE4A908EFB6045"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_40659906D7C946D2A1EE2D104736CCE0"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4711B3FAB6FC465E949E4D60D27E5F87"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -105,12 +159,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5819A8FCBF27453E97EF92EE1577EDC3"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_5C502028E1BA4D44A44914C3B5431C16"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -131,6 +179,12 @@
         {
         "MsmKey" = "8:_6D6BAE1EFB6139D686B4824138DB0EAF"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7151DBB7E0A84E5383A2357C5BAB6370"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -183,6 +237,24 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_898DB4851EC62C44E4213B09DEF9D00B"
+        "OwnerKey" = "8:_B13474E6BE234098BD9E8856654EDEBF"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_898DB4851EC62C44E4213B09DEF9D00B"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8D3A4C833C5B4653A54C4DEC1317D75B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8FB41E4C20419062413E8B4B74F3B593"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
@@ -195,7 +267,19 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_92BD44637AC048B48F05C851D290A6A0"
+        "MsmKey" = "8:_91A6FAC4E476491EA32D23E5CDCDDD33"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_91E1C70A27E94EAF8535E4D9A5D52353"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_933BA8788D8F41D284FEEF0E8BF0E627"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -249,6 +333,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_9D2B95738FBD4F27BC74D0560BC3E39F"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_AB4657202E62B421F7881BDF99B85EBC"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
@@ -257,6 +347,12 @@
         {
         "MsmKey" = "8:_AB4657202E62B421F7881BDF99B85EBC"
         "OwnerKey" = "8:_122801A9E4F8A9529A846AEE9FB9E45B"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_AE68C61ABE704987BF0DC3F12BAE282F"
+        "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -346,7 +442,7 @@
         "Entry"
         {
         "MsmKey" = "8:_BE053BB5FA8D60F77A3ACE82848892AE"
-        "OwnerKey" = "8:_137C49805BA38099805481B2EB16E8D1"
+        "OwnerKey" = "8:_898DB4851EC62C44E4213B09DEF9D00B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -364,6 +460,12 @@
         "Entry"
         {
         "MsmKey" = "8:_C1A03C659BD745CCAAF9CC73CDECAC66"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_C562464A1FD34540A27093757F10D2BC"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -417,6 +519,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_E20844379C564DA289D23CF80E97142A"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_E63F7CBADC67F26C75F625E03DB05C44"
         "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
@@ -425,6 +533,24 @@
         {
         "MsmKey" = "8:_E6E6E31C0B4C477294E7013E7EB2F01B"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_E8DA74BC19BE4E3C86F9508BBEAA8D39"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_EAEE95EC54224C92BB3EFCDD6116A98B"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F14D3E68A17FAC9C932F7DF97AB469DE"
+        "OwnerKey" = "8:_F724F1B883214A6CB6B6165DF2BECF27"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -526,6 +652,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_186E8C30875C7F833E8FDBE97FFED7E2"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_98AB9821852A9A40248E71F57BD6FB63"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -533,6 +665,12 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_B536E04CFB910F2DE4E56D9DCBBBEE76"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_F14D3E68A17FAC9C932F7DF97AB469DE"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -580,6 +718,12 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_331B67E8BEC1C9CB6E157230630C9D55"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_8FB41E4C20419062413E8B4B74F3B593"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -598,19 +742,19 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_137C49805BA38099805481B2EB16E8D1"
+        "OwnerKey" = "8:_649E65B0613BAFB5E0AE8875D77842A9"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_898DB4851EC62C44E4213B09DEF9D00B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_BE053BB5FA8D60F77A3ACE82848892AE"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_649E65B0613BAFB5E0AE8875D77842A9"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -728,6 +872,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0B679B070CFE47DBB8111E6130EEE76F"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\DeckPlate1.png"
+            "TargetName" = "8:DeckPlate1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0F28C8236978406CBD2B73C6B8626638"
             {
             "SourcePath" = "8:..\\Make3D\\Dialogs\\TankTrack\\Links\\Simple.txt"
@@ -779,20 +943,60 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_137C49805BA38099805481B2EB16E8D1"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_13BECADFF11E4E018136435772F35BB4"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Circle.png"
+            "TargetName" = "8:Circle.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_14FE7ECFB4204B57AE31FE3D72398423"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Hex1.png"
+            "TargetName" = "8:Hex1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_186E8C30875C7F833E8FDBE97FFED7E2"
             {
             "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:TRUE"
-            "AssemblyAsmDisplayName" = "8:System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:PolygonLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_137C49805BA38099805481B2EB16E8D1"
+                    "_186E8C30875C7F833E8FDBE97FFED7E2"
                     {
-                    "Name" = "8:System.IO.Compression.FileSystem.dll"
+                    "Name" = "8:PolygonLibrary.dll"
                     "Attributes" = "3:512"
                     }
                 }
-            "SourcePath" = "8:System.IO.Compression.FileSystem.dll"
+            "SourcePath" = "8:PolygonLibrary.dll"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
@@ -806,7 +1010,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -932,6 +1136,77 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_32FB4827867B47C2A71D74F3BF1DFAE4"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Rough.png"
+            "TargetName" = "8:Rough.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_331B67E8BEC1C9CB6E157230630C9D55"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Compression, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                "ScatterAssemblies"
+                {
+                    "_331B67E8BEC1C9CB6E157230630C9D55"
+                    {
+                    "Name" = "8:System.IO.Compression.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.IO.Compression.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_34440A071E234A2789D955871BDAEC16"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Skull.png"
+            "TargetName" = "8:Skull.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_3BAD130B09344F949489D0821585387D"
             {
             "SourcePath" = "8:..\\Make3D\\templates\\blankmodel1_35.txt"
@@ -958,6 +1233,46 @@
             "TargetName" = "8:AircraftBuildInstructions.docx"
             "Tag" = "8:"
             "Folder" = "8:_23862707349949B195647F45758B8C14"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_40659906D7C946D2A1EE2D104736CCE0"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Stone2.png"
+            "TargetName" = "8:Stone2.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4711B3FAB6FC465E949E4D60D27E5F87"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\StoneWall1.png"
+            "TargetName" = "8:StoneWall1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1063,26 +1378,6 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5819A8FCBF27453E97EF92EE1577EDC3"
-            {
-            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\ClearPrint3D.cmd"
-            "TargetName" = "8:ClearPrint3D.cmd"
-            "Tag" = "8:"
-            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5C502028E1BA4D44A44914C3B5431C16"
             {
             "SourcePath" = "8:..\\Make3D\\templates\\LimpetTemplate.txt"
@@ -1183,6 +1478,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7151DBB7E0A84E5383A2357C5BAB6370"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\StoneWall2.png"
+            "TargetName" = "8:StoneWall2.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_760605C36E5E42FEB48EA667076245B2"
@@ -1329,6 +1644,57 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_898DB4851EC62C44E4213B09DEF9D00B"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:System.IO.Compression.FileSystem, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+                "ScatterAssemblies"
+                {
+                    "_898DB4851EC62C44E4213B09DEF9D00B"
+                    {
+                    "Name" = "8:System.IO.Compression.FileSystem.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:System.IO.Compression.FileSystem.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:TRUE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D3A4C833C5B4653A54C4DEC1317D75B"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Checker1.png"
+            "TargetName" = "8:Checker1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_8FB41E4C20419062413E8B4B74F3B593"
             {
             "AssemblyRegister" = "3:1"
@@ -1360,12 +1726,52 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_92BD44637AC048B48F05C851D290A6A0"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_91A6FAC4E476491EA32D23E5CDCDDD33"
             {
-            "SourcePath" = "8:..\\Make3D\\templates\\Commands\\ExtractThingiverseFiles.cmd"
-            "TargetName" = "8:ExtractThingiverseFiles.cmd"
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Spot1.png"
+            "TargetName" = "8:Spot1.png"
             "Tag" = "8:"
-            "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_91E1C70A27E94EAF8535E4D9A5D52353"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Knot.png"
+            "TargetName" = "8:Knot.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_933BA8788D8F41D284FEEF0E8BF0E627"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\stone1.jpg"
+            "TargetName" = "8:stone1.jpg"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1513,6 +1919,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9D2B95738FBD4F27BC74D0560BC3E39F"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Ring1.png"
+            "TargetName" = "8:Ring1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AB4657202E62B421F7881BDF99B85EBC"
             {
             "AssemblyRegister" = "3:1"
@@ -1542,6 +1968,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AE68C61ABE704987BF0DC3F12BAE282F"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Squirkle2.png"
+            "TargetName" = "8:Squirkle2.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_AF6BB32167322A24471665C8877C6412"
@@ -1806,7 +2252,7 @@
             "SharedLegacy" = "11:FALSE"
             "PackageAs" = "3:1"
             "Register" = "3:1"
-            "Exclude" = "11:TRUE"
+            "Exclude" = "11:FALSE"
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
@@ -1836,6 +2282,26 @@
             "TargetName" = "8:ZipProject.cmd"
             "Tag" = "8:"
             "Folder" = "8:_C1B2B5C2E98744E9A9FF47FAF87186C3"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_C562464A1FD34540A27093757F10D2BC"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Gear1.png"
+            "TargetName" = "8:Gear1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2005,6 +2471,26 @@
             "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E20844379C564DA289D23CF80E97142A"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Squirkle1.png"
+            "TargetName" = "8:Squirkle1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_E63F7CBADC67F26C75F625E03DB05C44"
             {
             "AssemblyRegister" = "3:1"
@@ -2054,6 +2540,77 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_E8DA74BC19BE4E3C86F9508BBEAA8D39"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Flower.png"
+            "TargetName" = "8:Flower.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EAEE95EC54224C92BB3EFCDD6116A98B"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\StoneFloor1.png"
+            "TargetName" = "8:StoneFloor1.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F14D3E68A17FAC9C932F7DF97AB469DE"
+            {
+            "AssemblyRegister" = "3:1"
+            "AssemblyIsInGAC" = "11:FALSE"
+            "AssemblyAsmDisplayName" = "8:ImageUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
+                "ScatterAssemblies"
+                {
+                    "_F14D3E68A17FAC9C932F7DF97AB469DE"
+                    {
+                    "Name" = "8:ImageUtils.dll"
+                    "Attributes" = "3:512"
+                    }
+                }
+            "SourcePath" = "8:ImageUtils.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_C83FA6E0A9754106A3AC3CBDA9D99675"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F284D7C44BA746A9BFABD19C9107BB23"
@@ -2216,6 +2773,17 @@
                             "Condition" = "8:"
                             "Transitive" = "11:FALSE"
                             "Property" = "8:_022203B1F8084C7CB49D9964734F3E11"
+                                "Folders"
+                                {
+                                }
+                            }
+                            "{9EF0B969-E518-4E46-987F-47570745A589}:_2BC29BA5111B4163928FC0E98D6583E1"
+                            {
+                            "Name" = "8:Textures"
+                            "AlwaysCreate" = "11:FALSE"
+                            "Condition" = "8:"
+                            "Transitive" = "11:FALSE"
+                            "Property" = "8:_388C6385D0F44488ADA374968E5FB439"
                                 "Folders"
                                 {
                                 }
