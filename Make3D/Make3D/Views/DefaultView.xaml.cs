@@ -84,15 +84,21 @@ namespace Barnacle.Views
 
         private static void OpenFileUsingOS(string p)
         {
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo()
+            try
             {
-                FileName = p,
-                UseShellExecute = true,
-                Verb = "open"
-            };
-            System.Diagnostics.Process.Start(startInfo);
+                System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo()
+                {
+                    FileName = p,
+                    UseShellExecute = true,
+                    Verb = "open"
+                };
+                System.Diagnostics.Process.Start(startInfo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
-
         private void ChangeSolutionPanelVisibility(object param)
         {
             bool vis = (bool)param;
@@ -159,6 +165,10 @@ namespace Barnacle.Views
         private void InsertFile(object sender)
         {
             OpenFileDialog dlg = new OpenFileDialog();
+            if (Directory.Exists(BaseViewModel.Project.BaseFolder))
+            {
+                dlg.InitialDirectory = BaseViewModel.Project.BaseFolder;
+            }
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
@@ -243,6 +253,10 @@ namespace Barnacle.Views
         {
             CheckSaveFirst(sender);
             OpenFileDialog dlg = new OpenFileDialog();
+            if (Directory.Exists(BaseViewModel.Project.BaseFolder))
+            {
+                dlg.InitialDirectory = BaseViewModel.Project.BaseFolder;
+            }
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
@@ -288,8 +302,13 @@ namespace Barnacle.Views
         }
 
         private void ReferenceModel(object param)
-        {
+        {            
+           
             OpenFileDialog dlg = new OpenFileDialog();
+            if (Directory.Exists(BaseViewModel.Project.BaseFolder))
+            {
+                dlg.InitialDirectory = BaseViewModel.Project.BaseFolder;
+            }
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {
@@ -355,6 +374,10 @@ namespace Barnacle.Views
         private void SaveAsFile(object sender)
         {
             SaveFileDialog dlg = new SaveFileDialog();
+            if (Directory.Exists(BaseViewModel.Project.BaseFolder))
+            {
+                dlg.InitialDirectory = BaseViewModel.Project.BaseFolder;
+            }
             dlg.Filter = BaseViewModel.Document.FileFilter;
             if (dlg.ShowDialog() == true)
             {

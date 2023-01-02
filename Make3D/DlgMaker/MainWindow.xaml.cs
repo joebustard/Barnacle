@@ -13,7 +13,7 @@ namespace DlgMaker
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private static string ctrString = @"                <Label VerticalAlignment=""Center"" Width=""100""><pName></Label>
-                 <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip""/>
+                 <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
         private static string ldrb = @"
@@ -81,11 +81,11 @@ public <pType> <PName>
         }
     }
 }
-public String <pName>ToolTip
+public String <PName>ToolTip
 {
     get
     {
-return $""<pName> must be <= {max<pName>}"";
+return $""<PName> must be <= {max<pName>}"";
     }
 }
 
@@ -113,11 +113,11 @@ public <pType> <PName>
         }
     }
 }
-public String <pName>ToolTip
+public String <PName>ToolTip
 {
     get
     {
-        return $""<pName> must be >= {min<pName>}"";
+        return $""<PName> must be >= {min<pName>}"";
     }
 }
 ";
@@ -145,11 +145,11 @@ public <pType> <PName>
         }
     }
 }
-public String <pName>ToolTip
+public String <PName>ToolTip
 {
     get
     {
-        return $""<pName> must be in the range {min<pName>} to {max<pName>}"";
+        return $""<PName> must be in the range {min<pName>} to {max<pName>}"";
     }
 }
 

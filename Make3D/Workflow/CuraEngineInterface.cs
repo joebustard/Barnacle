@@ -17,7 +17,7 @@ set CURAPATH=$CPATH
 set CURA_ENGINE_SEARCH_PATH=%CURAPATH%\resources;%CURAPATH%\resources\definitions;%CURAPATH%\resources\extruders
 cd ""%CURAPATH%""
 set path = ""%CURAPATH%"";%CURA_ENGINE_SEARCH_PATH%;%Path%
-curaengine.exe slice ^
+curaengine.exe slice -v ^
 $Printer
 $Extruder
 $SettingOverrides
@@ -119,18 +119,12 @@ exit 0
             System.IO.File.WriteAllText(File, txt);
         }
 
-        public static async Task<bool> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
+        public static async Task<SliceResult> Slice(string stlPath, string gcodePath, string logPath, string sdCardName, string slicerPath, string printer, string extruder, string userProfile, String startG, string endG)
         {
-            bool ok = false;
+            SliceResult res = new SliceResult();
+            res.Result = false;
             try
             {
-                string sdcard = "";
-                // look fora named sd card.
-                // if we find one  then we can copy the gocde there.
-                //  if (sdCardName != "")
-                //   {
-                //       sdcard = FindSDCard(sdCardName);
-                //   }
 
                 // we need to construct a cmd file to run the slice
                 // Work  out where it should be.
@@ -145,8 +139,6 @@ exit 0
 
                 string tmpFile = Path.GetTempFileName();
                 tmpFile = Path.ChangeExtension(tmpFile, "gcode");
-
-                //tmpFile = Path.Combine(tmpFile, "tmp.gcode");
                 if (File.Exists(tmpFile))
                 {
                     File.Delete(tmpFile);
@@ -172,7 +164,10 @@ exit 0
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
 
                 string n = System.IO.Path.GetFileNameWithoutExtension(stlPath);
-
+                if (File.Exists(logPath))
+                {
+                    File.Delete(logPath);
+                }
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
                                   slicerPath + @"\resources\definitions\" + printer,
@@ -184,25 +179,46 @@ exit 0
                                  tmpFile,
                                  logPath);
 
-                ok = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
+                res.Result = await DoSlice(gcodePath, tmpCmdFile, tmpFile);
 
                 if (File.Exists(tmpCmdFile))
                 {
-                    //      File.Delete(tmpCmdFile);
+                   File.Delete(tmpCmdFile);
                 }
 
                 if (File.Exists(tmpFile))
                 {
                     File.Delete(tmpFile);
                 }
-                // debugging, just save the profile so we can have a peek.
-                // defpro.Save("C:\\tmp\\sorted.txt");
+                if ( File.Exists(logPath))
+                {
+                    string[] logLines = File.ReadAllLines(logPath);
+                    int i = logLines.GetLength(0);
+                  
+                    if ( logLines[i-1].Trim().ToLower().StartsWith("filament"))
+                    {
+                        string[] words = logLines[i - 1].Split(':');
+                        words[1] = words[1].Trim();
+                        res.Filament = Convert.ToInt32(words[1]);
+                    }
+                    if (logLines[i - 3].Trim().ToLower().StartsWith("print time (s)"))
+                    {
+                        string[] words = logLines[i - 3].Split(':');
+                        words[1] = words[1].Trim();
+                        res.TotalSeconds = Convert.ToInt32(words[1]);
+
+                        TimeSpan ts = new TimeSpan(0, 0, res.TotalSeconds);
+                        res.Hours = ts.Hours;
+                        res.Minutes = ts.Minutes;
+                        res.Seconds = ts.Seconds;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            return ok;
+            return res;
         }
 
         private static Task<bool> DoSlice(string gcodePath, string tmpCmdFile, string tmpFile)

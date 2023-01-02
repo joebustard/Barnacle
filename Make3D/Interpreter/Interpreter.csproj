@@ -66,6 +66,7 @@
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
+    <Compile Include="SolidFunctions\MakePillNode.cs" />
     <Compile Include="SolidFunctions\MakeSpringNode.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />
     <Compile Include="Operators\StackComparator.cs" />

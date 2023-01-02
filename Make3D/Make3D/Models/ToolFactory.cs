@@ -58,6 +58,10 @@ namespace Barnacle.Models
                     res = new PGramDlg();
                     break;
 
+                case "Pill":
+                    res = new PillDlg();
+                    break;
+
                 case "Platelet":
                     res = new Platelet();
                     break;

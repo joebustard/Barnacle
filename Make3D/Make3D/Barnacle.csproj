@@ -119,6 +119,7 @@
     <Compile Include="Dialogs\MultiImport.xaml.cs">
       <DependentUpon>MultiImport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
@@ -448,6 +449,10 @@
     <Page Include="Dialogs\MultiImport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\Pill\PillDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -1072,6 +1077,7 @@
     <Resource Include="Data\Textures\Knot.png" />
     <Resource Include="Data\Textures\Skull.png" />
     <Resource Include="Data\Textures\StoneWall2.png" />
+    <Resource Include="Images\Buttons\OrthoPath.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

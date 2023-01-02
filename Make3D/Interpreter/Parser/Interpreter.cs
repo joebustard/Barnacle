@@ -84,6 +84,7 @@ namespace ScriptLanguage
                 "makepath",
                 "makeparallelogram",
                 "makeparabolicdish",
+                "makepill",
                 "makeplatelet",
                 "makeplankwall",
                 "makepulley",
@@ -120,6 +121,46 @@ namespace ScriptLanguage
                 "width",
                 "val"
             };
+        }
+        private ExpressionNode ParseMakePillFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePill";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 4;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePillNode mn = new MakePillNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
         }
 
         public bool Load(Script script, string FilePath)
@@ -2544,6 +2585,11 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makepill":
+                            {
+                                exp = ParseMakePillFunction(parentName);
+                            }
+                            break;
                         case "makeplankwall":
                             {
                                 exp = ParseMakePlankWallFunction(parentName);

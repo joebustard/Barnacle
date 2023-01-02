@@ -279,7 +279,7 @@
                                              VerticalAlignment="Top"
                                              x:Name="ImportMultiSTL" />
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton Label="STL Export"
+                    <Custom:RibbonMenuButton Label="Export"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/export.png"
                                              x:Name="Export">
                         <Custom:RibbonButton Command="{Binding ExportCommand}"
@@ -506,7 +506,7 @@
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
                                              CommandParameter="Optimum"
                                              HorizontalAlignment="Stretch"
-                                             Label="Optimum"
+                                             Label="Spiral"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Distribute all items to minimise printing footprint"
                                              VerticalAlignment="Top"

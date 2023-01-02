@@ -636,6 +636,10 @@ namespace Barnacle.UserControls
         {
             flexiPath.FromString(s);
             PathText = flexiPath.ToPath(absolutePaths);
+            if ( s != "")
+            {
+                selectionMode = SelectionModeType.SelectSegmentAtPoint;
+            }
         }
 
         private PointGrid pointGrid;
@@ -786,11 +790,12 @@ namespace Barnacle.UserControls
                 polyPoints[selectedPoint].Y = position.Y;
 
                 flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
-                PathText = flexiPath.ToPath(absolutePaths);
+                
                 updateRequired = true;
                 selectedPoint = -1;
                 NotifyPropertyChanged("Points");
             }
+            PathText = flexiPath.ToPath(absolutePaths);
             moving = false;
             return updateRequired;
         }

@@ -26,7 +26,7 @@
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
-      <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
+      <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
     </Folder>
   </ProjectDefinition>
 
@@ -225,7 +225,7 @@
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
-      <File Name="BillOfMaterials.docx" Source="templates/bom.docx" />
+      <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
     </Folder>
   </ProjectDefinition>
 </Defs>

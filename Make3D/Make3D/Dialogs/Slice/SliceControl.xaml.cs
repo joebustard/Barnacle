@@ -227,13 +227,17 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        private void AppendResults(string s)
+        private void AppendResults(string s,bool crlf=true)
         {
             Application.Current.Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    ResultsText += s + "\n";
+                    ResultsText += s ;
+                    if ( crlf )
+                    {
+                        ResultsText += "\n";
+                    }
                     ResultsBox.CaretIndex = ResultsBox.Text.Length;
                     ResultsBox.ScrollToEnd();
                 }));
@@ -535,7 +539,7 @@ M84 ; Disable stepper motors
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
             string prf = selectedUserProfile;
 
-            AppendResults("Slice " + modelName);
+            AppendResults(modelName+", ", false);
             string curaPrinterName;
             string curaExtruderName;
             BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
@@ -552,16 +556,24 @@ M84 ; Disable stepper motors
             eg = eg.Replace("\r\n", "\\n");
             eg = eg.Replace("\n", "\\n");
 
-            bool ok;
-            ok = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, curaPrinterName, curaExtruderName, prf, sg, eg)));
-            if (ok)
+            SliceResult sliceRes;
+            sliceRes = await Task.Run(() => (CuraEngineInterface.Slice(exportedPath, gcodePath, logPath, Properties.Settings.Default.SDCardLabel, SlicerPath, curaPrinterName, curaExtruderName, prf, sg, eg)));
+            if (sliceRes.Result)
             {
-                AppendResults("Completed " + modelName);
+                int exportedParts = 0;
+                foreach ( Object3D obj in exportDoc.Content)
+                {
+                if ( obj.Exportable)
+                {
+
+                        exportedParts++;
+                    }
+                }
+                AppendResults($"{exportedParts}, {sliceRes.Hours}:{sliceRes.Minutes}:{sliceRes.Seconds}, {sliceRes.Filament}");                
             }
             else
-            {
-                AppendResults("FAILED  " + modelName);
-                AppendResults("View Logfile  at " + logPath);
+            {                
+                AppendResults(" FAILED View Logfile  at " + logPath);
             }
         }
 

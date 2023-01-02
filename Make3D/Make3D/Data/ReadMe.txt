@@ -2,13 +2,22 @@
 ===========
 Fixed
   Slicing dialog background not using style resource
+  Catch exception raised when opening external doc without default app associated.
+  Small window where platlet would not save path in editor parameters
 
 Changed
   Disable slice controls while copying to SD card
   Sort texture names in platelet tool
+  Default Bill of Materials is now an xlsx not a docx. Columns match output from slice
+  Default texture depth changed from 1.0 to 0.5
+  Insert File/Reference File/Open FIle/Save As initial directory set to project folder
+
 
 Added 
   Folder for user platelet textures. C:\programdata\barnacle\textures
+  Pill tool
+  Slicer output shows numer of objects in each file, estimated print time and estimated material.
+  This is just the estimates reported by curaengine
 
 v1.0.2
 ===========

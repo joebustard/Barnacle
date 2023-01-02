@@ -219,7 +219,7 @@
 
                         Command="{Binding OrthoLockCommand}"
                         ToolTip="If on then new segments will be orthogonally locked while they are being added. That is, either horizontal or vertical.">
-                            <Image Source="/Barnacle;component/Images/Buttons/Image.png" />
+                            <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
                         </Button>
                     </Border>
                     <CheckBox

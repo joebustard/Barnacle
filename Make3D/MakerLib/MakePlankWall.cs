@@ -16,6 +16,7 @@ namespace MakerLib
         private double gap;
         private double gapDepth;
 
+ 
         public PlankWallMaker(double wallLength, double wallHeight, double wallWidth, double plankWidth, double gap, double gapDepth)
         {
             this.wallLength = wallLength;

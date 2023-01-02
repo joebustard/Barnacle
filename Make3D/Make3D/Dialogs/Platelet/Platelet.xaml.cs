@@ -125,7 +125,7 @@ namespace Barnacle.Dialogs
                 if (plateWidth != value)
                 {
                     if (value > 0 && value <= 500)
-                    {
+                    { 
                         plateWidth = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
@@ -784,6 +784,7 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < points.Count; i++)
                 {
+                /*
                     if (PathEditor.LocalImage == null)
                     {
                         // flipping coordinates so have to reverse polygon too
@@ -796,6 +797,8 @@ namespace Barnacle.Dialogs
                         double y = PathEditor.ToMM(top - points[i].Y);
                         tmp.Insert(0, new System.Windows.Point(x, y));
                     }
+                    */
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
 
                 // generate side triangles so original points are already in list
@@ -970,7 +973,7 @@ namespace Barnacle.Dialogs
             }
             WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
-            TextureDepth = EditorParameters.GetDouble("TextureDepth", 1);
+            TextureDepth = EditorParameters.GetDouble("TextureDepth", 0.5);
             HollowShape = EditorParameters.GetBoolean("Hollow", false);
             TexturedShape = EditorParameters.GetBoolean("Textured", false);
             SolidShape = EditorParameters.GetBoolean("Solid", true);
