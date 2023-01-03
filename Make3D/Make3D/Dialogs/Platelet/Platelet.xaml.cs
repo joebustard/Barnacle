@@ -55,7 +55,7 @@ namespace Barnacle.Dialogs
             hollowShape = false;
             texturedShape = false;
             largeTexture = true;
-            invertTexture = false;
+            centreTexture = true;
             showWidth = Visibility.Hidden;
             showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
@@ -125,7 +125,7 @@ namespace Barnacle.Dialogs
                 if (plateWidth != value)
                 {
                     if (value > 0 && value <= 500)
-                    { 
+                    {
                         plateWidth = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
@@ -341,6 +341,25 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private bool centreTexture;
+
+        public bool CentreTexture
+        {
+            get
+            {
+                return centreTexture;
+            }
+            set
+            {
+                if (centreTexture != value)
+                {
+                    centreTexture = value;
+                    NotifyPropertyChanged();
+                }
+                UpdateDisplay();
+            }
+        }
+
         public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
         {
             Point pt0 = new Point(vt[p0].X, vt[p0].Y);
@@ -475,7 +494,7 @@ namespace Barnacle.Dialogs
             {
                 for (double py = by; py < ty; py += sz)
                 {
-                    if (GetTextureMask(px, py, sz) > 15)
+                    if (GetTextureMask(px, py, sz, centreTexture) > 15)
                     {
                         ext.Left = px;
                         ext.Bottom = py;
@@ -784,20 +803,20 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < points.Count; i++)
                 {
-                /*
-                    if (PathEditor.LocalImage == null)
-                    {
-                        // flipping coordinates so have to reverse polygon too
-                        tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                    }
-                    else
+                    /*
+                        if (PathEditor.LocalImage == null)
+                        {
+                            // flipping coordinates so have to reverse polygon too
+                            tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                        }
+                        else
 
-                    {
-                        double x = PathEditor.ToMM(points[i].X);
-                        double y = PathEditor.ToMM(top - points[i].Y);
-                        tmp.Insert(0, new System.Windows.Point(x, y));
-                    }
-                    */
+                        {
+                            double x = PathEditor.ToMM(points[i].X);
+                            double y = PathEditor.ToMM(top - points[i].Y);
+                            tmp.Insert(0, new System.Windows.Point(x, y));
+                        }
+                        */
                     tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
 
@@ -835,11 +854,15 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private double xExtent;
+        private double yExtent;
+
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
             {
                 ClearShape();
+                PathCentroid = PathEditor.Centroid();
                 if (displayPoints?.Count > 3)
                 {
                     List<System.Windows.Point> points = displayPoints;
@@ -879,6 +902,8 @@ namespace Barnacle.Dialogs
                         by = Math.Min(tmp[i].Y, by);
                         ty = Math.Max(tmp[i].Y, ty);
                     }
+                    xExtent = rx - lx;
+                    yExtent = ty - by;
                     double sz = 0.5;
                     if (!largeTexture)
                     {
@@ -895,7 +920,7 @@ namespace Barnacle.Dialogs
 
                     ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
-                    LoadTextureImage(invertTexture);
+                    LoadTextureImage();
 
                     double off = sz / 2;
                     for (double px = lx; px < rx; px += sz)
@@ -907,7 +932,7 @@ namespace Barnacle.Dialogs
                             if (interception.Corners.GetLength(0) > 2)
                             {
                                 bool insidepixel = false;
-                                byte mask = GetTextureMask(px, py, sz);
+                                byte mask = GetTextureMask(px, py, sz, centreTexture);
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
                                     insidepixel = IsItAnInsidePixel(interception.Corners, px, py, sz);
@@ -930,12 +955,26 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private byte GetTextureMask(double px, double py, double sz)
+        private Point PathCentroid;
+
+        private byte GetTextureMask(double px, double py, double sz, bool centre)
         {
-            px = px / sz;
-            py = py / sz;
-            px = px % textureImageWidth;
-            py = py % textureImageHeight;
+            if (centre)
+            {
+                px = px / sz;
+                py = py / sz;
+                double xr = textureImageWidth / xExtent;
+                double yr = textureImageHeight / yExtent;
+                px = px * xr;
+                py = py * yr;
+                px = px % textureImageWidth;
+                py = py % textureImageHeight;
+            }
+            else
+            {
+                px = px % textureImageWidth;
+                py = py % textureImageHeight;
+            }
             return textureMap[(int)px, (int)py];
         }
 
@@ -979,36 +1018,18 @@ namespace Barnacle.Dialogs
             SolidShape = EditorParameters.GetBoolean("Solid", true);
             LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
             SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
-            InvertTexture = EditorParameters.GetBoolean("InvertTexture", false);
+            CentreTexture = EditorParameters.GetBoolean("CentreTexture", true);
             SelectedTexture = EditorParameters.Get("SelectedTexture");
         }
 
-        private bool invertTexture;
+        private bool lastCentre;
 
-        public bool InvertTexture
-        {
-            get { return invertTexture; }
-            set
-            {
-                if (value != invertTexture)
-                {
-                    invertTexture = value;
-                    LoadTextureImage(invertTexture);
-                    NotifyPropertyChanged();
-                    UpdateDisplay();
-                }
-            }
-        }
-
-        private bool lastInvert;
-
-        private void LoadTextureImage(bool invert = false)
+        private void LoadTextureImage()
         {
             if (selectedTexture != "")
             {
-                if (selectedTexture != loadedImageName || lastInvert != invert)
+                if (selectedTexture != loadedImageName)
                 {
-                    lastInvert = invert;
                     string imagePath = textureFiles[selectedTexture];
                     if (File.Exists(imagePath))
                     {
@@ -1023,10 +1044,7 @@ namespace Barnacle.Dialogs
                             {
                                 byte mask = 0;
                                 System.Drawing.Color col = workingImage.GetPixel(x, y);
-                                if (invert)
-                                {
-                                    col = System.Drawing.Color.FromArgb(col.A, 255 - col.R, col.G, col.B);
-                                }
+
                                 if (col.R < 128)
                                 {
                                     mask = frontMask;
@@ -1383,7 +1401,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LargeTexture", LargeTexture.ToString());
             EditorParameters.Set("SmallTexture", SmallTexture.ToString());
             EditorParameters.Set("SelectedTexture", SelectedTexture);
-            EditorParameters.Set("InvertTexture", InvertTexture.ToString());
+            EditorParameters.Set("CentreTexture", CentreTexture.ToString());
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)

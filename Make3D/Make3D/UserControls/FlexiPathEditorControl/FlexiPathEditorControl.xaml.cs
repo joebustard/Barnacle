@@ -773,5 +773,10 @@ namespace Barnacle.UserControls
                     break;
             }
         }
+
+        internal Point Centroid()
+        {
+            return vm.Centroid();
+        }
     }
 }

@@ -728,6 +728,28 @@ namespace Barnacle.LineLib
             return result;
         }
 
+        public Point Centroid()
+        {
+            double x = 0;
+            double y = 0;
+            int count = 0;
+
+            foreach (FlexiPoint p in points)
+            {
+                x += p.X;
+                y += p.Y;
+                count++;
+            }
+            if (count > 0)
+            {
+                return new Point(x / count, y / count);
+            }
+            else
+            {
+                return new Point(0, 0);
+            }
+        }
+
         public void InsertCurveSegment(int index, Point position)
         {
             for (int i = 0; i < segs.Count; i++)

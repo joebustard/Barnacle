@@ -636,7 +636,7 @@ namespace Barnacle.UserControls
         {
             flexiPath.FromString(s);
             PathText = flexiPath.ToPath(absolutePaths);
-            if ( s != "")
+            if (s != "")
             {
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
@@ -790,7 +790,7 @@ namespace Barnacle.UserControls
                 polyPoints[selectedPoint].Y = position.Y;
 
                 flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
-                
+
                 updateRequired = true;
                 selectedPoint = -1;
                 NotifyPropertyChanged("Points");
@@ -847,6 +847,11 @@ namespace Barnacle.UserControls
             }
             moving = false;
             return updateRequired;
+        }
+
+        internal Point Centroid()
+        {
+            return flexiPath.Centroid();
         }
 
         internal void SetPolarGridCentre(Point fixedPolarGridCentre)
