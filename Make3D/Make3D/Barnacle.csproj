@@ -1078,6 +1078,7 @@
     <Resource Include="Data\Textures\Skull.png" />
     <Resource Include="Data\Textures\StoneWall2.png" />
     <Resource Include="Images\Buttons\OrthoPath.png" />
+    <Resource Include="Data\Textures\Logo1.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

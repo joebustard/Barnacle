@@ -55,7 +55,7 @@ namespace Barnacle.Dialogs
             hollowShape = false;
             texturedShape = false;
             largeTexture = true;
-            centreTexture = true;
+            tileTexture = true;
             showWidth = Visibility.Hidden;
             showTextures = Visibility.Hidden;
             ModelGroup = MyModelGroup;
@@ -341,19 +341,19 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool centreTexture;
+        private bool tileTexture;
 
-        public bool CentreTexture
+        public bool TileTexture
         {
             get
             {
-                return centreTexture;
+                return tileTexture;
             }
             set
             {
-                if (centreTexture != value)
+                if (tileTexture != value)
                 {
-                    centreTexture = value;
+                    tileTexture = value;
                     NotifyPropertyChanged();
                 }
                 UpdateDisplay();
@@ -494,7 +494,7 @@ namespace Barnacle.Dialogs
             {
                 for (double py = by; py < ty; py += sz)
                 {
-                    if (GetTextureMask(px, py, sz, centreTexture) > 15)
+                    if (GetTextureMask(px, py, sz, tileTexture) > 15)
                     {
                         ext.Left = px;
                         ext.Bottom = py;
@@ -932,7 +932,7 @@ namespace Barnacle.Dialogs
                             if (interception.Corners.GetLength(0) > 2)
                             {
                                 bool insidepixel = false;
-                                byte mask = GetTextureMask(px, py, sz, centreTexture);
+                                byte mask = GetTextureMask(px, py, sz, tileTexture);
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
                                     insidepixel = IsItAnInsidePixel(interception.Corners, px, py, sz);
@@ -957,25 +957,47 @@ namespace Barnacle.Dialogs
 
         private Point PathCentroid;
 
-        private byte GetTextureMask(double px, double py, double sz, bool centre)
+        private byte GetTextureMask(double px, double py, double sz, bool tile)
         {
-            if (centre)
+            if (!tile)
             {
-                px = px / sz;
-                py = py / sz;
-                double xr = textureImageWidth / xExtent;
-                double yr = textureImageHeight / yExtent;
-                px = px * xr;
-                py = py * yr;
-                px = px % textureImageWidth;
-                py = py % textureImageHeight;
+                if (sz == 0.5)
+                {
+                    double xr = (textureImageWidth / xExtent);
+                    double yr = (textureImageHeight / yExtent);
+                    px = px * xr;
+                    py = py * yr;
+
+                    if (px >= 0 && px < textureImageWidth && py >= 0 && py < textureImageHeight)
+                    {
+                        return textureMap[(int)px, (int)py];
+                    }
+                    return (byte)0;
+                }
+                if (sz == 0.25)
+                {
+                    double xr = 2 * (textureImageWidth / xExtent);
+                    double yr = 2 * (textureImageHeight / yExtent);
+                    px = px * xr;
+                    py = py * yr;
+                    px = px - (textureImageWidth / 2);
+                    py = py - (textureImageHeight / 2);
+                    if (px >= 0 && px < textureImageWidth && py >= 0 && py < textureImageHeight)
+                    {
+                        return textureMap[(int)px, (int)py];
+                    }
+                    return (byte)0;
+                }
+                return (byte)0;
             }
             else
             {
+                px = px / sz;
+                py = py / sz;
                 px = px % textureImageWidth;
                 py = py % textureImageHeight;
+                return textureMap[(int)px, (int)py];
             }
-            return textureMap[(int)px, (int)py];
         }
 
         private bool IsItAnInsidePixel(Point[] c, double px, double py, double sz)
@@ -1018,7 +1040,7 @@ namespace Barnacle.Dialogs
             SolidShape = EditorParameters.GetBoolean("Solid", true);
             LargeTexture = EditorParameters.GetBoolean("LargeTexture", true);
             SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
-            CentreTexture = EditorParameters.GetBoolean("CentreTexture", true);
+            TileTexture = EditorParameters.GetBoolean("CentreTexture", true);
             SelectedTexture = EditorParameters.Get("SelectedTexture");
         }
 
@@ -1401,7 +1423,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("LargeTexture", LargeTexture.ToString());
             EditorParameters.Set("SmallTexture", SmallTexture.ToString());
             EditorParameters.Set("SelectedTexture", SelectedTexture);
-            EditorParameters.Set("CentreTexture", CentreTexture.ToString());
+            EditorParameters.Set("CentreTexture", TileTexture.ToString());
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)

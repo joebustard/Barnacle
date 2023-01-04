@@ -136,7 +136,7 @@ Visibility="{Binding ShowTextures}" />
                             Text="{Binding TextureDepth}" />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup" IsChecked="{Binding LargeTexture}" Content="Large" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup"  IsChecked="{Binding SmallTexture}" Content="Small" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
-                        <CheckBox Margin="4,0,0,0" IsChecked="{Binding CentreTexture}" Content="Centre" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
+                        <CheckBox Margin="4,0,0,0" IsChecked="{Binding TileTexture}" Content="Tile" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
                     </StackPanel>
                 </Grid>
             </Grid>
