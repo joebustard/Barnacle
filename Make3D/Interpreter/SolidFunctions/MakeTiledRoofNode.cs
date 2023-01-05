@@ -74,19 +74,19 @@ namespace ScriptLanguage
                 // check calculated values are in range
                 bool inRange = true;
 
-                if (valLength < 50 || valLength > 200)
+                if (valLength < 10 || valLength > 200)
                 {
                     Log.Instance().AddEntry("MakeTiledRoof : Length value out of range (50..200)");
                     inRange = false;
                 }
 
-                if (valHeight < 4 || valHeight > 20)
+                if (valHeight < 1 || valHeight > 20)
                 {
                     Log.Instance().AddEntry("MakeTiledRoof : Height value out of range (4..20)");
                     inRange = false;
                 }
 
-                if (valWidth < 5 || valWidth > 20)
+                if (valWidth <1 || valWidth > 20)
                 {
                     Log.Instance().AddEntry("MakeTiledRoof : Width value out of range (5..20)");
                     inRange = false;
@@ -104,15 +104,15 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
-                if (valTileWidth < 1 || valTileWidth > 10)
+                if (valTileWidth < 0.1 || valTileWidth > 10)
                 {
-                    Log.Instance().AddEntry("MakeTiledRoof : TileWidth value out of range (1..10)");
+                    Log.Instance().AddEntry("MakeTiledRoof : TileWidth value out of range (0.1..10)");
                     inRange = false;
                 }
 
-                if (valGapBetweenTiles < 1 || valGapBetweenTiles > 10)
+                if (valGapBetweenTiles < 0.1 || valGapBetweenTiles > 10)
                 {
-                    Log.Instance().AddEntry("MakeTiledRoof : GapBetweenTiles value out of range (1..10)");
+                    Log.Instance().AddEntry("MakeTiledRoof : GapBetweenTiles value out of range (0.1..10)");
                     inRange = false;
                 }
 

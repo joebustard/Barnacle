@@ -528,6 +528,7 @@ namespace Barnacle.Views
                                 {
                                     NotificationManager.Notify("Loading", null);
                                     BaseViewModel.Document.Load(p);
+                                    undoer.ClearUndoFiles();
                                     NotificationManager.Notify("Refresh", null);
                                     BaseViewModel.Project.FirstFile = fName;
                                     NotificationManager.Notify("ObjectSelected", null);

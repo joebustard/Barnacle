@@ -87,7 +87,7 @@ namespace Barnacle.Dialogs
             {
                 if (tileGap != value)
                 {
-                    if (value >= 1 && value <= 10)
+                    if (value >= 0.1 && value <= 10)
                     {
                         tileGap = value;
                         NotifyPropertyChanged();
@@ -350,12 +350,12 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
-            WallHeight = 50;
-            WallWidth = 5;
-            WallLength = 150;
-            TileHeight = 10;
-            TileLength = 8;
-            TileWidth = 4;
+            WallHeight = 75;
+            WallWidth = 2;
+            WallLength = 130;
+            TileHeight = 2.17;
+            TileLength = 3.486;
+            TileWidth = 1;
             TileGap = 1;
             TileOverlap = 0.1;
             LoadEditorParameters();
