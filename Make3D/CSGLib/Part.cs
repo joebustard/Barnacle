@@ -58,7 +58,7 @@ namespace CSGLib
             cancelToken = cancellationToken;
         }
 
-        private int maxSplitLevel = 300;
+        private readonly int maxSplitLevel = 300;
 
         /// <summary>
         /// tolerance value to test equalities
@@ -100,8 +100,7 @@ namespace CSGLib
             int[] indices = solid.GetIndices();
             var verticesTemp = new List<Vertex>();
 
-            //create vertices
-
+            // create vertices
             Vertices = new List<Vertex>();
             octTree = new OctTree(Vertices, solid.Minimum, solid.Maximum, 100);
             for (int i = 0; i < verticesPoints.Length; i++)
@@ -136,7 +135,7 @@ namespace CSGLib
         /// Classify faces as being inside, outside or on boundary of other object
         /// </summary>
         /// <param name="otherObject">object 3d used for the comparison</param>
-        public CSGState ClassifyFaces(Part otherObject)
+        public CSGState ClassifyFaces(Part otherObject, IProgress<CSGGroupProgress> progress, string v)
         {
             CSGState result = CSGState.Good;
             //calculate adjacency information
@@ -155,6 +154,10 @@ namespace CSGLib
             //for each face
             for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
             {
+                if (i % 100 == 0)
+                {
+                    BooleanModeller.ReportProgress(v + $" {i} of {NumFaces}", 0, progress);
+                }
                 face = GetFace(i);
 
                 //if the face vertices aren't classified to make the simple classify
@@ -222,9 +225,13 @@ namespace CSGLib
         public Face GetFace(int index)
         {
             if (index < 0 || index >= Faces.Count)
+            {
                 return null;
+            }
             else
+            {
                 return Faces[index];
+            }
         }
 
         /// <summary>
@@ -253,7 +260,7 @@ namespace CSGLib
         /// Split faces so that none face is intercepted by a face of other object
         /// </summary>
         /// <param name="obj">the other object 3d used to make the split</param>
-        public CSGState SplitFaces(Part obj)
+        public CSGState SplitFaces(Part obj, IProgress<CSGGroupProgress> progress, string v)
         {
             CSGState result = CSGState.Good;
             Line line;
@@ -264,7 +271,7 @@ namespace CSGLib
             int signFace1Vert1, signFace1Vert2, signFace1Vert3, signFace2Vert1, signFace2Vert2, signFace2Vert3;
             int numFacesBefore = NumFaces;
             int numFacesStart = NumFaces + obj.NumFaces;
-            int facesLimit = 50 * numFacesStart;
+            int facesLimit = 100 * numFacesStart;
             if (facesLimit > 1000000)
             {
                 facesLimit = 1000000;
@@ -275,6 +282,13 @@ namespace CSGLib
                 //for each object1 face...
                 for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
                 {
+                    if (i % 100 == 0)
+                    {
+                        if (progress != null)
+                        {
+                            BooleanModeller.ReportProgress(v + $" {i} of {NumFaces}", 0, progress);
+                        }
+                    }
                     //if object1 face bound and object2 bound overlap ...
                     face1 = GetFace(i);
 
@@ -300,17 +314,7 @@ namespace CSGLib
                                 signFace1Vert2 = distFace1Vert2 > EqualityTolerance ? 1 : (distFace1Vert2 < -EqualityTolerance ? -1 : 0);
                                 signFace1Vert3 = distFace1Vert3 > EqualityTolerance ? 1 : (distFace1Vert3 < -EqualityTolerance ? -1 : 0);
 
-                                //if all the signs are zero, the planes are coplanar
-                                //if all the signs are positive or negative, the planes do not intersect
-                                //if the signs are not equal...
-                                //if ((signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3) && signFace1Vert1 == 0)
-                                //{
-                                //    Logger.Log("  Coplanar\r\n");
-                                //}
-                                //if ((signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3))
-                                //{
-                                //    Logger.Log("  No Interception\r\n");
-                                //}
+
                                 if (!(signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3))
                                 {
                                     //distance from the face2 vertices to the face1 plane
@@ -366,7 +370,6 @@ namespace CSGLib
                                                         continue;
                                                     }
                                                 }
-                                                //else: test next face
                                                 else
                                                 {
                                                     i--;
@@ -400,11 +403,6 @@ namespace CSGLib
         /// <returns></returns>
         private Face AddFace(Vertex v1, Vertex v2, Vertex v3, int splitLevel)
         {
-            //  Logger.Log("AddFace\r\n");
-            //    Logger.Log(v1.ToString() + "\r\n");
-            //    Logger.Log(v2.ToString() + "\r\n");
-            //Logger.Log(v3.ToString() + "\r\n");
-
             if (!(v1.Equals(v2) || v1.Equals(v3) || v2.Equals(v3)))
             {
                 Face face = new Face(v1, v2, v3);

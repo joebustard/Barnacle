@@ -776,7 +776,12 @@ namespace Barnacle.UserControls
 
         internal Point Centroid()
         {
-            return vm.Centroid();
+            if (vm != null)
+            {
+                return vm.Centroid();
+            }
+            else
+                return new Point(0, 0);
         }
     }
 }

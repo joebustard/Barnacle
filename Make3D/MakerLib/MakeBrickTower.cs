@@ -311,12 +311,6 @@ namespace MakerLib
             }
         }
 
-        private Point CalcPoint(double theta, double r)
-        {
-            Point p = new Point();
-            p.X = r * Math.Sin(theta);
-            p.Y = r * Math.Cos(theta);
-            return p;
-        }
+
     }
 }

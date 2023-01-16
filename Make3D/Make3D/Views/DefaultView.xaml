@@ -193,7 +193,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectFirst.png"
                                          ToolTip="Select First"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectFirstButton" />
+                                         x:Name="SelectFirstButton" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Previous"
                                          HorizontalAlignment="Stretch"
@@ -201,7 +201,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectPrevious.png"
                                          ToolTip="Select Previous"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectPrevButton" />
+                                         x:Name="SelectPrevButton" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Next"
                                          HorizontalAlignment="Stretch"
@@ -209,7 +209,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectNext.png"
                                          ToolTip="Select Next"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectNextButton" />
+                                         x:Name="SelectNextButton" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Last"
                                          HorizontalAlignment="Stretch"
@@ -217,7 +217,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectLast.png"
                                          ToolTip="Select Last"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectLastButton" />
+                                         x:Name="SelectLastButton" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="All"
                                          HorizontalAlignment="Stretch"
@@ -225,7 +225,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"
                                          ToolTip="Select All"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectAllButton" />
+                                         x:Name="SelectAllButton" IsEnabled="{Binding EditingActive}"/>
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Clear"
                                          HorizontalAlignment="Stretch"
@@ -233,14 +233,14 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
                                          ToolTip="Clear selection"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectNoneButton" />
+                                         x:Name="SelectNoneButton" IsEnabled="{Binding EditingActive}"/>
                     <ComboBox HorizontalAlignment="Stretch"
                               ItemsSource="{Binding ObjectNames}"
                               MinWidth="100"
                               SelectedItem="{Binding SelectedObjectName}"
                               ToolTip="Select an object by its name"
                               VerticalAlignment="Top"
-                              x:Name="SelectObjectNames" />
+                              x:Name="SelectObjectNames" IsEnabled="{Binding EditingActive}"/>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ProjectGroup"
                                     Header="Project"

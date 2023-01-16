@@ -85,20 +85,20 @@ namespace CSGLib
 
             //split the faces so that none of them intercepts each other
             //Logger.Log("Split Faces ob1 (ob2)\r\n");
-            CSGState ps1 = Object1.SplitFaces(Object2);
+            CSGState ps1 = Object1.SplitFaces(Object2,null,"");
             CSGState ps2 = CSGState.Good;
             CSGState ps3 = CSGState.Good;
             CSGState ps4 = CSGState.Good;
             if (ps1 == CSGState.Good)
             {
-                ps2 = Object2.SplitFaces(Object1);
+                ps2 = Object2.SplitFaces(Object1, null, "");
                 if (ps2 == CSGState.Good)
                 {
                     //classify faces as being inside or outside the other solid
-                    ps3 = Object1.ClassifyFaces(Object2);
+                    ps3 = Object1.ClassifyFaces(Object2, null, "");
                     if (ps3 == CSGState.Good)
                     {
-                        ps4 = Object2.ClassifyFaces(Object1);
+                        ps4 = Object2.ClassifyFaces(Object1, null, "");
                     }
                     State = CSGState.Good;
                 }
@@ -224,28 +224,29 @@ namespace CSGLib
                             State = CSGState.Bad;
 
                             //split the faces so that none of them intercepts each other
+
                             ReportProgress("Split Left Faces", 0, progress);
                             if (!cancelToken.IsCancellationRequested)
                             {
-                                opresult.OperationStatus = Object1.SplitFaces(Object2);
+                                opresult.OperationStatus = Object1.SplitFaces(Object2,progress, "Split Left Faces");
                                 if (opresult.OperationStatus == CSGState.Good)
                                 {
                                     ReportProgress("Split Right Faces", 0, progress);
                                     if (!cancelToken.IsCancellationRequested)
                                     {
-                                        opresult.OperationStatus = Object2.SplitFaces(Object1);
+                                        opresult.OperationStatus = Object2.SplitFaces(Object1, progress, "Split Right Faces");
                                         if (opresult.OperationStatus == CSGState.Good)
                                         {
                                             ReportProgress("Classify Left Faces", 0, progress);
                                             if (!cancelToken.IsCancellationRequested)
                                             {
-                                                opresult.OperationStatus = Object1.ClassifyFaces(Object2);
+                                                opresult.OperationStatus = Object1.ClassifyFaces(Object2, progress,"Classify Left Faces");
                                                 if (opresult.OperationStatus == CSGState.Good)
                                                 {
                                                     ReportProgress("Classify Right Faces", 0, progress);
                                                     if (!cancelToken.IsCancellationRequested)
                                                     {
-                                                        opresult.OperationStatus = Object2.ClassifyFaces(Object1);
+                                                        opresult.OperationStatus = Object2.ClassifyFaces(Object1, progress, "Classify RIght Faces");
                                                         if (opresult.OperationStatus == CSGState.Good)
                                                         {
                                                             State = CSGState.Good;
@@ -300,7 +301,7 @@ namespace CSGLib
             return opresult;
         }
 
-        private void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
+        public static void ReportProgress(string v1, int v2, IProgress<CSGGroupProgress> progress)
         {
             if (progress != null)
             {

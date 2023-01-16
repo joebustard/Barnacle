@@ -120,6 +120,7 @@
       <DependentUpon>MultiImport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
+    <Compile Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
@@ -451,6 +452,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\Pill\PillDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1079,6 +1084,10 @@
     <Resource Include="Data\Textures\StoneWall2.png" />
     <Resource Include="Images\Buttons\OrthoPath.png" />
     <Resource Include="Data\Textures\Logo1.png" />
+    <Resource Include="Images\Buttons\CrownlessRidge.png" />
+    <Resource Include="Images\Buttons\CrownRidge.png" />
+    <Resource Include="Images\Buttons\FlatRidge.png" />
+    <Resource Include="Images\Buttons\HollowCrownRidge.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

@@ -189,6 +189,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_741A197BE97148B585229C615E95E94D"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_760605C36E5E42FEB48EA667076245B2"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1484,6 +1490,26 @@
             {
             "SourcePath" = "8:..\\Make3D\\Data\\Textures\\StoneWall2.png"
             "TargetName" = "8:StoneWall2.png"
+            "Tag" = "8:"
+            "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_741A197BE97148B585229C615E95E94D"
+            {
+            "SourcePath" = "8:..\\Make3D\\Data\\Textures\\Logo1.png"
+            "TargetName" = "8:Logo1.png"
             "Tag" = "8:"
             "Folder" = "8:_2BC29BA5111B4163928FC0E98D6583E1"
             "Condition" = "8:"

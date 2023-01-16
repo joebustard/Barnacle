@@ -58,6 +58,7 @@
     <Compile Include="MakeRailWheel.cs" />
     <Compile Include="MakerBase.cs" />
     <Compile Include="MakeReuleaux.cs" />
+    <Compile Include="MakeRoofRidge.cs" />
     <Compile Include="MakeShapedBrickWall.cs" />
     <Compile Include="MakeShapedTiledRoof.cs" />
     <Compile Include="MakeSpring.cs" />

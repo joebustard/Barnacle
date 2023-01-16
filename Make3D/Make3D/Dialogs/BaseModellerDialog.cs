@@ -283,7 +283,13 @@ namespace Barnacle.Dialogs
             Faces.Add(c1);
             Faces.Add(c2);
         }
-
+        protected Point CalcPoint(double theta, double r)
+        {
+            Point p = new Point();
+            p.X = r * Math.Sin(theta);
+            p.Y = r * Math.Cos(theta);
+            return p;
+        }
         public void HitTest(Viewport3D viewport3D1, Point mouseposition)
         {
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);

@@ -50,7 +50,13 @@ namespace MakerLib
             Faces.Add(c1);
             Faces.Add(c2);
         }
-
+        protected Point CalcPoint(double theta, double r)
+        {
+            Point p = new Point();
+            p.X = r * Math.Sin(theta);
+            p.Y = r * Math.Cos(theta);
+            return p;
+        }
         internal static double Distance3D(Point3D p1, Point3D p2)
         {
             double dx = p2.X - p1.X;
@@ -462,7 +468,30 @@ namespace MakerLib
                 Faces.Add(c2);
             }
         }
+        protected void EdgeH(List<Point> points, double thickness)
+        {
 
+            for (  int i = 0; i < points.Count; i ++)
+            {
+                int j = i + 1;
+                if ( j >= points.Count )
+                {
+                    j = 0;
+                }
+                int c0 = AddVertice(points[i].X, points[i].Y, 0);
+                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
+                int c2 = AddVertice(points[j].X, points[j].Y, thickness);
+                int c3 = AddVertice(points[j].X, points[j].Y, 0);
+                Faces.Add(c0);
+                Faces.Add(c1);
+                Faces.Add(c2);
+
+                Faces.Add(c0);
+                Faces.Add(c2);
+                Faces.Add(c3);
+
+            }
+        }
         protected void TriangulatePerimiter(List<System.Drawing.PointF> points, double thickness)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -519,6 +548,12 @@ namespace MakerLib
                     Faces.Add(c2);
                 }
             }
+        }
+        protected void ExtrudeH (List<Point> points, double z)
+        {
+            EdgeH(points, z);
+            TriangulateSurface(points.ToArray(), 0,true);
+            TriangulateSurface(points.ToArray(), z,false);
         }
     }
 }
