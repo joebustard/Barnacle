@@ -33,10 +33,11 @@ namespace Barnacle.Models.Adorners
         private Dictionary<string, Control> thumbLabels;
 
         private List<Object3D> thumbs;
+
         public SizeAdorner(PolarCamera camera)
         {
             NotificationManager.ViewUnsubscribe("SizeAdorner");
-    
+
             Camera = camera;
             Adornments = new Model3DCollection();
             SelectedObjects = new List<Object3D>();
@@ -48,7 +49,7 @@ namespace Barnacle.Models.Adorners
 
             labelLocations = new Dictionary<string, Point3D>();
             label3DOffsets = new Dictionary<string, Point3D>();
-            //thumbLabels = new List<Label>();
+
             thumbLabels = new Dictionary<string, Control>();
             ViewPort = null;
             refreshTimer = new DispatcherTimer();
@@ -166,12 +167,12 @@ namespace Barnacle.Models.Adorners
                         TopLabelVisibility();
                     }
                     break;
+
                 case PolarCamera.Orientations.Bottom:
                     {
                         BottomLabelVisibility();
                     }
                     break;
-
             }
         }
 
@@ -200,6 +201,7 @@ namespace Barnacle.Models.Adorners
                         SetLabelVisibility("BackThumb", true);
                     }
                     break;
+
                 case PolarCamera.Orientations.Left:
                     {
                         SetLabelVisibility("TopThumb", false);
@@ -210,6 +212,7 @@ namespace Barnacle.Models.Adorners
                         SetLabelVisibility("BackThumb", false);
                     }
                     break;
+
                 case PolarCamera.Orientations.Right:
                     {
                         SetLabelVisibility("TopThumb", false);
@@ -248,6 +251,7 @@ namespace Barnacle.Models.Adorners
                         SetLabelVisibility("BackThumb", true);
                     }
                     break;
+
                 case PolarCamera.Orientations.Left:
                     {
                         SetLabelVisibility("TopThumb", true);
@@ -258,6 +262,7 @@ namespace Barnacle.Models.Adorners
                         SetLabelVisibility("BackThumb", false);
                     }
                     break;
+
                 case PolarCamera.Orientations.Right:
                     {
                         SetLabelVisibility("TopThumb", true);
@@ -269,7 +274,6 @@ namespace Barnacle.Models.Adorners
                     }
                     break;
             }
-
         }
 
         private void SetLabelVisibility(string v1, bool v2)
@@ -288,7 +292,6 @@ namespace Barnacle.Models.Adorners
                 thumbLabels[v1].Visibility = vs;
                 PositionLabel(v1);
             }
-
         }
 
         internal override void MouseUp()
@@ -399,7 +402,7 @@ namespace Barnacle.Models.Adorners
 
         private void Create3DLabelOffset(string name, double x, double y, double z)
         {
-            label3DOffsets[name] = new Point3D(x, y,z);
+            label3DOffsets[name] = new Point3D(x, y, z);
         }
 
         private void CreateAdornments(Point3D position, Point3D size, bool addSizeThumbs)
@@ -411,22 +414,22 @@ namespace Barnacle.Models.Adorners
             {
                 double thumbSize = 4;
                 CreateThumb(position, thumbSize, box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "RightThumb");
-                Create3DLabelOffset("RightThumb", tbMargin, 0,0);
+                Create3DLabelOffset("RightThumb", tbMargin, 0, 0);
 
                 CreateThumb(position, thumbSize, -box.AbsoluteBounds.Width / 2, 0, 0, Colors.White, "LeftThumb");
-                Create3DLabelOffset("LeftThumb", -tbMargin, 0,0);
+                Create3DLabelOffset("LeftThumb", -tbMargin, 0, 0);
 
                 CreateThumb(position, thumbSize, 0, box.AbsoluteBounds.Height / 2, 0, Colors.White, "TopThumb");
-                Create3DLabelOffset("TopThumb", 0,  tbMargin ,0);
+                Create3DLabelOffset("TopThumb", 0, tbMargin, 0);
 
                 CreateThumb(position, thumbSize, 0, -box.AbsoluteBounds.Height / 2, 0, Colors.White, "BottomThumb");
-                Create3DLabelOffset("BottomThumb", 0, -tbMargin,0);
+                Create3DLabelOffset("BottomThumb", 0, -tbMargin, 0);
 
                 CreateThumb(position, thumbSize, 0, 0, box.AbsoluteBounds.Depth / 2, Colors.White, "FrontThumb");
-                Create3DLabelOffset("FrontThumb", 0, 0,tbMargin);
+                Create3DLabelOffset("FrontThumb", 0, 0, tbMargin);
 
                 CreateThumb(position, thumbSize, 0, 0, -box.AbsoluteBounds.Depth / 2, Colors.White, "BackThumb");
-                Create3DLabelOffset("BackThumb", 0, 0,-tbMargin);
+                Create3DLabelOffset("BackThumb", 0, 0, -tbMargin);
 
                 CreateTextLabels(size);
                 UpdateLabelVisibility();
@@ -461,7 +464,7 @@ namespace Barnacle.Models.Adorners
                                 FormattedText formattedText = new FormattedText(size.X.ToString("F3"), System.Globalization.CultureInfo.CurrentCulture,
                                                                    FlowDirection.LeftToRight, new Typeface("Arial"), 14, Brushes.Black);
                                 FormattedText txt = formattedText;
-                               // label3DOffsets["LeftThumb"] = new Point(-100, -textBoxHeight / 2);
+                                // label3DOffsets["LeftThumb"] = new Point(-100, -textBoxHeight / 2);
                                 AddLabel("LeftThumb", th.AbsoluteBounds.Lower.X, th.Position.Y, th.Position.Z, size.X.ToString("F3"), HorizontalAlignment.Right);
                             }
                             break;
@@ -474,15 +477,13 @@ namespace Barnacle.Models.Adorners
 
                         case "FrontThumb":
                             {
-                               
-                                    AddLabel("FrontThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"), HorizontalAlignment.Center);
-                                
+                                AddLabel("FrontThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"), HorizontalAlignment.Center);
                             }
                             break;
 
                         case "BackThumb":
                             {
-                                    AddLabel("BackThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"), HorizontalAlignment.Center);
+                                AddLabel("BackThumb", th.AbsoluteBounds.Upper.X, th.Position.Y, th.Position.Z, size.Z.ToString("F3"), HorizontalAlignment.Center);
                             }
                             break;
                     }
@@ -561,7 +562,6 @@ namespace Barnacle.Models.Adorners
             }
 
             scaleChange = new Point3D(1, 1, 1);
-           
         }
 
         private void KeyboardTimer_Tick(object sender, EventArgs e)
@@ -944,8 +944,8 @@ namespace Barnacle.Models.Adorners
                 Point3D loc = Location(labelLocations[v], label3DOffsets[v]);
                 Point point = CameraUtils.Convert3DPoint(loc, ViewPort);
 
-                Canvas.SetLeft(thumbLabels[v], point.X );
-                Canvas.SetTop(thumbLabels[v], point.Y );
+                Canvas.SetLeft(thumbLabels[v], point.X);
+                Canvas.SetTop(thumbLabels[v], point.Y);
                 if (!Overlay.Children.Contains(thumbLabels[v]))
                 {
                     Overlay.Children.Add(thumbLabels[v]);
@@ -953,7 +953,7 @@ namespace Barnacle.Models.Adorners
             }
         }
 
-        private Point3D Location(Point3D p1,Point3D p2)
+        private Point3D Location(Point3D p1, Point3D p2)
         {
             return new Point3D(p1.X + p2.X,
                                 p1.Y + p2.Y,
@@ -1000,6 +1000,7 @@ namespace Barnacle.Models.Adorners
                 box.CalcScale(false);
             }
         }
+
         private bool ValidDimension(string text, out double dim)
         {
             bool valid = false;
@@ -1018,7 +1019,6 @@ namespace Barnacle.Models.Adorners
                     }
                     catch
                     {
-
                     }
                 }
             }

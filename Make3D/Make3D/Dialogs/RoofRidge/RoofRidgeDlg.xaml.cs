@@ -87,6 +87,7 @@ namespace Barnacle.Dialogs
                 return $"Arm Thickness must be in the range {minarmThickness} to {maxarmThickness}";
             }
         }
+
         public double ArmLength
         {
             get
@@ -106,6 +107,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public double ArmThickness
         {
             get
@@ -125,6 +127,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String ArmLengthToolTip
         {
             get
@@ -313,10 +316,10 @@ namespace Barnacle.Dialogs
         {
             ClearShape();
             RoofRidgeMaker maker = new RoofRidgeMaker(
-                armLength, armAngle,armThickness, ridgeLength, crownRadius, flatCrestWidth, mode
+                armLength, armAngle, armThickness, ridgeLength, crownRadius, flatCrestWidth, mode
                 );
             maker.Generate(Vertices, Faces);
-            CentreVertices();
+            //   CentreVertices();
         }
 
         private Uri ImageUri(string p)
@@ -331,7 +334,7 @@ namespace Barnacle.Dialogs
             ArmAngle = EditorParameters.GetDouble("ArmAngle", 90);
             ArmThickness = EditorParameters.GetDouble("ArmThickness", 1);
             RidgeLength = EditorParameters.GetDouble("RidgeLength", 100);
-            CrownRadius = EditorParameters.GetDouble("CrownRadius", 1);
+            CrownRadius = EditorParameters.GetDouble("CrownRadius", 2);
             FlatCrestWidth = EditorParameters.GetDouble("FlatCrestWidth", 1);
 
             mode = EditorParameters.GetInt("Mode", 0);
