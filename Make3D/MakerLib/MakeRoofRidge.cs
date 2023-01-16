@@ -67,7 +67,7 @@ namespace MakerLib
 
             double innerCircumference = 2 * Math.PI * crownRadius;
             double innerArmSweep = (armThickness / innerCircumference) * Math.PI * 2.0;
-         //   innerArmSweep = 0.001;
+            //   innerArmSweep = 0.001;
             List<Point> pnts = new List<Point>();
             double armAngleRad = DegRad(armAngle);
             double aaByTwo = armAngleRad / 2;
@@ -76,16 +76,18 @@ namespace MakerLib
 
             double arm1thetaS = arm1thetaE - innerArmSweep;
 
-            double arm2thetaE = PiByTwo + aaByTwo;
+            double arm2thetaS = PiByTwo + aaByTwo;
 
-            double arm2thetaS = arm2thetaE + innerArmSweep;
-
+            double arm2thetaE = arm2thetaS + innerArmSweep;
 
             double outter1 = arm1thetaE - (innerArmSweep / 2);
-
-
             double outter1S = outter1 - (outerArmSweep / 2);
             double outter1E = outter1 + (outerArmSweep / 2);
+
+            double outter2 = arm2thetaS + (innerArmSweep / 2);
+            double outter2S = outter2 - (outerArmSweep / 2);
+            double outter2E = outter2 + (outerArmSweep / 2);
+
             //arm1thetaS = DegRad(arm1thetaS);
             //   double arm1thetaE = arm1thetaS + innerArmSweep;
 
@@ -106,28 +108,28 @@ namespace MakerLib
             pnts.Add(CalcPoint(arm1thetaS, crownRadius));
             pnts.Add(CalcPoint(outter1S, crownRadius + armLength));
 
-            pnts.Add(CalcPoint(outter1E , crownRadius + armLength));
+            pnts.Add(CalcPoint(outter1E, crownRadius + armLength));
             pnts.Add(CalcPoint(arm1thetaE, crownRadius));
 
             t = arm1thetaE;
-           
+
             while (t < arm2thetaS)
             {
                 pnts.Add(CalcPoint(t, crownRadius));
                 t += dt;
             }
-            /*
-            pnts.Add(CalcPoint(arm2thetaS, crownRadius));
-            pnts.Add(CalcPoint(arm2thetaS, crownRadius + armLength));
 
-            pnts.Add(CalcPoint(arm2thetaS + outerArmSweep, crownRadius + armLength));
+            pnts.Add(CalcPoint(arm2thetaS, crownRadius));
+            pnts.Add(CalcPoint(outter2S, crownRadius + armLength));
+
+            pnts.Add(CalcPoint(outter2E, crownRadius + armLength));
             pnts.Add(CalcPoint(arm2thetaE, crownRadius));
 
             t = arm2thetaE;
-            */
+
             while (t < Math.PI * 2)
             {
-                //   pnts.Add(CalcPoint(t, crownRadius));
+                pnts.Add(CalcPoint(t, crownRadius));
                 t += dt;
             }
 
