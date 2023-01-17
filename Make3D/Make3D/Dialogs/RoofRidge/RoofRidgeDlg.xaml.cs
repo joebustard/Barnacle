@@ -33,7 +33,7 @@ namespace Barnacle.Dialogs
 
         private string[] imageNames =
         {
-        "CrownlessRidge","FlatRidge","HollowCrownRidge","CrownRidge"
+        "CrownlessRidge","FlatRidge","CrownRidge"
         };
 
         private bool loaded;
@@ -135,7 +135,32 @@ namespace Barnacle.Dialogs
                 return $"Arm Length must be in the range {minarmLength} to {maxarmLength}";
             }
         }
-
+        private Visibility crownVisibility;
+        public Visibility CrownVisibility
+        {
+            get { return crownVisibility; }
+            set
+            {
+                if (crownVisibility != value)
+                {
+                    crownVisibility = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private Visibility ridgeVisibility;
+        public Visibility RidgeVisibility
+        {
+            get { return ridgeVisibility; }
+            set
+            {
+                if (ridgeVisibility != value)
+                {
+                    ridgeVisibility = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public double CrownRadius
         {
             get
@@ -304,12 +329,40 @@ namespace Barnacle.Dialogs
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             mode = mode + 1;
-            if (mode > 3)
+            if (mode > 2)
             {
                 mode = 0;
             }
             SetShapeImage(mode);
+            SetShapeControls();
             UpdateDisplay();
+        }
+
+        private void SetShapeControls()
+        {
+            switch (mode)
+            {
+                case 0:
+                    {
+                        CrownVisibility = Visibility.Hidden;
+                        RidgeVisibility = Visibility.Hidden;
+                    }
+                    break;
+
+                case 01:
+                    {
+                        CrownVisibility = Visibility.Hidden;
+                        RidgeVisibility = Visibility.Visible;
+                    }
+                    break;
+
+                case 2:
+                    {
+                        CrownVisibility = Visibility.Visible;
+                        RidgeVisibility = Visibility.Hidden;
+                    }
+                    break;
+            }
         }
 
         private void GenerateShape()
@@ -319,7 +372,7 @@ namespace Barnacle.Dialogs
                 armLength, armAngle, armThickness, ridgeLength, crownRadius, flatCrestWidth, mode
                 );
             maker.Generate(Vertices, Faces);
-            //   CentreVertices();
+            CentreVertices();
         }
 
         private Uri ImageUri(string p)
@@ -379,6 +432,7 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             SetShapeImage(mode);
+            SetShapeControls();
             loaded = true;
 
             UpdateDisplay();

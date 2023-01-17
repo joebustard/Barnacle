@@ -45,9 +45,6 @@ namespace MakerLib
                     break;
 
                 case 2:
-                    break;
-
-                case 3:
                     MakeCrownRidge(armLength, armAngle, armThickness, ridgeLength, crownRadius);
                     break;
             }
@@ -70,7 +67,7 @@ namespace MakerLib
 
             double arm1Angle = 90 - armAngle / 2;
             double arm2Angle = 90 + armAngle / 2;
-            //   innerArmSweep = 0.001;
+           
             List<Point> pnts = new List<Point>();
             double arm1AngleRad = DegRad(arm1Angle);
             double arm2AngleRad = DegRad(arm2Angle);
@@ -113,29 +110,29 @@ namespace MakerLib
             ExtrudepsideDown(ridgeLength, pnts);
         }
 
-        private void ExtrudepsideDown(double ridgeLength, List<Point> pnts)
+        private void ExtrudepsideDown(double ridgeLength, List<Point> pnts, bool invert = false)
         {
             List<Point> tmp = new List<Point>();
             foreach (Point p in pnts)
             {
                 tmp.Add(new Point(p.X, -p.Y));
             }
-            ExtrudeH(tmp, ridgeLength);
+            ExtrudeH(tmp, ridgeLength, invert);
         }
 
         private void MakeFlatRidge(double armLength, double armAngle, double armThickness, double ridgeLength, double flatCrestWidth)
         {
             List<Point> pnts = new List<Point>();
-            armAngle = 180 - armAngle;
-            double theta = (armAngle / 2) + 90;
+            
+            double theta1 = 90-(armAngle / 2);
             double fcw = flatCrestWidth / 2.0;
-            theta = (theta * Math.PI * 2.0) / 360.0;
+            theta1 = DegRad(theta1);
 
             pnts.Add(new Point(fcw, 0));
-            Point pt = CalcPoint(theta, armLength);
+            Point pt = CalcPoint(theta1, armLength);
             pnts.Add(new Point(pt.X + fcw, pt.Y));
-            pnts.Add(new Point(pnts[1].X, (pnts[1].Y - armThickness)));
-            pnts.Add(new Point(fcw, -armThickness));
+            pnts.Add(new Point(pnts[1].X, pnts[1].Y + armThickness));
+            pnts.Add(new Point(fcw, armThickness));
 
             pnts.Add(new Point(-pnts[3].X, pnts[3].Y));
             pnts.Add(new Point(-pnts[2].X, pnts[2].Y));
@@ -159,7 +156,7 @@ namespace MakerLib
             pnts.Add(new Point(-pnts[1].X, pnts[1].Y - armThickness));
             pnts.Add(new Point(-pnts[1].X, pnts[1].Y));
 
-            ExtrudepsideDown(ridgeLength, pnts);
+            ExtrudepsideDown(ridgeLength, pnts,false);
         }
     }
 }

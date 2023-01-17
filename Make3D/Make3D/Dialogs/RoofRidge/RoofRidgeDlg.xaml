@@ -49,14 +49,14 @@
 
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100" Content="Crown Radius"/>
+                <Label VerticalAlignment="Center" Width="100" Content="Crown Radius" Visibility="{Binding CrownVisibility}"/>
 
-                 <TextBox Margin="8,0,0,0" Text="{Binding CrownRadius}" Width="150" ToolTip="{Binding CrownRadiusToolTip}"/>
+                 <TextBox Margin="8,0,0,0" Text="{Binding CrownRadius}" Width="150" ToolTip="{Binding CrownRadiusToolTip}" Visibility="{Binding CrownVisibility}"/>
 
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100" Content="Flat Crest Size"/>
-                <TextBox Margin="8,0,0,0" Text="{Binding FlatCrestWidth}" Width="150" ToolTip="{Binding FlatCrestWidthToolTip}"/>
+                <Label VerticalAlignment="Center" Width="100" Content="Flat Crest Size" Visibility="{Binding RidgeVisibility}"/>
+                <TextBox Margin="8,0,0,0" Text="{Binding FlatCrestWidth}" Width="150" ToolTip="{Binding FlatCrestWidthToolTip}" Visibility="{Binding RidgeVisibility}"/>
 
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">

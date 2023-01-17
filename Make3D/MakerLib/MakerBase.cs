@@ -471,7 +471,7 @@ namespace MakerLib
             }
         }
 
-        protected void EdgeH(List<Point> points, double thickness)
+        protected void EdgeH(List<Point> points, double thickness, bool invert=false)
         {
             for (int i = 0; i < points.Count; i++)
             {
@@ -484,13 +484,26 @@ namespace MakerLib
                 int c1 = AddVertice(points[i].X, points[i].Y, thickness);
                 int c2 = AddVertice(points[j].X, points[j].Y, thickness);
                 int c3 = AddVertice(points[j].X, points[j].Y, 0);
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
 
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c3);
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
             }
         }
 
@@ -552,9 +565,9 @@ namespace MakerLib
             }
         }
 
-        protected void ExtrudeH(List<Point> points, double z)
+        protected void ExtrudeH(List<Point> points, double z, bool invert)
         {
-            EdgeH(points, z);
+            EdgeH(points, z, invert);
             TriangulateSurface(points.ToArray(), 0, true);
             TriangulateSurface(points.ToArray(), z, false);
         }
