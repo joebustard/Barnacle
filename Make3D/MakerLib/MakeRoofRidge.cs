@@ -55,7 +55,7 @@ namespace MakerLib
 
         private double DegRad(double x)
         {
-            return (x / 180) * Math.PI;
+            return (Math.PI / 180.0) * x;
         }
 
         private const double PiByTwo = Math.PI / 2.0;
@@ -67,73 +67,60 @@ namespace MakerLib
 
             double innerCircumference = 2 * Math.PI * crownRadius;
             double innerArmSweep = (armThickness / innerCircumference) * Math.PI * 2.0;
+
+            double arm1Angle = 90 - armAngle / 2;
+            double arm2Angle = 90 + armAngle / 2;
             //   innerArmSweep = 0.001;
             List<Point> pnts = new List<Point>();
-            double armAngleRad = DegRad(armAngle);
-            double aaByTwo = armAngleRad / 2;
-
-            double arm1thetaE = PiByTwo - aaByTwo;
-
-            double arm1thetaS = arm1thetaE - innerArmSweep;
-
-            double arm2thetaS = PiByTwo + aaByTwo;
-
-            double arm2thetaE = arm2thetaS + innerArmSweep;
-
-            double outter1 = arm1thetaE - (innerArmSweep / 2);
-            double outter1S = outter1 - (outerArmSweep / 2);
-            double outter1E = outter1 + (outerArmSweep / 2);
-
-            double outter2 = arm2thetaS + (innerArmSweep / 2);
-            double outter2S = outter2 - (outerArmSweep / 2);
-            double outter2E = outter2 + (outerArmSweep / 2);
-
-            //arm1thetaS = DegRad(arm1thetaS);
-            //   double arm1thetaE = arm1thetaS + innerArmSweep;
-
-            //   double arm2thetaS = arm1thetaE + DegRad(armAngle);
-            //    double arm2thetaE = arm2thetaS + innerArmSweep;
-
-            // arm2thetaE += (2.0 * Math.PI);
-            // arm2thetaS += (2.0 * Math.PI);
+            double arm1AngleRad = DegRad(arm1Angle);
+            double arm2AngleRad = DegRad(arm2Angle);
 
             double dt = Math.PI / 180;
             double t = 0;
-            while (t < arm1thetaS)
+            while (t < arm1AngleRad)
             {
                 pnts.Add(CalcPoint(t, crownRadius));
                 t += dt;
             }
 
-            pnts.Add(CalcPoint(arm1thetaS, crownRadius));
-            pnts.Add(CalcPoint(outter1S, crownRadius + armLength));
+            pnts.Add(CalcPoint(arm1AngleRad - innerArmSweep / 2, crownRadius));
+            pnts.Add(CalcPoint(arm1AngleRad - outerArmSweep / 2, crownRadius + armLength));
 
-            pnts.Add(CalcPoint(outter1E, crownRadius + armLength));
-            pnts.Add(CalcPoint(arm1thetaE, crownRadius));
+            pnts.Add(CalcPoint(arm1AngleRad + outerArmSweep / 2, crownRadius + armLength));
+            pnts.Add(CalcPoint(arm1AngleRad + innerArmSweep / 2, crownRadius));
 
-            t = arm1thetaE;
+            t = arm1AngleRad + .0001;
 
-            while (t < arm2thetaS)
+            while (t < arm2AngleRad)
             {
                 pnts.Add(CalcPoint(t, crownRadius));
                 t += dt;
             }
 
-            pnts.Add(CalcPoint(arm2thetaS, crownRadius));
-            pnts.Add(CalcPoint(outter2S, crownRadius + armLength));
+            pnts.Add(CalcPoint(arm2AngleRad - innerArmSweep / 2, crownRadius));
+            pnts.Add(CalcPoint(arm2AngleRad - outerArmSweep / 2, crownRadius + armLength));
 
-            pnts.Add(CalcPoint(outter2E, crownRadius + armLength));
-            pnts.Add(CalcPoint(arm2thetaE, crownRadius));
+            pnts.Add(CalcPoint(arm2AngleRad + outerArmSweep / 2, crownRadius + armLength));
+            pnts.Add(CalcPoint(arm2AngleRad + innerArmSweep / 2, crownRadius));
 
-            t = arm2thetaE;
+            t = arm2AngleRad + 0.0001;
 
             while (t < Math.PI * 2)
             {
                 pnts.Add(CalcPoint(t, crownRadius));
                 t += dt;
             }
+            ExtrudepsideDown(ridgeLength, pnts);
+        }
 
-            ExtrudeH(pnts, ridgeLength);
+        private void ExtrudepsideDown(double ridgeLength, List<Point> pnts)
+        {
+            List<Point> tmp = new List<Point>();
+            foreach (Point p in pnts)
+            {
+                tmp.Add(new Point(p.X, -p.Y));
+            }
+            ExtrudeH(tmp, ridgeLength);
         }
 
         private void MakeFlatRidge(double armLength, double armAngle, double armThickness, double ridgeLength, double flatCrestWidth)
@@ -147,14 +134,14 @@ namespace MakerLib
             pnts.Add(new Point(fcw, 0));
             Point pt = CalcPoint(theta, armLength);
             pnts.Add(new Point(pt.X + fcw, pt.Y));
-            pnts.Add(new Point(pnts[1].X, pnts[1].Y - armThickness));
+            pnts.Add(new Point(pnts[1].X, (pnts[1].Y - armThickness)));
             pnts.Add(new Point(fcw, -armThickness));
 
             pnts.Add(new Point(-pnts[3].X, pnts[3].Y));
             pnts.Add(new Point(-pnts[2].X, pnts[2].Y));
             pnts.Add(new Point(-pnts[1].X, pnts[1].Y));
             pnts.Add(new Point(-pnts[0].X, pnts[0].Y));
-            ExtrudeH(pnts, ridgeLength);
+            ExtrudepsideDown(ridgeLength, pnts);
         }
 
         private void MakeCrownless(double armLength, double armAngle, double armThickness, double ridgeLength1)
@@ -171,7 +158,8 @@ namespace MakerLib
             pnts.Add(new Point(0, -armThickness));
             pnts.Add(new Point(-pnts[1].X, pnts[1].Y - armThickness));
             pnts.Add(new Point(-pnts[1].X, pnts[1].Y));
-            ExtrudeH(pnts, ridgeLength1);
+
+            ExtrudepsideDown(ridgeLength, pnts);
         }
     }
 }
