@@ -99,6 +99,7 @@ namespace Barnacle.ViewModels
             UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
             CopyCommand = new RelayCommand(OnCopy);
+            CloneInPlaceCommand = new RelayCommand(OnCloneInPlace);
             PasteCommand = new RelayCommand(OnPaste);
             PasteAtCommand = new RelayCommand(OnPasteAt);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
@@ -189,6 +190,11 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnCloneInPlace(object obj)
+        {
+            NotificationManager.Notify("CloneInPlace", null);
         }
 
         private void SuspendEditing(object param)
@@ -324,6 +330,7 @@ namespace Barnacle.ViewModels
         public ICommand CircularPasteCommand { get; set; }
 
         public ICommand CopyCommand { get; set; }
+        public ICommand CloneInPlaceCommand { get; set; }
 
         public ICommand CutCommand { get; set; }
 

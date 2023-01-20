@@ -125,6 +125,7 @@ namespace Barnacle.ViewModels
             NotificationManager.SubscribeTask("Editor", "Group", OnGroup);
             NotificationManager.Subscribe("Editor", "Cut", OnCut);
             NotificationManager.Subscribe("Editor", "Copy", OnCopy);
+            NotificationManager.Subscribe("Editor", "CloneInPlace", OnCloneInPlace);
             NotificationManager.Subscribe("Editor", "Paste", OnPaste);
             NotificationManager.Subscribe("Editor", "PasteAt", OnPasteAt);
             NotificationManager.Subscribe("Editor", "DoMultiPaste", OnMultiPaste);
@@ -188,6 +189,37 @@ namespace Barnacle.ViewModels
             isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void OnCloneInPlace(object param)
+        {
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                if (ob != null)
+                {
+                    Object3D o = ob.Clone();
+                    o.Name = Document.DuplicateName(o.Name);
+
+                    o.Remesh();
+                    o.MoveToFloor();
+                    o.CalcScale(false);
+                    allBounds += o.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(o);
+                    Document.Content.Add(o);
+                    Document.Dirty = true;
+
+                    selectedObjectAdorner.Clear();
+                    selectedObjectAdorner.AdornObject(o);
+                    RegenerateDisplayList();
+                    NotificationManager.Notify("ObjectNamesChanged", null);
+                    NotificationManager.Notify("ObjectSelected", o);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Must have a single object selected", "Error");
+            }
         }
 
         private void OnAddObjectToLibrary(object param)
@@ -2743,8 +2775,6 @@ namespace Barnacle.ViewModels
                         {
                             MessageBox.Show(ex.Message);
                         }
-                        
-                       
                     }
                     break;
             }

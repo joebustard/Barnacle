@@ -60,7 +60,7 @@
                     <Custom:RibbonButton Command="{Binding UndoCommand}"
                                          SmallImageSource="/images/buttons/edit_undo.png"
                                          x:Name="Undo" IsEnabled="{Binding EditingActive}" />
-                                         <!--
+                    <!--
                     <Custom:RibbonButton Command="{Binding RedoCommand}"
                                          SmallImageSource="/images/buttons/edit_redo.png"
                                          x:Name="Redo" IsEnabled="{Binding EditingActive}" />
@@ -155,32 +155,44 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                          VerticalAlignment="Top"
                                          x:Name="CutButton" />
-                    <Custom:RibbonButton Command="{Binding PasteCommand}"
+                    <Custom:RibbonButton Command="{Binding CloneInPlaceCommand}"
+                                         HorizontalAlignment="Stretch"
+                                         Label="Clone"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/clone.png"
+                                         ToolTip="Clone in exactly the same same place as the original without moving or rotating anything. Be careful!"
+                                         VerticalAlignment="Top"
+                                         x:Name="CloneInPlaceButton" />
+                    <Custom:RibbonMenuButton  HorizontalAlignment="Stretch"
+                                         Label="Paste"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/paste.png">
+                        <Custom:RibbonButton Command="{Binding PasteCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Paste"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/paste.png"
                                          ToolTip="Paste at the right of the existing bounds"
                                          VerticalAlignment="Top"
                                          x:Name="PasteButton" />
-                    <Custom:RibbonButton Command="{Binding PasteAtCommand}"
+                        <Custom:RibbonButton Command="{Binding PasteAtCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Paste At"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/pasteat.png"
                                          ToolTip="Paste at the floor marker if its present"
                                          VerticalAlignment="Top"
                                          x:Name="PasteAtButton" />
-                    <Custom:RibbonButton Command="{Binding MultiPasteCommand}"
+
+                        <Custom:RibbonButton Command="{Binding MultiPasteCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Multi Paste"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/pastemulti.png"
                                          VerticalAlignment="Top"
                                          x:Name="PasteMultiButton" />
-                    <Custom:RibbonButton Command="{Binding CircularPasteCommand}"
+                        <Custom:RibbonButton Command="{Binding CircularPasteCommand}"
                                          HorizontalAlignment="Stretch"
                                          Label="Circular Paste"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/pastecircle.png"
                                          VerticalAlignment="Top"
                                          x:Name="PasteCircularButton" />
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="SelectionGroup"
                                     Header="Selection"
@@ -193,7 +205,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectFirst.png"
                                          ToolTip="Select First"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectFirstButton" IsEnabled="{Binding EditingActive}"/>
+                                         x:Name="SelectFirstButton" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Previous"
                                          HorizontalAlignment="Stretch"
@@ -201,7 +213,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectPrevious.png"
                                          ToolTip="Select Previous"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectPrevButton" IsEnabled="{Binding EditingActive}"/>
+                                         x:Name="SelectPrevButton" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Next"
                                          HorizontalAlignment="Stretch"
@@ -209,7 +221,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectNext.png"
                                          ToolTip="Select Next"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectNextButton" IsEnabled="{Binding EditingActive}"/>
+                                         x:Name="SelectNextButton" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Last"
                                          HorizontalAlignment="Stretch"
@@ -217,7 +229,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectLast.png"
                                          ToolTip="Select Last"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectLastButton" IsEnabled="{Binding EditingActive}"/>
+                                         x:Name="SelectLastButton" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="All"
                                          HorizontalAlignment="Stretch"
@@ -225,7 +237,7 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"
                                          ToolTip="Select All"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectAllButton" IsEnabled="{Binding EditingActive}"/>
+                                         x:Name="SelectAllButton" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Clear"
                                          HorizontalAlignment="Stretch"
@@ -233,14 +245,14 @@
                                          SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
                                          ToolTip="Clear selection"
                                          VerticalAlignment="Top"
-                                         x:Name="SelectNoneButton" IsEnabled="{Binding EditingActive}"/>
+                                         x:Name="SelectNoneButton" IsEnabled="{Binding EditingActive}" />
                     <ComboBox HorizontalAlignment="Stretch"
                               ItemsSource="{Binding ObjectNames}"
                               MinWidth="100"
                               SelectedItem="{Binding SelectedObjectName}"
                               ToolTip="Select an object by its name"
                               VerticalAlignment="Top"
-                              x:Name="SelectObjectNames" IsEnabled="{Binding EditingActive}"/>
+                              x:Name="SelectObjectNames" IsEnabled="{Binding EditingActive}" />
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ProjectGroup"
                                     Header="Project"

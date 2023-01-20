@@ -1,4 +1,5 @@
-﻿v1.0.3
+﻿
+v1.0.3
 ===========
 Fixed
   Slicing dialog background not using style resource
@@ -14,13 +15,16 @@ Changed
   Default Bill of Materials is now an xlsx not a docx. Columns match output from slice
   
   Insert File/Reference File/Open FIle/Save As initial directory set to project folder
+  Moved the 4 paste buttons under a ribbonmenubtton to save screen space.
 
 
 Added 
   Folder for user platelet textures. C:\programdata\barnacle\textures
   Checkbox to centre texture or tile across platelet
+  Clone button. Makes duplicate of object in exactly the smae place
 
   Pill tool
+  Roof Ridge Tool
 
   Slicer output shows number of objects in each file, estimated print time and estimated material.
       This is just the estimates reported by curaengine
