@@ -22,8 +22,7 @@ Added
   Folder for user platelet textures. C:\programdata\barnacle\textures
   Checkbox to centre texture or tile across platelet
   Clone button. Makes duplicate of object in exactly the smae place
-
-  Pill tool
+  Added F7/F8 key as short cuts for up/down Camera rotation  Pill tool
   Roof Ridge Tool
 
   Slicer output shows number of objects in each file, estimated print time and estimated material.

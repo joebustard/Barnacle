@@ -74,5 +74,9 @@ namespace Barnacle.Dialogs
             instance.InfoLabel.Content = s;
             Refresh(instance.InfoLabel);
         }
+        public void UpdateText(String s)
+        {
+            instance.InfoLabel.Content = s;            
+        }
     }
 }

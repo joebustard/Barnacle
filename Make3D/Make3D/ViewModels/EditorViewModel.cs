@@ -741,15 +741,28 @@ namespace Barnacle.ViewModels
 
                     case Key.F5:
                         {
-                            RotateCamera(-0.5);
+                            RotateCamera(-0.5,0.0);
                         }
                         break;
 
                     case Key.F6:
                         {
-                            RotateCamera(0.5);
+                            RotateCamera(0.5,0.0);
                         }
                         break;
+
+                    case Key.F7:
+                        {
+                            RotateCamera(0.0, -0.5);
+                        }
+                        break;
+
+                    case Key.F8:
+                        {
+                            RotateCamera(0.0, 0.5);
+                        }
+                        break;
+
                 }
             }
             else
@@ -2124,9 +2137,9 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("CameraPos");
         }
 
-        private void RotateCamera(double dt)
+        private void RotateCamera(double dt,double dp)
         {
-            camera.RotateDegrees(dt);
+            camera.RotateDegrees(dt,dp);
             LookToCenter();
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
@@ -3864,7 +3877,8 @@ namespace Barnacle.ViewModels
         private void ShowCSGProgress(CSGGroupProgress obj)
         {
             InfoWindow.Instance().ShowInfo("CSG Operation");
-            InfoWindow.Instance().ShowText(obj.Text);
+            //InfoWindow.Instance().ShowText(obj.Text);
+            InfoWindow.Instance().UpdateText(obj.Text);
         }
 
         private void ShowToolForCurrentSelection(bool clear = false)

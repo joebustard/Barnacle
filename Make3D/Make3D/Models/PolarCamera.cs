@@ -208,9 +208,10 @@ namespace Barnacle.Models
             }
         }
 
-        internal void RotateDegrees(double dt)
+        internal void RotateDegrees(double dt,double dp)
         {
             polarPos.Theta += (dt * Math.PI) / 180.0;
+            polarPos.Phi += (dp * Math.PI) / 180.0;
 
             ConvertPolarTo3D();
         }
