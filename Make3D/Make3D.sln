@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PolygonLibrary", "PolygonLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageUtils", "ImageUtils\ImageUtils.csproj", "{3A96F5C2-0C0D-4C85-99B7-1F47BD843A5B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HoleLibrary", "HoleLibrary\HoleLibrary.csproj", "{918B2B56-31AF-4294-BF15-0D4F4CD0675F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,10 @@ Global
 		{3A96F5C2-0C0D-4C85-99B7-1F47BD843A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A96F5C2-0C0D-4C85-99B7-1F47BD843A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A96F5C2-0C0D-4C85-99B7-1F47BD843A5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{918B2B56-31AF-4294-BF15-0D4F4CD0675F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{918B2B56-31AF-4294-BF15-0D4F4CD0675F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{918B2B56-31AF-4294-BF15-0D4F4CD0675F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{918B2B56-31AF-4294-BF15-0D4F4CD0675F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
