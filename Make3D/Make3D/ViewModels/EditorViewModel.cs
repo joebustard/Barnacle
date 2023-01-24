@@ -7,6 +7,7 @@ using Barnacle.Models.LoopSmoothing;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
 using CSGLib;
+using HoleLibrary;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
@@ -113,6 +114,7 @@ namespace Barnacle.ViewModels
 
             modelItems.Add(floor.FloorMesh);
             NotificationManager.Subscribe("Editor", "ZoomIn", ZoomIn);
+            NotificationManager.Subscribe("Editor", "FixHoles", FixHoles);
             NotificationManager.Subscribe("Editor", "ZoomOut", ZoomOut);
             NotificationManager.Subscribe("Editor", "ZoomReset", ZoomReset);
             NotificationManager.Subscribe("Editor", "CameraCommand", OnCameraCommand);
@@ -189,6 +191,35 @@ namespace Barnacle.ViewModels
             isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void FixHoles(object param)
+        {
+            if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
+            {
+                Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                if (ob != null)
+                {
+                    HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
+                    hf.FindHoles();
+
+                    ob.Remesh();
+
+                    ob.CalcScale(false);
+                    allBounds += ob.AbsoluteBounds;
+                    GeometryModel3D gm = GetMesh(ob);
+                    Document.Dirty = true;
+
+                    selectedObjectAdorner.Clear();
+                    selectedObjectAdorner.AdornObject(ob);
+                    RegenerateDisplayList();
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Must have a single object selected", "Error");
+            }
         }
 
         private void OnCloneInPlace(object param)

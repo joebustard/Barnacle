@@ -96,6 +96,7 @@ namespace Barnacle.ViewModels
             InsertCommand = new RelayCommand(OnInsert);
             ReferenceCommand = new RelayCommand(OnReference);
             ManifoldCommand = new RelayCommand(OnManifoldTest);
+            FixHolesCommand = new RelayCommand(OnFixHoles);
             UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
             CopyCommand = new RelayCommand(OnCopy);
@@ -190,6 +191,11 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnFixHoles(object obj)
+        {
+            NotificationManager.Notify("FixHoles", null);
         }
 
         private void OnCloneInPlace(object obj)
@@ -540,6 +546,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ManifoldCommand { get; set; }
+        public ICommand FixHolesCommand { get; set; }
 
         public ICommand MarkerCommand { get; set; }
 

@@ -888,6 +888,15 @@
                                              ToolTip="Remove Duplicate Vertex"
                                              VerticalAlignment="Top"
                                              x:Name="DupVertexButton" />
+
+                        <Custom:RibbonButton Command="{Binding FixHolesCommand}"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Fix Holes"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ToolTip="Remove small holes"
+                                             VerticalAlignment="Top"
+                                             x:Name="FixHolesButton" />
+
                         <Custom:RibbonButton Command="{Binding UnrefVertexCommand}"
                                              HorizontalAlignment="Stretch"
                                              Label="Rem Unref Vertex"

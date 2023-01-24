@@ -857,6 +857,10 @@
       <Project>{5BD65286-F34E-45AE-9E8D-2E7A0DFF6D0D}</Project>
       <Name>EditorParameterLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HoleLibrary\HoleLibrary.csproj">
+      <Project>{918B2B56-31AF-4294-BF15-0D4F4CD0675F}</Project>
+      <Name>HoleLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ImageUtils\ImageUtils.csproj">
       <Project>{3a96f5c2-0c0d-4c85-99b7-1f47bd843a5b}</Project>
       <Name>ImageUtils</Name>

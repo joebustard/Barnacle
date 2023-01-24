@@ -17,6 +17,7 @@ namespace HoleLibrary
 
         public Face(int v0, int v1, int v2, List<Edge> edges)
         {
+            Edges = new Edge[3];
             Edges[0] = FindEdge(v0, v1, this, edges);
             Edges[1] = FindEdge(v1, v2, this, edges);
             Edges[2] = FindEdge(v2, v0, this, edges);
@@ -37,6 +38,7 @@ namespace HoleLibrary
             if (res == null)
             {
                 res = new Edge(v0, v1, face);
+                edges.Add(res);
             }
             else
             {

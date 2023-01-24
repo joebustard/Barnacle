@@ -18,12 +18,29 @@ namespace HoleLibrary
         {
             points = meshPoints;
             edges = new List<Edge>();
+            faces = new List<Face>();
             for (int i = 0; i < meshFaces.Count; i += 3)
             {
                 Face nf = new Face(meshFaces[i],
                     meshFaces[i + 1],
-                    meshFaces[i + 2], edges);
+                    meshFaces[i + 2],
+                    edges);
+                faces.Add(nf);
             }
+
+        }
+        public void FindHoles()
+        {
+            List<Edge> duffEdges = new List<Edge>();
+            foreach (Edge e in edges)
+            {
+                if (e.Face2 == null)
+                {
+                    duffEdges.Add(e);
+                }
+            }
+
+
         }
     }
 }
