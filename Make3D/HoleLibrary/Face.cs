@@ -23,13 +23,13 @@ namespace HoleLibrary
             Edges[2] = FindEdge(v2, v0, this, edges);
         }
 
-        private Edge FindEdge(int v0, int v1, Face face, List<Edge> edges)
+        private Edge FindEdge(int start, int end, Face face, List<Edge> edges)
         {
             Edge res = null;
             // dummy for now
             foreach (Edge e in edges)
             {
-                if (e.EdgeMatch(v0, v1))
+                if (e.EdgeMatch(start, end))
                 {
                     res = e;
                     break;
@@ -37,12 +37,12 @@ namespace HoleLibrary
             }
             if (res == null)
             {
-                res = new Edge(v0, v1, face);
+                res = new Edge(start, end, face);
                 edges.Add(res);
             }
             else
             {
-                res.Face2 = this;
+                res.Face2 = face;
             }
             return res;
         }

@@ -144,77 +144,45 @@ namespace ManifoldLib
                     }
                 }
             }
-        }
 
+        }
+        private int AddVertice(Point3DCollection pnts, double x, double y, double z)
+        {
+            int res = -1;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if (PointUtils.equals(pnts[i], x, y, z))
+                {
+                    res = i;
+                    break;
+                }
+            }
+
+            if (res == -1)
+            {
+                pnts.Add(new Point3D(x, y, z));
+                res = pnts.Count - 1;
+            }
+            return res;
+        }
         public void RemoveDuplicateVertices()
         {
-            IsManifold = false;
-            NumberOfDuplicatedVertices = 0;
-            treeRoot = null;
-            if ((Indices != null) && (Indices.Count >= 3))
+            Int32Collection tris = new Int32Collection();
+            Point3DCollection vertices = new Point3DCollection();
+
+            for ( int i =0; i < Indices.Count; i ++)
             {
-                if ((Points != null) && (Points.Count >= 3))
-                {
-                    Vertices.Clear();
-
-                    for (int i = 0; i < Points.Count; i++)
-                    {
-                        if (Indices.Contains(i))
-                        {
-                            Vertex v = new Vertex();
-                            v.Pos = new Point3D(Points[i].X, Points[i].Y, Points[i].Z);
-                            v.OriginalNumber = i;
-                            v.NewNumber = -1;
-                            InsertVertice(v);
-                        }
-                    }
-
-                    int dupof = 0;
-                    int newid = 0;
-                    Vertices[0].NewNumber = newid;
-                    for (int i = 1; i < Vertices.Count; i++)
-                    {
-                        if (PointUtils.equals(Vertices[dupof].Pos, Vertices[i].Pos))
-                        {
-                            Vertices[i].DuplicateOf = Vertices[dupof].OriginalNumber;
-                        }
-                        else
-                        {
-                            dupof = i;
-                            newid++;
-                        }
-                        Vertices[i].NewNumber = newid;
-                    }
-
-                    Faces.Clear();
-                    for (int i = 0; i < Indices.Count; i += 3)
-                    {
-                        Face f = new Face(Indices[i], Indices[i + 1], Indices[i + 2]);
-                        Faces.Add(f);
-                    }
-
-                    foreach (Face f in Faces)
-                    {
-                        foreach (Edge e in f.Edges)
-                        {
-                            for (int i = 0; i < Vertices.Count; i++)
-                            {
-                                if (Vertices[i].OriginalNumber == e.P0)
-                                {
-                                    e.NP0 = Vertices[i].NewNumber;
-                                }
-                                if (Vertices[i].OriginalNumber == e.P1)
-                                {
-                                    e.NP1 = Vertices[i].NewNumber;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                VerticesToPoints();
+                    int f0 = Indices[i];
+                    Point3D p = Points[f0];
+                    int nf0 = AddVertice(vertices, p.X, p.Y, p.Z);
+                    tris.Add(nf0);
             }
+            Points = vertices;
+            Indices = tris;
+
         }
+
+
 
         public void RemoveUnreferencedVertices()
         {

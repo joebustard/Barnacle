@@ -990,8 +990,9 @@ namespace Barnacle.ViewModels
             return mesh;
         }
 
-        private static void RemoveDuplicateVertices(Object3D ob)
+        private  void RemoveDuplicateVertices(Object3D ob)
         {
+            CheckPoint();
             ManifoldChecker checker = new ManifoldChecker();
             PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
             // checker.Points = ob.RelativeObjectVertices;
