@@ -127,8 +127,18 @@ namespace Barnacle.Models
             }
         }
 
-        public void Import(string filename, ref Vector3DCollection normals, ref List<P3D> pnts, ref Int32Collection tris, bool swapYZ)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="normals"></param>
+        /// <param name="pnts"></param>
+        /// <param name="tris"></param>
+        /// <param name="swapYZ"></param>
+        /// <returns>returns true if stl was binary</returns>
+        public bool Import(string filename, ref Vector3DCollection normals, ref List<P3D> pnts, ref Int32Collection tris, bool swapYZ)
         {
+            bool binary = false;
             normals.Clear();
             pnts.Clear();
             tris.Clear();
@@ -138,7 +148,7 @@ namespace Barnacle.Models
             String ft = CheckFileFormat(filename);
             if (ft == "BinSTL")
             {
-                //ReadBinaryStl(filename, normals, pnts, tris, swapYZ);
+                binary = true;
                 ReadBinaryStl(filename, normals, pnts, tris, swapYZ);
             }
             else if (ft == "AsciiSTL")
@@ -146,6 +156,7 @@ namespace Barnacle.Models
                 //ReadAsciiStl(filename, normals, pnts, tris, swapYZ);
                 ReadAsciiStl(filename, normals, pnts, tris, swapYZ);
             }
+            return binary;
         }
 
         private static int AddVertex(Point3DCollection verts, Point3D pn)

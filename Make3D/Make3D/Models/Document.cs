@@ -1,4 +1,5 @@
 ﻿using Barnacle.Object3DLib;
+using ManifoldLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -436,6 +437,7 @@ namespace Barnacle.Models
 
             exp.Export(name, exportList, ProjectSettings.ExportRotation, ProjectSettings.ExportAxisSwap, bnds);
         }
+
         public void Empty()
         {
             if (Content != null)
@@ -453,6 +455,7 @@ namespace Barnacle.Models
             referencedFiles = null;
             ProjectSettings = null;
         }
+
         internal void Clear()
         {
             FilePath = "";
@@ -487,7 +490,7 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
-            if (Properties.Settings.Default.SDCardLabel != null )
+            if (Properties.Settings.Default.SDCardLabel != null)
             {
                 ProjectSettings.SDCardName = Properties.Settings.Default.SDCardLabel;
             }
@@ -499,7 +502,7 @@ namespace Barnacle.Models
             {
                 ProjectSettings.SlicerPath = Properties.Settings.Default.SlicerPath;
             }
-           // Properties.Settings.Default.SDCardLabel = ProjectSettings.SDCardName;
+            // Properties.Settings.Default.SDCardLabel = ProjectSettings.SDCardName;
             Properties.Settings.Default.Save();
         }
 
@@ -881,10 +884,22 @@ namespace Barnacle.Models
             Object3D ob = new Object3D();
             Vector3DCollection normals = ob.Normals;
             List<P3D> pnts = ob.RelativeObjectVertices;
-
             Int32Collection tris = ob.TriangleIndices;
-            exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
 
+            bool wasBinary = exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
+            if (wasBinary)
+            {
+                // binary stls sometimes turn out to have a lot of duplicate points
+                // remove them now.
+                ManifoldChecker checker = new ManifoldChecker();
+                PointUtils.P3DToPointCollection(pnts, checker.Points);
+
+                checker.Indices = tris;
+                checker.RemoveDuplicateVertices();
+                PointUtils.PointCollectionToP3D(checker.Points, pnts);
+                tris = checker.Indices;
+            }
+            ob.Color = ProjectSettings.DefaultObjectColour;
             ob.PrimType = "Mesh";
             ob.CalcScale();
             ob.RelativeToAbsolute();

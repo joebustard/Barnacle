@@ -213,7 +213,6 @@ namespace Barnacle.ViewModels
                     selectedObjectAdorner.Clear();
                     selectedObjectAdorner.AdornObject(ob);
                     RegenerateDisplayList();
-
                 }
             }
             else
@@ -772,13 +771,13 @@ namespace Barnacle.ViewModels
 
                     case Key.F5:
                         {
-                            RotateCamera(-0.5,0.0);
+                            RotateCamera(-0.5, 0.0);
                         }
                         break;
 
                     case Key.F6:
                         {
-                            RotateCamera(0.5,0.0);
+                            RotateCamera(0.5, 0.0);
                         }
                         break;
 
@@ -793,7 +792,6 @@ namespace Barnacle.ViewModels
                             RotateCamera(0.0, 0.5);
                         }
                         break;
-
                 }
             }
             else
@@ -2168,9 +2166,9 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("CameraPos");
         }
 
-        private void RotateCamera(double dt,double dp)
+        private void RotateCamera(double dt, double dp)
         {
-            camera.RotateDegrees(dt,dp);
+            camera.RotateDegrees(dt, dp);
             LookToCenter();
             ReportCameraPosition();
             NotifyPropertyChanged("CameraPos");
@@ -2795,8 +2793,8 @@ namespace Barnacle.ViewModels
                             if (File.Exists(dlg.FileName))
                             {
                                 Document.ImportStl(dlg.FileName, BaseViewModel.Project.SharedProjectSettings.ImportAxisSwap);
-
                                 RegenerateDisplayList();
+                                NotificationManager.Notify("ObjectNamesChanged", null);
                             }
                         }
                     }
