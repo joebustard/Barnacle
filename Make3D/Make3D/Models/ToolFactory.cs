@@ -58,6 +58,10 @@ namespace Barnacle.Models
                     res = new PGramDlg();
                     break;
 
+                case "Pie":
+                    res = new PieDlg();
+                    break;
+
                 case "Pill":
                     res = new PillDlg();
                     break;
@@ -89,7 +93,6 @@ namespace Barnacle.Models
                 case "RoofRidge":
                     res = new RoofRidgeDlg();
                     break;
-
 
                 case "Reuleaux":
                     res = new ReuleauxDlg();

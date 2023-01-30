@@ -87,6 +87,7 @@ namespace ScriptLanguage
                 "makepill",
                 "makeplatelet",
                 "makeplankwall",
+                "makepie",
                 "makepulley",
                 "makereuleaux",
                 "makeroofridge",
@@ -123,6 +124,48 @@ namespace ScriptLanguage
                 "val"
             };
         }
+
+        private ExpressionNode ParseMakePieFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePie";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 5;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePieNode mn = new MakePieNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
         private ExpressionNode ParseMakePillFunction(string parentName)
         {
             ExpressionNode exp = null;
@@ -2586,11 +2629,18 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makepie":
+                            {
+                                exp = ParseMakePieFunction(parentName);
+                            }
+                            break;
+
                         case "makepill":
                             {
                                 exp = ParseMakePillFunction(parentName);
                             }
                             break;
+
                         case "makeplankwall":
                             {
                                 exp = ParseMakePlankWallFunction(parentName);
@@ -2834,6 +2884,7 @@ namespace ScriptLanguage
             }
             return resultNode;
         }
+
         private ExpressionNode ParseMakeRoofRidgeFunction(string parentName)
         {
             ExpressionNode exp = null;

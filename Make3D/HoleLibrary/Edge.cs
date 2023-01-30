@@ -1,18 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HoleLibrary
+﻿namespace HoleLibrary
 {
     public class Edge
     {
-        public int Start { get; set; }
-        public int End { get; set; }
-        public Face Face1 { get; set; }
-        public Face Face2 { get; set; }
-
         public Edge()
         {
             Start = -1;
@@ -28,6 +17,11 @@ namespace HoleLibrary
             Face1 = f;
             Face2 = null;
         }
+
+        public int End { get; set; }
+        public Face Face1 { get; set; }
+        public Face Face2 { get; set; }
+        public int Start { get; set; }
 
         internal bool EdgeMatch(int v0, int v1)
         {

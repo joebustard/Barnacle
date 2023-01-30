@@ -1,20 +1,16 @@
 ﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace HoleLibrary
 {
     public class HoleFinder
     {
-        public List<P3D> Points;
-        public Int32Collection MeshFaces;
         public List<Face> faces;
+        public Int32Collection MeshFaces;
+        public List<P3D> Points;
         private List<Edge> edges;
-
 
         public HoleFinder(List<P3D> meshPoints, Int32Collection mf)
         {
@@ -22,7 +18,7 @@ namespace HoleLibrary
             MeshFaces = mf;
             edges = new List<Edge>();
             faces = new List<Face>();
-            for (int i = 0; i <= mf.Count-3; i += 3)
+            for (int i = 0; i <= mf.Count - 3; i += 3)
             {
                 Face nf = new Face(mf[i],
                     mf[i + 1],
@@ -30,8 +26,8 @@ namespace HoleLibrary
                     edges);
                 faces.Add(nf);
             }
-
         }
+
         public Tuple<int, int> FindHoles()
         {
             int foundHoles = 0;
@@ -42,7 +38,7 @@ namespace HoleLibrary
                 if (e.Face2 == null)
                 {
                     duffEdges.Add(e);
-                   // Debug($"Edge {e.Start} to {e.End}");
+                    // Debug($"Edge {e.Start} to {e.End}");
                 }
             }
             bool more = (duffEdges.Count >= 3);
@@ -132,6 +128,11 @@ namespace HoleLibrary
             return new Tuple<int, int>(foundHoles, fixedHoles);
         }
 
+        private void Debug(string v)
+        {
+            System.Diagnostics.Debug.WriteLine(v);
+        }
+
         private bool FillHole(List<int> holePoints)
         {
             bool res = false;
@@ -141,10 +142,8 @@ namespace HoleLibrary
 
                 switch (holePoints.Count)
                 {
-
                     case 3:
                         {
-
                             MeshFaces.Add(holePoints[2]);
                             MeshFaces.Add(holePoints[1]);
                             MeshFaces.Add(holePoints[0]);
@@ -154,7 +153,6 @@ namespace HoleLibrary
 
                     case 4:
                         {
-
                             MeshFaces.Add(holePoints[2]);
                             MeshFaces.Add(holePoints[1]);
                             MeshFaces.Add(holePoints[0]);
@@ -170,7 +168,7 @@ namespace HoleLibrary
                         {
                             if (holePoints.Count < 20)
                             {
-                            // find centroid
+                                // find centroid
                                 double cx = 0;
                                 double cy = 0;
                                 double cz = 0;
@@ -190,10 +188,10 @@ namespace HoleLibrary
                                 // I know this  isn't brilliant!
                                 int cn = Points.Count - 1;
                                 int j = holePoints.Count - 1;
-                                while ( j > 0)
+                                while (j > 0)
                                 {
                                     MeshFaces.Add(holePoints[j]);
-                                    MeshFaces.Add(holePoints[j-1]);
+                                    MeshFaces.Add(holePoints[j - 1]);
                                     MeshFaces.Add(cn);
                                     j--;
                                 }
@@ -201,15 +199,9 @@ namespace HoleLibrary
                             }
                         }
                         break;
-
                 }
             }
             return res;
-        }
-
-        private void Debug(string v)
-        {
-            System.Diagnostics.Debug.WriteLine(v);
         }
     }
 }

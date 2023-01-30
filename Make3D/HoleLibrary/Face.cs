@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace HoleLibrary
 {
     public class Face
     {
-        public Edge[] Edges { get; set; }
-
         public Face()
         {
             Edges = new Edge[3];
@@ -22,6 +16,8 @@ namespace HoleLibrary
             Edges[1] = FindEdge(v1, v2, this, edges);
             Edges[2] = FindEdge(v2, v0, this, edges);
         }
+
+        public Edge[] Edges { get; set; }
 
         private Edge FindEdge(int start, int end, Face face, List<Edge> edges)
         {

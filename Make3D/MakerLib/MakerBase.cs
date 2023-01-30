@@ -471,7 +471,7 @@ namespace MakerLib
             }
         }
 
-        protected void EdgeH(List<Point> points, double thickness, bool invert=false)
+        protected void EdgeH(List<Point> points, double thickness, bool invert = false)
         {
             for (int i = 0; i < points.Count; i++)
             {
@@ -563,6 +563,11 @@ namespace MakerLib
                     Faces.Add(c2);
                 }
             }
+        }
+
+        protected double DegToRad(double deg)
+        {
+            return deg * Math.PI / 180;
         }
 
         protected void ExtrudeH(List<Point> points, double z, bool invert)
