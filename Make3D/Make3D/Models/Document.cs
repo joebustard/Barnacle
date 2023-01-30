@@ -887,18 +887,7 @@ namespace Barnacle.Models
             Int32Collection tris = ob.TriangleIndices;
 
             bool wasBinary = exp.Import(fileName, ref normals, ref pnts, ref tris, swapYZ);
-            if (wasBinary)
-            {
-                // binary stls sometimes turn out to have a lot of duplicate points
-                // remove them now.
-                ManifoldChecker checker = new ManifoldChecker();
-                PointUtils.P3DToPointCollection(pnts, checker.Points);
 
-                checker.Indices = tris;
-                checker.RemoveDuplicateVertices();
-                PointUtils.PointCollectionToP3D(checker.Points, pnts);
-                tris = checker.Indices;
-            }
             ob.Color = ProjectSettings.DefaultObjectColour;
             ob.PrimType = "Mesh";
             ob.CalcScale();
@@ -913,289 +902,306 @@ namespace Barnacle.Models
             Content.Add(ob);
             ob.Name = "Object_" + Content.Count.ToString();
             Dirty = true;
-        }
 
-        internal void InsertFile(string fileName)
-        {
-            Read(fileName, false);
-
-            Dirty = false;
-        }
-
-        internal void ReferenceFile(string fileName)
-        {
-            LoadReferencedFile(fileName);
-            Dirty = true;
-            if (!referencedFiles.Contains(fileName))
+            if (wasBinary)
             {
-                referencedFiles.Add(fileName);
+                RemoveDuplicateVertices(ob);
             }
-        }
+        
+    }
+    private void RemoveDuplicateVertices(Object3D ob)
+    {
 
-        internal void RenameCurrent(string old, string renamed)
+        ManifoldChecker checker = new ManifoldChecker();
+        PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
+        // checker.Points = ob.RelativeObjectVertices;
+        checker.Indices = ob.TriangleIndices;
+        checker.RemoveDuplicateVertices();
+        PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
+        ob.TriangleIndices = checker.Indices;
+        ob.Remesh();
+    }
+    internal void InsertFile(string fileName)
+    {
+        Read(fileName, false);
+
+        Dirty = false;
+    }
+
+    internal void ReferenceFile(string fileName)
+    {
+        LoadReferencedFile(fileName);
+        Dirty = true;
+        if (!referencedFiles.Contains(fileName))
         {
-            if (FilePath == old)
-            {
-                FilePath = renamed;
-                FileName = System.IO.Path.GetFileName(renamed);
-                Caption = FileName;
-            }
-        }
-
-        internal void RenameFolder(string old, string renamed)
-        {
-            if (FilePath.StartsWith(old))
-            {
-                FilePath = FilePath.Replace(old, renamed);
-            }
-        }
-
-        internal void ReplaceObjectsByGroup(Group3D grp)
-        {
-            Content.Remove(grp.LeftObject);
-            Content.Remove(grp.RightObject);
-            Content.Add(grp);
-            Dirty = true;
-        }
-
-        internal void SplitGroup(Group3D grp)
-        {
-            Content.Remove(grp);
-            grp.LeftObject.Remesh();
-            Content.Add(grp.LeftObject);
-
-            grp.RightObject.Remesh();
-            Content.Add(grp.RightObject);
-
-            grp.LeftObject.CalcScale(false);
-            grp.RightObject.CalcScale(false);
-            Dirty = true;
-        }
-
-        private void GetInt(XmlElement docele, string nm, ref int res, int v)
-        {
-            res = v;
-            if (docele.HasAttribute(nm))
-            {
-                string s = docele.GetAttribute(nm);
-                if (s != "")
-                {
-                    res = Convert.ToInt32(s);
-                }
-            }
-        }
-
-        private void LoadReferencedFile(string fileName)
-        {
-            try
-            {
-                if (File.Exists(fileName))
-                {
-                    DateTime timeStamp = File.GetLastWriteTime(fileName);
-                    XmlDocument doc = new XmlDocument();
-                    doc.XmlResolver = null;
-                    doc.Load(fileName);
-                    XmlNode docNode = doc.SelectSingleNode("Document");
-                    XmlNodeList nodes = docNode.ChildNodes;
-                    foreach (XmlNode nd in nodes)
-                    {
-                        if (nd.Name == "obj")
-                        {
-                            ReferenceObject3D obj = new ReferenceObject3D();
-
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
-                            obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
-                            {
-                                // only reference an object if its exportable/referenceable
-                                if (obj.Exportable)
-                                {
-                                    Content.Add(obj);
-                                }
-                            }
-                        }
-                        if (nd.Name == "groupobj")
-                        {
-                            ReferenceGroup3D obj = new ReferenceGroup3D();
-
-                            obj.Reference.Path = fileName;
-                            obj.Reference.TimeStamp = timeStamp;
-                            obj.BaseRead(nd);
-                            obj.SetMesh();
-                            if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
-                            {
-                                if (obj.Exportable)
-                                {
-                                    Content.Add(obj);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        private void OnDocDirty(object param)
-        {
-            Dirty = true;
-        }
-
-        private void ReadBinary(string fileName, bool clearFirst)
-        {
-            if (clearFirst)
-            {
-                Content.Clear();
-                referencedFiles.Clear();
-            }
-            using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
-            {
-                nextId = reader.ReadInt32();
-                revision = reader.ReadInt32();
-                string id = reader.ReadString();
-                Guid.TryParse(id, out documentID);
-                int count = reader.ReadInt32();
-                for (int i = 0; i < count; i++)
-                {
-                    string fn = reader.ReadString();
-                    fn = ParentProject.ProjectPathToAbsPath(fn);
-                    referencedFiles.Add(fn);
-                }
-
-                foreach (string fn in referencedFiles)
-                {
-                    LoadReferencedFile(fn);
-                }
-                count = reader.ReadInt32();
-                for (int i = 0; i < count; i++)
-                {
-                    byte type = reader.ReadByte();
-                    switch (type)
-                    {
-                        case 0:
-                            {
-                                Object3D ob = new Object3D();
-                                ob.ReadBinary(reader);
-                                ob.Remesh();
-                                ob.SetMesh();
-                                if (ob.PrimType != "Mesh")
-                                {
-                                    ob = ob.ConvertToMesh();
-                                }
-                                if (!(double.IsNegativeInfinity(ob.Position.X)))
-                                {
-                                    Content.Add(ob);
-                                }
-                            }
-                            break;
-
-                        case 1:
-                            {
-                                Group3D ob = new Group3D();
-                                ob.ReadBinary(reader);
-                                ob.Remesh();
-                                ob.SetMesh();
-
-                                if (!(double.IsNegativeInfinity(ob.Position.X)))
-                                {
-                                    Content.Add(ob);
-                                }
-                            }
-                            break;
-
-                        case 2:
-                            {
-                                ReferenceObject3D ob = new ReferenceObject3D();
-                                ob.ReadBinary(reader);
-                                ob.Remesh();
-                                // so we should have already read the referenced files by now
-                                // meaning there should already be a referenced object which matches.
-                                // if there is then update its position to whatever this object says
-
-                                foreach (Object3D old in Content)
-                                {
-                                    if (old is ReferenceObject3D)
-                                    {
-                                        if (old.Name == ob.Name && (old as ReferenceObject3D).Reference.Path == ob.Reference.Path)
-                                        {
-                                            old.Position = ob.Position;
-                                            old.Rotation = ob.Rotation;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-
-                        case 3:
-                            {
-                                ReferenceGroup3D ob = new ReferenceGroup3D();
-                                ob.ReadBinary(reader);
-                                ob.Remesh();
-                                ob.SetMesh();
-
-                                foreach (Object3D old in Content)
-                                {
-                                    if (old is ReferenceGroup3D)
-                                    {
-                                        if (old.Name == ob.Name && (old as ReferenceGroup3D).Reference.Path == ob.Reference.Path)
-                                        {
-                                            old.Position = ob.Position;
-                                            old.Rotation = ob.Rotation;
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                }
-            }
-        }
-
-        private bool ReferencedObjectInContent(string name, string pth)
-        {
-            bool found = false;
-            ExternalReference rf = null;
-            foreach (Object3D obj in Content)
-            {
-                if (obj.Name == name)
-                {
-                    if (obj is ReferenceObject3D)
-                    {
-                        rf = (obj as ReferenceObject3D).Reference;
-                        if (rf.Path == pth)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                    else
-                    if (obj is ReferenceGroup3D)
-                    {
-                        rf = (obj as ReferenceGroup3D).Reference;
-                        if (rf.Path == pth)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            return found;
+            referencedFiles.Add(fileName);
         }
     }
+
+    internal void RenameCurrent(string old, string renamed)
+    {
+        if (FilePath == old)
+        {
+            FilePath = renamed;
+            FileName = System.IO.Path.GetFileName(renamed);
+            Caption = FileName;
+        }
+    }
+
+    internal void RenameFolder(string old, string renamed)
+    {
+        if (FilePath.StartsWith(old))
+        {
+            FilePath = FilePath.Replace(old, renamed);
+        }
+    }
+
+    internal void ReplaceObjectsByGroup(Group3D grp)
+    {
+        Content.Remove(grp.LeftObject);
+        Content.Remove(grp.RightObject);
+        Content.Add(grp);
+        Dirty = true;
+    }
+
+    internal void SplitGroup(Group3D grp)
+    {
+        Content.Remove(grp);
+        grp.LeftObject.Remesh();
+        Content.Add(grp.LeftObject);
+
+        grp.RightObject.Remesh();
+        Content.Add(grp.RightObject);
+
+        grp.LeftObject.CalcScale(false);
+        grp.RightObject.CalcScale(false);
+        Dirty = true;
+    }
+
+    private void GetInt(XmlElement docele, string nm, ref int res, int v)
+    {
+        res = v;
+        if (docele.HasAttribute(nm))
+        {
+            string s = docele.GetAttribute(nm);
+            if (s != "")
+            {
+                res = Convert.ToInt32(s);
+            }
+        }
+    }
+
+    private void LoadReferencedFile(string fileName)
+    {
+        try
+        {
+            if (File.Exists(fileName))
+            {
+                DateTime timeStamp = File.GetLastWriteTime(fileName);
+                XmlDocument doc = new XmlDocument();
+                doc.XmlResolver = null;
+                doc.Load(fileName);
+                XmlNode docNode = doc.SelectSingleNode("Document");
+                XmlNodeList nodes = docNode.ChildNodes;
+                foreach (XmlNode nd in nodes)
+                {
+                    if (nd.Name == "obj")
+                    {
+                        ReferenceObject3D obj = new ReferenceObject3D();
+
+                        obj.Reference.Path = fileName;
+                        obj.Reference.TimeStamp = timeStamp;
+                        obj.BaseRead(nd);
+                        obj.SetMesh();
+                        if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
+                        {
+                            // only reference an object if its exportable/referenceable
+                            if (obj.Exportable)
+                            {
+                                Content.Add(obj);
+                            }
+                        }
+                    }
+                    if (nd.Name == "groupobj")
+                    {
+                        ReferenceGroup3D obj = new ReferenceGroup3D();
+
+                        obj.Reference.Path = fileName;
+                        obj.Reference.TimeStamp = timeStamp;
+                        obj.BaseRead(nd);
+                        obj.SetMesh();
+                        if (!ReferencedObjectInContent(obj.Name, fileName) && !(double.IsNegativeInfinity(obj.Position.X)))
+                        {
+                            if (obj.Exportable)
+                            {
+                                Content.Add(obj);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message);
+        }
+    }
+
+    private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+    {
+        if (PropertyChanged != null)
+        {
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    private void OnDocDirty(object param)
+    {
+        Dirty = true;
+    }
+
+    private void ReadBinary(string fileName, bool clearFirst)
+    {
+        if (clearFirst)
+        {
+            Content.Clear();
+            referencedFiles.Clear();
+        }
+        using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+        {
+            nextId = reader.ReadInt32();
+            revision = reader.ReadInt32();
+            string id = reader.ReadString();
+            Guid.TryParse(id, out documentID);
+            int count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                string fn = reader.ReadString();
+                fn = ParentProject.ProjectPathToAbsPath(fn);
+                referencedFiles.Add(fn);
+            }
+
+            foreach (string fn in referencedFiles)
+            {
+                LoadReferencedFile(fn);
+            }
+            count = reader.ReadInt32();
+            for (int i = 0; i < count; i++)
+            {
+                byte type = reader.ReadByte();
+                switch (type)
+                {
+                    case 0:
+                        {
+                            Object3D ob = new Object3D();
+                            ob.ReadBinary(reader);
+                            ob.Remesh();
+                            ob.SetMesh();
+                            if (ob.PrimType != "Mesh")
+                            {
+                                ob = ob.ConvertToMesh();
+                            }
+                            if (!(double.IsNegativeInfinity(ob.Position.X)))
+                            {
+                                Content.Add(ob);
+                            }
+                        }
+                        break;
+
+                    case 1:
+                        {
+                            Group3D ob = new Group3D();
+                            ob.ReadBinary(reader);
+                            ob.Remesh();
+                            ob.SetMesh();
+
+                            if (!(double.IsNegativeInfinity(ob.Position.X)))
+                            {
+                                Content.Add(ob);
+                            }
+                        }
+                        break;
+
+                    case 2:
+                        {
+                            ReferenceObject3D ob = new ReferenceObject3D();
+                            ob.ReadBinary(reader);
+                            ob.Remesh();
+                            // so we should have already read the referenced files by now
+                            // meaning there should already be a referenced object which matches.
+                            // if there is then update its position to whatever this object says
+
+                            foreach (Object3D old in Content)
+                            {
+                                if (old is ReferenceObject3D)
+                                {
+                                    if (old.Name == ob.Name && (old as ReferenceObject3D).Reference.Path == ob.Reference.Path)
+                                    {
+                                        old.Position = ob.Position;
+                                        old.Rotation = ob.Rotation;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case 3:
+                        {
+                            ReferenceGroup3D ob = new ReferenceGroup3D();
+                            ob.ReadBinary(reader);
+                            ob.Remesh();
+                            ob.SetMesh();
+
+                            foreach (Object3D old in Content)
+                            {
+                                if (old is ReferenceGroup3D)
+                                {
+                                    if (old.Name == ob.Name && (old as ReferenceGroup3D).Reference.Path == ob.Reference.Path)
+                                    {
+                                        old.Position = ob.Position;
+                                        old.Rotation = ob.Rotation;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+    }
+
+    private bool ReferencedObjectInContent(string name, string pth)
+    {
+        bool found = false;
+        ExternalReference rf = null;
+        foreach (Object3D obj in Content)
+        {
+            if (obj.Name == name)
+            {
+                if (obj is ReferenceObject3D)
+                {
+                    rf = (obj as ReferenceObject3D).Reference;
+                    if (rf.Path == pth)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                else
+                if (obj is ReferenceGroup3D)
+                {
+                    rf = (obj as ReferenceGroup3D).Reference;
+                    if (rf.Path == pth)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+        }
+        return found;
+    }
+}
 }

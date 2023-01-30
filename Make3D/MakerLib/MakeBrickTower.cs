@@ -63,8 +63,8 @@ namespace MakerLib
             double offsetSweep = 0;
             while (y < towerHeight)
             {
-                MakeOuterBrickRing(numberOfWholeBricknGaps, halfBrickWidth, twoPi, brickSweep, gapSweep, y, offsetSweep);
-                MakeInnerBrickRing(numberOfWholeBricknGaps, halfBrickWidth, twoPi, brickSweep, gapSweep, y, offsetSweep);
+               MakeOuterBrickRing(numberOfWholeBricknGaps, halfBrickWidth, twoPi, brickSweep, gapSweep, y, offsetSweep);
+               MakeInnerBrickRing(numberOfWholeBricknGaps, halfBrickWidth, twoPi, brickSweep, gapSweep, y, offsetSweep);
                 y += brickHeight;
 
                 y += gapLength;
@@ -106,13 +106,13 @@ namespace MakerLib
 
                 if (bottom)
                 {
-                    AddFace(v0, v2, v1);
-                    AddFace(v0, v3, v2);
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
                 }
                 else
                 {
-                    AddFace(v0, v1, v2);
-                    AddFace(v0, v2, v3);
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
                 }
                 theta += dt;
             }
@@ -138,8 +138,8 @@ namespace MakerLib
                 int v2 = AddVertice(p2);
                 int v3 = AddVertice(p3);
 
-                AddFace(v0, v1, v2);
-                AddFace(v0, v2, v3);
+                AddFace(v0, v2, v1);
+                AddFace(v0, v3, v2);
 
                 theta += dt;
             }
@@ -165,8 +165,8 @@ namespace MakerLib
                 int v2 = AddVertice(p2);
                 int v3 = AddVertice(p3);
 
-                AddFace(v0, v2, v1);
-                AddFace(v0, v3, v2);
+                AddFace(v0, v1, v2);
+                AddFace(v0, v2, v3);
 
                 theta += dt;
             }
@@ -196,76 +196,11 @@ namespace MakerLib
                 int v2 = AddVertice(p2);
                 int v3 = AddVertice(p3);
 
-                AddFace(v0, v1, v2);
-                AddFace(v0, v2, v3);
-
-                // outter gap face
-                theta += brickSweep;
-                theta2 += gapSweep;
-
-                pt0 = CalcPoint(theta, towerRadius);
-                pt1 = CalcPoint(theta2, towerRadius);
-                p0 = new Point3D(pt0.X, y, pt0.Y);
-                p1 = new Point3D(pt1.X, y, pt1.Y);
-                p2 = new Point3D(pt1.X, y + brickHeight, pt1.Y);
-                p3 = new Point3D(pt0.X, y + brickHeight, pt0.Y);
-
-                int v4 = AddVertice(p0);
-                int v5 = AddVertice(p1);
-                int v6 = AddVertice(p2);
-                int v7 = AddVertice(p3);
-
-                // link both at start
-                Point3D p8 = new Point3D(pt8.X, y, pt8.Y);
-                Point3D p9 = new Point3D(pt8.X, y + brickHeight, pt8.Y);
-                int v8 = AddVertice(p8);
-                int v9 = AddVertice(p9);
-
-                AddFace(v0, v3, v9);
-                AddFace(v0, v9, v8);
-
-                // link both of them
-                // at end
-                AddFace(v1, v4, v7);
-                AddFace(v1, v7, v2);
-
-                // close top of brick
-                AddFace(v3, v2, v7);
-                AddFace(v3, v7, v9);
-
-                // close bottom of brick
-                AddFace(v0, v8, v4);
-                AddFace(v0, v4, v1);
-                theta += gapSweep;
-            }
-        }
-
-        private void MakeInnerBrickRing(int numberOfWholeBricknGaps, double halfBrickWidth, double twoPi, double brickSweep, double gapSweep, double y, double offsetSweep)
-        {
-            double theta = offsetSweep;
-            for (int i = 0; i < numberOfWholeBricknGaps; i++)
-            //while (theta < twoPi)
-            {
-                double theta2 = theta + brickSweep;
-
-                Point pt0 = CalcPoint(theta, towerRadius - halfBrickWidth);
-                Point pt1 = CalcPoint(theta2, towerRadius - halfBrickWidth);
-                // Point pt8 = CalcPoint(theta, towerRadius - halfBrickWidth + gapDepth);
-                Point pt8 = CalcPoint(theta, towerRadius);
-                Point3D p0 = new Point3D(pt0.X, y, pt0.Y);
-                Point3D p1 = new Point3D(pt1.X, y, pt1.Y);
-                Point3D p2 = new Point3D(pt1.X, y + brickHeight, pt1.Y);
-                Point3D p3 = new Point3D(pt0.X, y + brickHeight, pt0.Y);
-
-                int v0 = AddVertice(p0);
-                int v1 = AddVertice(p1);
-                int v2 = AddVertice(p2);
-                int v3 = AddVertice(p3);
-
+               
                 AddFace(v0, v2, v1);
                 AddFace(v0, v3, v2);
 
-                //gap face
+                // outter gap face
                 theta += brickSweep;
                 theta2 += gapSweep;
 
@@ -292,13 +227,8 @@ namespace MakerLib
 
                 // link both of them
                 // at end
-                Faces.Add(v1);
-                Faces.Add(v7);
-                Faces.Add(v4);
-
-                Faces.Add(v1);
-                Faces.Add(v2);
-                Faces.Add(v7);
+                AddFace(v1, v7, v4);
+                AddFace(v1, v2, v7);
 
                 // close top of brick
                 AddFace(v3, v7, v2);
@@ -311,6 +241,79 @@ namespace MakerLib
             }
         }
 
+        private void MakeInnerBrickRing(int numberOfWholeBricknGaps, double halfBrickWidth, double twoPi, double brickSweep, double gapSweep, double y, double offsetSweep)
+        {
+            double theta = offsetSweep;
+            for (int i = 0; i < numberOfWholeBricknGaps; i++)
+            //while (theta < twoPi)
+            {
+                double theta2 = theta + brickSweep;
+
+                Point pt0 = CalcPoint(theta, towerRadius - halfBrickWidth);
+                Point pt1 = CalcPoint(theta2, towerRadius - halfBrickWidth);
+                // Point pt8 = CalcPoint(theta, towerRadius - halfBrickWidth + gapDepth);
+                Point pt8 = CalcPoint(theta, towerRadius);
+                Point3D p0 = new Point3D(pt0.X, y, pt0.Y);
+                Point3D p1 = new Point3D(pt1.X, y, pt1.Y);
+                Point3D p2 = new Point3D(pt1.X, y + brickHeight, pt1.Y);
+                Point3D p3 = new Point3D(pt0.X, y + brickHeight, pt0.Y);
+
+                int v0 = AddVertice(p0);
+                int v1 = AddVertice(p1);
+                int v2 = AddVertice(p2);
+                int v3 = AddVertice(p3);
+
+             
+                AddFace(v0, v1, v2);
+                AddFace(v0, v2, v3);
+
+                //gap face
+                theta += brickSweep;
+                theta2 += gapSweep;
+
+                pt0 = CalcPoint(theta, towerRadius);
+                pt1 = CalcPoint(theta2, towerRadius);
+                p0 = new Point3D(pt0.X, y, pt0.Y);
+                p1 = new Point3D(pt1.X, y, pt1.Y);
+                p2 = new Point3D(pt1.X, y + brickHeight, pt1.Y);
+                p3 = new Point3D(pt0.X, y + brickHeight, pt0.Y);
+
+                int v4 = AddVertice(p0);
+                int v5 = AddVertice(p1);
+                int v6 = AddVertice(p2);
+                int v7 = AddVertice(p3);
+
+                // link both at start
+                Point3D p8 = new Point3D(pt8.X, y, pt8.Y);
+                Point3D p9 = new Point3D(pt8.X, y + brickHeight, pt8.Y);
+                int v8 = AddVertice(p8);
+                int v9 = AddVertice(p9);
+
+                AddFace(v0, v3, v9);
+                AddFace(v0, v9, v8);
+
+                // link both of them
+                // at end
+                Faces.Add(v1);
+                Faces.Add(v7);
+                Faces.Add(v4);
+
+                Faces.Add(v1);
+                Faces.Add(v2);
+                Faces.Add(v7);
+
+                // close top of brick
+                AddFace(v3, v2, v7);
+                AddFace(v3, v7, v9);
+
+                // close bottom of brick
+                AddFace(v0, v8, v4);
+                AddFace(v0, v4, v1);
+                // jb
+                theta += gapSweep;
+            }
+        }
+
 
     }
-}
+} 

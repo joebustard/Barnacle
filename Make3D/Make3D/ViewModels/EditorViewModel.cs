@@ -200,8 +200,9 @@ namespace Barnacle.ViewModels
                 Object3D ob = selectedObjectAdorner.SelectedObjects[0];
                 if (ob != null)
                 {
+                    CheckPoint();
                     HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                    hf.FindHoles();
+                   Tuple<int,int> res =  hf.FindHoles();
 
                     ob.Remesh();
 
@@ -213,6 +214,7 @@ namespace Barnacle.ViewModels
                     selectedObjectAdorner.Clear();
                     selectedObjectAdorner.AdornObject(ob);
                     RegenerateDisplayList();
+                    MessageBox.Show($"Found {res.Item1.ToString()} holes, Filled {res.Item2.ToString()}", "Information");
                 }
             }
             else
@@ -988,9 +990,11 @@ namespace Barnacle.ViewModels
             return mesh;
         }
 
-        private  void RemoveDuplicateVertices(Object3D ob)
+        private  int RemoveDuplicateVertices(Object3D ob)
         {
+            
             CheckPoint();
+            int numberRemoved = ob.RelativeObjectVertices.Count;
             ManifoldChecker checker = new ManifoldChecker();
             PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
             // checker.Points = ob.RelativeObjectVertices;
@@ -999,6 +1003,8 @@ namespace Barnacle.ViewModels
             PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Indices;
             ob.Remesh();
+            numberRemoved -= ob.RelativeObjectVertices.Count;
+            return numberRemoved;
         }
 
         private static void RemoveUnrefVertices(Object3D ob)
@@ -3222,11 +3228,13 @@ namespace Barnacle.ViewModels
             }
             else
             {
+                int totalRemoved = 0;
                 foreach (Object3D ob in selectedObjectAdorner.SelectedObjects)
                 {
-                    RemoveDuplicateVertices(ob);
+                    totalRemoved += RemoveDuplicateVertices(ob);
                 }
                 Document.Dirty = true;
+                MessageBox.Show($"Removed {totalRemoved} duplicate vertices");
             }
         }
 

@@ -10,34 +10,39 @@ namespace HoleLibrary
 {
     public class HoleFinder
     {
-        private List<P3D> points;
-        private List<Face> faces;
+        public List<P3D> Points;
+        public Int32Collection MeshFaces;
+        public List<Face> faces;
         private List<Edge> edges;
 
-        public HoleFinder(List<P3D> meshPoints, Int32Collection meshFaces)
+
+        public HoleFinder(List<P3D> meshPoints, Int32Collection mf)
         {
-            points = meshPoints;
+            Points = meshPoints;
+            MeshFaces = mf;
             edges = new List<Edge>();
             faces = new List<Face>();
-            for (int i = 0; i < meshFaces.Count; i += 3)
+            for (int i = 0; i <= mf.Count-3; i += 3)
             {
-                Face nf = new Face(meshFaces[i],
-                    meshFaces[i + 1],
-                    meshFaces[i + 2],
+                Face nf = new Face(mf[i],
+                    mf[i + 1],
+                    mf[i + 2],
                     edges);
                 faces.Add(nf);
             }
 
         }
-        public void FindHoles()
+        public Tuple<int, int> FindHoles()
         {
+            int foundHoles = 0;
+            int fixedHoles = 0;
             List<Edge> duffEdges = new List<Edge>();
             foreach (Edge e in edges)
             {
                 if (e.Face2 == null)
                 {
                     duffEdges.Add(e);
-                    Debug($"Edge {e.Start} to {e.End}");
+                   // Debug($"Edge {e.Start} to {e.End}");
                 }
             }
             bool more = (duffEdges.Count >= 3);
@@ -114,18 +119,92 @@ namespace HoleLibrary
                     maxi = duffEdges.Count;
                 }
                 Debug($"Closed {closed} Points {holePoints.Count}");
-                if ( closed)
+                foundHoles++;
+                if (closed)
                 {
-                    FillHole(holePoints);
+                    if (FillHole(holePoints))
+                    {
+                        fixedHoles++;
+                    }
                 }
                 more = (duffEdges.Count >= 3);
             }
-
+            return new Tuple<int, int>(foundHoles, fixedHoles);
         }
 
-        private void FillHole(List<int> holePoints)
+        private bool FillHole(List<int> holePoints)
         {
-            
+            bool res = false;
+            if (holePoints.Count > 3)
+            {
+                holePoints.RemoveAt(holePoints.Count - 1);
+
+                switch (holePoints.Count)
+                {
+
+                    case 3:
+                        {
+
+                            MeshFaces.Add(holePoints[2]);
+                            MeshFaces.Add(holePoints[1]);
+                            MeshFaces.Add(holePoints[0]);
+                            res = true;
+                        }
+                        break;
+
+                    case 4:
+                        {
+
+                            MeshFaces.Add(holePoints[2]);
+                            MeshFaces.Add(holePoints[1]);
+                            MeshFaces.Add(holePoints[0]);
+
+                            MeshFaces.Add(holePoints[3]);
+                            MeshFaces.Add(holePoints[2]);
+                            MeshFaces.Add(holePoints[0]);
+                            res = true;
+                        }
+                        break;
+
+                    default:
+                        {
+                            if (holePoints.Count < 20)
+                            {
+                            // find centroid
+                                double cx = 0;
+                                double cy = 0;
+                                double cz = 0;
+                                foreach (int ind in holePoints)
+                                {
+                                    cx += Points[ind].X;
+                                    cy += Points[ind].Y;
+                                    cz += Points[ind].Z;
+                                }
+                                cx = cx / holePoints.Count;
+                                cy = cy / holePoints.Count;
+                                cz = cz / holePoints.Count;
+                                // add it as new point
+                                Points.Add(new P3D(cx, cy, cz));
+
+                                // create a simple triangle from each edge to the centroid.
+                                // I know this  isn't brilliant!
+                                int cn = Points.Count - 1;
+                                int j = holePoints.Count - 1;
+                                while ( j > 0)
+                                {
+                                    MeshFaces.Add(holePoints[j]);
+                                    MeshFaces.Add(holePoints[j-1]);
+                                    MeshFaces.Add(cn);
+                                    j--;
+                                }
+                                res = true;
+                            }
+                        }
+                        break;
+
+                }
+            }
+            return res;
         }
 
         private void Debug(string v)
