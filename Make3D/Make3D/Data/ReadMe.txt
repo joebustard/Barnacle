@@ -16,13 +16,14 @@ Changed
   
   Insert File/Reference File/Open FIle/Save As initial directory set to project folder
   Moved the 4 paste buttons under a ribbonmenubtton to save screen space.
-
+  Replaced separate duplicate/unreferenced vertice fixer by a single one that does both and is faster
 
 Added 
   Folder for user platelet textures. C:\programdata\barnacle\textures
   Checkbox to centre texture or tile across platelet
   Clone button. Makes duplicate of object in exactly the same place
-  Added F7/F8 key as short cuts for up/down Camera rotation  Pill tool
+  Added F7/F8 key as short cuts for up/down Camera rotation  
+  Pill tool
   Roof Ridge Tool
   Simple Pie Slice Tool
 

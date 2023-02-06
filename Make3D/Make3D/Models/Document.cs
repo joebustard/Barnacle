@@ -1,5 +1,5 @@
 ﻿using Barnacle.Object3DLib;
-using ManifoldLib;
+using FixLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1193,13 +1193,12 @@ namespace Barnacle.Models
 
         private void RemoveDuplicateVertices(Object3D ob)
         {
-            ManifoldChecker checker = new ManifoldChecker();
-            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
-            // checker.Points = ob.RelativeObjectVertices;
-            checker.Indices = ob.TriangleIndices;
-            checker.RemoveDuplicateVertices();
-            PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
-            ob.TriangleIndices = checker.Indices;
+            Fixer checker = new Fixer();
+            Point3DCollection points = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);
+            checker.RemoveDuplicateVertices(points, ob.TriangleIndices);
+            PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
+            ob.TriangleIndices = checker.Faces;
             ob.Remesh();
         }
     }

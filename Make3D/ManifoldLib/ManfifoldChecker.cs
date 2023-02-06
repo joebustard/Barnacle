@@ -165,6 +165,7 @@ namespace ManifoldLib
             }
             return res;
         }
+        /*
         public void RemoveDuplicateVertices()
         {
             Int32Collection tris = new Int32Collection();
@@ -181,7 +182,7 @@ namespace ManifoldLib
             Indices = tris;
 
         }
-
+        */
 
 
         public void RemoveUnreferencedVertices()

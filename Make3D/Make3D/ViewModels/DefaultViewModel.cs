@@ -137,7 +137,7 @@ namespace Barnacle.ViewModels
             MeshEditCommand = new RelayCommand(OnMeshEdit);
             MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
-            UnrefVertexCommand = new RelayCommand(OnUnrefVertex);
+           
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             ResetOriginCommand = new RelayCommand(OnReorigin);
             ViewCommand = new RelayCommand(OnView);
@@ -1609,11 +1609,6 @@ namespace Barnacle.ViewModels
         private void OnUndo(object obj)
         {
             NotificationManager.Notify("Undo", null);
-        }
-
-        private void OnUnrefVertex(object obj)
-        {
-            NotificationManager.Notify("UnrefVertices", null);
         }
 
         private void OnView(object obj)

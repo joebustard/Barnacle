@@ -17,11 +17,11 @@ namespace VisualSolutionExplorer
             ExportAxisSwap = true;
             ImportAxisSwap = true;
             FloorAll = true;
-            VersionExport = true;
+            VersionExport = false ;
             ClearPreviousVersionsOnExport = true;
             ExportEmptyFiles = false;
             AutoSaveScript = true;
-            DefaultObjectColour = Colors.CadetBlue;
+            DefaultObjectColour = Colors.DarkGray;
             SlicerPath = @"";
             PlaceNewAtMarker = true;
         }

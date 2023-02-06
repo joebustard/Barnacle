@@ -7,6 +7,7 @@ using Barnacle.Models.LoopSmoothing;
 using Barnacle.Object3DLib;
 using Barnacle.ViewModel.BuildPlates;
 using CSGLib;
+using FixLib;
 using HoleLibrary;
 using ManifoldLib;
 using MeshDecimator;
@@ -995,13 +996,13 @@ namespace Barnacle.ViewModels
             
             CheckPoint();
             int numberRemoved = ob.RelativeObjectVertices.Count;
-            ManifoldChecker checker = new ManifoldChecker();
-            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, checker.Points);
-            // checker.Points = ob.RelativeObjectVertices;
-            checker.Indices = ob.TriangleIndices;
-            checker.RemoveDuplicateVertices();
-            PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
-            ob.TriangleIndices = checker.Indices;
+            Fixer checker = new Fixer();
+            Point3DCollection points = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);            
+            
+            checker.RemoveDuplicateVertices(points, ob.TriangleIndices);
+            PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
+            ob.TriangleIndices = checker.Faces;
             ob.Remesh();
             numberRemoved -= ob.RelativeObjectVertices.Count;
             return numberRemoved;
