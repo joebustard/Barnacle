@@ -17,6 +17,14 @@ namespace HoleLibrary
             Edges[2] = FindEdge(v2, v0, this, edges);
         }
 
+        public Face(int v0, int v1, int v2, EdgeTree edges)
+        {
+            Edges = new Edge[3];
+            Edges[0] = edges.FindEdge(v0, v1, this);
+            Edges[1] = edges.FindEdge(v1, v2, this);
+            Edges[2] = edges.FindEdge(v2, v0, this);
+        }
+
         public Edge[] Edges { get; set; }
 
         private Edge FindEdge(int start, int end, Face face, List<Edge> edges)

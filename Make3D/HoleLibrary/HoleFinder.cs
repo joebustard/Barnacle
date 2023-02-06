@@ -11,19 +11,39 @@ namespace HoleLibrary
         public Int32Collection MeshFaces;
         public List<P3D> Points;
         private List<Edge> edges;
+        private EdgeTree edgeTree;
 
         public HoleFinder(List<P3D> meshPoints, Int32Collection mf)
         {
             Points = meshPoints;
             MeshFaces = mf;
-            edges = new List<Edge>();
+            double centre = 0;
+            foreach (P3D p in Points)
+            {
+                centre += p.X;
+            }
+            centre = centre / Points.Count;
             faces = new List<Face>();
+            /*
+                        edges = new List<Edge>();
+                        for (int i = 0; i <= mf.Count - 3; i += 3)
+                        {
+                            Face nf = new Face(mf[i],
+                                mf[i + 1],
+                                mf[i + 2],
+                                edges);
+                            faces.Add(nf);
+                        }
+            */
+            edgeTree = new EdgeTree();
+            edgeTree.Vertices = meshPoints;
+            edgeTree.CentrePoint = (float)centre;
             for (int i = 0; i <= mf.Count - 3; i += 3)
             {
                 Face nf = new Face(mf[i],
                     mf[i + 1],
                     mf[i + 2],
-                    edges);
+                    edgeTree);
                 faces.Add(nf);
             }
         }
@@ -33,14 +53,11 @@ namespace HoleLibrary
             int foundHoles = 0;
             int fixedHoles = 0;
             List<Edge> duffEdges = new List<Edge>();
-            foreach (Edge e in edges)
-            {
-                if (e.Face2 == null)
-                {
-                    duffEdges.Add(e);
-                    // Debug($"Edge {e.Start} to {e.End}");
-                }
-            }
+            //FetchDuff(edges, duffEdges);
+
+            FetchDuff(edgeTree.BothLeft, duffEdges);
+            FetchDuff(edgeTree.BothRight, duffEdges);
+            FetchDuff(edgeTree.Mixed, duffEdges);
             bool more = (duffEdges.Count >= 3);
             while (more)
             {
@@ -126,6 +143,18 @@ namespace HoleLibrary
                 more = (duffEdges.Count >= 3);
             }
             return new Tuple<int, int>(foundHoles, fixedHoles);
+        }
+
+        private void FetchDuff(List<Edge> edges, List<Edge> duffEdges)
+        {
+            foreach (Edge e in edges)
+            {
+                if (e.Face2 == null)
+                {
+                    duffEdges.Add(e);
+                    // Debug($"Edge {e.Start} to {e.End}");
+                }
+            }
         }
 
         private void Debug(string v)
