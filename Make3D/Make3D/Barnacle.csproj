@@ -288,8 +288,6 @@
     <Compile Include="Dialogs\WireFrame\WireFrameSegment.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\CohenSutherland.cs" />
-    <Compile Include="Models\OctTree\OctNode.cs" />
-    <Compile Include="Models\OctTree\OctTree.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
@@ -897,6 +895,10 @@
     <ProjectReference Include="..\Object3DLib\Object3DLib.csproj">
       <Project>{5F92B002-B820-4A56-A2B1-482C252BA8BE}</Project>
       <Name>Object3DLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OctTreeLib\OctTreeLib.csproj">
+      <Project>{0d9bb88e-b275-4e45-8ea9-aec204588a7c}</Project>
+      <Name>OctTreeLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\PlacementLib\PlacementLib.csproj">
       <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>
