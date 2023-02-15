@@ -24,17 +24,7 @@ namespace HoleLibrary
             }
             centre = centre / Points.Count;
             faces = new List<Face>();
-            /*
-                        edges = new List<Edge>();
-                        for (int i = 0; i <= mf.Count - 3; i += 3)
-                        {
-                            Face nf = new Face(mf[i],
-                                mf[i + 1],
-                                mf[i + 2],
-                                edges);
-                            faces.Add(nf);
-                        }
-            */
+                   
             edgeTree = new EdgeTree();
             edgeTree.Vertices = meshPoints;
             edgeTree.CentrePoint = (float)centre;

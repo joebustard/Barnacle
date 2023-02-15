@@ -10,23 +10,27 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class PieDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private const double maxlowerBevel = 10;
+        private const double maxcentreThickness = 100;
+
         private const double maxradius = 200;
         private const double maxsweep = 359;
         private const double maxthickness = 100;
-        private const double maxupperBevel = 10;
-        private const double minlowerBevel = 0;
+
+        private const double mincentreThickness = 0.1;
+
         private const double minradius = 5;
         private const double minsweep = 1;
         private const double minthickness = 1;
-        private const double minupperBevel = 0;
+
+        private double centreThickness;
+        private Visibility centreThicknessVisibility;
+        private double edgeThickness;
         private bool loaded;
-        private double lowerBevel;
+
         private double radius;
         private double sweep;
-        private double thickness;
-        private double upperBevel;
         private string warningText;
+        private bool wedgeSelected;
 
         public PieDlg()
         {
@@ -35,21 +39,22 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+            centreThicknessVisibility = Visibility.Hidden;
         }
 
-        public double LowerBevel
+        public double CentreThickness
         {
             get
             {
-                return lowerBevel;
+                return centreThickness;
             }
             set
             {
-                if (lowerBevel != value)
+                if (centreThickness != value)
                 {
-                    if (value >= minlowerBevel && value <= maxlowerBevel)
+                    if (value >= mincentreThickness && value <= maxcentreThickness)
                     {
-                        lowerBevel = value;
+                        centreThickness = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -57,11 +62,27 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public String LowerBevelToolTip
+        public String CentreThicknessToolTip
         {
             get
             {
-                return $"LowerBevel must be in the range {minlowerBevel} to {maxlowerBevel}. Lower Bevel + Upper Bevel must be less han thickness.";
+                return $"Centre Thickness must be in the range {mincentreThickness} to {maxcentreThickness}";
+            }
+        }
+
+        public Visibility CentreThicknessVisibility
+        {
+            get
+            {
+                return centreThicknessVisibility;
+            }
+            set
+            {
+                if (value != centreThicknessVisibility)
+                {
+                    centreThicknessVisibility = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -147,27 +168,19 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public String SweepToolTip
-        {
-            get
-            {
-                return $"Sweep must be in the range {minsweep} to {maxsweep}";
-            }
-        }
-
         public double Thickness
         {
             get
             {
-                return thickness;
+                return edgeThickness;
             }
             set
             {
-                if (thickness != value)
+                if (edgeThickness != value)
                 {
                     if (value >= minthickness && value <= maxthickness)
                     {
-                        thickness = value;
+                        edgeThickness = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -180,34 +193,6 @@ namespace Barnacle.Dialogs
             get
             {
                 return $"Thickness must be in the range {minthickness} to {maxthickness}";
-            }
-        }
-
-        public double UpperBevel
-        {
-            get
-            {
-                return upperBevel;
-            }
-            set
-            {
-                if (upperBevel != value)
-                {
-                    if (value >= minupperBevel && value <= maxupperBevel)
-                    {
-                        upperBevel = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String UpperBevelToolTip
-        {
-            get
-            {
-                return $"UpperBevel must be in the range {minupperBevel} to {maxupperBevel}. Lower Bevel + Upper Bevel must be less han thickness.";
             }
         }
 
@@ -227,6 +212,28 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public bool WedgeSelected
+        {
+            get { return wedgeSelected; }
+            set
+            {
+                if (value != wedgeSelected)
+                {
+                    wedgeSelected = value;
+                    if (wedgeSelected)
+                    {
+                        CentreThicknessVisibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        CentreThicknessVisibility = Visibility.Hidden;
+                    }
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -237,7 +244,15 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            PieMaker maker = new PieMaker(radius, thickness, sweep, upperBevel, lowerBevel);
+            PieMaker maker;
+            if (wedgeSelected)
+            {
+                maker = new PieMaker(radius, centreThickness, edgeThickness, sweep);
+            }
+            else
+            {
+                maker = new PieMaker(radius, edgeThickness, edgeThickness, sweep);
+            }
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }
@@ -248,8 +263,9 @@ namespace Barnacle.Dialogs
             Radius = EditorParameters.GetDouble("Radius", 20);
             Thickness = EditorParameters.GetDouble("Thickness", 5);
             Sweep = EditorParameters.GetDouble("Sweep", 90);
-            UpperBevel = EditorParameters.GetDouble("UpperBevel", 0);
-            LowerBevel = EditorParameters.GetDouble("LowerBevel", 0);
+
+            WedgeSelected = EditorParameters.GetBoolean("WedgeSelected", false);
+            CentreThickness = EditorParameters.GetDouble("CentreThickness", 1);
         }
 
         private void SaveEditorParmeters()
@@ -259,8 +275,9 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Radius", Radius.ToString());
             EditorParameters.Set("Thickness", Thickness.ToString());
             EditorParameters.Set("Sweep", Sweep.ToString());
-            EditorParameters.Set("UpperBevel", UpperBevel.ToString());
-            EditorParameters.Set("LowerBevel", LowerBevel.ToString());
+
+            EditorParameters.Set("WedgeSelected", WedgeSelected.ToString());
+            EditorParameters.Set("CentreThickness", CentreThickness.ToString());
         }
 
         private void UpdateDisplay()

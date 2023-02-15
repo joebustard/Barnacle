@@ -42,6 +42,13 @@
                 <Label VerticalAlignment="Center" Width="100">Sweep</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding Sweep}" Width="150" ToolTip="{Binding SweepToolTip}" />
             </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <CheckBox VerticalAlignment="Center" Width="80" Content="Wedge" IsChecked="{Binding WedgeSelected}"/>
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
+                <Label Content="Centre Thickness" VerticalAlignment="Center" Width="100" Visibility="{Binding CentreThicknessVisibility}"/>
+                <TextBox Margin="8,0,0,0" Text="{Binding CentreThickness}" Width="150" ToolTip="{Binding CentreThicknessToolTip}" Visibility="{Binding CentreThicknessVisibility}"/>
+            </StackPanel>
             <!--
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Upper Bevel</Label>

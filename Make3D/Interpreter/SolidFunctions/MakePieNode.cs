@@ -1,43 +1,36 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
     internal class MakePieNode : ExpressionNode
     {
-                private ExpressionNode radiusExp ;
-        private ExpressionNode thicknessExp ;
-        private ExpressionNode sweepExp ;
-        private ExpressionNode upperBevelExp ;
-        private ExpressionNode lowerBevelExp ;
+        private ExpressionNode radiusExp;
+        private ExpressionNode centreThicknessExp;
+        private ExpressionNode edgeThicknessExp;
+        private ExpressionNode sweepExp;
 
-
-        public MakePieNode
-            (
-            ExpressionNode radius, ExpressionNode thickness, ExpressionNode sweep, ExpressionNode upperBevel, ExpressionNode lowerBevel
-            )
+        public MakePieNode( ExpressionNode radius,
+                            ExpressionNode centreThickness,
+        ExpressionNode edgeThickness, 
+        ExpressionNode sweep)
         {
-                      this.radiusExp = radius ;
-          this.thicknessExp = thickness ;
-          this.sweepExp = sweep ;
-          this.upperBevelExp = upperBevel ;
-          this.lowerBevelExp = lowerBevel ;
+            this.radiusExp = radius;
+            this.centreThicknessExp = edgeThickness;
+            this.edgeThicknessExp = edgeThickness;
+            this.sweepExp = sweep;
 
         }
 
         public MakePieNode
                 (ExpressionCollection coll)
         {
-                            this.radiusExp = coll.Get(0);
-                this.thicknessExp = coll.Get(1);
-                this.sweepExp = coll.Get(2);
-                this.upperBevelExp = coll.Get(3);
-                this.lowerBevelExp = coll.Get(4);
-
+            this.radiusExp = coll.Get(0);
+            this.centreThicknessExp = coll.Get(1);
+            this.edgeThicknessExp = coll.Get(2);
+            this.sweepExp = coll.Get(3);                        
         }
 
         /// Execute this node
@@ -47,47 +40,44 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-                            double valRadius= 0;                double valThickness= 0;                double valSweep= 0;                double valUpperBevel= 0;                double valLowerBevel= 0;
+            double valRadius = 0; 
+            double valCentreThickness = 0;
+            double valEdgeThickness = 0;
+            double valSweep = 0; 
+
 
             if (
-               EvalExpression(radiusExp, ref valRadius, "Radius", "MakePie")  &&
-               EvalExpression(thicknessExp, ref valThickness, "Thickness", "MakePie")  &&
-               EvalExpression(sweepExp, ref valSweep, "Sweep", "MakePie")  &&
-               EvalExpression(upperBevelExp, ref valUpperBevel, "UpperBevel", "MakePie")  &&
-               EvalExpression(lowerBevelExp, ref valLowerBevel, "LowerBevel", "MakePie") )
+               EvalExpression(radiusExp, ref valRadius, "Radius", "MakePie") &&
+               EvalExpression(edgeThicknessExp, ref valEdgeThickness, "Edge Thickness", "MakePie") &&
+               EvalExpression(sweepExp, ref valSweep, "Sweep", "MakePie") &&
+               EvalExpression(centreThicknessExp, ref valCentreThickness, "CentreThick", "MakePie"))
+            
             {
                 // check calculated values are in range
                 bool inRange = true;
-                
-            if (valRadius < 5 || valRadius > 200 )
-            {
-                Log.Instance().AddEntry("MakePie : Radius value out of range (5..200)");
-                inRange= false;
-            }
 
-            if (valThickness < 1 || valThickness > 100 )
-            {
-                Log.Instance().AddEntry("MakePie : Thickness value out of range (1..100)");
-                inRange= false;
-            }
+                if (valRadius < 5 || valRadius > 200)
+                {
+                    Log.Instance().AddEntry("MakePie : Radius value out of range (5..200)");
+                    inRange = false;
+                }
+                if (valCentreThickness < 0.1 || valCentreThickness > 100)
+                {
+                    Log.Instance().AddEntry("MakePie : Centre Thickness value out of range (0.1..100)");
+                    inRange = false;
+                }
+                if (valEdgeThickness < 1 || valEdgeThickness > 100)
+                {
+                    Log.Instance().AddEntry("MakePie : Edge Thickness value out of range (1..100)");
+                    inRange = false;
+                }
 
-            if (valSweep < 1 || valSweep > 359 )
-            {
-                Log.Instance().AddEntry("MakePie : Sweep value out of range (1..359)");
-                inRange= false;
-            }
+                if (valSweep < 1 || valSweep > 359)
+                {
+                    Log.Instance().AddEntry("MakePie : Sweep value out of range (1..359)");
+                    inRange = false;
+                }
 
-            if (valUpperBevel < 0 || valUpperBevel > 10 )
-            {
-                Log.Instance().AddEntry("MakePie : UpperBevel value out of range (0..10)");
-                inRange= false;
-            }
-
-            if (valLowerBevel < 0 || valLowerBevel > 10 )
-            {
-                Log.Instance().AddEntry("MakePie : LowerBevel value out of range (0..10)");
-                inRange= false;
-            }
 
                 if (inRange)
                 {
@@ -101,7 +91,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    PieMaker maker = new PieMaker(valRadius, valThickness, valSweep, valUpperBevel, valLowerBevel);
+                    PieMaker maker = new PieMaker(valRadius, valCentreThickness,valEdgeThickness, valSweep);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -127,12 +117,11 @@ namespace ScriptLanguage
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("MakePie") + "( ";
-            
-        result += radiusExp.ToRichText()+", ";
-        result += thicknessExp.ToRichText()+", ";
-        result += sweepExp.ToRichText()+", ";
-        result += upperBevelExp.ToRichText()+", ";
-        result += lowerBevelExp.ToRichText();
+
+            result += radiusExp.ToRichText() + ", ";
+            result += centreThicknessExp.ToRichText() + ", ";
+            result += edgeThicknessExp.ToRichText() + ", ";
+            result += sweepExp.ToRichText() ;
             result += " )";
             return result;
         }
@@ -140,12 +129,12 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = "MakePie( ";
-            
-        result += radiusExp.ToString()+", ";
-        result += thicknessExp.ToString()+", ";
-        result += sweepExp.ToString()+", ";
-        result += upperBevelExp.ToString()+", ";
-        result += lowerBevelExp.ToString();
+
+            result += radiusExp.ToString() + ", ";
+            result += centreThicknessExp.ToString() + ", ";
+            result += edgeThicknessExp.ToString() + ", ";
+            result += sweepExp.ToString();
+
             result += " )";
             return result;
         }
