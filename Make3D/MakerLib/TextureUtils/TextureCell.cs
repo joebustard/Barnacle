@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Barnacle.Dialogs.TextureUtils
+namespace MakerLib.TextureUtils
 {
     public class TextureCell
     {
         public byte Width;
+
         // size of side walls to add
         // 0 means no wall, 255 means all the way back
         public byte NorthWall;
+
         public byte SouthWall;
         public byte EastWall;
         public byte WestWall;

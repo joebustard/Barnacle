@@ -126,8 +126,6 @@
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
     <Compile Include="Dialogs\TexturedTube\TexturedTubeDlg.xaml.cs" />
-    <Compile Include="Dialogs\TextureUtils\TextureCell.cs" />
-    <Compile Include="Dialogs\TextureUtils\TextureManager.cs" />
     <Compile Include="Dialogs\VaseLoft\VaseLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
       <DependentUpon>Platelet.xaml</DependentUpon>

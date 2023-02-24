@@ -1,5 +1,8 @@
-using Barnacle.Dialogs.TextureUtils;
+using MakerLib.TextureUtils;
 using MakerLib;
+
+using MakerLib.TextureUtils;
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,6 +41,7 @@ namespace Barnacle.Dialogs
         private double tubeHeight;
         private string warningText;
         private TextureManager textureManager;
+
         public TexturedTubeDlg()
         {
             InitializeComponent();
@@ -45,7 +49,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
-            textureManager = new TextureManager();
+            textureManager = TextureManager.Instance();
             textureManager.LoadTextureNames();
         }
 
@@ -150,6 +154,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String SolidToolTip
         {
             get
@@ -197,7 +202,6 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     if (!String.IsNullOrEmpty(texture))
                     {
-                        textureManager.LoadTextureImage(texture);
                         UpdateDisplay();
                     }
                 }
@@ -235,7 +239,6 @@ namespace Barnacle.Dialogs
         public List<String> TextureItems
         {
             get { return textureManager.TextureNames; }
-
         }
 
         public double TextureResolution
@@ -326,6 +329,7 @@ namespace Barnacle.Dialogs
                 return $"TubeHeight must be in the range {mintubeHeight} to {maxtubeHeight}";
             }
         }
+
         public string WarningText
         {
             get
@@ -354,12 +358,12 @@ namespace Barnacle.Dialogs
             ClearShape();
             if (solid)
             {
-                TexturedDiskMaker diskmaker = new TexturedDiskMaker(tubeHeight, innerRadius, sweep, texture, textureDepth, textureResolution );
+                TexturedDiskMaker diskmaker = new TexturedDiskMaker(tubeHeight, innerRadius, sweep, texture, textureDepth, textureResolution);
                 diskmaker.Generate(Vertices, Faces);
             }
             else
             {
-                TexturedTubeMaker tubemaker = new TexturedTubeMaker(tubeHeight, innerRadius, thickness, sweep, texture, textureDepth, textureResolution );
+                TexturedTubeMaker tubemaker = new TexturedTubeMaker(tubeHeight, innerRadius, thickness, sweep, texture, textureDepth, textureResolution);
                 tubemaker.Generate(Vertices, Faces);
             }
 

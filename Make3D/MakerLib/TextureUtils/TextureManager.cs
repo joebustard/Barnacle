@@ -6,8 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 
-namespace Barnacle.Dialogs.TextureUtils
+namespace MakerLib.TextureUtils
 {
     public class TextureManager
     {
@@ -16,6 +17,7 @@ namespace Barnacle.Dialogs.TextureUtils
         private int textureImageWidth;
         private TextureCell[,] textureMap;
         private System.Drawing.Bitmap workingImage;
+
         public SortedList<string, string> TextureFiles
         {
             get { return textureFiles; }
@@ -29,7 +31,9 @@ namespace Barnacle.Dialogs.TextureUtils
                 return res;
             }
         }
+
         private string loadedImageName;
+
         public void LoadTextureImage(string selectedTexture)
         {
             if (selectedTexture != "")
@@ -53,7 +57,7 @@ namespace Barnacle.Dialogs.TextureUtils
                                 for (int y = 0; y < workingImage.Height; y++)
                                 {
                                     System.Drawing.Color col = workingImage.GetPixel(x, y);
-                                    textureMap[x, y] = new TextureCell((byte)(255-col.R));
+                                    textureMap[x, y] = new TextureCell((byte)(255 - col.R));
                                 }
                             }
 
@@ -72,7 +76,6 @@ namespace Barnacle.Dialogs.TextureUtils
                                         }
                                         if (x > 0)
                                         {
-
                                             neighbour = textureMap[x - 1, y].Width;
                                             textureMap[x, y].WestWall = (byte)(textureMap[x, y].Width - neighbour);
                                         }
@@ -84,7 +87,6 @@ namespace Barnacle.Dialogs.TextureUtils
                                         }
                                         if (x < workingImage.Width - 1)
                                         {
-
                                             neighbour = textureMap[x + 1, y].Width;
                                             textureMap[x, y].EastWall = (byte)(textureMap[x, y].Width - neighbour);
                                         }
@@ -118,12 +120,12 @@ namespace Barnacle.Dialogs.TextureUtils
                             {
                                 for (int y = 0; y < workingImage.Height; y++)
                                 {
-                                    System.Diagnostics.Debug.WriteLine($"{x},{y} = {textureMap[x, y].Width} > {textureMap[x, y].NorthWall},{textureMap[x, y].SouthWall},{textureMap[x, y].EastWall},{textureMap[x, y].WestWall}");                                    
+                                    System.Diagnostics.Debug.WriteLine($"{x},{y} = {textureMap[x, y].Width} > {textureMap[x, y].NorthWall},{textureMap[x, y].SouthWall},{textureMap[x, y].EastWall},{textureMap[x, y].WestWall}");
                                 }
                             }
                             */
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             MessageBox.Show(e.Message);
                         }
@@ -132,10 +134,22 @@ namespace Barnacle.Dialogs.TextureUtils
             }
         }
 
-        public TextureManager()
+        private TextureManager()
         {
             textureFiles = new SortedList<string, string>();
         }
+
+        private static TextureManager instance = null;
+
+        public static TextureManager Instance()
+        {
+            if (instance == null)
+            {
+                instance = new TextureManager();
+            }
+            return instance;
+        }
+
         public void LoadTextureNames()
         {
             try

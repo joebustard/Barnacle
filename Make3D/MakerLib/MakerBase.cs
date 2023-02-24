@@ -1,4 +1,5 @@
 ﻿using Barnacle.Object3DLib;
+using OctTreeLib;
 using PolygonLibrary;
 using PolygonTriangulationLib;
 using System;
@@ -49,6 +50,58 @@ namespace MakerLib
             Faces.Add(c0);
             Faces.Add(c1);
             Faces.Add(c2);
+        }
+
+        public void MakeVSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
+        {
+            if (!useOctTree)
+            {
+                int v0 = AddVertice(x1, y1, z1);
+                int v1 = AddVertice(x1, y2, z1);
+                int v2 = AddVertice(x2, y2, z2);
+                int v3 = AddVertice(x2, y1, z2);
+
+                AddFace(v0, v1, v2);
+                AddFace(v0, v2, v3);
+            }
+            else
+            {
+                int v0 = AddVerticeOctTree(x1, y1, z1);
+                int v1 = AddVerticeOctTree(x1, y2, z1);
+                int v2 = AddVerticeOctTree(x2, y2, z2);
+                int v3 = AddVerticeOctTree(x2, y1, z2);
+
+                AddFace(v0, v1, v2);
+                AddFace(v0, v2, v3);
+            }
+        }
+
+        private int AddVerticeOctTree(Point3D v)
+        {
+            int res = -1;
+            res = octTree.PointPresent(v);
+
+            if (res == -1)
+            {
+                //Vertices.Add(new Point3D(v.X, v.Y, v.Z));
+                res = Vertices.Count;
+                octTree.AddPoint(res, v);
+            }
+            return res;
+        }
+
+        private int AddVerticeOctTree(double x, double y, double z)
+        {
+            int res = -1;
+            Point3D v = new Point3D(x, y, z);
+            res = octTree.PointPresent(v);
+
+            if (res == -1)
+            {
+                res = Vertices.Count;
+                octTree.AddPoint(res, v);
+            }
+            return res;
         }
 
         protected Point CalcPoint(double theta, double r)
@@ -290,6 +343,14 @@ namespace MakerLib
                     }
                 }
             }
+        }
+
+        private OctTree octTree;
+
+        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
+            return octTree;
         }
 
         protected int AddVertice(double x, double y, double z)
