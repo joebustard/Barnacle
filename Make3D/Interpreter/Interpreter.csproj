@@ -93,6 +93,8 @@
     <Compile Include="SolidFunctions\MakeStadium.cs" />
     <Compile Include="SolidFunctions\MakeStoneWallNode.cs" />
     <Compile Include="SolidFunctions\MakeText.cs" />
+    <Compile Include="SolidFunctions\MakeTexturedDiskNode.cs" />
+    <Compile Include="SolidFunctions\MakeTexturedTubeNode.cs" />
     <Compile Include="SolidFunctions\MakeTiledRoofNode.cs" />
     <Compile Include="SolidFunctions\MakeTorus.cs" />
     <Compile Include="SolidFunctions\MakeTrapezoid.cs" />

@@ -100,6 +100,7 @@ namespace ScriptLanguage
                 "maketext",
                 "maketiledroof",
                 "maketorus",
+                "maketexturedtube",
                 "maketrapezoid",
                 "maketrickle",
                 "maketube",
@@ -2737,6 +2738,11 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "maketexturedtube":
+                            {
+                                exp = ParseMakeTexturedTubeFunction(parentName);
+                            }
+                            break;
                         case "now":
                             {
                                 exp = ParseNowFunction(parentName);
@@ -2883,6 +2889,89 @@ namespace ScriptLanguage
                 resultNode.IsInLibrary = tokeniser.InIncludeFile();
             }
             return resultNode;
+        }
+
+
+        private ExpressionNode ParseMakeTexturedTubeFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeTexturedTube";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeTexturedTubeNode mn = new MakeTexturedTubeNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeTexturedDiskFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeTexturedDisk";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 6;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeTexturedDiskNode mn = new MakeTexturedDiskNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
         }
 
         private ExpressionNode ParseMakeRoofRidgeFunction(string parentName)

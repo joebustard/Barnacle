@@ -142,6 +142,10 @@ namespace Barnacle.Models
                     res = new TextDlg();
                     break;
 
+                case "TexturedTube":
+                    res = new TexturedTubeDlg();
+                    break;
+
                 case "TiledRoof":
                     res = new TiledRoofDlg();
                     break;

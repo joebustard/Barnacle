@@ -16,6 +16,10 @@ namespace DlgMaker
                  <TextBox Margin=""8,0,0,0"" Text=""{Binding <pName>}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
+        private static string ctrCombo = @"                <Label VerticalAlignment=""Center"" Width=""100""><pName></Label>
+                 <ComboBox Margin=""8,0,0,0"" SelectedItem=""{Binding <pName>}"" Items=""{Binding <pName>Items}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
+";
+
         private static string ldrb = @"
            <pName>= EditorParameters.GetBool(""<pName>"",<pinitial>);
 
@@ -1033,6 +1037,44 @@ public String <PName>ToolTip
                 {
                     res1 = propTemplatelh;
                 }
+                if ( t == "combo")
+                {
+                    res1 = @"
+                    private string <pName>;
+                    public  string <PName>
+                    {
+                       get { return <pName>; }
+                       set
+                       {
+                         if ( <pName> != value )
+                         {
+                         <pName> = value;
+                         NotifyPropertyChanged();
+                         UpdateDisplay();
+                         }
+                       }
+                    }
+                    private ObservableCollection<String> <pName>Items;
+                    public  ObservableCollection<String> <PName>Items
+                    {
+                       get { return <pName>Items; }
+                       set
+                       {
+                         if ( <pName>Items != value )
+                         {
+                         <pName>Items = value;
+                         NotifyPropertyChanged();
+                         UpdateDisplay();
+                         }
+                       }
+                    }
+
+                    public String <pName>ToolTip
+                    {
+                        get { return ""<PName> Text""; }
+                    }
+                ";
+                }
                 res1 = res1.Replace("<pName>", pName);
                 res1 = res1.Replace("<PName>", PName);
                 res1 = res1.Replace("<pType>", t);
@@ -1101,24 +1143,15 @@ public String <PName>ToolTip
             loadParams += GetLoadParams(p6Name, p6Type, p6Initial);
             loadParams += GetLoadParams(p7Name, p7Type, p7Initial);
             loadParams += GetLoadParams(p8Name, p8Type, p8Initial);
-            string p1Controls = GetControls(P1Name);
-            string p2Controls = GetControls(P2Name);
-            string p3Controls = GetControls(P3Name);
-            string p4Controls = GetControls(P4Name);
-            string p5Controls = GetControls(P5Name);
-            string p6Controls = GetControls(P6Name);
-            string p7Controls = GetControls(P7Name);
-            string p8Controls = GetControls(P8Name);
-            /*
-                        string pSet = GetInitialSettings(p1Name, p1Min, p1Type);
-                        pSet = GetInitialSettings(p2Name, p2Min, p2Type);
-                        pSet = GetInitialSettings(p3Name, p3Min, p3Type);
-                        pSet = GetInitialSettings(p4Name, p4Min, p4Type);
-                        pSet = GetInitialSettings(p5Name, p5Min, p5Type);
-                        pSet = GetInitialSettings(p6Name, p6Min, p6Type);
-                        pSet = GetInitialSettings(p7Name, p7Min, p7Type);
-                        pSet = GetInitialSettings(p8Name, p8Min, p8Type);
-                        */
+            string p1Controls = GetControls(P1Name, p1Type);
+            string p2Controls = GetControls(P2Name, p2Type);
+            string p3Controls = GetControls(P3Name, p3Type);
+            string p4Controls = GetControls(P4Name, p4Type);
+            string p5Controls = GetControls(P5Name, p5Type);
+            string p6Controls = GetControls(P6Name, p6Type);
+            string p7Controls = GetControls(P7Name, p7Type);
+            string p8Controls = GetControls(P8Name, p8Type);
+
             string pSet = "";
             System.IO.Directory.CreateDirectory(targetFolder);
             string[] files = System.IO.Directory.GetFiles(templateRoot, "Blank*.*");
@@ -1156,6 +1189,20 @@ public String <PName>ToolTip
                     fout.Close();
                 }
             }
+        }
+
+        private string GetControls(string p1Name, string ptype)
+        {
+            string res = "";
+            if (ptype == "combo")
+            {
+                res = GenControls(p1Name, ctrCombo);
+            }
+            else
+            {
+                res = GenControls(p1Name, ctrString);
+            }
+            return res;
         }
 
         private string GetInitialSettings(string n, string v, string t)
@@ -1410,13 +1457,13 @@ public String <PName>ToolTip
             return res;
         }
 
-        private string GetControls(string name)
+        private string GenControls(string name, string s)
         {
             string res = "";
             if (name != null && name != "")
             {
                 name = name.ToUpper().Substring(0, 1) + name.Substring(1);
-                res = ctrString.Replace("<pName>", name);
+                res = s.Replace("<pName>", name);
             }
             return res;
         }
@@ -1429,6 +1476,7 @@ public String <PName>ToolTip
                 {
                     res += ", ";
                 }
+                if (t == "combo") t = "string";
                 res += t + " " + LowName(name);
             }
             return res;
@@ -1466,6 +1514,7 @@ public String <PName>ToolTip
             string res = "";
             if (n != null && n != "")
             {
+                if (t == "combo") t = "string";
                 res = "                " + t + " val" + n;
                 if (t == "double" || t == "int")
                 {
@@ -1474,6 +1523,10 @@ public String <PName>ToolTip
                 if (t == "bool")
                 {
                     res += "= false;";
+                }
+                if (t == "string")
+                {
+                    res += @"= """";";
                 }
             }
             return res;
@@ -1533,6 +1586,10 @@ public String <PName>ToolTip
                     r = ldrb;
                 }
                 if (t == "string")
+                {
+                    r = ldrs;
+                }
+                if (t == "combo")
                 {
                     r = ldrs;
                 }
@@ -1684,10 +1741,10 @@ public String <PName>ToolTip
             return res;
         }
 
-        private string GetRangeCheck(string n, string l, string m)
+        private string GetRangeCheck(string n, string l, string m, string t)
         {
             string res = "";
-            if (n != null && n != "")
+            if (n != null && n != "" && t != "combo")
             {
                 if (l != null && l != "")
                 {
@@ -1720,14 +1777,14 @@ public String <PName>ToolTip
         private string GetRangeChecks()
         {
             string res = "";
-            res += GetRangeCheck(P1Name, p1Min, p1Max);
-            res += GetRangeCheck(P2Name, p2Min, p2Max);
-            res += GetRangeCheck(P3Name, p3Min, p3Max);
-            res += GetRangeCheck(P4Name, p4Min, p4Max);
-            res += GetRangeCheck(P5Name, p5Min, p5Max);
-            res += GetRangeCheck(P6Name, p6Min, p6Max);
-            res += GetRangeCheck(P7Name, p7Min, p7Max);
-            res += GetRangeCheck(P8Name, p8Min, p8Max);
+            res += GetRangeCheck(P1Name, p1Min, p1Max, p1Type);
+            res += GetRangeCheck(P2Name, p2Min, p2Max, p2Type);
+            res += GetRangeCheck(P3Name, p3Min, p3Max, p3Type);
+            res += GetRangeCheck(P4Name, p4Min, p4Max, p4Type);
+            res += GetRangeCheck(P5Name, p5Min, p5Max, p5Type);
+            res += GetRangeCheck(P6Name, p6Min, p6Max, p6Type);
+            res += GetRangeCheck(P7Name, p7Min, p7Max, p7Type);
+            res += GetRangeCheck(P8Name, p8Min, p8Max, p8Type);
             return res;
         }
 
@@ -1805,6 +1862,7 @@ public String <PName>ToolTip
             parameterTypes.Add("int");
             parameterTypes.Add("bool");
             parameterTypes.Add("string");
+            parameterTypes.Add("combo");
             NotifyPropertyChanged("ParameterTypes");
             P1Name = "";
             P1Max = "10";

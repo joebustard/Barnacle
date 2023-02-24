@@ -65,6 +65,8 @@
     <Compile Include="MakeSpring.cs" />
     <Compile Include="MakeSquirkle.cs" />
     <Compile Include="MakeStoneWall.cs" />
+    <Compile Include="MakeTexturedDisk.cs" />
+    <Compile Include="MakeTexturedTube.cs" />
     <Compile Include="MakeTiledRoof.cs" />
     <Compile Include="MakeTrickle.cs" />
     <Compile Include="MakeWagonWheel.cs" />
