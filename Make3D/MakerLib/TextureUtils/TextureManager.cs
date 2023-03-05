@@ -66,7 +66,8 @@ namespace MakerLib.TextureUtils
                             {
                                 for (int y = 0; y < workingImage.Height; y++)
                                 {
-                                    if (textureMap[x, y].Width > 0)
+                                    byte w = textureMap[x, y].Width;
+                                    if (w > 0)
                                     {
                                         // WEST
                                         // if cell on the left edge it will need a west wall
@@ -77,7 +78,10 @@ namespace MakerLib.TextureUtils
                                         if (x > 0)
                                         {
                                             neighbour = textureMap[x - 1, y].Width;
-                                            textureMap[x, y].WestWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            if (neighbour < w)
+                                            {
+                                                textureMap[x, y].WestWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            }
                                         }
 
                                         // EAST
@@ -87,35 +91,45 @@ namespace MakerLib.TextureUtils
                                         }
                                         if (x < workingImage.Width - 1)
                                         {
+
                                             neighbour = textureMap[x + 1, y].Width;
-                                            textureMap[x, y].EastWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            if (neighbour < w)
+                                            {
+                                                textureMap[x, y].EastWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            }
                                         }
-                                        // NORTH
+                                        // South
                                         if (y == 0)
                                         {
-                                            textureMap[x, y].NorthWall = textureMap[x, y].Width;
+                                            textureMap[x, y].SouthWall = textureMap[x, y].Width;
                                         }
                                         if (y > 0)
                                         {
                                             neighbour = textureMap[x, y - 1].Width;
-                                            textureMap[x, y].NorthWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            if (neighbour < w)
+                                            {
+                                                textureMap[x, y].SouthWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            }
                                         }
 
-                                        // SOUTH
+                                        // North
                                         if (y == workingImage.Height - 1)
                                         {
-                                            textureMap[x, y].SouthWall = textureMap[x, y].Width;
+                                            textureMap[x, y].NorthWall = textureMap[x, y].Width;
                                         }
                                         if (y < workingImage.Height - 1)
                                         {
                                             neighbour = textureMap[x, y + 1].Width;
-                                            textureMap[x, y].SouthWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            if (neighbour < w)
+                                            {
+                                                textureMap[x, y].NorthWall = (byte)(textureMap[x, y].Width - neighbour);
+                                            }
                                         }
                                     }
                                 }
                             }
-
                             /*
+                            System.Diagnostics.Debug.WriteLine("=======================================");
                             for (int x = 0; x < workingImage.Width; x++)
                             {
                                 for (int y = 0; y < workingImage.Height; y++)
@@ -132,6 +146,31 @@ namespace MakerLib.TextureUtils
                     }
                 }
             }
+        }
+        public enum MapMode
+        {
+            Tile
+        }
+        public MapMode Mode { get; set; }
+        internal TextureCell GetCell(int tx, int ty)
+        {
+            TextureCell res = null;
+            if (workingImage != null)
+            {
+                switch (Mode)
+                {
+                    case MapMode.Tile:
+                        {
+
+                            tx = tx % workingImage.Width;
+                            ty = ty % workingImage.Height;
+                            ty = workingImage.Height - ty - 1;
+                            res = textureMap[tx, ty];
+                        }
+                        break;
+                }
+            }
+            return res;
         }
 
         private TextureManager()
