@@ -18,6 +18,8 @@ namespace MakerLib
         private string texture;
         private double textureDepth;
         private double textureResolution;
+        private double vTextureResolution;
+        private double hTextureResolution;
         private TextureManager textureManager;
 
         public TexturedDiskMaker(double diskHeight, double radius, double sweep, string texture, double textureDepth, double textureResolution)
@@ -48,11 +50,28 @@ namespace MakerLib
             {
                 textureResolution = 0.1;
             }
+            vTextureResolution = textureResolution;
+            hTextureResolution = textureResolution;
+
+            if ( textureManager.Mode == TextureManager.MapMode.FittedTile)
+            {
+                // estimate vertical size in steps
+                double ySteps = diskHeight / vTextureResolution;
+                double vRepeats = (ySteps / textureManager.PatternHeight);
+                vRepeats = Math.Ceiling(vRepeats);
+                vTextureResolution = diskHeight / (vRepeats * textureManager.PatternHeight);
+                
+                double circumference = radius * DegToRad(sweep) * 2.0;
+                double xSteps = circumference / hTextureResolution;
+                double hRepeats = (xSteps / textureManager.PatternWidth);
+                hRepeats = Math.Ceiling(hRepeats);
+                hTextureResolution = circumference / (hRepeats * textureManager.PatternWidth);
+            }
             // Whats the inner sweep angle in degrees
-            double inswe = (textureResolution * 360.0) / (twoPI * radius);
+            double inswe = (hTextureResolution * 360.0) / (twoPI * radius);
 
             // outer sweep is going to be close but just takes into account the depth
-            double outswe = (textureResolution * 360.0) / (twoPI * (radius + textureDepth));
+            double outswe = (hTextureResolution * 360.0) / (twoPI * (radius + textureDepth));
             inswe = DegToRad(inswe);
             outswe = DegToRad(outswe);
 
@@ -60,14 +79,14 @@ namespace MakerLib
             // In practice how many X-pixels does that mean we have
 
             int maxFacePixel = (int)((Math.PI * 2.0) / inswe);
-            double facePixelHeight = diskHeight / textureResolution;
+            double facePixelHeight = diskHeight / vTextureResolution;
             double x = 0;
             double y = 0;
             int tx = 0;
             int ty = 0;
             TextureCell cell;
             double maxSweep = twoPI;
-            double deltaY = textureResolution;
+            double deltaY = vTextureResolution;
             Bottom(inswe, radius, maxSweep);
             while (y < diskHeight)
             {

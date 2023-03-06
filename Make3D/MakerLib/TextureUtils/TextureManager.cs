@@ -17,7 +17,35 @@ namespace MakerLib.TextureUtils
         private int textureImageWidth;
         private TextureCell[,] textureMap;
         private System.Drawing.Bitmap workingImage;
+        public double PatternHeight
+        {
+            get
+            {
+                if (workingImage != null)
+                {
+                    return textureImageHeight;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
 
+        public double PatternWidth
+        {
+            get
+            {
+                if (workingImage != null)
+                {
+                    return textureImageWidth;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
         public SortedList<string, string> TextureFiles
         {
             get { return textureFiles; }
@@ -149,7 +177,9 @@ namespace MakerLib.TextureUtils
         }
         public enum MapMode
         {
-            Tile
+            ClippedTile,
+            FittedTile
+
         }
         public MapMode Mode { get; set; }
         internal TextureCell GetCell(int tx, int ty)
@@ -159,7 +189,17 @@ namespace MakerLib.TextureUtils
             {
                 switch (Mode)
                 {
-                    case MapMode.Tile:
+                    case MapMode.ClippedTile:
+                        {
+
+                            tx = tx % workingImage.Width;
+                            ty = ty % workingImage.Height;
+                            ty = workingImage.Height - ty - 1;
+                            res = textureMap[tx, ty];
+                        }
+                        break;
+
+                    case MapMode.FittedTile:
                         {
 
                             tx = tx % workingImage.Width;

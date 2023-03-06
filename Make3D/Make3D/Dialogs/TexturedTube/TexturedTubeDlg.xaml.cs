@@ -51,6 +51,7 @@ namespace Barnacle.Dialogs
             loaded = false;
             textureManager = TextureManager.Instance();
             textureManager.LoadTextureNames();
+            textureManager.Mode = TextureManager.MapMode.ClippedTile;
         }
 
         public double InnerRadius
@@ -129,12 +130,59 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     if (solid)
                     {
+                        ShowThickness = Visibility.Hidden;
+                        UpdateDisplay();
+                    }
+                    else
+                    {
+                        ShowThickness = Visibility.Visible;
+                    }
+                }
+            }
+        }
+        private bool clippedTile;
+        public bool ClippedTile
+        {
+            get { return clippedTile; }
+            set
+            {
+                if (clippedTile != value)
+                {
+                    clippedTile = value;
+                    NotifyPropertyChanged();
+                    if (clippedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedTile;
+                        }
                         UpdateDisplay();
                     }
                 }
             }
         }
 
+        private bool fittedTile;
+        public bool FittedTile
+        {
+            get { return fittedTile; }
+            set
+            {
+                if (fittedTile != value)
+                {
+                    fittedTile = value;
+                    NotifyPropertyChanged();
+                    if (fittedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
         public bool Tube
         {
             get
@@ -352,7 +400,19 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
-
+        private Visibility showThickness;
+        public Visibility ShowThickness
+        {
+            get { return showThickness; }
+            set
+            {
+                if (value != showThickness)
+                {
+                    showThickness = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         private void GenerateShape()
         {
             ClearShape();
