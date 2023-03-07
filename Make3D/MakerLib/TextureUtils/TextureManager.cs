@@ -17,6 +17,8 @@ namespace MakerLib.TextureUtils
         private int textureImageWidth;
         private TextureCell[,] textureMap;
         private System.Drawing.Bitmap workingImage;
+        private TextureCell outOfRangeCell;
+
         public double PatternHeight
         {
             get
@@ -46,6 +48,7 @@ namespace MakerLib.TextureUtils
                 }
             }
         }
+
         public SortedList<string, string> TextureFiles
         {
             get { return textureFiles; }
@@ -119,7 +122,6 @@ namespace MakerLib.TextureUtils
                                         }
                                         if (x < workingImage.Width - 1)
                                         {
-
                                             neighbour = textureMap[x + 1, y].Width;
                                             if (neighbour < w)
                                             {
@@ -175,13 +177,17 @@ namespace MakerLib.TextureUtils
                 }
             }
         }
+
         public enum MapMode
         {
             ClippedTile,
-            FittedTile
-
+            FittedTile,
+            ClippedSingle,
+            FittedSingle
         }
+
         public MapMode Mode { get; set; }
+
         internal TextureCell GetCell(int tx, int ty)
         {
             TextureCell res = null;
@@ -191,7 +197,6 @@ namespace MakerLib.TextureUtils
                 {
                     case MapMode.ClippedTile:
                         {
-
                             tx = tx % workingImage.Width;
                             ty = ty % workingImage.Height;
                             ty = workingImage.Height - ty - 1;
@@ -201,11 +206,25 @@ namespace MakerLib.TextureUtils
 
                     case MapMode.FittedTile:
                         {
-
                             tx = tx % workingImage.Width;
                             ty = ty % workingImage.Height;
                             ty = workingImage.Height - ty - 1;
                             res = textureMap[tx, ty];
+                        }
+                        break;
+
+                    case MapMode.ClippedSingle:
+                    case MapMode.FittedSingle: // Fitted relies on the caller changing the resolution
+                        {
+                            if ((tx < workingImage.Width) && (ty < workingImage.Height))
+                            {
+                                ty = workingImage.Height - ty - 1;
+                                res = textureMap[tx, ty];
+                            }
+                            else
+                            {
+                                res = outOfRangeCell;
+                            }
                         }
                         break;
                 }
@@ -216,6 +235,7 @@ namespace MakerLib.TextureUtils
         private TextureManager()
         {
             textureFiles = new SortedList<string, string>();
+            outOfRangeCell = new TextureCell(0);
         }
 
         private static TextureManager instance = null;

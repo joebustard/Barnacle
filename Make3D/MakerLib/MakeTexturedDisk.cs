@@ -25,7 +25,7 @@ namespace MakerLib
         public TexturedDiskMaker(double diskHeight, double radius, double sweep, string texture, double textureDepth, double textureResolution)
         {
             this.diskHeight = diskHeight;
-            this.radius = radius;
+            this.radius = radius - textureDepth;
 
             this.sweep = sweep;
             this.texture = texture;
@@ -53,19 +53,31 @@ namespace MakerLib
             vTextureResolution = textureResolution;
             hTextureResolution = textureResolution;
 
-            if ( textureManager.Mode == TextureManager.MapMode.FittedTile)
+            if (textureManager.Mode == TextureManager.MapMode.FittedTile)
             {
                 // estimate vertical size in steps
                 double ySteps = diskHeight / vTextureResolution;
                 double vRepeats = (ySteps / textureManager.PatternHeight);
                 vRepeats = Math.Ceiling(vRepeats);
                 vTextureResolution = diskHeight / (vRepeats * textureManager.PatternHeight);
-                
-                double circumference = radius * DegToRad(sweep) * 2.0;
+
+                double circumference = radius * Math.PI * 2.0;
                 double xSteps = circumference / hTextureResolution;
                 double hRepeats = (xSteps / textureManager.PatternWidth);
                 hRepeats = Math.Ceiling(hRepeats);
                 hTextureResolution = circumference / (hRepeats * textureManager.PatternWidth);
+            }
+            if (textureManager.Mode == TextureManager.MapMode.FittedSingle)
+            {
+                // estimate vertical size in steps
+
+                vTextureResolution = diskHeight / textureManager.PatternHeight;
+
+                double circumference = radius * Math.PI * 2.0;
+
+                hTextureResolution = circumference / (textureManager.PatternWidth + 2);
+
+                // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
             }
             // Whats the inner sweep angle in degrees
             double inswe = (hTextureResolution * 360.0) / (twoPI * radius);
@@ -87,7 +99,7 @@ namespace MakerLib
             TextureCell cell;
             double maxSweep = twoPI;
             double deltaY = vTextureResolution;
-            Bottom(inswe, radius, maxSweep);
+
             while (y < diskHeight)
             {
                 if (diskHeight - y < deltaY)
@@ -101,7 +113,6 @@ namespace MakerLib
                     cell = textureManager.GetCell(tx, ty);
                     if (cell != null)
                     {
-
                         if (cell.Width == 0)
                         {
                             Point p = CalcPoint(theta, radius);
@@ -125,7 +136,6 @@ namespace MakerLib
                             // must always close left edge of pattern
                             if (tx == 0)
                             {
-
                                 Point p3 = CalcPoint(theta, radius);
                                 MakeVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
                             }
@@ -139,7 +149,6 @@ namespace MakerLib
 
                             if (theta + inswe >= maxSweep)
                             {
-
                                 Point p3 = CalcPoint(theta + inswe, radius);
                                 MakeVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
                             }
@@ -227,15 +236,20 @@ namespace MakerLib
                 y += deltaY;
                 ty++;
             }
-            End(inswe, radius, sweep, y,false);
+            if (Faces.Count > 0)
+            {
+                Bottom(inswe, radius, maxSweep);
+                End(inswe, radius, sweep, y, false);
+            }
         }
+
         private void Bottom(double dtheta, double radius, double sweep)
         {
-            End(dtheta, radius, sweep,0);
+            End(dtheta, radius, sweep, 0);
         }
-        private void End(double inswe, double radius, double sweep,double y,  bool normal = true)
+
+        private void End(double inswe, double radius, double sweep, double y, bool normal = true)
         {
-            
             double theta = 0;
             int v0 = AddVerticeOctTree(0, y, 0);
             while (theta < sweep)

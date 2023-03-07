@@ -34,51 +34,48 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <RadioButton GroupName="SolidRadio" Width="100"  Content="Tube" VerticalAlignment="Center" IsChecked="{Binding Tube}" />
-                <RadioButton GroupName="SolidRadio" VerticalAlignment="Center" Margin="8,0,0,0" Content="Disk" IsChecked="{Binding Solid}"/>
-                
-
+                <RadioButton GroupName="SolidRadio" VerticalAlignment="Center" Margin="8,0,0,0" Content="Disk" IsChecked="{Binding Solid}" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Height</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding TubeHeight}" Width="150" ToolTip="{Binding TubeHeightToolTip}"/>
-
+                <TextBox Margin="8,0,0,0" Text="{Binding TubeHeight}" Width="150" ToolTip="{Binding TubeHeightToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Radius</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding InnerRadius}" Width="150" ToolTip="{Binding InnerRadiusToolTip}"/>
-
+                <TextBox Margin="8,0,0,0" Text="{Binding InnerRadius}" Width="150" ToolTip="{Binding InnerRadiusToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal" >
-                                <Label VerticalAlignment="Center" Width="100" Visibility="{Binding ShowThickness}">Thickness</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding Thickness}" Width="150" ToolTip="{Binding ThicknessToolTip}" Visibility="{Binding ShowThickness}"/>
-
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="100" Visibility="{Binding ShowThickness}">Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding Thickness}" Width="150" ToolTip="{Binding ThicknessToolTip}" Visibility="{Binding ShowThickness}" />
             </StackPanel>
-            
+
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">Sweep</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding Sweep}" Width="150" ToolTip="{Binding SweepToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Sweep</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding Sweep}" Width="150" ToolTip="{Binding SweepToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">Texture</Label>
-                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Texture}" ItemsSource="{Binding TextureItems}" Width="150" ToolTip="{Binding TextureToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Texture</Label>
+                <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Texture}" ItemsSource="{Binding TextureItems}" Width="150" ToolTip="{Binding TextureToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Texture Resolution</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding TextureResolution}"  Width="150" ToolTip="{Binding TextureResolutionToolTip}"/>
+                <TextBox Margin="8,0,0,0" Text="{Binding TextureResolution}"  Width="150" ToolTip="{Binding TextureResolutionToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Texture Depth</Label>
-                <TextBox Margin="8,0,0,0" Text="{Binding TextureDepth}"  Width="150" ToolTip="{Binding TextureDepthToolTip}"/>
+                <TextBox Margin="8,0,0,0" Text="{Binding TextureDepth}"  Width="150" ToolTip="{Binding TextureDepthToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <RadioButton GroupName="ScaleGroup" Width="100" Content="Clipped Tile" VerticalAlignment="Center" ToolTip="Tile the pattern and clip it against the edges."
-                IsChecked="{Binding ClippedTile}"
-                />
-                <RadioButton GroupName="ScaleGroup" Width="100" Content="Fitted Tile" VerticalAlignment="Center" ToolTip="Tile the pattern, scale to ensure whole repeats" Margin="8,0,0,0" 
-                IsChecked="{Binding FittedTile}"
-                />
+                IsChecked="{Binding ClippedTile}" />
+                <RadioButton GroupName="ScaleGroup" Width="100" Content="Fitted Tile" VerticalAlignment="Center" ToolTip="Tile the pattern, scale to ensure whole repeats" Margin="8,0,0,0"
+                IsChecked="{Binding FittedTile}" />
+            </StackPanel>
+            <StackPanel Grid.Row="10" Orientation="Horizontal">
+                <RadioButton GroupName="ScaleGroup" Width="100" Content="Clipped Single" VerticalAlignment="Center" ToolTip="Put the pattern on once. If it doesn't fit clip it"
+                IsChecked="{Binding ClippedSingle}" />
+                <RadioButton GroupName="ScaleGroup" Width="100" Content="Fitted Single" VerticalAlignment="Center" ToolTip="Put the pattern on once and scale it to fit" Margin="8,0,0,0"
+                IsChecked="{Binding FittedSingle}" />
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
@@ -135,4 +132,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

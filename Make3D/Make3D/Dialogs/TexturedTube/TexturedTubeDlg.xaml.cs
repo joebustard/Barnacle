@@ -140,7 +140,9 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private bool clippedTile;
+
         public bool ClippedTile
         {
             get { return clippedTile; }
@@ -162,7 +164,54 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private bool clippedSingle;
+
+        public bool ClippedSingle
+        {
+            get { return clippedSingle; }
+            set
+            {
+                if (clippedSingle != value)
+                {
+                    clippedSingle = value;
+                    NotifyPropertyChanged();
+                    if (clippedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        private bool fittedSingle;
+
+        public bool FittedSingle
+        {
+            get { return fittedSingle; }
+            set
+            {
+                if (fittedSingle != value)
+                {
+                    fittedSingle = value;
+                    NotifyPropertyChanged();
+                    if (fittedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         private bool fittedTile;
+
         public bool FittedTile
         {
             get { return fittedTile; }
@@ -183,6 +232,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public bool Tube
         {
             get
@@ -400,7 +450,9 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
+
         private Visibility showThickness;
+
         public Visibility ShowThickness
         {
             get { return showThickness; }
@@ -413,6 +465,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private void GenerateShape()
         {
             ClearShape();
@@ -433,22 +486,19 @@ namespace Barnacle.Dialogs
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
             TubeHeight = EditorParameters.GetDouble("TubeHeight", 20);
-
             InnerRadius = EditorParameters.GetDouble("InnerRadius", 10);
-
             Thickness = EditorParameters.GetDouble("Thickness", 5);
-
             Solid = EditorParameters.GetBoolean("Solid", false);
             Tube = !Solid;
             Sweep = EditorParameters.GetDouble("Sweep", 360);
-
             Texture = EditorParameters.Get("Texture");
-
             TextureDepth = EditorParameters.GetDouble("TextureDepth", 0.5);
-
             TextureResolution = EditorParameters.GetDouble("TextureResolution", 0.5);
+            ClippedTile = EditorParameters.GetBoolean("ClippedTile", true);
+            FittedTile = EditorParameters.GetBoolean("FittedTile", false);
+            ClippedSingle = EditorParameters.GetBoolean("ClippedSingle", false);
+            FittedSingle = EditorParameters.GetBoolean("FittedSingle", false);
         }
 
         private void SaveEditorParmeters()
@@ -463,6 +513,10 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Texture", Texture.ToString());
             EditorParameters.Set("TextureDepth", TextureDepth.ToString());
             EditorParameters.Set("TextureResolution", TextureResolution.ToString());
+            EditorParameters.Set("ClippedTile", ClippedTile.ToString());
+            EditorParameters.Set("FittedTile", FittedTile.ToString());
+            EditorParameters.Set("ClippedSingle", ClippedSingle.ToString());
+            EditorParameters.Set("FittedSIngle", FittedSingle.ToString());
         }
 
         private void UpdateDisplay()
