@@ -62,6 +62,7 @@ namespace MakerLib
                 vTextureResolution = diskHeight / (vRepeats * textureManager.PatternHeight);
 
                 double circumference = radius * Math.PI * 2.0;
+                circumference = (DegToRad(sweep) / (Math.PI * 2.0)) * circumference;
                 double xSteps = circumference / hTextureResolution;
                 double hRepeats = (xSteps / textureManager.PatternWidth);
                 hRepeats = Math.Ceiling(hRepeats);
@@ -74,7 +75,7 @@ namespace MakerLib
                 vTextureResolution = diskHeight / textureManager.PatternHeight;
 
                 double circumference = radius * Math.PI * 2.0;
-
+                circumference = (DegToRad(sweep) / (Math.PI * 2.0)) * circumference;
                 hTextureResolution = circumference / (textureManager.PatternWidth + 2);
 
                 // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
@@ -97,7 +98,7 @@ namespace MakerLib
             int tx = 0;
             int ty = 0;
             TextureCell cell;
-            double maxSweep = twoPI;
+            double maxSweep = DegToRad(sweep);
             double deltaY = vTextureResolution;
 
             while (y < diskHeight)
@@ -238,7 +239,7 @@ namespace MakerLib
             }
             if (Faces.Count > 0)
             {
-                Bottom(inswe, radius, maxSweep);
+                Bottom(inswe, radius, sweep);
                 End(inswe, radius, sweep, y, false);
             }
         }
