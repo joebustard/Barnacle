@@ -41,6 +41,7 @@ namespace MakerLib
             pnts.Clear();
             faces.Clear();
             Vertices = pnts;
+            double maxSweep = DegToRad(sweep);
             double xExtent = 1.5 * (textureDepth + radius);
             double yExtent = 1.5 * diskHeight;
             OctTree octTree = CreateOctree(new Point3D(-xExtent, -yExtent, -xExtent),
@@ -98,8 +99,10 @@ namespace MakerLib
             int tx = 0;
             int ty = 0;
             TextureCell cell;
-            double maxSweep = DegToRad(sweep);
+            
             double deltaY = vTextureResolution;
+
+            double theta = 0;
 
             while (y < diskHeight)
             {
@@ -107,8 +110,8 @@ namespace MakerLib
                 {
                     deltaY = diskHeight - y;
                 }
-                double theta = 0;
                 tx = 0;
+                theta = 0;
                 while (theta < maxSweep)
                 {
                     cell = textureManager.GetCell(tx, ty);
@@ -239,8 +242,26 @@ namespace MakerLib
             }
             if (Faces.Count > 0)
             {
-                Bottom(inswe, radius, sweep);
-                End(inswe, radius, sweep, y, false);
+                Bottom(inswe, radius, maxSweep);
+                End(inswe, radius, maxSweep, y, false);
+            }
+            if ( sweep < 360.0)
+            {
+                // need to close off swept ends
+                Point p = CalcPoint(0, radius);
+                int v0 = AddVerticeOctTree(p.X, 0, p.Y);
+                int v1 = AddVerticeOctTree(p.X, diskHeight, p.Y);
+                int v2 = AddVerticeOctTree(0, 0, 0);
+                int v3 = AddVerticeOctTree(0,diskHeight,0);
+                AddFace(v0, v2, v1);
+                AddFace(v2, v3, v1);
+
+                p = CalcPoint(theta, radius);
+                v0 = AddVerticeOctTree(p.X, 0, p.Y);
+                v1 = AddVerticeOctTree(p.X, diskHeight, p.Y);
+                AddFace(v0, v1, v2);
+                AddFace(v2, v1, v3);
+
             }
         }
 

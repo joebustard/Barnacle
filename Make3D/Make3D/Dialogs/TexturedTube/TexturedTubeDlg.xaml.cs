@@ -130,6 +130,7 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     if (solid)
                     {
+                        tube = false;
                         ShowThickness = Visibility.Hidden;
                         UpdateDisplay();
                     }
@@ -247,6 +248,7 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     if (tube)
                     {
+                        solid = false;
                         UpdateDisplay();
                     }
                 }
