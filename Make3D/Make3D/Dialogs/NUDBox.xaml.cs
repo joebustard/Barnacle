@@ -15,9 +15,9 @@ namespace Barnacle.Dialogs
 
         public ValueChanged OnValueChanged;
 
-        private double minvalue = 0,
-    maxvalue = 100,
-    startvalue = 10;
+        private double minvalue = 0;
+        private double maxvalue = 100;
+        private double startvalue = 10;
 
         public double Value
         {

@@ -1293,9 +1293,10 @@ namespace Barnacle.ViewModels
                     }
                     PartLibraryProject.CreateLibraryProject("Parts");
                     PartLibraryProject.ProjectFilePath = pth;
+                    PartLibraryProject.MarkAsLibrary();
                     PartLibraryProject.Save();
                 }
-                PartLibraryProject.MarkAsLibrary();
+                
                 LibraryVisibility = Visibility.Visible;
             }
             catch

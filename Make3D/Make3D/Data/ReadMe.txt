@@ -5,20 +5,19 @@ Fixed
   Slicing dialog background not using style resource
   Catch exception raised when opening external doc without default app associated.
   Small intermittent bug where platlet would not save path in editor parameters
+  Intermittent fault where image would not change when different library objects added
 
 Changed
   Disable slice controls while copying to SD card
-
   Sort texture names in platelet tool
-  Default texture depth changed from 1.0 to 0.5
-  
-  Default Bill of Materials is now an xlsx not a docx. Columns match output from slice
-  
+  Default texture depth changed from 1.0 to 0.5 
+  Default Bill of Materials is now an xlsx not a docx. Columns match output from slice  
   Insert File/Reference File/Open FIle/Save As initial directory set to project folder
   Moved the 4 paste buttons under a ribbonmenubtton to save screen space.
   Replaced separate duplicate/unreferenced vertice fixer by a single one that does both and is faster
 
 Added 
+  Textured disc/cyclinders
   Folder for user platelet textures. C:\programdata\barnacle\textures
   Checkbox to centre texture or tile across platelet
   Clone button. Makes duplicate of object in exactly the same place

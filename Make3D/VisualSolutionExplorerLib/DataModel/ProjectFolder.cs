@@ -61,10 +61,13 @@ namespace VisualSolutionExplorer
             internal set
             {
                 canAddToLibrary = value;
+
+                /*
                 foreach (ProjectFile pfi in ProjectFiles)
                 {
                     pfi.IsLibraryFile = canAddToLibrary;
                 }
+                */
                 foreach (ProjectFolder pf in ProjectFolders)
                 {
                     pf.CanAddToLibrary = canAddToLibrary;
@@ -301,7 +304,7 @@ namespace VisualSolutionExplorer
                 pf.EditFile = EditFile;
                 pf.Export = Export;
                 pf.RunFile = RunFile;
-
+                pf.IsLibraryFile = IsInLibrary;
                 ProjectFiles.Add(pf);
                 pf.FilePath = FolderPath + "\\" + pf.FileName;
             }
