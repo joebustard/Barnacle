@@ -31,7 +31,8 @@ namespace Barnacle.Dialogs
         private double innerRadius;
         private bool loaded;
         private bool solid;
-        private bool tube;
+        private bool outerTube;
+        private bool innerTube;
         private double sweep;
         private string texture;
         private double textureDepth;
@@ -130,7 +131,8 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     if (solid)
                     {
-                        tube = false;
+                        outerTube = false;
+                        innerTube = false;
                         ShowThickness = Visibility.Hidden;
                         UpdateDisplay();
                     }
@@ -234,21 +236,44 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public bool Tube
+        public bool OuterTube
         {
             get
             {
-                return tube;
+                return outerTube;
             }
             set
             {
-                if (tube != value)
+                if (outerTube != value)
                 {
-                    tube = value;
+                    outerTube = value;
                     NotifyPropertyChanged();
-                    if (tube)
+                    if (outerTube)
                     {
                         solid = false;
+                        innerTube = false;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool InnerTube
+        {
+            get
+            {
+                return innerTube;
+            }
+            set
+            {
+                if (innerTube != value)
+                {
+                    innerTube = value;
+                    NotifyPropertyChanged();
+                    if (innerTube)
+                    {
+                        solid = false;
+                        outerTube = false;
                         UpdateDisplay();
                     }
                 }
@@ -478,7 +503,16 @@ namespace Barnacle.Dialogs
             }
             else
             {
-                TexturedTubeMaker tubemaker = new TexturedTubeMaker(tubeHeight, innerRadius, thickness, sweep, texture, textureDepth, textureResolution);
+                int sideMask = 0;
+                if (outerTube)
+                {
+                    sideMask += 1;
+                }
+                if (innerTube)
+                {
+                    sideMask += 2;
+                }
+                TexturedTubeMaker tubemaker = new TexturedTubeMaker(tubeHeight, innerRadius, thickness, sweep, texture, textureDepth, textureResolution, sideMask);
                 tubemaker.Generate(Vertices, Faces);
             }
 
@@ -491,8 +525,9 @@ namespace Barnacle.Dialogs
             TubeHeight = EditorParameters.GetDouble("TubeHeight", 20);
             InnerRadius = EditorParameters.GetDouble("InnerRadius", 10);
             Thickness = EditorParameters.GetDouble("Thickness", 5);
-            Solid = EditorParameters.GetBoolean("Solid", false);
-            Tube = !Solid;
+            Solid = EditorParameters.GetBoolean("Solid", true);
+            OuterTube = EditorParameters.GetBoolean("OuterTube", false);
+            InnerTube = EditorParameters.GetBoolean("InnerTube", false); ;
             Sweep = EditorParameters.GetDouble("Sweep", 360);
             Texture = EditorParameters.Get("Texture");
             TextureDepth = EditorParameters.GetDouble("TextureDepth", 0.5);
@@ -511,6 +546,8 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("InnerRadius", InnerRadius.ToString());
             EditorParameters.Set("Thickness", Thickness.ToString());
             EditorParameters.Set("Solid", Solid.ToString());
+            EditorParameters.Set("InnerTube", InnerTube.ToString());
+            EditorParameters.Set("OuterTube", OuterTube.ToString());
             EditorParameters.Set("Sweep", Sweep.ToString());
             EditorParameters.Set("Texture", Texture.ToString());
             EditorParameters.Set("TextureDepth", TextureDepth.ToString());
@@ -518,7 +555,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("ClippedTile", ClippedTile.ToString());
             EditorParameters.Set("FittedTile", FittedTile.ToString());
             EditorParameters.Set("ClippedSingle", ClippedSingle.ToString());
-            EditorParameters.Set("FittedSIngle", FittedSingle.ToString());
+            EditorParameters.Set("FittedSingle", FittedSingle.ToString());
         }
 
         private void UpdateDisplay()

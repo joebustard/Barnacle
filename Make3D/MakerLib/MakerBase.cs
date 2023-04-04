@@ -76,6 +76,30 @@ namespace MakerLib
             }
         }
 
+        public void MakeRevVSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
+        {
+            if (!useOctTree)
+            {
+                int v0 = AddVertice(x1, y1, z1);
+                int v1 = AddVertice(x1, y2, z1);
+                int v2 = AddVertice(x2, y2, z2);
+                int v3 = AddVertice(x2, y1, z2);
+
+                AddFace(v0, v2, v1);
+                AddFace(v0, v3, v2);
+            }
+            else
+            {
+                int v0 = AddVerticeOctTree(x1, y1, z1);
+                int v1 = AddVerticeOctTree(x1, y2, z1);
+                int v2 = AddVerticeOctTree(x2, y2, z2);
+                int v3 = AddVerticeOctTree(x2, y1, z2);
+
+                AddFace(v0, v2, v1);
+                AddFace(v0, v3, v2);
+            }
+        }
+
         public void MakeHSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
         {
             if (!useOctTree)
@@ -99,6 +123,7 @@ namespace MakerLib
                 AddFace(v0, v2, v3);
             }
         }
+
         private int AddVerticeOctTree(Point3D v)
         {
             int res = -1;
@@ -113,7 +138,7 @@ namespace MakerLib
             return res;
         }
 
-        public  int AddVerticeOctTree(double x, double y, double z)
+        public int AddVerticeOctTree(double x, double y, double z)
         {
             int res = -1;
             if (octTree != null)
