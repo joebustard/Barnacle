@@ -33,6 +33,7 @@ namespace Barnacle.Dialogs
         private bool solid;
         private bool outerTube;
         private bool innerTube;
+        private bool doubleTube;
         private double sweep;
         private string texture;
         private double textureDepth;
@@ -252,6 +253,31 @@ namespace Barnacle.Dialogs
                     {
                         solid = false;
                         innerTube = false;
+                        doubleTube = false;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool DoubleTube
+        {
+            get
+            {
+                return doubleTube;
+            }
+            set
+            {
+                if (doubleTube != value)
+                {
+                    doubleTube = value;
+                    NotifyPropertyChanged();
+                    if (outerTube)
+                    {
+                        solid = false;
+                        innerTube = false;
+                        outerTube = false;
+
                         UpdateDisplay();
                     }
                 }
@@ -274,6 +300,7 @@ namespace Barnacle.Dialogs
                     {
                         solid = false;
                         outerTube = false;
+                        doubleTube = false;
                         UpdateDisplay();
                     }
                 }
@@ -512,6 +539,10 @@ namespace Barnacle.Dialogs
                 {
                     sideMask += 2;
                 }
+                if (doubleTube)
+                {
+                    sideMask = 3;
+                }
                 TexturedTubeMaker tubemaker = new TexturedTubeMaker(tubeHeight, innerRadius, thickness, sweep, texture, textureDepth, textureResolution, sideMask);
                 tubemaker.Generate(Vertices, Faces);
             }
@@ -527,7 +558,8 @@ namespace Barnacle.Dialogs
             Thickness = EditorParameters.GetDouble("Thickness", 5);
             Solid = EditorParameters.GetBoolean("Solid", true);
             OuterTube = EditorParameters.GetBoolean("OuterTube", false);
-            InnerTube = EditorParameters.GetBoolean("InnerTube", false); ;
+            InnerTube = EditorParameters.GetBoolean("InnerTube", false);
+            DoubleTube = EditorParameters.GetBoolean("DoubleTube", false); ;
             Sweep = EditorParameters.GetDouble("Sweep", 360);
             Texture = EditorParameters.Get("Texture");
             TextureDepth = EditorParameters.GetDouble("TextureDepth", 0.5);
@@ -548,6 +580,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Solid", Solid.ToString());
             EditorParameters.Set("InnerTube", InnerTube.ToString());
             EditorParameters.Set("OuterTube", OuterTube.ToString());
+            EditorParameters.Set("DoubleTube", DoubleTube.ToString());
             EditorParameters.Set("Sweep", Sweep.ToString());
             EditorParameters.Set("Texture", Texture.ToString());
             EditorParameters.Set("TextureDepth", TextureDepth.ToString());

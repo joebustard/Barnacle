@@ -34,8 +34,9 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <RadioButton GroupName="SolidRadio" VerticalAlignment="Center"  Content="Disk" IsChecked="{Binding Solid}" ToolTip="Make a solid disc with texture around its circumference" />
-                <RadioButton GroupName="SolidRadio" Width="100" Margin="8,0,0,0" Content="Outer Tube" VerticalAlignment="Center" IsChecked="{Binding OuterTube}" ToolTip="Make a tube with texture around its circumference" />
-                <RadioButton GroupName="SolidRadio" Width="100" Margin="8,0,0,0" Content="Inner Tube" VerticalAlignment="Center" IsChecked="{Binding InnerTube}" ToolTip="Make a tube with texture around its inner circumference" />
+                <RadioButton GroupName="SolidRadio"  Margin="8,0,0,0" Content="Outer Tube" VerticalAlignment="Center" IsChecked="{Binding OuterTube}" ToolTip="Make a tube with texture around its circumference" />
+                <RadioButton GroupName="SolidRadio"  Margin="8,0,0,0" Content="Inner Tube" VerticalAlignment="Center" IsChecked="{Binding InnerTube}" ToolTip="Make a tube with texture around its inner circumference" />
+                <RadioButton GroupName="SolidRadio"  Margin="8,0,0,0" Content="Double Sided Tube" VerticalAlignment="Center" IsChecked="{Binding DoubleTube}" ToolTip="Make a tube with texture around its inner and outer circumferences" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Height</Label>
