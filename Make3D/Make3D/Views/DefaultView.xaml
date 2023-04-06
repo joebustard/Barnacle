@@ -340,50 +340,50 @@
                                              ToolTip="Delete all exported stl and printer files"
                                              VerticalAlignment="Top"
                                              x:Name="Clean" />
+                    <Custom:RibbonButton Command="{Binding AutoFixCommand}"
+
+                                             HorizontalAlignment="Stretch"
+                                             Label="AutoFix"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/clean.png"
+                                             ToolTip="Remove duplicate vertices, unreferenced vertices from all models in all files in the project."
+                                             VerticalAlignment="Top"
+                                             x:Name="Autofix" />
                 </Custom:RibbonGroup>
                 <!--
                         <Custom:RibbonSeparator />
 
                         <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
                         -->
-                <Custom:RibbonGroup Name="DataGroup"
-                                    Header="Objects"
+
+                <Custom:RibbonGroup Name="PoisitionDataGroup"
+                                    Header="Position"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/objects.png" IsEnabled="{Binding EditingActive}">
-                    <Custom:RibbonMenuButton Label="Flip"
+                    <Custom:RibbonMenuButton Label="Move"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Flip.png"
-                                             x:Name="Flip">
-                        <Custom:RibbonButton Command="{Binding FlipCommand}"
-                                             CommandParameter="Horizontal"
+                                             x:Name="Move">
+                        <Custom:RibbonButton Command="{Binding AlignCommand}"
+                                             CommandParameter="Floor"
                                              HorizontalAlignment="Stretch"
-                                             Label="Horizontal"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipH.png"
-                                             ToolTip="Flip objects vertices horizontally (left to right)."
+                                             Label="Floor"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Floor.png"
+                                             ToolTip="Align objects so they are all on the floor."
                                              VerticalAlignment="Top"
-                                             x:Name="HorizontalFlip" />
-                        <Custom:RibbonButton Command="{Binding FlipCommand}"
-                                             CommandParameter="Vertical"
+                                             x:Name="FloorAlignment" />
+                        <Custom:RibbonButton Command="{Binding AlignCommand}"
+                                             CommandParameter="Centre"
                                              HorizontalAlignment="Stretch"
-                                             Label="Vertical"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipV.png"
-                                             ToolTip="Flip objects vertices vertically (top to bottom)."
+                                             Label="Center"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ToolTip="Align objects so they are all centered on the first selected."
                                              VerticalAlignment="Top"
-                                             x:Name="VerticalFlip" />
-                        <Custom:RibbonButton Command="{Binding FlipCommand}"
-                                             CommandParameter="Distal"
+                                             x:Name="CentreAlignment" />
+                        <Custom:RibbonButton Command="{Binding MarkerCommand}"
                                              HorizontalAlignment="Stretch"
-                                             Label="Distal"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipD.png"
-                                             ToolTip="Flip Flip objects vertices distally {back to front)."
+                                             Label="Marker"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Marker.png"
+                                             ToolTip="Move items to the marker on the floor"
                                              VerticalAlignment="Top"
-                                             x:Name="DistalFlip" />
-                        <Custom:RibbonButton Command="{Binding FlipCommand}"
-                                             CommandParameter="Inside"
-                                             HorizontalAlignment="Stretch"
-                                             Label="Inside out"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipIO.png"
-                                             ToolTip="Flip inside out."
-                                             VerticalAlignment="Top"
-                                             x:Name="InsideFlip" />
+                                             x:Name="MarkerAlignment" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Align"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Align.png"
@@ -436,29 +436,6 @@
                                              ToolTip="Align objects so their back edges match the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="BackAlignment" />
-                        <Custom:RibbonButton Command="{Binding AlignCommand}"
-                                             CommandParameter="Floor"
-                                             HorizontalAlignment="Stretch"
-                                             Label="Floor"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/Floor.png"
-                                             ToolTip="Align objects so they are all on the floor."
-                                             VerticalAlignment="Top"
-                                             x:Name="FloorAlignment" />
-                        <Custom:RibbonButton Command="{Binding AlignCommand}"
-                                             CommandParameter="Centre"
-                                             HorizontalAlignment="Stretch"
-                                             Label="Center"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
-                                             ToolTip="Align objects so they are all centered on the first selected."
-                                             VerticalAlignment="Top"
-                                             x:Name="CentreAlignment" />
-                        <Custom:RibbonButton Command="{Binding MarkerCommand}"
-                                             HorizontalAlignment="Stretch"
-                                             Label="Marker"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/Marker.png"
-                                             ToolTip="Move items to the marker on the floor"
-                                             VerticalAlignment="Top"
-                                             x:Name="MarkerAlignment" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Stack"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Stack.png"
@@ -548,6 +525,47 @@
                                              VerticalAlignment="Top"
                                              x:Name="DEvenAlignment" />
                     </Custom:RibbonMenuButton>
+                </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="DataGroup"
+                                    Header="Objects"
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/objects.png" IsEnabled="{Binding EditingActive}">
+                    <Custom:RibbonMenuButton Label="Flip"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Flip.png"
+                                             x:Name="Flip">
+                        <Custom:RibbonButton Command="{Binding FlipCommand}"
+                                             CommandParameter="Horizontal"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Horizontal"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipH.png"
+                                             ToolTip="Flip objects vertices horizontally (left to right)."
+                                             VerticalAlignment="Top"
+                                             x:Name="HorizontalFlip" />
+                        <Custom:RibbonButton Command="{Binding FlipCommand}"
+                                             CommandParameter="Vertical"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Vertical"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipV.png"
+                                             ToolTip="Flip objects vertices vertically (top to bottom)."
+                                             VerticalAlignment="Top"
+                                             x:Name="VerticalFlip" />
+                        <Custom:RibbonButton Command="{Binding FlipCommand}"
+                                             CommandParameter="Distal"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Distal"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipD.png"
+                                             ToolTip="Flip Flip objects vertices distally {back to front)."
+                                             VerticalAlignment="Top"
+                                             x:Name="DistalFlip" />
+                        <Custom:RibbonButton Command="{Binding FlipCommand}"
+                                             CommandParameter="Inside"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Inside out"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/FlipIO.png"
+                                             ToolTip="Flip inside out."
+                                             VerticalAlignment="Top"
+                                             x:Name="InsideFlip" />
+                    </Custom:RibbonMenuButton>
+
                     <Custom:RibbonMenuButton Label="Size"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Size.png"
                                              x:Name="Size">
@@ -897,7 +915,6 @@
                                              VerticalAlignment="Top"
                                              x:Name="FixHolesButton" />
 
-                        
                         <Custom:RibbonButton Command="{Binding ResetOriginCommand}"
                                              HorizontalAlignment="Stretch"
                                              Label="Reset Origin"

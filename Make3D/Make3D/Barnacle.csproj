@@ -85,6 +85,9 @@
     <Compile Include="Dialogs\AboutBox\AboutBoxDlg.xaml.cs">
       <DependentUpon>AboutBoxDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\AutoFix\AutoFixDlg.xaml.cs">
+      <DependentUpon>AutoFixDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\BaseModellerDialog.cs" />
     <Compile Include="Dialogs\BezierFuselage\BezierLine.cs" />
     <Compile Include="Dialogs\BezierFuselage\BulkheadControl.xaml.cs">
@@ -400,6 +403,10 @@
       <DependentUpon>StartupView.xaml</DependentUpon>
     </Compile>
     <Page Include="Dialogs\AboutBox\AboutBoxDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\AutoFix\AutoFixDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

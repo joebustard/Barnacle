@@ -114,6 +114,7 @@ namespace Barnacle.ViewModels
             modelItems = new Model3DCollection();
 
             modelItems.Add(floor.FloorMesh);
+            NotificationManager.Subscribe("Editor", "AutoFix", AutoFix);
             NotificationManager.Subscribe("Editor", "ZoomIn", ZoomIn);
             NotificationManager.Subscribe("Editor", "FixHoles", FixHoles);
             NotificationManager.Subscribe("Editor", "ZoomOut", ZoomOut);
@@ -194,6 +195,12 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
         }
 
+        private void AutoFix(object param)
+        {
+            AutoFixDlg dlg = new AutoFixDlg();
+            dlg.ShowDialog();
+        }
+
         private void FixHoles(object param)
         {
             if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
@@ -203,7 +210,7 @@ namespace Barnacle.ViewModels
                 {
                     CheckPoint();
                     HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                   Tuple<int,int> res =  hf.FindHoles();
+                    Tuple<int, int> res = hf.FindHoles();
 
                     ob.Remesh();
 
@@ -991,15 +998,14 @@ namespace Barnacle.ViewModels
             return mesh;
         }
 
-        private  int RemoveDuplicateVertices(Object3D ob)
+        private int RemoveDuplicateVertices(Object3D ob)
         {
-            
             CheckPoint();
             int numberRemoved = ob.RelativeObjectVertices.Count;
             Fixer checker = new Fixer();
             Point3DCollection points = new Point3DCollection();
-            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);            
-            
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, points);
+
             checker.RemoveDuplicateVertices(points, ob.TriangleIndices);
             PointUtils.PointCollectionToP3D(checker.Vertices, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Faces;

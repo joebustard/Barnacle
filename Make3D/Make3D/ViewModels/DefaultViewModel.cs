@@ -60,6 +60,9 @@ namespace Barnacle.ViewModels
         private bool spurGearEnabled;
         private bool stadiumEnabled;
         private SubViewManager subViewMan;
+
+        public RelayCommand AutoFixCommand { get; set; }
+
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
         private bool tubeEnabled;
@@ -86,6 +89,7 @@ namespace Barnacle.ViewModels
         {
             settingsLoaded = false;
             subViewMan = new SubViewManager();
+            AutoFixCommand = new RelayCommand(OnAutoFix);
             NewCommand = new RelayCommand(OnNew);
             NewProjectCommand = new RelayCommand(OnNewProject);
             OpenProjectCommand = new RelayCommand(OnOpenProject);
@@ -137,7 +141,7 @@ namespace Barnacle.ViewModels
             MeshEditCommand = new RelayCommand(OnMeshEdit);
             MeshHullCommand = new RelayCommand(OnHullEdit);
             DupVertexCommand = new RelayCommand(OnDupVertex);
-           
+
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             ResetOriginCommand = new RelayCommand(OnReorigin);
             ViewCommand = new RelayCommand(OnView);
@@ -191,6 +195,11 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnAutoFix(object obj)
+        {
+            NotificationManager.Notify("AutoFix", null);
         }
 
         private void OnFixHoles(object obj)
@@ -1296,7 +1305,7 @@ namespace Barnacle.ViewModels
                     PartLibraryProject.MarkAsLibrary();
                     PartLibraryProject.Save();
                 }
-                
+
                 LibraryVisibility = Visibility.Visible;
             }
             catch
