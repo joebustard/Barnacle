@@ -78,7 +78,16 @@ namespace Barnacle.Dialogs
                 NotifyPropertyChanged();
             }
         }
-
+        private bool canFix;
+        public bool CanFix
+        {
+            get { return canFix; }
+            set
+            {
+                canFix = value;
+                NotifyPropertyChanged();
+            }
+        }
         public string ResultsText
         {
             get { return resultsText; }
@@ -135,6 +144,8 @@ namespace Barnacle.Dialogs
         {
             ClearResults();
             CanClose = false;
+            CanFix = false;
+            string original = BaseViewModel.Document.FilePath;
             if (BaseViewModel.Document.Dirty)
             {
                 MessageBoxResult res = MessageBox.Show("Open document has changed. Save first?", "Warning", MessageBoxButton.YesNoCancel);
@@ -143,6 +154,7 @@ namespace Barnacle.Dialogs
                     BaseViewModel.Document.Save(BaseViewModel.Document.FilePath);
                 }
             }
+            BaseViewModel.Document.Clear(); 
             string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
             String pth = BaseViewModel.Project.BaseFolder;
             foreach (string fullPath in filenames)
@@ -150,23 +162,28 @@ namespace Barnacle.Dialogs
                 await Task.Run(() => AutoFixDocument(fullPath));
             }
 
+            BaseViewModel.Document.Load(original);
+            AppendResults("Done");
             CanClose = true;
+            CanFix = true;
         }
 
         private async Task AutoFixDocument(string fullPath)
         {
-            AppendResults($"Loading {fullPath}");
+            AppendResults($"{fullPath}");
             Document doc = new Document();
 
             doc.Load(fullPath);
             foreach (Object3D ob in doc.Content)
             {
                 AppendResults($" {ob.Name}");
-                if (removeHoles) FixHoles(ob);
                 if (removeDuplicates) RemoveDuplicateVertices(ob);
+                if (removeHoles) FixHoles(ob);
+
             }
             AppendResults($"");
-            //doc.Save(fullPath);
+            doc.Save(fullPath);
+            doc.Clear();
         }
 
         private void FixHoles(Object3D ob)

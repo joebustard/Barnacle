@@ -42,7 +42,7 @@
                 <ColumnDefinition Width="1*" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="2" Content="Start" Click="StartClicked" />
+            <Button IsEnabled="{Binding CanFix}"  Grid.Column="2" Content="Start" Click="StartClicked" />
             <Button IsEnabled="{Binding CanClose}" Grid.Column="4" Content="Close" Click="CloseClicked" />
         </Grid>
     </Grid>

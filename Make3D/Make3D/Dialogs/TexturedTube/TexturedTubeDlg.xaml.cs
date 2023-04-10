@@ -254,6 +254,7 @@ namespace Barnacle.Dialogs
                         solid = false;
                         innerTube = false;
                         doubleTube = false;
+                        ShowThickness = Visibility.Visible;
                         UpdateDisplay();
                     }
                 }
@@ -272,12 +273,12 @@ namespace Barnacle.Dialogs
                 {
                     doubleTube = value;
                     NotifyPropertyChanged();
-                    if (outerTube)
+                    if (doubleTube)
                     {
                         solid = false;
                         innerTube = false;
                         outerTube = false;
-
+                        ShowThickness = Visibility.Visible;
                         UpdateDisplay();
                     }
                 }
@@ -301,6 +302,7 @@ namespace Barnacle.Dialogs
                         solid = false;
                         outerTube = false;
                         doubleTube = false;
+                        ShowThickness = Visibility.Visible;
                         UpdateDisplay();
                     }
                 }

@@ -55,6 +55,7 @@ namespace MakerLib
                           new Point3D(+xExtent, +yExtent, +xExtent));
             Faces = faces;
             double maxSweep = DegToRad(sweep);
+            
             if ((sideMask & 1) != 0)
             {
                 GenerateOutsideTexture(maxSweep, out inswe);
@@ -63,7 +64,7 @@ namespace MakerLib
             {
                 BlankOutside(maxSweep);
             }
-
+            
             if ((sideMask & 2) != 0)
             {
                 GenerateInsideTexture(maxSweep, out inswe);
@@ -72,6 +73,7 @@ namespace MakerLib
             {
                 BlankInside(maxSweep);
             }
+            
             // generate top and bottom
             if (Faces.Count > 0)
             {
@@ -101,6 +103,7 @@ namespace MakerLib
                 AddFace(v0, v1, v2);
                 AddFace(v2, v1, v3);
             }
+            
         }
 
         private double BlankInside(double maxSweep)
@@ -514,7 +517,7 @@ namespace MakerLib
                                     int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
                                     int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
 
-                                    AddFace(v0, v1, v1);
+                                    AddFace(v0, v1, v2);
                                     AddFace(v0, v3, v2);
                                 }
                                 else
