@@ -25,7 +25,7 @@
             <RowDefinition Height="10" />
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-            <CheckBox IsChecked="{Binding RemoveDuplicates}" Width="150" VerticalAlignment="Center" Content="Remove duplicate vertices" />
+            <CheckBox IsChecked="{Binding RemoveDuplicates}" Width="200" VerticalAlignment="Center" Content="Remove duplicate vertices" />
         </StackPanel>
         <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1">
             <CheckBox IsChecked="{Binding RemoveHoles}" Width="150" VerticalAlignment="Center" Content="Remove holes" />

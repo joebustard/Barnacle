@@ -28,21 +28,26 @@ namespace Barnacle.Dialogs
         private const double mintextureResolution = 0.1;
         private const double minthickness = 1;
         private const double mintubeHeight = 1;
-        private double innerRadius;
-        private bool loaded;
-        private bool solid;
-        private bool outerTube;
-        private bool innerTube;
+        private bool clippedSingle;
+        private bool clippedTile;
         private bool doubleTube;
+        private bool fittedSingle;
+        private bool fittedTile;
+        private double innerRadius;
+        private bool innerTube;
+        private bool loaded;
+        private bool outerTube;
+        private Visibility showThickness;
+        private bool solid;
         private double sweep;
         private string texture;
         private double textureDepth;
         private ObservableCollection<String> textureItems;
+        private TextureManager textureManager;
         private double textureResolution;
         private double thickness;
         private double tubeHeight;
         private string warningText;
-        private TextureManager textureManager;
 
         public TexturedTubeDlg()
         {
@@ -54,6 +59,114 @@ namespace Barnacle.Dialogs
             textureManager = TextureManager.Instance();
             textureManager.LoadTextureNames();
             textureManager.Mode = TextureManager.MapMode.ClippedTile;
+        }
+
+        public bool ClippedSingle
+        {
+            get { return clippedSingle; }
+            set
+            {
+                if (clippedSingle != value)
+                {
+                    clippedSingle = value;
+                    NotifyPropertyChanged();
+                    if (clippedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool ClippedTile
+        {
+            get { return clippedTile; }
+            set
+            {
+                if (clippedTile != value)
+                {
+                    clippedTile = value;
+                    NotifyPropertyChanged();
+                    if (clippedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool DoubleTube
+        {
+            get
+            {
+                return doubleTube;
+            }
+            set
+            {
+                if (doubleTube != value)
+                {
+                    doubleTube = value;
+                    NotifyPropertyChanged();
+                    if (doubleTube)
+                    {
+                        solid = false;
+                        innerTube = false;
+                        outerTube = false;
+                        ShowThickness = Visibility.Visible;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool FittedSingle
+        {
+            get { return fittedSingle; }
+            set
+            {
+                if (fittedSingle != value)
+                {
+                    fittedSingle = value;
+                    NotifyPropertyChanged();
+                    if (fittedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool FittedTile
+        {
+            get { return fittedTile; }
+            set
+            {
+                if (fittedTile != value)
+                {
+                    fittedTile = value;
+                    NotifyPropertyChanged();
+                    if (fittedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
         }
 
         public double InnerRadius
@@ -81,6 +194,54 @@ namespace Barnacle.Dialogs
             get
             {
                 return $"InnerRadius must be in the range {mininnerRadius} to {maxinnerRadius}";
+            }
+        }
+
+        public bool InnerTube
+        {
+            get
+            {
+                return innerTube;
+            }
+            set
+            {
+                if (innerTube != value)
+                {
+                    innerTube = value;
+                    NotifyPropertyChanged();
+                    if (innerTube)
+                    {
+                        solid = false;
+                        outerTube = false;
+                        doubleTube = false;
+                        ShowThickness = Visibility.Visible;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool OuterTube
+        {
+            get
+            {
+                return outerTube;
+            }
+            set
+            {
+                if (outerTube != value)
+                {
+                    outerTube = value;
+                    NotifyPropertyChanged();
+                    if (outerTube)
+                    {
+                        solid = false;
+                        innerTube = false;
+                        doubleTube = false;
+                        ShowThickness = Visibility.Visible;
+                        UpdateDisplay();
+                    }
+                }
             }
         }
 
@@ -118,6 +279,19 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public Visibility ShowThickness
+        {
+            get { return showThickness; }
+            set
+            {
+                if (value != showThickness)
+                {
+                    showThickness = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public bool Solid
         {
             get
@@ -140,170 +314,6 @@ namespace Barnacle.Dialogs
                     else
                     {
                         ShowThickness = Visibility.Visible;
-                    }
-                }
-            }
-        }
-
-        private bool clippedTile;
-
-        public bool ClippedTile
-        {
-            get { return clippedTile; }
-            set
-            {
-                if (clippedTile != value)
-                {
-                    clippedTile = value;
-                    NotifyPropertyChanged();
-                    if (clippedTile)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.ClippedTile;
-                        }
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private bool clippedSingle;
-
-        public bool ClippedSingle
-        {
-            get { return clippedSingle; }
-            set
-            {
-                if (clippedSingle != value)
-                {
-                    clippedSingle = value;
-                    NotifyPropertyChanged();
-                    if (clippedSingle)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.ClippedSingle;
-                        }
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private bool fittedSingle;
-
-        public bool FittedSingle
-        {
-            get { return fittedSingle; }
-            set
-            {
-                if (fittedSingle != value)
-                {
-                    fittedSingle = value;
-                    NotifyPropertyChanged();
-                    if (fittedSingle)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.FittedSingle;
-                        }
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        private bool fittedTile;
-
-        public bool FittedTile
-        {
-            get { return fittedTile; }
-            set
-            {
-                if (fittedTile != value)
-                {
-                    fittedTile = value;
-                    NotifyPropertyChanged();
-                    if (fittedTile)
-                    {
-                        if (textureManager != null)
-                        {
-                            textureManager.Mode = TextureManager.MapMode.FittedTile;
-                        }
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public bool OuterTube
-        {
-            get
-            {
-                return outerTube;
-            }
-            set
-            {
-                if (outerTube != value)
-                {
-                    outerTube = value;
-                    NotifyPropertyChanged();
-                    if (outerTube)
-                    {
-                        solid = false;
-                        innerTube = false;
-                        doubleTube = false;
-                        ShowThickness = Visibility.Visible;
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public bool DoubleTube
-        {
-            get
-            {
-                return doubleTube;
-            }
-            set
-            {
-                if (doubleTube != value)
-                {
-                    doubleTube = value;
-                    NotifyPropertyChanged();
-                    if (doubleTube)
-                    {
-                        solid = false;
-                        innerTube = false;
-                        outerTube = false;
-                        ShowThickness = Visibility.Visible;
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public bool InnerTube
-        {
-            get
-            {
-                return innerTube;
-            }
-            set
-            {
-                if (innerTube != value)
-                {
-                    innerTube = value;
-                    NotifyPropertyChanged();
-                    if (innerTube)
-                    {
-                        solid = false;
-                        outerTube = false;
-                        doubleTube = false;
-                        ShowThickness = Visibility.Visible;
-                        UpdateDisplay();
                     }
                 }
             }
@@ -505,21 +515,6 @@ namespace Barnacle.Dialogs
             SaveEditorParmeters();
             DialogResult = true;
             Close();
-        }
-
-        private Visibility showThickness;
-
-        public Visibility ShowThickness
-        {
-            get { return showThickness; }
-            set
-            {
-                if (value != showThickness)
-                {
-                    showThickness = value;
-                    NotifyPropertyChanged();
-                }
-            }
         }
 
         private void GenerateShape()

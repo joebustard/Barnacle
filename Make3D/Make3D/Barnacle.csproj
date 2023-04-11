@@ -1116,6 +1116,8 @@
     <Resource Include="Images\Buttons\FlatRidge.png" />
     <Resource Include="Images\Buttons\HollowCrownRidge.png" />
     <Resource Include="Images\Buttons\clone.png" />
+    <Resource Include="Images\AutoFix.png" />
+    <Resource Include="Images\Buttons\AutoFix.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

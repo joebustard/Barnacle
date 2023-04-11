@@ -571,6 +571,10 @@ namespace Barnacle.Dialogs
             {
                 stepSize = 1.0 / (2 * tipPnts.Count - 1);
             }
+            if (stepSize <= 0.00)
+            {
+                stepSize = 0.1;
+            }
             if (wholeModelChecked || topModelChecked)
             {
                 for (double t = 0; t <= 0.5; t += stepSize)

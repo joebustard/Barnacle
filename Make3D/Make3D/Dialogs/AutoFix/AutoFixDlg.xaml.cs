@@ -4,21 +4,11 @@ using Barnacle.ViewModels;
 using FixLib;
 using HoleLibrary;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
@@ -29,35 +19,10 @@ namespace Barnacle.Dialogs
     public partial class AutoFixDlg : Window, INotifyPropertyChanged
     {
         private bool canClose;
-        private string resultsText;
-        private bool removeHoles;
+        private bool canFix;
         private bool removeDuplicates;
-
-        public bool RemoveHoles
-        {
-            get { return removeHoles; }
-            set
-            {
-                if (removeHoles != value)
-                {
-                    removeHoles = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool RemoveDuplicates
-        {
-            get { return removeDuplicates; }
-            set
-            {
-                if (removeDuplicates != value)
-                {
-                    removeDuplicates = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+        private bool removeHoles;
+        private string resultsText;
 
         public AutoFixDlg()
         {
@@ -78,7 +43,7 @@ namespace Barnacle.Dialogs
                 NotifyPropertyChanged();
             }
         }
-        private bool canFix;
+
         public bool CanFix
         {
             get { return canFix; }
@@ -88,6 +53,33 @@ namespace Barnacle.Dialogs
                 NotifyPropertyChanged();
             }
         }
+
+        public bool RemoveDuplicates
+        {
+            get { return removeDuplicates; }
+            set
+            {
+                if (removeDuplicates != value)
+                {
+                    removeDuplicates = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool RemoveHoles
+        {
+            get { return removeHoles; }
+            set
+            {
+                if (removeHoles != value)
+                {
+                    removeHoles = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public string ResultsText
         {
             get { return resultsText; }
@@ -125,6 +117,23 @@ namespace Barnacle.Dialogs
                 }));
         }
 
+        private async Task AutoFixDocument(string fullPath)
+        {
+            AppendResults($"{fullPath}");
+            Document doc = new Document();
+
+            doc.Load(fullPath);
+            foreach (Object3D ob in doc.Content)
+            {
+                AppendResults($" {ob.Name}");
+                if (removeDuplicates) RemoveDuplicateVertices(ob);
+                if (removeHoles) FixHoles(ob);
+            }
+            AppendResults($"");
+            doc.Save(fullPath);
+            doc.Clear();
+        }
+
         private void ClearResults()
         {
             Application.Current.Dispatcher.BeginInvoke(
@@ -138,52 +147,6 @@ namespace Barnacle.Dialogs
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
             Close();
-        }
-
-        private async void StartClicked(object sender, RoutedEventArgs e)
-        {
-            ClearResults();
-            CanClose = false;
-            CanFix = false;
-            string original = BaseViewModel.Document.FilePath;
-            if (BaseViewModel.Document.Dirty)
-            {
-                MessageBoxResult res = MessageBox.Show("Open document has changed. Save first?", "Warning", MessageBoxButton.YesNoCancel);
-                if (res == MessageBoxResult.Yes)
-                {
-                    BaseViewModel.Document.Save(BaseViewModel.Document.FilePath);
-                }
-            }
-            BaseViewModel.Document.Clear(); 
-            string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
-            String pth = BaseViewModel.Project.BaseFolder;
-            foreach (string fullPath in filenames)
-            {
-                await Task.Run(() => AutoFixDocument(fullPath));
-            }
-
-            BaseViewModel.Document.Load(original);
-            AppendResults("Done");
-            CanClose = true;
-            CanFix = true;
-        }
-
-        private async Task AutoFixDocument(string fullPath)
-        {
-            AppendResults($"{fullPath}");
-            Document doc = new Document();
-
-            doc.Load(fullPath);
-            foreach (Object3D ob in doc.Content)
-            {
-                AppendResults($" {ob.Name}");
-                if (removeDuplicates) RemoveDuplicateVertices(ob);
-                if (removeHoles) FixHoles(ob);
-
-            }
-            AppendResults($"");
-            doc.Save(fullPath);
-            doc.Clear();
         }
 
         private void FixHoles(Object3D ob)
@@ -216,6 +179,34 @@ namespace Barnacle.Dialogs
             {
                 AppendResults($"    Removed {numberRemoved} vertices");
             }
+        }
+
+        private async void StartClicked(object sender, RoutedEventArgs e)
+        {
+            ClearResults();
+            CanClose = false;
+            CanFix = false;
+            string original = BaseViewModel.Document.FilePath;
+            if (BaseViewModel.Document.Dirty)
+            {
+                MessageBoxResult res = MessageBox.Show("Open document has changed. Save first?", "Warning", MessageBoxButton.YesNoCancel);
+                if (res == MessageBoxResult.Yes)
+                {
+                    BaseViewModel.Document.Save(BaseViewModel.Document.FilePath);
+                }
+            }
+            BaseViewModel.Document.Clear();
+            string[] filenames = BaseViewModel.Project.GetExportFiles(".txt");
+            String pth = BaseViewModel.Project.BaseFolder;
+            foreach (string fullPath in filenames)
+            {
+                await Task.Run(() => AutoFixDocument(fullPath));
+            }
+
+            BaseViewModel.Document.Load(original);
+            AppendResults("Done");
+            CanClose = true;
+            CanFix = true;
         }
     }
 }

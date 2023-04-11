@@ -344,7 +344,7 @@
 
                                              HorizontalAlignment="Stretch"
                                              Label="AutoFix"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/clean.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/AutoFix.png"
                                              ToolTip="Remove duplicate vertices, unreferenced vertices from all models in all files in the project."
                                              VerticalAlignment="Top"
                                              x:Name="Autofix" />

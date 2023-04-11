@@ -17,14 +17,16 @@ Changed
   Replaced separate duplicate/unreferenced vertice fixer by a single one that does both and is faster
 
 Added 
+  Pill tool
+  Roof Ridge Tool
+  Simple Pie Slice Tool
   Textured disc/cyclinders
+
   Folder for user platelet textures. C:\programdata\barnacle\textures
   Checkbox to centre texture or tile across platelet
   Clone button. Makes duplicate of object in exactly the same place
   Added F7/F8 key as short cuts for up/down Camera rotation  
-  Pill tool
-  Roof Ridge Tool
-  Simple Pie Slice Tool
+
 
   Slicer output shows number of objects in each file, estimated print time and estimated material.
       This is just the estimates reported by curaengine
