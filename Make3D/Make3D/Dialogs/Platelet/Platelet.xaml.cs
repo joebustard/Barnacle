@@ -914,7 +914,7 @@ namespace Barnacle.Dialogs
                             }
                             texturexY++;
                         }
-                        texturexY++;
+                        texturexX++;
                     }
 
                     //    CloseEdge(lx, by, rx, ty, tmp, sz);
@@ -1193,110 +1193,116 @@ namespace Barnacle.Dialogs
                 Faces.Add(v0);
                 Faces.Add(v2);
                 Faces.Add(v3);
+
+                if (cell.WestWall > 0)
+                {
+                    double westSideDepth = ((double)(cell.Width - cell.WestWall) * textureDepth) / 255.0;
+
+                    v0 = AddVertice(px, py, z);
+                    v1 = AddVertice(px, py, westSideDepth);
+                    v2 = AddVertice(px, py + sz, westSideDepth);
+                    v3 = AddVertice(px, py + sz, z);
+                    Faces.Add(v0);
+                    Faces.Add(v2);
+                    Faces.Add(v1);
+
+                    Faces.Add(v0);
+                    Faces.Add(v3);
+                    Faces.Add(v2);
+                }
+                /*
+                // must always close left edge of pattern
+                if (tx == 0)
+                {
+                    Point p3 = CalcPoint(theta, innerRadius);
+                    MakeRevVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
+                }
+                */
+
+                if (cell.EastWall > 0)
+                {
+                    double eastSideDepth = ((double)(cell.Width - cell.EastWall) * textureDepth) / 255.0;
+                    v0 = AddVertice(px + sz, py, z);
+                    v1 = AddVertice(px + sz, py, eastSideDepth);
+                    v2 = AddVertice(px + sz, py + sz, eastSideDepth);
+                    v3 = AddVertice(px + sz, py + sz, z);
+                    Faces.Add(v0);
+                    Faces.Add(v1);
+                    Faces.Add(v2);
+
+                    Faces.Add(v0);
+                    Faces.Add(v2);
+                    Faces.Add(v3);
+                }
+                /*
+                if (theta + inswe >= maxSweep)
+                {
+                    Point p3 = CalcPoint(theta + inswe, innerRadius);
+                    MakeRevVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
+                }
+                */
+                if (cell.NorthWall > 0)
+                {
+                    double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
+                    v0 = AddVertice(px, py, z);
+                    v1 = AddVertice(px + sz, py, z);
+                    v2 = AddVertice(px + sz, py, sideDepth);
+                    v3 = AddVertice(px, py, sideDepth);
+
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
+                }
+                if (cell.SouthWall > 0)
+                {
+                    double sideDepth = ((double)(cell.Width - cell.SouthWall) * textureDepth) / 255.0;
+                    v0 = AddVertice(px, py + sz, z);
+                    v1 = AddVertice(px + sz, py + sz, z);
+                    v2 = AddVertice(px + sz, py + sz, sideDepth);
+                    v3 = AddVertice(px, py + sz, sideDepth);
+
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
+                }
                 /*
 
-                                if (cell.WestWall > 0)
-                                {
-                                    double westSideDepth = ((double)(cell.Width - cell.WestWall) * textureDepth) / 255.0;
+                   if (cell.SouthWall > 0)
+                   {
+                       double sideDepth = ((double)(cell.Width - cell.SouthWall) * textureDepth) / 255.0;
 
-                                    MakeRevVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
-                                }
+                       Point p4 = CalcPoint(theta, innerRadius - zoff);
+                       Point p5 = CalcPoint(theta, innerRadius - sideDepth);
+                       Point p6 = CalcPoint(theta + inswe, innerRadius - sideDepth);
+                       Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
 
-                                // must always close left edge of pattern
-                                if (tx == 0)
-                                {
-                                    Point p3 = CalcPoint(theta, innerRadius);
-                                    MakeRevVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
-                                }
+                       int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
+                       int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
+                       int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
+                       int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
 
-                                if (cell.EastWall > 0)
-                                {
-                                    double sideDepth = ((double)(cell.Width - cell.EastWall) * textureDepth) / 255.0;
-                                    Point p3 = CalcPoint(theta + inswe, innerRadius - sideDepth);
-                                    MakeRevVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
-                                }
+                       AddFace(v0, v1, v2);
+                       AddFace(v0, v3, v2);
+                   }
+                   else
+                   {
+                       if (y + deltaY >= tubeHeight)
+                       {
+                           double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
 
-                                if (theta + inswe >= maxSweep)
-                                {
-                                    Point p3 = CalcPoint(theta + inswe, innerRadius);
-                                    MakeRevVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
-                                }
-                                if (cell.NorthWall > 0)
-                                {
-                                    double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
+                           Point p4 = CalcPoint(theta, innerRadius - zoff);
+                           Point p5 = CalcPoint(theta, innerRadius);
+                           Point p6 = CalcPoint(theta + inswe, innerRadius);
+                           Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
 
-                                    Point p4 = CalcPoint(theta, innerRadius - zoff);
-                                    Point p5 = CalcPoint(theta, innerRadius - sideDepth);
-                                    Point p6 = CalcPoint(theta + inswe, innerRadius - sideDepth);
-                                    Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
+                           int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
+                           int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
+                           int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
+                           int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
 
-                                    int v0 = AddVerticeOctTree(p4.X, y, p4.Y);
-                                    int v1 = AddVerticeOctTree(p5.X, y, p5.Y);
-                                    int v2 = AddVerticeOctTree(p6.X, y, p6.Y);
-                                    int v3 = AddVerticeOctTree(p7.X, y, p7.Y);
-
-                                    AddFace(v0, v1, v2);
-                                    AddFace(v0, v2, v3);
-                                }
-                                else
-                                {
-                                    if (y + deltaY >= tubeHeight)
-                                    {
-                                        double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
-
-                                        Point p4 = CalcPoint(theta, innerRadius - zoff);
-                                        Point p5 = CalcPoint(theta, innerRadius);
-                                        Point p6 = CalcPoint(theta + inswe, innerRadius);
-                                        Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
-
-                                        int v0 = AddVerticeOctTree(p4.X, y, p4.Y);
-                                        int v1 = AddVerticeOctTree(p5.X, y, p5.Y);
-                                        int v2 = AddVerticeOctTree(p6.X, y, p6.Y);
-                                        int v3 = AddVerticeOctTree(p7.X, y, p7.Y);
-
-                                        AddFace(v0, v1, v2);
-                                        AddFace(v0, v2, v3);
-                                    }
-                                }
-
-                                if (cell.SouthWall > 0)
-                                {
-                                    double sideDepth = ((double)(cell.Width - cell.SouthWall) * textureDepth) / 255.0;
-
-                                    Point p4 = CalcPoint(theta, innerRadius - zoff);
-                                    Point p5 = CalcPoint(theta, innerRadius - sideDepth);
-                                    Point p6 = CalcPoint(theta + inswe, innerRadius - sideDepth);
-                                    Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
-
-                                    int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
-                                    int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
-                                    int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
-                                    int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
-
-                                    AddFace(v0, v1, v2);
-                                    AddFace(v0, v3, v2);
-                                }
-                                else
-                                {
-                                    if (y + deltaY >= tubeHeight)
-                                    {
-                                        double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
-
-                                        Point p4 = CalcPoint(theta, innerRadius - zoff);
-                                        Point p5 = CalcPoint(theta, innerRadius);
-                                        Point p6 = CalcPoint(theta + inswe, innerRadius);
-                                        Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
-
-                                        int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
-                                        int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
-                                        int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
-                                        int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
-
-                                        AddFace(v0, v2, v1);
-                                        AddFace(v0, v3, v2);
-                                    }
-                                }
-                */
+                           AddFace(v0, v2, v1);
+                           AddFace(v0, v3, v2);
+                       }
+                   }
+   */
             }
 
             /*
