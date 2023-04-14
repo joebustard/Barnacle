@@ -1,4 +1,5 @@
 ﻿using Barnacle.Models;
+using MakerLib.TextureUtils;
 using PolygonLibrary;
 using PolygonTriangulationLib;
 using System;
@@ -63,6 +64,9 @@ namespace Barnacle.Dialogs
             textureFiles = new SortedList<string, string>();
             loadedImageName = "";
             selectedTexture = "";
+            textureManager = TextureManager.Instance();
+            textureManager.LoadTextureNames();
+            textureManager.Mode = TextureManager.MapMode.ClippedTile;
         }
 
         public enum PixelColour
@@ -142,6 +146,10 @@ namespace Barnacle.Dialogs
                 if (value != selectedTexture)
                 {
                     selectedTexture = value;
+                    if (textureManager != null && !String.IsNullOrEmpty(selectedTexture))
+                    {
+                        textureManager.LoadTextureImage(selectedTexture);
+                    }
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
@@ -803,20 +811,6 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < points.Count; i++)
                 {
-                    /*
-                        if (PathEditor.LocalImage == null)
-                        {
-                            // flipping coordinates so have to reverse polygon too
-                            tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        }
-                        else
-
-                        {
-                            double x = PathEditor.ToMM(points[i].X);
-                            double y = PathEditor.ToMM(top - points[i].Y);
-                            tmp.Insert(0, new System.Windows.Point(x, y));
-                        }
-                        */
                     tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
 
@@ -868,42 +862,9 @@ namespace Barnacle.Dialogs
                     List<System.Windows.Point> points = displayPoints;
 
                     List<System.Windows.Point> tmp = new List<System.Windows.Point>();
-                    double top = 0;
-                    for (int i = 0; i < points.Count - 1; i++)
-                    {
-                        if (points[i].Y > top)
-                        {
-                            top = points[i].Y;
-                        }
-                    }
-                    for (int i = 0; i < points.Count - 1; i++)
-                    {
-                        if (PathEditor.LocalImage == null)
-                        {
-                            // flipping coordinates so have to reverse polygon too
-                            tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        }
-                        else
-
-                        {
-                            double x = PathEditor.ToMM(points[i].X);
-                            double y = PathEditor.ToMM(top - points[i].Y);
-                            tmp.Insert(0, new System.Windows.Point(x, y));
-                        }
-                    }
-                    double lx = double.MaxValue;
-                    double rx = double.MinValue;
-                    double ty = double.MinValue;
-                    double by = double.MaxValue;
-                    for (int i = 0; i < tmp.Count; i++)
-                    {
-                        lx = Math.Min(tmp[i].X, lx);
-                        rx = Math.Max(tmp[i].X, rx);
-                        by = Math.Min(tmp[i].Y, by);
-                        ty = Math.Max(tmp[i].Y, ty);
-                    }
-                    xExtent = rx - lx;
-                    yExtent = ty - by;
+                    InvertVertical(points, tmp);
+                    double lx, rx, ty, by;
+                    CalculateExtents(tmp, out lx, out rx, out ty, out by);
                     double sz = 0.5;
                     if (!largeTexture)
                     {
@@ -920,11 +881,14 @@ namespace Barnacle.Dialogs
 
                     ConvexPolygon2D boundary = new ConvexPolygon2D(tmp.ToArray());
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
-                    LoadTextureImage();
+                    //   LoadTextureImage();
 
                     double off = sz / 2;
+                    int texturexX = 0;
+                    int texturexY = 0;
                     for (double px = lx; px < rx; px += sz)
                     {
+                        texturexY = 0;
                         for (double py = by; py < ty; py += sz)
                         {
                             ConvexPolygon2D rect = RectPoly(px, py, sz);
@@ -932,25 +896,78 @@ namespace Barnacle.Dialogs
                             if (interception.Corners.GetLength(0) > 2)
                             {
                                 bool insidepixel = false;
-                                byte mask = GetTextureMask(px, py, sz, tileTexture);
+                                // byte mask = GetTextureMask(px, py, sz, tileTexture);
+                                byte mask = 0;
+                                TextureCell cell = textureManager.GetCell(texturexX, texturexY);
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
                                     insidepixel = IsItAnInsidePixel(interception.Corners, px, py, sz);
                                 }
                                 if (insidepixel)
                                 {
-                                    PolygonInside(tmp, sz, off, px, py, mask);
+                                    PolygonInside(tmp, sz, off, px, py, cell);
                                 }
                                 else
                                 {
                                     PolygonOnEdge(tmp, sz, off, px, py, interception, mask);
                                 }
                             }
+                            texturexY++;
                         }
+                        texturexY++;
                     }
 
-                    CloseEdge(lx, by, rx, ty, tmp, sz);
+                    //    CloseEdge(lx, by, rx, ty, tmp, sz);
                     CentreVertices();
+                }
+            }
+        }
+
+        private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
+        {
+            lx = double.MaxValue;
+            rx = double.MinValue;
+            ty = double.MinValue;
+            by = double.MaxValue;
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                lx = Math.Min(tmp[i].X, lx);
+                rx = Math.Max(tmp[i].X, rx);
+                by = Math.Min(tmp[i].Y, by);
+                ty = Math.Max(tmp[i].Y, ty);
+            }
+            xExtent = rx - lx;
+            yExtent = ty - by;
+        }
+
+        /// <summary>
+        /// Invert a list of points vertically
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="tmp"></param>
+        private void InvertVertical(List<Point> points, List<Point> tmp)
+        {
+            double top = 0;
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                if (points[i].Y > top)
+                {
+                    top = points[i].Y;
+                }
+            }
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                if (PathEditor.LocalImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                else
+
+                {
+                    double x = PathEditor.ToMM(points[i].X);
+                    double y = PathEditor.ToMM(top - points[i].Y);
+                    tmp.Insert(0, new System.Windows.Point(x, y));
                 }
             }
         }
@@ -1042,6 +1059,7 @@ namespace Barnacle.Dialogs
             SmallTexture = EditorParameters.GetBoolean("SmallTexture", false);
             TileTexture = EditorParameters.GetBoolean("CentreTexture", true);
             SelectedTexture = EditorParameters.Get("SelectedTexture");
+            textureManager.LoadTextureImage(selectedTexture);
         }
 
         private bool lastCentre;
@@ -1116,34 +1134,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void LoadTextureNames()
-        {
-            try
-            {
-                String appFolder = AppDomain.CurrentDomain.BaseDirectory + "Data\\Textures";
-                GetTexturesFromFolder(appFolder);
-
-                appFolder = System.Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData) + "\\Barnacle\\Textures";
-                GetTexturesFromFolder(appFolder);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void GetTexturesFromFolder(string appFolder)
-        {
-            if (Directory.Exists(appFolder))
-            {
-                string[] txtFiles = Directory.GetFiles(appFolder, "*.png");
-                foreach (string s in txtFiles)
-                {
-                    string fName = System.IO.Path.GetFileNameWithoutExtension(s);
-                    textureFiles[fName] = s;
-                }
-            }
-        }
+        private TextureManager textureManager;
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
         {
@@ -1184,9 +1175,131 @@ namespace Barnacle.Dialogs
             return result;
         }
 
-        private void PolygonInside(List<Point> tmp, double sz, double off, double px, double py, byte mask)
+        private void PolygonInside(List<Point> tmp, double sz, double off, double px, double py, TextureCell cell)
         {
             double z = 0;
+            if (cell != null)
+            {
+                z = ((double)cell.Width * textureDepth) / 255.0;
+                // main surface
+                int v0 = AddVertice(px, py, z);
+                int v1 = AddVertice(px + sz, py, z);
+                int v2 = AddVertice(px + sz, py + sz, z);
+                int v3 = AddVertice(px, py + sz, z);
+                Faces.Add(v0);
+                Faces.Add(v1);
+                Faces.Add(v2);
+
+                Faces.Add(v0);
+                Faces.Add(v2);
+                Faces.Add(v3);
+                /*
+
+                                if (cell.WestWall > 0)
+                                {
+                                    double westSideDepth = ((double)(cell.Width - cell.WestWall) * textureDepth) / 255.0;
+
+                                    MakeRevVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
+                                }
+
+                                // must always close left edge of pattern
+                                if (tx == 0)
+                                {
+                                    Point p3 = CalcPoint(theta, innerRadius);
+                                    MakeRevVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
+                                }
+
+                                if (cell.EastWall > 0)
+                                {
+                                    double sideDepth = ((double)(cell.Width - cell.EastWall) * textureDepth) / 255.0;
+                                    Point p3 = CalcPoint(theta + inswe, innerRadius - sideDepth);
+                                    MakeRevVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
+                                }
+
+                                if (theta + inswe >= maxSweep)
+                                {
+                                    Point p3 = CalcPoint(theta + inswe, innerRadius);
+                                    MakeRevVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
+                                }
+                                if (cell.NorthWall > 0)
+                                {
+                                    double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
+
+                                    Point p4 = CalcPoint(theta, innerRadius - zoff);
+                                    Point p5 = CalcPoint(theta, innerRadius - sideDepth);
+                                    Point p6 = CalcPoint(theta + inswe, innerRadius - sideDepth);
+                                    Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
+
+                                    int v0 = AddVerticeOctTree(p4.X, y, p4.Y);
+                                    int v1 = AddVerticeOctTree(p5.X, y, p5.Y);
+                                    int v2 = AddVerticeOctTree(p6.X, y, p6.Y);
+                                    int v3 = AddVerticeOctTree(p7.X, y, p7.Y);
+
+                                    AddFace(v0, v1, v2);
+                                    AddFace(v0, v2, v3);
+                                }
+                                else
+                                {
+                                    if (y + deltaY >= tubeHeight)
+                                    {
+                                        double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
+
+                                        Point p4 = CalcPoint(theta, innerRadius - zoff);
+                                        Point p5 = CalcPoint(theta, innerRadius);
+                                        Point p6 = CalcPoint(theta + inswe, innerRadius);
+                                        Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
+
+                                        int v0 = AddVerticeOctTree(p4.X, y, p4.Y);
+                                        int v1 = AddVerticeOctTree(p5.X, y, p5.Y);
+                                        int v2 = AddVerticeOctTree(p6.X, y, p6.Y);
+                                        int v3 = AddVerticeOctTree(p7.X, y, p7.Y);
+
+                                        AddFace(v0, v1, v2);
+                                        AddFace(v0, v2, v3);
+                                    }
+                                }
+
+                                if (cell.SouthWall > 0)
+                                {
+                                    double sideDepth = ((double)(cell.Width - cell.SouthWall) * textureDepth) / 255.0;
+
+                                    Point p4 = CalcPoint(theta, innerRadius - zoff);
+                                    Point p5 = CalcPoint(theta, innerRadius - sideDepth);
+                                    Point p6 = CalcPoint(theta + inswe, innerRadius - sideDepth);
+                                    Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
+
+                                    int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
+                                    int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
+                                    int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
+                                    int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
+
+                                    AddFace(v0, v1, v2);
+                                    AddFace(v0, v3, v2);
+                                }
+                                else
+                                {
+                                    if (y + deltaY >= tubeHeight)
+                                    {
+                                        double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
+
+                                        Point p4 = CalcPoint(theta, innerRadius - zoff);
+                                        Point p5 = CalcPoint(theta, innerRadius);
+                                        Point p6 = CalcPoint(theta + inswe, innerRadius);
+                                        Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
+
+                                        int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
+                                        int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
+                                        int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
+                                        int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
+
+                                        AddFace(v0, v2, v1);
+                                        AddFace(v0, v3, v2);
+                                    }
+                                }
+                */
+            }
+
+            /*
             if (mask > 15)
             {
                 z = textureDepth;
@@ -1277,6 +1390,7 @@ namespace Barnacle.Dialogs
                     Faces.Add(s2);
                 }
             }
+            */
         }
 
         private void PolygonOnEdge(List<Point> tmp, double sz, double off, double px, double py, ConvexPolygon2D interception, byte mask)
@@ -1471,7 +1585,7 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
-            LoadTextureNames();
+            //   LoadTextureNames();
             LoadEditorParameters();
             PathEditor.DefaultImagePath = DefaultImagePath;
             loaded = true;
@@ -1479,6 +1593,11 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             warningText = "";
             Redisplay();
+        }
+
+        public List<String> TextureItems
+        {
+            get { return textureManager.TextureNames; }
         }
     }
 

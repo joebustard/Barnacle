@@ -123,7 +123,7 @@ HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
                             Width="100"
 
                             VerticalContentAlignment="Center"
-                            ItemsSource="{Binding TextureNames}"
+                            ItemsSource="{Binding TextureItems}"
                             SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
                             Visibility="{Binding ShowTextures}" />
                         <Label VerticalAlignment="Center" Content="Depth"

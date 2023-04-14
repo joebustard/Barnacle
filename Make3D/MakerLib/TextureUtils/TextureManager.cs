@@ -188,7 +188,7 @@ namespace MakerLib.TextureUtils
 
         public MapMode Mode { get; set; }
 
-        internal TextureCell GetCell(int tx, int ty)
+        public TextureCell GetCell(int tx, int ty)
         {
             TextureCell res = null;
             if (workingImage != null)
