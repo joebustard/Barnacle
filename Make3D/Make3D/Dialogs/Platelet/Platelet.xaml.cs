@@ -536,10 +536,12 @@ namespace Barnacle.Dialogs
                                 }
                             }
                         }
-                        texturexY ++;
+                     
                     }
-                    texturexX ++;
+                    texturexY++;
+                    
                 }
+                texturexX++;
             }
         }
 
