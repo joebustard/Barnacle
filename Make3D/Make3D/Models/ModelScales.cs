@@ -35,6 +35,7 @@ namespace Barnacle.Models
             Standard["OO"] = 1.0 / 76.2;
             Standard["HO"] = 1.0 / 87;
             Standard["N"] = 1.0 / 148;
+            Standard["Z"] = 1.0 / 200;
         }
 
         internal static double ConversionFactor(string baseScale, string exportScale)
