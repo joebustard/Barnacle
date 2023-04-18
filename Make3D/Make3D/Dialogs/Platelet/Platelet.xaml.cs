@@ -676,10 +676,6 @@ namespace Barnacle.Dialogs
                     }
                 }
 
-                CalculateExtents(tmp, out lx, out rx, out ty, out by);
-
-                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
-          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
                 // user may ahve chosen a wallwidth that means the inside walls overlap
                 // DOnt allow that.
                 double actualWallWidth = wallWidth;
@@ -728,7 +724,11 @@ namespace Barnacle.Dialogs
                 {
                     tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
                 }
-                // generate side triangles so original points are already in list
+
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
+          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
