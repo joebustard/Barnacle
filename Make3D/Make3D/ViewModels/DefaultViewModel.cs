@@ -1168,7 +1168,7 @@ namespace Barnacle.ViewModels
         {
             parametricToolsToShow = new List<ToolDef>();
             //parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
-            //   parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
+            //parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));

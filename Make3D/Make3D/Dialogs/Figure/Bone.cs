@@ -339,7 +339,6 @@ namespace Barnacle.Dialogs.Figure
         internal void Load(XmlElement e)
         {
             Name = e.GetAttribute("Name");
-            Name = e.GetAttribute("Name");
             XRot = Convert.ToDouble(e.GetAttribute("Xr"));
             YRot = Convert.ToDouble(e.GetAttribute("Yr"));
             ZRot = Convert.ToDouble(e.GetAttribute("Zr"));

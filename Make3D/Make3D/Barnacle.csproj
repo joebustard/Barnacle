@@ -1145,7 +1145,7 @@ copy /Y $(SolutionDir)make3d\Data\*.* $(TargetDir)data
 copy /Y $(SolutionDir)make3d\Data\Textures\*.* $(TargetDir)data\textures
 copy /Y $(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs
 del   /q $(TargetDir)data\figure\*.txt
-rem copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
+copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
 
 Exit 0
 </PostBuildEvent>
