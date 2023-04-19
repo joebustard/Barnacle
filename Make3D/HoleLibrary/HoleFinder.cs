@@ -155,7 +155,7 @@ namespace HoleLibrary
         private bool FillHole(List<int> holePoints)
         {
             bool res = false;
-            if (holePoints.Count > 3)
+            if (holePoints.Count >= 3)
             {
                 holePoints.RemoveAt(holePoints.Count - 1);
 
@@ -185,7 +185,7 @@ namespace HoleLibrary
 
                     default:
                         {
-                            if (holePoints.Count < 20)
+                            if (holePoints.Count < 150)
                             {
                                 // find centroid
                                 double cx = 0;
@@ -215,6 +215,10 @@ namespace HoleLibrary
                                     j--;
                                 }
                                 res = true;
+                            }
+                            else
+                            {
+                                System.Diagnostics.Debug.WriteLine($"Large hole {holePoints.Count}");
                             }
                         }
                         break;
