@@ -73,6 +73,12 @@
                             Height="24"
                             Source="Images\Refresh.png" />
                     </Button>
+                    <Button Command="{Binding InsertObject}" ToolTip="Insert Library Object" Visibility="{Binding }">
+                        <Image
+                            Width="24"
+                            Height="24"
+                            Source="Images\Insert.png" />
+                    </Button>
                 </ToolBar>
             </ToolBarTray>
         </DockPanel>
