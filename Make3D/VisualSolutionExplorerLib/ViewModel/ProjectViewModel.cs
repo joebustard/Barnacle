@@ -10,6 +10,7 @@ namespace VisualSolutionExplorer
         public static string ProjectFilePath;
         private ObservableCollection<ProjectFolderViewModel> folders;
         private System.Windows.Visibility refreshVisibility;
+        private System.Windows.Visibility insertLibraryVisibility;
         private bool libraryAdd;
 
         public bool LibraryAdd
@@ -36,6 +37,7 @@ namespace VisualSolutionExplorer
             ExpandTree = new RelayCommand(OnExpandTree);
             RefreshTree = new RelayCommand(OnRefreshTree);
             RefreshVisibility = System.Windows.Visibility.Visible;
+            InsertLibraryVisibility = System.Windows.Visibility.Hidden;
         }
 
         public delegate void SolutionChangedDelegate(string changeEvent, string parameter1, string parameter2);
@@ -65,7 +67,22 @@ namespace VisualSolutionExplorer
         public Project Project { get; set; }
 
         public ICommand RefreshTree { get; set; }
-
+        
+        public System.Windows.Visibility InsertLibraryVisibility
+        {
+            get
+            {
+                return insertLibraryVisibility;
+            }
+            set
+            {
+                if (insertLibraryVisibility != value)
+                {
+                    insertLibraryVisibility = value;
+                    NotifyPropertyChanged("InsertLibraryVisibility");
+                }
+            }
+        }
         public System.Windows.Visibility RefreshVisibility
         {
             get

@@ -73,7 +73,7 @@
                             Height="24"
                             Source="Images\Refresh.png" />
                     </Button>
-                    <Button Command="{Binding InsertObject}" ToolTip="Insert Library Object" Visibility="{Binding }">
+                    <Button Command="{Binding InsertObject}" ToolTip="Insert Library Object" Visibility="{Binding InsertLibraryVisibility }">
                         <Image
                             Width="24"
                             Height="24"
