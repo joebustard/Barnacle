@@ -25,8 +25,11 @@ namespace Barnacle.Dialogs
         private List<System.Windows.Point> displayPoints;
         private bool hollowShape;
         private bool largeTexture;
+        private bool lastCentre;
         private bool loaded;
         private string loadedImageName;
+        private OctTree octTree;
+        private Point PathCentroid;
         private double plateWidth;
         private string selectedTexture;
         private Visibility showTextures;
@@ -38,10 +41,16 @@ namespace Barnacle.Dialogs
         private SortedList<string, string> textureFiles;
         private int textureImageHeight;
         private int textureImageWidth;
+        private TextureManager textureManager;
         private byte[,] textureMap;
+        private bool tileTexture;
         private double wallWidth;
         private string warningText;
         private System.Drawing.Bitmap workingImage;
+
+        private double xExtent;
+
+        private double yExtent;
 
         public Platelet()
         {
@@ -309,11 +318,33 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public List<String> TextureItems
+        {
+            get { return textureManager.TextureNames; }
+        }
+
         public IEnumerable<String> TextureNames
         {
             get
             {
                 return textureFiles.Keys;
+            }
+        }
+
+        public bool TileTexture
+        {
+            get
+            {
+                return tileTexture;
+            }
+            set
+            {
+                if (tileTexture != value)
+                {
+                    tileTexture = value;
+                    NotifyPropertyChanged();
+                }
+                UpdateDisplay();
             }
         }
 
@@ -350,23 +381,21 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool tileTexture;
-
-        public bool TileTexture
+        public int AddVerticeOctTree(double x, double y, double z)
         {
-            get
+            int res = -1;
+            if (octTree != null)
             {
-                return tileTexture;
-            }
-            set
-            {
-                if (tileTexture != value)
+                Point3D v = new Point3D(x, y, z);
+                res = octTree.PointPresent(v);
+
+                if (res == -1)
                 {
-                    tileTexture = value;
-                    NotifyPropertyChanged();
+                    res = Vertices.Count;
+                    octTree.AddPoint(res, v);
                 }
-                UpdateDisplay();
             }
+            return res;
         }
 
         public double AreaOfTriangle(Point3DCollection vt, int p0, int p1, int p2)
@@ -416,6 +445,12 @@ namespace Barnacle.Dialogs
                 y /= crns.GetLength(0);
             }
             return new Point(x, y);
+        }
+
+        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
+            return octTree;
         }
 
         protected bool IsPointInPolygon(Point point, List<Point> polygon)
@@ -494,6 +529,23 @@ namespace Barnacle.Dialogs
                     Faces.Add(c2);
                 }
             }
+        }
+
+        private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
+        {
+            lx = double.MaxValue;
+            rx = double.MinValue;
+            ty = double.MinValue;
+            by = double.MaxValue;
+            for (int i = 0; i < tmp.Count; i++)
+            {
+                lx = Math.Min(tmp[i].X, lx);
+                rx = Math.Max(tmp[i].X, rx);
+                by = Math.Min(tmp[i].Y, by);
+                ty = Math.Max(tmp[i].Y, ty);
+            }
+            xExtent = rx - lx;
+            yExtent = ty - by;
         }
 
         private void CloseEdge(double lx, double by, double rx, double ty, List<Point> tmp, double sz)
@@ -865,32 +917,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private double xExtent;
-        private double yExtent;
-
-        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
-        {
-            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
-            return octTree;
-        }
-
-        public int AddVerticeOctTree(double x, double y, double z)
-        {
-            int res = -1;
-            if (octTree != null)
-            {
-                Point3D v = new Point3D(x, y, z);
-                res = octTree.PointPresent(v);
-
-                if (res == -1)
-                {
-                    res = Vertices.Count;
-                    octTree.AddPoint(res, v);
-                }
-            }
-            return res;
-        }
-
         private void GenerateTexturedShape()
         {
             if (!String.IsNullOrEmpty(selectedTexture))
@@ -967,57 +993,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void CalculateExtents(List<Point> tmp, out double lx, out double rx, out double ty, out double by)
-        {
-            lx = double.MaxValue;
-            rx = double.MinValue;
-            ty = double.MinValue;
-            by = double.MaxValue;
-            for (int i = 0; i < tmp.Count; i++)
-            {
-                lx = Math.Min(tmp[i].X, lx);
-                rx = Math.Max(tmp[i].X, rx);
-                by = Math.Min(tmp[i].Y, by);
-                ty = Math.Max(tmp[i].Y, ty);
-            }
-            xExtent = rx - lx;
-            yExtent = ty - by;
-        }
-
-        /// <summary>
-        /// Invert a list of points vertically
-        /// </summary>
-        /// <param name="points"></param>
-        /// <param name="tmp"></param>
-        private void InvertVertical(List<Point> points, List<Point> tmp)
-        {
-            double top = 0;
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                if (points[i].Y > top)
-                {
-                    top = points[i].Y;
-                }
-            }
-            for (int i = 0; i < points.Count - 1; i++)
-            {
-                if (PathEditor.LocalImage == null)
-                {
-                    // flipping coordinates so have to reverse polygon too
-                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                }
-                else
-
-                {
-                    double x = PathEditor.ToMM(points[i].X);
-                    double y = PathEditor.ToMM(top - points[i].Y);
-                    tmp.Insert(0, new System.Windows.Point(x, y));
-                }
-            }
-        }
-
-        private Point PathCentroid;
-
         private byte GetTextureMask(double px, double py, double sz, bool tile)
         {
             if (!tile)
@@ -1058,6 +1033,38 @@ namespace Barnacle.Dialogs
                 px = px % textureImageWidth;
                 py = py % textureImageHeight;
                 return textureMap[(int)px, (int)py];
+            }
+        }
+
+        /// <summary>
+        /// Invert a list of points vertically
+        /// </summary>
+        /// <param name="points"></param>
+        /// <param name="tmp"></param>
+        private void InvertVertical(List<Point> points, List<Point> tmp)
+        {
+            double top = 0;
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                if (points[i].Y > top)
+                {
+                    top = points[i].Y;
+                }
+            }
+            for (int i = 0; i < points.Count - 1; i++)
+            {
+                if (PathEditor.LocalImage == null)
+                {
+                    // flipping coordinates so have to reverse polygon too
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                else
+
+                {
+                    double x = PathEditor.ToMM(points[i].X);
+                    double y = PathEditor.ToMM(top - points[i].Y);
+                    tmp.Insert(0, new System.Windows.Point(x, y));
+                }
             }
         }
 
@@ -1105,81 +1112,6 @@ namespace Barnacle.Dialogs
             SelectedTexture = EditorParameters.Get("SelectedTexture");
             textureManager.LoadTextureImage(selectedTexture);
         }
-
-        private bool lastCentre;
-
-        private void LoadTextureImage()
-        {
-            if (selectedTexture != "")
-            {
-                if (selectedTexture != loadedImageName)
-                {
-                    string imagePath = textureFiles[selectedTexture];
-                    if (File.Exists(imagePath))
-                    {
-                        workingImage = new System.Drawing.Bitmap(imagePath);
-                        loadedImageName = selectedTexture;
-                        textureImageWidth = workingImage.Width;
-                        textureImageHeight = workingImage.Height;
-                        textureMap = new byte[workingImage.Width, workingImage.Height];
-                        for (int x = 0; x < workingImage.Width; x++)
-                        {
-                            for (int y = 0; y < workingImage.Height; y++)
-                            {
-                                byte mask = 0;
-                                System.Drawing.Color col = workingImage.GetPixel(x, y);
-
-                                if (col.R < 128)
-                                {
-                                    mask = frontMask;
-                                }
-                                else
-                                {
-                                    // its the back, do we need to raise the sides
-                                    if (x > 0)
-                                    {
-                                        col = workingImage.GetPixel(x - 1, y);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | leftMask);
-                                        }
-                                    }
-                                    if (x < workingImage.Width - 1)
-                                    {
-                                        col = workingImage.GetPixel(x + 1, y);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | rightMask);
-                                        }
-                                    }
-
-                                    if (y > 0)
-                                    {
-                                        col = workingImage.GetPixel(x, y - 1);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | bottomMask);
-                                        }
-                                    }
-                                    if (y < workingImage.Height - 1)
-                                    {
-                                        col = workingImage.GetPixel(x, y + 1);
-                                        if (col.R < 128)
-                                        {
-                                            mask = (byte)(mask | topMask);
-                                        }
-                                    }
-                                }
-                                textureMap[x, y] = mask;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private TextureManager textureManager;
-        private OctTree octTree;
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
         {
@@ -1255,14 +1187,6 @@ namespace Barnacle.Dialogs
                     Faces.Add(v3);
                     Faces.Add(v2);
                 }
-                /*
-                // must always close left edge of pattern
-                if (tx == 0)
-                {
-                    Point p3 = CalcPoint(theta, innerRadius);
-                    MakeRevVSquareFace(p3.X, y, p3.Y, p.X, y + deltaY, p.Y);
-                }
-                */
 
                 if (cell.EastWall > 0)
                 {
@@ -1279,13 +1203,7 @@ namespace Barnacle.Dialogs
                     Faces.Add(v2);
                     Faces.Add(v3);
                 }
-                /*
-                if (theta + inswe >= maxSweep)
-                {
-                    Point p3 = CalcPoint(theta + inswe, innerRadius);
-                    MakeRevVSquareFace(p2.X, y, p2.Y, p3.X, y + deltaY, p3.Y);
-                }
-                */
+
                 if (cell.NorthWall > 0)
                 {
                     double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
@@ -1308,140 +1226,7 @@ namespace Barnacle.Dialogs
                     AddFace(v0, v1, v2);
                     AddFace(v0, v2, v3);
                 }
-                /*
-
-                   if (cell.SouthWall > 0)
-                   {
-                       double sideDepth = ((double)(cell.Width - cell.SouthWall) * textureDepth) / 255.0;
-
-                       Point p4 = CalcPoint(theta, innerRadius - zoff);
-                       Point p5 = CalcPoint(theta, innerRadius - sideDepth);
-                       Point p6 = CalcPoint(theta + inswe, innerRadius - sideDepth);
-                       Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
-
-                       int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
-                       int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
-                       int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
-                       int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
-
-                       AddFace(v0, v1, v2);
-                       AddFace(v0, v3, v2);
-                   }
-                   else
-                   {
-                       if (y + deltaY >= tubeHeight)
-                       {
-                           double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
-
-                           Point p4 = CalcPoint(theta, innerRadius - zoff);
-                           Point p5 = CalcPoint(theta, innerRadius);
-                           Point p6 = CalcPoint(theta + inswe, innerRadius);
-                           Point p7 = CalcPoint(theta + inswe, innerRadius - zoff);
-
-                           int v0 = AddVerticeOctTree(p4.X, y + deltaY, p4.Y);
-                           int v1 = AddVerticeOctTree(p5.X, y + deltaY, p5.Y);
-                           int v2 = AddVerticeOctTree(p6.X, y + deltaY, p6.Y);
-                           int v3 = AddVerticeOctTree(p7.X, y + deltaY, p7.Y);
-
-                           AddFace(v0, v2, v1);
-                           AddFace(v0, v3, v2);
-                       }
-                   }
-   */
             }
-
-            /*
-            if (mask > 15)
-            {
-                z = textureDepth;
-            }
-
-            // main surface
-            int v0 = AddVertice(px, py, z);
-            int v1 = AddVertice(px + sz, py, z);
-            int v2 = AddVertice(px + sz, py + sz, z);
-            int v3 = AddVertice(px, py + sz, z);
-            Faces.Add(v0);
-            Faces.Add(v1);
-            Faces.Add(v2);
-
-            Faces.Add(v0);
-            Faces.Add(v2);
-            Faces.Add(v3);
-
-            // edges that rise up if necessary
-            if ((byte)(mask & leftMask) != 0)
-            {
-                if (IsPointInPolygon(new Point(px - off, py + off), tmp))
-                {
-                    int s0 = AddVertice(px, py, 0);
-                    int s1 = AddVertice(px, py, textureDepth);
-                    int s2 = AddVertice(px, py + sz, textureDepth);
-                    int s3 = AddVertice(px, py + sz, 0);
-                    Faces.Add(s0);
-                    Faces.Add(s2);
-                    Faces.Add(s1);
-
-                    Faces.Add(s0);
-                    Faces.Add(s3);
-                    Faces.Add(s2);
-                }
-            }
-
-            if ((byte)(mask & rightMask) != 0)
-            {
-                if (IsPointInPolygon(new Point(px + sz + off, py + off), tmp))
-                {
-                    int s0 = AddVertice(px + sz, py, 0);
-                    int s1 = AddVertice(px + sz, py, textureDepth);
-                    int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                    int s3 = AddVertice(px + sz, py + sz, 0);
-                    Faces.Add(s0);
-                    Faces.Add(s1);
-                    Faces.Add(s2);
-
-                    Faces.Add(s0);
-                    Faces.Add(s2);
-                    Faces.Add(s3);
-                }
-            }
-
-            if ((byte)(mask & topMask) != 0)
-            {
-                if (IsPointInPolygon(new Point(px + off, py + sz + off), tmp))
-                {
-                    int s0 = AddVertice(px, py + sz, 0);
-                    int s1 = AddVertice(px + sz, py + sz, 0);
-                    int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                    int s3 = AddVertice(px, py + sz, textureDepth);
-                    Faces.Add(s0);
-                    Faces.Add(s1);
-                    Faces.Add(s2);
-
-                    Faces.Add(s0);
-                    Faces.Add(s2);
-                    Faces.Add(s3);
-                }
-            }
-
-            if ((byte)(mask & bottomMask) != 0)
-            {
-                if (IsPointInPolygon(new Point(px + off, py - off), tmp))
-                {
-                    int s0 = AddVertice(px, py, 0);
-                    int s1 = AddVertice(px + sz, py, 0);
-                    int s2 = AddVertice(px + sz, py, textureDepth);
-                    int s3 = AddVertice(px, py, textureDepth);
-                    Faces.Add(s0);
-                    Faces.Add(s2);
-                    Faces.Add(s1);
-
-                    Faces.Add(s0);
-                    Faces.Add(s3);
-                    Faces.Add(s2);
-                }
-            }
-            */
         }
 
         private void PolygonOnEdge(List<Point> tmp, double sz, double off, double px, double py, ConvexPolygon2D interception, TextureCell cell)
@@ -1532,81 +1317,6 @@ namespace Barnacle.Dialogs
                         Faces.Add(s2);
                     }
                 }
-
-                /*
-
-                    if ((byte)(mask & leftMask) != 0)
-                    {
-                        if (IsPointInPolygon(new Point(px - off, py + off), tmp))
-                        {
-                            int s0 = AddVertice(px, py, 0);
-                            int s1 = AddVertice(px, py, textureDepth);
-                            int s2 = AddVertice(px, py + sz, textureDepth);
-                            int s3 = AddVertice(px, py + sz, 0);
-                            Faces.Add(s0);
-                            Faces.Add(s2);
-                            Faces.Add(s1);
-
-                            Faces.Add(s0);
-                            Faces.Add(s3);
-                            Faces.Add(s2);
-                        }
-                    }
-
-                    if ((byte)(mask & rightMask) != 0)
-                    {
-                        if (IsPointInPolygon(new Point(px + sz + off, py + off), tmp))
-                        {
-                            int s0 = AddVertice(px + sz, py, 0);
-                            int s1 = AddVertice(px + sz, py, textureDepth);
-                            int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                            int s3 = AddVertice(px + sz, py + sz, 0);
-                            Faces.Add(s0);
-                            Faces.Add(s1);
-                            Faces.Add(s2);
-
-                            Faces.Add(s0);
-                            Faces.Add(s2);
-                            Faces.Add(s3);
-                        }
-                    }
-
-                    if ((byte)(mask & topMask) != 0)
-                    {
-                        if (IsPointInPolygon(new Point(px + off, py + sz + off), tmp))
-                        {
-                            int s0 = AddVertice(px, py + sz, 0);
-                            int s1 = AddVertice(px + sz, py + sz, 0);
-                            int s2 = AddVertice(px + sz, py + sz, textureDepth);
-                            int s3 = AddVertice(px, py + sz, textureDepth);
-                            Faces.Add(s0);
-                            Faces.Add(s1);
-                            Faces.Add(s2);
-
-                            Faces.Add(s0);
-                            Faces.Add(s2);
-                            Faces.Add(s3);
-                        }
-                    }
-
-                    if ((byte)(mask & bottomMask) != 0)
-                    {
-                        if (IsPointInPolygon(new Point(px + off, py - off), tmp))
-                        {
-                            int s0 = AddVertice(px, py, 0);
-                            int s1 = AddVertice(px + sz, py, 0);
-                            int s2 = AddVertice(px + sz, py, textureDepth);
-                            int s3 = AddVertice(px, py, textureDepth);
-                            Faces.Add(s0);
-                            Faces.Add(s2);
-                            Faces.Add(s1);
-
-                            Faces.Add(s0);
-                            Faces.Add(s3);
-                            Faces.Add(s2);
-                        }
-                    }
-                */
             }
             else
             {
@@ -1717,11 +1427,6 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             warningText = "";
             Redisplay();
-        }
-
-        public List<String> TextureItems
-        {
-            get { return textureManager.TextureNames; }
         }
     }
 

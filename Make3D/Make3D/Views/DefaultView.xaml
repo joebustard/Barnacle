@@ -199,6 +199,31 @@
                                     LargeImageSource="/Barnacle;component/Images/Buttons/SelectAll.png" IsEnabled="{Binding EditingActive}">
 
                     <Custom:RibbonButton Command="{Binding SelectCommand}"
+                                         CommandParameter="All"
+                                         HorizontalAlignment="Stretch"
+                                         Label="All"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"
+                                         ToolTip="Select All"
+                                         VerticalAlignment="Top"
+                                         x:Name="SelectAllButton" IsEnabled="{Binding EditingActive}" />
+                    <Custom:RibbonButton Command="{Binding SelectCommand}"
+                                         CommandParameter="Clear"
+                                         HorizontalAlignment="Stretch"
+                                         Label="Clear"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
+                                         ToolTip="Clear selection"
+                                         VerticalAlignment="Top"
+                                         x:Name="SelectNoneButton" IsEnabled="{Binding EditingActive}" />
+
+                    <ComboBox HorizontalAlignment="Stretch"
+                              ItemsSource="{Binding ObjectNames}"
+                              MinWidth="80"
+                              SelectedItem="{Binding SelectedObjectName}"
+                              ToolTip="Select an object by its name"
+                              VerticalAlignment="Top"
+                              x:Name="SelectObjectNames" IsEnabled="{Binding EditingActive}" />
+                    <Custom:RibbonMenuButton Label="Select" SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png">
+                    <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="First"
                                          HorizontalAlignment="Stretch"
                                          Label="First"
@@ -230,29 +255,7 @@
                                          ToolTip="Select Last"
                                          VerticalAlignment="Top"
                                          x:Name="SelectLastButton" IsEnabled="{Binding EditingActive}" />
-                    <Custom:RibbonButton Command="{Binding SelectCommand}"
-                                         CommandParameter="All"
-                                         HorizontalAlignment="Stretch"
-                                         Label="All"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png"
-                                         ToolTip="Select All"
-                                         VerticalAlignment="Top"
-                                         x:Name="SelectAllButton" IsEnabled="{Binding EditingActive}" />
-                    <Custom:RibbonButton Command="{Binding SelectCommand}"
-                                         CommandParameter="Clear"
-                                         HorizontalAlignment="Stretch"
-                                         Label="Clear"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/SelectClear.png"
-                                         ToolTip="Clear selection"
-                                         VerticalAlignment="Top"
-                                         x:Name="SelectNoneButton" IsEnabled="{Binding EditingActive}" />
-                    <ComboBox HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding ObjectNames}"
-                              MinWidth="100"
-                              SelectedItem="{Binding SelectedObjectName}"
-                              ToolTip="Select an object by its name"
-                              VerticalAlignment="Top"
-                              x:Name="SelectObjectNames" IsEnabled="{Binding EditingActive}" />
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ProjectGroup"
                                     Header="Project"
@@ -443,7 +446,7 @@
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
                                              CommandParameter="StackLeft"
                                              HorizontalAlignment="Stretch"
-                                             Label="Stack Left"
+                                             Label="Left"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Align objects so they are all centered and stacked To the left of the first selected."
                                              VerticalAlignment="Top"
@@ -451,7 +454,7 @@
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
                                              CommandParameter="StackRight"
                                              HorizontalAlignment="Stretch"
-                                             Label="Stack Right"
+                                             Label="Right"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Align objects so they are all centered and stacked To the right of the first selected."
                                              VerticalAlignment="Top"
@@ -459,7 +462,7 @@
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
                                              CommandParameter="StackY"
                                              HorizontalAlignment="Stretch"
-                                             Label="Stack Above"
+                                             Label="Above"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Align objects so they are all centered and stacked above the first selected."
                                              VerticalAlignment="Top"
@@ -467,7 +470,7 @@
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
                                              CommandParameter="StackBottom"
                                              HorizontalAlignment="Stretch"
-                                             Label="Stack Below"
+                                             Label="Below"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Align objects so they are all centered and stacked below the first selected."
                                              VerticalAlignment="Top"
@@ -475,7 +478,7 @@
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
                                              CommandParameter="StackZ"
                                              HorizontalAlignment="Stretch"
-                                             Label="Stack In Front"
+                                             Label="In Front"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Align objects so they are all centered and stacked To the front of the first selected."
                                              VerticalAlignment="Top"
@@ -483,7 +486,7 @@
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
                                              CommandParameter="StackBehind"
                                              HorizontalAlignment="Stretch"
-                                             Label="Stack Behind"
+                                             Label="Behind"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Align objects so they are all centered and stacked to the rear of the first selected."
                                              VerticalAlignment="Top"
@@ -999,9 +1002,7 @@
                                                           x:Name="SolutionExplorer" />
                         </Grid>
                     </TabItem>
-                    <!--
-                                <Views:ObjectPropertiesView HorizontalAlignment="Right" VerticalAlignment="Stretch" />
-                           -->
+
                     <TabItem Header="Edit"
                              x:Name="EditPanel">
                         <Grid HorizontalAlignment="Stretch">
