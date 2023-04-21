@@ -99,6 +99,7 @@ namespace Barnacle.Views
                 MessageBox.Show(ex.Message);
             }
         }
+
         private void ChangeSolutionPanelVisibility(object param)
         {
             bool vis = (bool)param;
@@ -302,8 +303,7 @@ namespace Barnacle.Views
         }
 
         private void ReferenceModel(object param)
-        {            
-           
+        {
             OpenFileDialog dlg = new OpenFileDialog();
             if (Directory.Exists(BaseViewModel.Project.BaseFolder))
             {
