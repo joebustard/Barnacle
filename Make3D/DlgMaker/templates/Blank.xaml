@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="<DIALOGTITLE>" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="DIALOGTITLE" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -31,22 +31,22 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <P1CONTROLS>
+                <!--P1CONTROLS-->
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <P2CONTROLS>
+                <!--P2CONTROLS-->
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <P3CONTROLS>
+                <!--P3CONTROLS-->
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <P4CONTROLS>
+                <!--P4CONTROLS-->
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <P5CONTROLS>
+                <!--P5CONTROLS-->
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <P6CONTROLS>
+                <!--P6CONTROLS-->
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />

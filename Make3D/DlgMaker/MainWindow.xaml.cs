@@ -1037,7 +1037,7 @@ public String <PName>ToolTip
                 {
                     res1 = propTemplatelh;
                 }
-                if ( t == "combo")
+                if (t == "combo")
                 {
                     res1 = @"
                     private string <pName>;
@@ -1167,17 +1167,17 @@ public String <PName>ToolTip
                     {
                         String l = fin.ReadLine();
                         l = l.Replace("Blank", ToolName);
-                        l = l.Replace("<DIALOGTITLE>", DialogTitle);
+                        l = l.Replace("DIALOGTITLE", DialogTitle);
                         l = l.Replace("//TOOLPROPS", toolProps);
                         l = l.Replace("//MAKEPARAMETERS", makerParams);
-                        l = l.Replace("<P1CONTROLS>", p1Controls);
-                        l = l.Replace("<P2CONTROLS>", p2Controls);
-                        l = l.Replace("<P3CONTROLS>", p3Controls);
-                        l = l.Replace("<P4CONTROLS>", p4Controls);
-                        l = l.Replace("<P5CONTROLS>", p5Controls);
-                        l = l.Replace("<P6CONTROLS>", p6Controls);
-                        l = l.Replace("<P7CONTROLS>", p7Controls);
-                        l = l.Replace("<P8CONTROLS>", p8Controls);
+                        l = l.Replace("<!--P1CONTROLS-->", p1Controls);
+                        l = l.Replace("<!--P2CONTROLS-->", p2Controls);
+                        l = l.Replace("<!--P3CONTROLS-->", p3Controls);
+                        l = l.Replace("<!--P4CONTROLS-->", p4Controls);
+                        l = l.Replace("<!--P5CONTROLS-->", p5Controls);
+                        l = l.Replace("<!--P6CONTROLS-->", p6Controls);
+                        l = l.Replace("<!--P7CONTROLS-->", p7Controls);
+                        l = l.Replace("<!--P8CONTROLS-->", p8Controls);
                         l = l.Replace("//LOADPARMETERS", loadParams);
                         l = l.Replace("//SAVEPARMETERS", saveParams);
                         l = l.Replace("//SAVEPARMETERS", saveParams);
