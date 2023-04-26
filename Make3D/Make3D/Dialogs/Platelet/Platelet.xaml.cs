@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media.Media3D;
 
@@ -758,7 +759,7 @@ namespace Barnacle.Dialogs
                         tmp.Insert(0, new System.Windows.Point(x, y));
                     }
                 }
-
+                Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
                 {
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
@@ -781,6 +782,8 @@ namespace Barnacle.Dialogs
 
                 OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
+                Point[] clk = OrderClockwise(tmp.ToArray());
+                tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -791,7 +794,9 @@ namespace Barnacle.Dialogs
                 {
                     tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
                 }
-                // generate side triangles so original points are already in list
+                // generate side triangles so original points are already in list               
+                clk = OrderAntiClockwise(tmp.ToArray());
+                tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -884,6 +889,8 @@ namespace Barnacle.Dialogs
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
                 // generate side triangles so original points are already in list
+                Point[] clk = OrderClockwise(tmp.ToArray());
+                tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -929,6 +936,8 @@ namespace Barnacle.Dialogs
 
                     List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                     InvertVertical(points, tmp);
+                    Point[] clk = OrderClockwise(tmp.ToArray());
+                    tmp = clk.ToList();
                     double lx, rx, ty, by;
                     CalculateExtents(tmp, out lx, out rx, out ty, out by);
 
