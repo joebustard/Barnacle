@@ -1,8 +1,6 @@
-using Barnacle.Object3DLib;
 using MakerLib.TextureUtils;
 using OctTreeLib;
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -210,18 +208,15 @@ namespace MakerLib
                 if (textureManager.Mode == TextureManager.MapMode.FittedSingle)
                 {
                     // estimate vertical size in steps
-
                     vTextureResolution = tubeHeight / textureManager.PatternHeight;
 
                     double circumference = radius * Math.PI * 2.0;
                     circumference = (DegToRad(sweep) / (Math.PI * 2.0)) * circumference;
                     hTextureResolution = circumference / (textureManager.PatternWidth + 2);
-
-                    // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
                 }
                 // Whats the inner sweep angle in degrees
                 inswe = (hTextureResolution * 360.0) / (twoPI * radius);
-
+                System.Diagnostics.Debug.WriteLine($"Texture res h {hTextureResolution} v {vTextureResolution}");
                 // outer sweep is going to be close but just takes into account the depth
                 double outswe = (hTextureResolution * 360.0) / (twoPI * (radius + textureDepth));
                 inswe = DegToRad(inswe);
@@ -420,6 +415,7 @@ namespace MakerLib
 
                     // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
                 }
+                System.Diagnostics.Debug.WriteLine($"Texture res h {hTextureResolution} v {vTextureResolution}");
                 // Whats the inner sweep angle in degrees
                 inswe = (hTextureResolution * 360.0) / (twoPI * radius);
 

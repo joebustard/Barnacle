@@ -30,7 +30,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />
-                    <RowDefinition Height="100" />
+                    <RowDefinition Height="180" />
                 </Grid.RowDefinitions>
                 <Viewport3D
                     Name="viewport3D1"
@@ -72,6 +72,8 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
@@ -134,10 +136,23 @@ Visibility="{Binding ShowTextures}" />
                     Visibility="{Binding ShowTextures}"
                             VerticalAlignment="Center"
                             Text="{Binding TextureDepth}" />
-                        <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup" IsChecked="{Binding LargeTexture}" Content="Large" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
+                        <!--      <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup" IsChecked="{Binding LargeTexture}" Content="Large" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
                         <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup"  IsChecked="{Binding SmallTexture}" Content="Small" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
+
                         <CheckBox Margin="4,0,0,0" IsChecked="{Binding TileTexture}" Content="Tile" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
+                        -->
                     </StackPanel>
+                    <Label VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" Content="Tile" Visibility="{Binding ShowTextures}" />
+                    <RadioButton GroupName="ScaleGroup" Grid.Row="4" Grid.Column="1"  Content="Clipped" VerticalAlignment="Center" ToolTip="Tile the pattern and clip it against the edges."
+                IsChecked="{Binding ClippedTile}"  Visibility="{Binding ShowTextures}" />
+                    <RadioButton GroupName="ScaleGroup" Grid.Row="4" Grid.Column="2"  Content="Fitted" VerticalAlignment="Center" ToolTip="Tile the pattern, scale to ensure whole repeats" Margin="8,0,0,0"
+                IsChecked="{Binding FittedTile}"  Visibility="{Binding ShowTextures}" />
+
+                    <Label VerticalAlignment="Center" Grid.Row="5" Grid.Column="0" Content="Single" Visibility="{Binding ShowTextures}" />
+                    <RadioButton Grid.Row="5" Grid.Column="1" GroupName="ScaleGroup"  Content="Clipped" VerticalAlignment="Center" ToolTip="Put the pattern on once. If it doesn't fit clip it"
+                IsChecked="{Binding ClippedSingle}"  Visibility="{Binding ShowTextures}" />
+                    <RadioButton Grid.Row="5" Grid.Column="2" GroupName="ScaleGroup"  Content="Fitted" VerticalAlignment="Center" ToolTip="Put the pattern on once and scale it to fit" Margin="8,0,0,0"
+                IsChecked="{Binding FittedSingle}"  Visibility="{Binding ShowTextures}" />
                 </Grid>
             </Grid>
         </Border>

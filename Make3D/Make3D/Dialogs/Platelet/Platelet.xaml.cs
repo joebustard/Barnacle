@@ -48,9 +48,11 @@ namespace Barnacle.Dialogs
         private double wallWidth;
         private string warningText;
         private System.Drawing.Bitmap workingImage;
-
+        private bool clippedSingle;
+        private bool clippedTile;
         private double xExtent;
-
+        private bool fittedSingle;
+        private bool fittedTile;
         private double yExtent;
 
         public Platelet()
@@ -1096,6 +1098,90 @@ namespace Barnacle.Dialogs
             return result;
         }
 
+        public bool ClippedSingle
+        {
+            get { return clippedSingle; }
+            set
+            {
+                if (clippedSingle != value)
+                {
+                    clippedSingle = value;
+                    NotifyPropertyChanged();
+                    if (clippedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool FittedSingle
+        {
+            get { return fittedSingle; }
+            set
+            {
+                if (fittedSingle != value)
+                {
+                    fittedSingle = value;
+                    NotifyPropertyChanged();
+                    if (fittedSingle)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedSingle;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool FittedTile
+        {
+            get { return fittedTile; }
+            set
+            {
+                if (fittedTile != value)
+                {
+                    fittedTile = value;
+                    NotifyPropertyChanged();
+                    if (fittedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.FittedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public bool ClippedTile
+        {
+            get { return clippedTile; }
+            set
+            {
+                if (clippedTile != value)
+                {
+                    clippedTile = value;
+                    NotifyPropertyChanged();
+                    if (clippedTile)
+                    {
+                        if (textureManager != null)
+                        {
+                            textureManager.Mode = TextureManager.MapMode.ClippedTile;
+                        }
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
         private void LoadEditorParameters()
         {
             string imageName = EditorParameters.Get("ImagePath");
@@ -1120,6 +1206,10 @@ namespace Barnacle.Dialogs
             TileTexture = EditorParameters.GetBoolean("CentreTexture", true);
             SelectedTexture = EditorParameters.Get("SelectedTexture");
             textureManager.LoadTextureImage(selectedTexture);
+            ClippedTile = EditorParameters.GetBoolean("ClippedTile", true);
+            FittedTile = EditorParameters.GetBoolean("FittedTile", false);
+            ClippedSingle = EditorParameters.GetBoolean("ClippedSingle", false);
+            FittedSingle = EditorParameters.GetBoolean("FittedSingle", false);
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -1381,6 +1471,10 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("SmallTexture", SmallTexture.ToString());
             EditorParameters.Set("SelectedTexture", SelectedTexture);
             EditorParameters.Set("CentreTexture", TileTexture.ToString());
+            EditorParameters.Set("ClippedTile", ClippedTile.ToString());
+            EditorParameters.Set("FittedTile", FittedTile.ToString());
+            EditorParameters.Set("ClippedSingle", ClippedSingle.ToString());
+            EditorParameters.Set("FittedSingle", FittedSingle.ToString());
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)
