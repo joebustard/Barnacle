@@ -53,6 +53,8 @@ namespace Barnacle.Dialogs
         private bool fittedSingle;
         private bool fittedTile;
         private double yExtent;
+        private double vTextureResolution;
+        private double hTextureResolution;
 
         public Platelet()
         {
@@ -485,19 +487,19 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        protected ConvexPolygon2D RectPoly(double px, double py, double sz)
+        protected ConvexPolygon2D RectPoly(double px, double py, double sx, double sy)
         {
             System.Windows.Point[] rct = new System.Windows.Point[4];
             rct[0].X = px;
             rct[0].Y = py;
 
             rct[1].X = px;
-            rct[1].Y = py + sz;
+            rct[1].Y = py + sy;
 
-            rct[2].X = px + sz;
-            rct[2].Y = py + sz;
+            rct[2].X = px + sx;
+            rct[2].Y = py + sy;
 
-            rct[3].X = px + sz;
+            rct[3].X = px + sx;
             rct[3].Y = py;
 
             return new ConvexPolygon2D(rct);
@@ -933,7 +935,33 @@ namespace Barnacle.Dialogs
                     InvertVertical(points, tmp);
                     double lx, rx, ty, by;
                     CalculateExtents(tmp, out lx, out rx, out ty, out by);
+                    double shapeHeight = Math.Abs(ty - by);
+                    double shapeWidth = rx - lx;
+                    vTextureResolution = 0.5;
+                    hTextureResolution = 0.5;
+                    if (textureManager.Mode == TextureManager.MapMode.FittedTile)
+                    {
+                        // estimate vertical size in steps
+                        double ySteps = shapeHeight / vTextureResolution;
+                        double vRepeats = (ySteps / textureManager.PatternHeight);
+                        vRepeats = Math.Ceiling(vRepeats);
+                        vTextureResolution = shapeHeight / (vRepeats * textureManager.PatternHeight);
 
+                        double xSteps = shapeWidth / hTextureResolution;
+                        double hRepeats = (xSteps / textureManager.PatternWidth);
+                        hRepeats = Math.Ceiling(hRepeats);
+                        hTextureResolution = (shapeWidth + 1) / (hRepeats * textureManager.PatternWidth);
+                    }
+                    if (textureManager.Mode == TextureManager.MapMode.FittedSingle)
+                    {
+                        // estimate vertical size in steps
+
+                        vTextureResolution = shapeHeight / textureManager.PatternHeight;
+
+                        hTextureResolution = shapeWidth / (textureManager.PatternWidth + 2);
+
+                        // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
+                    }
                     OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
               new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
@@ -955,33 +983,32 @@ namespace Barnacle.Dialogs
                     ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
                     //   LoadTextureImage();
 
-                    double off = sz / 2;
+                    double off = 0;
                     int texturexX = 0;
                     int texturexY = 0;
-                    for (double px = lx; px < rx; px += sz)
+                    for (double px = lx; px < rx; px += hTextureResolution)
                     {
                         texturexY = 0;
-                        for (double py = by; py < ty; py += sz)
+                        for (double py = by; py < ty; py += vTextureResolution)
                         {
-                            ConvexPolygon2D rect = RectPoly(px, py, sz);
+                            ConvexPolygon2D rect = RectPoly(px, py, hTextureResolution, vTextureResolution);
                             ConvexPolygon2D interception = interceptor.GetIntersectionOfPolygons(rect, boundary);
                             if (interception.Corners.GetLength(0) > 2)
                             {
                                 bool insidepixel = false;
-                                // byte mask = GetTextureMask(px, py, sz, tileTexture);
-                                byte mask = 0;
+
                                 TextureCell cell = textureManager.GetCell(texturexX, texturexY);
                                 if (interception.Corners.GetLength(0) == 4)
                                 {
-                                    insidepixel = IsItAnInsidePixel(interception.Corners, px, py, sz);
+                                    insidepixel = IsItAnInsidePixel(interception.Corners, px, py, hTextureResolution, vTextureResolution);
                                 }
                                 if (insidepixel)
                                 {
-                                    PolygonInside(tmp, sz, off, px, py, cell);
+                                    PolygonInside(tmp, hTextureResolution, vTextureResolution, off, px, py, cell);
                                 }
                                 else
                                 {
-                                    PolygonOnEdge(tmp, sz, off, px, py, interception, cell);
+                                    PolygonOnEdge(tmp, hTextureResolution, vTextureResolution, off, px, py, interception, cell);
                                 }
                             }
                             texturexY++;
@@ -1070,16 +1097,16 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool IsItAnInsidePixel(Point[] c, double px, double py, double sz)
+        private bool IsItAnInsidePixel(Point[] c, double px, double py, double sx, double sy)
         {
             bool result = false;
             if (c[0].X == px && c[0].Y == py)
             {
-                if (c[1].X == px + sz && c[1].Y == py)
+                if (c[1].X == px + sx && c[1].Y == py)
                 {
-                    if (c[2].X == px + sz && c[2].Y == py + sz)
+                    if (c[2].X == px + sx && c[2].Y == py + sy)
                     {
-                        if (c[3].X == px && c[3].Y == py + sz)
+                        if (c[3].X == px && c[3].Y == py + sy)
                         {
                             result = true;
                         }
@@ -1242,7 +1269,7 @@ namespace Barnacle.Dialogs
             return result;
         }
 
-        private void PolygonInside(List<Point> tmp, double sz, double off, double px, double py, TextureCell cell)
+        private void PolygonInside(List<Point> tmp, double sx, double sy, double off, double px, double py, TextureCell cell)
         {
             double z = 0;
             if (cell != null)
@@ -1250,9 +1277,9 @@ namespace Barnacle.Dialogs
                 z = ((double)cell.Width * textureDepth) / 255.0;
                 // main surface
                 int v0 = AddVerticeOctTree(px, py, z);
-                int v1 = AddVerticeOctTree(px + sz, py, z);
-                int v2 = AddVerticeOctTree(px + sz, py + sz, z);
-                int v3 = AddVerticeOctTree(px, py + sz, z);
+                int v1 = AddVerticeOctTree(px + sx, py, z);
+                int v2 = AddVerticeOctTree(px + sx, py + sy, z);
+                int v3 = AddVerticeOctTree(px, py + sy, z);
                 Faces.Add(v0);
                 Faces.Add(v1);
                 Faces.Add(v2);
@@ -1267,8 +1294,8 @@ namespace Barnacle.Dialogs
 
                     v0 = AddVerticeOctTree(px, py, z);
                     v1 = AddVerticeOctTree(px, py, westSideDepth);
-                    v2 = AddVerticeOctTree(px, py + sz, westSideDepth);
-                    v3 = AddVerticeOctTree(px, py + sz, z);
+                    v2 = AddVerticeOctTree(px, py + sy, westSideDepth);
+                    v3 = AddVerticeOctTree(px, py + sy, z);
                     Faces.Add(v0);
                     Faces.Add(v2);
                     Faces.Add(v1);
@@ -1281,10 +1308,10 @@ namespace Barnacle.Dialogs
                 if (cell.EastWall > 0)
                 {
                     double eastSideDepth = ((double)(cell.Width - cell.EastWall) * textureDepth) / 255.0;
-                    v0 = AddVerticeOctTree(px + sz, py, z);
-                    v1 = AddVerticeOctTree(px + sz, py, eastSideDepth);
-                    v2 = AddVerticeOctTree(px + sz, py + sz, eastSideDepth);
-                    v3 = AddVerticeOctTree(px + sz, py + sz, z);
+                    v0 = AddVerticeOctTree(px + sx, py, z);
+                    v1 = AddVerticeOctTree(px + sx, py, eastSideDepth);
+                    v2 = AddVerticeOctTree(px + sx, py + sy, eastSideDepth);
+                    v3 = AddVerticeOctTree(px + sx, py + sy, z);
                     Faces.Add(v0);
                     Faces.Add(v1);
                     Faces.Add(v2);
@@ -1298,8 +1325,8 @@ namespace Barnacle.Dialogs
                 {
                     double sideDepth = ((double)(cell.Width - cell.NorthWall) * textureDepth) / 255.0;
                     v0 = AddVerticeOctTree(px, py, z);
-                    v1 = AddVerticeOctTree(px + sz, py, z);
-                    v2 = AddVerticeOctTree(px + sz, py, sideDepth);
+                    v1 = AddVerticeOctTree(px + sx, py, z);
+                    v2 = AddVerticeOctTree(px + sx, py, sideDepth);
                     v3 = AddVerticeOctTree(px, py, sideDepth);
 
                     AddFace(v0, v2, v1);
@@ -1308,10 +1335,10 @@ namespace Barnacle.Dialogs
                 if (cell.SouthWall > 0)
                 {
                     double sideDepth = ((double)(cell.Width - cell.SouthWall) * textureDepth) / 255.0;
-                    v0 = AddVerticeOctTree(px, py + sz, z);
-                    v1 = AddVerticeOctTree(px + sz, py + sz, z);
-                    v2 = AddVerticeOctTree(px + sz, py + sz, sideDepth);
-                    v3 = AddVerticeOctTree(px, py + sz, sideDepth);
+                    v0 = AddVerticeOctTree(px, py + sy, z);
+                    v1 = AddVerticeOctTree(px + sx, py + sy, z);
+                    v2 = AddVerticeOctTree(px + sx, py + sy, sideDepth);
+                    v3 = AddVerticeOctTree(px, py + sy, sideDepth);
 
                     AddFace(v0, v1, v2);
                     AddFace(v0, v2, v3);
@@ -1319,7 +1346,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void PolygonOnEdge(List<Point> tmp, double sz, double off, double px, double py, ConvexPolygon2D interception, TextureCell cell)
+        private void PolygonOnEdge(List<Point> tmp, double sx, double sy, double off, double px, double py, ConvexPolygon2D interception, TextureCell cell)
         {
             TriangulationPolygon ply;
             List<Triangle> tris;
@@ -1342,8 +1369,8 @@ namespace Barnacle.Dialogs
                         {
                             int s0 = AddVerticeOctTree(px, py, 0);
                             int s1 = AddVerticeOctTree(px, py, z);
-                            int s2 = AddVerticeOctTree(px, py + sz, z);
-                            int s3 = AddVerticeOctTree(px, py + sz, 0);
+                            int s2 = AddVerticeOctTree(px, py + sy, z);
+                            int s3 = AddVerticeOctTree(px, py + sy, 0);
                             Faces.Add(s0);
                             Faces.Add(s2);
                             Faces.Add(s1);
@@ -1356,12 +1383,12 @@ namespace Barnacle.Dialogs
                 }
                 if (cell.EastWall != 0)
                 {
-                    if (IsPointInPolygon(new Point(px + sz + off, py + off), tmp))
+                    if (IsPointInPolygon(new Point(px + sx + off, py + off), tmp))
                     {
-                        int s0 = AddVerticeOctTree(px + sz, py, 0);
-                        int s1 = AddVerticeOctTree(px + sz, py, z);
-                        int s2 = AddVerticeOctTree(px + sz, py + sz, z);
-                        int s3 = AddVerticeOctTree(px + sz, py + sz, 0);
+                        int s0 = AddVerticeOctTree(px + sx, py, 0);
+                        int s1 = AddVerticeOctTree(px + sx, py, z);
+                        int s2 = AddVerticeOctTree(px + sx, py + sy, z);
+                        int s3 = AddVerticeOctTree(px + sx, py + sy, 0);
                         Faces.Add(s0);
                         Faces.Add(s1);
                         Faces.Add(s2);
@@ -1373,12 +1400,12 @@ namespace Barnacle.Dialogs
                 }
                 if (cell.SouthWall != 0)
                 {
-                    if (IsPointInPolygon(new Point(px + off, py + sz + off), tmp))
+                    if (IsPointInPolygon(new Point(px + off, py + sy + off), tmp))
                     {
-                        int s0 = AddVerticeOctTree(px, py + sz, 0);
-                        int s1 = AddVerticeOctTree(px + sz, py + sz, 0);
-                        int s2 = AddVerticeOctTree(px + sz, py + sz, z);
-                        int s3 = AddVerticeOctTree(px, py + sz, z
+                        int s0 = AddVerticeOctTree(px, py + sy, 0);
+                        int s1 = AddVerticeOctTree(px + sx, py + sy, 0);
+                        int s2 = AddVerticeOctTree(px + sx, py + sy, z);
+                        int s3 = AddVerticeOctTree(px, py + sy, z
                         );
                         Faces.Add(s0);
                         Faces.Add(s1);
@@ -1395,8 +1422,8 @@ namespace Barnacle.Dialogs
                     if (IsPointInPolygon(new Point(px + off, py - off), tmp))
                     {
                         int s0 = AddVerticeOctTree(px, py, 0);
-                        int s1 = AddVerticeOctTree(px + sz, py, 0);
-                        int s2 = AddVerticeOctTree(px + sz, py, z);
+                        int s1 = AddVerticeOctTree(px + sx, py, 0);
+                        int s2 = AddVerticeOctTree(px + sx, py, z);
                         int s3 = AddVerticeOctTree(px, py, z);
                         Faces.Add(s0);
                         Faces.Add(s2);
