@@ -4,6 +4,7 @@ using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -1090,7 +1091,32 @@ namespace Barnacle.Dialogs
                 x += gridX;
             }
         }
-
+        public Point[] OrderClockwise(Point[] points)
+        {
+            double mX = 0;
+            double my = 0;
+            foreach (Point p in points)
+            {
+                mX += p.X;
+                my += p.Y;
+            }
+            mX /= points.Length;
+            my /= points.Length;
+            return points.OrderBy(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
+        }
+        public Point[] OrderAntiClockwise(Point[] points)
+        {
+            double mX = 0;
+            double my = 0;
+            foreach (Point p in points)
+            {
+                mX += p.X;
+                my += p.Y;
+            }
+            mX /= points.Length;
+            my /= points.Length;
+            return points.OrderByDescending(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
+        }
         public static void CreateCanvasGrid(Canvas cnv, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(cnv);
