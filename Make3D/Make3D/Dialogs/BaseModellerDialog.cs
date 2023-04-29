@@ -284,6 +284,7 @@ namespace Barnacle.Dialogs
             Faces.Add(c1);
             Faces.Add(c2);
         }
+
         protected Point CalcPoint(double theta, double r)
         {
             Point p = new Point();
@@ -291,6 +292,7 @@ namespace Barnacle.Dialogs
             p.Y = r * Math.Cos(theta);
             return p;
         }
+
         public void HitTest(Viewport3D viewport3D1, Point mouseposition)
         {
             Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
@@ -799,16 +801,18 @@ namespace Barnacle.Dialogs
             DialogResult = false;
             Close();
         }
+
         protected string defaultImagePath;
+
         public string DefaultImagePath
         {
             get { return defaultImagePath; }
             set
             {
                 defaultImagePath = value;
-
             }
         }
+
         protected void CentreVertices()
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
@@ -1091,6 +1095,7 @@ namespace Barnacle.Dialogs
                 x += gridX;
             }
         }
+
         public Point[] OrderClockwise(Point[] points)
         {
             double mX = 0;
@@ -1104,6 +1109,7 @@ namespace Barnacle.Dialogs
             my /= points.Length;
             return points.OrderBy(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
         }
+
         public Point[] OrderAntiClockwise(Point[] points)
         {
             double mX = 0;
@@ -1117,6 +1123,7 @@ namespace Barnacle.Dialogs
             my /= points.Length;
             return points.OrderByDescending(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
         }
+
         public static void CreateCanvasGrid(Canvas cnv, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(cnv);

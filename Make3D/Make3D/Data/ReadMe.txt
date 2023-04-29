@@ -23,8 +23,9 @@ Added
   Textured disc/cyclinders
 
   Folder for user platelet textures. C:\programdata\barnacle\textures
-  Checkbox to centre texture or tile across platelet
+  options to fit texture or tile across platelet
   Clone button. Makes duplicate of object in exactly the same place
+  Ctrl-K key for clone
   Added F7/F8 key as short cuts for up/down Camera rotation  
 
 

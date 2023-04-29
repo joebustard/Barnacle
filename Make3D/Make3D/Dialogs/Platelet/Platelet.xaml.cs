@@ -959,7 +959,7 @@ namespace Barnacle.Dialogs
                         double xSteps = shapeWidth / hTextureResolution;
                         double hRepeats = (xSteps / textureManager.PatternWidth);
                         hRepeats = Math.Ceiling(hRepeats);
-                        hTextureResolution = (shapeWidth + 1) / (hRepeats * textureManager.PatternWidth);
+                        hTextureResolution = (shapeWidth - 1) / (hRepeats * textureManager.PatternWidth);
                     }
                     if (textureManager.Mode == TextureManager.MapMode.FittedSingle)
                     {
@@ -967,7 +967,7 @@ namespace Barnacle.Dialogs
 
                         vTextureResolution = shapeHeight / textureManager.PatternHeight;
 
-                        hTextureResolution = shapeWidth / (textureManager.PatternWidth + 2);
+                        hTextureResolution = shapeWidth / (textureManager.PatternWidth );
 
                         // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
                     }
