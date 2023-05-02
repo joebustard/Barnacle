@@ -1,6 +1,7 @@
 ﻿v1.0.4
 ===========
 Fixed
+  Small speed up in hole fixing.
 
 Changed
 

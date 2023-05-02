@@ -255,11 +255,24 @@ namespace Barnacle.ViewModels
                     RegenerateDisplayList();
                     NotificationManager.Notify("ObjectNamesChanged", null);
                     NotificationManager.Notify("ObjectSelected", o);
+                    PassOnGroupStatus(o);
                 }
             }
             else
             {
                 MessageBox.Show("Must have a single object selected", "Error");
+            }
+        }
+
+        private void PassOnGroupStatus(Object3D o)
+        {
+            if (o is Group3D)
+            {
+                NotificationManager.Notify("GroupSelected", true);
+            }
+            else
+            {
+                NotificationManager.Notify("GroupSelected", false);
             }
         }
 
@@ -534,6 +547,7 @@ namespace Barnacle.ViewModels
             Overlay.Children.Clear();
             RegenerateDisplayList();
             NotificationManager.Notify("ObjectSelected", null);
+            NotificationManager.Notify("GroupSelected", false);
         }
 
         internal void KeyDown(Key key, bool shift, bool ctrl)
@@ -742,11 +756,9 @@ namespace Barnacle.ViewModels
 
                 case Key.K:
                     {
-
                         OnCloneInPlace(null);
                     }
                     break;
-
 
                 case Key.M:
                     {
@@ -843,6 +855,7 @@ namespace Barnacle.ViewModels
                         HomeCamera();
                     }
                     break;
+
                 case Key.F5:
                     {
                         RotateCamera(-0.5, 0.0);
@@ -972,6 +985,7 @@ namespace Barnacle.ViewModels
                             selectedObjectAdorner.Clear();
                             Overlay.Children.Clear();
                             NotificationManager.Notify("ObjectSelected", null);
+                            NotificationManager.Notify("GroupSelected", false);
                         }
                         floorMarker = new FloorMarker();
                         floorMarker.Position = hitPos;
@@ -1538,6 +1552,14 @@ namespace Barnacle.ViewModels
                     RemoveObjectAdorner();
                     GenerateSelectionBox(selectedItems[0], sizer, control);
                     NotificationManager.Notify("ObjectSelected", selectedItems[0]);
+                    if (selectedItems.Count == 1)
+                    {
+                        PassOnGroupStatus(selectedItems[0]);
+                    }
+                    else
+                    {
+                        NotificationManager.Notify("GroupSelected", false);
+                    }
                     handled = true;
                 }
                 NotifyPropertyChanged("ModelItems");
@@ -1557,6 +1579,7 @@ namespace Barnacle.ViewModels
                             RemoveObjectAdorner();
                             // append the the object to the existing list of
                             selectedObjectAdorner.AdornObject(ob);
+                            PassOnGroupStatus(ob);
                             handled = true;
                             // update the display
                             foreach (Model3D md in selectedObjectAdorner.Adornments)
@@ -2066,6 +2089,7 @@ namespace Barnacle.ViewModels
             Overlay.Children.Clear();
             // dont leave obect palette show the details of an obect whih doesn't exist in the new file
             NotificationManager.Notify("ObjectSelected", null);
+            NotificationManager.Notify("GroupSelected", false);
         }
 
         private bool Loft(Object3D obj, string obType)
@@ -3538,6 +3562,7 @@ namespace Barnacle.ViewModels
 
             MakeSizeAdorner();
             selectedItems.Clear();
+            NotificationManager.Notify("GroupSelected", false);
         }
 
         private void ResetSelectionColours()
@@ -3736,6 +3761,15 @@ namespace Barnacle.ViewModels
                     selectedObjectAdorner.AdornObject(ob);
                     SetSelectionColours();
                     NotificationManager.Notify("ObjectSelected", ob);
+                    if (selectedItems.Count == 1)
+                    {
+                        PassOnGroupStatus(ob);
+                    }
+                    else
+                    {
+                        NotificationManager.Notify("GroupSelected", false);
+                    }
+
                     EnableTool(ob);
                 }
             }
@@ -3765,6 +3799,14 @@ namespace Barnacle.ViewModels
                     selectedObjectAdorner.AdornObject(ob);
                     SetSelectionColours();
                     NotificationManager.Notify("ObjectSelected", ob);
+                    if (selectedItems.Count == 1)
+                    {
+                        PassOnGroupStatus(ob);
+                    }
+                    else
+                    {
+                        NotificationManager.Notify("GroupSelected", false);
+                    }
                 }
                 EnableTool(ob);
             }
@@ -3813,6 +3855,15 @@ namespace Barnacle.ViewModels
 
                     SetSelectionColours();
                     NotificationManager.Notify("ObjectSelected", nxt);
+                    if (selectedItems.Count == 1)
+                    {
+                        PassOnGroupStatus(nxt);
+                    }
+                    else
+                    {
+                        NotificationManager.Notify("GroupSelected", false);
+                    }
+
                     EnableTool(nxt);
                 }
                 UpdateSelectionDisplay();
@@ -3850,6 +3901,14 @@ namespace Barnacle.ViewModels
                                 selectedObjectAdorner.AdornObject(ob);
                                 SetSelectionColours();
                                 NotificationManager.Notify("ObjectSelected", ob);
+                                if (selectedItems.Count == 1)
+                                {
+                                    PassOnGroupStatus(ob);
+                                }
+                                else
+                                {
+                                    NotificationManager.Notify("GroupSelected", false);
+                                }
                             }
                             EnableTool(ob);
                         }
@@ -3899,6 +3958,14 @@ namespace Barnacle.ViewModels
                         MakeSizeAdorner();
                     }
                     selectedObjectAdorner.AdornObject(nxt);
+                    if (selectedItems.Count == 1)
+                    {
+                        PassOnGroupStatus(nxt);
+                    }
+                    else
+                    {
+                        NotificationManager.Notify("GroupSelected", false);
+                    }
                     SetSelectionColours();
                     NotificationManager.Notify("ObjectSelected", nxt);
                     EnableTool(nxt);

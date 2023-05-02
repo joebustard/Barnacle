@@ -185,6 +185,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("ObjectNamesChanged", ObjectNamesChanged);
             NotificationManager.Subscribe("Loading", LoadingNewFile);
             NotificationManager.Subscribe("SuspendEditing", SuspendEditing);
+            NotificationManager.Subscribe("GroupSelected", GroupSelected);
 
             SubView = subViewMan.GetView("editor");
             CreateToolMenus();
@@ -195,6 +196,12 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void GroupSelected(object param)
+        {
+            bool group = (bool)param;
+            IsSelectedObjectAGroup = group;
         }
 
         private void OnAutoFix(object obj)
@@ -567,6 +574,20 @@ namespace Barnacle.ViewModels
 
         public ICommand MultiPasteCommand { get; set; }
 
+        public bool IsSelectedObjectAGroup
+        {
+            get { return isSelectedObjectAGroup; }
+            set
+            {
+                if (value != isSelectedObjectAGroup)
+                {
+                    isSelectedObjectAGroup = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private bool isSelectedObjectAGroup;
         public ICommand NewCommand { get; set; }
         public ICommand NewProjectCommand { get; set; }
 

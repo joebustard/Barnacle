@@ -1,4 +1,5 @@
 ﻿using Barnacle.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
@@ -8,59 +9,87 @@ namespace HoleLibrary
     {
         public EdgeTree()
         {
-            BothLeft = new List<Edge>();
-            BothRight = new List<Edge>();
-            Mixed = new List<Edge>();
-            CentrePoint = 0;
+            CentrePoint = new P3D(0, 0, 0);
             Vertices = null;
+            Edgebucket = new List<Edge>[3, 3, 3];
+            for (int r = 0; r < 3; r++)
+            {
+                for (int c = 0; c < 3; c++)
+                {
+                    for (int d = 0; d < 3; d++)
+                    {
+                        Edgebucket[c, r, d] = new List<Edge>();
+                    }
+                }
+            }
         }
 
-        public float CentrePoint { get; set; }
+        public List<Edge>[,,] Edgebucket;
+
+        public P3D CentrePoint { get; set; }
         public List<P3D> Vertices { get; set; }
-        public List<Edge> BothLeft { get; set; }
-        public List<Edge> BothRight { get; set; }
-        public List<Edge> Mixed { get; set; }
 
         public void AddEdge(Edge ed)
         {
+            int r;
+            int c;
+            int d;
+            ClassifyEdge(ed.Start, ed.End, out r, out c, out d);
+
             if (Vertices != null)
             {
-                if (Vertices[ed.Start].X <= CentrePoint && Vertices[ed.End].X <= CentrePoint)
-                {
-                    BothLeft.Add(ed);
-                }
-                else
-                if (Vertices[ed.Start].X > CentrePoint && Vertices[ed.End].X > CentrePoint)
-                {
-                    BothRight.Add(ed);
-                }
-                else
-                {
-                    Mixed.Add(ed);
-                }
+                Edgebucket[c, r, d].Add(ed);
+            }
+        }
+
+        private void ClassifyEdge(int start, int end, out int r, out int c, out int d)
+        {
+            r = 1;
+            c = 1;
+            d = 1;
+
+            if (Vertices[start].X <= CentrePoint.X && Vertices[end].X <= CentrePoint.X)
+            {
+                c = 0;
+            }
+            else
+            if (Vertices[start].X > CentrePoint.X && Vertices[end].X > CentrePoint.X)
+            {
+                c = 2;
+            }
+
+            if (Vertices[start].Y <= CentrePoint.Y && Vertices[end].Y <= CentrePoint.Y)
+            {
+                r = 0;
+            }
+            else
+            if (Vertices[start].Y > CentrePoint.Y && Vertices[end].Y > CentrePoint.Y)
+            {
+                r = 2;
+            }
+
+            if (Vertices[start].Z <= CentrePoint.Z && Vertices[end].Z <= CentrePoint.Z)
+            {
+                d = 0;
+            }
+            else
+            if (Vertices[start].Z > CentrePoint.Z && Vertices[end].Z > CentrePoint.Z)
+            {
+                d = 2;
             }
         }
 
         public Edge FindEdge(int start, int end, Face face)
         {
+            int r;
+            int c;
+            int d;
             Edge res = null;
             List<Edge> edgeList = null;
             if (Vertices != null)
             {
-                if (Vertices[start].X <= CentrePoint && Vertices[end].X <= CentrePoint)
-                {
-                    edgeList = BothLeft;
-                }
-                else
-                if (Vertices[start].X > CentrePoint && Vertices[end].X > CentrePoint)
-                {
-                    edgeList = BothRight;
-                }
-                else
-                {
-                    edgeList = Mixed;
-                }
-
+                ClassifyEdge(start, end, out r, out c, out d);
+                edgeList = Edgebucket[c, r, d];
                 // dummy for now
                 foreach (Edge e in edgeList)
                 {
@@ -73,7 +102,8 @@ namespace HoleLibrary
                 if (res == null)
                 {
                     res = new Edge(start, end, face);
-                    AddEdge(res);
+                    //  AddEdge(res);
+                    edgeList.Add(res);
                 }
                 else
                 {

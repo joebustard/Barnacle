@@ -223,7 +223,7 @@
                               VerticalAlignment="Top"
                               x:Name="SelectObjectNames" IsEnabled="{Binding EditingActive}" />
                     <Custom:RibbonMenuButton Label="Select" SmallImageSource="/Barnacle;component/Images/Buttons/SelectAll.png">
-                    <Custom:RibbonButton Command="{Binding SelectCommand}"
+                        <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="First"
                                          HorizontalAlignment="Stretch"
                                          Label="First"
@@ -231,7 +231,7 @@
                                          ToolTip="Select First"
                                          VerticalAlignment="Top"
                                          x:Name="SelectFirstButton" IsEnabled="{Binding EditingActive}" />
-                    <Custom:RibbonButton Command="{Binding SelectCommand}"
+                        <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Previous"
                                          HorizontalAlignment="Stretch"
                                          Label="Previous"
@@ -239,7 +239,7 @@
                                          ToolTip="Select Previous"
                                          VerticalAlignment="Top"
                                          x:Name="SelectPrevButton" IsEnabled="{Binding EditingActive}" />
-                    <Custom:RibbonButton Command="{Binding SelectCommand}"
+                        <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Next"
                                          HorizontalAlignment="Stretch"
                                          Label="Next"
@@ -247,7 +247,7 @@
                                          ToolTip="Select Next"
                                          VerticalAlignment="Top"
                                          x:Name="SelectNextButton" IsEnabled="{Binding EditingActive}" />
-                    <Custom:RibbonButton Command="{Binding SelectCommand}"
+                        <Custom:RibbonButton Command="{Binding SelectCommand}"
                                          CommandParameter="Last"
                                          HorizontalAlignment="Stretch"
                                          Label="Last"
@@ -651,7 +651,7 @@
                                              Label="Ungroup"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              VerticalAlignment="Top"
-                                             x:Name="UngroupSelected" />
+                                             x:Name="UngroupSelected" IsEnabled="{Binding IsSelectedObjectAGroup}" />
                         <Custom:RibbonSeparator />
                         <Custom:RibbonButton Command="{Binding GroupCommand}"
                                              CommandParameter="Mesh"
@@ -659,7 +659,8 @@
                                              Label="Group To Mesh"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              VerticalAlignment="Top"
-                                             x:Name="GroupToMesh" />
+                                             x:Name="GroupToMesh" ToolTip="Reduce the memory used by a group by converting it to a single object. Once this is done, it can't be ungrouped"
+                                             IsEnabled="{Binding IsSelectedObjectAGroup}" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Split"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/split.png"

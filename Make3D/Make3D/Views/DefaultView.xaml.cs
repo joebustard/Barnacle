@@ -532,6 +532,7 @@ namespace Barnacle.Views
                                     NotificationManager.Notify("Refresh", null);
                                     BaseViewModel.Project.FirstFile = fName;
                                     NotificationManager.Notify("ObjectSelected", null);
+                                    NotificationManager.Notify("GroupSelected", false);
                                 }
                             }
                         }
@@ -655,6 +656,7 @@ namespace Barnacle.Views
                                     BaseViewModel.Document.Load(p);
                                     NotificationManager.Notify("Refresh", null);
                                     NotificationManager.Notify("ObjectSelected", null);
+                                    NotificationManager.Notify("GroupSelected", false);
                                 }
                             }
                         }
@@ -759,6 +761,7 @@ namespace Barnacle.Views
                                         BaseViewModel.Document.Load(open);
                                         NotificationManager.Notify("Refresh", null);
                                         NotificationManager.Notify("ObjectSelected", null);
+                                        NotificationManager.Notify("GroupSelected", false);
                                     }
                                 }
                             }

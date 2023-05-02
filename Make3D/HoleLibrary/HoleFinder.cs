@@ -17,24 +17,31 @@ namespace HoleLibrary
         {
             Points = meshPoints;
             MeshFaces = mf;
-            double centre = 0;
-            foreach (P3D p in Points)
+            P3D centre = new P3D(0, 0, 0);
+            if (Points.Count > 0)
             {
-                centre += p.X;
-            }
-            centre = centre / Points.Count;
-            faces = new List<Face>();
-                   
-            edgeTree = new EdgeTree();
-            edgeTree.Vertices = meshPoints;
-            edgeTree.CentrePoint = (float)centre;
-            for (int i = 0; i <= mf.Count - 3; i += 3)
-            {
-                Face nf = new Face(mf[i],
-                    mf[i + 1],
-                    mf[i + 2],
-                    edgeTree);
-                faces.Add(nf);
+                foreach (P3D p in Points)
+                {
+                    centre.X += p.X;
+                    centre.Y += p.Y;
+                    centre.Z += p.Z;
+                }
+                centre.X = centre.X / Points.Count;
+                centre.Y = centre.Y / Points.Count;
+                centre.Z = centre.Z / Points.Count;
+                faces = new List<Face>();
+
+                edgeTree = new EdgeTree();
+                edgeTree.Vertices = meshPoints;
+                edgeTree.CentrePoint = centre;
+                for (int i = 0; i <= mf.Count - 3; i += 3)
+                {
+                    Face nf = new Face(mf[i],
+                        mf[i + 1],
+                        mf[i + 2],
+                        edgeTree);
+                    faces.Add(nf);
+                }
             }
         }
 
@@ -44,20 +51,29 @@ namespace HoleLibrary
             int fixedHoles = 0;
             List<Edge> duffEdges = new List<Edge>();
             //FetchDuff(edges, duffEdges);
+            for (int r = 0; r < 3; r++)
+            {
+                for (int c = 0; c < 3; c++)
+                {
+                    for (int d = 0; d < 3; d++)
+                    {
+                        FetchDuff(edgeTree.Edgebucket[c, r, d], duffEdges);
+                    }
+                }
+            }
 
-            FetchDuff(edgeTree.BothLeft, duffEdges);
-            FetchDuff(edgeTree.BothRight, duffEdges);
-            FetchDuff(edgeTree.Mixed, duffEdges);
             bool more = (duffEdges.Count >= 3);
+            List<int> holePoints = new List<int>();
             while (more)
             {
-                List<Edge> hole = new List<Edge>();
-                List<int> holePoints = new List<int>();
-                hole.Add(duffEdges[0]);
+                //  List<Edge> hole = new List<Edge>();
+
+                //   hole.Add(duffEdges[0]);
+
+                int holeS = duffEdges[0].Start;
+                int holeE = duffEdges[0].End;
                 duffEdges.RemoveAt(0);
 
-                int holeS = hole[0].Start;
-                int holeE = hole[0].End;
                 holePoints.Add(holeS);
                 holePoints.Add(holeE);
 
@@ -78,7 +94,7 @@ namespace HoleLibrary
                                 holeE = duffEdges[i].End;
                                 holePoints.Add(holeE);
 
-                                hole.Add(duffEdges[i]);
+                                //      hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -88,7 +104,7 @@ namespace HoleLibrary
                                 holeS = duffEdges[i].Start;
                                 holePoints.Insert(0, holeS);
 
-                                hole.Add(duffEdges[i]);
+                                //        hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -98,7 +114,7 @@ namespace HoleLibrary
                                 holeE = duffEdges[i].Start;
                                 holePoints.Add(holeE);
 
-                                hole.Add(duffEdges[i]);
+                                //            hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -108,7 +124,7 @@ namespace HoleLibrary
                                 holeS = duffEdges[i].End;
                                 holePoints.Insert(0, holeS);
 
-                                hole.Add(duffEdges[i]);
+                                //         hole.Add(duffEdges[i]);
                                 duffEdges.RemoveAt(i);
                                 found = true;
                             }
@@ -121,7 +137,7 @@ namespace HoleLibrary
                     }
                     maxi = duffEdges.Count;
                 }
-                Debug($"Closed {closed} Points {holePoints.Count}");
+
                 foundHoles++;
                 if (closed)
                 {
@@ -131,6 +147,7 @@ namespace HoleLibrary
                     }
                 }
                 more = (duffEdges.Count >= 3);
+                holePoints.Clear();
             }
             return new Tuple<int, int>(foundHoles, fixedHoles);
         }
