@@ -54,6 +54,10 @@ namespace Barnacle.Models
                     res = new ParabolicDishDlg();
                     break;
 
+                case "PathLoft":
+                    res = new PathLoftDlg();
+                    break;
+
                 case "Parallelogram":
                     res = new PGramDlg();
                     break;

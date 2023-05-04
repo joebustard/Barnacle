@@ -1165,6 +1165,7 @@ namespace Barnacle.ViewModels
             loftedToolsToShow.Add(new ToolDef("Vase", true, "VaseLoft", "Create an object by vase lofting."));
             loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
             loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
+            loftedToolsToShow.Add(new ToolDef("Path", true, "PathLoft", "Dra an open flexipath which is lofted to a given height and thickness"));
             //  loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
             SortMenu(loftedToolsToShow);
             NotifyPropertyChanged("LoftedToolsToShow");

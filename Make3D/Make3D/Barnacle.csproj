@@ -122,6 +122,7 @@
     <Compile Include="Dialogs\MultiImport.xaml.cs">
       <DependentUpon>MultiImport.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\PathLoft\PathLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\PieDlg\PieDlg.xaml.cs" />
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
     <Compile Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml.cs" />
@@ -457,6 +458,10 @@
     <Page Include="Dialogs\MultiImport.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\PathLoft\PathLoftDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\PieDlg\PieDlg.xaml">
       <Generator>MSBuild:Compile</Generator>

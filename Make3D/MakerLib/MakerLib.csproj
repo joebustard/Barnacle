@@ -53,6 +53,7 @@
     <Compile Include="MakeCurvedFunnel.cs" />
     <Compile Include="MakeDualProfile.cs" />
     <Compile Include="MakeParabolicDish.cs" />
+    <Compile Include="MakePathLoft.cs" />
     <Compile Include="MakePie.cs" />
     <Compile Include="MakePill.cs" />
     <Compile Include="MakePlankWall.cs" />

@@ -84,6 +84,7 @@ namespace ScriptLanguage
                 "makepath",
                 "makeparallelogram",
                 "makeparabolicdish",
+                "makepathloft",
                 "makepill",
                 "makeplatelet",
                 "makeplankwall",
@@ -2630,6 +2631,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "makepathloft":
+                            {
+                                exp = ParseMakePathLoftFunction(parentName);
+                            }
+                            break;
+
                         case "makepie":
                             {
                                 exp = ParseMakePieFunction(parentName);
@@ -2743,6 +2750,7 @@ namespace ScriptLanguage
                                 exp = ParseMakeTexturedTubeFunction(parentName);
                             }
                             break;
+
                         case "now":
                             {
                                 exp = ParseNowFunction(parentName);
@@ -2891,6 +2899,46 @@ namespace ScriptLanguage
             return resultNode;
         }
 
+        private ExpressionNode ParseMakePathLoftFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakePathLoft";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 1;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakePathLoftNode mn = new MakePathLoftNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
 
         private ExpressionNode ParseMakeTexturedTubeFunction(string parentName)
         {
