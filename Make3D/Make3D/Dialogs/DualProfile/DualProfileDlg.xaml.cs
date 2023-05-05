@@ -54,7 +54,7 @@ namespace Barnacle.Dialogs
             double tly = 0;
             double brx = 0;
             double bry = 0;
-            GetBounds(pnts, ref tlx, ref tly, ref brx, ref bry);
+            Get2DBounds(pnts, ref tlx, ref tly, ref brx, ref bry);
             if (tlx < double.MaxValue)
             {
                 frontXSize = brx - tlx;
@@ -72,28 +72,13 @@ namespace Barnacle.Dialogs
             Redisplay();
         }
 
-        private void GetBounds(List<Point> pnts, ref double tlx, ref double tly, ref double brx, ref double bry)
-        {
-            tlx = double.MaxValue;
-            tly = double.MaxValue;
-            brx = double.MinValue;
-            bry = double.MinValue;
-            foreach (Point p in pnts)
-            {
-                if (p.X < tlx) tlx = p.X;
-                if (p.X > brx) brx = p.X;
-                if (p.Y < tly) tly = p.Y;
-                if (p.Y > bry) bry = p.Y;
-            }
-        }
-
         private void TopPointsChanged(List<System.Windows.Point> pnts)
         {
             double tlx = 0;
             double tly = 0;
             double brx = 0;
             double bry = 0;
-            GetBounds(pnts, ref tlx, ref tly, ref brx, ref bry);
+            Get2DBounds(pnts, ref tlx, ref tly, ref brx, ref bry);
             if (tlx < double.MaxValue)
             {
                 topXSize = brx - tlx;

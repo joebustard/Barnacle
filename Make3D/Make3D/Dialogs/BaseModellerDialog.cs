@@ -59,6 +59,11 @@ namespace Barnacle.Dialogs
             spaceTreeRoot = null;
         }
 
+        public void Debug(string txt, [CallerMemberName] string caller = "")
+        {
+            System.Diagnostics.Debug.WriteLine($" {caller}: {txt}");
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds
@@ -73,6 +78,21 @@ namespace Barnacle.Dialogs
                 {
                     bounds = value;
                 }
+            }
+        }
+
+        protected void Get2DBounds(List<Point> pnts, ref double tlx, ref double tly, ref double brx, ref double bry)
+        {
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+            foreach (Point p in pnts)
+            {
+                if (p.X < tlx) tlx = p.X;
+                if (p.X > brx) brx = p.X;
+                if (p.Y < tly) tly = p.Y;
+                if (p.Y > bry) bry = p.Y;
             }
         }
 

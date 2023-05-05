@@ -1,5 +1,6 @@
 using MakerLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Media3D;
@@ -50,7 +51,10 @@ namespace Barnacle.Dialogs
         private const double maxloftThickness = 200;
         private double loftThickness;
 
+        private List<Point> pathPoints;
+
         public double LoftThickness
+
         {
             get
             {
@@ -85,6 +89,42 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+            PathEditor.OnFlexiPathChanged += PathPointsChanged;
+        }
+
+        private double pathXSize;
+        private double pathYSize;
+        private double tlx = 0;
+        private double tly = 0;
+        private double brx = 0;
+        private double bry = 0;
+        private double xRes = 0.25;
+        private double yRes = 0.25;
+
+        private void PathPointsChanged(List<Point> points)
+        {
+            tlx = 0;
+            tly = 0;
+            brx = 0;
+            bry = 0;
+            Get2DBounds(points, ref tlx, ref tly, ref brx, ref bry);
+            if (tlx < double.MaxValue)
+            {
+                double pathXSize = brx - tlx;
+                pathYSize = bry - tly;
+
+                double mx = tlx + pathXSize / 2.0;
+                double my = tly + pathYSize / 2.0;
+                pathPoints.Clear();
+                foreach (Point p in points)
+                {
+                    pathPoints.Add(new Point((p.X - mx) / pathXSize, (p.Y - my) / pathYSize));
+                }
+                xRes = 0.25 / pathXSize;
+                yRes = 0.25 / pathYSize;
+                GenerateShape();
+                Redisplay();
+            }
         }
 
         public override bool ShowAxies
@@ -147,8 +187,23 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            PathLoftMaker maker = new PathLoftMaker(loftHeight, loftThickness);
-            maker.Generate(Vertices, Faces);
+            // PathLoftMaker maker = new PathLoftMaker(loftHeight, loftThickness);
+            //  maker.Generate(Vertices, Faces);
+            DistanceCell2D cell = new DistanceCell2D();
+            cell.SetPoint(DistanceCell2D.TopLeft, new Point(10, 100), 7);
+            cell.SetPoint(DistanceCell2D.TopRight, new Point(100, 100), 8);
+            cell.SetPoint(DistanceCell2D.BottomLeft, new Point(10, 10), 5);
+            cell.SetPoint(DistanceCell2D.BottomRight, new Point(100, 10), 6);
+            cell.SetCentre(9);
+            float[] testVals =
+            {
+                11.0F,
+                12.0F,
+                13.0F,
+                14.0F
+            };
+            cell.CreateSubCells(testVals);
+            cell.Dump();
             CentreVertices();
         }
 
