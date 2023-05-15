@@ -1,3 +1,4 @@
+using asdflibrary;
 using MakerLib;
 using System;
 using System.Collections.Generic;
@@ -90,6 +91,7 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
+            pathPoints = new List<Point>();
         }
 
         private double pathXSize;
@@ -110,18 +112,50 @@ namespace Barnacle.Dialogs
             Get2DBounds(points, ref tlx, ref tly, ref brx, ref bry);
             if (tlx < double.MaxValue)
             {
-                double pathXSize = brx - tlx;
+                pathXSize = brx - tlx;
                 pathYSize = bry - tly;
 
                 double mx = tlx + pathXSize / 2.0;
                 double my = tly + pathYSize / 2.0;
+                double px;
+                double py;
                 pathPoints.Clear();
                 foreach (Point p in points)
                 {
-                    pathPoints.Add(new Point((p.X - mx) / pathXSize, (p.Y - my) / pathYSize));
+                    if (pathXSize > 0)
+                    {
+                        px = (p.X - mx) / pathXSize;
+                    }
+                    else
+                    {
+                        px = 0.0;
+                    }
+                    if (pathYSize > 0)
+                    {
+                        py = (p.Y - my) / pathYSize;
+                    }
+                    else
+                    {
+                        py = 0.0;
+                    }
+                    pathPoints.Add(new Point(px, py));
                 }
-                xRes = 0.25 / pathXSize;
-                yRes = 0.25 / pathYSize;
+                if (pathXSize > 0)
+                {
+                    xRes = 0.25 / pathXSize;
+                }
+                else
+                {
+                    xRes = 0.1;
+                }
+                if (pathYSize > 0)
+                {
+                    yRes = 0.25 / pathYSize;
+                }
+                else
+                {
+                    yRes = 0.1;
+                }
                 GenerateShape();
                 Redisplay();
             }
@@ -183,29 +217,152 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
-
+        private const double sizeLimit = 0.005;
         private void GenerateShape()
         {
             ClearShape();
             // PathLoftMaker maker = new PathLoftMaker(loftHeight, loftThickness);
             //  maker.Generate(Vertices, Faces);
-            DistanceCell2D cell = new DistanceCell2D();
-            cell.SetPoint(DistanceCell2D.TopLeft, new Point(10, 100), 7);
-            cell.SetPoint(DistanceCell2D.TopRight, new Point(100, 100), 8);
-            cell.SetPoint(DistanceCell2D.BottomLeft, new Point(10, 10), 5);
-            cell.SetPoint(DistanceCell2D.BottomRight, new Point(100, 10), 6);
-            cell.SetCentre(9);
-            float[] testVals =
+            if (pathPoints != null && pathPoints.Count > 0)
             {
-                11.0F,
-                12.0F,
-                13.0F,
-                14.0F
-            };
-            cell.CreateSubCells(testVals);
-            cell.Dump();
-            CentreVertices();
+                DistanceCell2D cell = new DistanceCell2D();
+                cell.InitialisePoints();
+                DistanceCell2D.OnCalculateDistance = CalculateDistance;
+                cell.SetPoint(DistanceCell2D.TopLeft, -0.6F, 0.6F, CalculateDistance(-0.6F, 0.6F));
+                cell.SetPoint(DistanceCell2D.TopRight, 0.6F, 0.6F, CalculateDistance(0.6F, 0.6F));
+                cell.SetPoint(DistanceCell2D.BottomLeft, -0.6F, -0.6F, CalculateDistance(-0.6F, -0.6F));
+                cell.SetPoint(DistanceCell2D.BottomRight,0.6F, -0.6F, CalculateDistance(0.6F, -0.6F));
+                cell.SetCentre();
+              
+                cell.CreateSubCells();
+                cell.Dump();
+                List<DistanceCell2D> queue = new List<DistanceCell2D>();
+                queue.Add(cell.SubCells[0]);
+                queue.Add(cell.SubCells[1]);
+                queue.Add(cell.SubCells[2]);
+                queue.Add(cell.SubCells[3]);
+                DateTime start = DateTime.Now;
+                while ( queue.Count > 0)
+                {
+                    DistanceCell2D cn = queue[0];
+                    queue.RemoveAt(0);
+                    if (cn.Size() > sizeLimit)
+                    {
+                        cn.CreateSubCells();
+                        queue.Add(cn.SubCells[0]);
+                        queue.Add(cn.SubCells[1]);
+                        queue.Add(cn.SubCells[2]);
+                        queue.Add(cn.SubCells[3]);
+                    }
+                }
+                float th = 0.025F;
+                cell.AdjustValues(th);
+                DateTime end = DateTime.Now;
+                TimeSpan dur = end - start;
+                Debug($"Duration {dur}");
+                CubeMarcher cm = new CubeMarcher();
+                GridCell gc = new GridCell();
+                List<Triangle> triangles = new List<Triangle>();
+                float dd = 0.025F;
+                Functions.SphereRadius = 0.5F;
+                for (float x = -0.6F; x <= 0.6; x += dd)
+                {
+                    for (float y = -0.6F; y <= 0.6F; y += dd)
+                    {
+                        for (float z = -0.6F; z <= 0.6; z += dd)
+                        {
+                            gc.p[0] = new XYZ(x, y, z);
+
+                            gc.p[1] = new XYZ(x + dd, y, z);
+                            gc.p[2] = new XYZ(x + dd, y, z + dd);
+                            gc.p[3] = new XYZ(x, y, z + dd);
+
+                            gc.p[4] = new XYZ(x, y + dd, z);
+                            gc.p[5] = new XYZ(x + dd, y + dd, z);
+                            gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
+                            gc.p[7] = new XYZ(x, y + dd, z + dd);
+                        }
+                    }
+                }
+                            CentreVertices();
+                cell = null;
+                GC.Collect();
+            }
         }
+
+
+        private float CalculateDistance(float x, float y)
+        {
+            Point closest = new Point(0, 0);
+
+            float res = DistToPoly(pathPoints, x, y, ref closest);
+
+            return res;
+        }
+
+        private float DistToPoly(List<Point> pnts, float x, float y, ref Point closest)
+        {
+            float v = float.MaxValue;
+            float d = 0;
+
+            Point cl = new Point(0, 0);
+            for (int i = 0; i < pnts.Count - 1; i++)
+            {
+                d = FindClosestToLine(x, y, pnts[i], pnts[i + 1], out cl);
+                if (d < v)
+                {
+                    v = d;
+                    closest.X = cl.X;
+                    closest.Y = cl.Y;
+                }
+            }
+            return v;
+        }
+
+        public float FindClosestToLine(
+          float x, float y, Point p1, Point p2, out Point closest)
+        {
+            double dx = p2.X - p1.X;
+            double dy = p2.Y - p1.Y;
+            if ((dx == 0) && (dy == 0))
+            {
+                // It's a point not a line segment.
+                closest = p1;
+                dx = x - p1.X;
+                dy = y - p1.Y;
+                return (float)Math.Sqrt(dx * dx + dy * dy);
+            }
+
+            // Calculate the t that minimizes the distance.
+            double t = ((x - p1.X) * dx + (y - p1.Y) * dy) /
+                (dx * dx + dy * dy);
+
+            // See if this represents one of the segment's
+            // end points or a point in the middle.
+            if (t < 0)
+            {
+                closest = new Point(p1.X, p1.Y);
+                dx = x - p1.X;
+                dy = y - p1.Y;
+            }
+            else if (t > 1)
+            {
+                closest = new Point(p2.X, p2.Y);
+                dx = x - p2.X;
+                dy = y - p2.Y;
+            }
+            else
+            {
+                closest = new Point(p1.X + t * dx, p1.Y + t * dy);
+                dx = x - closest.X;
+                dy = y - closest.Y;
+            }
+
+            return (float)Math.Sqrt(dx * dx + dy * dy);
+        }
+
+
+
 
         private void LoadEditorParameters()
         {

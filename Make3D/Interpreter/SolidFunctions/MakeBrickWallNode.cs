@@ -123,8 +123,9 @@ namespace ScriptLanguage
 
                     obj.CalcScale(false);
                     obj.Remesh();
-                    Script.ResultArtefacts.Add(obj);
-                    ExecutionStack.Instance().PushSolid((int)Script.ResultArtefacts.Count - 1);
+                    int id = Script.NextObjectId;
+                    Script.ResultArtefacts[id] = obj;
+                    ExecutionStack.Instance().PushSolid(id);
                 }
                 else
                 {

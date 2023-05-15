@@ -123,7 +123,8 @@ namespace ScriptLanguage
                 "union",
                 "unionall",
                 "width",
-                "val"
+                "val",
+                "validsolid"
             };
         }
 
@@ -2853,6 +2854,11 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "validsolid":
+                            {
+                                exp = GetFunctionNode<ValidSolidNode>(parentName);
+                            }
+                            break;
                         case "length":
                         case "width":
                         case "height":

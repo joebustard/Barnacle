@@ -84,7 +84,7 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            if (leftobjectIndex >= 0 && leftobjectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[leftobjectIndex] != null)
+                            if (Script.ResultArtefacts.ContainsKey(leftobjectIndex))
                             {
                                 int rightobjectIndex;
                                 if (!PullSolid(out rightobjectIndex))
@@ -94,7 +94,7 @@ namespace ScriptLanguage
                                 }
                                 else
                                 {
-                                    if (leftobjectIndex >= 0 && leftobjectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[leftobjectIndex] != null)
+                                    if (Script.ResultArtefacts.ContainsKey(rightobjectIndex))
                                     {
                                         Bounds3D bns = new Bounds3D(Script.ResultArtefacts[leftobjectIndex].AbsoluteBounds);
                                         double midX = bns.MidPoint().X;

@@ -8,9 +8,12 @@ using System.Windows;
 
 namespace Barnacle.Dialogs
 {
+
     internal class DistanceCell2D
     {
-        public Point[] points;
+        public static List<System.Drawing.PointF> AllPoints;
+        public delegate float CalculateDistance(float x, float y);
+        public int[] points;
         public float[] values;
         public DistanceCell2D[] SubCells;
 
@@ -19,67 +22,97 @@ namespace Barnacle.Dialogs
         public const int BottomLeft = 2;
         public const int BottomRight = 3;
         public const int Centre = 4;
-
+        public static CalculateDistance OnCalculateDistance = null;
         public DistanceCell2D()
         {
-            points = new System.Windows.Point[5];
+            points = new int[5];
             values = new float[5];
             SubCells = null;
+            
         }
-
-        public void SetPoint(int loc, Point p, float val)
+        public void InitialisePoints()
+        {
+            AllPoints = new List<System.Drawing.PointF>();
+        }
+        public void SetPoint(int loc, float x, float y, float v)
         {
             int l = (int)loc;
-            points[l] = new Point(p.X, p.Y);
-            values[l] = val;
+            AllPoints.Add(new System.Drawing.PointF(x, y));
+            points[l] = AllPoints.Count - 1;
+            values[l] = v;
         }
 
-        public void SetCentre(int v)
+        public void CalcPoint(int loc, float x, float y)
         {
-            points[4] = new Point(points[0].X + (points[3].X - points[0].X) / 2,
-                                  points[0].Y + (points[3].Y - points[0].Y) / 2);
-            values[4] = v;
+            int l = (int)loc;
+            AllPoints.Add(new System.Drawing.PointF(x, y));
+            points[l] = AllPoints.Count - 1;
+            values[l] = OnCalculateDistance(x,y);
+        }
+        public void SetPoint(int loc, int pointIndex, float v)
+        {
+            int l = (int)loc;
+            points[l] = pointIndex;
+            values[l] = v;
+        }
+
+        public void SetCentre()
+        {
+            AllPoints.Add(new System.Drawing.PointF(AllPoints[points[0]].X + (AllPoints[points[3]].X - AllPoints[points[0]].X) / 2,
+                                     AllPoints[points[0]].Y + (AllPoints[points[3]].Y - AllPoints[points[0]].Y) / 2));
+            points[4] = AllPoints.Count - 1;
+            if (OnCalculateDistance != null)
+            {
+                values[4] = OnCalculateDistance(AllPoints[points[4]].X, AllPoints[points[4]].Y);
+            }
         }
 
         /// <summary>
         /// splitValues 0, top, 1, right, 2, bottom, 3 left
         /// </summary>
-        /// <param name="splitValues"></param>
-        public void CreateSubCells(float[] splitValues)
+        
+        public void CreateSubCells()
         {
             SubCells = new DistanceCell2D[4];
 
             SubCells[TopLeft] = new DistanceCell2D();
             SubCells[TopLeft].SetPoint(TopLeft, points[TopLeft], values[TopLeft]);
-            SubCells[TopLeft].SetPoint(TopRight, new Point(points[Centre].X, points[TopLeft].Y), splitValues[0]);
+            SubCells[TopLeft].CalcPoint(TopRight, AllPoints[points[Centre]].X, AllPoints[points[TopLeft]].Y);
             SubCells[TopLeft].SetPoint(BottomRight, points[Centre], values[Centre]);
-            SubCells[TopLeft].SetPoint(BottomLeft, new Point(points[TopLeft].X, points[Centre].Y), splitValues[3]);
+            SubCells[TopLeft].CalcPoint(BottomLeft, AllPoints[points[TopLeft]].X, AllPoints[points[Centre]].Y);
+            SubCells[TopLeft].SetCentre();
 
             SubCells[TopRight] = new DistanceCell2D();
-            SubCells[TopRight].SetPoint(TopLeft, new Point(points[Centre].X, points[TopLeft].Y), splitValues[0]);
+            SubCells[TopRight].CalcPoint(TopLeft, AllPoints[points[Centre]].X, AllPoints[points[TopLeft]].Y);
             SubCells[TopRight].SetPoint(TopRight, points[TopRight], values[TopRight]);
-            SubCells[TopRight].SetPoint(BottomRight, new Point(points[TopRight].X, points[Centre].Y), splitValues[1]);
+            SubCells[TopRight].CalcPoint(BottomRight, AllPoints[points[TopRight]].X, AllPoints[points[Centre]].Y);
             SubCells[TopRight].SetPoint(BottomLeft, points[Centre], values[Centre]);
+            SubCells[TopRight].SetCentre();
+
+
 
             SubCells[BottomLeft] = new DistanceCell2D();
-            SubCells[BottomLeft].SetPoint(TopLeft, new Point(points[BottomLeft].X, points[Centre].Y), splitValues[3]);
-            SubCells[BottomLeft].SetPoint(TopRight, new Point(points[Centre].X, points[Centre].Y), values[Centre]);
-            SubCells[BottomLeft].SetPoint(BottomRight, new Point(points[Centre].X, points[BottomLeft].Y), splitValues[2]);
-            SubCells[BottomLeft].SetPoint(BottomLeft, new Point(points[BottomLeft].X, points[BottomLeft].Y), values[BottomLeft]);
+            SubCells[BottomLeft].CalcPoint(TopLeft, AllPoints[points[BottomLeft]].X, AllPoints[points[Centre]].Y);
+            SubCells[BottomLeft].SetPoint(TopRight, points[Centre], values[Centre]);
+            SubCells[BottomLeft].CalcPoint(BottomRight, AllPoints[points[Centre]].X, AllPoints[points[BottomLeft]].Y);
+            SubCells[BottomLeft].SetPoint(BottomLeft, points[BottomLeft], values[BottomLeft]);
+            SubCells[BottomLeft].SetCentre();
 
             SubCells[BottomRight] = new DistanceCell2D();
-            SubCells[BottomRight].SetPoint(TopLeft, new Point(points[Centre].X, points[Centre].Y), values[Centre]);
-            SubCells[BottomRight].SetPoint(TopRight, new Point(points[TopRight].X, points[Centre].Y), splitValues[1]);
-            SubCells[BottomRight].SetPoint(BottomRight, new Point(points[BottomRight].X, points[BottomRight].Y), values[BottomRight]);
-            SubCells[BottomRight].SetPoint(BottomLeft, new Point(points[Centre].X, points[BottomRight].Y), splitValues[2]);
+            SubCells[BottomRight].SetPoint(TopLeft, points[Centre], values[Centre]);
+            SubCells[BottomRight].CalcPoint(TopRight, AllPoints[points[TopRight]].X, AllPoints[points[Centre]].Y);
+            SubCells[BottomRight].SetPoint(BottomRight, points[BottomRight], values[BottomRight]);
+            SubCells[BottomRight].CalcPoint(BottomLeft, AllPoints[points[Centre]].X, AllPoints[points[BottomRight]].Y);
+            SubCells[BottomRight].SetCentre();
+
         }
 
         public void Dump(string indent = "")
         {
             Debug($"{indent}=====");
-            Debug($"{indent}Tl {points[TopLeft].X},{points[TopLeft].Y}={values[TopLeft]}  TR {points[TopRight].X},{points[TopRight].Y}={values[TopRight]} ");
-            Debug($"{indent}Ce {points[Centre].X},{points[Centre].Y}={values[Centre]} ");
-            Debug($"{indent}BL {points[BottomLeft].X},{points[BottomLeft].Y}={values[BottomLeft]}  BR {points[BottomRight].X},{points[BottomRight].Y}={values[BottomRight]} ");
+            Debug($"{indent}Tl {AllPoints[points[TopLeft]].X},{AllPoints[points[TopLeft]].Y}={values[TopLeft]}  TR {AllPoints[points[TopRight]].X},{AllPoints[points[TopRight]].Y}={values[TopRight]} ");
+            Debug($"{indent}Ce {AllPoints[points[Centre]].X},{AllPoints[points[Centre]].Y}={values[Centre]} ");
+            Debug($"{indent}BL {AllPoints[points[BottomLeft]].X},{AllPoints[points[BottomLeft]].Y}={values[BottomLeft]}  BR {AllPoints[points[BottomRight]].X},{AllPoints[points[BottomRight]].Y}={values[BottomRight]} ");
             if (SubCells != null)
             {
                 SubCells[TopLeft].Dump(indent + " ");
@@ -94,12 +127,41 @@ namespace Barnacle.Dialogs
             System.Diagnostics.Debug.WriteLine($" {caller}: {txt}");
         }
 
-        internal void CreateSubCells(int cellId, float[] testVals)
+        internal void CreateSubCells(int cellId)
         {
             if (SubCells != null)
             {
-                SubCells[cellId].CreateSubCells(testVals);
+                SubCells[cellId].CreateSubCells();
             }
+        }
+
+        internal double Size()
+        {
+            /*
+                System.Drawing.PointF p1 = AllPoints[points[TopLeft]];
+                System.Drawing.PointF p2 = AllPoints[points[BottomRight]];
+
+                double res = Math.Sqrt( (p1.X - p2.X) * (p1.X - p2.X) +
+                                        (p1.Y - p2.Y) * (p1.Y - p2.Y));
+
+                //Debug($"p1 {p1.X},{p1.Y} p2 {p2.X},{p2.Y} res {res}");
+                return res;
+                */
+            return AllPoints[points[BottomRight]].X - AllPoints[points[TopLeft]].X;
+        }
+
+        internal void AdjustValues(float th)
+        {
+            values[0] -= th;
+            values[1] -= th;
+            values[2] -= th;
+            values[3] -= th;
+            values[4] -= th;
+            SubCells[0].AdjustValues(th);
+            SubCells[1].AdjustValues(th);
+            SubCells[2].AdjustValues(th);
+            SubCells[3].AdjustValues(th);
+
         }
     }
 }

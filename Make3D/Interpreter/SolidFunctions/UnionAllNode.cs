@@ -55,10 +55,13 @@ namespace ScriptLanguage
                     }
 
                     Script.ResultArtefacts.Clear();
-                    Script.ResultArtefacts.Add(leftie);
+                    Script.NextObjectId = 0;
+                    int id = Script.NextObjectId;
+                    Script.ResultArtefacts[id] = leftie;
+                    
                     leftie.CalcScale(false);
                     leftie.Remesh();
-                    ExecutionStack.Instance().PushSolid(0);
+                    ExecutionStack.Instance().PushSolid(id);
                 }
                 else
                 {

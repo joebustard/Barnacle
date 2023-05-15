@@ -156,7 +156,7 @@ namespace CSGLib
             {
                 if (i % 100 == 0)
                 {
-                    BooleanModeller.ReportProgress(v + $" {i} of {NumFaces}", 0, progress);
+                    BooleanModeller.ReportProgress(v + $" {i} of {NumFaces} {(i * 100) / NumFaces}%", 0, progress);
                 }
                 face = GetFace(i);
 
@@ -286,7 +286,7 @@ namespace CSGLib
                     {
                         if (progress != null)
                         {
-                            BooleanModeller.ReportProgress(v + $" {i} of {NumFaces}", 0, progress);
+                            BooleanModeller.ReportProgress(v + $" {i} of {NumFaces} {(i*100)/NumFaces}%", 0, progress);
                         }
                     }
                     //if object1 face bound and object2 bound overlap ...

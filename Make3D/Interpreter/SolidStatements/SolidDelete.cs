@@ -25,18 +25,21 @@ namespace ScriptLanguage
                         {
                             ReportStatement();
                             Log.Instance().AddEntry($"Run Time Error : {label} solid name incorrect");
+                            result = false;
                         }
                         else
                         {
-                            if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
+                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
                             {
-                                Script.ResultArtefacts[objectIndex] = null;
+                                Script.ResultArtefacts.Remove(objectIndex);
                                 GC.Collect();
                             }
+                            /* NOT an error to delet something which doesn't exist
                             else
                             {
                                 Log.Instance().AddEntry($"Run Time Error : {label} unknown solid");
                             }
+                            */
                         }
                     }
                 }
@@ -44,6 +47,7 @@ namespace ScriptLanguage
             catch (Exception ex)
             {
                 Log.Instance().AddEntry($"{label} : {ex.Message}");
+                result = false;
             }
             return result;
         }

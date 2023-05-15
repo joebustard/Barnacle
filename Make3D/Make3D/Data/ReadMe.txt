@@ -4,8 +4,12 @@ Fixed
   Small speed up in hole fixing.
 
 Changed
+ Font in slice dialog changed to fixed one, font size increased
+ Limpet script Delete Solid no longer gives run time error if solid has already been deleted.
+ Limpet Script Union(), Difference(), Intersection() now deletes the original objects
 
 Added
+ Percentage done added to csg progress reports.
 
 v1.0.3
 ===========
