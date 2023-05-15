@@ -122,6 +122,7 @@ namespace Barnacle.Dialogs
                 pathPoints.Clear();
                 foreach (Point p in points)
                 {
+                    /*
                     if (pathXSize > 0)
                     {
                         px = (p.X - mx) / pathXSize;
@@ -139,6 +140,9 @@ namespace Barnacle.Dialogs
                         py = 0.0;
                     }
                     pathPoints.Add(new Point(px, py));
+                    */
+
+                    pathPoints.Add(new Point(p.X, p.Y));
                 }
                 if (pathXSize > 0)
                 {
@@ -217,7 +221,9 @@ namespace Barnacle.Dialogs
             DialogResult = true;
             Close();
         }
-        private const double sizeLimit = 0.005;
+
+        private const double sizeLimit = 0.01;
+
         private void GenerateShape()
         {
             ClearShape();
@@ -228,12 +234,18 @@ namespace Barnacle.Dialogs
                 DistanceCell2D cell = new DistanceCell2D();
                 cell.InitialisePoints();
                 DistanceCell2D.OnCalculateDistance = CalculateDistance;
+                /*
                 cell.SetPoint(DistanceCell2D.TopLeft, -0.6F, 0.6F, CalculateDistance(-0.6F, 0.6F));
                 cell.SetPoint(DistanceCell2D.TopRight, 0.6F, 0.6F, CalculateDistance(0.6F, 0.6F));
                 cell.SetPoint(DistanceCell2D.BottomLeft, -0.6F, -0.6F, CalculateDistance(-0.6F, -0.6F));
-                cell.SetPoint(DistanceCell2D.BottomRight,0.6F, -0.6F, CalculateDistance(0.6F, -0.6F));
+                cell.SetPoint(DistanceCell2D.BottomRight, 0.6F, -0.6F, CalculateDistance(0.6F, -0.6F));
+                */
+                cell.SetPoint(DistanceCell2D.TopLeft, (float)tlx, (float)tly, CalculateDistance((float)tlx, (float)tly));
+                cell.SetPoint(DistanceCell2D.TopRight, (float)brx, (float)tly, CalculateDistance((float)brx, (float)tly));
+                cell.SetPoint(DistanceCell2D.BottomLeft, (float)tlx, (float)bry, CalculateDistance((float)tlx, (float)bry));
+                cell.SetPoint(DistanceCell2D.BottomRight, (float)brx, (float)bry, CalculateDistance((float)brx, (float)bry));
                 cell.SetCentre();
-              
+
                 cell.CreateSubCells();
                 cell.Dump();
                 List<DistanceCell2D> queue = new List<DistanceCell2D>();
@@ -242,11 +254,18 @@ namespace Barnacle.Dialogs
                 queue.Add(cell.SubCells[2]);
                 queue.Add(cell.SubCells[3]);
                 DateTime start = DateTime.Now;
-                while ( queue.Count > 0)
+                bool subdivide = false;
+                while (queue.Count > 0)
                 {
                     DistanceCell2D cn = queue[0];
                     queue.RemoveAt(0);
+                    subdivide = false;
                     if (cn.Size() > sizeLimit)
+                    {
+                        subdivide = true;
+                    }
+
+                    if (subdivide)
                     {
                         cn.CreateSubCells();
                         queue.Add(cn.SubCells[0]);
@@ -255,41 +274,43 @@ namespace Barnacle.Dialogs
                         queue.Add(cn.SubCells[3]);
                     }
                 }
-                float th = 0.025F;
+                float th = (float)(loftThickness * xRes);
+                if (pathXSize > pathYSize)
+                {
+                    th = (float)(loftThickness / pathXSize);
+                }
+                else
+                {
+                    th = (float)(loftThickness / pathYSize);
+                }
+                th = 1.0F;
                 cell.AdjustValues(th);
                 DateTime end = DateTime.Now;
                 TimeSpan dur = end - start;
                 Debug($"Duration {dur}");
-                CubeMarcher cm = new CubeMarcher();
-                GridCell gc = new GridCell();
+
                 List<Triangle> triangles = new List<Triangle>();
-                float dd = 0.025F;
-                Functions.SphereRadius = 0.5F;
-                for (float x = -0.6F; x <= 0.6; x += dd)
+                cell.GenerateWalls(triangles);
+
+                foreach (Triangle t in triangles)
                 {
-                    for (float y = -0.6F; y <= 0.6F; y += dd)
-                    {
-                        for (float z = -0.6F; z <= 0.6; z += dd)
-                        {
-                            gc.p[0] = new XYZ(x, y, z);
-
-                            gc.p[1] = new XYZ(x + dd, y, z);
-                            gc.p[2] = new XYZ(x + dd, y, z + dd);
-                            gc.p[3] = new XYZ(x, y, z + dd);
-
-                            gc.p[4] = new XYZ(x, y + dd, z);
-                            gc.p[5] = new XYZ(x + dd, y + dd, z);
-                            gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
-                            gc.p[7] = new XYZ(x, y + dd, z + dd);
-                        }
-                    }
+                    /*
+                    int p0 = AddVertice(t.p[0].x * pathXSize, -(t.p[0].y * loftHeight), t.p[0].z * pathYSize);
+                    int p1 = AddVertice(t.p[1].x * pathXSize, -(t.p[1].y * loftHeight), t.p[1].z * pathYSize);
+                    int p2 = AddVertice(t.p[2].x * pathXSize, -(t.p[2].y * loftHeight), t.p[2].z * pathYSize);
+*/
+                    int p0 = AddVertice(t.p[0].x, (t.p[0].y * loftHeight), t.p[0].z);
+                    int p1 = AddVertice(t.p[1].x, (t.p[1].y * loftHeight), t.p[1].z);
+                    int p2 = AddVertice(t.p[2].x, (t.p[2].y * loftHeight), t.p[2].z);
+                    Faces.Add(p0);
+                    Faces.Add(p1);
+                    Faces.Add(p2);
                 }
-                            CentreVertices();
+                CentreVertices();
                 cell = null;
                 GC.Collect();
             }
         }
-
 
         private float CalculateDistance(float x, float y)
         {
@@ -361,14 +382,12 @@ namespace Barnacle.Dialogs
             return (float)Math.Sqrt(dx * dx + dy * dy);
         }
 
-
-
-
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
 
-            LoftHeight = EditorParameters.GetDouble("LoftHeight", 1);
+            LoftHeight = EditorParameters.GetDouble("LoftHeight", 10);
+            LoftThickness = EditorParameters.GetDouble("LoftThickness", 5);
         }
 
         private void SaveEditorParmeters()
