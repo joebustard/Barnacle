@@ -26,9 +26,9 @@ namespace Barnacle.Dialogs
         private List<System.Windows.Point> displayPoints;
         private bool hollowShape;
         private bool largeTexture;
-        private bool lastCentre;
+
         private bool loaded;
-        private string loadedImageName;
+
         private OctTree octTree;
         private Point PathCentroid;
         private double plateWidth;
@@ -40,10 +40,9 @@ namespace Barnacle.Dialogs
         private double textureDepth;
         private bool texturedShape;
         private SortedList<string, string> textureFiles;
-        private int textureImageHeight;
-        private int textureImageWidth;
+
         private TextureManager textureManager;
-        private byte[,] textureMap;
+
         private bool tileTexture;
         private double wallWidth;
         private string warningText;
@@ -77,7 +76,7 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
             textureFiles = new SortedList<string, string>();
-            loadedImageName = "";
+
             selectedTexture = "";
             textureManager = TextureManager.Instance();
             textureManager.LoadTextureNames();
@@ -798,7 +797,7 @@ namespace Barnacle.Dialogs
                 {
                     tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
                 }
-                // generate side triangles so original points are already in list               
+                // generate side triangles so original points are already in list
                 clk = OrderAntiClockwise(tmp.ToArray());
                 tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
@@ -967,7 +966,7 @@ namespace Barnacle.Dialogs
 
                         vTextureResolution = shapeHeight / textureManager.PatternHeight;
 
-                        hTextureResolution = shapeWidth / (textureManager.PatternWidth );
+                        hTextureResolution = shapeWidth / (textureManager.PatternWidth);
 
                         // should check if the original rsolution is smaller, if so add an offset to shift the pattern up or round
                     }
@@ -1028,49 +1027,6 @@ namespace Barnacle.Dialogs
                     CloseEdge(lx, by, rx, ty, tmp, sz);
                     CentreVertices();
                 }
-            }
-        }
-
-        private byte GetTextureMask(double px, double py, double sz, bool tile)
-        {
-            if (!tile)
-            {
-                if (sz == 0.5)
-                {
-                    double xr = (textureImageWidth / xExtent);
-                    double yr = (textureImageHeight / yExtent);
-                    px = px * xr;
-                    py = py * yr;
-
-                    if (px >= 0 && px < textureImageWidth && py >= 0 && py < textureImageHeight)
-                    {
-                        return textureMap[(int)px, (int)py];
-                    }
-                    return (byte)0;
-                }
-                if (sz == 0.25)
-                {
-                    double xr = 2 * (textureImageWidth / xExtent);
-                    double yr = 2 * (textureImageHeight / yExtent);
-                    px = px * xr;
-                    py = py * yr;
-                    px = px - (textureImageWidth / 2);
-                    py = py - (textureImageHeight / 2);
-                    if (px >= 0 && px < textureImageWidth && py >= 0 && py < textureImageHeight)
-                    {
-                        return textureMap[(int)px, (int)py];
-                    }
-                    return (byte)0;
-                }
-                return (byte)0;
-            }
-            else
-            {
-                px = px / sz;
-                py = py / sz;
-                px = px % textureImageWidth;
-                py = py % textureImageHeight;
-                return textureMap[(int)px, (int)py];
             }
         }
 

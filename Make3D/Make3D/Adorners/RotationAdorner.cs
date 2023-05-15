@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
@@ -16,6 +17,14 @@ namespace Barnacle.Models.Adorners
         private Object3D xAxis;
         private Object3D yAxis;
         private Object3D zAxis;
+        private const double tbMargin = 10;
+        private const double textBoxHeight = 25;
+        private const double textBoxWidth = 50;
+
+        private Dictionary<string, Point3D> label3DOffsets;
+
+        private Dictionary<string, Control> thumbLabels;
+        private Dictionary<string, Point3D> labelLocations;
 
         public RotationAdorner(PolarCamera camera)
         {
@@ -26,6 +35,10 @@ namespace Barnacle.Models.Adorners
             sphere = null;
             selectedSphere = false;
             bounds = new Bounds3D();
+            labelLocations = new Dictionary<string, Point3D>();
+            label3DOffsets = new Dictionary<string, Point3D>();
+
+            thumbLabels = new Dictionary<string, Control>();
             NotificationManager.Subscribe("RotationAdorner", "ScaleRefresh", OnScaleRefresh);
         }
 
