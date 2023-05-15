@@ -336,7 +336,7 @@ namespace Barnacle.Views
 
         private bool RunScript(string fileName)
         {
-            List<Object3D> content = new List<Object3D>();
+            Dictionary<int, Object3D> content = new Dictionary<int,Object3D>();
             bool result = false;
             NotificationManager.Notify("Select", "clear");
             if (File.Exists(fileName))
@@ -354,7 +354,7 @@ namespace Barnacle.Views
                     }
                     else
                     {
-                        foreach (Object3D obj in content)
+                        foreach (Object3D obj in content.Values)
                         {
                             BaseViewModel.Document.Content.Add(obj);
                         }

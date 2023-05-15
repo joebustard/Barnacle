@@ -9,7 +9,6 @@ namespace MakerLib
 {
     public class PillMaker : MakerBase
     {
-
         private double flatLength;
         private double flatHeight;
         private double edge;
@@ -20,7 +19,8 @@ namespace MakerLib
         private double halfW;
         private int edgeDivs;
         private const double halfPi = Math.PI / 2.0;
-        private Point[] trigPoints; 
+        private Point[] trigPoints;
+
         public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth)
         {
             this.flatLength = flatLength;
@@ -30,7 +30,7 @@ namespace MakerLib
             halfW = pillWidth / 2.0;
             frontX = edge;
             frontY = edge;
-            frontZ = halfW; 
+            frontZ = halfW;
             edgeDivs = 10;
         }
 
@@ -40,17 +40,16 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
-            trigPoints = new Point[edgeDivs+1];
-            double theta = 0;
-            double dt = halfPi / (edgeDivs-1);
-            double px;
-            double py;
+            trigPoints = new Point[edgeDivs + 1];
+            double theta;
+            double dt = halfPi / (edgeDivs - 1);
+
             for (int i = 0; i < edgeDivs; i++)
             {
                 theta = (dt * i);
                 trigPoints[i] = new Point(Math.Sin(theta), Math.Cos(theta));
             }
-          
+
             MakeFrontFlat();
             MakeBackFlat();
 
@@ -65,40 +64,42 @@ namespace MakerLib
 
             MakeFrontBottom();
             MakeBackBottom();
-            
-            MakeFrontTopRightCorner();            
+
+            MakeFrontTopRightCorner();
             MakeBackTopRightCorner();
-            
-            MakeFrontTopLeftCorner();            
+
+            MakeFrontTopLeftCorner();
             MakeBackTopLeftCorner();
-            
+
             MakeFrontBottomRightCorner();
             MakeBackBottomRightCorner();
-
 
             MakeFrontBottomLeftCorner();
             MakeBackBottomLeftCorner();
         }
+
         private void MakeBackBottomLeftCorner()
         {
             double cx = frontX;
             double cy = frontY;
             double cz = 0;
 
-            MakeCorner(Math.PI, 0, cx, cy, cz,true);
+            MakeCorner(Math.PI, 0, cx, cy, cz, true);
         }
+
         private void MakeFrontBottomLeftCorner()
         {
-            double cx = frontX ;
+            double cx = frontX;
             double cy = frontY;
             double cz = 0;
 
-            MakeCorner(-halfPi, 0, cx, cy, cz,true);
+            MakeCorner(-halfPi, 0, cx, cy, cz, true);
         }
+
         private void MakeFrontBottomRightCorner()
         {
             double cx = frontX + flatLength;
-            double cy = frontY ;
+            double cy = frontY;
             double cz = 0;
 
             MakeCorner(0, -halfPi, cx, cy, cz);
@@ -112,9 +113,9 @@ namespace MakerLib
 
             MakeCorner(halfPi, -halfPi, cx, cy, cz);
         }
-        private Point3D SpherePoint(double cx,double cy, double cz, double theta, double phi, double r1, double r2)
-        {
 
+        private Point3D SpherePoint(double cx, double cy, double cz, double theta, double phi, double r1, double r2)
+        {
             double px = cx + r1 * Math.Sin(theta) * Math.Cos(phi);
             double py = cy + r1 * Math.Sin(theta) * Math.Sin(phi);
             double pz = cz + r2 * Math.Cos(theta);
@@ -124,7 +125,7 @@ namespace MakerLib
         private void MakeFrontTopLeftCorner()
         {
             double cx = frontX;
-            double cy = frontY+flatHeight;
+            double cy = frontY + flatHeight;
             double cz = 0;
 
             MakeCorner(0, halfPi, cx, cy, cz);
@@ -138,13 +139,14 @@ namespace MakerLib
 
             MakeCorner(halfPi, halfPi, cx, cy, cz);
         }
+
         private void MakeFrontTopRightCorner()
         {
             double cx = frontX + flatLength;
             double cy = frontY + flatHeight;
             double cz = 0;
 
-            MakeCorner(0,0,cx,cy,cz);  
+            MakeCorner(0, 0, cx, cy, cz);
         }
 
         private void MakeBackTopRightCorner()
@@ -156,7 +158,7 @@ namespace MakerLib
             MakeCorner(halfPi, 0, cx, cy, cz);
         }
 
-        private void MakeCorner(double toff, double poff, double cx, double cy, double cz, bool invert= false)
+        private void MakeCorner(double toff, double poff, double cx, double cy, double cz, bool invert = false)
         {
             double d = halfPi / (edgeDivs - 1);
             double theta;
@@ -167,10 +169,10 @@ namespace MakerLib
             Point3D p3;
             for (int i = 0; i < edgeDivs - 1; i++)
             {
-                theta = toff+(d * i);
+                theta = toff + (d * i);
                 for (int j = 0; j < edgeDivs - 1; j++)
                 {
-                    phi = poff+(d * j);
+                    phi = poff + (d * j);
                     p0 = SpherePoint(cx, cy, cz, theta, phi, edge, halfW);
                     p1 = SpherePoint(cx, cy, cz, theta + d, phi, edge, halfW);
                     p2 = SpherePoint(cx, cy, cz, theta + d, phi + d, edge, halfW);
@@ -191,7 +193,6 @@ namespace MakerLib
                         AddFace(v0, v2, v3);
                     }
                 }
-
             }
         }
 
@@ -199,7 +200,7 @@ namespace MakerLib
         {
             double lx = frontX;
             double rx = frontX + flatLength;
-            double ly = frontY ;
+            double ly = frontY;
             double tz = frontZ;
             for (int i = 0; i < edgeDivs - 1; i++)
             {
@@ -214,7 +215,7 @@ namespace MakerLib
                 int p2 = AddVertice(rx, py2, pz2);
                 int p3 = AddVertice(lx, py2, pz2);
                 AddFace(p0, p2, p1);
-                AddFace(p0, p3  , p2);
+                AddFace(p0, p3, p2);
             }
         }
 
@@ -263,6 +264,7 @@ namespace MakerLib
                 AddFace(p0, p2, p3);
             }
         }
+
         private void MakeBackTop()
         {
             double lx = frontX;
@@ -285,9 +287,9 @@ namespace MakerLib
                 AddFace(p0, p3, p2);
             }
         }
+
         private void MakeFrontLeft()
         {
-           
             double ty = frontY + flatHeight;
             double tz = frontZ;
             for (int i = 0; i < edgeDivs - 1; i++)
@@ -295,7 +297,7 @@ namespace MakerLib
                 double px1 = frontX - trigPoints[i].X * edge;
                 double pz1 = trigPoints[i].Y * halfW;
 
-                double px2 = frontX -  trigPoints[i + 1].X * edge;
+                double px2 = frontX - trigPoints[i + 1].X * edge;
                 double pz2 = trigPoints[i + 1].Y * halfW;
 
                 int p0 = AddVertice(px1, frontY, pz1);
@@ -309,7 +311,6 @@ namespace MakerLib
 
         private void MakeBackLeft()
         {
-
             double ty = frontY + flatHeight;
             double tz = -frontZ;
             for (int i = 0; i < edgeDivs - 1; i++)
@@ -328,18 +329,19 @@ namespace MakerLib
                 AddFace(p0, p2, p3);
             }
         }
+
         private void MakeFrontRight()
         {
             double rx = frontX + flatLength;
             double ty = frontY + flatHeight;
             double tz = frontZ;
-            for ( int i = 0; i < edgeDivs-1; i ++)
-           {
+            for (int i = 0; i < edgeDivs - 1; i++)
+            {
                 double px1 = rx + trigPoints[i].X * edge;
                 double pz1 = trigPoints[i].Y * halfW;
 
-                double px2 = rx + trigPoints[i+1].X * edge;
-                double pz2 =  trigPoints[i+1].Y * halfW;
+                double px2 = rx + trigPoints[i + 1].X * edge;
+                double pz2 = trigPoints[i + 1].Y * halfW;
 
                 int p0 = AddVertice(px1, frontY, pz1);
                 int p1 = AddVertice(px2, frontY, pz2);
@@ -358,10 +360,10 @@ namespace MakerLib
             for (int i = 0; i < edgeDivs - 1; i++)
             {
                 double px1 = rx + trigPoints[i].X * edge;
-                double pz1 = -trigPoints[i].Y * halfW ;
+                double pz1 = -trigPoints[i].Y * halfW;
 
-                double px2 = rx + trigPoints[i + 1].X * edge ;
-                double pz2 = -trigPoints[i + 1].Y * halfW ;
+                double px2 = rx + trigPoints[i + 1].X * edge;
+                double pz2 = -trigPoints[i + 1].Y * halfW;
 
                 int p0 = AddVertice(px1, frontY, pz1);
                 int p1 = AddVertice(px2, frontY, pz2);
@@ -371,11 +373,12 @@ namespace MakerLib
                 AddFace(p0, p3, p2);
             }
         }
+
         private void MakeFrontFlat()
         {
             int p0 = AddVertice(frontX, frontY, frontZ);
             int p1 = AddVertice(frontX + flatLength, frontY, frontZ);
-            int p2 = AddVertice(frontX + flatLength, frontY+flatHeight, frontZ);
+            int p2 = AddVertice(frontX + flatLength, frontY + flatHeight, frontZ);
             int p3 = AddVertice(frontX, frontY + flatHeight, frontZ);
 
             Faces.Add(p0);

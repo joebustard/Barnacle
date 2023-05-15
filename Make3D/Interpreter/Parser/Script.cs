@@ -10,17 +10,20 @@ namespace ScriptLanguage
         public static string PartsLibraryPath = "";
         private ParseTreeNode parseTree;
         //   public static MdiChildForm theForm;
-
+        private static int nextObjectId;
+        public static int NextObjectId { get { return nextObjectId++; } set { nextObjectId = value; } }
         // Instance constructor
         public Script()
         {
             parseTree = null;
-            ResultArtefacts = new List<Object3D>();
+            //ResultArtefacts = new List<Object3D>();
+            ResultArtefacts = new Dictionary<int, Object3D>();
         }
 
         // This is used a generic way of returning objects or data created when the script is
         // run.
-        public static List<Object3D> ResultArtefacts
+        //public static List<Object3D> ResultArtefacts
+        public static Dictionary<int, Object3D> ResultArtefacts
         {
             get;
             set;
@@ -30,13 +33,14 @@ namespace ScriptLanguage
         {
             ExecutionStack.Instance().Clear();
             ResultArtefacts.Clear();
-
+            nextObjectId = 0;
             bool result = false;
             if (parseTree != null)
             {
                 ParseTreeNode.continueRunning = true;
                 result = parseTree.Execute();
-                foreach (Object3D ob in ResultArtefacts)
+                //foreach (Object3D ob in ResultArtefacts)
+                foreach (Object3D ob in ResultArtefacts.Values)
                 {
                     if (ob != null)
                     {
@@ -59,7 +63,7 @@ namespace ScriptLanguage
             PartsLibraryPath = v;
         }
 
-        public void SetResultsContent(List<Object3D> content)
+        public void SetResultsContent(Dictionary<int, Object3D> content)
         {
             ResultArtefacts = content;
         }

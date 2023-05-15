@@ -28,7 +28,7 @@ namespace ScriptLanguage
                         }
                         else
                         {
-                            if (objectIndex >= 0 && objectIndex <= Script.ResultArtefacts.Count && Script.ResultArtefacts[objectIndex] != null)
+                            if (Script.ResultArtefacts.ContainsKey(objectIndex))
                             {
                                 Script.ResultArtefacts[objectIndex].MoveToFloor();
                                 Script.ResultArtefacts[objectIndex].Remesh();

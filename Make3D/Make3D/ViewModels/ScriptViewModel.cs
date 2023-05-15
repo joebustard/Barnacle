@@ -452,7 +452,7 @@ program ""Script Name""
 
             if (res.Status)
             {
-                foreach (Object3D ob in res.Artefacts)
+                foreach (Object3D ob in res.Artefacts.Values)
                 {
                     if (ob != null)
                     {
@@ -473,7 +473,7 @@ program ""Script Name""
         private struct RunRes
         {
             public bool Status { get; set; }
-            public List<Object3D> Artefacts { get; set; }
+            public Dictionary<int,Object3D> Artefacts { get; set; }
             public List<ScriptLanguage.LogEntry> LogEntrys { get; set; }
         }
 
@@ -482,7 +482,7 @@ program ""Script Name""
             return Task.Run(() =>
                 {
                     RunRes result = new RunRes();
-                    result.Artefacts = new List<Object3D>();
+                    result.Artefacts = new Dictionary<int,Object3D>();
                     result.LogEntrys = new List<ScriptLanguage.LogEntry>();
                     script.SetResultsContent(result.Artefacts);
                     script.SetCancelationToken(cancellationToken);

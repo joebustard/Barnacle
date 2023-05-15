@@ -21,7 +21,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="10*" />
-            <ColumnDefinition Width="30*" />
+            <ColumnDefinition Width="50*" />
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="10*" />
             <ColumnDefinition Width="10*" />
@@ -38,7 +38,7 @@
         <Button Grid.Column="4" Grid.Row="2" Margin="2,2,2,4" Content="New" Click="NewProfileClicked" />
         <Button Grid.Column="5" Grid.Row="2" Margin="2,2,2,4" Content="Del" Click="DelProfileClicked" ToolTip="Delete Current Profile" IsEnabled="{Binding IsEditProfileEnabled}" />
         <Label Grid.Column="1" Grid.Row="4" Margin="2,2,2,10" Content="Status" VerticalAlignment="Center" />
-        <TextBox x:Name="ResultsBox" Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="3" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top"></TextBox>
+        <TextBox x:Name="ResultsBox" Grid.Column="2" Grid.Row="4" Grid.RowSpan="2" Grid.ColumnSpan="4" IsReadOnly="True" AcceptsReturn="True" Text="{Binding ResultsText}" VerticalContentAlignment="Top" FontFamily="Courier New" FontSize="16" FontWeight="Bold"></TextBox>
 
         <Button Grid.Column="3" Grid.Row="6" IsEnabled="{Binding CanSlice}" Content="Slice" Margin="2,4,0,0" Click="SliceClicked" />
 

@@ -227,14 +227,14 @@ namespace Barnacle.Dialogs.Slice
             }
         }
 
-        private void AppendResults(string s,bool crlf=true)
+        private void AppendResults(string s, bool crlf = true)
         {
             Application.Current.Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    ResultsText += s ;
-                    if ( crlf )
+                    ResultsText += s;
+                    if (crlf)
                     {
                         ResultsText += "\n";
                     }
@@ -539,7 +539,7 @@ M84 ; Disable stepper motors
             string logPath = Path.GetTempPath() + modelName + "_slicelog.log";
             string prf = selectedUserProfile;
 
-            AppendResults(modelName+", ", false);
+            AppendResults(modelName.PadRight(16) + ", ", false);
             string curaPrinterName;
             string curaExtruderName;
             BarnaclePrinter bp = printerManager.FindPrinter(selectedPrinter);
@@ -561,18 +561,19 @@ M84 ; Disable stepper motors
             if (sliceRes.Result)
             {
                 int exportedParts = 0;
-                foreach ( Object3D obj in exportDoc.Content)
+                foreach (Object3D obj in exportDoc.Content)
                 {
-                if ( obj.Exportable)
-                {
+                    if (obj.Exportable)
+                    {
 
                         exportedParts++;
                     }
                 }
-                AppendResults($"{exportedParts}, {sliceRes.Hours}:{sliceRes.Minutes}:{sliceRes.Seconds}, {sliceRes.Filament}");                
+                string timeFormat = sliceRes.Hours.ToString("00") + ":" + sliceRes.Minutes.ToString("00") + ":" + sliceRes.Seconds.ToString("00");
+                AppendResults($"{exportedParts.ToString().PadRight(3)}, {timeFormat}, {sliceRes.Filament}");
             }
             else
-            {                
+            {
                 AppendResults(" FAILED View Logfile  at " + logPath);
             }
         }
@@ -580,7 +581,7 @@ M84 ; Disable stepper motors
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
-            
+
             printerManager = new BarnaclePrinterManager();
             BarnaclePrinterNames = printerManager.GetPrinterNames();
             if (SlicerPath != null && SlicerPath != "")

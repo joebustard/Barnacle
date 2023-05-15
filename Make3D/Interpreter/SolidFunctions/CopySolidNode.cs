@@ -37,8 +37,9 @@ namespace ScriptLanguage
                         clone.CalcScale(false);
                         clone.Remesh();
 
-                        Script.ResultArtefacts.Add(clone);
-                        ExecutionStack.Instance().PushSolid(Script.ResultArtefacts.Count - 1);
+                        int id = Script.NextObjectId;
+                        Script.ResultArtefacts[id] = clone;
+                        ExecutionStack.Instance().PushSolid(id); 
                         result = true;
                     }
                     else
