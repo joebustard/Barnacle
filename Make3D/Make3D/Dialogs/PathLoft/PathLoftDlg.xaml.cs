@@ -96,27 +96,27 @@ namespace Barnacle.Dialogs
 
         private double pathXSize;
         private double pathYSize;
-        private double tlx = 0;
-        private double tly = 0;
-        private double brx = 0;
-        private double bry = 0;
+        private double trx = 0;
+        private double triy = 0;
+        private double blx = 0;
+        private double bly = 0;
         private double xRes = 0.25;
         private double yRes = 0.25;
 
         private void PathPointsChanged(List<Point> points)
         {
-            tlx = 0;
-            tly = 0;
-            brx = 0;
-            bry = 0;
-            Get2DBounds(points, ref tlx, ref tly, ref brx, ref bry);
-            if (tlx < double.MaxValue)
+            trx = 0;
+            triy = 0;
+            blx = 0;
+            bly = 0;
+            Get2DBounds(points, ref blx, ref bly, ref trx, ref triy);
+            if (trx < double.MaxValue)
             {
-                pathXSize = brx - tlx;
-                pathYSize = bry - tly;
+                pathXSize = blx - trx;
+                pathYSize = bly - triy;
 
-                double mx = tlx + pathXSize / 2.0;
-                double my = tly + pathYSize / 2.0;
+                double mx = trx + pathXSize / 2.0;
+                double my = triy + pathYSize / 2.0;
                 double px;
                 double py;
                 pathPoints.Clear();
@@ -222,7 +222,7 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private const double sizeLimit = 0.01;
+        private const double sizeLimit = 0.1;
 
         private void GenerateShape()
         {
@@ -240,10 +240,10 @@ namespace Barnacle.Dialogs
                 cell.SetPoint(DistanceCell2D.BottomLeft, -0.6F, -0.6F, CalculateDistance(-0.6F, -0.6F));
                 cell.SetPoint(DistanceCell2D.BottomRight, 0.6F, -0.6F, CalculateDistance(0.6F, -0.6F));
                 */
-                cell.SetPoint(DistanceCell2D.TopLeft, (float)tlx, (float)tly, CalculateDistance((float)tlx, (float)tly));
-                cell.SetPoint(DistanceCell2D.TopRight, (float)brx, (float)tly, CalculateDistance((float)brx, (float)tly));
-                cell.SetPoint(DistanceCell2D.BottomLeft, (float)tlx, (float)bry, CalculateDistance((float)tlx, (float)bry));
-                cell.SetPoint(DistanceCell2D.BottomRight, (float)brx, (float)bry, CalculateDistance((float)brx, (float)bry));
+                cell.SetPoint(DistanceCell2D.TopLeft, (float)blx - 1, (float)triy + 1, CalculateDistance((float)blx - 1, (float)triy + 1));
+                cell.SetPoint(DistanceCell2D.TopRight, (float)trx + 1, (float)triy + 1, CalculateDistance((float)trx + 1, (float)triy + 1));
+                cell.SetPoint(DistanceCell2D.BottomLeft, (float)blx - 1, (float)bly - 1, CalculateDistance((float)blx - 1, (float)bly - 1));
+                cell.SetPoint(DistanceCell2D.BottomRight, (float)trx + 1, (float)bly - 1, CalculateDistance((float)trx + 1, (float)bly - 1));
                 cell.SetCentre();
 
                 cell.CreateSubCells();
@@ -303,8 +303,8 @@ namespace Barnacle.Dialogs
                     int p1 = AddVertice(t.p[1].x, (t.p[1].y * loftHeight), t.p[1].z);
                     int p2 = AddVertice(t.p[2].x, (t.p[2].y * loftHeight), t.p[2].z);
                     Faces.Add(p0);
-                    Faces.Add(p1);
                     Faces.Add(p2);
+                    Faces.Add(p1);
                 }
                 CentreVertices();
                 cell = null;
