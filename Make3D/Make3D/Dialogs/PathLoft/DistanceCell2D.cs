@@ -1,5 +1,4 @@
-﻿using asdflibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -9,12 +8,11 @@ using System.Windows;
 
 namespace Barnacle.Dialogs
 {
+
     internal class DistanceCell2D
     {
         public static List<System.Drawing.PointF> AllPoints;
-
         public delegate float CalculateDistance(float x, float y);
-
         public int[] points;
         public float[] values;
         public DistanceCell2D[] SubCells;
@@ -25,23 +23,17 @@ namespace Barnacle.Dialogs
         public const int BottomRight = 3;
         public const int Centre = 4;
         public static CalculateDistance OnCalculateDistance = null;
-        private static CubeMarcher cubeMarcher;
-        private static GridCell gc = new GridCell();
-
         public DistanceCell2D()
         {
             points = new int[5];
             values = new float[5];
             SubCells = null;
+            
         }
-
         public void InitialisePoints()
         {
             AllPoints = new List<System.Drawing.PointF>();
-            cubeMarcher = new CubeMarcher();
-            gc = new GridCell();
         }
-
         public void SetPoint(int loc, float x, float y, float v)
         {
             int l = (int)loc;
@@ -55,9 +47,8 @@ namespace Barnacle.Dialogs
             int l = (int)loc;
             AllPoints.Add(new System.Drawing.PointF(x, y));
             points[l] = AllPoints.Count - 1;
-            values[l] = OnCalculateDistance(x, y);
+            values[l] = OnCalculateDistance(x,y);
         }
-
         public void SetPoint(int loc, int pointIndex, float v)
         {
             int l = (int)loc;
@@ -79,7 +70,7 @@ namespace Barnacle.Dialogs
         /// <summary>
         /// splitValues 0, top, 1, right, 2, bottom, 3 left
         /// </summary>
-
+        
         public void CreateSubCells()
         {
             SubCells = new DistanceCell2D[4];
@@ -98,6 +89,8 @@ namespace Barnacle.Dialogs
             SubCells[TopRight].SetPoint(BottomLeft, points[Centre], values[Centre]);
             SubCells[TopRight].SetCentre();
 
+
+
             SubCells[BottomLeft] = new DistanceCell2D();
             SubCells[BottomLeft].CalcPoint(TopLeft, AllPoints[points[BottomLeft]].X, AllPoints[points[Centre]].Y);
             SubCells[BottomLeft].SetPoint(TopRight, points[Centre], values[Centre]);
@@ -111,6 +104,7 @@ namespace Barnacle.Dialogs
             SubCells[BottomRight].SetPoint(BottomRight, points[BottomRight], values[BottomRight]);
             SubCells[BottomRight].CalcPoint(BottomLeft, AllPoints[points[Centre]].X, AllPoints[points[BottomRight]].Y);
             SubCells[BottomRight].SetCentre();
+
         }
 
         public void Dump(string indent = "")
@@ -163,49 +157,11 @@ namespace Barnacle.Dialogs
             values[2] -= th;
             values[3] -= th;
             values[4] -= th;
-            if (SubCells != null && SubCells.GetLength(0) == 4)
-            {
-                SubCells[0].AdjustValues(th);
-                SubCells[1].AdjustValues(th);
-                SubCells[2].AdjustValues(th);
-                SubCells[3].AdjustValues(th);
-            }
-        }
+            SubCells[0].AdjustValues(th);
+            SubCells[1].AdjustValues(th);
+            SubCells[2].AdjustValues(th);
+            SubCells[3].AdjustValues(th);
 
-        public void GenerateWalls(List<Triangle> triangles)
-        {
-            if (SubCells != null && SubCells.GetLength(0) > 0)
-            {
-                SubCells[0].GenerateWalls(triangles);
-                SubCells[1].GenerateWalls(triangles);
-                SubCells[2].GenerateWalls(triangles);
-                SubCells[3].GenerateWalls(triangles);
-            }
-            else
-            {
-                System.Drawing.PointF p1 = AllPoints[points[TopLeft]];
-                System.Drawing.PointF p2 = AllPoints[points[BottomRight]];
-                gc.p[0] = new XYZ(p1.X, -0.6, p1.Y);
-                gc.p[1] = new XYZ(p2.X, -0.6, p1.Y);
-                gc.p[2] = new XYZ(p2.X, -0.6, p2.Y);
-                gc.p[3] = new XYZ(p1.X, -0.6, p2.Y);
-
-                gc.val[0] = values[TopLeft];
-                gc.val[1] = values[TopRight];
-                gc.val[2] = values[BottomRight];
-                gc.val[3] = values[BottomLeft];
-
-                gc.p[4] = new XYZ(p1.X, 0.6, p1.Y);
-                gc.p[5] = new XYZ(p2.X, 0.6, p1.Y);
-                gc.p[6] = new XYZ(p2.X, 0.6, p2.Y);
-                gc.p[7] = new XYZ(p1.X, 0.6, p2.Y);
-
-                gc.val[4] = values[TopLeft];
-                gc.val[5] = values[TopRight];
-                gc.val[6] = values[BottomRight];
-                gc.val[7] = values[BottomLeft];
-                cubeMarcher.Polygonise(gc, 0.0, triangles);
-            }
         }
     }
 }

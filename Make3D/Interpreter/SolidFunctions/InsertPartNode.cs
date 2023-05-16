@@ -46,7 +46,7 @@ namespace ScriptLanguage
                                 clone.Remesh();
                                 int id = Script.NextObjectId;
                                 Script.ResultArtefacts[id] = clone;
-                                ExecutionStack.Instance().PushSolid(id);
+                                ExecutionStack.Instance().PushSolid(id); 
                                 result = true;
                             }
                             else
@@ -119,7 +119,7 @@ namespace ScriptLanguage
             }
             catch (Exception ex)
             {
-                Log.Instance().AddEntry($"InsertPart : failed to load part: " + ex.Message);
+                Log.Instance().AddEntry($"InsertPart : failed to load part");
             }
             return res;
         }
