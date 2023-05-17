@@ -306,6 +306,15 @@ namespace Barnacle.Dialogs
                     Faces.Add(p2);
                     Faces.Add(p1);
                 }
+                foreach (Triangle t in triangles)
+                {
+                    if (Math.Abs(t.p[0].y) < 0.0001)
+                    {
+                        if (Math.Abs(t.p[2].y) < 0.0001)
+                        {
+                        }
+                    }
+                }
                 CentreVertices();
                 cell = null;
                 GC.Collect();

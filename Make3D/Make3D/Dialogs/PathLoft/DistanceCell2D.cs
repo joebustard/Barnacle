@@ -185,26 +185,48 @@ namespace Barnacle.Dialogs
             {
                 System.Drawing.PointF p1 = AllPoints[points[TopLeft]];
                 System.Drawing.PointF p2 = AllPoints[points[BottomRight]];
-                gc.p[0] = new XYZ(p1.X, -0.6, p1.Y);
-                gc.p[1] = new XYZ(p2.X, -0.6, p1.Y);
-                gc.p[2] = new XYZ(p2.X, -0.6, p2.Y);
-                gc.p[3] = new XYZ(p1.X, -0.6, p2.Y);
+                gc.p[0] = new XYZ(p1.X, 0, p1.Y);
+                gc.p[1] = new XYZ(p2.X, 0, p1.Y);
+                gc.p[2] = new XYZ(p2.X, 0, p2.Y);
+                gc.p[3] = new XYZ(p1.X, 0, p2.Y);
 
                 gc.val[0] = values[TopLeft];
                 gc.val[1] = values[TopRight];
                 gc.val[2] = values[BottomRight];
                 gc.val[3] = values[BottomLeft];
 
-                gc.p[4] = new XYZ(p1.X, 0.6, p1.Y);
-                gc.p[5] = new XYZ(p2.X, 0.6, p1.Y);
-                gc.p[6] = new XYZ(p2.X, 0.6, p2.Y);
-                gc.p[7] = new XYZ(p1.X, 0.6, p2.Y);
+                gc.p[4] = new XYZ(p1.X, 1, p1.Y);
+                gc.p[5] = new XYZ(p2.X, 1, p1.Y);
+                gc.p[6] = new XYZ(p2.X, 1, p2.Y);
+                gc.p[7] = new XYZ(p1.X, 1, p2.Y);
 
                 gc.val[4] = values[TopLeft];
                 gc.val[5] = values[TopRight];
                 gc.val[6] = values[BottomRight];
                 gc.val[7] = values[BottomLeft];
                 cubeMarcher.Polygonise(gc, 0.0, triangles);
+                /*
+                gc.p[0] = new XYZ(p1.X, -0.1, p1.Y);
+                gc.p[1] = new XYZ(p2.X, -0.1, p1.Y);
+                gc.p[2] = new XYZ(p2.X, -0.1, p2.Y);
+                gc.p[3] = new XYZ(p1.X, -0.1, p2.Y);
+
+                gc.val[0] = values[TopLeft] + 0.1;
+                gc.val[1] = values[TopRight] + 0.1;
+                gc.val[2] = values[BottomRight] + 0.1;
+                gc.val[3] = values[BottomLeft] + 0.1;
+
+                gc.p[4] = new XYZ(p1.X, 0.1, p1.Y);
+                gc.p[5] = new XYZ(p2.X, 0.1, p1.Y);
+                gc.p[6] = new XYZ(p2.X, 0.1, p2.Y);
+                gc.p[7] = new XYZ(p1.X, 0.1, p2.Y);
+
+                gc.val[4] = values[TopLeft] + 0.1;
+                gc.val[5] = values[TopRight] + 0.1;
+                gc.val[6] = values[BottomRight] + 0.1;
+                gc.val[7] = values[BottomLeft] + 0.1;
+                cubeMarcher.Polygonise(gc, 0.0, triangles);
+                */
             }
         }
     }
