@@ -306,13 +306,81 @@ namespace Barnacle.Dialogs
                     Faces.Add(p2);
                     Faces.Add(p1);
                 }
+                List<PathEdge> pathEdges = new List<PathEdge>(); ;
                 foreach (Triangle t in triangles)
                 {
-                    if (Math.Abs(t.p[0].y) < 0.0001)
+                    Debug($"tri p0={t.p[0].x},{t.p[0].y},{t.p[0].z}  p1={t.p[1].x},{t.p[1].y},{t.p[1].z}    p2={t.p[2].x},{t.p[2].y},{t.p[2].z}");
+                    if ((Math.Abs(t.p[0].y) < 0.0001) && (Math.Abs(t.p[1].y) < 0.0001))
                     {
-                        if (Math.Abs(t.p[2].y) < 0.0001)
+                        PathEdge pe = new PathEdge(t.p[0], t.p[1]);
+                        pathEdges.Add(pe);
+                    }
+                    if ((Math.Abs(t.p[0].y) < 0.0001) && (Math.Abs(t.p[2].y) < 0.0001))
+                    {
+                        PathEdge pe = new PathEdge(t.p[0], t.p[2]);
+                        pathEdges.Add(pe);
+                    }
+                    if ((Math.Abs(t.p[1].y) < 0.0001) && (Math.Abs(t.p[2].y) < 0.0001))
+                    {
+                        PathEdge pe = new PathEdge(t.p[1], t.p[2]);
+                        pathEdges.Add(pe);
+                    }
+                }
+                List<System.Drawing.PointF> polyLine = new List<System.Drawing.PointF>();
+                polyLine.Add(pathEdges[0].P1);
+                polyLine.Add(pathEdges[0].P2);
+                pathEdges.RemoveAt(0);
+                bool done = false;
+                int pend = 0;
+                while (!done)
+                {
+                    int i = 0;
+                    bool match = false;
+                    while (i < pathEdges.Count && match == false)
+                    {
+                        // does the current edge start at the end of the poly
+                        if (pathEdges[i].StartEquals(polyLine[pend]))
                         {
+                            polyLine.Add(pathEdges[i].P2);
+                            match = true;
                         }
+                        else
+                        {
+                            // does the current edge end at the end of the poly
+                            // if so add it reverse
+                            if (pathEdges[i].EndEquals(polyLine[pend]))
+                            {
+                                polyLine.Add(pathEdges[i].P2);
+                                match = true;
+                            }
+
+                            // does the current edge end at the start of the poly
+                            if (pathEdges[i].EndEquals(polyLine[0]))
+                            {
+                                polyLine.Insert(0, pathEdges[i].P1);
+                                match = true;
+                            }
+                            else
+                            {
+                                // does the current edge start at the start of the poly
+                                // if so add it reverse
+                                if (pathEdges[i].StartEquals(polyLine[pend]))
+                                {
+                                    polyLine.Insert(0, pathEdges[i].P2);
+                                    match = true;
+                                }
+                            }
+                        }
+
+                        if (match)
+                        {
+                            pathEdges.RemoveAt(i);
+                        }
+                        i++;
+                    }
+                    if (pathEdges.Count == 0)
+                    {
+                        done = true;
                     }
                 }
                 CentreVertices();

@@ -123,6 +123,7 @@
       <DependentUpon>MultiImport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\PathLoft\DistanceCell2D.cs" />
+    <Compile Include="Dialogs\PathLoft\PathEdge.cs" />
     <Compile Include="Dialogs\PathLoft\PathLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\PieDlg\PieDlg.xaml.cs" />
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
