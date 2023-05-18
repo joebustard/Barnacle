@@ -17,6 +17,15 @@ namespace Barnacle.LineLib
             segs = new List<FlexiSegment>();
             points = new ObservableCollection<FlexiPoint>();
             closed = true;
+            openEndedPath = false;
+        }
+
+        private bool openEndedPath;
+
+        public bool OpenEndedPath
+        {
+            get { return openEndedPath; }
+            set { openEndedPath = value; }
         }
 
         public bool Closed
@@ -389,7 +398,7 @@ namespace Barnacle.LineLib
 
         public void ClosePath()
         {
-            if (segs.Count >= 2)
+            if (segs.Count >= 2 && openEndedPath == false)
             {
                 // create a separate segment that goes back to point zero
                 LineSegment sq = new LineSegment(points.Count - 1, 0);
@@ -621,9 +630,12 @@ namespace Barnacle.LineLib
                 // auto close
                 if (points[0].X != points[i - 1].X || points[0].Y != points[i - 1].Y)
                 {
-                    // create a separate segment that goes back to point zero
-                    LineSegment sq = new LineSegment(pnts.Count - 1, 0);
-                    segments.Add(sq);
+                    if (openEndedPath == false)
+                    {
+                        // create a separate segment that goes back to point zero
+                        LineSegment sq = new LineSegment(pnts.Count - 1, 0);
+                        segments.Add(sq);
+                    }
                 }
                 segs.Clear();
                 segs.AddRange(segments);

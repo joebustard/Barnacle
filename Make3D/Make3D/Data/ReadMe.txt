@@ -4,8 +4,11 @@ Fixed
   Small speed up in hole fixing.
 
 Changed
+   Fonts on slicer dialog results
 
 Added
+   Path Loft tool
+
 
 v1.0.3
 ===========

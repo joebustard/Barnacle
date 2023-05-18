@@ -53,7 +53,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private float tolerance = 0.0001F;
+        private float tolerance = 0.0000001F;
 
         public bool equals(System.Drawing.PointF a, System.Drawing.PointF b)
         {

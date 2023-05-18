@@ -462,7 +462,7 @@ namespace Barnacle.UserControls
             if (vm.MouseUp(e, position))
             {
                 UpdateDisplay();
-                NotifyPathPointsChanged();
+                //  NotifyPathPointsChanged();
             }
         }
 
@@ -696,6 +696,64 @@ namespace Barnacle.UserControls
             }
         }
 
+        private bool continuosPointsNotify;
+
+        public bool ContinuousPointsNotify
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.ContinuousPointsNotify;
+                }
+                else
+                {
+                    return continuosPointsNotify;
+                }
+            }
+
+            set
+            {
+                if (vm != null)
+                {
+                    vm.ContinuousPointsNotify = value;
+                }
+                else
+                {
+                    continuosPointsNotify = value;
+                }
+            }
+        }
+
+        private bool openEndedPath;
+
+        public bool OpenEndedPath
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.OpenEndedPath;
+                }
+                else
+                {
+                    return openEndedPath;
+                }
+            }
+
+            set
+            {
+                if (vm != null)
+                {
+                    vm.OpenEndedPath = value;
+                }
+                else
+                {
+                    openEndedPath = value;
+                }
+            }
+        }
+
         private Point fixedPolarGridCentre;
 
         public Point FixedPolarGridCentre
@@ -721,11 +779,13 @@ namespace Barnacle.UserControls
                     vm.SetFixedEnds(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
                     vm.FixedPolarGridCentre = fixedPolarGridCentre;
                     vm.FixedEndPath = fixedEndPath;
+                    vm.OpenEndedPath = openEndedPath;
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     ShowGridStatus();
                     vm.AbsolutePaths = absolutePaths;
                     vm.SetPath(pathText);
                     vm.DefaultImagePath = defaultImagePath;
+                    vm.ContinuousPointsNotify = continuosPointsNotify;
                     if (imagePath != null)
                     {
                         vm.LoadImage(imagePath);

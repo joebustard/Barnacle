@@ -60,6 +60,11 @@ namespace Barnacle.UserControls
             }
         }
 
+        public void SetOpenEnded(bool open)
+        {
+            flexiPath.OpenEndedPath = open;
+        }
+
         private bool showOrtho;
 
         private Visibility showWidth;
@@ -690,6 +695,22 @@ namespace Barnacle.UserControls
             polarGrid.CreateMarkers(ScreenDpi);
         }
 
+        public bool ContinuousPointsNotify { get; set; } = true;
+        private bool openEndedPath;
+
+        public bool OpenEndedPath
+        {
+            get { return openEndedPath; }
+            set
+            {
+                openEndedPath = value;
+                if (flexiPath != null)
+                {
+                    flexiPath.OpenEndedPath = openEndedPath;
+                }
+            }
+        }
+
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;
@@ -704,7 +725,10 @@ namespace Barnacle.UserControls
                 AddAnotherPointToPoly(position);
                 e.Handled = true;
                 updateRequired = true;
-                NotifyPropertyChanged("Points");
+                if (ContinuousPointsNotify)
+                {
+                    NotifyPropertyChanged("Points");
+                }
             }
             else
             {

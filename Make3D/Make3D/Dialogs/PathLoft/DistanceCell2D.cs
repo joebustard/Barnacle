@@ -1,4 +1,5 @@
 ﻿using asdflibrary;
+using Barnacle.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -228,6 +229,75 @@ namespace Barnacle.Dialogs
                 cubeMarcher.Polygonise(gc, 0.0, triangles);
                 */
             }
+        }
+
+        internal bool InterceptedBy(Point point1, Point point2)
+        {
+            bool intercept = false;
+            // if both points are to left of box, no intercept
+            if (point1.X < AllPoints[points[TopLeft]].X && point2.X < AllPoints[points[TopLeft]].X)
+            {
+                intercept = false;
+            }
+            else
+            if (point1.X > AllPoints[points[TopRight]].X && point2.X > AllPoints[points[TopRight]].X)
+            {
+                // both to right of box
+                intercept = false;
+            }
+            else
+            if (point1.Y > AllPoints[points[TopLeft]].Y && point2.Y > AllPoints[points[TopLeft]].Y)
+            {
+                intercept = false;
+            }
+            else
+            if (point1.Y < AllPoints[points[BottomLeft]].Y && point2.Y < AllPoints[points[BottomLeft]].Y)
+            {
+                intercept = false;
+            }
+            else
+            {
+                System.Drawing.PointF p1 = new System.Drawing.PointF((float)point1.X, (float)point1.Y);
+                System.Drawing.PointF p2 = new System.Drawing.PointF((float)point2.X, (float)point2.Y);
+                if (LineUtils.DoSegmentsIntersect(AllPoints[points[TopLeft]], AllPoints[points[TopRight]], p1, p2))
+                {
+                    intercept = true;
+                }
+                else
+                     if (LineUtils.DoSegmentsIntersect(AllPoints[points[BottomLeft]], AllPoints[points[BottomRight]], p1, p2))
+                {
+                    intercept = true;
+                }
+                else
+                     if (LineUtils.DoSegmentsIntersect(AllPoints[points[TopLeft]], AllPoints[points[BottomLeft]], p1, p2))
+                {
+                    intercept = true;
+                }
+                else
+                     if (LineUtils.DoSegmentsIntersect(AllPoints[points[TopRight]], AllPoints[points[BottomRight]], p1, p2))
+                {
+                    intercept = true;
+                }
+            }
+            return intercept;
+        }
+
+        internal bool Contains(double x, double y)
+        {
+            if ((float)x >= AllPoints[points[TopLeft]].X)
+            {
+                if ((float)x <= AllPoints[points[TopRight]].X)
+                {
+                    if ((float)y <= AllPoints[points[TopLeft]].Y)
+                    {
+                        if ((float)y >= AllPoints[points[BottomRight]].Y)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
 }
