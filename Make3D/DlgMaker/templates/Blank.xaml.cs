@@ -126,5 +126,17 @@ namespace Barnacle.Dialogs
 
             UpdateDisplay();
         }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            //SETDEFAULTS
+            loaded = true;
+        }
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
+        }
     }
 }

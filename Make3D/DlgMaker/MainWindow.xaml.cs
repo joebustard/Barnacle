@@ -1143,6 +1143,16 @@ public String <PName>ToolTip
             loadParams += GetLoadParams(p6Name, p6Type, p6Initial);
             loadParams += GetLoadParams(p7Name, p7Type, p7Initial);
             loadParams += GetLoadParams(p8Name, p8Type, p8Initial);
+
+            string defaultParams = "";
+            defaultParams += GetParamDefault(p1Name, p1Initial);
+            defaultParams += GetParamDefault(p2Name, p2Initial);
+            defaultParams += GetParamDefault(p3Name, p3Initial);
+            defaultParams += GetParamDefault(p4Name, p4Initial);
+            defaultParams += GetParamDefault(p5Name, p5Initial);
+            defaultParams += GetParamDefault(p6Name, p6Initial);
+            defaultParams += GetParamDefault(p7Name, p7Initial);
+            defaultParams += GetParamDefault(p8Name, p8Initial);
             string p1Controls = GetControls(P1Name, p1Type);
             string p2Controls = GetControls(P2Name, p2Type);
             string p3Controls = GetControls(P3Name, p3Type);
@@ -1180,8 +1190,10 @@ public String <PName>ToolTip
                         l = l.Replace("<!--P8CONTROLS-->", p8Controls);
                         l = l.Replace("//LOADPARMETERS", loadParams);
                         l = l.Replace("//SAVEPARMETERS", saveParams);
-                        l = l.Replace("//SAVEPARMETERS", saveParams);
+
                         l = l.Replace("//SETPROPERTIES", pSet);
+
+                        l = l.Replace("//SETDEFAULTS", defaultParams);
 
                         fout.WriteLine(l);
                     }
@@ -1189,6 +1201,16 @@ public String <PName>ToolTip
                     fout.Close();
                 }
             }
+        }
+
+        private string GetParamDefault(string pn, string pi)
+        {
+            if (pn != "")
+            {
+                return $"    {pn} = {pi};\n";
+            }
+
+            return "";
         }
 
         private string GetControls(string p1Name, string ptype)

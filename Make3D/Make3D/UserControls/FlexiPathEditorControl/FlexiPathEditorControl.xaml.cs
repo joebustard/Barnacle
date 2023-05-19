@@ -546,7 +546,11 @@ namespace Barnacle.UserControls
         {
             if (OnFlexiPathChanged != null)
             {
-                OnFlexiPathChanged(vm.DisplayPoints);
+                if (vm.PointsDirty)
+                {
+                    OnFlexiPathChanged(vm.DisplayPoints);
+                    vm.PointsDirty = false;
+                }
             }
         }
 

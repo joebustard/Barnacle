@@ -22,6 +22,10 @@ namespace Barnacle.Models
                     res = new BezierSurfaceDlg();
                     break;
 
+                case "Box":
+                    res = new BoxDlg();
+                    break;
+
                 case "Bicorn":
                     res = new BicornDlg();
                     break;
