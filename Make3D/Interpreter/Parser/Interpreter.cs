@@ -76,6 +76,7 @@ namespace ScriptLanguage
                 "length",
                 "make",
                 "makebicorn",
+                "makebox",
                 "makebrickwall",
                 "makebricktower",
                 "makehollow",
@@ -126,6 +127,47 @@ namespace ScriptLanguage
                 "val",
                 "validsolid"
             };
+        }
+
+        private ExpressionNode ParseMakeBoxFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeBox";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeBoxNode mn = new MakeBoxNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
         }
 
         private ExpressionNode ParseMakePieFunction(string parentName)
@@ -2560,6 +2602,12 @@ namespace ScriptLanguage
                             }
                             break;
 
+                        case "box":
+                            {
+                                exp = ParseMakeFunction(parentName);
+                            }
+                            break;
+
                         case "makebicorn":
                             {
                                 exp = ParseMakeBicornFunction(parentName);
@@ -2859,6 +2907,7 @@ namespace ScriptLanguage
                                 exp = GetFunctionNode<ValidSolidNode>(parentName);
                             }
                             break;
+
                         case "length":
                         case "width":
                         case "height":

@@ -1508,6 +1508,7 @@ namespace Barnacle.Dialogs
             //   LoadTextureNames();
             LoadEditorParameters();
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.OpenEndedPath = false;
             loaded = true;
             GenerateShape();
             UpdateCameraPos();

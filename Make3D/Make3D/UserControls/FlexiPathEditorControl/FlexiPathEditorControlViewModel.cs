@@ -60,6 +60,8 @@ namespace Barnacle.UserControls
             }
         }
 
+        private bool pointsDirty;
+
         public void SetOpenEnded(bool open)
         {
             flexiPath.OpenEndedPath = open;
@@ -104,6 +106,7 @@ namespace Barnacle.UserControls
             snap = true;
             gridSettings = new GridSettings();
             imagePath = "";
+            pointsDirty = true;
         }
 
         private void OnToggleOrthoLock(object obj)
@@ -508,6 +511,7 @@ namespace Barnacle.UserControls
                 if (deleted)
                 {
                     PathText = flexiPath.ToPath(absolutePaths);
+                    PointsDirty = true;
                 }
             }
             // just in case the segment deletion means the point has gone
@@ -570,6 +574,7 @@ namespace Barnacle.UserControls
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
                     }
                     else if (selectedPoint == polyPoints.Count - 1)
                     {
@@ -582,11 +587,13 @@ namespace Barnacle.UserControls
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
                     }
                     else
                     {
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
                     }
 
                     PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
@@ -631,6 +638,7 @@ namespace Barnacle.UserControls
                 {
                     added = true;
                     PathText = flexiPath.ToPath(absolutePaths);
+                    PointsDirty = true;
                     NotifyPropertyChanged("Points");
                 }
             }
@@ -645,6 +653,7 @@ namespace Barnacle.UserControls
             {
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
+            PointsDirty = true;
         }
 
         private PointGrid pointGrid;
@@ -711,6 +720,8 @@ namespace Barnacle.UserControls
             }
         }
 
+        public bool PointsDirty { get; internal set; }
+
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;
@@ -722,9 +733,11 @@ namespace Barnacle.UserControls
             }
             else if (selectionMode == SelectionModeType.AppendPoint)
             {
+                PointsDirty = true;
                 AddAnotherPointToPoly(position);
                 e.Handled = true;
                 updateRequired = true;
+
                 if (ContinuousPointsNotify)
                 {
                     NotifyPropertyChanged("Points");
@@ -815,6 +828,7 @@ namespace Barnacle.UserControls
 
                 flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
 
+                PointsDirty = true;
                 updateRequired = true;
                 selectedPoint = -1;
                 NotifyPropertyChanged("Points");
@@ -841,6 +855,7 @@ namespace Barnacle.UserControls
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
                     }
                     else if (selectedPoint == polyPoints.Count - 1)
                     {
@@ -853,6 +868,7 @@ namespace Barnacle.UserControls
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         snappedPos.X = polyPoints[selectedPoint].X;
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
                     }
                     else
                     {
@@ -860,6 +876,7 @@ namespace Barnacle.UserControls
                         polyPoints[selectedPoint].Y = position.Y;
                         System.Windows.Point snappedPos = SnapPositionToMM(position);
                         flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
                     }
 
                     PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
@@ -892,7 +909,9 @@ namespace Barnacle.UserControls
                 //  closeFigure = true;
                 selectedPoint = -1;
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
+                PointsDirty = true;
                 flexiPath.ClosePath();
+                NotifyPropertyChanged("Points");
             }
             else
             {
@@ -908,6 +927,7 @@ namespace Barnacle.UserControls
                 }
                 selectionMode = SelectionModeType.AppendPoint;
                 selectedPoint = polyPoints.Count - 1;
+                PointsDirty = true;
             }
         }
 
@@ -993,6 +1013,7 @@ namespace Barnacle.UserControls
 
             flexiPath.FromTextPath(v);
             PathText = flexiPath.ToPath(absolutePaths);
+            PointsDirty = true;
             NotifyPropertyChanged("Points");
         }
 
@@ -1091,7 +1112,7 @@ namespace Barnacle.UserControls
             {
                 PathText = pth;
                 flexiPath.FromTextPath(pth);
-
+                PointsDirty = true;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
         }
@@ -1114,6 +1135,7 @@ namespace Barnacle.UserControls
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
             PathText = "";
+            PointsDirty = true;
             NotifyPropertyChanged("Points");
         }
 

@@ -65,6 +65,7 @@
     <Compile Include="Execution\Array.cs" />
     <Compile Include="IntrinsicFunctions\Dim.cs" />
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
+    <Compile Include="SolidFunctions\MakeBoxNode.cs" />
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
     <Compile Include="SolidFunctions\MakePathLoftNode.cs" />
     <Compile Include="SolidFunctions\MakePieNode.cs" />

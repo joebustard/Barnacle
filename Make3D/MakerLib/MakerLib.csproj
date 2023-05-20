@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BicornMaker.cs" />
     <Compile Include="HollowPolyMaker.cs" />
+    <Compile Include="MakeBox.cs" />
     <Compile Include="MakeBrickTower.cs" />
     <Compile Include="MakeBrickWall.cs" />
     <Compile Include="MakeCurvedFunnel.cs" />

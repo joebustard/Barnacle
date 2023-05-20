@@ -1,11 +1,11 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.BlankDlg"
+<local:BaseModellerDialog x:Class="Barnacle.Dialogs.BoxDlg"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="DIALOGTITLE" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+        Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -28,35 +28,52 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="100" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                <!--P1CONTROLS-->
-                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                <Label VerticalAlignment="Center" Width="100">Box Length</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding BoxLength}" Width="150" ToolTip="{Binding BoxLengthToolTip}" />
+                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameers to their defaults" Click="ResetDefaults" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <!--P2CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Box Height</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding BoxHeight}" Width="150" ToolTip="{Binding BoxHeightToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <!--P3CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Box Width</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding BoxWidth}" Width="150" ToolTip="{Binding BoxWidthToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <!--P4CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Base Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding BaseThickness}" Width="150" ToolTip="{Binding BaseThicknessToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                <!--P5CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Left Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding LeftThickness}" Width="150" ToolTip="{Binding LeftThicknessToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                <!--P6CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Right Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding RightThickness}" Width="150" ToolTip="{Binding RightThicknessToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                <!--P7CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Front Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding FrontThickness}" Width="150" ToolTip="{Binding FrontThicknessToolTip}" />
             </StackPanel>
+
             <StackPanel Grid.Row="8" Orientation="Horizontal">
-                <!--P8CONTROLS-->
+                <Label VerticalAlignment="Center" Width="100">Back Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding BackThickness}" Width="150" ToolTip="{Binding BackThicknessToolTip}" />
             </StackPanel>
+
             <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                <!--
+                <Label VerticalAlignment="Center"  FontSize="16" Foreground="{StaticResource WarningColour}">
+                    <Label.Content>
+                        <AccessText TextWrapping="Wrap" Text="{Binding WarningText}" />
+                    </Label.Content>
+                </Label>
+                -->
+                <TextBlock FontSize="16" Foreground="{StaticResource WarningColour}" Text="{Binding WarningText}" TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
@@ -113,4 +130,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>
