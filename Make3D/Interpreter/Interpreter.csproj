@@ -67,6 +67,7 @@
     <Compile Include="IntrinsicFunctions\RndNode.cs" />
     <Compile Include="SolidFunctions\MakeBoxNode.cs" />
     <Compile Include="SolidFunctions\MakeBrickTowerNode.cs" />
+    <Compile Include="SolidFunctions\MakeConstructionStripNode.cs" />
     <Compile Include="SolidFunctions\MakePathLoftNode.cs" />
     <Compile Include="SolidFunctions\MakePieNode.cs" />
     <Compile Include="SolidFunctions\MakePillNode.cs" />

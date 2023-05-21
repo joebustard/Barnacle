@@ -8,7 +8,7 @@ Changed
 
 Added
    Path Loft tool
-
+   Hollow Box Tool
 
 v1.0.3
 ===========

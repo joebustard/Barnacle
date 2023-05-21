@@ -21,6 +21,7 @@ namespace Barnacle.ViewModels
         public List<ToolDef> aircraftToolsToShow;
         public List<ToolDef> decorativeToolsToShow;
         public List<ToolDef> loftedToolsToShow;
+        public List<ToolDef> mechanicalToolsToShow;
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
         public List<ToolDef> buildingToolsToShow;
@@ -556,6 +557,23 @@ namespace Barnacle.ViewModels
                 if (loftedToolsToShow != value)
                 {
                     loftedToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        public List<ToolDef> MechanicalToolsToShow
+        {
+            get
+            {
+                return mechanicalToolsToShow;
+            }
+            set
+            {
+                if (mechanicalToolsToShow != value)
+                {
+                    mechanicalToolsToShow = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -1159,6 +1177,16 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("DecorativeToolsToShow");
         }
 
+        private void CreateMechanicalToolMenu()
+        {
+            mechanicalToolsToShow = new List<ToolDef>();
+            mechanicalToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
+
+            mechanicalToolsToShow.Add(new ToolDef("Construction Strip", true, "ConstructionStrip", "Create a strip with holes and round ends."));
+            SortMenu(mechanicalToolsToShow);
+            NotifyPropertyChanged("MechanicalToolsToShow");
+        }
+
         private void CreateLoftingMenu()
         {
             loftedToolsToShow = new List<ToolDef>();
@@ -1196,7 +1224,6 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
             parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
             parametricToolsToShow.Add(new ToolDef("Dual", true, "Dual", "Create an object from two polygons."));
-            parametricToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
             parametricToolsToShow.Add(new ToolDef("Squared Stadium", true, "SquaredStadium", "Create a stadium or sausage with one end a variable radius and the other square."));
 
             parametricToolsToShow.Add(new ToolDef("Stadium", true, "Stadium", "Create a stadium or sausage with variable end radii."));
@@ -1246,6 +1273,7 @@ namespace Barnacle.ViewModels
             CreateAircraftToolMenu();
             CreateDecorativeToolMenu();
             CreateBuildingMenu();
+            CreateMechanicalToolMenu();
         }
 
         private void CreateVehicleToolMenu()

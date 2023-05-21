@@ -51,6 +51,7 @@
     <Compile Include="MakeBox.cs" />
     <Compile Include="MakeBrickTower.cs" />
     <Compile Include="MakeBrickWall.cs" />
+    <Compile Include="MakeConstructionStrip.cs" />
     <Compile Include="MakeCurvedFunnel.cs" />
     <Compile Include="MakeDualProfile.cs" />
     <Compile Include="MakeParabolicDish.cs" />
