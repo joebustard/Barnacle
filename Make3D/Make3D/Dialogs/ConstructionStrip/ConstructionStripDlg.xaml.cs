@@ -253,8 +253,8 @@ namespace Barnacle.Dialogs
             StripHeight = EditorParameters.GetDouble("StripHeight", 2.5);
             StripWidth = EditorParameters.GetDouble("StripWidth", 17);
             StripRepeats = EditorParameters.GetInt("StripRepeats", 1);
-            HoleRadius = EditorParameters.GetDouble("HoleRadius", 2.5);
-           NumberOfHoles = EditorParameters.GetInt("NumberOfHoles", 3);
+            HoleRadius = EditorParameters.GetDouble("HoleRadius", 4.5);
+            NumberOfHoles = EditorParameters.GetInt("NumberOfHoles", 3);
         }
 
         private void SaveEditorParmeters()
@@ -295,7 +295,7 @@ namespace Barnacle.Dialogs
             StripHeight = 2.5;
             StripWidth = 17;
             StripRepeats = 1;
-            HoleRadius = 2.5;
+            HoleRadius = 4.5;
             NumberOfHoles = 3;
 
             loaded = true;
