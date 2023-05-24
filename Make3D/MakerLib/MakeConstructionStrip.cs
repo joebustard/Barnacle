@@ -161,7 +161,7 @@ namespace MakerLib
                         case 5:
                             {
                                 l = stripWidth;
-
+                                MakeShapeFive(px, py, hw);
                                 px += l;
                             }
                             break;
@@ -169,7 +169,7 @@ namespace MakerLib
                         case 6:
                             {
                                 l = stripWidth;
-
+                                MakeShapeSix(px, py, hw);
                                 px += l;
                             }
                             break;
@@ -364,21 +364,21 @@ namespace MakerLib
 
         private void MakeShapeFour(double px, double py, double hw)
         {
-            // shape 2 is Left side
+            // 
 
-            Point e0 = new Point(px, py);
-            Point e1 = new Point(px + hw - holeRadius, py);
-            Point e2 = new Point(px + hw, py + holeRadius);
-            Point e3 = new Point(px + hw, py + (stripWidth - holeRadius));
-            Point e4 = new Point(px + hw - holeRadius, py + stripWidth);
-            Point e5 = new Point(px, py + stripWidth);
-            Point e6 = new Point(px + hw - holeRadius - 0.1, py + hw);
+            Point e0 = new Point(px+stripWidth, py);
+            Point e1 = new Point(px + stripWidth, py - holeRadius + hw);
+            Point e2 = new Point(px + stripWidth-holeRadius, py + hw);
+            Point e3 = new Point(px + holeRadius, py + hw);
+            Point e4 = new Point(px, py + hw-holeRadius);
+            Point e5 = new Point(px, py);
+            Point e6 = new Point(px + stripWidth/2, py + hw/2 -0.1);
 
-            double cx = px + hw;
-            double cy = py;
+            double cx = px + stripWidth;
+            double cy = py+hw;
 
-            double st = DegToRad(90);
-            double et = DegToRad(180);
+            double st = DegToRad(180);
+            double et = DegToRad(270);
             int pn0 = AddVertice(e0.X, 0, e0.Y);
             int pn1 = AddVertice(e1.X, 0, e1.Y);
             int pn2 = AddVertice(e2.X, 0, e2.Y);
@@ -423,10 +423,10 @@ namespace MakerLib
                 Faces.Add(pn13);
             }
 
-            cx = px + hw;
-            cy = py + stripWidth;
-            st = DegToRad(180);
-            et = DegToRad(270);
+            cx = px;
+            cy = py + hw;
+            st = DegToRad(270);
+            et = DegToRad(360);
 
             theta = 0;
             for (theta = st; theta < et; theta += dt)
@@ -500,6 +500,348 @@ namespace MakerLib
             Faces.Add(pn12);
         }
 
+        private void MakeShapeFive( double px, double py, double hw)
+        {
+            
+            Point e0 = new Point(px + holeRadius, py);
+            Point e1 = new Point(px + stripWidth - holeRadius, py);
+            Point e2 = new Point(px + stripWidth, py + holeRadius);
+            Point e3 = new Point(px + stripWidth, py + stripWidth - holeRadius);
+            Point e4 = new Point(px + stripWidth - holeRadius, py + stripWidth);
+            Point e5 = new Point(px + holeRadius, py + stripWidth);
+            Point e6 = new Point(px, py + stripWidth - holeRadius);
+            Point e7 = new Point(px , py + holeRadius);
+            Point e8 = new Point(px + stripWidth / 2, py + stripWidth / 2);
+
+            int pn0 = AddVertice(e0.X, 0, e0.Y);
+            int pn1 = AddVertice(e1.X, 0, e1.Y);
+            int pn2 = AddVertice(e2.X, 0, e2.Y);
+            int pn3 = AddVertice(e3.X, 0, e3.Y);
+            int pn4 = AddVertice(e4.X, 0, e4.Y);
+            int pn5 = AddVertice(e5.X, 0, e5.Y);
+            int pn6 = AddVertice(e6.X, 0, e6.Y);
+            int pn7 = AddVertice(e7.X, 0, e7.Y);
+            int pn8 = AddVertice(e8.X, 0, e8.Y);
+
+            int pn9 = AddVertice(e0.X, stripHeight, e0.Y);
+            int pn10 = AddVertice(e1.X, stripHeight, e1.Y);
+            int pn11 = AddVertice(e2.X, stripHeight, e2.Y);
+            int pn12 = AddVertice(e3.X, stripHeight, e3.Y);
+            int pn13 = AddVertice(e4.X, stripHeight, e4.Y);
+            int pn14 = AddVertice(e5.X, stripHeight, e5.Y);
+            int pn15 = AddVertice(e6.X, stripHeight, e6.Y);
+            int pn16 = AddVertice(e7.X, stripHeight, e7.Y);
+            int pn17 = AddVertice(e8.X, stripHeight, e8.Y);
+
+            double cx = px;
+            double cy = py;
+
+            double st = DegToRad(0);
+            double et = DegToRad(90);
+            double dt = DegToRad(3);
+
+            double theta = 0;
+            for (theta = st; theta < et; theta += dt)
+            {
+                System.Windows.Point pin0 = CalcPoint(theta, holeRadius);
+                System.Windows.Point pin1 = CalcPoint(theta + dt, holeRadius);
+
+                int p0 = AddVertice(cx + pin0.X, 0, cy + pin0.Y);
+                int p1 = AddVertice(cx + pin0.X, stripHeight, cy + pin0.Y);
+                int p2 = AddVertice(cx + pin1.X, stripHeight, cy + pin1.Y);
+                int p3 = AddVertice(cx + pin1.X, 0, cy + pin1.Y);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p1);
+
+                Faces.Add(p0);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(pn8);
+                Faces.Add(p3);
+
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(pn17);
+            }
+
+            cx = px + stripWidth;
+            cy = py;
+            st = DegToRad(90);
+            et = DegToRad(180);
+
+            theta = 0;
+            for (theta = st; theta < et; theta += dt)
+            {
+                System.Windows.Point pin0 = CalcPoint(theta, holeRadius);
+                System.Windows.Point pin1 = CalcPoint(theta + dt, holeRadius);
+
+                int p0 = AddVertice(cx + pin0.X, 0, cy + pin0.Y);
+                int p1 = AddVertice(cx + pin0.X, stripHeight, cy + pin0.Y);
+                int p2 = AddVertice(cx + pin1.X, stripHeight, cy + pin1.Y);
+                int p3 = AddVertice(cx + pin1.X, 0, cy + pin1.Y);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p1);
+
+                Faces.Add(p0);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(pn8);
+                Faces.Add(p3);
+
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(pn17);
+            }
+
+            cx = px + stripWidth;
+            cy = py + stripWidth;
+            st = DegToRad(180);
+            et = DegToRad(270);
+
+            theta = 0;
+            for (theta = st; theta < et; theta += dt)
+            {
+                System.Windows.Point pin0 = CalcPoint(theta, holeRadius);
+                System.Windows.Point pin1 = CalcPoint(theta + dt, holeRadius);
+
+                int p0 = AddVertice(cx + pin0.X, 0, cy + pin0.Y);
+                int p1 = AddVertice(cx + pin0.X, stripHeight, cy + pin0.Y);
+                int p2 = AddVertice(cx + pin1.X, stripHeight, cy + pin1.Y);
+                int p3 = AddVertice(cx + pin1.X, 0, cy + pin1.Y);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p1);
+
+                Faces.Add(p0);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(pn8);
+                Faces.Add(p3);
+
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(pn17);
+            }
+
+
+            cx = px;
+            cy = py + stripWidth;
+            st = DegToRad(270);
+            et = DegToRad(360);
+
+            theta = 0;
+            for (theta = st; theta < et; theta += dt)
+            {
+                System.Windows.Point pin0 = CalcPoint(theta, holeRadius);
+                System.Windows.Point pin1 = CalcPoint(theta + dt, holeRadius);
+
+                int p0 = AddVertice(cx + pin0.X, 0, cy + pin0.Y);
+                int p1 = AddVertice(cx + pin0.X, stripHeight, cy + pin0.Y);
+                int p2 = AddVertice(cx + pin1.X, stripHeight, cy + pin1.Y);
+                int p3 = AddVertice(cx + pin1.X, 0, cy + pin1.Y);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p1);
+
+                Faces.Add(p0);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(pn8);
+                Faces.Add(p3);
+
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(pn17);
+            }
+            
+            // bottom
+            Faces.Add(pn0);
+            Faces.Add(pn1);
+            Faces.Add(pn8);
+
+            Faces.Add(pn9);
+            Faces.Add(pn17);
+            Faces.Add(pn10);
+
+            Faces.Add(pn2);
+            Faces.Add(pn3);
+            Faces.Add(pn8);
+
+            Faces.Add(pn11);
+            Faces.Add(pn17);
+            Faces.Add(pn12);
+
+
+            Faces.Add(pn4);
+            Faces.Add(pn5);
+            Faces.Add(pn8);
+
+            Faces.Add(pn13);
+            Faces.Add(pn17);
+            Faces.Add(pn14);
+
+            Faces.Add(pn6);
+            Faces.Add(pn7);
+            Faces.Add(pn8);
+
+            Faces.Add(pn15);
+            Faces.Add(pn17);
+            Faces.Add(pn16);
+
+ 
+          
+        }
+        private void MakeShapeSix(double px, double py, double hw)
+        {
+            // 
+
+            Point e0 = new Point(px , py+hw);
+            Point e1 = new Point(px , py + holeRadius );
+            Point e2 = new Point(px + holeRadius, py );
+            Point e3 = new Point(px + stripWidth - holeRadius, py);
+            Point e4 = new Point(px + stripWidth, py +holeRadius);
+            Point e5 = new Point(px +stripWidth, py+hw);
+            Point e6 = new Point(px + stripWidth / 2, py + hw / 2 + 0.1);
+
+            double cx = px;
+            double cy = py;
+
+            double st = DegToRad(0);
+            double et = DegToRad(90);
+            int pn0 = AddVertice(e0.X, 0, e0.Y);
+            int pn1 = AddVertice(e1.X, 0, e1.Y);
+            int pn2 = AddVertice(e2.X, 0, e2.Y);
+            int pn3 = AddVertice(e3.X, 0, e3.Y);
+            int pn4 = AddVertice(e4.X, 0, e4.Y);
+            int pn5 = AddVertice(e5.X, 0, e5.Y);
+            int pn6 = AddVertice(e6.X, 0, e6.Y);
+
+            int pn7 = AddVertice(e0.X, stripHeight, e0.Y);
+            int pn8 = AddVertice(e1.X, stripHeight, e1.Y);
+            int pn9 = AddVertice(e2.X, stripHeight, e2.Y);
+            int pn10 = AddVertice(e3.X, stripHeight, e3.Y);
+            int pn11 = AddVertice(e4.X, stripHeight, e4.Y);
+            int pn12 = AddVertice(e5.X, stripHeight, e5.Y);
+            int pn13 = AddVertice(e6.X, stripHeight, e6.Y);
+            double dt = DegToRad(3);
+            double theta = 0;
+            for (theta = st; theta < et; theta += dt)
+            {
+                System.Windows.Point pin0 = CalcPoint(theta, holeRadius);
+                System.Windows.Point pin1 = CalcPoint(theta + dt, holeRadius);
+
+                int p0 = AddVertice(cx + pin0.X, 0, cy + pin0.Y);
+                int p1 = AddVertice(cx + pin0.X, stripHeight, cy + pin0.Y);
+                int p2 = AddVertice(cx + pin1.X, stripHeight, cy + pin1.Y);
+                int p3 = AddVertice(cx + pin1.X, 0, cy + pin1.Y);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p1);
+
+                Faces.Add(p0);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(pn6);
+                Faces.Add(p3);
+
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(pn13);
+            }
+
+            cx = px+stripWidth;
+            cy = py ;
+            st = DegToRad(90);
+            et = DegToRad(180);
+
+            theta = 0;
+            for (theta = st; theta < et; theta += dt)
+            {
+                System.Windows.Point pin0 = CalcPoint(theta, holeRadius);
+                System.Windows.Point pin1 = CalcPoint(theta + dt, holeRadius);
+
+                int p0 = AddVertice(cx + pin0.X, 0, cy + pin0.Y);
+                int p1 = AddVertice(cx + pin0.X, stripHeight, cy + pin0.Y);
+                int p2 = AddVertice(cx + pin1.X, stripHeight, cy + pin1.Y);
+                int p3 = AddVertice(cx + pin1.X, 0, cy + pin1.Y);
+
+                Faces.Add(p0);
+                Faces.Add(p2);
+                Faces.Add(p1);
+
+                Faces.Add(p0);
+                Faces.Add(p3);
+                Faces.Add(p2);
+
+                Faces.Add(p0);
+                Faces.Add(pn6);
+                Faces.Add(p3);
+
+                Faces.Add(p1);
+                Faces.Add(p2);
+                Faces.Add(pn13);
+            }
+
+            // bottom
+            Faces.Add(pn2);
+            Faces.Add(pn3);
+            Faces.Add(pn6);
+
+            Faces.Add(pn0);
+            Faces.Add(pn1);
+            Faces.Add(pn6);
+
+            Faces.Add(pn6);
+            Faces.Add(pn4);
+            Faces.Add(pn5);
+
+            Faces.Add(pn6);
+            Faces.Add(pn5);
+            Faces.Add(pn0);
+
+            //top
+            Faces.Add(pn9);
+            Faces.Add(pn13);
+            Faces.Add(pn10);
+
+            Faces.Add(pn7);
+            Faces.Add(pn13);
+            Faces.Add(pn8);
+
+            Faces.Add(pn13);
+            Faces.Add(pn12);
+            Faces.Add(pn11);
+
+            Faces.Add(pn13);
+            Faces.Add(pn7);
+            Faces.Add(pn12);
+
+            //Close left
+            Faces.Add(pn0);
+            Faces.Add(pn5);
+            Faces.Add(pn7);
+
+            Faces.Add(pn7);
+            Faces.Add(pn5);
+            Faces.Add(pn12);
+        }
         private void MakeCorner(double hw, double cx, double cy, double st, double et)
         {
             double dt = DegToRad(3);
