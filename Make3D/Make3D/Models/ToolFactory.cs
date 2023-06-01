@@ -150,6 +150,10 @@ namespace Barnacle.Models
                     res = new StoneWallDlg();
                     break;
 
+                case "Symbol":
+                    res = new SymbolDlg();
+                    break;
+
                 case "Text":
                     res = new TextDlg();
                     break;

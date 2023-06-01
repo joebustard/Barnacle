@@ -562,7 +562,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-
         public List<ToolDef> MechanicalToolsToShow
         {
             get
@@ -1171,6 +1170,7 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("Bicorn", true, "Bicorn", "Create a bicorn shape."));
             decorativeToolsToShow.Add(new ToolDef("Squirkle", true, "Squirkle", "Create a squirkle shape."));
             decorativeToolsToShow.Add(new ToolDef("Trickle", true, "Trickle", "Create a trickle shape."));
+            decorativeToolsToShow.Add(new ToolDef("Symbol", true, "Symbol", "Create an object from a symbol in a font."));
             decorativeToolsToShow.Add(new ToolDef("Text", true, "Text", "Create Text."));
             decorativeToolsToShow.Add(new ToolDef("Pill", true, "Pill", "Create Pill."));
             SortMenu(decorativeToolsToShow);

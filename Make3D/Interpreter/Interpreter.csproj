@@ -95,6 +95,7 @@
     <Compile Include="SolidFunctions\MakeSquirkle.cs" />
     <Compile Include="SolidFunctions\MakeStadium.cs" />
     <Compile Include="SolidFunctions\MakeStoneWallNode.cs" />
+    <Compile Include="SolidFunctions\MakeSymbolNode.cs" />
     <Compile Include="SolidFunctions\MakeText.cs" />
     <Compile Include="SolidFunctions\MakeTexturedDiskNode.cs" />
     <Compile Include="SolidFunctions\MakeTexturedTubeNode.cs" />

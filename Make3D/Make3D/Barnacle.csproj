@@ -76,6 +76,9 @@
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="WriteableBitmapEx.Wpf, Version=1.6.8.0, Culture=neutral, PublicKeyToken=50375ca6144f1c69, processorArchitecture=MSIL">
+      <HintPath>..\packages\WriteableBitmapEx.1.6.8\lib\net40\WriteableBitmapEx.Wpf.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -133,6 +136,7 @@
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
+    <Compile Include="Dialogs\SymbolFont\SymbolFontDlg.xaml.cs" />
     <Compile Include="Dialogs\TexturedTube\TexturedTubeDlg.xaml.cs" />
     <Compile Include="Dialogs\VaseLoft\VaseLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\Platelet\Platelet.xaml.cs">
@@ -312,6 +316,10 @@
     <Compile Include="UserControls\FlexiPathEditorControl\PointGrid.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PolarGrid.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\RectangularGrid.cs" />
+    <Compile Include="UserControls\SymbolGridControl\Symbol.cs" />
+    <Compile Include="UserControls\SymbolGridControl\SymbolGridControl.cs" />
+    <Compile Include="UserControls\SymbolGridControl\SymbolGridViewModel.cs" />
+    <Compile Include="UserControls\SymbolGridControl\SymbolSelector.xaml.cs" />
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AvailableColour.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
@@ -496,6 +504,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Spring\SpringDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\SymbolFont\SymbolFontDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -738,6 +750,10 @@
     <Page Include="UserControls\FlexiPathEditorControl\GridSettingsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\SymbolGridControl\SymbolSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ScriptView.xaml">
       <SubType>Designer</SubType>
