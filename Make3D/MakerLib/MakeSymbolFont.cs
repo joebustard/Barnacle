@@ -1,5 +1,4 @@
 using Barnacle.Object3DLib;
-using SymbolGridControl.MakeSymbol;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -31,9 +30,11 @@ namespace MakerLib
             Vertices = pnts;
             Faces = faces;
             MakeSymbolUtils msu = new MakeSymbolUtils();
+            msu.Faces = Faces;
+            msu.Vertices = Vertices;
             if (!String.IsNullOrEmpty(symbolCode) && !String.IsNullOrEmpty(symbolFontName))
             {
-                msu.GenerateSymbol(symbolCode, symbolFontName);
+                msu.GenerateSymbol(symbolCode, symbolFontName, symbolLength, symbolHeight, symbolWidth);
             }
         }
     }

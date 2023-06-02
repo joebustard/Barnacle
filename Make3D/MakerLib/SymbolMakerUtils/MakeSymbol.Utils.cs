@@ -1,4 +1,6 @@
-﻿using System;
+﻿using asdflibrary;
+using MakerLib;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -9,13 +11,16 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace SymbolGridControl.MakeSymbol
+namespace MakerLib
 {
-    public class MakeSymbolUtils
+    public class MakeSymbolUtils : MakerBase
     {
         private const float diagonalDist = 0.70710678118F;
+        private const float diagonalDistNeigh = 2 * diagonalDist;
         private const float horizontalDist = 0.5F;
+        private const float horizontalDistNeigh = 2 * horizontalDist;
         private const float vdiagDist = 0.886F;
+        private const float vdiagDistNeigh = 2 * vdiagDist;
         private int imageHeight = 75;
         private int imageWidth = 75;
 
@@ -112,7 +117,7 @@ namespace SymbolGridControl.MakeSymbol
                 qe.py = item.py + dy;
                 qe.pz = item.pz + dz;
                 qe.dx = dx + nearpdx;
-                qe.dy = (5 * dy) + nearpdy;
+                qe.dy = (1 * dy) + nearpdy;
                 qe.dz = dz + nearpdz;
                 qe.dist = (float)Math.Sqrt((qe.dx * qe.dx) + (qe.dy * qe.dy) + (qe.dz * qe.dz));
                 AddQueue(queue, qe);
@@ -151,20 +156,29 @@ namespace SymbolGridControl.MakeSymbol
         }
 
         private BitmapImage bitmap;
+        private double frontXSize;
+        private double frontYSize;
+        private double frontZSize;
 
-        public void GenerateSymbol(string v, string fontName)
+        public void GenerateSymbol(string v, string fontName, double l, double h, double w)
         {
             DrawingVisual drawingVisual = new DrawingVisual();
             DrawingContext drawingContext = drawingVisual.RenderOpen();
 
             FormattedText ft = new FormattedText(v, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                                   new Typeface(fontName), 60, System.Windows.Media.Brushes.Black);
+                                   new Typeface(fontName), 100, System.Windows.Media.Brushes.Black);
             ft.SetFontStretch(FontStretches.Normal);
             Size sz = new Size(ft.Width, ft.Height);
-            imageWidth = (int)(Math.Ceiling(sz.Width)) + 4;
-            imageHeight = (int)(Math.Ceiling(sz.Height)) + 4;
+            frontXSize = l / sz.Width;
+            frontZSize = w / sz.Height;
+            frontYSize = h / (numberOfLayers * 5);
+            frontXSize = 0.25;
+            frontZSize = 0.25;
+            frontYSize = 0.25;
+            imageWidth = (int)(Math.Ceiling(sz.Width)) + 20;
+            imageHeight = (int)(Math.Ceiling(sz.Height)) + 20;
             drawingContext.DrawRectangle(System.Windows.Media.Brushes.White, new System.Windows.Media.Pen(System.Windows.Media.Brushes.White, 1), new Rect(0, 0, imageWidth, imageHeight));
-            drawingContext.DrawText(ft, new System.Windows.Point(0, 0));
+            drawingContext.DrawText(ft, new System.Windows.Point(10, 10));
 
             drawingContext.Close();
 
@@ -265,6 +279,60 @@ namespace SymbolGridControl.MakeSymbol
                     CheckAllNeighbours(mock3D, queue, qe, visited, true);
                 }
             }
+
+            DumpLayerImages(wrb, distVector);
+            CubeMarcher cm = new CubeMarcher();
+            GridCell gc = new GridCell();
+            List<Triangle> triangles = new List<Triangle>();
+            for (int py = 0; py < numberOfLayers - 1; py++)
+            {
+                int ly = py;
+                int hy = (py + 1);
+                for (int px = 0; px < imageWidth - 1; px++)
+                {
+                    int hx = px + 1;
+
+                    for (int pz = 0; pz < imageHeight - 1; pz++)
+                    {
+                        int hz = pz + 1;
+                        gc.p[0] = new XYZ(px, ly, pz);
+                        gc.p[1] = new XYZ(hx, ly, pz);
+                        gc.p[2] = new XYZ(hx, ly, hz);
+                        gc.p[3] = new XYZ(px, ly, hz);
+                        gc.p[4] = new XYZ(px, hy, pz);
+                        gc.p[5] = new XYZ(hx, hy, pz);
+                        gc.p[6] = new XYZ(hx, hy, hz);
+                        gc.p[7] = new XYZ(px, hy, hz);
+
+                        gc.val[0] = distVector[px, py, pz].dv;
+                        gc.val[1] = distVector[hx, py, pz].dv;
+                        gc.val[2] = distVector[hx, py, hz].dv;
+                        gc.val[3] = distVector[px, py, hz].dv;
+                        gc.val[4] = distVector[px, py + 1, pz].dv;
+                        gc.val[5] = distVector[hx, py + 1, pz].dv;
+                        gc.val[6] = distVector[hx, py + 1, hz].dv;
+                        gc.val[7] = distVector[px, py + 1, hz].dv;
+                        triangles.Clear();
+
+                        cm.Polygonise(gc, 0, triangles);
+
+                        foreach (Triangle t in triangles)
+                        {
+                            int p0 = AddVertice(t.p[0].x * frontXSize, (t.p[0].y * frontYSize), t.p[0].z * frontZSize);
+                            int p1 = AddVertice(t.p[1].x * frontXSize, (t.p[1].y * frontYSize), t.p[1].z * frontZSize);
+                            int p2 = AddVertice(t.p[2].x * frontXSize, (t.p[2].y * frontYSize), t.p[2].z * frontZSize);
+
+                            Faces.Add(p0);
+                            Faces.Add(p1);
+                            Faces.Add(p2);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DumpLayerImages(WriteableBitmap wrb, DistVector[,,] distVector)
+        {
             float minDist = float.MaxValue;
             float maxDist = float.MinValue;
 
@@ -316,38 +384,38 @@ namespace SymbolGridControl.MakeSymbol
 
         private void CheckAllNeighbours(Mock3DBitmap mock3D, List<QueueItem> queue, QueueItem qe, bool[,,] visited, bool inside)
         {
-            CheckNeighbour(mock3D, queue, -1, -1, -1, qe, vdiagDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, -1, -1, qe, vdiagDist, visited, inside);
-            CheckNeighbour(mock3D, queue, -1, -1, 1, qe, vdiagDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, -1, 1, qe, vdiagDist, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, -1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, -1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, -1, 1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, -1, 1, qe, vdiagDistNeigh, visited, inside);
 
-            CheckNeighbour(mock3D, queue, -1, 0, -1, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 0, -1, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, -1, 0, 1, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 0, 1, qe, diagonalDist, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 0, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 0, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 0, 1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 0, 1, qe, diagonalDistNeigh, visited, inside);
 
-            CheckNeighbour(mock3D, queue, -1, 1, -1, qe, vdiagDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 1, -1, qe, vdiagDist, visited, inside);
-            CheckNeighbour(mock3D, queue, -1, 1, 1, qe, vdiagDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 1, 1, qe, vdiagDist, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 1, -1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 1, 1, qe, vdiagDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 1, 1, qe, vdiagDistNeigh, visited, inside);
 
-            CheckNeighbour(mock3D, queue, -1, -1, 0, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, -1, 0, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, -1, -1, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, -1, 1, qe, diagonalDist, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, -1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, -1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, -1, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, -1, 1, qe, diagonalDistNeigh, visited, inside);
 
-            CheckNeighbour(mock3D, queue, -1, 0, 0, qe, horizontalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 0, 0, qe, horizontalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 0, -1, qe, horizontalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 0, 1, qe, horizontalDist, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 0, 0, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 0, 0, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 0, -1, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 0, 1, qe, horizontalDistNeigh, visited, inside);
 
-            CheckNeighbour(mock3D, queue, -1, 1, 0, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 1, 1, 0, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 1, -1, qe, diagonalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 1, 1, qe, diagonalDist, visited, inside);
+            CheckNeighbour(mock3D, queue, -1, 1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 1, 1, 0, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 1, -1, qe, diagonalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 1, 1, qe, diagonalDistNeigh, visited, inside);
 
-            CheckNeighbour(mock3D, queue, 0, -1, 0, qe, horizontalDist, visited, inside);
-            CheckNeighbour(mock3D, queue, 0, 1, 0, qe, horizontalDist, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, -1, 0, qe, horizontalDistNeigh, visited, inside);
+            CheckNeighbour(mock3D, queue, 0, 1, 0, qe, horizontalDistNeigh, visited, inside);
         }
 
         private void GenerateSeeds(Mock3DBitmap mock3D, List<QueueItem> queue, int px, int py, int pz, bool inside)

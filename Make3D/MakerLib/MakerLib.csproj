@@ -95,6 +95,10 @@
     <Compile Include="TubeMaker.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\asdflibrary\asdflibrary.csproj">
+      <Project>{2557B21C-FE6C-4B1D-8DAB-AD7D8404FD56}</Project>
+      <Name>asdflibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EarClipperLib\EarClipperLib.csproj">
       <Project>{DEB59262-3D4D-46B1-9934-71AA91C92714}</Project>
       <Name>EarClipperLib</Name>

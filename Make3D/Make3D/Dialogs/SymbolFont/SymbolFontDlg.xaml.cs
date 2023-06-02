@@ -267,6 +267,7 @@ namespace Barnacle.Dialogs
         {
             SymbolCode = symbol;
             SymbolFont = fontName;
+            UpdateDisplay();
         }
 
         private void SetDefaults()

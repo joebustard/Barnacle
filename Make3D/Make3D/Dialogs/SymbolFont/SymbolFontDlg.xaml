@@ -27,7 +27,9 @@
                 <RowDefinition Height="25" />
 
                 <RowDefinition />
+                <RowDefinition Height="25" />
             </Grid.RowDefinitions>
+            <!--
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">SymbolLength</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding SymbolLength}" Width="150" ToolTip="{Binding SymbolLengthToolTip}" />
@@ -46,7 +48,9 @@
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
-            <gc:SymbolSelector Grid.Row="5" x:Name="SymbolSelection" />
+             <gc:SymbolSelector Grid.Row="5" x:Name="SymbolSelection" />
+            -->
+            <gc:SymbolSelector Grid.Row="1" Grid.RowSpan="5" x:Name="SymbolSelection" />
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"

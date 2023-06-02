@@ -63,12 +63,13 @@
                     Command="{Binding ElementName=ItemsControl, Path=NextPageCommand}"
                     Content="Next" />
         </Grid>
-        <Grid Grid.Row="3">
-            <DockPanel Height="150">
-                <Border Width="148" Height="148" BorderBrush="Black" BorderThickness="1" Background="White">
-                    <Image Width="140" Height="140" Source="{Binding SymbolSource}" x:Name="CharImage" />
-                </Border>
-            </DockPanel>
-        </Grid>
+
+        <DockPanel Height="150"  Grid.Row="3" Visibility="{Binding ShowImage}">
+            <Border Width="148" Height="148" BorderBrush="Black" BorderThickness="1" Background="White" Visibility="{Binding ShowImage}">
+                <Image Width="140" Height="140" Source="{Binding SymbolSource}" x:Name="CharImage" Visibility="{Binding ShowImage}" />
+            </Border>
+        </DockPanel>
+
+        <local:SpinControl   Grid.Row="3" Visibility="{Binding ShowBusy}" Height="150" Width="150" />
     </Grid>
 </UserControl>

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media.Imaging;
 
-namespace SymbolGridControl
+namespace MakerLib
 {
     public class Mock3DBitmap
     {

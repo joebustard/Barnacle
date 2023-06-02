@@ -320,6 +320,9 @@
     <Compile Include="UserControls\SymbolGridControl\SymbolGridControl.cs" />
     <Compile Include="UserControls\SymbolGridControl\SymbolGridViewModel.cs" />
     <Compile Include="UserControls\SymbolGridControl\SymbolSelector.xaml.cs" />
+    <Compile Include="UserControls\SpinControl\SpinControl.xaml.cs">
+      <DependentUpon>SpinControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\AvailableColour.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
@@ -755,6 +758,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UserControls\SpinControl\SpinControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ScriptView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1151,6 +1158,7 @@
     <Resource Include="Images\Buttons\clone.png" />
     <Resource Include="Images\AutoFix.png" />
     <Resource Include="Images\Buttons\AutoFix.png" />
+    <Resource Include="Images\Spinner.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
