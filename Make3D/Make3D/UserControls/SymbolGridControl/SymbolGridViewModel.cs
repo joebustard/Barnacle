@@ -42,35 +42,7 @@ namespace Barnacle.UserControls
             }
         }
 
-        private Visibility showImage;
-
-        public Visibility ShowImage
-        {
-            get { return showImage; }
-            set
-            {
-                if (showImage == value)
-                {
-                    showImage = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private Visibility showBusy;
-
-        public Visibility ShowBusy
-        {
-            get { return showBusy; }
-            set
-            {
-                if (showBusy == value)
-                {
-                    showBusy = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
+     
 
         public SymbolGridViewModel()
         {
@@ -88,8 +60,7 @@ namespace Barnacle.UserControls
             selectedChar = null;
             fontName = SelectedFontName;
             bitmap = null;
-            ShowBusy = Visibility.Hidden;
-            ShowImage = Visibility.Visible;
+
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,8 +1,10 @@
 using MakerLib;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Dialogs
 {
@@ -31,95 +33,34 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double SymbolLength
+ 
+        private Visibility show3D;
+
+        public Visibility Show3D
         {
-            get
-            {
-                return symbolLength;
-            }
+            get { return show3D; }
             set
             {
-                if (symbolLength != value)
+                if (show3D != value)
                 {
-                    if (value >= minsymbolLength && value <= maxsymbolLength)
-                    {
-                        symbolLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
+                    show3D = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
 
-        public String SymbolLengthToolTip
-        {
-            get
-            {
-                return $"Symbol Length must be in the range {minsymbolLength} to {maxsymbolLength}";
-            }
-        }
+        private Visibility showBusy;
 
-        private const double minsymbolHeight = 2;
-        private const double maxsymbolHeight = 200;
-        private double symbolHeight;
-
-        public double SymbolHeight
+        public Visibility ShowBusy
         {
-            get
-            {
-                return symbolHeight;
-            }
+            get { return showBusy; }
             set
             {
-                if (symbolHeight != value)
+                if (showBusy != value)
                 {
-                    if (value >= minsymbolHeight && value <= maxsymbolHeight)
-                    {
-                        symbolHeight = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
+                    showBusy = value;
+                    NotifyPropertyChanged();
                 }
-            }
-        }
-
-        public String SymbolHeightToolTip
-        {
-            get
-            {
-                return $"Symbol Height must be in the range {minsymbolHeight} to {maxsymbolHeight}";
-            }
-        }
-
-        private const double minsymbolWidth = 2;
-        private const double maxsymbolWidth = 200;
-        private double symbolWidth;
-
-        public double SymbolWidth
-        {
-            get
-            {
-                return symbolWidth;
-            }
-            set
-            {
-                if (symbolWidth != value)
-                {
-                    if (value >= minsymbolWidth && value <= maxsymbolWidth)
-                    {
-                        symbolWidth = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String SymbolWidthToolTip
-        {
-            get
-            {
-                return $"Symbol Width must be in the range {minsymbolWidth} to {maxsymbolWidth}";
             }
         }
 
@@ -145,10 +86,11 @@ namespace Barnacle.Dialogs
         public SymbolDlg()
         {
             InitializeComponent();
-            ToolName = "SymbolFont";
+            ToolName = "Symbol";
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
+
         }
 
         public override bool ShowAxies
@@ -208,44 +150,65 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private void GenerateShape()
+        private  void GenerateShape()
         {
-            ClearShape();
-            SymbolFontMaker maker = new SymbolFontMaker(symbolLength, symbolHeight, symbolWidth, symbolCode, symbolFont);
-            maker.Generate(Vertices, Faces);
-            CentreVertices();
-        }
+            /*
+                //ShowBusy = Visibility.Visible;
+                //Show3D = Visibility.Hidden;
+                ClearShape();
+                SymbolFontMaker maker = new SymbolFontMaker(symbolLength, symbolHeight, symbolWidth, symbolCode, symbolFont);
+                SymbolFontMaker.ResultDetails ret = await Task.Run(async () =>  await maker.GenerateAsync(Vertices,Faces));
 
+                Vertices.Clear();
+                Faces.Clear();
+                foreach( Point3D p in ret.pnts)
+                {
+                    Vertices.Add( new Point3D(p.X,p.Y,p.Z));
+                }
+                foreach( int i in ret.faces)
+                {
+                    int j = i;
+                    Faces.Add(j);
+                }
+                */
+            if (symbolCode != oldSymbol || symbolFont != oldFont)
+            {
+                ClearShape();
+                SymbolFontMaker maker = new SymbolFontMaker(symbolCode, symbolFont);
+                oldSymbol = symbolCode;
+                oldFont = symbolFont;
+                maker.Generate(Vertices, Faces);
+                CentreVertices();
+            }
+        }
+        private string oldSymbol="";
+        private string oldFont="";
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
-
-            SymbolLength = EditorParameters.GetDouble("SymbolLength", 10);
-
-            SymbolHeight = EditorParameters.GetDouble("SymbolHeight", 10);
-
-            SymbolWidth = EditorParameters.GetDouble("SymbolWidth", 10);
-
+            SymbolFont = EditorParameters.Get("SymbolFont");
             SymbolCode = EditorParameters.Get("SymbolCode");
-            SymbolFont = EditorParameters.Get("SymbolCode");
+            
         }
 
         private void SaveEditorParmeters()
         {
             // save the parameters for the tool
-
-            EditorParameters.Set("SymbolLength", SymbolLength.ToString());
-            EditorParameters.Set("SymbolHeight", SymbolHeight.ToString());
-            EditorParameters.Set("SymbolWidth", SymbolWidth.ToString());
             EditorParameters.Set("SymbolCode", SymbolCode.ToString());
             EditorParameters.Set("SymbolFont", SymbolFont.ToString());
         }
 
         private void UpdateDisplay()
         {
+            
             if (loaded)
             {
+                DateTime start = DateTime.Now;
+                
                 GenerateShape();
+                DateTime end = DateTime.Now;
+                TimeSpan ts = end - start;
+                Debug($"Update display took {ts.TotalSeconds} seconds");
                 Redisplay();
             }
         }
@@ -261,21 +224,19 @@ namespace Barnacle.Dialogs
 
             UpdateDisplay();
             SymbolSelection.OnSymbolChanged = OnSymbolChanged;
+            ShowBusy = Visibility.Hidden;
+            Show3D = Visibility.Visible;
         }
 
-        private void OnSymbolChanged(string symbol, string fontName)
+        private  void OnSymbolChanged(string symbol, string fontName)
         {
-            SymbolCode = symbol;
             SymbolFont = fontName;
-            UpdateDisplay();
+            SymbolCode = symbol;                       
         }
 
         private void SetDefaults()
         {
             loaded = false;
-            SymbolLength = 10;
-            SymbolHeight = 10;
-            SymbolWidth = 10;
             SymbolCode = "A";
 
             loaded = true;

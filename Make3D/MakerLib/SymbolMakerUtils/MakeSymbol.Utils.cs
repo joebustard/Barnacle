@@ -160,21 +160,19 @@ namespace MakerLib
         private double frontYSize;
         private double frontZSize;
 
-        public void GenerateSymbol(string v, string fontName, double l, double h, double w)
+        public void GenerateSymbol(string v, string fontName)
         {
             DrawingVisual drawingVisual = new DrawingVisual();
             DrawingContext drawingContext = drawingVisual.RenderOpen();
 
             FormattedText ft = new FormattedText(v, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                                   new Typeface(fontName), 100, System.Windows.Media.Brushes.Black);
+                                   new Typeface(fontName), 150, System.Windows.Media.Brushes.Black);
             ft.SetFontStretch(FontStretches.Normal);
             Size sz = new Size(ft.Width, ft.Height);
-            frontXSize = l / sz.Width;
-            frontZSize = w / sz.Height;
-            frontYSize = h / (numberOfLayers * 5);
+
             frontXSize = 0.25;
             frontZSize = 0.25;
-            frontYSize = 0.25;
+            frontYSize = 0.5;
             imageWidth = (int)(Math.Ceiling(sz.Width)) + 20;
             imageHeight = (int)(Math.Ceiling(sz.Height)) + 20;
             drawingContext.DrawRectangle(System.Windows.Media.Brushes.White, new System.Windows.Media.Pen(System.Windows.Media.Brushes.White, 1), new Rect(0, 0, imageWidth, imageHeight));
@@ -183,17 +181,15 @@ namespace MakerLib
             drawingContext.Close();
 
             RenderTargetBitmap bmp = new RenderTargetBitmap(imageWidth, imageHeight, 96, 96, PixelFormats.Default);
-
             bmp.Render(drawingVisual);
             bitmap = new BitmapImage();
             var bitmapEncoder = new PngBitmapEncoder();
             bitmapEncoder.Frames.Add(BitmapFrame.Create(bmp));
-            // bitmapEncoder.Frames[0].DownloadCompleted += ViewModel_DownloadCompleted;
+
             using (var stream = new MemoryStream())
             {
                 bitmapEncoder.Save(stream);
                 stream.Seek(0, SeekOrigin.Begin);
-
                 bitmap.BeginInit();
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.StreamSource = stream;
@@ -201,7 +197,6 @@ namespace MakerLib
             }
 
             WriteableBitmap wrb = new WriteableBitmap(bmp);
-
             GenerateField(wrb);
         }
 
@@ -209,10 +204,10 @@ namespace MakerLib
         {
             bool[,,] visited;
             visited = new bool[imageWidth, numberOfLayers, imageHeight];
-            DistVector[,,] distVector = new DistVector[imageWidth, numberOfLayers, imageHeight];
+            DistVector[,,] distVector = new DistVector[imageWidth, numberOfLayers * 2, imageHeight];
             Mock3DBitmap mock3D = new Mock3DBitmap(imageWidth, numberOfLayers, imageHeight);
             mock3D.SetLayerImage(wrb, 2);
-            mock3D.SetLayerImage(wrb, 3);
+
             List<QueueItem> queue = new List<QueueItem>();
 
             // pass one, outside
@@ -280,11 +275,25 @@ namespace MakerLib
                 }
             }
 
-            DumpLayerImages(wrb, distVector);
+            for (int py = 0; py < numberOfLayers; py++)
+            {
+                for (int px = 0; px < imageWidth; px++)
+                {
+                    for (int pz = 0; pz < imageHeight; pz++)
+                    {
+                        if (distVector[px, py, pz].inside)
+                        {
+                            distVector[px, py, pz].dv = -distVector[px, py, pz].dv;
+                        }
+                        distVector[px, 2 * numberOfLayers - py - 1, pz] = distVector[px, py, pz];
+                    }
+                }
+            }
+            //  DumpLayerImages(wrb, distVector);
             CubeMarcher cm = new CubeMarcher();
             GridCell gc = new GridCell();
             List<Triangle> triangles = new List<Triangle>();
-            for (int py = 0; py < numberOfLayers - 1; py++)
+            for (int py = 0; py < 2 * numberOfLayers - 1; py++)
             {
                 int ly = py;
                 int hy = (py + 1);
@@ -421,7 +430,6 @@ namespace MakerLib
         private void GenerateSeeds(Mock3DBitmap mock3D, List<QueueItem> queue, int px, int py, int pz, bool inside)
         {
             // diagonals
-
             CheckSeed(mock3D, queue, -1, -1, -1, px, py, pz, vdiagDist, inside);
             CheckSeed(mock3D, queue, 1, -1, -1, px, py, pz, vdiagDist, inside);
             CheckSeed(mock3D, queue, -1, -1, 1, px, py, pz, vdiagDist, inside);
@@ -458,7 +466,7 @@ namespace MakerLib
             CheckSeed(mock3D, queue, 0, 1, 0, px, py, pz, horizontalDist, inside);
         }
 
-        private const int numberOfLayers = 6;
+        private const int numberOfLayers = 3;
 
         private bool valid(int px, int py, int pz)
         {

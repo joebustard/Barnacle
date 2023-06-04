@@ -11,19 +11,9 @@ namespace ScriptLanguage
     {
         private ExpressionNode symbolCodeExp;
         private ExpressionNode symbolFontExp;
-        private ExpressionNode symbolHeightExp;
-        private ExpressionNode symbolLengthExp;
-        private ExpressionNode symbolWidthExp;
 
-        public MakeSymbolNode
-            (
-            ExpressionNode symbolLength, ExpressionNode symbolHeight, ExpressionNode symbolWidth, ExpressionNode symbolCode
-            , ExpressionNode symbolFont
-            )
+        public MakeSymbolNode(ExpressionNode symbolCode, ExpressionNode symbolFont)
         {
-            this.symbolLengthExp = symbolLength;
-            this.symbolHeightExp = symbolHeight;
-            this.symbolWidthExp = symbolWidth;
             this.symbolCodeExp = symbolCode;
             this.symbolFontExp = symbolFont;
         }
@@ -31,11 +21,8 @@ namespace ScriptLanguage
         public MakeSymbolNode
                 (ExpressionCollection coll)
         {
-            this.symbolLengthExp = coll.Get(0);
-            this.symbolHeightExp = coll.Get(1);
-            this.symbolWidthExp = coll.Get(2);
-            this.symbolCodeExp = coll.Get(3);
-            this.symbolFontExp = coll.Get(4);
+            this.symbolCodeExp = coll.Get(0);
+            this.symbolFontExp = coll.Get(1);
         }
 
         /// Execute this node
@@ -45,64 +32,32 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valSymbolLength = 0; double valSymbolHeight = 0; double valSymbolWidth = 0; string valSymbolCode = "";
+            string valSymbolCode = "";
             string valFontName = "";
-            if (
-               EvalExpression(symbolLengthExp, ref valSymbolLength, "SymbolLength", "MakeSymbol") &&
-               EvalExpression(symbolHeightExp, ref valSymbolHeight, "SymbolHeight", "MakeSymbol") &&
-               EvalExpression(symbolWidthExp, ref valSymbolWidth, "SymbolWidth", "MakeSymbol") &&
-               EvalExpression(symbolCodeExp, ref valSymbolCode, "SymbolCode", "MakeSymbol") &&
-               EvalExpression(symbolFontExp, ref valFontName, "FontName", "MakeSymbol")
+            if (EvalExpression(symbolCodeExp, ref valSymbolCode, "SymbolCode", "MakeSymbol") &&
+                  EvalExpression(symbolFontExp, ref valFontName, "FontName", "MakeSymbol")
                )
             {
-                // check calculated values are in range
-                bool inRange = true;
+                result = true;
 
-                if (valSymbolLength < 2 || valSymbolLength > 200)
-                {
-                    Log.Instance().AddEntry("MakeSymbol : SymbolLength value out of range (2..200)");
-                    inRange = false;
-                }
+                Object3D obj = new Object3D();
 
-                if (valSymbolHeight < 2 || valSymbolHeight > 200)
-                {
-                    Log.Instance().AddEntry("MakeSymbol : SymbolHeight value out of range (2..200)");
-                    inRange = false;
-                }
+                obj.Name = "Symbol";
+                obj.PrimType = "Mesh";
+                obj.Scale = new Scale3D(20, 20, 20);
 
-                if (valSymbolWidth < 2 || valSymbolWidth > 200)
-                {
-                    Log.Instance().AddEntry("MakeSymbol : SymbolWidth value out of range (2..200)");
-                    inRange = false;
-                }
+                obj.Position = new Point3D(0, 0, 0);
+                Point3DCollection tmp = new Point3DCollection();
+                SymbolFontMaker maker = new SymbolFontMaker(valSymbolCode, valFontName);
 
-                if (inRange)
-                {
-                    result = true;
+                maker.Generate(tmp, obj.TriangleIndices);
+                PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
 
-                    Object3D obj = new Object3D();
-
-                    obj.Name = "Symbol";
-                    obj.PrimType = "Mesh";
-                    obj.Scale = new Scale3D(20, 20, 20);
-
-                    obj.Position = new Point3D(0, 0, 0);
-                    Point3DCollection tmp = new Point3DCollection();
-                    SymbolFontMaker maker = new SymbolFontMaker(valSymbolLength, valSymbolHeight, valSymbolWidth, valSymbolCode, valFontName);
-
-                    maker.Generate(tmp, obj.TriangleIndices);
-                    PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
-
-                    obj.CalcScale(false);
-                    obj.Remesh();
-                    int id = Script.NextObjectId;
-                    Script.ResultArtefacts[id] = obj;
-                    ExecutionStack.Instance().PushSolid(id);
-                }
-                else
-                {
-                    Log.Instance().AddEntry("MakeSymbol : Illegal value");
-                }
+                obj.CalcScale(false);
+                obj.Remesh();
+                int id = Script.NextObjectId;
+                Script.ResultArtefacts[id] = obj;
+                ExecutionStack.Instance().PushSolid(id);
             }
 
             return result;
@@ -116,9 +71,6 @@ namespace ScriptLanguage
         {
             String result = RichTextFormatter.KeyWord("MakeSymbol") + "( ";
 
-            result += symbolLengthExp.ToRichText() + ", ";
-            result += symbolHeightExp.ToRichText() + ", ";
-            result += symbolWidthExp.ToRichText() + ", ";
             result += symbolCodeExp.ToRichText() + ", ";
             result += symbolFontExp.ToRichText();
             result += " )";
@@ -128,10 +80,6 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = "MakeSymbol( ";
-
-            result += symbolLengthExp.ToString() + ", ";
-            result += symbolHeightExp.ToString() + ", ";
-            result += symbolWidthExp.ToString() + ", ";
             result += symbolCodeExp.ToString() + ", ";
             result += symbolFontExp.ToString();
             result += " )";
