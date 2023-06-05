@@ -10,7 +10,8 @@ namespace HoleLibrary
         public List<Face> faces;
         public Int32Collection MeshFaces;
         public List<P3D> Points;
-        private List<Edge> edges;
+
+        //  private List<Edge> edges;
         private EdgeTree edgeTree;
 
         public HoleFinder(List<P3D> meshPoints, Int32Collection mf)
