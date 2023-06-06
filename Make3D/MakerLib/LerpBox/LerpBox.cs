@@ -1,4 +1,5 @@
-﻿using System;
+﻿using asdflibrary;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,10 +8,12 @@ namespace Lerp.LerpLib
     public class LerpBox
     {
         public Voxel[,,] Voxels;
+        public byte CornerMask;
 
         public LerpBox()
         {
             Voxels = new Voxel[2, 2, 2];
+            CornerMask = 0;
         }
 
         public void Dump()
@@ -39,14 +42,46 @@ namespace Lerp.LerpLib
             Voxels[1, 1, 1] = v8;
         }
 
+        public void CheckMask(int x, int y, int z)
+        {
+            if (Voxels[x, y, z].V < 0)
+            {
+                int index = x << 2 + y << 2 + z;
+                CornerMask = (byte)(CornerMask | (1 << index));
+            }
+        }
+
+        public void SetMask()
+        {
+            CornerMask = 0;
+            CheckMask(0, 0, 0);
+            CheckMask(0, 0, 1);
+            CheckMask(0, 1, 0);
+            CheckMask(0, 1, 1);
+            CheckMask(1, 0, 0);
+            CheckMask(1, 0, 1);
+            CheckMask(1, 1, 0);
+            CheckMask(1, 1, 1);
+        }
+
         public void SetVoxel(int x, int y, int z, float px, float py, float pz, float v)
         {
             Voxels[x, y, z] = new Voxel(px, py, pz, v);
+            if (v < 0)
+            {
+                int index = x << 2 + y << 2 + z;
+                CornerMask = (byte)(CornerMask | (1 << index));
+            }
         }
 
         public void SetVoxel(int x, int y, int z, Voxel v)
         {
             Voxels[x, y, z] = v;
+            if (v.V < 0)
+            {
+                int index = x << 2 + y << 2 + z;
+                CornerMask = (byte)(CornerMask | (1 << index));
+            }
         }
 
         public List<LerpBox> Subdivide()
@@ -129,6 +164,29 @@ namespace Lerp.LerpLib
         private float Lerp(float x0, float x1, float t)
         {
             return (x0 + (x1 - x0) * t);
+        }
+
+        public GridCell ToGridCell()
+        {
+            GridCell gc = new GridCell();
+            gc.p[0] = Voxels[0, 0, 0].ToXZY();
+            gc.p[1] = Voxels[1, 0, 0].ToXZY();
+            gc.p[2] = Voxels[1, 0, 1].ToXZY();
+            gc.p[3] = Voxels[0, 0, 1].ToXZY();
+            gc.p[4] = Voxels[0, 1, 0].ToXZY();
+            gc.p[5] = Voxels[1, 1, 0].ToXZY();
+            gc.p[6] = Voxels[1, 1, 1].ToXZY();
+            gc.p[7] = Voxels[0, 1, 1].ToXZY();
+
+            gc.val[0] = Voxels[0, 0, 0].V;
+            gc.val[1] = Voxels[1, 0, 0].V;
+            gc.val[2] = Voxels[1, 0, 1].V;
+            gc.val[3] = Voxels[0, 0, 1].V;
+            gc.val[4] = Voxels[0, 1, 0].V;
+            gc.val[5] = Voxels[1, 1, 0].V;
+            gc.val[6] = Voxels[1, 1, 1].V;
+            gc.val[7] = Voxels[0, 1, 1].V;
+            return gc;
         }
     }
 }
