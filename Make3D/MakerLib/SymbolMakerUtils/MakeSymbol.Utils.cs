@@ -1,5 +1,7 @@
 ﻿using asdflibrary;
+using Lerp.LerpLib;
 using MakerLib;
+using OctTreeLib;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 
 namespace MakerLib
 {
@@ -156,9 +159,6 @@ namespace MakerLib
         }
 
         private BitmapImage bitmap;
-        private double frontXSize;
-        private double frontYSize;
-        private double frontZSize;
 
         public void GenerateSymbol(string v, string fontName)
         {
@@ -166,13 +166,10 @@ namespace MakerLib
             DrawingContext drawingContext = drawingVisual.RenderOpen();
 
             FormattedText ft = new FormattedText(v, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                                   new Typeface(fontName), 150, System.Windows.Media.Brushes.Black);
+                                   new Typeface(fontName), 100, System.Windows.Media.Brushes.Black);
             ft.SetFontStretch(FontStretches.Normal);
             Size sz = new Size(ft.Width, ft.Height);
 
-            frontXSize = 0.25;
-            frontZSize = 0.25;
-            frontYSize = 0.5;
             imageWidth = (int)(Math.Ceiling(sz.Width)) + 20;
             imageHeight = (int)(Math.Ceiling(sz.Height)) + 20;
             drawingContext.DrawRectangle(System.Windows.Media.Brushes.White, new System.Windows.Media.Pen(System.Windows.Media.Brushes.White, 1), new Rect(0, 0, imageWidth, imageHeight));
@@ -290,9 +287,11 @@ namespace MakerLib
                 }
             }
             //  DumpLayerImages(wrb, distVector);
+            List<Triangle> triangles = new List<Triangle>();
+            triangles.Clear();
             CubeMarcher cm = new CubeMarcher();
             GridCell gc = new GridCell();
-            List<Triangle> triangles = new List<Triangle>();
+
             for (int py = 0; py < 2 * numberOfLayers - 1; py++)
             {
                 int ly = py;
@@ -304,39 +303,63 @@ namespace MakerLib
                     for (int pz = 0; pz < imageHeight - 1; pz++)
                     {
                         int hz = pz + 1;
-                        gc.p[0] = new XYZ(px, ly, pz);
-                        gc.p[1] = new XYZ(hx, ly, pz);
-                        gc.p[2] = new XYZ(hx, ly, hz);
-                        gc.p[3] = new XYZ(px, ly, hz);
-                        gc.p[4] = new XYZ(px, hy, pz);
-                        gc.p[5] = new XYZ(hx, hy, pz);
-                        gc.p[6] = new XYZ(hx, hy, hz);
-                        gc.p[7] = new XYZ(px, hy, hz);
+                        LerpBox lb = new LerpBox();
+                        lb.SetVoxel(0, 0, 0, px, py, pz, distVector[px, py, pz].dv);
+                        lb.SetVoxel(1, 0, 0, hx, py, pz, distVector[hx, py, pz].dv);
+                        lb.SetVoxel(1, 0, 1, hx, py, hz, distVector[hx, py, hz].dv);
+                        lb.SetVoxel(0, 0, 1, px, py, hz, distVector[px, py, hz].dv);
 
-                        gc.val[0] = distVector[px, py, pz].dv;
-                        gc.val[1] = distVector[hx, py, pz].dv;
-                        gc.val[2] = distVector[hx, py, hz].dv;
-                        gc.val[3] = distVector[px, py, hz].dv;
-                        gc.val[4] = distVector[px, py + 1, pz].dv;
-                        gc.val[5] = distVector[hx, py + 1, pz].dv;
-                        gc.val[6] = distVector[hx, py + 1, hz].dv;
-                        gc.val[7] = distVector[px, py + 1, hz].dv;
-                        triangles.Clear();
+                        lb.SetVoxel(0, 1, 0, px, hy, pz, distVector[px, hy, pz].dv);
+                        lb.SetVoxel(1, 1, 0, hx, hy, pz, distVector[hx, hy, pz].dv);
+                        lb.SetVoxel(1, 1, 1, hx, hy, hz, distVector[hx, hy, hz].dv);
+                        lb.SetVoxel(0, 1, 1, px, hy, hz, distVector[px, hy, hz].dv);
+                        /*
+                                                gc.p[0] = new XYZ(px, ly, pz);
+                                                gc.p[1] = new XYZ(hx, ly, pz);
+                                                gc.p[2] = new XYZ(hx, ly, hz);
+                                                gc.p[3] = new XYZ(px, ly, hz);
+                                                gc.p[4] = new XYZ(px, hy, pz);
+                                                gc.p[5] = new XYZ(hx, hy, pz);
+                                                gc.p[6] = new XYZ(hx, hy, hz);
+                                                gc.p[7] = new XYZ(px, hy, hz);
 
-                        cm.Polygonise(gc, 0, triangles);
-
-                        foreach (Triangle t in triangles)
+                                                gc.val[0] = distVector[px, py, pz].dv;
+                                                gc.val[1] = distVector[hx, py, pz].dv;
+                                                gc.val[2] = distVector[hx, py, hz].dv;
+                                                gc.val[3] = distVector[px, py, hz].dv;
+                                                gc.val[4] = distVector[px, py + 1, pz].dv;
+                                                gc.val[5] = distVector[hx, py + 1, pz].dv;
+                                                gc.val[6] = distVector[hx, py + 1, hz].dv;
+                                                gc.val[7] = distVector[px, py + 1, hz].dv;
+                        */
+                        if (lb.CornerMask != 0 && lb.CornerMask != 255)
                         {
-                            int p0 = AddVertice(t.p[0].x * frontXSize, (t.p[0].y * frontYSize), t.p[0].z * frontZSize);
-                            int p1 = AddVertice(t.p[1].x * frontXSize, (t.p[1].y * frontYSize), t.p[1].z * frontZSize);
-                            int p2 = AddVertice(t.p[2].x * frontXSize, (t.p[2].y * frontYSize), t.p[2].z * frontZSize);
+                            List<LerpBox> divs = lb.Subdivide();
+                            foreach (LerpBox subBox in divs)
+                            {
+                                subBox.SetMask();
+                                if (subBox.CornerMask != 0 && subBox.CornerMask != 255)
+                                {
+                                    gc = subBox.ToGridCell();
 
-                            Faces.Add(p0);
-                            Faces.Add(p1);
-                            Faces.Add(p2);
+                                    cm.Polygonise(gc, 0, triangles);
+                                }
+                            }
                         }
                     }
                 }
+            }
+            OctTree octTree = CreateOctree(new Point3D(-1, -1, -1),
+                      new Point3D(imageWidth, 7, imageHeight));
+            foreach (Triangle t in triangles)
+            {
+                int p0 = AddVerticeOctTree(t.p[0].x, t.p[0].y, t.p[0].z);
+                int p1 = AddVerticeOctTree(t.p[1].x, t.p[1].y, t.p[1].z);
+                int p2 = AddVerticeOctTree(t.p[2].x, t.p[2].y, t.p[2].z);
+
+                Faces.Add(p0);
+                Faces.Add(p1);
+                Faces.Add(p2);
             }
         }
 

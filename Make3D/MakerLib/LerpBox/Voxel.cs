@@ -1,4 +1,5 @@
-﻿using System;
+﻿using asdflibrary;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,6 +22,11 @@ namespace Lerp.LerpLib
             this.Y = py;
             this.Z = pz;
             V = v;
+        }
+
+        public XYZ ToXZY()
+        {
+            return new XYZ(X, Y, Z);
         }
 
         public void Dump()
