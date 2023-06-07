@@ -1171,22 +1171,22 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir $(TargetDir)templates
-mkdir $(TargetDir)data
-mkdir $(TargetDir)data\Textures
-mkdir $(TargetDir)data\figure
-mkdir $(TargetDir)data\Links
-mkdir $(TargetDir)data\Textures
+    <PostBuildEvent>mkdir "$(TargetDir)templates"
+mkdir "$(TargetDir)data"
+mkdir "$(TargetDir)data\Textures"
+mkdir "$(TargetDir)data\figure"
+mkdir "$(TargetDir)data\Links"
+mkdir "$(TargetDir)data\Textures"
 del   /q $(TargetDir)data\Links\*.txt
-mkdir $(TargetDir)libs
-xcopy $(SolutionDir)make3d\templates\*.* $(TargetDir)templates /q /s /y
-copy /Y $(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.* $(TargetDir)data
-copy /Y $(SolutionDir)make3d\Dialogs\TankTrack\Links\*.* $(TargetDir)data\Links
-copy /Y $(SolutionDir)make3d\Data\*.* $(TargetDir)data
-copy /Y $(SolutionDir)make3d\Data\Textures\*.* $(TargetDir)data\textures
-copy /Y $(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs
-del   /q $(TargetDir)data\figure\*.txt
-copy /Y $(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt  $(TargetDir)data\figure
+mkdir "$(TargetDir)libs"
+xcopy "$(SolutionDir)make3d\templates\*.*" "$(TargetDir)templates" /q /s /y
+copy /Y "$(SolutionDir)make3d\Dialogs\Wing\Airfoils\*.*" "$(TargetDir)data"
+copy /Y "$(SolutionDir)make3d\Dialogs\TankTrack\Links\*.*" "$(TargetDir)data\Links"
+copy /Y "$(SolutionDir)make3d\Data\*.*" "$(TargetDir)data"
+copy /Y "$(SolutionDir)make3d\Data\Textures\*.* $(TargetDir)data\textures"
+copy /Y "$(SolutionDir)Interpreter\Libs\*.* $(TargetDir)libs"
+del   /q "$(TargetDir)data\figure\*.txt"
+copy /Y "$(SolutionDir)make3d\Dialogs\Figure\FigureData\*.txt " "$(TargetDir)data\figure"
 
 Exit 0
 </PostBuildEvent>

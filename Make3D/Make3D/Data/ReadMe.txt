@@ -2,13 +2,15 @@
 ===========
 Fixed
   Small speed up in hole fixing.
+  Explore folder menu option wasn't working
 
 Changed
    Fonts on slicer dialog results
 
 Added
    Path Loft tool
-   Hollow Box Tool
+   Simple Hollow Box Tool
+   Symbol tool to turn a character from a symbol font into a 3D object
 
 v1.0.3
 ===========

@@ -177,8 +177,9 @@
       <File Name="BillOfMaterials.xlsx" Source="templates/aircraftbillofmaterials.xlsx" />
       <File Name="BuildInstructions.docx" Source="templates/AircraftBuildInstructions.docx" />
     </Folder>
-    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
-    <Folder Name="Images\Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+    <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True">
+      <Folder Name="Ribs" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
+    </Folder>
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
     <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">

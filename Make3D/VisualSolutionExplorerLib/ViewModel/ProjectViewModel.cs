@@ -7,7 +7,7 @@ namespace VisualSolutionExplorer
 {
     public class ProjectViewModel : INotifyPropertyChanged
     {
-        public static string ProjectFilePath;
+        public  string ProjectFilePath;
         private ObservableCollection<ProjectFolderViewModel> folders;
         private System.Windows.Visibility refreshVisibility;
         private System.Windows.Visibility insertLibraryVisibility;

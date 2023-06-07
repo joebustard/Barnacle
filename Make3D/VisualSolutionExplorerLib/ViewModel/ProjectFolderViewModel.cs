@@ -20,7 +20,7 @@ namespace VisualSolutionExplorer
             _folder = folder;
             _folder.Vm = this;
             MakeContextMenu(folder);
-
+            ParentProject = folder.ParentProject;
             isEditing = false;
             StopEditing = new RelayCommand(OnStopEditing);
         }
@@ -182,7 +182,7 @@ namespace VisualSolutionExplorer
 
         public void ExploreFolder()
         {
-            string root = Path.GetDirectoryName(ProjectViewModel.ProjectFilePath);
+            string root = Path.GetDirectoryName(ParentProject.BaseFolder);
             string pth = root + _folder.FolderPath;
             if (!pth.EndsWith(Path.DirectorySeparatorChar.ToString()))
             {
@@ -286,6 +286,8 @@ namespace VisualSolutionExplorer
             foreach (ProjectFolder fld in _folder.ProjectFolders)
             {
                 ProjectFolderViewModel pfo = new ProjectFolderViewModel(fld);
+                pfo.ParentProject = ParentProject;
+
                 pfo.SolutionChanged = NotifySolutionChanged;
                 base.Children.Add(pfo);
                 pfo.LoadChildren();

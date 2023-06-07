@@ -85,7 +85,7 @@ namespace VisualSolutionExplorer
 
                     Folders = fldrs;
                     viewModel.SetContent(Folders);
-                    ProjectViewModel.ProjectFilePath = ParentProject.BaseFolder;
+                    // ProjectViewModel.ProjectFilePath = ParentProject.BaseFolder;
                     if (!showRefreshButton)
                     {
                         viewModel.RefreshVisibility = Visibility.Hidden;
