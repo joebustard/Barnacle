@@ -12,8 +12,6 @@ namespace Barnacle
     /// </summary>
     public partial class MainWindow : Window
     {
-        private AdaptiveSignedDistanceField adfTest;
-
         public MainWindow()
         {
             InitializeComponent();

@@ -16,13 +16,9 @@ namespace ScriptLanguage
         private ExpressionNode mortarGapExp;
         private ExpressionNode roofWidthExp;
 
-        public MakeShapedTiledRoofNode
-            (
-            ExpressionNode pathNode,
-            ExpressionNode tileLength, ExpressionNode tileHeight, ExpressionNode tileDepth, ExpressionNode mortarGap, ExpressionNode roofWidth
-            )
+        public MakeShapedTiledRoofNode(ExpressionNode pathNode, ExpressionNode tileLength, ExpressionNode tileHeight, ExpressionNode tileDepth, ExpressionNode mortarGap, ExpressionNode roofWidth)
         {
-            this.pathExp = pathExp;
+            this.pathExp = pathNode;
             this.tileLengthExp = tileLength;
             this.tileHeightExp = tileHeight;
             this.tileDepthExp = tileDepth;
@@ -30,8 +26,7 @@ namespace ScriptLanguage
             this.roofWidthExp = roofWidth;
         }
 
-        public MakeShapedTiledRoofNode
-                (ExpressionCollection coll)
+        public MakeShapedTiledRoofNode(ExpressionCollection coll)
         {
             this.pathExp = coll.Get(0);
             this.tileLengthExp = coll.Get(1);

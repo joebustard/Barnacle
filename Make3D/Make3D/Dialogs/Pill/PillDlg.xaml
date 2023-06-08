@@ -31,30 +31,27 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">FlatLength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding FlatLength}" Width="150" ToolTip="{Binding FlatLengthToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Flat Length</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding FlatLength}" Width="150" ToolTip="{Binding FlatLengthToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">FlatHeight</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding FlatHeight}" Width="150" ToolTip="{Binding FlatHeightToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Flat Height</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding FlatHeight}" Width="150" ToolTip="{Binding FlatHeightToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">Edge</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding Edge}" Width="150" ToolTip="{Binding EdgeToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Edge</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding Edge}" Width="150" ToolTip="{Binding EdgeToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">PillWidth</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding PillWidth}" Width="150" ToolTip="{Binding PillWidthToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Pill Width</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding PillWidth}" Width="150" ToolTip="{Binding PillWidthToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
+                <RadioButton GroupName="PillType" VerticalAlignment="Center" Content="Plain" />
+                <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Half" />
+                <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Tray" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -114,4 +111,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

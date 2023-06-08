@@ -9,32 +9,30 @@ namespace ScriptLanguage
 {
     internal class MakePillNode : ExpressionNode
     {
-                private ExpressionNode flatLengthExp ;
-        private ExpressionNode flatHeightExp ;
-        private ExpressionNode edgeExp ;
-        private ExpressionNode pillWidthExp ;
+        private ExpressionNode flatLengthExp;
+        private ExpressionNode flatHeightExp;
+        private ExpressionNode edgeExp;
+        private ExpressionNode pillWidthExp;
+        private ExpressionNode frontOnlyExp;
 
-
-        public MakePillNode
-            (
-            ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth
+        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode frontOnly
             )
         {
-                      this.flatLengthExp = flatLength ;
-          this.flatHeightExp = flatHeight ;
-          this.edgeExp = edge ;
-          this.pillWidthExp = pillWidth ;
-
+            this.flatLengthExp = flatLength;
+            this.flatHeightExp = flatHeight;
+            this.edgeExp = edge;
+            this.pillWidthExp = pillWidth;
+            this.frontOnlyExp = frontOnly;
         }
 
         public MakePillNode
                 (ExpressionCollection coll)
         {
-                            this.flatLengthExp = coll.Get(0);
-                this.flatHeightExp = coll.Get(1);
-                this.edgeExp = coll.Get(2);
-                this.pillWidthExp = coll.Get(3);
-
+            this.flatLengthExp = coll.Get(0);
+            this.flatHeightExp = coll.Get(1);
+            this.edgeExp = coll.Get(2);
+            this.pillWidthExp = coll.Get(3);
+            this.frontOnlyExp = coll.Get(4);
         }
 
         /// Execute this node
@@ -44,40 +42,45 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-                            double valFlatLength= 0;                double valFlatHeight= 0;                double valEdge= 0;                double valPillWidth= 0;
-
+            double valFlatLength = 0;
+            double valFlatHeight = 0;
+            double valEdge = 0;
+            double valPillWidth = 0;
+            bool valFrontOnly = false;
             if (
-               EvalExpression(flatLengthExp, ref valFlatLength, "FlatLength", "MakePill")  &&
-               EvalExpression(flatHeightExp, ref valFlatHeight, "FlatHeight", "MakePill")  &&
-               EvalExpression(edgeExp, ref valEdge, "Edge", "MakePill")  &&
-               EvalExpression(pillWidthExp, ref valPillWidth, "PillWidth", "MakePill") )
+               EvalExpression(flatLengthExp, ref valFlatLength, "FlatLength", "MakePill") &&
+               EvalExpression(flatHeightExp, ref valFlatHeight, "FlatHeight", "MakePill") &&
+               EvalExpression(edgeExp, ref valEdge, "Edge", "MakePill") &&
+               EvalExpression(pillWidthExp, ref valPillWidth, "PillWidth", "MakePill") &&
+               EvalExpression(frontOnlyExp, ref valFrontOnly, "FrontOnly", "MakePill")
+               )
             {
                 // check calculated values are in range
                 bool inRange = true;
-                
-            if (valFlatLength < 1 || valFlatLength > 100 )
-            {
-                Log.Instance().AddEntry("MakePill : FlatLength value out of range (1..100)");
-                inRange= false;
-            }
 
-            if (valFlatHeight < 1 || valFlatHeight > 100 )
-            {
-                Log.Instance().AddEntry("MakePill : FlatHeight value out of range (1..100)");
-                inRange= false;
-            }
+                if (valFlatLength < 1 || valFlatLength > 100)
+                {
+                    Log.Instance().AddEntry("MakePill : FlatLength value out of range (1..100)");
+                    inRange = false;
+                }
 
-            if (valEdge < 1 || valEdge > 100 )
-            {
-                Log.Instance().AddEntry("MakePill : Edge value out of range (1..100)");
-                inRange= false;
-            }
+                if (valFlatHeight < 1 || valFlatHeight > 100)
+                {
+                    Log.Instance().AddEntry("MakePill : FlatHeight value out of range (1..100)");
+                    inRange = false;
+                }
 
-            if (valPillWidth < 2 || valPillWidth > 200 )
-            {
-                Log.Instance().AddEntry("MakePill : PillWidth value out of range (2..200)");
-                inRange= false;
-            }
+                if (valEdge < 1 || valEdge > 100)
+                {
+                    Log.Instance().AddEntry("MakePill : Edge value out of range (1..100)");
+                    inRange = false;
+                }
+
+                if (valPillWidth < 2 || valPillWidth > 200)
+                {
+                    Log.Instance().AddEntry("MakePill : PillWidth value out of range (2..200)");
+                    inRange = false;
+                }
 
                 if (inRange)
                 {
@@ -91,7 +94,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth);
+                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth, valFrontOnly);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -118,11 +121,12 @@ namespace ScriptLanguage
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("MakePill") + "( ";
-            
-        result += flatLengthExp.ToRichText()+", ";
-        result += flatHeightExp.ToRichText()+", ";
-        result += edgeExp.ToRichText()+", ";
-        result += pillWidthExp.ToRichText();
+
+            result += flatLengthExp.ToRichText() + ", ";
+            result += flatHeightExp.ToRichText() + ", ";
+            result += edgeExp.ToRichText() + ", ";
+            result += pillWidthExp.ToRichText() + ", ";
+            result += frontOnlyExp.ToRichText();
             result += " )";
             return result;
         }
@@ -130,11 +134,12 @@ namespace ScriptLanguage
         public override String ToString()
         {
             String result = "MakePill( ";
-            
-        result += flatLengthExp.ToString()+", ";
-        result += flatHeightExp.ToString()+", ";
-        result += edgeExp.ToString()+", ";
-        result += pillWidthExp.ToString();
+
+            result += flatLengthExp.ToString() + ", ";
+            result += flatHeightExp.ToString() + ", ";
+            result += edgeExp.ToString() + ", ";
+            result += pillWidthExp.ToString() + ", ";
+            result += frontOnlyExp.ToString();
             result += " )";
             return result;
         }

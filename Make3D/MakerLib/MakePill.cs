@@ -17,16 +17,18 @@ namespace MakerLib
         private double frontY;
         private double frontZ;
         private double halfW;
+        private bool frontOnly;
         private int edgeDivs;
         private const double halfPi = Math.PI / 2.0;
         private Point[] trigPoints;
 
-        public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth)
+        public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth, bool frontOnly)
         {
             this.flatLength = flatLength;
             this.flatHeight = flatHeight;
             this.edge = edge;
             this.pillWidth = pillWidth;
+            this.frontOnly = frontOnly;
             halfW = pillWidth / 2.0;
             frontX = edge;
             frontY = edge;
@@ -51,31 +53,27 @@ namespace MakerLib
             }
 
             MakeFrontFlat();
-            MakeBackFlat();
-
             MakeFrontRight();
-            MakeBackRight();
-
             MakeFrontLeft();
-            MakeBackLeft();
-
             MakeFrontTop();
-            MakeBackTop();
-
             MakeFrontBottom();
-            MakeBackBottom();
-
             MakeFrontTopRightCorner();
-            MakeBackTopRightCorner();
-
             MakeFrontTopLeftCorner();
-            MakeBackTopLeftCorner();
-
             MakeFrontBottomRightCorner();
-            MakeBackBottomRightCorner();
-
             MakeFrontBottomLeftCorner();
-            MakeBackBottomLeftCorner();
+
+            if (!frontOnly)
+            {
+                MakeBackFlat();
+                MakeBackRight();
+                MakeBackLeft();
+                MakeBackTop();
+                MakeBackBottom();
+                MakeBackTopRightCorner();
+                MakeBackTopLeftCorner();
+                MakeBackBottomRightCorner();
+                MakeBackBottomLeftCorner();
+            }
         }
 
         private void MakeBackBottomLeftCorner()
