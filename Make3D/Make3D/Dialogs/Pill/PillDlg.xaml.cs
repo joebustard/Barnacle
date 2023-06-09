@@ -208,17 +208,65 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private bool frontOnly;
+        private int shape;
 
-        public bool FrontOnly
+        private bool plainSelected;
+
+        public bool PlainSelected
         {
-            get { return frontOnly; }
+            get { return plainSelected; }
             set
             {
-                if (frontOnly != value)
+                if (plainSelected != value)
                 {
-                    frontOnly = value;
+                    plainSelected = value;
                     NotifyPropertyChanged();
+                    if (plainSelected)
+                    {
+                        shape = 0;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        private bool halfSelected;
+
+        public bool HalfSelected
+        {
+            get { return halfSelected; }
+            set
+            {
+                if (halfSelected != value)
+                {
+                    halfSelected = value;
+                    NotifyPropertyChanged();
+                    if (halfSelected)
+                    {
+                        shape = 1;
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        private bool traySelected;
+
+        public bool TraySelected
+        {
+            get { return traySelected; }
+            set
+            {
+                if (traySelected != value)
+                {
+                    traySelected = value;
+
+                    NotifyPropertyChanged();
+                    if (traySelected)
+                    {
+                        shape = 2;
+                        UpdateDisplay();
+                    }
                 }
             }
         }
@@ -226,7 +274,7 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            PillMaker maker = new PillMaker(flatLength, flatHeight, edge, pillWidth, frontOnly);
+            PillMaker maker = new PillMaker(flatLength, flatHeight, edge, pillWidth, shape);
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }
@@ -242,7 +290,9 @@ namespace Barnacle.Dialogs
             Edge = EditorParameters.GetDouble("Edge", 5);
 
             PillWidth = EditorParameters.GetDouble("PillWidth", 10);
-            FrontOnly = EditorParameters.GetBoolean("FrontOnly", false);
+            PlainSelected = EditorParameters.GetBoolean("PlainSelected", true);
+            HalfSelected = EditorParameters.GetBoolean("HalfSelected", false);
+            TraySelected = EditorParameters.GetBoolean("TraySelected", false);
         }
 
         private void SaveEditorParmeters()
@@ -253,7 +303,9 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("FlatHeight", FlatHeight.ToString());
             EditorParameters.Set("Edge", Edge.ToString());
             EditorParameters.Set("PillWidth", PillWidth.ToString());
-            EditorParameters.Set("FrontOnly", FrontOnly.ToString());
+            EditorParameters.Set("PlainSelected", PlainSelected.ToString());
+            EditorParameters.Set("HalfSelected", HalfSelected.ToString());
+            EditorParameters.Set("TraySelected", TraySelected.ToString());
         }
 
         private void UpdateDisplay()

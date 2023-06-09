@@ -17,18 +17,18 @@ namespace MakerLib
         private double frontY;
         private double frontZ;
         private double halfW;
-        private bool frontOnly;
+        private int shape;
         private int edgeDivs;
         private const double halfPi = Math.PI / 2.0;
         private Point[] trigPoints;
 
-        public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth, bool frontOnly)
+        public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth, int shape)
         {
             this.flatLength = flatLength;
             this.flatHeight = flatHeight;
             this.edge = edge;
             this.pillWidth = pillWidth;
-            this.frontOnly = frontOnly;
+            this.shape = shape;
             halfW = pillWidth / 2.0;
             frontX = edge;
             frontY = edge;
@@ -51,28 +51,64 @@ namespace MakerLib
                 theta = (dt * i);
                 trigPoints[i] = new Point(Math.Sin(theta), Math.Cos(theta));
             }
-
-            MakeFrontFlat();
-            MakeFrontRight();
-            MakeFrontLeft();
-            MakeFrontTop();
-            MakeFrontBottom();
-            MakeFrontTopRightCorner();
-            MakeFrontTopLeftCorner();
-            MakeFrontBottomRightCorner();
-            MakeFrontBottomLeftCorner();
-
-            if (!frontOnly)
+            switch (shape)
             {
-                MakeBackFlat();
-                MakeBackRight();
-                MakeBackLeft();
-                MakeBackTop();
-                MakeBackBottom();
-                MakeBackTopRightCorner();
-                MakeBackTopLeftCorner();
-                MakeBackBottomRightCorner();
-                MakeBackBottomLeftCorner();
+                case 0:
+                    {
+                        MakeFrontFlat();
+                        MakeFrontRight();
+                        MakeFrontLeft();
+                        MakeFrontTop();
+                        MakeFrontBottom();
+                        MakeFrontTopRightCorner();
+                        MakeFrontTopLeftCorner();
+                        MakeFrontBottomRightCorner();
+                        MakeFrontBottomLeftCorner();
+
+                        MakeBackFlat();
+                        MakeBackRight();
+                        MakeBackLeft();
+                        MakeBackTop();
+                        MakeBackBottom();
+                        MakeBackTopRightCorner();
+                        MakeBackTopLeftCorner();
+                        MakeBackBottomRightCorner();
+                        MakeBackBottomLeftCorner();
+                    }
+                    break;
+
+                case 1:
+                    {
+                        MakeFrontFlat();
+                        MakeFrontRight();
+                        MakeFrontLeft();
+                        MakeFrontTop();
+                        MakeFrontBottom();
+                        MakeFrontTopRightCorner();
+                        MakeFrontTopLeftCorner();
+                        MakeFrontBottomRightCorner();
+                        MakeFrontBottomLeftCorner();
+
+                        MakeBackHalf();
+
+                        MakeHalfCorners();
+                        MakeBackHalfGaps();
+                    }
+                    break;
+
+                case 2:
+                    {
+                        MakeFrontFlat();
+                        MakeFrontRight();
+                        MakeFrontLeft();
+                        MakeFrontTop();
+                        MakeFrontBottom();
+                        MakeFrontTopRightCorner();
+                        MakeFrontTopLeftCorner();
+                        MakeFrontBottomRightCorner();
+                        MakeFrontBottomLeftCorner();
+                    }
+                    break;
             }
         }
 
@@ -390,7 +426,11 @@ namespace MakerLib
 
         private void MakeBackFlat()
         {
-            double backZ = -frontZ;
+            MakeFlat(-frontZ);
+        }
+
+        private void MakeFlat(double backZ)
+        {
             int p0 = AddVertice(frontX, frontY, backZ);
             int p1 = AddVertice(frontX + flatLength, frontY, backZ);
             int p2 = AddVertice(frontX + flatLength, frontY + flatHeight, backZ);
@@ -403,6 +443,74 @@ namespace MakerLib
             Faces.Add(p0);
             Faces.Add(p3);
             Faces.Add(p2);
+        }
+
+        private void MakeBackHalf()
+        {
+            double px1 = frontX;
+            double py1 = frontY - edge;
+
+            double px2 = px1 + flatLength;
+            double py2 = frontY + flatHeight + edge;
+
+            // fill the gap between the back square and the right edge of the pill
+            int p0 = AddVertice(px1, py1, 0);
+            int p1 = AddVertice(px1, py2, 0);
+            int p2 = AddVertice(px2, py2, 0);
+            int p3 = AddVertice(px2, py1, 0);
+            AddFace(p0, p1, p2);
+            AddFace(p0, p2, p3);
+        }
+
+        private void MakeBackHalfGaps()
+        {
+            double px1 = frontX + flatLength;
+            double ty = frontY + flatHeight;
+            double px2 = px1 + edge;
+
+            // fill the gap between the back square and the right edge of the pill
+            int p0 = AddVertice(px1, ty, 0);
+            int p1 = AddVertice(px1, frontY, 0);
+            int p2 = AddVertice(px2, frontY, 0);
+            int p3 = AddVertice(px2, ty, 0);
+            AddFace(p0, p2, p1);
+            AddFace(p0, p3, p2);
+            // fill the gap between the back square and the left edge of the pill
+            px1 = frontX - edge;
+            ty = frontY + flatHeight;
+            px2 = frontX;
+            p0 = AddVertice(px1, ty, 0);
+            p1 = AddVertice(px1, frontY, 0);
+            p2 = AddVertice(px2, frontY, 0);
+            p3 = AddVertice(px2, ty, 0);
+            AddFace(p0, p2, p1);
+            AddFace(p0, p3, p2);
+        }
+
+        private void MakeHalfCorners()
+        {
+            MakeFlatPie(frontX + flatLength, frontY + flatHeight, 90, 0, edge);
+            MakeFlatPie(frontX, frontY + flatHeight, 180, 90, edge);
+            MakeFlatPie(frontX, frontY, 270, 180, edge);
+            MakeFlatPie(frontX + flatLength, frontY, 360, 270, edge);
+        }
+
+        private void MakeFlatPie(double cx, double cy, double start, double stop, double radius)
+        {
+            double theta = DegToRad(start);
+            double dt = DegToRad((stop - start) / edgeDivs);
+            int v0 = AddVertice(cx, cy, 0);
+            for (int i = 0; i < edgeDivs; i++)
+            {
+                double t = theta + (dt * i);
+                double t2 = t + dt;
+
+                Point p1 = CalcPoint(t, radius);
+                Point p2 = CalcPoint(t2, radius);
+                int v1 = AddVertice(cx + p1.X, cy + p1.Y, 0);
+                int v2 = AddVertice(cx + p2.X, cy + p2.Y, 0);
+                AddFace(v0, v1, v2);
+            }
         }
     }
 }

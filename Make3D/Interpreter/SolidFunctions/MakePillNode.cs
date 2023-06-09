@@ -1,38 +1,35 @@
 using Barnacle.Object3DLib;
 using MakerLib;
 using System;
-
-using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace ScriptLanguage
 {
     internal class MakePillNode : ExpressionNode
     {
-        private ExpressionNode flatLengthExp;
-        private ExpressionNode flatHeightExp;
         private ExpressionNode edgeExp;
+        private ExpressionNode flatHeightExp;
+        private ExpressionNode flatLengthExp;
         private ExpressionNode pillWidthExp;
-        private ExpressionNode frontOnlyExp;
+        private ExpressionNode shapeExp;
 
-        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode frontOnly
+        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode shape
             )
         {
             this.flatLengthExp = flatLength;
             this.flatHeightExp = flatHeight;
             this.edgeExp = edge;
             this.pillWidthExp = pillWidth;
-            this.frontOnlyExp = frontOnly;
+            this.shapeExp = shape;
         }
 
-        public MakePillNode
-                (ExpressionCollection coll)
+        public MakePillNode(ExpressionCollection coll)
         {
             this.flatLengthExp = coll.Get(0);
             this.flatHeightExp = coll.Get(1);
             this.edgeExp = coll.Get(2);
             this.pillWidthExp = coll.Get(3);
-            this.frontOnlyExp = coll.Get(4);
+            this.shapeExp = coll.Get(4);
         }
 
         /// Execute this node
@@ -46,13 +43,13 @@ namespace ScriptLanguage
             double valFlatHeight = 0;
             double valEdge = 0;
             double valPillWidth = 0;
-            bool valFrontOnly = false;
+            int valShape = 0;
             if (
                EvalExpression(flatLengthExp, ref valFlatLength, "FlatLength", "MakePill") &&
                EvalExpression(flatHeightExp, ref valFlatHeight, "FlatHeight", "MakePill") &&
                EvalExpression(edgeExp, ref valEdge, "Edge", "MakePill") &&
                EvalExpression(pillWidthExp, ref valPillWidth, "PillWidth", "MakePill") &&
-               EvalExpression(frontOnlyExp, ref valFrontOnly, "FrontOnly", "MakePill")
+               EvalExpression(shapeExp, ref valShape, "Shape", "MakePill")
                )
             {
                 // check calculated values are in range
@@ -94,7 +91,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth, valFrontOnly);
+                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth, valShape);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -117,7 +114,6 @@ namespace ScriptLanguage
         /// Returns a String representation of this node that can be used for
         /// Pretty Printing
         ///
-        ///
         public override String ToRichText()
         {
             String result = RichTextFormatter.KeyWord("MakePill") + "( ";
@@ -126,7 +122,7 @@ namespace ScriptLanguage
             result += flatHeightExp.ToRichText() + ", ";
             result += edgeExp.ToRichText() + ", ";
             result += pillWidthExp.ToRichText() + ", ";
-            result += frontOnlyExp.ToRichText();
+            result += shapeExp.ToRichText();
             result += " )";
             return result;
         }
@@ -139,7 +135,7 @@ namespace ScriptLanguage
             result += flatHeightExp.ToString() + ", ";
             result += edgeExp.ToString() + ", ";
             result += pillWidthExp.ToString() + ", ";
-            result += frontOnlyExp.ToString();
+            result += shapeExp.ToString();
             result += " )";
             return result;
         }
