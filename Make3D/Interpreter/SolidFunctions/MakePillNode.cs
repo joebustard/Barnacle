@@ -11,15 +11,16 @@ namespace ScriptLanguage
         private ExpressionNode flatHeightExp;
         private ExpressionNode flatLengthExp;
         private ExpressionNode pillWidthExp;
+        private ExpressionNode trayThicknessExp;
         private ExpressionNode shapeExp;
 
-        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode shape
-            )
+        public MakePillNode(ExpressionNode flatLength, ExpressionNode flatHeight, ExpressionNode edge, ExpressionNode pillWidth, ExpressionNode trayThickness, ExpressionNode shape )
         {
             this.flatLengthExp = flatLength;
             this.flatHeightExp = flatHeight;
             this.edgeExp = edge;
             this.pillWidthExp = pillWidth;
+            this.trayThicknessExp = trayThickness;
             this.shapeExp = shape;
         }
 
@@ -29,7 +30,8 @@ namespace ScriptLanguage
             this.flatHeightExp = coll.Get(1);
             this.edgeExp = coll.Get(2);
             this.pillWidthExp = coll.Get(3);
-            this.shapeExp = coll.Get(4);
+            this.trayThicknessExp = coll.Get(4);
+            this.shapeExp = coll.Get(5);
         }
 
         /// Execute this node
@@ -43,12 +45,14 @@ namespace ScriptLanguage
             double valFlatHeight = 0;
             double valEdge = 0;
             double valPillWidth = 0;
+            double valTrayThickness = 0;
             int valShape = 0;
             if (
                EvalExpression(flatLengthExp, ref valFlatLength, "FlatLength", "MakePill") &&
                EvalExpression(flatHeightExp, ref valFlatHeight, "FlatHeight", "MakePill") &&
                EvalExpression(edgeExp, ref valEdge, "Edge", "MakePill") &&
                EvalExpression(pillWidthExp, ref valPillWidth, "PillWidth", "MakePill") &&
+               EvalExpression(trayThicknessExp, ref valTrayThickness, "TrayThickness", "MakePill") &&
                EvalExpression(shapeExp, ref valShape, "Shape", "MakePill")
                )
             {
@@ -78,7 +82,11 @@ namespace ScriptLanguage
                     Log.Instance().AddEntry("MakePill : PillWidth value out of range (2..200)");
                     inRange = false;
                 }
-
+                if (valShape == 2 && ( valTrayThickness < 0.1 || valTrayThickness >= valFlatLength /2 ))
+                {
+                    Log.Instance().AddEntry("MakePill : PillWidth value out of range (2..200)");
+                    inRange = false;
+                }
                 if (inRange)
                 {
                     result = true;
@@ -91,7 +99,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth, valShape);
+                    PillMaker maker = new PillMaker(valFlatLength, valFlatHeight, valEdge, valPillWidth,valTrayThickness, valShape);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

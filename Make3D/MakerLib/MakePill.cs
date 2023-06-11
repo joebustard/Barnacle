@@ -23,7 +23,7 @@ namespace MakerLib
         private const double halfPi = Math.PI / 2.0;
         private Point[] trigPoints;
 
-        public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth, int shape)
+        public PillMaker(double flatLength, double flatHeight, double edge, double pillWidth,double trayThickness,  int shape)
         {
             this.flatLength = flatLength;
             this.flatHeight = flatHeight;
@@ -35,7 +35,7 @@ namespace MakerLib
             frontY = edge;
             frontZ = halfW;
             edgeDivs = 10;
-            trayThickness = 2;
+           this.trayThickness = trayThickness;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -123,9 +123,57 @@ namespace MakerLib
                         MakeFrontTopLeftTrayCorner();
                         MakeFrontBottomRightTrayCorner();
                         MakeFrontBottomLeftTrayCorner();
+                        ConnectInnerTrayToOuter();
                     }
                     break;
             }
+        }
+
+        private void ConnectInnerTrayToOuter()
+        {
+            MakeRectFace(frontX, frontY-edge, frontX + flatLength, frontY + trayThickness-edge,0);
+            MakeRectFace(frontX, frontY +flatHeight+edge-trayThickness, frontX + flatLength, frontY  +flatHeight+edge, 0);
+            MakeRectFace(0, edge, trayThickness, frontY+flatHeight, 0);
+            MakeRectFace(frontX+flatLength+edge-trayThickness, edge, frontX + flatLength + edge , frontY + flatHeight, 0);
+            MakeArcFace(frontX, frontY, 0,edge - trayThickness, edge, 270, 180);
+            MakeArcFace(frontX+flatLength, frontY, 0, edge - trayThickness, edge, 360, 270);
+            MakeArcFace(frontX + flatLength, frontY+flatHeight, 0, edge - trayThickness, edge, 90, 0);
+            MakeArcFace(frontX , frontY + flatHeight, 0, edge - trayThickness, edge, 180, 90);
+        }
+
+        private void MakeArcFace(double cx, double cy, double cz,double innerR, double outterR, double st, double et)
+        {
+            double theta;
+            double theta2;
+            
+            double str = DegToRad(st);
+            double etr = DegToRad(et);
+            double dt = (etr - str) / edgeDivs;
+            for (int i = 0; i < edgeDivs; i ++)
+            {
+                theta = str + (i * dt);
+                theta2 = theta + dt;
+                Point pn0 = CalcPoint(theta,innerR);
+                int p0 = AddVertice(cx + pn0.X, cy + pn0.Y, cz);
+                Point pn1 = CalcPoint(theta, outterR);
+                int p1 = AddVertice(cx + pn1.X, cy + pn1.Y, cz);
+                Point pn2 = CalcPoint(theta2, outterR);
+                int p2 = AddVertice(cx + pn2.X, cy + pn2.Y, cz);
+                Point pn3 = CalcPoint(theta2, innerR);
+                int p3 = AddVertice(cx + pn3.X, cy + pn3.Y, cz);
+                AddFace(p0, p1, p2);
+                AddFace(p0, p2, p3);
+            }
+        }
+
+        private void MakeRectFace(double lx, double ly, double rx, double ry,double z)
+        {
+            int p0 = AddVertice(lx, ly, z);
+            int p1 = AddVertice(rx, ly, z);
+            int p2 = AddVertice(rx, ry, z);
+            int p3 = AddVertice(lx, ry, z);
+            AddFace(p0, p2, p1);
+            AddFace(p0, p3, p2);
         }
 
         private void MakeBackBottomLeftCorner()

@@ -46,13 +46,16 @@
                 <Label VerticalAlignment="Center" Width="100">Pill Width</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding PillWidth}" Width="150" ToolTip="{Binding PillWidthToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
+            <StackPanel Grid.Row="5" Orientation="Horizontal" Visibility="{Binding ShowTray}">
+                <Label VerticalAlignment="Center" Width="100">Tray Thickness</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding TrayThickness}" Width="150" ToolTip="{Binding TrayThicknessToolTip}" />
+            </StackPanel>
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <RadioButton GroupName="PillType" VerticalAlignment="Center" Content="Plain" IsChecked="{Binding PlainSelected}" />
                 <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Half" IsChecked="{Binding HalfSelected}" />
                 <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Tray" IsChecked="{Binding TraySelected}" />
             </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-            </StackPanel>
+
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
