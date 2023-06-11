@@ -49,7 +49,7 @@
             <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <RadioButton GroupName="PillType" VerticalAlignment="Center" Content="Plain" IsChecked="{Binding PlainSelected}" />
                 <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Half" IsChecked="{Binding HalfSelected}" />
-                <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Tray" IsChecked="{Binding Trayelected}" />
+                <RadioButton Margin="8,0,0,0" GroupName="PillType" VerticalAlignment="Center" Content="Tray" IsChecked="{Binding TraySelected}" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
             </StackPanel>

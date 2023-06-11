@@ -17,6 +17,7 @@ namespace MakerLib
         private double frontY;
         private double frontZ;
         private double halfW;
+        private double trayThickness;
         private int shape;
         private int edgeDivs;
         private const double halfPi = Math.PI / 2.0;
@@ -34,6 +35,7 @@ namespace MakerLib
             frontY = edge;
             frontZ = halfW;
             edgeDivs = 10;
+            trayThickness = 2;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -98,6 +100,8 @@ namespace MakerLib
 
                 case 2:
                     {
+                    // make outside shell
+                    
                         MakeFrontFlat();
                         MakeFrontRight();
                         MakeFrontLeft();
@@ -107,6 +111,18 @@ namespace MakerLib
                         MakeFrontTopLeftCorner();
                         MakeFrontBottomRightCorner();
                         MakeFrontBottomLeftCorner();
+                        
+                        // inside shell
+                        MakeFlat(frontZ-trayThickness);
+                        MakeFrontTrayRight();
+                        MakeFrontTrayLeft();
+                        MakeFrontTrayTop();
+                        MakeFrontTrayBottom();
+
+                        MakeFrontTopRightTrayCorner();
+                        MakeFrontTopLeftTrayCorner();
+                        MakeFrontBottomRightTrayCorner();
+                        MakeFrontBottomLeftTrayCorner();
                     }
                     break;
             }
@@ -121,6 +137,8 @@ namespace MakerLib
             MakeCorner(Math.PI, 0, cx, cy, cz, true);
         }
 
+
+
         private void MakeFrontBottomLeftCorner()
         {
             double cx = frontX;
@@ -128,6 +146,15 @@ namespace MakerLib
             double cz = 0;
 
             MakeCorner(-halfPi, 0, cx, cy, cz, true);
+        }
+
+        private void MakeFrontBottomLeftTrayCorner()
+        {
+            double cx = frontX;
+            double cy = frontY;
+            double cz = 0;
+
+            MakeTrayCorner(-halfPi, 0, cx, cy, cz);
         }
 
         private void MakeFrontBottomRightCorner()
@@ -139,6 +166,14 @@ namespace MakerLib
             MakeCorner(0, -halfPi, cx, cy, cz);
         }
 
+        private void MakeFrontBottomRightTrayCorner()
+        {
+            double cx = frontX + flatLength;
+            double cy = frontY;
+            double cz = 0;
+
+            MakeTrayCorner(0, -halfPi, cx, cy, cz,true);
+        }
         private void MakeBackBottomRightCorner()
         {
             double cx = frontX + flatLength;
@@ -165,6 +200,14 @@ namespace MakerLib
             MakeCorner(0, halfPi, cx, cy, cz);
         }
 
+        private void MakeFrontTopLeftTrayCorner()
+        {
+            double cx = frontX;
+            double cy = frontY + flatHeight;
+            double cz = 0;
+
+            MakeTrayCorner(0, halfPi, cx, cy, cz, true);
+        }
         private void MakeBackTopLeftCorner()
         {
             double cx = frontX;
@@ -174,6 +217,16 @@ namespace MakerLib
             MakeCorner(halfPi, halfPi, cx, cy, cz);
         }
 
+        private void MakeFrontTopRightTrayCorner()
+        {
+            double cx = frontX + flatLength;
+            double cy = frontY + flatHeight;
+            double cz = 0;
+
+            MakeTrayCorner(0, 0, cx, cy, cz,true);
+        }
+
+
         private void MakeFrontTopRightCorner()
         {
             double cx = frontX + flatLength;
@@ -182,7 +235,6 @@ namespace MakerLib
 
             MakeCorner(0, 0, cx, cy, cz);
         }
-
         private void MakeBackTopRightCorner()
         {
             double cx = frontX + flatLength;
@@ -230,6 +282,43 @@ namespace MakerLib
             }
         }
 
+        private void MakeTrayCorner(double toff, double poff, double cx, double cy, double cz, bool invert = false)
+        {
+            double d = halfPi / (edgeDivs - 1);
+            double theta;
+            double phi;
+            Point3D p0;
+            Point3D p1;
+            Point3D p2;
+            Point3D p3;
+            for (int i = 0; i < edgeDivs - 1; i++)
+            {
+                theta = toff + (d * i);
+                for (int j = 0; j < edgeDivs - 1; j++)
+                {
+                    phi = poff + (d * j);
+                    p0 = SpherePoint(cx, cy, cz, theta, phi, edge-trayThickness, halfW - trayThickness);
+                    p1 = SpherePoint(cx, cy, cz, theta + d, phi, edge - trayThickness, halfW - trayThickness);
+                    p2 = SpherePoint(cx, cy, cz, theta + d, phi + d, edge - trayThickness, halfW - trayThickness);
+                    p3 = SpherePoint(cx, cy, cz, theta, phi + d, edge - trayThickness, halfW - trayThickness);
+
+                    int v0 = AddVertice(p0);
+                    int v1 = AddVertice(p1);
+                    int v2 = AddVertice(p2);
+                    int v3 = AddVertice(p3);
+                    if (invert)
+                    {
+                        AddFace(v0, v2, v1);
+                        AddFace(v0, v3, v2);
+                    }
+                    else
+                    {
+                        AddFace(v0, v1, v2);
+                        AddFace(v0, v2, v3);
+                    }
+                }
+            }
+        }
         private void MakeFrontBottom()
         {
             double lx = frontX;
@@ -250,6 +339,29 @@ namespace MakerLib
                 int p3 = AddVertice(lx, py2, pz2);
                 AddFace(p0, p2, p1);
                 AddFace(p0, p3, p2);
+            }
+        }
+
+        private void MakeFrontTrayBottom()
+        {
+            double lx = frontX;
+            double rx = frontX + flatLength;
+            double ly = frontY;
+            double tz = frontZ - trayThickness;
+            for (int i = 0; i < edgeDivs - 1; i++)
+            {
+                double py1 = ly - trigPoints[i].X * (edge - trayThickness);
+                double pz1 = trigPoints[i].Y * (halfW - trayThickness);
+
+                double py2 = ly - trigPoints[i + 1].X * (edge - trayThickness);
+                double pz2 = trigPoints[i + 1].Y * (halfW - trayThickness);
+
+                int p0 = AddVertice(lx, py1, pz1);
+                int p1 = AddVertice(rx, py1, pz1);
+                int p2 = AddVertice(rx, py2, pz2);
+                int p3 = AddVertice(lx, py2, pz2);
+                AddFace(p0, p1, p2);
+                AddFace(p0, p2, p3);
             }
         }
 
@@ -298,6 +410,28 @@ namespace MakerLib
                 AddFace(p0, p2, p3);
             }
         }
+        private void MakeFrontTrayTop()
+        {
+            double lx = frontX;
+            double rx = frontX + flatLength;
+            double ly = frontY + flatHeight;
+            double tz = frontZ- trayThickness;
+            for (int i = 0; i < edgeDivs - 1; i++)
+            {
+                double py1 = ly + trigPoints[i].X * (edge-trayThickness);
+                double pz1 = trigPoints[i].Y * (halfW - trayThickness);
+
+                double py2 = ly + trigPoints[i + 1].X * (edge - trayThickness);
+                double pz2 = trigPoints[i + 1].Y * (halfW - trayThickness);
+
+                int p0 = AddVertice(lx, py1, pz1);
+                int p1 = AddVertice(rx, py1, pz1);
+                int p2 = AddVertice(rx, py2, pz2);
+                int p3 = AddVertice(lx, py2, pz2);
+                AddFace(p0, p2, p1);
+                AddFace(p0, p3, p2);
+            }
+        }
 
         private void MakeBackTop()
         {
@@ -340,6 +474,27 @@ namespace MakerLib
                 int p3 = AddVertice(px1, ty, pz1);
                 AddFace(p0, p2, p1);
                 AddFace(p0, p3, p2);
+            }
+        }
+
+        private void MakeFrontTrayLeft()
+        {
+            double ty = frontY + flatHeight;
+            double tz = frontZ-trayThickness;
+            for (int i = 0; i < edgeDivs - 1; i++)
+            {
+                double px1 = frontX - trigPoints[i].X * (edge - trayThickness);
+                double pz1 = trigPoints[i].Y * (halfW - trayThickness);
+
+                double px2 = frontX - trigPoints[i + 1].X * (edge - trayThickness);
+                double pz2 = trigPoints[i + 1].Y * (halfW - trayThickness);
+
+                int p0 = AddVertice(px1, frontY, pz1);
+                int p1 = AddVertice(px2, frontY, pz2);
+                int p2 = AddVertice(px2, ty, pz2);
+                int p3 = AddVertice(px1, ty, pz1);
+                AddFace(p0, p1, p2);
+                AddFace(p0, p2, p3);
             }
         }
 
@@ -510,6 +665,29 @@ namespace MakerLib
                 int v1 = AddVertice(cx + p1.X, cy + p1.Y, 0);
                 int v2 = AddVertice(cx + p2.X, cy + p2.Y, 0);
                 AddFace(v0, v1, v2);
+            }
+        }
+
+
+        private void MakeFrontTrayRight()
+        {
+            double rx = frontX + flatLength;
+            double ty = frontY + flatHeight;
+            double tz = frontZ - trayThickness;
+            for (int i = 0; i < edgeDivs - 1; i++)
+            {
+                double px1 = rx + trigPoints[i].X * (edge - trayThickness);
+                double pz1 = trigPoints[i].Y * (halfW - trayThickness);
+
+                double px2 = rx + trigPoints[i + 1].X * (edge - trayThickness);
+                double pz2 = trigPoints[i + 1].Y * (halfW - trayThickness); 
+
+                int p0 = AddVertice(px1, frontY, pz1);
+                int p1 = AddVertice(px2, frontY, pz2);
+                int p2 = AddVertice(px2, ty, pz2);
+                int p3 = AddVertice(px1, ty, pz1);
+                AddFace(p0, p2, p1);
+                AddFace(p0, p3, p2);
             }
         }
     }
