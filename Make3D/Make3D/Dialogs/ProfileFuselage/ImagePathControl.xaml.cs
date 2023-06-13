@@ -629,7 +629,7 @@ namespace Barnacle.Dialogs
             {
                 tmp.Add(profilePoints[j]);
             }
-            if (minIndex > 0)
+            if (minIndex > 0 && minIndex<profilePoints.Count)
             {
                 for (int j = 0; j < minIndex; j++)
                 {

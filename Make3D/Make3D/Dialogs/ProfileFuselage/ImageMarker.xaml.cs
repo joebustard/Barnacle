@@ -544,34 +544,37 @@ namespace Barnacle.Dialogs
             Point down = new Point(0, 0);
             int y = 0;
             bool found = false;
-            if (x >= 0 && x < workingImage.Width)
+            if (workingImage != null)
             {
-                y = 0;
-                while (y < workingImage.Height && !found)
+                if (x >= 0 && x < workingImage.Width)
                 {
-                    System.Drawing.Color c = workingImage.GetPixel(x, y);
-                    if (c.R < 128)
-                    {
-                        found = true;
-                        up = new Point(x, y);
-                        break;
-                    }
-                    y++;
-                }
-
-                if (found)
-                {
-                    found = false;
-                    y = workingImage.Height - 1;
-                    while (y > 0 && !found)
+                    y = 0;
+                    while (y < workingImage.Height && !found)
                     {
                         System.Drawing.Color c = workingImage.GetPixel(x, y);
                         if (c.R < 128)
                         {
                             found = true;
-                            down = new Point(x, y);
+                            up = new Point(x, y);
+                            break;
                         }
-                        y--;
+                        y++;
+                    }
+
+                    if (found)
+                    {
+                        found = false;
+                        y = workingImage.Height - 1;
+                        while (y > 0 && !found)
+                        {
+                            System.Drawing.Color c = workingImage.GetPixel(x, y);
+                            if (c.R < 128)
+                            {
+                                found = true;
+                                down = new Point(x, y);
+                            }
+                            y--;
+                        }
                     }
                 }
             }
