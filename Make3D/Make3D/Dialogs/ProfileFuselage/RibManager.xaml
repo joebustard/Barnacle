@@ -37,7 +37,7 @@
             <Label FontSize="14"
                    Grid.Row="1"
                    Style="{StaticResource InverseLabel}">
-            Ribs
+                Ribs
             </Label>
             <Button Click="AddRib_Click"
                     Content="Append"
@@ -69,7 +69,7 @@
             <Label FontSize="14"
                    Grid.Row="7"
                    Style="{StaticResource InverseLabel}">
-            Rib Files
+                Rib Files
             </Label>
             <Button Click="LoadRibs_Click"
                     Content="Load"
@@ -89,22 +89,22 @@
                 Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="60" />
                     <ColumnDefinition />
-                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="60" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Height="30" Content="&lt;" Click="PreviousRib_CLicked" />
+                <Button Grid.Column="0" Height="60" Content="&lt;" Click="PreviousRib_CLicked" />
                 <ListView Grid.Column="1" ItemsSource="{Binding Ribs}"
                       SelectedItem="{Binding SelectedRib}" SelectedIndex="{Binding SelectedRibIndex}" x:Name="RibList"  ScrollViewer.HorizontalScrollBarVisibility="Hidden">
 
                     <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal">
-                        </StackPanel>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-            </ListView>
-                <Button Grid.Column="2" Height="30" Content="&gt;" Click="NextRib_Clicked" />
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal">
+                            </StackPanel>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                </ListView>
+                <Button Grid.Column="2" Height="60" Content="&gt;" Click="NextRib_Clicked" />
             </Grid>
         </Border>
     </Grid>
