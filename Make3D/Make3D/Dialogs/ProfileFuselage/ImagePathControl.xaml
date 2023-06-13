@@ -7,9 +7,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Barnacle.Dialogs"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:usercontrols="clr-namespace:Barnacle.UserControls">
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
+            <usercontrols:FlexiPathEditorControl x:Name="FlexyControl" />
+            <!--
             <Grid.RowDefinitions>
                 <RowDefinition Height="52" />
                 <RowDefinition Height="48" />
@@ -184,9 +186,7 @@
                           ScrollChanged="ScrollViewer_ScrollChanged"
                           VerticalScrollBarVisibility="Visible"
                           x:Name="ScrollView">
-                <!--
-                    <Image x:Name="RibImage" />
-                    -->
+
                 <Canvas Background="Transparent"
                         Margin="2,2"
                         MouseDown="FlexiPathCanvas_MouseDown"
@@ -218,6 +218,7 @@
                 <Button Grid.Column="2" Content="Copy" Click="CopyPath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2" />
                 <Button Grid.Column="3" Content="Paste" Click="PastePath_Click" Style="{StaticResource SmallButton}" Margin="2,2,2,2" />
             </Grid>
+             -->
         </Grid>
     </Border>
 </UserControl>
