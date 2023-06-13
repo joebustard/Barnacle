@@ -381,6 +381,11 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, MovePathBorder);
         }
 
+        internal List<System.Drawing.PointF> DisplayPointsF()
+        {
+            return vm?.DisplayPointsF();
+        }
+
         private void Ln_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             System.Windows.Point position = e.GetPosition(MainCanvas);

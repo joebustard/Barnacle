@@ -23,9 +23,113 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class ImagePathControl : UserControl, INotifyPropertyChanged
     {
-        //  public ForceReload OnForceReload;
+        public ForceReload OnForceReload;
         private double brx = double.MinValue;
+        public delegate void ForceReload(string pth);
+        public string PathText
+        {
+            get
+            {
+                return pathText;
+            }
+            set
+            {
+                if (pathText != value)
+                {
+                    pathText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        public void Clear()
+        {
+            Dirty = true;
+            Header = "";
+            FName = "";
+            NumDivisions = 80;
+            ProfilePoints = new List<PointF>();
+            scale = 1;
+           // SetFlexiPathScale();
+            selectedPoint = -1;
+            //SelectionMode = SelectionModeType.SelectSegmentAtPoint;
 
+            isValid = false;
+            DataContext = this;
+            imagePath = "";
+            workingImage = null;
+            src = null;
+            PathBackgroundImage = new System.Windows.Controls.Image();
+            flexiPath = new FlexiPath();
+
+            InitialisePoints();
+            polyPoints = flexiPath.FlexiPoints;
+            scrollX = 0;
+            scrollY = 0;
+        }
+        private void CopySrcToWorking()
+        {
+            if (src != null)
+            {
+                System.Drawing.Color c;
+                workingImage = new System.Drawing.Bitmap(src);
+                for (int px = 0; px < src.Width; px++)
+                {
+                    for (int py = 0; py < src.Height; py++)
+                    {
+                        workingImage.SetPixel(px, py, System.Drawing.Color.White);
+                        c = src.GetPixel(px, py);
+                        if (c.R < 200 || c.G < 200 || c.B < 200)
+                        {
+                            if (px < tlx)
+                            {
+                                tlx = px;
+                            }
+                            if (py < tly)
+                            {
+                                tly = py;
+                            }
+                        }
+                    }
+                }
+
+                for (int px = (int)tlx; px < src.Width; px++)
+                {
+                    for (int py = (int)tly; py < src.Height; py++)
+                    {
+                        c = src.GetPixel(px, py);
+                        // if (c.R < 200 || c.G < 200 || c.B < 200)
+                        {
+                            int tx = px - (int)tlx + 1;
+                            int ty = py - (int)tly + 1;
+                            if ((tx < workingImage.Width - 1) &&
+                                 (ty < workingImage.Height - 1))
+                            {
+                                //workingImage.SetPixel(tx, ty, System.Drawing.Color.Black);
+                                workingImage.SetPixel(tx, ty, c);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        private void LoadImage(string imagePath, bool force)
+        {
+            if (File.Exists(imagePath))
+            {
+                if (src == null || force)
+                {
+                    //src = new System.Drawing.Bitmap(imagePath);
+                    //  src = LoadBitmapUnlocked(imagePath);
+                    FlexiControl.LoadImage(imagePath);
+                    isValid = true;
+                }
+                ShowWorkingImage();
+            }
+            else
+            {
+                MessageBox.Show($"Cant find image {imagePath}");
+            }
+        }
         public void SetImageSource()
         {
             if (workingImage != null)
@@ -46,9 +150,32 @@ namespace Barnacle.Dialogs
         private double gridX = 0;
         private double gridY = 0;
         private string header;
-
+        public bool IsValid
+        {
+            get { return isValid; }
+            set { isValid = value; }
+        }
         private double height = 10;
+        private double Distance(PointF point1, PointF point2)
+        {
+            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
+            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
 
+            return Math.Sqrt(diff);
+        }
+        private void LoadImage(string f)
+        {
+            Uri fileUri = new Uri(f);
+            localImage = new BitmapImage();
+            localImage.BeginInit();
+            localImage.UriSource = fileUri;
+            //    localImage.DecodePixelWidth = 800;
+            localImage.EndInit();
+            //EditorParameters.Set("ImagePath", f);
+           // FlexiPathCanvas.Width = localImage.Width;
+         //   FlexiPathCanvas.Height = localImage.Height;
+            UpdateDisplay();
+        }
         private bool hollowShape;
         public bool Dirty { get; set; }
         private ImageEdge imageEdge;
@@ -265,26 +392,31 @@ namespace Barnacle.Dialogs
 
         internal void Read(XmlElement parentNode)
         {
-            /*
+           
             XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
             ImagePath = ele.GetAttribute("Path");
-            //  LoadImage(imagePath,false);
+            LoadImage(imagePath,false);
             scale = Convert.ToDouble(ele.GetAttribute("Scale"));
             scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
             scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
             XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
             string p = edgeNode.InnerText;
-            flexiPath.FromTextPath(p);
+            FlexiControl.FromString(p);
+            //flexiPath.FromTextPath(p);
             loaded = false;
-            ScrollView.ScrollToHorizontalOffset(scrollX);
-            ScrollView.ScrollToVerticalOffset(scrollY);
+            //ScrollView.ScrollToHorizontalOffset(scrollX);
+            //ScrollView.ScrollToVerticalOffset(scrollY);
             UpdateDisplay();
             loaded = true;
             NotifyPropertyChanged("Scale");
-            */
+          
             Dirty = true;
         }
-
+        private void InitialisePoints()
+        {
+            flexiPath.Clear();
+           // selectionMode = SelectionModeType.StartPoint;
+        }
         public string Header
         {
             get
@@ -335,7 +467,159 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+        public void FetchImage(bool forceReload = false)
+        {
+            LoadImage(imagePath, forceReload);
+        }
 
+        public void GenerateProfilePoints(int modelType = 0)
+        {
+            profilePoints = new List<PointF>();
+            
+            List<PointF> pnts = FlexiControl.DisplayPointsF();
+            if (pnts != null)
+            {
+                pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
+                tlx = double.MaxValue;
+                tly = double.MaxValue;
+                brx = double.MinValue;
+                bry = double.MinValue;
+
+                double pathLength = 0;
+                for (int i = 0; i < pnts.Count; i++)
+                {
+                    if (i < pnts.Count - 1)
+                    {
+                        pathLength += Distance(pnts[i], pnts[i + 1]);
+                    }
+                    if (pnts[i].X < tlx)
+                    {
+                        tlx = pnts[i].X;
+                    }
+
+                    if (pnts[i].Y < tly)
+                    {
+                        tly = pnts[i].Y;
+                    }
+
+                    if (pnts[i].X > brx)
+                    {
+                        brx = pnts[i].X;
+                    }
+
+                    if (pnts[i].Y > bry)
+                    {
+                        bry = pnts[i].Y;
+                    }
+                }
+                System.Diagnostics.Debug.WriteLine($"Path bounds tlx {tlx} tly {tly} brx {brx} bry {bry}");
+                divisionLength = pathLength / (NumDivisions - 1);
+                pathWidth = brx - tlx;
+                pathHeight = bry - tly;
+                middleX = tlx + pathWidth / 2.0;
+                middleY = tly + pathHeight / 2.0;
+                double minangle = double.MaxValue;
+                int minIndex = int.MaxValue;
+                System.Diagnostics.Debug.WriteLine($"Pathwidth {pathWidth} PathHeight {pathHeight} middleX {middleX} middleY {middleY}");
+                double deltaT = 1.0 / (NumDivisions + 1);
+                List<double> angles = new List<double>();
+                for (int div = 0; div < NumDivisions; div++)
+                {
+                    double t = div * deltaT;
+                    double targetDistance = t * pathLength;
+                    if (targetDistance < pathLength)
+                    {
+                        double runningDistance = 0;
+                        int cp = 1;
+                        bool found = false;
+
+                        while (!found && cp < pnts.Count)
+                        {
+                            PointF p0 = pnts[cp - 1];
+                            PointF p1 = pnts[cp];
+                            double d = Distance(p0, p1);
+                            if ((runningDistance <= targetDistance) &&
+                                 (runningDistance + d >= targetDistance))
+                            {
+                                found = true;
+                                double overhang = targetDistance - runningDistance;
+                                if (overhang < 0)
+                                {
+                                    System.Diagnostics.Debug.WriteLine("Distance error creating profile");
+                                }
+                                if (overhang != 0.0)
+                                {
+                                    double delta = overhang / d;
+                                    double nx = p0.X + (p1.X - p0.X) * delta;
+                                    double ny = p0.Y + (p1.Y - p0.Y) * delta;
+
+                                    double rx = nx - middleX;
+                                    double ry = ny - middleY;
+                                    double rd = Math.Atan2(ry, rx);
+                                    angles.Add(rd);
+                                    if (rx > 0 && rd < minangle)
+                                    {
+                                        minIndex = angles.Count - 1;
+                                        minangle = rd;
+                                    }
+
+                                    nx = (nx - tlx) / pathWidth;
+                                    ny = (ny - tly) / pathHeight;
+                                    profilePoints.Add(new PointF((float)nx, (float)ny));
+                                    System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
+                                }
+                                else
+                                {
+                                    double nx = p0.X;
+                                    double ny = p0.Y;
+
+                                    double rx = nx - middleX;
+                                    double ry = ny - middleY;
+                                    double rd = Math.Atan2(ry, rx);
+                                    angles.Add(rd);
+                                    if (rx > 0 && rd < minangle)
+                                    {
+                                        minIndex = angles.Count - 1;
+                                        minangle = rd;
+                                    }
+
+                                    nx = (nx - tlx) / pathWidth;
+                                    ny = (ny - tly) / pathHeight;
+                                    profilePoints.Add(new PointF((float)nx, (float)ny));
+                                    System.Diagnostics.Debug.WriteLine($"nx {nx} ny {ny}");
+                                }
+                            }
+                            runningDistance += d;
+                            cp++;
+                        }
+                    }
+                }
+                //
+
+                List<PointF> tmp = new List<PointF>();
+
+                for (int j = minIndex; j < profilePoints.Count; j++)
+                {
+                    tmp.Add(profilePoints[j]);
+                }
+                if (minIndex > 0 && minIndex < profilePoints.Count)
+                {
+                    for (int j = 0; j < minIndex; j++)
+                    {
+                        tmp.Add(profilePoints[j]);
+                    }
+                }
+                profilePoints = tmp;
+                Dirty = false;
+            }
+        }
+
+        public string GenPath()
+        {
+       //     PathText = flexiPath.ToPath();
+       //     return PathText;
+       return "";
+        }
         public int NumDivisions { get; set; }
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -343,6 +627,86 @@ namespace Barnacle.Dialogs
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+        internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
+        {
+            int sc = 2;
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+            int offset = 4;
+            List<PointF> pnts = flexiPath.DisplayPointsF();
+            if (bmp == null && pnts.Count > 0 && workingImage != null)
+            {
+                bmp = new Bitmap(sc * workingImage.Width, sc * workingImage.Height);
+            }
+            if (bmp != null)
+            {
+                for (int i = 0; i < pnts.Count; i++)
+                {
+                    if (pnts[i].X < tlx)
+                    {
+                        tlx = (double)pnts[i].X;
+                    }
+
+                    if (pnts[i].Y < tly)
+                    {
+                        tly = (double)pnts[i].Y;
+                    }
+
+                    if (pnts[i].X > brx)
+                    {
+                        brx = (double)pnts[i].X;
+                    }
+
+                    if (pnts[i].Y > bry)
+                    {
+                        bry = (double)pnts[i].Y;
+                    }
+                }
+                tlx *= sc;
+                tly *= sc;
+                brx *= sc;
+                bry *= sc;
+                using (var gfx = Graphics.FromImage(bmp))
+                using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
+                {
+                    // draw one thousand random white lines on a dark blue background
+                    gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+                    gfx.Clear(System.Drawing.Color.White);
+                    for (int i = 0; i < pnts.Count; i++)
+                    {
+                        int j = i + 1;
+                        if (j >= pnts.Count)
+                        {
+                            j = 0;
+                        }
+                        var pt1 = new System.Drawing.Point((int)(pnts[i].X * sc) - (int)tlx + offset, (int)(pnts[i].Y * sc) - (int)(tly) + offset);
+                        var pt2 = new System.Drawing.Point((int)(pnts[j].X * sc) - (int)tlx + offset, (int)(pnts[j].Y * sc) - (int)(tly) + offset);
+                        gfx.DrawLine(pen, pt1, pt2);
+                    }
+                }
+            }
+            brx = brx - tlx + offset;
+            bry = bry - tly + offset;
+            tlx = offset;
+            tly = offset;
+        }
+
+        public double EdgeLength
+        {
+            get
+            {
+                if (imageEdge != null)
+                {
+                    return imageEdge.Length;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
@@ -399,7 +763,12 @@ namespace Barnacle.Dialogs
             pnts.InnerText = flexiPath.ToPath(true);
             ele.AppendChild(pnts);
         }
+        private void ShowWorkingImage()
+        {
+            CopySrcToWorking();
 
+            SetImageSource();
+        }
         /*
         public delegate void ForceReload(string pth);
 

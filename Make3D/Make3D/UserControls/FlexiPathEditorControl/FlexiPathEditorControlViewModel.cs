@@ -467,6 +467,11 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal List<System.Drawing.PointF> DisplayPointsF()
+        {
+            return flexiPath.DisplayPointsF();
+        }
+
         public ICommand ZoomCommand { get; set; }
 
         private string imagePath;
