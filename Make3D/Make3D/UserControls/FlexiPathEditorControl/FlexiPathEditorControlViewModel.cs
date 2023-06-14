@@ -12,6 +12,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
@@ -37,6 +38,7 @@ namespace Barnacle.UserControls
 
         private int selectedPoint;
         private string defaultImagePath;
+        private List<PenSetting> Pens;
 
         public string DefaultImagePath
         {
@@ -107,6 +109,39 @@ namespace Barnacle.UserControls
             gridSettings = new GridSettings();
             imagePath = "";
             pointsDirty = true;
+            CreatePens();
+            CurrentPen = 2;
+        }
+
+        public int CurrentPen { get; set; }
+
+        private void CreatePens()
+        {
+            Pens = new List<PenSetting>();
+            PenSetting ps = new PenSetting(6, Brushes.Yellow, 0.5);
+            ps.DashPattern.Add(2);
+            ps.DashPattern.Add(2);
+            Pens.Add(ps);
+
+            ps = new PenSetting(6, Brushes.Yellow, 1);
+            Pens.Add(ps);
+
+            ps = new PenSetting(6, Brushes.BlueViolet, 0.5);
+            ps.DashPattern.Add(2);
+            ps.DashPattern.Add(2);
+            Pens.Add(ps);
+
+            ps = new PenSetting(6, Brushes.BlueViolet, 1);
+            Pens.Add(ps);
+        }
+
+        public PenSetting GetPen()
+        {
+            if (Pens != null && CurrentPen < Pens.Count)
+            {
+                return Pens[CurrentPen];
+            }
+            return Pens[0];
         }
 
         private void OnToggleOrthoLock(object obj)

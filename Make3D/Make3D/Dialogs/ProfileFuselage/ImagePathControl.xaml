@@ -11,7 +11,7 @@
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="52" />
+                <RowDefinition Height="35" />
                 <RowDefinition Height="48" />
                 <RowDefinition />
             </Grid.RowDefinitions>
@@ -20,24 +20,26 @@
                       VerticalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
                 </Grid.ColumnDefinitions>
-                <Label Content="{Binding Header}"
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <Label FontSize="14" VerticalAlignment="Center" Content="Rib :" />
+                    <Label Content="{Binding Header}"
                            FontSize="14"
-                           Grid.Column="0"
-                           HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           x:Name="HeaderLabel" />
-
-                <Label Content="{Binding FName}"
+                           x:Name="HeaderLabel" Margin="8,0,0,0" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                    <Label FontSize="14" VerticalAlignment="Center" Content="Image :" />
+                    <Label Content="{Binding FName}"
                            FontSize="14"
                            Grid.Column="1"
-                           HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           x:Name="FNameLabel" />
+                           x:Name="FNameLabel" Margin="8,0,0,0" />
+                </StackPanel>
             </Grid>
-            <usercontrols:FlexiPathEditorControl x:Name="FlexiControl" Grid.Row="2"/>
+            <usercontrols:FlexiPathEditorControl x:Name="FlexiControl" Grid.Row="2" />
             <!--
             <Grid.RowDefinitions>
                 <RowDefinition Height="52" />

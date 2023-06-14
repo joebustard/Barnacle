@@ -25,7 +25,9 @@ namespace Barnacle.Dialogs
     {
         public ForceReload OnForceReload;
         private double brx = double.MinValue;
+
         public delegate void ForceReload(string pth);
+
         public string PathText
         {
             get
@@ -41,6 +43,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public void Clear()
         {
             Dirty = true;
@@ -49,7 +52,7 @@ namespace Barnacle.Dialogs
             NumDivisions = 80;
             ProfilePoints = new List<PointF>();
             scale = 1;
-           // SetFlexiPathScale();
+            // SetFlexiPathScale();
             selectedPoint = -1;
             //SelectionMode = SelectionModeType.SelectSegmentAtPoint;
 
@@ -66,6 +69,7 @@ namespace Barnacle.Dialogs
             scrollX = 0;
             scrollY = 0;
         }
+
         private void CopySrcToWorking()
         {
             if (src != null)
@@ -112,6 +116,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private void LoadImage(string imagePath, bool force)
         {
             if (File.Exists(imagePath))
@@ -130,6 +135,7 @@ namespace Barnacle.Dialogs
                 MessageBox.Show($"Cant find image {imagePath}");
             }
         }
+
         public void SetImageSource()
         {
             if (workingImage != null)
@@ -150,12 +156,15 @@ namespace Barnacle.Dialogs
         private double gridX = 0;
         private double gridY = 0;
         private string header;
+
         public bool IsValid
         {
             get { return isValid; }
             set { isValid = value; }
         }
+
         private double height = 10;
+
         private double Distance(PointF point1, PointF point2)
         {
             double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
@@ -163,6 +172,7 @@ namespace Barnacle.Dialogs
 
             return Math.Sqrt(diff);
         }
+
         private void LoadImage(string f)
         {
             Uri fileUri = new Uri(f);
@@ -172,10 +182,11 @@ namespace Barnacle.Dialogs
             //    localImage.DecodePixelWidth = 800;
             localImage.EndInit();
             //EditorParameters.Set("ImagePath", f);
-           // FlexiPathCanvas.Width = localImage.Width;
-         //   FlexiPathCanvas.Height = localImage.Height;
+            // FlexiPathCanvas.Width = localImage.Width;
+            //   FlexiPathCanvas.Height = localImage.Height;
             UpdateDisplay();
         }
+
         private bool hollowShape;
         public bool Dirty { get; set; }
         private ImageEdge imageEdge;
@@ -392,10 +403,12 @@ namespace Barnacle.Dialogs
 
         internal void Read(XmlElement parentNode)
         {
-           
             XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
             ImagePath = ele.GetAttribute("Path");
-            LoadImage(imagePath,false);
+            if (!String.IsNullOrEmpty(ImagePath))
+            {
+                LoadImage(imagePath, false);
+            }
             scale = Convert.ToDouble(ele.GetAttribute("Scale"));
             scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
             scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
@@ -409,14 +422,16 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
             loaded = true;
             NotifyPropertyChanged("Scale");
-          
+
             Dirty = true;
         }
+
         private void InitialisePoints()
         {
             flexiPath.Clear();
-           // selectionMode = SelectionModeType.StartPoint;
+            // selectionMode = SelectionModeType.StartPoint;
         }
+
         public string Header
         {
             get
@@ -467,15 +482,19 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public void FetchImage(bool forceReload = false)
         {
-            LoadImage(imagePath, forceReload);
+            if (!String.IsNullOrEmpty(imagePath))
+            {
+                LoadImage(imagePath, forceReload);
+            }
         }
 
         public void GenerateProfilePoints(int modelType = 0)
         {
             profilePoints = new List<PointF>();
-            
+
             List<PointF> pnts = FlexiControl.DisplayPointsF();
             if (pnts != null)
             {
@@ -616,10 +635,11 @@ namespace Barnacle.Dialogs
 
         public string GenPath()
         {
-       //     PathText = flexiPath.ToPath();
-       //     return PathText;
-       return "";
+            //     PathText = flexiPath.ToPath();
+            //     return PathText;
+            return "";
         }
+
         public int NumDivisions { get; set; }
 
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
@@ -629,6 +649,7 @@ namespace Barnacle.Dialogs
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
         }
+
         internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
         {
             int sc = 2;
@@ -760,15 +781,22 @@ namespace Barnacle.Dialogs
             parentNode.AppendChild(ele);
             XmlElement pnts = doc.CreateElement("Edge");
             // make sure we get the points with absolute coordinates
-            pnts.InnerText = flexiPath.ToPath(true);
+            pnts.InnerText = FlexiControl.ToPath(true);
             ele.AppendChild(pnts);
         }
+
+        internal void TurnOffGrid()
+        {
+            FlexiControl.TurnOffGrid();
+        }
+
         private void ShowWorkingImage()
         {
             CopySrcToWorking();
 
             SetImageSource();
         }
+
         /*
         public delegate void ForceReload(string pth);
 

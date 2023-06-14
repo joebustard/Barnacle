@@ -355,11 +355,14 @@ namespace Barnacle.UserControls
         {
             if (v < points.Count)
             {
+                PenSetting ps = vm.GetPen();
                 SolidColorBrush br = new SolidColorBrush(System.Windows.Media.Color.FromArgb(250, 255, 255, 5));
                 Line ln = new Line();
-                ln.Stroke = br;
-                ln.StrokeThickness = 6;
-                ln.Fill = br;
+                ln.Stroke = ps.Brush;
+                ln.StrokeThickness = ps.StrokeThickness;
+                ln.Opacity = ps.Opacity;
+                ln.Fill = ps.Brush;
+                ln.StrokeDashArray = ps.DashPattern;
                 ln.X1 = ToPixelX(points[i].X);
                 ln.Y1 = ToPixelY(points[i].Y);
                 ln.X2 = ToPixelX(points[v].X);
@@ -763,6 +766,38 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal string ToPath(bool v)
+        {
+            if (v)
+            {
+                return vm.AbsPathText();
+            }
+            else
+            {
+                return vm.PathText;
+            }
+        }
+
+        private GridSettings.GridStyle showGrid;
+
+        public GridSettings.GridStyle ShowGrid
+        {
+            get { return showGrid; }
+            set
+            {
+                showGrid = value;
+                if (vm != null)
+                {
+                    vm.ShowGrid = showGrid;
+                }
+            }
+        }
+
+        internal void TurnOffGrid()
+        {
+            ShowGrid = GridSettings.GridStyle.Hidden;
+        }
+
         private Point fixedPolarGridCentre;
 
         public Point FixedPolarGridCentre
@@ -790,6 +825,7 @@ namespace Barnacle.UserControls
                     vm.FixedEndPath = fixedEndPath;
                     vm.OpenEndedPath = openEndedPath;
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
+                    vm.ShowGrid = showGrid;
                     ShowGridStatus();
                     vm.AbsolutePaths = absolutePaths;
                     vm.SetPath(pathText);

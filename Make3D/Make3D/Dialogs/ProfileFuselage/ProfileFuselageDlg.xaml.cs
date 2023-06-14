@@ -619,526 +619,527 @@ namespace Barnacle.Dialogs
                 MessageBox.Show(ex.Message, "GenerateSkin");
                 throw ex;
             }
-        
-    }
+        }
 
-    private void Left_Click(object sender, RoutedEventArgs e)
-    {
-        Camera.HomeLeft();
-        Camera.Distance = 2 * Bounds.Width;
-        UpdateCameraPos();
-    }
-
-    private async void LoadEditorParameters()
-    {
-        string s = EditorParameters.Get("Path");
-        if (s != "")
+        private void Left_Click(object sender, RoutedEventArgs e)
         {
-            filePath = s;
-            noteWindow.Owner = this;
-            noteWindow.Show();
+            Camera.HomeLeft();
+            Camera.Distance = 2 * Bounds.Width;
+            UpdateCameraPos();
+        }
 
-            RibManager.ControlsEnabled = false;
-            /*await*/
-            Read(filePath);
-            noteWindow.Hide();
-            dirty = false;
-            RibManager.ControlsEnabled = true;
-            wholeBody = true;
-            frontBody = false;
-            backBody = false;
-            s = EditorParameters.Get("Model");
-            if (s == "Front")
-            {
-                wholeBody = false;
-                frontBody = true;
-                backBody = false;
-            }
-            else
-            if (s == "Back")
-            {
-                backBody = true;
-                frontBody = false;
-                wholeBody = false;
-            }
-            s = EditorParameters.Get("NumberOfDivisions");
+        private async void LoadEditorParameters()
+        {
+            string s = EditorParameters.Get("Path");
             if (s != "")
             {
-                numberOfDivisions = Convert.ToInt16(s);
-            }
-            autoFit = EditorParameters.GetBoolean("AutoFit");
-        }
-    }
+                filePath = s;
+                noteWindow.Owner = this;
+                noteWindow.Show();
 
-    private bool LoadRib(XmlElement el, string pth, string nme, System.Drawing.Point position, double viewScale, string edgePath, double scx, double scy)
-    {
-        bool res = true;
-        try
+                RibManager.ControlsEnabled = false;
+                /*await*/
+                Read(filePath);
+                noteWindow.Hide();
+                dirty = false;
+                RibManager.ControlsEnabled = true;
+                wholeBody = true;
+                frontBody = false;
+                backBody = false;
+                s = EditorParameters.Get("Model");
+                if (s == "Front")
+                {
+                    wholeBody = false;
+                    frontBody = true;
+                    backBody = false;
+                }
+                else
+                if (s == "Back")
+                {
+                    backBody = true;
+                    frontBody = false;
+                    wholeBody = false;
+                }
+                s = EditorParameters.Get("NumberOfDivisions");
+                if (s != "")
+                {
+                    numberOfDivisions = Convert.ToInt16(s);
+                }
+                autoFit = EditorParameters.GetBoolean("AutoFit");
+            }
+        }
+
+        private bool LoadRib(XmlElement el, string pth, string nme, System.Drawing.Point position, double viewScale, string edgePath, double scx, double scy)
         {
+            bool res = true;
+            try
+            {
+                ImagePathControl rc = new ImagePathControl();
+                rc.ImagePath = pth;
+                rc.Header = nme;
+                rc.Width = 600;
+                rc.Height = 600;
+                rc.Scale = viewScale;
+                rc.EdgePath = edgePath;
+                rc.ScrollX = scx;
+                rc.ScrollY = scy;
+                rc.FetchImage();
+                if (rc.IsValid)
+                {
+                    rc.TurnOffGrid();
+                    rc.SetImageSource();
+                    rc.OnForceReload = RibManager.OnForceRibReload;
+                    CreateLetter(nme, position, rc);
+                    RibManager.Ribs.Add(rc);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "LoadRib");
+                res = false;
+            }
+
+            return res;
+        }
+
+        private void OnRibInserted(string name, ImagePathControl rc, ImagePathControl after)
+        {
+            int nextX = 0;
+            int nextY = 10;
+            for (int i = 0; i < markers.Count; i++)
+            {
+                if (markers[i].Rib == after)
+                {
+                    if (i < markers.Count - 1)
+                    {
+                        nextX = markers[i].Position.X + (markers[i + 1].Position.X - markers[i].Position.X) / 2;
+                    }
+                    else
+                    {
+                        nextX = markers[i].Position.X + 10;
+                    }
+                }
+                nextY = 40 - nextY;
+            }
+            if (nextX == 0 && markers.Count > 0)
+            {
+                nextX = markers[markers.Count - 1].Position.X + 10;
+            }
+            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
+            SortRibs();
+            TopView.AddRib(name);
+            SideView.AddRib(name);
+            UpdateDisplay();
+            dirty = true;
+        }
+
+        private void OnRibsRenamed(List<RibManager.NameRec> newNames)
+        {
+            foreach (LetterMarker mk in markers)
+            {
+                foreach (RibManager.NameRec rc in newNames)
+                {
+                    if (mk.Letter == rc.originalName)
+                    {
+                        mk.Letter = rc.newName;
+                        break;
+                    }
+                }
+            }
+            SideView.UpdateDisplay();
+            TopView.UpdateDisplay();
+            dirty = true;
+        }
+
+        private async Task Read(string fileName)
+        {
+            this.Cursor = Cursors.Wait;
+            RibManager.Ribs.Clear();
+            Markers.Clear();
+            TopViewManager.Clear();
+            SideViewManager.Clear();
+            TopView.Clear();
+            SideView.Clear();
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
+            doc.Load(fileName);
+            XmlNode docNode = doc.SelectSingleNode("Spars");
+            XmlElement ele = docNode as XmlElement;
+            string s = ele.GetAttribute("NextLetter");
+            RibManager.NextNameLetter = s[0];
+            s = ele.GetAttribute("NextNumber");
+            RibManager.NextNameNumber = Convert.ToInt32(s);
+            XmlElement topNode = docNode.SelectSingleNode("TopView") as XmlElement;
+            TopViewManager.PathControl.Read(topNode);
+            TopViewManager.PathControl.FetchImage();
+            TopViewManager.PathControl.UpdateDisplay();
+
+            XmlElement sideNode = docNode.SelectSingleNode("SideView") as XmlElement;
+            SideViewManager.PathControl.Read(sideNode);
+            SideViewManager.PathControl.FetchImage();
+            SideViewManager.PathControl.UpdateDisplay();
+            CopyPathsToViews();
+
+            XmlNodeList nodes = docNode.SelectNodes("Rib");
+            int nextY = 10;
+            foreach (XmlNode nd in nodes)
+            {
+                XmlElement el = nd as XmlElement;
+                string nme = el.GetAttribute("Header");
+                noteWindow.Message = "Loading Rib " + nme;
+                int pos = Convert.ToInt16(el.GetAttribute("Position"));
+                //    await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
+                LoadOneRib(nextY, el, nme, pos);
+                nextY = 10 - nextY;
+            }
+
+            SortRibs();
+            // need to update the top and side views BEFORE generating skin
+            TopView.UpdateDisplay();
+            SideView.UpdateDisplay();
+            UpdateLimits();
+            GenerateSkin();
+            Redisplay();
+            noteWindow.Hide();
+            this.Activate();
+            this.Cursor = Cursors.Arrow;
+        }
+
+        private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
+        {
+            XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
             ImagePathControl rc = new ImagePathControl();
-            rc.ImagePath = pth;
+            rc.Read(el);
             rc.Header = nme;
             rc.Width = 600;
             rc.Height = 600;
-            rc.Scale = viewScale;
-            rc.EdgePath = edgePath;
-            rc.ScrollX = scx;
-            rc.ScrollY = scy;
             rc.FetchImage();
             if (rc.IsValid)
             {
+                rc.TurnOffGrid();
                 rc.SetImageSource();
                 rc.OnForceReload = RibManager.OnForceRibReload;
-                CreateLetter(nme, position, rc);
+                CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
                 RibManager.Ribs.Add(rc);
+                rc.GenerateProfilePoints();
             }
         }
-        catch (Exception ex)
+
+        private void Right_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show(ex.Message, "LoadRib");
-            res = false;
+            Camera.HomeRight();
+            Camera.Distance = 2 * Bounds.Width;
+            UpdateCameraPos();
         }
 
-        return res;
-    }
-
-    private void OnRibInserted(string name, ImagePathControl rc, ImagePathControl after)
-    {
-        int nextX = 0;
-        int nextY = 10;
-        for (int i = 0; i < markers.Count; i++)
+        private void SaveAs()
         {
-            if (markers[i].Rib == after)
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Fuselage spar files (*.spr) | *.spr";
+            if (saveFileDialog.ShowDialog() == true)
             {
-                if (i < markers.Count - 1)
-                {
-                    nextX = markers[i].Position.X + (markers[i + 1].Position.X - markers[i].Position.X) / 2;
-                }
-                else
-                {
-                    nextX = markers[i].Position.X + 10;
-                }
-            }
-            nextY = 40 - nextY;
-        }
-        if (nextX == 0 && markers.Count > 0)
-        {
-            nextX = markers[markers.Count - 1].Position.X + 10;
-        }
-        CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
-        SortRibs();
-        TopView.AddRib(name);
-        SideView.AddRib(name);
-        UpdateDisplay();
-        dirty = true;
-    }
-
-    private void OnRibsRenamed(List<RibManager.NameRec> newNames)
-    {
-        foreach (LetterMarker mk in markers)
-        {
-            foreach (RibManager.NameRec rc in newNames)
-            {
-                if (mk.Letter == rc.originalName)
-                {
-                    mk.Letter = rc.newName;
-                    break;
-                }
+                Write(saveFileDialog.FileName);
+                filePath = saveFileDialog.FileName;
+                dirty = false;
             }
         }
-        SideView.UpdateDisplay();
-        TopView.UpdateDisplay();
-        dirty = true;
-    }
 
-    private async Task Read(string fileName)
-    {
-        this.Cursor = Cursors.Wait;
-        RibManager.Ribs.Clear();
-        Markers.Clear();
-        TopViewManager.Clear();
-        SideViewManager.Clear();
-        TopView.Clear();
-        SideView.Clear();
-        XmlDocument doc = new XmlDocument();
-        doc.XmlResolver = null;
-        doc.Load(fileName);
-        XmlNode docNode = doc.SelectSingleNode("Spars");
-        XmlElement ele = docNode as XmlElement;
-        string s = ele.GetAttribute("NextLetter");
-        RibManager.NextNameLetter = s[0];
-        s = ele.GetAttribute("NextNumber");
-        RibManager.NextNameNumber = Convert.ToInt32(s);
-        XmlElement topNode = docNode.SelectSingleNode("TopView") as XmlElement;
-        TopViewManager.PathControl.Read(topNode);
-        TopViewManager.PathControl.FetchImage();
-        TopViewManager.PathControl.UpdateDisplay();
-
-        XmlElement sideNode = docNode.SelectSingleNode("SideView") as XmlElement;
-        SideViewManager.PathControl.Read(sideNode);
-        SideViewManager.PathControl.FetchImage();
-        SideViewManager.PathControl.UpdateDisplay();
-        CopyPathsToViews();
-
-        XmlNodeList nodes = docNode.SelectNodes("Rib");
-        int nextY = 10;
-        foreach (XmlNode nd in nodes)
+        private void SaveEditorParmeters()
         {
-            XmlElement el = nd as XmlElement;
-            string nme = el.GetAttribute("Header");
-            noteWindow.Message = "Loading Rib " + nme;
-            int pos = Convert.ToInt16(el.GetAttribute("Position"));
-            //    await Task.Run(() => LoadOneRib(nextY, el, nme, pos));
-            LoadOneRib(nextY, el, nme, pos);
-            nextY = 10 - nextY;
-        }
-
-        SortRibs();
-        // need to update the top and side views BEFORE generating skin
-        TopView.UpdateDisplay();
-        SideView.UpdateDisplay();
-        UpdateLimits();
-        GenerateSkin();
-        Redisplay();
-        noteWindow.Hide();
-        this.Activate();
-        this.Cursor = Cursors.Arrow;
-    }
-
-    private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
-    {
-        XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
-        ImagePathControl rc = new ImagePathControl();
-        rc.Read(el);
-        rc.Header = nme;
-        rc.Width = 600;
-        rc.Height = 600;
-        rc.FetchImage();
-        if (rc.IsValid)
-        {
-            rc.SetImageSource();
-            rc.OnForceReload = RibManager.OnForceRibReload;
-            CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
-            RibManager.Ribs.Add(rc);
-            rc.GenerateProfilePoints();
-        }
-    }
-
-    private void Right_Click(object sender, RoutedEventArgs e)
-    {
-        Camera.HomeRight();
-        Camera.Distance = 2 * Bounds.Width;
-        UpdateCameraPos();
-    }
-
-    private void SaveAs()
-    {
-        SaveFileDialog saveFileDialog = new SaveFileDialog();
-        saveFileDialog.Filter = "Fuselage spar files (*.spr) | *.spr";
-        if (saveFileDialog.ShowDialog() == true)
-        {
-            Write(saveFileDialog.FileName);
-            filePath = saveFileDialog.FileName;
-            dirty = false;
-        }
-    }
-
-    private void SaveEditorParmeters()
-    {
-        // save the parameters for the tool
-        if (filePath != "")
-        {
-            EditorParameters.Set("Path", filePath);
-        }
-        string md = "Whole";
-        if (FrontBody)
-        {
-            md = "Front";
-        }
-        if (BackBody)
-        {
-            md = "Back";
-        }
-        EditorParameters.Set("Model", md);
-        EditorParameters.Set("NumberOfDivisions", numberOfDivisions.ToString());
-        EditorParameters.Set("AutoFit", autoFit.ToString());
-    }
-
-    private void SaveProject()
-    {
-        if (filePath == "")
-        {
-            SaveAs();
-        }
-        else
-        {
-            Write(filePath);
-            dirty = false;
-        }
-    }
-
-    private void SortRibs()
-    {
-        try
-        {
-            bool swapped = false;
-            do
+            // save the parameters for the tool
+            if (filePath != "")
             {
-                swapped = false;
-                for (int i = 0; i < markers.Count - 1; i++)
-                {
-                    if (markers[i].Position.X > markers[i + 1].Position.X)
-                    {
-                        LetterMarker mk = markers[i];
-                        markers[i] = markers[i + 1];
-                        markers[i + 1] = mk;
-                        swapped = true;
-                    }
-                }
-            } while (swapped);
-            int nextY = 10;
-            foreach (LetterMarker mk in markers)
-            {
-                mk.Position = new System.Drawing.Point(mk.Position.X, nextY);
-                nextY = 40 - nextY;
+                EditorParameters.Set("Path", filePath);
             }
-            SideView.Markers = markers;
-            TopView.Markers = markers;
-            ObservableCollection<ImagePathControl> ribs = new ObservableCollection<ImagePathControl>();
-            foreach (LetterMarker mk in markers)
+            string md = "Whole";
+            if (FrontBody)
             {
-                ribs.Add(mk.Rib);
+                md = "Front";
             }
-            RibManager.Ribs = ribs;
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(ex.Message, "SortRibs");
-        }
-    }
-
-    private void Top_Click(object sender, RoutedEventArgs e)
-    {
-        Camera.HomeTop();
-        Camera.DistanceToFit(Bounds.Width, Bounds.Height);
-        UpdateCameraPos();
-    }
-
-    private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)
-    {
-        TriangulationPolygon ply = new TriangulationPolygon();
-
-        ply.Points = points.ToArray();
-        List<Triangle> tris = ply.Triangulate();
-        foreach (Triangle t in tris)
-        {
-            int c0 = AddVertice(xo, yo + t.Points[0].X, z + t.Points[0].Y);
-            int c1 = AddVertice(xo, yo + t.Points[1].X, z + t.Points[1].Y);
-            int c2 = AddVertice(xo, yo + t.Points[2].X, z + t.Points[2].Y);
-            if (invert)
+            if (BackBody)
             {
-                Faces.Add(c0);
-                Faces.Add(c2);
-                Faces.Add(c1);
+                md = "Back";
+            }
+            EditorParameters.Set("Model", md);
+            EditorParameters.Set("NumberOfDivisions", numberOfDivisions.ToString());
+            EditorParameters.Set("AutoFit", autoFit.ToString());
+        }
+
+        private void SaveProject()
+        {
+            if (filePath == "")
+            {
+                SaveAs();
             }
             else
             {
-                Faces.Add(c0);
-                Faces.Add(c1);
-                Faces.Add(c2);
+                Write(filePath);
+                dirty = false;
             }
         }
-    }
 
-    private void UpdateDisplay(bool regenSkin = true)
-    {
-        SideView.UpdateDisplay();
-        TopView.UpdateDisplay();
-        if (regenSkin)
+        private void SortRibs()
         {
-            GenerateSkin();
-        }
-        Redisplay();
-        NotifyPropertyChanged("CameraPos");
-    }
-
-    private void UpdateLimits()
-    {
-        if (TopView.IsValid && SideView.IsValid)
-        {
-            double l = TopView.LeftLimit;
-            if (SideView.LeftLimit > l)
+            try
             {
-                l = SideView.LeftLimit;
-            }
-
-            double r = TopView.RightLimit;
-            if (SideView.RightLimit < r)
-            {
-                r = SideView.RightLimit;
-            }
-
-            TopView.LeftLimit = l;
-            SideView.LeftLimit = l;
-            TopView.RightLimit = r;
-            SideView.RightLimit = r;
-        }
-    }
-
-    private void Window_Loaded(object sender, RoutedEventArgs e)
-    {
-        markers = new List<LetterMarker>();
-        TopView.SetHeader("Top View");
-
-        TopView.OnPinMoved = PinMoved;
-        TopView.OnMarkerMoved = MarkerMoved;
-        TopView.OnCopyLetter = CopyLetter;
-        TopView.Markers = markers;
-        SideView.SetHeader("Side View");
-
-        SideView.OnPinMoved = PinMoved;
-        SideView.OnMarkerMoved = MarkerMoved;
-        SideView.Markers = markers;
-        SideView.OnCopyLetter = CopyLetter;
-        RibManager.OnRibAdded = OnRibAdded;
-        RibManager.OnRibInserted = OnRibInserted;
-        RibManager.OnCommandHandler = OnCommand;
-        RibManager.OnRibsRenamed = OnRibsRenamed;
-        RibManager.OnRibDeleted = OnRibDeleted;
-        SideViewManager.OnCommandHandler = OnCommand;
-        SideViewManager.CommandText = "Load Side";
-        TopViewManager.OnCommandHandler = OnCommand;
-        TopViewManager.CommandText = "Load Top";
-        UpdateCameraPos();
-        LoadEditorParameters();
-        MyModelGroup.Children.Clear();
-
-        Redisplay();
-        NotifyPropertyChanged("WholeBody");
-        NotifyPropertyChanged("FrontBody");
-        NotifyPropertyChanged("BackBody");
-        NotifyPropertyChanged("NumberOfDivisions");
-        NotifyPropertyChanged("AutoFit");
-    }
-
-    private void Write(string f)
-    {
-        XmlDocument doc = new XmlDocument();
-        doc.XmlResolver = null;
-        XmlElement docNode = doc.CreateElement("Spars");
-        docNode.SetAttribute("NextLetter", RibManager.NextNameLetter.ToString());
-        docNode.SetAttribute("NextNumber", RibManager.NextNameNumber.ToString());
-        XmlElement topNode = doc.CreateElement("TopView");
-        TopViewManager.PathControl.Write(doc, topNode);
-        //topNode.SetAttribute("Path", TopViewManager.ImageFilePath);
-
-        docNode.AppendChild(topNode);
-        XmlElement sideNode = doc.CreateElement("SideView");
-        SideViewManager.PathControl.Write(doc, sideNode);
-        sideNode.SetAttribute("Path", SideViewManager.ImageFilePath);
-        docNode.AppendChild(sideNode);
-        foreach (ImagePathControl ob in RibManager.Ribs)
-        {
-            foreach (LetterMarker mk in markers)
-            {
-                if (mk.Letter == ob.Header)
+                bool swapped = false;
+                do
                 {
-                    // ob.Write(doc, docNode, mk.Position.X, mk.Letter);
-                    XmlElement ribNode = doc.CreateElement("Rib");
-                    ribNode.SetAttribute("Header", ob.Header);
-                    ribNode.SetAttribute("Position", mk.Position.X.ToString());
-                    docNode.AppendChild(ribNode);
-                    ob.Write(doc, ribNode);
-                    break;
+                    swapped = false;
+                    for (int i = 0; i < markers.Count - 1; i++)
+                    {
+                        if (markers[i].Position.X > markers[i + 1].Position.X)
+                        {
+                            LetterMarker mk = markers[i];
+                            markers[i] = markers[i + 1];
+                            markers[i + 1] = mk;
+                            swapped = true;
+                        }
+                    }
+                } while (swapped);
+                int nextY = 10;
+                foreach (LetterMarker mk in markers)
+                {
+                    mk.Position = new System.Drawing.Point(mk.Position.X, nextY);
+                    nextY = 40 - nextY;
+                }
+                SideView.Markers = markers;
+                TopView.Markers = markers;
+                ObservableCollection<ImagePathControl> ribs = new ObservableCollection<ImagePathControl>();
+                foreach (LetterMarker mk in markers)
+                {
+                    ribs.Add(mk.Rib);
+                }
+                RibManager.Ribs = ribs;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "SortRibs");
+            }
+        }
+
+        private void Top_Click(object sender, RoutedEventArgs e)
+        {
+            Camera.HomeTop();
+            Camera.DistanceToFit(Bounds.Width, Bounds.Height);
+            UpdateCameraPos();
+        }
+
+        private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+
+            ply.Points = points.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(xo, yo + t.Points[0].X, z + t.Points[0].Y);
+                int c1 = AddVertice(xo, yo + t.Points[1].X, z + t.Points[1].Y);
+                int c2 = AddVertice(xo, yo + t.Points[2].X, z + t.Points[2].Y);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
                 }
             }
         }
-        doc.AppendChild(docNode);
-        doc.Save(f);
-    }
 
-    private void ZoomIn_Click(object sender, RoutedEventArgs e)
-    {
-        zoomLevel *= 1.1;
-        TopView.SetScale(zoomLevel);
-        SideView.SetScale(zoomLevel);
-    }
-
-    private void ZoomOut_Click(object sender, RoutedEventArgs e)
-    {
-        zoomLevel *= 0.9;
-        TopView.SetScale(zoomLevel);
-        SideView.SetScale(zoomLevel);
-    }
-
-    private void ZoomFit_Click(object sender, RoutedEventArgs e)
-    {
-        double imageLength = (TopView.RightLimit - TopView.LeftLimit) + 10;
-        double imagescale = TopView.ActualWidth / imageLength;
-
-        zoomLevel = imagescale;
-        TopView.SetScale(zoomLevel);
-        SideView.SetScale(zoomLevel);
-    }
-
-    private void ZoomReset_Click(object sender, RoutedEventArgs e)
-    {
-        zoomLevel = 1;
-        TopView.SetScale(zoomLevel);
-        SideView.SetScale(zoomLevel);
-    }
-
-    private void OnPositionTabSelected(object sender, RoutedEventArgs e)
-    {
-        CopyPathsToViews();
-        UpdateDisplay();
-    }
-
-    private void CopyPathsToViews()
-    {
-        CopyPathToSideView();
-        CopyPathToFrontView();
-    }
-
-    private void CopyPathToFrontView()
-    {
-        double tlx = 0;
-        double tly = 0;
-        double brx = 0;
-        double bry = 0;
-        Bitmap bmp = null;
-        //get the flexipath from  the top and render the path onto an image
-        TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
-        TopView.WorkingImage = bmp;
-        TopView.SetupImage(bmp, tlx, tly, brx, bry);
-        TopView.UpdateDisplay();
-    }
-
-    private void CopyPathToSideView()
-    {
-        double tlx = 0;
-        double tly = 0;
-        double brx = 0;
-        double bry = 0;
-        //get the flexipath from  the side and render the path onto an image
-        Bitmap bmp = null;
-        SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
-        SideView.WorkingImage = bmp;
-        SideView.SetupImage(bmp, tlx, tly, brx, bry);
-        SideView.UpdateDisplay();
-    }
-
-    private void ResetMarkers_Click(object sender, RoutedEventArgs e)
-    {
-        if (markers != null && markers.Count > 1)
+        private void UpdateDisplay(bool regenSkin = true)
         {
-            double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
-            for (int i = 0; i < markers.Count; i++)
+            SideView.UpdateDisplay();
+            TopView.UpdateDisplay();
+            if (regenSkin)
             {
-                markers[i].Position = new System.Drawing.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
+                GenerateSkin();
             }
+            Redisplay();
+            NotifyPropertyChanged("CameraPos");
+        }
+
+        private void UpdateLimits()
+        {
+            if (TopView.IsValid && SideView.IsValid)
+            {
+                double l = TopView.LeftLimit;
+                if (SideView.LeftLimit > l)
+                {
+                    l = SideView.LeftLimit;
+                }
+
+                double r = TopView.RightLimit;
+                if (SideView.RightLimit < r)
+                {
+                    r = SideView.RightLimit;
+                }
+
+                TopView.LeftLimit = l;
+                SideView.LeftLimit = l;
+                TopView.RightLimit = r;
+                SideView.RightLimit = r;
+            }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            markers = new List<LetterMarker>();
+            TopView.SetHeader("Top View");
+
+            TopView.OnPinMoved = PinMoved;
+            TopView.OnMarkerMoved = MarkerMoved;
+            TopView.OnCopyLetter = CopyLetter;
+            TopView.Markers = markers;
+            SideView.SetHeader("Side View");
+
+            SideView.OnPinMoved = PinMoved;
+            SideView.OnMarkerMoved = MarkerMoved;
+            SideView.Markers = markers;
+            SideView.OnCopyLetter = CopyLetter;
+            RibManager.OnRibAdded = OnRibAdded;
+            RibManager.OnRibInserted = OnRibInserted;
+            RibManager.OnCommandHandler = OnCommand;
+            RibManager.OnRibsRenamed = OnRibsRenamed;
+            RibManager.OnRibDeleted = OnRibDeleted;
+            SideViewManager.OnCommandHandler = OnCommand;
+            SideViewManager.CommandText = "Load Side";
+            TopViewManager.OnCommandHandler = OnCommand;
+            TopViewManager.CommandText = "Load Top";
+            UpdateCameraPos();
+            LoadEditorParameters();
+            MyModelGroup.Children.Clear();
+
+            Redisplay();
+            NotifyPropertyChanged("WholeBody");
+            NotifyPropertyChanged("FrontBody");
+            NotifyPropertyChanged("BackBody");
+            NotifyPropertyChanged("NumberOfDivisions");
+            NotifyPropertyChanged("AutoFit");
+        }
+
+        private void Write(string f)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
+            XmlElement docNode = doc.CreateElement("Spars");
+            docNode.SetAttribute("NextLetter", RibManager.NextNameLetter.ToString());
+            docNode.SetAttribute("NextNumber", RibManager.NextNameNumber.ToString());
+            XmlElement topNode = doc.CreateElement("TopView");
+            TopViewManager.PathControl.Write(doc, topNode);
+            //topNode.SetAttribute("Path", TopViewManager.ImageFilePath);
+
+            docNode.AppendChild(topNode);
+            XmlElement sideNode = doc.CreateElement("SideView");
+            SideViewManager.PathControl.Write(doc, sideNode);
+            sideNode.SetAttribute("Path", SideViewManager.ImageFilePath);
+            docNode.AppendChild(sideNode);
+            foreach (ImagePathControl ob in RibManager.Ribs)
+            {
+                foreach (LetterMarker mk in markers)
+                {
+                    if (mk.Letter == ob.Header)
+                    {
+                        // ob.Write(doc, docNode, mk.Position.X, mk.Letter);
+                        XmlElement ribNode = doc.CreateElement("Rib");
+                        ribNode.SetAttribute("Header", ob.Header);
+                        ribNode.SetAttribute("Position", mk.Position.X.ToString());
+                        docNode.AppendChild(ribNode);
+                        ob.Write(doc, ribNode);
+                        break;
+                    }
+                }
+            }
+            doc.AppendChild(docNode);
+            doc.Save(f);
+        }
+
+        private void ZoomIn_Click(object sender, RoutedEventArgs e)
+        {
+            zoomLevel *= 1.1;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
+
+        private void ZoomOut_Click(object sender, RoutedEventArgs e)
+        {
+            zoomLevel *= 0.9;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
+
+        private void ZoomFit_Click(object sender, RoutedEventArgs e)
+        {
+            double imageLength = (TopView.RightLimit - TopView.LeftLimit) + 10;
+            double imagescale = TopView.ActualWidth / imageLength;
+
+            zoomLevel = imagescale;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
+
+        private void ZoomReset_Click(object sender, RoutedEventArgs e)
+        {
+            zoomLevel = 1;
+            TopView.SetScale(zoomLevel);
+            SideView.SetScale(zoomLevel);
+        }
+
+        private void OnPositionTabSelected(object sender, RoutedEventArgs e)
+        {
+            CopyPathsToViews();
             UpdateDisplay();
         }
+
+        private void CopyPathsToViews()
+        {
+            CopyPathToSideView();
+            CopyPathToFrontView();
+        }
+
+        private void CopyPathToFrontView()
+        {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            Bitmap bmp = null;
+            //get the flexipath from  the top and render the path onto an image
+            TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            TopView.WorkingImage = bmp;
+            TopView.SetupImage(bmp, tlx, tly, brx, bry);
+            TopView.UpdateDisplay();
+        }
+
+        private void CopyPathToSideView()
+        {
+            double tlx = 0;
+            double tly = 0;
+            double brx = 0;
+            double bry = 0;
+            //get the flexipath from  the side and render the path onto an image
+            Bitmap bmp = null;
+            SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+            SideView.WorkingImage = bmp;
+            SideView.SetupImage(bmp, tlx, tly, brx, bry);
+            SideView.UpdateDisplay();
+        }
+
+        private void ResetMarkers_Click(object sender, RoutedEventArgs e)
+        {
+            if (markers != null && markers.Count > 1)
+            {
+                double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
+                for (int i = 0; i < markers.Count; i++)
+                {
+                    markers[i].Position = new System.Drawing.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
+                }
+                UpdateDisplay();
+            }
+        }
     }
-}
 }
