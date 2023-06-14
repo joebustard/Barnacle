@@ -81,6 +81,7 @@ namespace Barnacle.UserControls
             InitializeComponent();
             OnFlexiPathChanged = null;
             fixedEndPath = false;
+            showGrid = GridSettings.GridStyle.Rectangular;
             fixedPathStartPoint = new Point(0, 10);
             fixedPathMidPoint = new Point(20, 50);
             fixedPathEndPoint = new Point(0, 90);

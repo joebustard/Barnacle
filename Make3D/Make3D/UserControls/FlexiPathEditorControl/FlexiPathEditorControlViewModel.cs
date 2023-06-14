@@ -75,7 +75,7 @@ namespace Barnacle.UserControls
 
         private bool snap;
 
-        private GridSettings.GridStyle showGrid;
+        private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
 
         public FlexiPathEditorControlViewModel()
         {
@@ -457,6 +457,14 @@ namespace Barnacle.UserControls
             set
             {
                 showGrid = value;
+                if (showGrid == GridSettings.GridStyle.Hidden)
+                {
+                    Snap = false;
+                }
+                else
+                {
+                    Snap = true;
+                }
                 NotifyPropertyChanged();
             }
         }

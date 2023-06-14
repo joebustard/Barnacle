@@ -27,7 +27,14 @@ namespace Barnacle.Dialogs
         private double brx = double.MinValue;
 
         public delegate void ForceReload(string pth);
-
+        // Load a bitmap without locking it.
+        private Bitmap LoadBitmapUnlocked(string file_name)
+        {
+            using (Bitmap bm = new Bitmap(file_name))
+            {
+                return new Bitmap(bm);
+            }
+        }
         public string PathText
         {
             get
@@ -43,7 +50,23 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+        public static BitmapSource LoadBitmap(System.Drawing.Bitmap source)
+        {
+            IntPtr ip = source.GetHbitmap();
+            BitmapSource bs = null;
+            try
+            {
+                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip,
+                   IntPtr.Zero, Int32Rect.Empty,
+                   System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            }
+            finally
+            {
+                DeleteObject(ip);
+            }
 
+            return bs;
+        }
         public void Clear()
         {
             Dirty = true;
@@ -123,8 +146,8 @@ namespace Barnacle.Dialogs
             {
                 if (src == null || force)
                 {
-                    //src = new System.Drawing.Bitmap(imagePath);
-                    //  src = LoadBitmapUnlocked(imagePath);
+                    src = new System.Drawing.Bitmap(imagePath);
+                      src = LoadBitmapUnlocked(imagePath);
                     FlexiControl.LoadImage(imagePath);
                     isValid = true;
                 }
@@ -135,12 +158,15 @@ namespace Barnacle.Dialogs
                 MessageBox.Show($"Cant find image {imagePath}");
             }
         }
+        [DllImport("gdi32")]
+        private static extern int DeleteObject(IntPtr o);
+
 
         public void SetImageSource()
         {
             if (workingImage != null)
             {
-                //   PathBackgroundImage.Source = loadBitmap(workingImage);
+                PathBackgroundImage.Source = LoadBitmap(workingImage);
                 //   FlexiPathCanvas.Width = workingImage.Width;
                 //    FlexiPathCanvas.Height = workingImage.Height;
             }
@@ -364,8 +390,7 @@ namespace Barnacle.Dialogs
         public ImagePathControl()
         {
             InitializeComponent();
-
-            //       Clear();
+            Clear();
             loaded = false;
         }
 
@@ -658,7 +683,7 @@ namespace Barnacle.Dialogs
             brx = double.MinValue;
             bry = double.MinValue;
             int offset = 4;
-            List<PointF> pnts = flexiPath.DisplayPointsF();
+            List<PointF> pnts = FlexiControl.DisplayPointsF();
             if (bmp == null && pnts.Count > 0 && workingImage != null)
             {
                 bmp = new Bitmap(sc * workingImage.Width, sc * workingImage.Height);
