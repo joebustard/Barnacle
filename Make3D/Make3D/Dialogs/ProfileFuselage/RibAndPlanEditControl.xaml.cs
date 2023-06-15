@@ -1,5 +1,4 @@
 ﻿using Barnacle.LineLib;
-using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,8 +9,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Xml;
@@ -21,200 +18,29 @@ namespace Barnacle.Dialogs
     /// <summary>
     /// Interaction logic for ImagePathControl.xaml
     /// </summary>
-    public partial class ImagePathControl : UserControl, INotifyPropertyChanged
+    public partial class RibAndPlanEditControl : UserControl, INotifyPropertyChanged
     {
         public ForceReload OnForceReload;
         private double brx = double.MinValue;
 
-        public delegate void ForceReload(string pth);
-        // Load a bitmap without locking it.
-        private Bitmap LoadBitmapUnlocked(string file_name)
-        {
-            using (Bitmap bm = new Bitmap(file_name))
-            {
-                return new Bitmap(bm);
-            }
-        }
-        public string PathText
-        {
-            get
-            {
-                return pathText;
-            }
-            set
-            {
-                if (pathText != value)
-                {
-                    pathText = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-        public static BitmapSource LoadBitmap(System.Drawing.Bitmap source)
-        {
-            IntPtr ip = source.GetHbitmap();
-            BitmapSource bs = null;
-            try
-            {
-                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip,
-                   IntPtr.Zero, Int32Rect.Empty,
-                   System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-            }
-            finally
-            {
-                DeleteObject(ip);
-            }
-
-            return bs;
-        }
-        public void Clear()
-        {
-            Dirty = true;
-            Header = "";
-            FName = "";
-            NumDivisions = 80;
-            ProfilePoints = new List<PointF>();
-            scale = 1;
-            // SetFlexiPathScale();
-            selectedPoint = -1;
-            //SelectionMode = SelectionModeType.SelectSegmentAtPoint;
-
-            isValid = false;
-            DataContext = this;
-            imagePath = "";
-            workingImage = null;
-            src = null;
-            PathBackgroundImage = new System.Windows.Controls.Image();
-            flexiPath = new FlexiPath();
-
-            InitialisePoints();
-            polyPoints = flexiPath.FlexiPoints;
-            scrollX = 0;
-            scrollY = 0;
-        }
-
-        private void CopySrcToWorking()
-        {
-            if (src != null)
-            {
-                System.Drawing.Color c;
-                workingImage = new System.Drawing.Bitmap(src);
-                for (int px = 0; px < src.Width; px++)
-                {
-                    for (int py = 0; py < src.Height; py++)
-                    {
-                        workingImage.SetPixel(px, py, System.Drawing.Color.White);
-                        c = src.GetPixel(px, py);
-                        if (c.R < 200 || c.G < 200 || c.B < 200)
-                        {
-                            if (px < tlx)
-                            {
-                                tlx = px;
-                            }
-                            if (py < tly)
-                            {
-                                tly = py;
-                            }
-                        }
-                    }
-                }
-
-                for (int px = (int)tlx; px < src.Width; px++)
-                {
-                    for (int py = (int)tly; py < src.Height; py++)
-                    {
-                        c = src.GetPixel(px, py);
-                        // if (c.R < 200 || c.G < 200 || c.B < 200)
-                        {
-                            int tx = px - (int)tlx + 1;
-                            int ty = py - (int)tly + 1;
-                            if ((tx < workingImage.Width - 1) &&
-                                 (ty < workingImage.Height - 1))
-                            {
-                                //workingImage.SetPixel(tx, ty, System.Drawing.Color.Black);
-                                workingImage.SetPixel(tx, ty, c);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        private void LoadImage(string imagePath, bool force)
-        {
-            if (File.Exists(imagePath))
-            {
-                if (src == null || force)
-                {
-                    src = new System.Drawing.Bitmap(imagePath);
-                      src = LoadBitmapUnlocked(imagePath);
-                    FlexiControl.LoadImage(imagePath);
-                    isValid = true;
-                }
-                ShowWorkingImage();
-            }
-            else
-            {
-                MessageBox.Show($"Cant find image {imagePath}");
-            }
-        }
-        [DllImport("gdi32")]
-        private static extern int DeleteObject(IntPtr o);
-
-
-        public void SetImageSource()
-        {
-            if (workingImage != null)
-            {
-                PathBackgroundImage.Source = LoadBitmap(workingImage);
-                //   FlexiPathCanvas.Width = workingImage.Width;
-                //    FlexiPathCanvas.Height = workingImage.Height;
-            }
-        }
-
         private double bry = double.MinValue;
+
         private bool canCNVDouble;
 
         private double divisionLength;
+
         private FlexiPath flexiPath;
+
         private string fName;
+
         private List<Shape> gridMarkers;
+
         private double gridX = 0;
+
         private double gridY = 0;
+
         private string header;
 
-        public bool IsValid
-        {
-            get { return isValid; }
-            set { isValid = value; }
-        }
-
-        private double height = 10;
-
-        private double Distance(PointF point1, PointF point2)
-        {
-            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
-            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
-
-            return Math.Sqrt(diff);
-        }
-
-        private void LoadImage(string f)
-        {
-            Uri fileUri = new Uri(f);
-            localImage = new BitmapImage();
-            localImage.BeginInit();
-            localImage.UriSource = fileUri;
-            //    localImage.DecodePixelWidth = 800;
-            localImage.EndInit();
-            //EditorParameters.Set("ImagePath", f);
-            // FlexiPathCanvas.Width = localImage.Width;
-            //   FlexiPathCanvas.Height = localImage.Height;
-            UpdateDisplay();
-        }
-
-        private bool hollowShape;
-        public bool Dirty { get; set; }
         private ImageEdge imageEdge;
 
         // raw list of points font around the bitmap
@@ -225,11 +51,70 @@ namespace Barnacle.Dialogs
         private bool lineShape;
 
         private bool loaded;
+
         private BitmapImage localImage;
 
         private double middleX;
 
         private double middleY;
+
+        private bool moving;
+
+        private System.Windows.Controls.Image PathBackgroundImage;
+
+        private double pathHeight = 0;
+
+        private string pathText;
+
+        private double pathWidth = 0;
+
+        private ObservableCollection<FlexiPoint> polyPoints;
+
+        private List<PointF> profilePoints;
+
+        private double scale;
+
+        private double scrollX;
+
+        private double scrollY;
+
+        private int selectedPoint;
+
+        private System.Drawing.Bitmap src;
+
+        private double tlx = double.MaxValue;
+
+        private double tly = double.MaxValue;
+
+        private System.Drawing.Bitmap workingImage;
+
+        public RibAndPlanEditControl()
+        {
+            InitializeComponent();
+            Clear();
+            loaded = false;
+        }
+
+        public delegate void ForceReload(string pth);
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool Dirty { get; set; }
+
+        public double EdgeLength
+        {
+            get
+            {
+                if (imageEdge != null)
+                {
+                    return imageEdge.Length;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
 
         public string EdgePath
         {
@@ -253,19 +138,80 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool moving;
-        private System.Windows.Controls.Image PathBackgroundImage;
-        private double pathHeight = 0;
-        private string pathText;
+        public string FName
+        {
+            get
+            {
+                return fName;
+            }
+            set
+            {
+                if (fName != value)
+                {
+                    fName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
-        private double pathWidth = 0;
-        private ObservableCollection<FlexiPoint> polyPoints;
+        public string Header
+        {
+            get
+            {
+                return header;
+            }
+            set
+            {
+                if (header != value)
+                {
+                    header = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
-        private List<PointF> profilePoints;
-        private double scale;
-        private double scrollX;
-        private double scrollY;
-        private int selectedPoint;
+        public string ImagePath
+        {
+            get
+            {
+                return imagePath;
+            }
+            set
+            {
+                if (value != imagePath)
+                {
+                    imagePath = value;
+                    if (imagePath != "")
+                    {
+                        FName = System.IO.Path.GetFileName(imagePath);
+                    }
+                }
+            }
+        }
+
+        public bool IsValid
+        {
+            get { return isValid; }
+            set { isValid = value; }
+        }
+
+        public int NumDivisions { get; set; }
+
+        public string PathText
+        {
+            get
+            {
+                return pathText;
+            }
+            set
+            {
+                if (pathText != value)
+                {
+                    pathText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public List<PointF> ProfilePoints
         {
@@ -357,155 +303,60 @@ namespace Barnacle.Dialogs
             }
         }
 
-        //   private SelectionModeType selectionMode;
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        public System.Drawing.Bitmap WorkingImage
         {
-            loaded = false;
-            showOrtho = true;
-            //  ScrollView.ScrollToHorizontalOffset(scrollX);
-            //    ScrollView.ScrollToVerticalOffset(scrollY);
-            //selectionMode = SelectionModeType.SelectSegmentAtPoint;
-            UpdateDisplay();
-            loaded = true;
+            get
+            {
+                return workingImage;
+            }
+            set
+            {
+                workingImage = value;
+            }
         }
 
-        private bool showGrid;
-        private bool showOrtho;
-
-        private bool showProfilePoints;
-        private Visibility showWidth;
-
-        private bool snap;
-        private bool solidShape;
-
-        private System.Drawing.Bitmap src;
-
-        private double tlx = double.MaxValue;
-
-        private double tly = double.MaxValue;
-        private int wallWidth;
-
-        private System.Drawing.Bitmap workingImage;
-
-        public ImagePathControl()
+        public static BitmapSource LoadBitmap(System.Drawing.Bitmap source)
         {
-            InitializeComponent();
-            Clear();
-            loaded = false;
+            IntPtr ip = source.GetHbitmap();
+            BitmapSource bs = null;
+            try
+            {
+                bs = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(ip,
+                   IntPtr.Zero, Int32Rect.Empty,
+                   System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
+            }
+            finally
+            {
+                DeleteObject(ip);
+            }
+
+            return bs;
         }
 
-        internal ImagePathControl Clone(bool copyImage = true)
+        public void Clear()
         {
-            ImagePathControl cl = new ImagePathControl();
-            /*
-            cl.Header = Header;
-            cl.NumDivisions = NumDivisions;
-
-            cl.ImagePath = ImagePath;
-            cl.flexiPath.FromTextPath(flexiPath.ToPath(true));
-            cl.ProfilePoints = new List<PointF>();
-            foreach (PointF fp in profilePoints)
-            {
-                PointF fn = new PointF(fp.X, fp.Y);
-                cl.ProfilePoints.Add(fn);
-            }
-            if (copyImage)
-            {
-                cl.WorkingImage = new System.Drawing.Bitmap(workingImage);
-                for (int px = 0; px < workingImage.Width; px++)
-                {
-                    for (int py = 0; py < workingImage.Height; py++)
-                    {
-                        cl.WorkingImage.SetPixel(px, py, workingImage.GetPixel(px, py));
-                    }
-                }
-            }
-            cl.src = src;
-            cl.OnForceReload = OnForceReload;
-            */
-            return cl;
-        }
-
-        internal void Read(XmlElement parentNode)
-        {
-            XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
-            ImagePath = ele.GetAttribute("Path");
-            if (!String.IsNullOrEmpty(ImagePath))
-            {
-                LoadImage(imagePath, false);
-            }
-            scale = Convert.ToDouble(ele.GetAttribute("Scale"));
-            scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
-            scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
-            XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
-            string p = edgeNode.InnerText;
-            FlexiControl.FromString(p);
-            //flexiPath.FromTextPath(p);
-            loaded = false;
-            //ScrollView.ScrollToHorizontalOffset(scrollX);
-            //ScrollView.ScrollToVerticalOffset(scrollY);
-            UpdateDisplay();
-            loaded = true;
-            NotifyPropertyChanged("Scale");
-
             Dirty = true;
-        }
+            Header = "";
+            FName = "";
+            NumDivisions = 80;
+            ProfilePoints = new List<PointF>();
+            scale = 1;
+            // SetFlexiPathScale();
+            selectedPoint = -1;
+            //SelectionMode = SelectionModeType.SelectSegmentAtPoint;
 
-        private void InitialisePoints()
-        {
-            flexiPath.Clear();
-            // selectionMode = SelectionModeType.StartPoint;
-        }
+            isValid = false;
+            DataContext = this;
+            imagePath = "";
+            workingImage = null;
+            src = null;
+            PathBackgroundImage = new System.Windows.Controls.Image();
+            flexiPath = new FlexiPath();
 
-        public string Header
-        {
-            get
-            {
-                return header;
-            }
-            set
-            {
-                if (header != value)
-                {
-                    header = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string FName
-        {
-            get
-            {
-                return fName;
-            }
-            set
-            {
-                if (fName != value)
-                {
-                    fName = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string ImagePath
-        {
-            get
-            {
-                return imagePath;
-            }
-            set
-            {
-                if (value != imagePath)
-                {
-                    imagePath = value;
-                    if (imagePath != "")
-                    {
-                        FName = System.IO.Path.GetFileName(imagePath);
-                    }
-                }
-            }
+            InitialisePoints();
+            polyPoints = flexiPath.FlexiPoints;
+            scrollX = 0;
+            scrollY = 0;
         }
 
         public void FetchImage(bool forceReload = false)
@@ -665,14 +516,124 @@ namespace Barnacle.Dialogs
             return "";
         }
 
-        public int NumDivisions { get; set; }
-
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public void SetImageSource()
+        {
+            if (workingImage != null)
+            {
+                PathBackgroundImage.Source = LoadBitmap(workingImage);
+                //   FlexiPathCanvas.Width = workingImage.Width;
+                //    FlexiPathCanvas.Height = workingImage.Height;
+            }
+        }
+
+        public void UpdateDisplay()
+        {
+            /*
+              FlexiPathCanvas.Children.Clear();
+              FlexiPathCanvas.Children.Add(PathBackgroundImage);
+              // this is the grid on the path edit
+              if (showGrid)
+              {
+                  if (gridMarkers == null)
+                  {
+                      gridMarkers = new List<Shape>();
+                      BaseModellerDialog.CreateCanvasGrid(FlexiPathCanvas, out gridX, out gridY, 10.0, gridMarkers);
+                  }
+                  foreach (Shape sh in gridMarkers)
+                  {
+                      FlexiPathCanvas.Children.Add(sh);
+                  }
+              }
+              DisplayLines();
+              DisplayPoints();
+              if (showProfilePoints)
+              {
+                  ShowProfile();
+              }
+              PathText = flexiPath.ToPath();
+              */
+        }
+
+        public void UpdateHeaderLabel()
+        {
+            Dirty = true;
+            /*
+            HeaderLabel.Content = Header;
+            FNameLabel.Content = FName;
+            */
+        }
+
+        public void Write(XmlDocument doc, XmlElement parentNode)
+        {
+            XmlElement ele = doc.CreateElement("ImagePath");
+
+            ele.SetAttribute("Path", imagePath);
+            ele.SetAttribute("Scale", scale.ToString());
+            ele.SetAttribute("ScrollX", ScrollX.ToString());
+            ele.SetAttribute("ScrollY", ScrollY.ToString());
+            parentNode.AppendChild(ele);
+            XmlElement pnts = doc.CreateElement("Edge");
+            // make sure we get the points with absolute coordinates
+            pnts.InnerText = FlexiControl.ToPath(true);
+            ele.AppendChild(pnts);
+        }
+
+        internal RibAndPlanEditControl Clone(bool copyImage = true)
+        {
+            RibAndPlanEditControl cl = new RibAndPlanEditControl();
+
+            cl.Header = Header;
+            cl.NumDivisions = NumDivisions;
+            cl.TurnOffGrid();
+            cl.ImagePath = ImagePath;
+            cl.FlexiControl.FromTextPath(FlexiControl.ToPath(true));
+            cl.ProfilePoints = new List<PointF>();
+            cl.Width = Width;
+            cl.Height = Height;
+            cl.LoadImage(ImagePath, true);
+            foreach (PointF fp in profilePoints)
+            {
+                PointF fn = new PointF(fp.X, fp.Y);
+                cl.ProfilePoints.Add(fn);
+            }
+
+            cl.src = src;
+            cl.OnForceReload = OnForceReload;
+
+            return cl;
+        }
+
+        internal void Read(XmlElement parentNode)
+        {
+            XmlElement ele = (XmlElement)parentNode.SelectSingleNode("ImagePath");
+            ImagePath = ele.GetAttribute("Path");
+            if (!String.IsNullOrEmpty(ImagePath))
+            {
+                LoadImage(imagePath, false);
+            }
+            scale = Convert.ToDouble(ele.GetAttribute("Scale"));
+            scrollX = Convert.ToDouble(ele.GetAttribute("ScrollX"));
+            scrollY = Convert.ToDouble(ele.GetAttribute("ScrollY"));
+            XmlNode edgeNode = (XmlElement)ele.SelectSingleNode("Edge");
+            string p = edgeNode.InnerText;
+            FlexiControl.FromString(p);
+            //flexiPath.FromTextPath(p);
+            loaded = false;
+            //ScrollView.ScrollToHorizontalOffset(scrollX);
+            //ScrollView.ScrollToVerticalOffset(scrollY);
+            UpdateDisplay();
+            loaded = true;
+            NotifyPropertyChanged("Scale");
+
+            Dirty = true;
         }
 
         internal void RenderFlexipath(ref Bitmap bmp, out double tlx, out double tly, out double brx, out double bry)
@@ -741,78 +702,115 @@ namespace Barnacle.Dialogs
             tly = offset;
         }
 
-        public double EdgeLength
-        {
-            get
-            {
-                if (imageEdge != null)
-                {
-                    return imageEdge.Length;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void UpdateDisplay()
-        {
-            /*
-            FlexiPathCanvas.Children.Clear();
-            FlexiPathCanvas.Children.Add(PathBackgroundImage);
-            // this is the grid on the path edit
-            if (showGrid)
-            {
-                if (gridMarkers == null)
-                {
-                    gridMarkers = new List<Shape>();
-                    BaseModellerDialog.CreateCanvasGrid(FlexiPathCanvas, out gridX, out gridY, 10.0, gridMarkers);
-                }
-                foreach (Shape sh in gridMarkers)
-                {
-                    FlexiPathCanvas.Children.Add(sh);
-                }
-            }
-            DisplayLines();
-            DisplayPoints();
-            if (showProfilePoints)
-            {
-                ShowProfile();
-            }
-            PathText = flexiPath.ToPath();
-            */
-        }
-
-        public void UpdateHeaderLabel()
-        {
-            Dirty = true;
-            /*
-            HeaderLabel.Content = Header;
-            FNameLabel.Content = FName;
-            */
-        }
-
-        public void Write(XmlDocument doc, XmlElement parentNode)
-        {
-            XmlElement ele = doc.CreateElement("ImagePath");
-
-            ele.SetAttribute("Path", imagePath);
-            ele.SetAttribute("Scale", scale.ToString());
-            ele.SetAttribute("ScrollX", ScrollX.ToString());
-            ele.SetAttribute("ScrollY", ScrollY.ToString());
-            parentNode.AppendChild(ele);
-            XmlElement pnts = doc.CreateElement("Edge");
-            // make sure we get the points with absolute coordinates
-            pnts.InnerText = FlexiControl.ToPath(true);
-            ele.AppendChild(pnts);
-        }
-
         internal void TurnOffGrid()
         {
             FlexiControl.TurnOffGrid();
+        }
+
+        [DllImport("gdi32")]
+        private static extern int DeleteObject(IntPtr o);
+
+        private void CopySrcToWorking()
+        {
+            if (src != null)
+            {
+                System.Drawing.Color c;
+                workingImage = new System.Drawing.Bitmap(src);
+                for (int px = 0; px < src.Width; px++)
+                {
+                    for (int py = 0; py < src.Height; py++)
+                    {
+                        workingImage.SetPixel(px, py, System.Drawing.Color.White);
+                        c = src.GetPixel(px, py);
+                        if (c.R < 200 || c.G < 200 || c.B < 200)
+                        {
+                            if (px < tlx)
+                            {
+                                tlx = px;
+                            }
+                            if (py < tly)
+                            {
+                                tly = py;
+                            }
+                        }
+                    }
+                }
+
+                for (int px = (int)tlx; px < src.Width; px++)
+                {
+                    for (int py = (int)tly; py < src.Height; py++)
+                    {
+                        c = src.GetPixel(px, py);
+                        // if (c.R < 200 || c.G < 200 || c.B < 200)
+                        {
+                            int tx = px - (int)tlx + 1;
+                            int ty = py - (int)tly + 1;
+                            if ((tx < workingImage.Width - 1) &&
+                                 (ty < workingImage.Height - 1))
+                            {
+                                //workingImage.SetPixel(tx, ty, System.Drawing.Color.Black);
+                                workingImage.SetPixel(tx, ty, c);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private double Distance(PointF point1, PointF point2)
+        {
+            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
+            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
+
+            return Math.Sqrt(diff);
+        }
+
+        private void InitialisePoints()
+        {
+            flexiPath.Clear();
+            // selectionMode = SelectionModeType.StartPoint;
+        }
+
+        // Load a bitmap without locking it.
+        private Bitmap LoadBitmapUnlocked(string file_name)
+        {
+            using (Bitmap bm = new Bitmap(file_name))
+            {
+                return new Bitmap(bm);
+            }
+        }
+
+        private void LoadImage(string imagePath, bool force)
+        {
+            if (File.Exists(imagePath))
+            {
+                if (src == null || force)
+                {
+                    src = new System.Drawing.Bitmap(imagePath);
+                    src = LoadBitmapUnlocked(imagePath);
+                    FlexiControl.LoadImage(imagePath);
+                    isValid = true;
+                }
+                ShowWorkingImage();
+            }
+            else
+            {
+                MessageBox.Show($"Cant find image {imagePath}");
+            }
+        }
+
+        private void LoadImage(string f)
+        {
+            Uri fileUri = new Uri(f);
+            localImage = new BitmapImage();
+            localImage.BeginInit();
+            localImage.UriSource = fileUri;
+            //    localImage.DecodePixelWidth = 800;
+            localImage.EndInit();
+            //EditorParameters.Set("ImagePath", f);
+            // FlexiPathCanvas.Width = localImage.Width;
+            //   FlexiPathCanvas.Height = localImage.Height;
+            UpdateDisplay();
         }
 
         private void ShowWorkingImage()
@@ -820,6 +818,19 @@ namespace Barnacle.Dialogs
             CopySrcToWorking();
 
             SetImageSource();
+        }
+
+        //   private SelectionModeType selectionMode;
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            loaded = false;
+
+            //  ScrollView.ScrollToHorizontalOffset(scrollX);
+            //    ScrollView.ScrollToVerticalOffset(scrollY);
+            //selectionMode = SelectionModeType.SelectSegmentAtPoint;
+            FlexiControl.AbsolutePaths = true;
+            UpdateDisplay();
+            loaded = true;
         }
 
         /*

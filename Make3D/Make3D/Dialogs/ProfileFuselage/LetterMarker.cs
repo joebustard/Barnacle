@@ -12,7 +12,7 @@ namespace Barnacle.Dialogs
 
         public string Letter { get; set; }
         public Point Position { get; set; }
-        public ImagePathControl Rib { get; set; }
+        public RibAndPlanEditControl Rib { get; set; }
 
         internal void Dump()
         {

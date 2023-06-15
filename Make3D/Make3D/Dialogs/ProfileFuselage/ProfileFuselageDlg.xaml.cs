@@ -312,7 +312,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void OnRibAdded(string name, ImagePathControl rc)
+        public void OnRibAdded(string name, RibAndPlanEditControl rc)
         {
             int nextX = 0;
             int nextY = 10;
@@ -330,7 +330,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        public void OnRibDeleted(ImagePathControl rc)
+        public void OnRibDeleted(RibAndPlanEditControl rc)
         {
             LetterMarker target = null;
             foreach (LetterMarker mk in markers)
@@ -350,7 +350,7 @@ namespace Barnacle.Dialogs
             dirty = true;
         }
 
-        public void OnRibInserted(string name, ImagePathControl rc)
+        public void OnRibInserted(string name, RibAndPlanEditControl rc)
         {
             int nextX = 10;
             int nextY = 10;
@@ -419,7 +419,7 @@ namespace Barnacle.Dialogs
             RibManager.CopyARib(name);
         }
 
-        private void CreateLetter(string v1, System.Drawing.Point v2, ImagePathControl rib)
+        private void CreateLetter(string v1, System.Drawing.Point v2, RibAndPlanEditControl rib)
         {
             LetterMarker mk = new LetterMarker(v1, v2);
             mk.Rib = rib;
@@ -445,7 +445,7 @@ namespace Barnacle.Dialogs
                     {
                         bool okToGenerate = true;
                         double prevX = 0;
-                        List<ImagePathControl> theRibs = new List<ImagePathControl>();
+                        List<RibAndPlanEditControl> theRibs = new List<RibAndPlanEditControl>();
                         List<double> ribXs = new List<double>();
                         List<Dimension> topDims = new List<Dimension>();
                         List<Dimension> sideDims = new List<Dimension>();
@@ -454,7 +454,7 @@ namespace Barnacle.Dialogs
                         {
                             double x = markers[i].Position.X;
 
-                            ImagePathControl cp;
+                            RibAndPlanEditControl cp;
                             if (RibManager.Ribs[i].Dirty)
                             {
                                 cp = RibManager.Ribs[i].Clone(false);
@@ -476,7 +476,7 @@ namespace Barnacle.Dialogs
                                         double nx = prevX + 1;
                                         while (nx < x)
                                         {
-                                            ImagePathControl nr = RibManager.Ribs[i].Clone(false);
+                                            RibAndPlanEditControl nr = RibManager.Ribs[i].Clone(false);
                                             // nr.GenerateProfilePoints();
                                             theRibs.Add(nr);
                                             ribXs.Add(nx);
@@ -674,7 +674,7 @@ namespace Barnacle.Dialogs
             bool res = true;
             try
             {
-                ImagePathControl rc = new ImagePathControl();
+                RibAndPlanEditControl rc = new RibAndPlanEditControl();
                 rc.ImagePath = pth;
                 rc.Header = nme;
                 rc.Width = 600;
@@ -702,7 +702,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private void OnRibInserted(string name, ImagePathControl rc, ImagePathControl after)
+        private void OnRibInserted(string name, RibAndPlanEditControl rc, RibAndPlanEditControl after)
         {
             int nextX = 0;
             int nextY = 10;
@@ -808,7 +808,7 @@ namespace Barnacle.Dialogs
         private void LoadOneRib(int nextY, XmlElement el, string nme, int pos)
         {
             XmlElement imagepcon = (XmlElement)(el.SelectSingleNode("ImagePath"));
-            ImagePathControl rc = new ImagePathControl();
+            RibAndPlanEditControl rc = new RibAndPlanEditControl();
             rc.Read(el);
             rc.Header = nme;
             rc.Width = 600;
@@ -905,7 +905,7 @@ namespace Barnacle.Dialogs
                 }
                 SideView.Markers = markers;
                 TopView.Markers = markers;
-                ObservableCollection<ImagePathControl> ribs = new ObservableCollection<ImagePathControl>();
+                ObservableCollection<RibAndPlanEditControl> ribs = new ObservableCollection<RibAndPlanEditControl>();
                 foreach (LetterMarker mk in markers)
                 {
                     ribs.Add(mk.Rib);
@@ -1038,7 +1038,7 @@ namespace Barnacle.Dialogs
             SideViewManager.PathControl.Write(doc, sideNode);
             sideNode.SetAttribute("Path", SideViewManager.ImageFilePath);
             docNode.AppendChild(sideNode);
-            foreach (ImagePathControl ob in RibManager.Ribs)
+            foreach (RibAndPlanEditControl ob in RibManager.Ribs)
             {
                 foreach (LetterMarker mk in markers)
                 {

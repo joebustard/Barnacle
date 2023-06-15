@@ -35,12 +35,12 @@
             </TabItem>
             <TabItem Header="Side Plan">
                 <Grid>
-                    <local:ViewManager x:Name="SideViewManager" />
+                    <local:PlanView x:Name="SideViewManager" />
                 </Grid>
             </TabItem>
             <TabItem Header="Top Plan">
                 <Grid>
-                    <local:ViewManager x:Name="TopViewManager" />
+                    <local:PlanView x:Name="TopViewManager" />
                 </Grid>
             </TabItem>
             <TabItem Header="Position"

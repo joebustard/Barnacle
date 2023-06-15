@@ -20,14 +20,14 @@ namespace Barnacle.Dialogs
         private bool controlsEnabled;
 
         private int modelType;
-        private ObservableCollection<ImagePathControl> ribs;
+        private ObservableCollection<RibAndPlanEditControl> ribs;
 
-        private ImagePathControl selectedRib;
+        private RibAndPlanEditControl selectedRib;
 
         public RibManager()
         {
             InitializeComponent();
-            ribs = new ObservableCollection<ImagePathControl>();
+            ribs = new ObservableCollection<RibAndPlanEditControl>();
             DataContext = this;
             NextNameLetter = 'A';
             NextNameNumber = 0;
@@ -39,11 +39,11 @@ namespace Barnacle.Dialogs
 
         public delegate void CommandHandler(string command);
 
-        public delegate void RibAdded(string ribName, ImagePathControl rc);
+        public delegate void RibAdded(string ribName, RibAndPlanEditControl rc);
 
-        public delegate void RibDeleted(ImagePathControl rc);
+        public delegate void RibDeleted(RibAndPlanEditControl rc);
 
-        public delegate void RibInserted(string ribName, ImagePathControl rc, ImagePathControl after);
+        public delegate void RibInserted(string ribName, RibAndPlanEditControl rc, RibAndPlanEditControl after);
 
         public delegate void RibsRenamed(List<NameRec> newNames);
 
@@ -96,7 +96,7 @@ namespace Barnacle.Dialogs
                 if (value != numberOfProfilePoints)
                 {
                     numberOfProfilePoints = value;
-                    foreach (ImagePathControl rc in ribs)
+                    foreach (RibAndPlanEditControl rc in ribs)
                     {
                         rc.NumDivisions = numberOfProfilePoints;
                     }
@@ -113,7 +113,7 @@ namespace Barnacle.Dialogs
 
         public RibsRenamed OnRibsRenamed { get; set; }
 
-        public ObservableCollection<ImagePathControl> Ribs
+        public ObservableCollection<RibAndPlanEditControl> Ribs
         {
             get
             {
@@ -129,7 +129,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public ImagePathControl SelectedRib
+        public RibAndPlanEditControl SelectedRib
         {
             get
             {
@@ -156,8 +156,8 @@ namespace Barnacle.Dialogs
         internal void CopyARib(string name)
         {
             selectedRib = null;
-            ImagePathControl src = null;
-            foreach (ImagePathControl rc in Ribs)
+            RibAndPlanEditControl src = null;
+            foreach (RibAndPlanEditControl rc in Ribs)
             {
                 if (rc.Header == name)
                 {
@@ -173,7 +173,7 @@ namespace Barnacle.Dialogs
 
         internal void OnForceRibReload(string s)
         {
-            foreach (ImagePathControl rc in Ribs)
+            foreach (RibAndPlanEditControl rc in Ribs)
             {
                 if (rc.ImagePath == s)
                 {
@@ -240,7 +240,7 @@ namespace Barnacle.Dialogs
             {
                 try
                 {
-                    ImagePathControl rc = new ImagePathControl();
+                    RibAndPlanEditControl rc = new RibAndPlanEditControl();
 
                     rc.ImagePath = dlg.FileName;
                     rc.FetchImage();
@@ -276,12 +276,12 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void Copy(ImagePathControl src)
+        private void Copy(RibAndPlanEditControl src)
         {
-            ImagePathControl clone = src.Clone();
+            RibAndPlanEditControl clone = src.Clone();
             string nameStart = clone.Header.Substring(0, 1);
             int subName = 0;
-            foreach (ImagePathControl rc in Ribs)
+            foreach (RibAndPlanEditControl rc in Ribs)
             {
                 if (rc.Header.StartsWith(nameStart))
                 {
@@ -339,7 +339,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateProfiles()
         {
-            foreach (ImagePathControl rc in ribs)
+            foreach (RibAndPlanEditControl rc in ribs)
             {
                 rc.GenerateProfilePoints(modelType);
             }

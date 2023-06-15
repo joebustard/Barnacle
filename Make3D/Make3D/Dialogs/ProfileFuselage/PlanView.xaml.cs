@@ -10,7 +10,7 @@ namespace Barnacle.Dialogs
     /// <summary>
     /// Interaction logic for ViewManager.xaml
     /// </summary>
-    public partial class ViewManager : UserControl, INotifyPropertyChanged
+    public partial class PlanView : UserControl, INotifyPropertyChanged
     {
         private string commandText;
 
@@ -59,7 +59,7 @@ namespace Barnacle.Dialogs
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public ViewManager()
+        public PlanView()
         {
             InitializeComponent();
             CommandText = "Load It";

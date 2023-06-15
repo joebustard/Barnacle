@@ -195,11 +195,11 @@
       <DependentUpon>ProfileFuselageDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ProfileFuselage\RibManager.xaml.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\ImagePathControl.xaml.cs">
-      <DependentUpon>ImagePathControl.xaml</DependentUpon>
+    <Compile Include="Dialogs\ProfileFuselage\RibAndPlanEditControl.xaml.cs">
+      <DependentUpon>RibAndPlanEditControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Dialogs\ProfileFuselage\ViewManager.xaml.cs">
-      <DependentUpon>ViewManager.xaml</DependentUpon>
+    <Compile Include="Dialogs\ProfileFuselage\PlanView.xaml.cs">
+      <DependentUpon>PlanView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\Propeller\Propeller.xaml.cs">
       <DependentUpon>Propeller.xaml</DependentUpon>
@@ -595,11 +595,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Dialogs\ProfileFuselage\ImagePathControl.xaml">
+    <Page Include="Dialogs\ProfileFuselage\RibAndPlanEditControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\ProfileFuselage\ViewManager.xaml">
+    <Page Include="Dialogs\ProfileFuselage\PlanView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

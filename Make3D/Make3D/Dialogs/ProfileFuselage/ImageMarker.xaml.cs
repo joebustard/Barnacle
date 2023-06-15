@@ -280,7 +280,7 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        internal void DeleteMarker(ImagePathControl rc)
+        internal void DeleteMarker(RibAndPlanEditControl rc)
         {
             UpdateDisplay();
         }

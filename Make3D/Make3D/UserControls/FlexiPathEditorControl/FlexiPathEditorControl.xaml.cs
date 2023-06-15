@@ -375,6 +375,15 @@ namespace Barnacle.UserControls
             }
         }
 
+        internal void FromTextPath(string v)
+        {
+            pathText = v;
+            if (vm != null)
+            {
+                vm.FromString(pathText);
+            }
+        }
+
         private void EnableSelectionModeBorder(Border src)
         {
             DoButtonBorder(src, PickBorder);
@@ -769,14 +778,18 @@ namespace Barnacle.UserControls
 
         internal string ToPath(bool v)
         {
-            if (v)
+            if (vm != null)
             {
-                return vm.AbsPathText();
+                if (v)
+                {
+                    return vm.AbsPathText();
+                }
+                else
+                {
+                    return vm.PathText;
+                }
             }
-            else
-            {
-                return vm.PathText;
-            }
+            return "";
         }
 
         private GridSettings.GridStyle showGrid;
