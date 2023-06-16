@@ -1,4 +1,5 @@
 ﻿using Barnacle.Dialogs;
+using Barnacle.Dialogs.RibbedFuselage;
 using System.Windows;
 
 namespace Barnacle.Models
@@ -87,7 +88,8 @@ namespace Barnacle.Models
                     break;
 
                 case "ProfileFuselage":
-                    res = new ProfileFuselageDlg();
+                    // res = new ProfileFuselageDlg();
+                    res = new RibbedFuselageDlg();
                     break;
 
                 case "Propeller":

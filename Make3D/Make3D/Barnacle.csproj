@@ -132,6 +132,14 @@
     <Compile Include="Dialogs\PathLoft\PathLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\PieDlg\PieDlg.xaml.cs" />
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\MarkerModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\RibImageDetailsModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml.cs">
+      <DependentUpon>RibbedFuselageDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\RibbedFuselage\Views\RibView.xaml.cs">
+      <DependentUpon>RibView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
@@ -305,6 +313,10 @@
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
     <Compile Include="Models\ZipUtils.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\EditorSettingsModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\FuselageModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\ImageDetailsModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\ViewModels\FuselageViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControlViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml.cs">
       <DependentUpon>FlexiPathEditorControl.xaml</DependentUpon>
@@ -494,6 +506,14 @@
     <Page Include="Dialogs\Pill\PillDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\RibbedFuselage\Views\RibView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -836,6 +856,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Dialogs\RibbedFuselage\RibbedFuselage.cd" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

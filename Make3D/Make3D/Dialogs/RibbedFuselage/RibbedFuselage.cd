@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Barnacle.RibbedFuselage.ImageDetailsModel">
+    <Position X="10.5" Y="1" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAAAAAAAAAABAQAAAAEAAAEAAICAAAAAgA=</HashCode>
+      <FileName>Dialogs\RibbedFuselage\Models\ImageDetailsModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="EditorSettings" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Barnacle.RibbedFuselage.Models.EditorSettingsModel">
+    <Position X="12.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAgIAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogs\RibbedFuselage\Models\EditorSettingsModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Barnacle.RibbedFuselage.Models.FuselageModel">
+    <Position X="8" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIUEYAAhEAABgBgAACQIAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Dialogs\RibbedFuselage\Models\FuselageModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="SideImageDetails" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Barnacle.RibbedFuselage.ViewModels.FuselageViewModel">
+    <Position X="5.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIEAAAAAAIAAAAAAQAAAgAAAAAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Dialogs\RibbedFuselage\ViewModels\FuselageViewModel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="fuselageData" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Barnacle.Dialogs.RibbedFuselage.Models.RibImageDetailsModel">
+    <Position X="10.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Dialogs\RibbedFuselage\Models\RibImageDetailsModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Barnacle.Dialogs.RibbedFuselage.Models.MarkerModel">
+    <Position X="11" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAQAAQAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Dialogs\RibbedFuselage\Models\MarkerModel.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
