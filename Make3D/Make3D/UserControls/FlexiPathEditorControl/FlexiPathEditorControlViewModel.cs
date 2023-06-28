@@ -1007,6 +1007,7 @@ namespace Barnacle.UserControls
             bmi.EndInit();
             BackgroundImage = bmi;
             imagePath = f;
+            NotifyPropertyChanged("BackgroundImage");
         }
 
         private void MoveWholePath(System.Windows.Point position)

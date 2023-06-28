@@ -10,7 +10,8 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class RibbedFuselageDlg : BaseModellerDialog
     {
-        FuselageViewModel vm;
+        private FuselageViewModel vm;
+
         public RibbedFuselageDlg()
         {
             InitializeComponent();
@@ -23,28 +24,29 @@ namespace Barnacle.Dialogs
 
         private void TopPathChanged(string pathText)
         {
-          
+            vm?.SetTopPath(pathText);
         }
 
         private void TopImageChanged(string imagePath)
         {
-            
+            vm?.SetTopImage(imagePath);
         }
 
         private void SidePathChanged(string pathText)
         {
-
+            vm?.SetSidePath(pathText);
         }
 
         private void SideImageChanged(string imagePath)
         {
-
+            vm?.SetSideImage(imagePath);
         }
+
         private void RibList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (e.AddedItems.Count > 0)
+            if (vm.SelectedRibIndex != -1)
             {
-                RibList.ScrollIntoView(e.AddedItems[0]);
+                RibList.ScrollIntoView(vm.SelectedRib);
             }
         }
     }

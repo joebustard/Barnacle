@@ -149,7 +149,7 @@
                     <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Top View Of Fuselage" />
                     <Border Grid.Column="1" Grid.Row="1"
                 Style="{StaticResource ControlBorder}">
-                        <ctrls:FlexiPathEditorControl x:Name="TopPathEditor" />
+                        <ctrls:FlexiPathEditorControl x:Name="TopPathEditor" AbsolutePaths="True" ShowGrid="Hidden" />
                     </Border>
                 </Grid>
             </TabItem>
@@ -164,7 +164,7 @@
                     <Label Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Content="Side View Of Fuselage" />
                     <Border Grid.Column="1" Grid.Row="1"
                 Style="{StaticResource ControlBorder}">
-                        <ctrls:FlexiPathEditorControl x:Name="SidePathEditor" />
+                        <ctrls:FlexiPathEditorControl x:Name="SidePathEditor" AbsolutePaths="True" ShowGrid="Hidden" />
                     </Border>
                 </Grid>
             </TabItem>

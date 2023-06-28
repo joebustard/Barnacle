@@ -14,6 +14,7 @@ namespace Barnacle.RibbedFuselage.Models
         private ObservableCollection<RibImageDetailsModel> ribs;
         private ImageDetailsModel sideImageDetails;
         private ImageDetailsModel topImageDetails;
+        private const double defaultMarkerSpacing = 10;
 
         public FuselageModel()
         {
@@ -25,6 +26,7 @@ namespace Barnacle.RibbedFuselage.Models
             Description = "";
             NextNameLetter = 'A';
             NextNameNumber = 0;
+            nextNewMakerPosition = 0;
             SideImageDetails = new ImageDetailsModel();
             TopImageDetails = new ImageDetailsModel();
         }
@@ -35,6 +37,26 @@ namespace Barnacle.RibbedFuselage.Models
             set
             {
             }
+        }
+
+        internal void SetTopImage(string imagePath)
+        {
+            TopImageDetails.ImageFilePath = imagePath;
+        }
+
+        internal void SetTopPath(string pathText)
+        {
+            TopImageDetails.FlexiPathText = pathText;
+        }
+
+        internal void SetSidePath(string pathText)
+        {
+            SideImageDetails.FlexiPathText = pathText;
+        }
+
+        internal void SetSideImage(string imagePath)
+        {
+            SideImageDetails.ImageFilePath = imagePath;
         }
 
         public ObservableCollection<MarkerModel> Markers
@@ -56,6 +78,17 @@ namespace Barnacle.RibbedFuselage.Models
             set
             {
             }
+        }
+
+        private double nextNewMakerPosition;
+
+        internal void AddMarker(string name)
+        {
+            MarkerModel marker = new MarkerModel();
+            marker.Name = name;
+            marker.Position = nextNewMakerPosition;
+            markers.Add(marker);
+            nextNewMakerPosition += defaultMarkerSpacing;
         }
 
         public ObservableCollection<RibImageDetailsModel> Ribs
@@ -94,11 +127,12 @@ namespace Barnacle.RibbedFuselage.Models
             }
         }
 
-        public void AddRib()
+        public RibImageDetailsModel AddRib()
         {
             RibImageDetailsModel ribmod = new RibImageDetailsModel();
             ribmod.Name = GetNewRibName();
             ribs.Add(ribmod);
+            return ribmod;
         }
 
         public char NextNameLetter { get; set; }
@@ -157,6 +191,8 @@ namespace Barnacle.RibbedFuselage.Models
                     NextNameLetter = v[0];
                     v = sparNode.GetAttribute("NextNumber");
                     NextNameNumber = Convert.ToInt16(v);
+                    v = sparNode.GetAttribute("NextMarkerPosition");
+                    nextNewMakerPosition = Convert.ToDouble(v);
                 }
                 XmlElement topEle = sparNode.SelectSingleNode("TopView") as XmlElement;
                 topImageDetails.Load(topEle);
@@ -164,7 +200,7 @@ namespace Barnacle.RibbedFuselage.Models
                 sideImageDetails.Load(sideEle);
 
                 XmlNodeList rl = sparNode.SelectNodes("Rib");
-                foreach( XmlNode  nd in rl)
+                foreach (XmlNode nd in rl)
                 {
                     XmlElement el = nd as XmlElement;
                     RibImageDetailsModel rib = new RibImageDetailsModel();
@@ -188,7 +224,6 @@ namespace Barnacle.RibbedFuselage.Models
             throw new System.NotImplementedException();
         }
 
-
         public void SortRibsByPosition()
         {
             throw new System.NotImplementedException();
@@ -201,6 +236,7 @@ namespace Barnacle.RibbedFuselage.Models
             XmlElement docNode = doc.CreateElement("Spars");
             docNode.SetAttribute("NextLetter", NextNameLetter.ToString());
             docNode.SetAttribute("NextNumber", NextNameNumber.ToString());
+            docNode.SetAttribute("NextMarkerPosition", nextNewMakerPosition.ToString());
             XmlElement topNode = doc.CreateElement("TopView");
             topImageDetails.Save(topNode, doc);
             docNode.AppendChild(topNode);
@@ -213,7 +249,6 @@ namespace Barnacle.RibbedFuselage.Models
                 XmlElement ribNode = doc.CreateElement("Rib");
                 ob.Save(ribNode, doc);
                 docNode.AppendChild(ribNode);
-
             }
             foreach (MarkerModel m in markers)
             {

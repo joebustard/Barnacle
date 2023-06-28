@@ -1,15 +1,25 @@
 ﻿using Barnacle.RibbedFuselage.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
 namespace Barnacle.RibbedFuselage
 {
-    internal class ImageDetailsModel
+    internal class ImageDetailsModel : INotifyPropertyChanged
     {
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
         public ImageDetailsModel()
         {
             imageFilePath = "";
@@ -31,6 +41,7 @@ namespace Barnacle.RibbedFuselage
                 if (value != imageFilePath)
                 {
                     imageFilePath = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -48,6 +59,7 @@ namespace Barnacle.RibbedFuselage
                 if (value != flexiPathText)
                 {
                     flexiPathText = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -65,6 +77,7 @@ namespace Barnacle.RibbedFuselage
                 if (value != name)
                 {
                     name = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -79,6 +92,8 @@ namespace Barnacle.RibbedFuselage
 
         private string displayFileName;
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
         public String DisplayFileName
         {
             get
@@ -90,6 +105,7 @@ namespace Barnacle.RibbedFuselage
                 if (value != displayFileName)
                 {
                     displayFileName = value;
+                    NotifyPropertyChanged();
                 }
             }
         }
@@ -109,7 +125,6 @@ namespace Barnacle.RibbedFuselage
             {
                 FlexiPathText = ele.GetAttribute("FlexiPathText");
             }
-
         }
 
         public virtual void Save(XmlElement ele, XmlDocument doc)

@@ -14,9 +14,9 @@ namespace Barnacle.UserControls
     /// </summary>
     public partial class FlexiPathEditorControl : UserControl
     {
-        public FlexiPathChanged OnFlexiPathChanged;
-        public FlexiPathTextChanged OnFlexiPathTextChanged;
-        public FlexiImageChanged OnFlexiImageChanged;
+        public FlexiPathChanged OnFlexiPathChanged { get; set; }
+        public FlexiPathTextChanged OnFlexiPathTextChanged { get; set; }
+        public FlexiImageChanged OnFlexiImageChanged { get; set; }
 
         private string pathText = "";
 
@@ -91,8 +91,11 @@ namespace Barnacle.UserControls
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
+
         public delegate void FlexiImageChanged(String imagePath);
+
         public delegate void FlexiPathTextChanged(string pathText);
+
         public bool PathClosed
         {
             get
@@ -573,7 +576,6 @@ namespace Barnacle.UserControls
                     vm.PointsDirty = false;
                 }
             }
-
         }
 
         private void NotifyPathTextChanged()
@@ -583,14 +585,20 @@ namespace Barnacle.UserControls
                 OnFlexiPathTextChanged(vm.PathText);
             }
         }
+
+        private void NotifyImageChanged()
+        {
+            if (OnFlexiImageChanged != null)
+            {
+                OnFlexiImageChanged(vm.ImagePath);
+            }
+        }
+
         public void LoadImage(String fileName)
         {
             vm?.LoadImage(fileName);
             imagePath = fileName;
-            if (OnFlexiImageChanged != null)
-            {
-                OnFlexiImageChanged(fileName);
-            }
+            NotifyImageChanged();
         }
 
         private void SetSelectionModeBorderColours()
@@ -899,10 +907,17 @@ namespace Barnacle.UserControls
                     break;
 
                 case "Points":
+                    {
+                        UpdateDisplay();
+                        NotifyPathPointsChanged();
+                    }
+                    break;
+
                 case "BackgroundImage":
                     {
                         UpdateDisplay();
                         NotifyPathPointsChanged();
+                        NotifyImageChanged();
                     }
                     break;
 

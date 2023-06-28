@@ -33,6 +33,26 @@ namespace Barnacle.RibbedFuselage.ViewModels
             SelectedRibIndex = -1;
         }
 
+        internal void SetTopImage(string imagePath)
+        {
+            FuselageData?.SetTopImage(imagePath);
+        }
+
+        internal void SetTopPath(string pathText)
+        {
+            FuselageData?.SetTopPath(pathText);
+        }
+
+        internal void SetSideImage(string imagePath)
+        {
+            FuselageData?.SetSideImage(imagePath);
+        }
+
+        internal void SetSidePath(string pathText)
+        {
+            FuselageData?.SetSidePath(pathText);
+        }
+
         private void OnRibComand(object obj)
         {
             string prm = obj as string;
@@ -42,8 +62,10 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 {
                     case "append":
                         {
-                            fuselageData.AddRib();
+                            RibImageDetailsModel rib = fuselageData.AddRib();
                             NotifyPropertyChanged("Ribs");
+                            SelectedRib = rib;
+                            fuselageData.AddMarker(rib.Name);
                         }
                         break;
 
@@ -114,7 +136,6 @@ namespace Barnacle.RibbedFuselage.ViewModels
             {
                 SelectedRibIndex++;
                 SelectedRib = fuselageData.Ribs[selectedRibIndex];
-                // RibList.ScrollIntoView(selectedRib);
             }
         }
 
@@ -124,7 +145,6 @@ namespace Barnacle.RibbedFuselage.ViewModels
             {
                 SelectedRibIndex--;
                 SelectedRib = fuselageData.Ribs[selectedRibIndex];
-                //RibList.ScrollIntoView(selectedRib);
             }
         }
 
@@ -178,9 +198,9 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 dirty = false;
             }
         }
+
         public void Save()
         {
-
             if (String.IsNullOrEmpty(filePath))
             {
                 SaveAs();
@@ -190,7 +210,6 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 Write(filePath);
                 dirty = false;
             }
-
         }
 
         private void Write(string filePath)
@@ -220,8 +239,6 @@ namespace Barnacle.RibbedFuselage.ViewModels
                     MessageBox.Show(ex.Message);
                 }
             }
-
-            
         }
     }
 }
