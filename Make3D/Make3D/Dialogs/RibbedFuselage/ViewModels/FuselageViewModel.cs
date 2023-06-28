@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace Barnacle.RibbedFuselage.ViewModels
 {
@@ -67,11 +68,13 @@ namespace Barnacle.RibbedFuselage.ViewModels
 
                     case "load":
                         {
+                            Load();
                         }
                         break;
 
                     case "save":
                         {
+                            Save();
                         }
                         break;
 
@@ -148,6 +151,8 @@ namespace Barnacle.RibbedFuselage.ViewModels
         }
 
         private RibImageDetailsModel selectedRib;
+        private string filePath;
+        private bool dirty;
 
         public RibImageDetailsModel SelectedRib
         {
@@ -162,12 +167,61 @@ namespace Barnacle.RibbedFuselage.ViewModels
             }
         }
 
+        private void SaveAs()
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            saveFileDialog.Filter = "Fuselage spar files (*.spr) | *.spr";
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                Write(saveFileDialog.FileName);
+                filePath = saveFileDialog.FileName;
+                dirty = false;
+            }
+        }
         public void Save()
         {
+
+            if (String.IsNullOrEmpty(filePath))
+            {
+                SaveAs();
+            }
+            else
+            {
+                Write(filePath);
+                dirty = false;
+            }
+
+        }
+
+        private void Write(string filePath)
+        {
+            if (fuselageData != null)
+            {
+                fuselageData.Save(filePath);
+            }
         }
 
         public void Load()
         {
+            OpenFileDialog opDlg = new OpenFileDialog();
+            opDlg.Filter = "Fusalage spar files (*.spr) | *.spr";
+            if (opDlg.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    filePath = opDlg.FileName;
+                    if (fuselageData != null)
+                    {
+                        fuselageData.Load(filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+
+            
         }
     }
 }

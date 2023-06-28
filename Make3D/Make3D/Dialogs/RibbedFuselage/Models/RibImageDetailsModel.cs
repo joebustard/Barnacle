@@ -24,6 +24,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
 
         public override void Save(XmlElement ele, XmlDocument doc)
         {
+            base.Save(ele, doc);
         }
     }
 }

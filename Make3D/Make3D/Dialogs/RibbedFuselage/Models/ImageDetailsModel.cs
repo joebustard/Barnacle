@@ -96,10 +96,27 @@ namespace Barnacle.RibbedFuselage
 
         public virtual void Load(XmlElement ele)
         {
+            if (ele.HasAttribute("Name"))
+            {
+                Name = ele.GetAttribute("Name");
+            }
+            if (ele.HasAttribute("ImageFilePath"))
+            {
+                ImageFilePath = ele.GetAttribute("ImageFilePath");
+            }
+
+            if (ele.HasAttribute("FlexiPathText"))
+            {
+                FlexiPathText = ele.GetAttribute("FlexiPathText");
+            }
+
         }
 
         public virtual void Save(XmlElement ele, XmlDocument doc)
         {
+            ele.SetAttribute("Name", Name);
+            ele.SetAttribute("ImageFilePath", ImageFilePath);
+            ele.SetAttribute("FlexiPathText", FlexiPathText);
         }
     }
 }

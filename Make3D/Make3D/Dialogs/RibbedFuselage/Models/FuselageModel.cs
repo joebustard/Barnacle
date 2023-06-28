@@ -25,6 +25,8 @@ namespace Barnacle.RibbedFuselage.Models
             Description = "";
             NextNameLetter = 'A';
             NextNameNumber = 0;
+            SideImageDetails = new ImageDetailsModel();
+            TopImageDetails = new ImageDetailsModel();
         }
 
         public String Description
@@ -139,8 +141,46 @@ namespace Barnacle.RibbedFuselage.Models
             return deleted;
         }
 
-        public void Load(XmlElement ele)
+        public void Load(string f)
         {
+            ribs.Clear();
+            markers.Clear();
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
+            doc.Load(f);
+            XmlElement sparNode = doc.SelectSingleNode("Spars") as XmlElement;
+            if (sparNode != null)
+            {
+                if (sparNode.HasAttribute("NextLetter"))
+                {
+                    string v = sparNode.GetAttribute("NextLetter");
+                    NextNameLetter = v[0];
+                    v = sparNode.GetAttribute("NextNumber");
+                    NextNameNumber = Convert.ToInt16(v);
+                }
+                XmlElement topEle = sparNode.SelectSingleNode("TopView") as XmlElement;
+                topImageDetails.Load(topEle);
+                XmlElement sideEle = sparNode.SelectSingleNode("SideView") as XmlElement;
+                sideImageDetails.Load(sideEle);
+
+                XmlNodeList rl = sparNode.SelectNodes("Rib");
+                foreach( XmlNode  nd in rl)
+                {
+                    XmlElement el = nd as XmlElement;
+                    RibImageDetailsModel rib = new RibImageDetailsModel();
+                    rib.Load(el);
+                    ribs.Add(rib);
+                }
+
+                XmlNodeList ml = sparNode.SelectNodes("Marker");
+                foreach (XmlNode nd in rl)
+                {
+                    XmlElement el = nd as XmlElement;
+                    MarkerModel mk = new MarkerModel();
+                    mk.Load(el);
+                    markers.Add(mk);
+                }
+            }
         }
 
         public void RenameRib()
@@ -148,13 +188,41 @@ namespace Barnacle.RibbedFuselage.Models
             throw new System.NotImplementedException();
         }
 
-        public void Save(XmlElement ele, XmlDocument doc)
-        {
-        }
 
         public void SortRibsByPosition()
         {
             throw new System.NotImplementedException();
+        }
+
+        public void Save(string f)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.XmlResolver = null;
+            XmlElement docNode = doc.CreateElement("Spars");
+            docNode.SetAttribute("NextLetter", NextNameLetter.ToString());
+            docNode.SetAttribute("NextNumber", NextNameNumber.ToString());
+            XmlElement topNode = doc.CreateElement("TopView");
+            topImageDetails.Save(topNode, doc);
+            docNode.AppendChild(topNode);
+            XmlElement sideNode = doc.CreateElement("SideView");
+            sideImageDetails.Save(sideNode, doc);
+            docNode.AppendChild(sideNode);
+
+            foreach (RibImageDetailsModel ob in ribs)
+            {
+                XmlElement ribNode = doc.CreateElement("Rib");
+                ob.Save(ribNode, doc);
+                docNode.AppendChild(ribNode);
+
+            }
+            foreach (MarkerModel m in markers)
+            {
+                XmlElement markerNode = doc.CreateElement("Marker");
+                m.Save(markerNode, doc);
+                docNode.AppendChild(markerNode);
+            }
+            doc.AppendChild(docNode);
+            doc.Save(f);
         }
     }
 }
