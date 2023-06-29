@@ -872,9 +872,23 @@ namespace Barnacle.UserControls
                     {
                         vm.LoadImage(imagePath);
                     }
+                    else
+                    {
+                        if (!String.IsNullOrEmpty(vm.ImagePath))
+                        {
+                            vm.LoadImage(vm.ImagePath);
+                        }
+                    }
                     if (pathText != null)
                     {
                         vm.FromString(pathText);
+                    }
+                    else
+                    {
+                        if (!String.IsNullOrEmpty(vm.PathText))
+                        {
+                            vm.FromString(vm.PathText);
+                        }
                     }
                     vm.SelectedPoint = -1;
                 }

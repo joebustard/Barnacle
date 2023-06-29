@@ -1,4 +1,5 @@
 ﻿using Barnacle.Dialogs.RibbedFuselage.Models;
+using Barnacle.UserControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,6 +54,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             vm = this.DataContext as RibImageDetailsModel;
+            RibView rv = sender as RibView;
+            FlexiPathEditorControl fc = rv.FlexiControl;
+
+            fc.ImagePath = vm.ImageFilePath;
+            fc.SetPath(vm.FlexiPathText);
         }
     }
 }

@@ -189,11 +189,19 @@ namespace Barnacle.RibbedFuselage.Models
                 {
                     string v = sparNode.GetAttribute("NextLetter");
                     NextNameLetter = v[0];
-                    v = sparNode.GetAttribute("NextNumber");
+                }
+                if (sparNode.HasAttribute("NextLetter"))
+                {
+                    string v = sparNode.GetAttribute("NextNumber");
                     NextNameNumber = Convert.ToInt16(v);
-                    v = sparNode.GetAttribute("NextMarkerPosition");
+                }
+
+                if (sparNode.HasAttribute("NextMarkerPosition"))
+                {
+                    string v = sparNode.GetAttribute("NextMarkerPosition");
                     nextNewMakerPosition = Convert.ToDouble(v);
                 }
+
                 XmlElement topEle = sparNode.SelectSingleNode("TopView") as XmlElement;
                 topImageDetails.Load(topEle);
                 XmlElement sideEle = sparNode.SelectSingleNode("SideView") as XmlElement;

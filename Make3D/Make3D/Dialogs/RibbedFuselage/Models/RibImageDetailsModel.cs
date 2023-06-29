@@ -20,6 +20,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
 
         public override void Load(XmlElement ele)
         {
+            base.Load(ele);
         }
 
         public override void Save(XmlElement ele, XmlDocument doc)

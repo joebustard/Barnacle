@@ -232,6 +232,12 @@ namespace Barnacle.RibbedFuselage.ViewModels
                     if (fuselageData != null)
                     {
                         fuselageData.Load(filePath);
+                        NotifyPropertyChanged("Ribs");
+                        if (Ribs.Count > 0)
+                        {
+                            SelectedRib = Ribs[0];
+                            selectedRibIndex = 0;
+                        }
                     }
                 }
                 catch (Exception ex)

@@ -120,7 +120,10 @@ namespace Barnacle.RibbedFuselage
             {
                 ImageFilePath = ele.GetAttribute("ImageFilePath");
             }
-
+            if (!String.IsNullOrEmpty(ImageFilePath))
+            {
+                DisplayFileName = System.IO.Path.GetFileName(ImageFilePath);
+            }
             if (ele.HasAttribute("FlexiPathText"))
             {
                 FlexiPathText = ele.GetAttribute("FlexiPathText");
