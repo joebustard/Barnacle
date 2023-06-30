@@ -15,15 +15,23 @@ namespace Barnacle.RibbedFuselage.ViewModels
 {
     internal class FuselageViewModel : INotifyPropertyChanged
     {
-        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
+        private bool dirty;
 
-        public RelayCommand RibCommand { get; set; }
+        private string filePath;
+
+        private FuselageModel fuselageData;
+
+        private RibImageDetailsModel selectedRib;
+
+        private int selectedRibIndex;
+
+        private String sideImage;
+
+        private string sidePath;
+
+        private String topImage;
+
+        private string topPath;
 
         public FuselageViewModel()
         {
@@ -33,24 +41,169 @@ namespace Barnacle.RibbedFuselage.ViewModels
             SelectedRibIndex = -1;
         }
 
-        internal void SetTopImage(string imagePath)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public FuselageModel FuselageData
         {
-            FuselageData?.SetTopImage(imagePath);
+            get { return fuselageData; }
+            set
+            {
+                if (fuselageData != value)
+                {
+                    fuselageData = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
-        internal void SetTopPath(string pathText)
+        public RelayCommand RibCommand { get; set; }
+
+        public ObservableCollection<RibImageDetailsModel> Ribs
         {
-            FuselageData?.SetTopPath(pathText);
+            get { return fuselageData.Ribs; }
         }
 
-        internal void SetSideImage(string imagePath)
+        public RibImageDetailsModel SelectedRib
         {
-            FuselageData?.SetSideImage(imagePath);
+            get { return selectedRib; }
+            set
+            {
+                if (selectedRib != value)
+                {
+                    selectedRib = value;
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
-        internal void SetSidePath(string pathText)
+        public int SelectedRibIndex
         {
-            FuselageData?.SetSidePath(pathText);
+            get { return selectedRibIndex; }
+            set
+            {
+                if (value != selectedRibIndex)
+                {
+                    selectedRibIndex = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String SideImage
+        {
+            get { return sideImage; }
+            set
+            {
+                if (sideImage != value)
+                {
+                    sideImage = value;
+                    FuselageData?.SetSideImage(sideImage);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string SidePath
+        {
+            get { return sidePath; }
+            set
+            {
+                if (sidePath != value)
+                {
+                    sidePath = value;
+                    FuselageData.SetSidePath(sidePath);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public String TopImage
+        {
+            get { return topImage; }
+            set
+            {
+                if (topImage != value)
+                {
+                    topImage = value;
+                    FuselageData?.SetTopImage(topImage);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string TopPath
+        {
+            get { return topPath; }
+            set
+            {
+                if (string.Compare(topPath, value) != 0)
+                {
+                    topPath = value;
+                    FuselageData.SetTopPath(topPath);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public void Load()
+        {
+            OpenFileDialog opDlg = new OpenFileDialog();
+            opDlg.Filter = "Fusalage spar files (*.spr) | *.spr";
+            if (opDlg.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    filePath = opDlg.FileName;
+                    if (fuselageData != null)
+                    {
+                        fuselageData.Load(filePath);
+                        NotifyPropertyChanged("Ribs");
+                        if (Ribs.Count > 0)
+                        {
+                            SelectedRib = Ribs[0];
+                            selectedRibIndex = 0;
+                        }
+                        TopImage = fuselageData.TopImageDetails.ImageFilePath;
+                        TopPath = fuselageData.TopImageDetails.FlexiPathText;
+                        SideImage = fuselageData.SideImageDetails.ImageFilePath;
+                        SidePath = fuselageData.SideImageDetails.FlexiPathText;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+            }
+        }
+
+        public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public void Save()
+        {
+            if (String.IsNullOrEmpty(filePath))
+            {
+                SaveAs();
+            }
+            else
+            {
+                Write(filePath);
+                dirty = false;
+            }
+        }
+
+        private void NextRib()
+        {
+            if (selectedRibIndex < fuselageData.Ribs.Count - 1)
+            {
+                SelectedRibIndex++;
+                SelectedRib = fuselageData.Ribs[selectedRibIndex];
+            }
         }
 
         private void OnRibComand(object obj)
@@ -71,11 +224,13 @@ namespace Barnacle.RibbedFuselage.ViewModels
 
                     case "copy":
                         {
+                            SelectedRib = fuselageData.CloneRib(SelectedRibIndex);
                         }
                         break;
 
                     case "rename":
                         {
+                            fuselageData.RenameAllRibs();
                         }
                         break;
 
@@ -115,75 +270,12 @@ namespace Barnacle.RibbedFuselage.ViewModels
             }
         }
 
-        private int selectedRibIndex;
-
-        public int SelectedRibIndex
-        {
-            get { return selectedRibIndex; }
-            set
-            {
-                if (value != selectedRibIndex)
-                {
-                    selectedRibIndex = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private void NextRib()
-        {
-            if (selectedRibIndex < fuselageData.Ribs.Count - 1)
-            {
-                SelectedRibIndex++;
-                SelectedRib = fuselageData.Ribs[selectedRibIndex];
-            }
-        }
-
         private void PreviousRib()
         {
             if (selectedRibIndex > 0)
             {
                 SelectedRibIndex--;
                 SelectedRib = fuselageData.Ribs[selectedRibIndex];
-            }
-        }
-
-        private FuselageModel fuselageData;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public FuselageModel FuselageData
-        {
-            get { return fuselageData; }
-            set
-            {
-                if (fuselageData != value)
-                {
-                    fuselageData = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public ObservableCollection<RibImageDetailsModel> Ribs
-        {
-            get { return fuselageData.Ribs; }
-        }
-
-        private RibImageDetailsModel selectedRib;
-        private string filePath;
-        private bool dirty;
-
-        public RibImageDetailsModel SelectedRib
-        {
-            get { return selectedRib; }
-            set
-            {
-                if (selectedRib != value)
-                {
-                    selectedRib = value;
-                    NotifyPropertyChanged();
-                }
             }
         }
 
@@ -199,51 +291,11 @@ namespace Barnacle.RibbedFuselage.ViewModels
             }
         }
 
-        public void Save()
-        {
-            if (String.IsNullOrEmpty(filePath))
-            {
-                SaveAs();
-            }
-            else
-            {
-                Write(filePath);
-                dirty = false;
-            }
-        }
-
         private void Write(string filePath)
         {
             if (fuselageData != null)
             {
                 fuselageData.Save(filePath);
-            }
-        }
-
-        public void Load()
-        {
-            OpenFileDialog opDlg = new OpenFileDialog();
-            opDlg.Filter = "Fusalage spar files (*.spr) | *.spr";
-            if (opDlg.ShowDialog() == DialogResult.OK)
-            {
-                try
-                {
-                    filePath = opDlg.FileName;
-                    if (fuselageData != null)
-                    {
-                        fuselageData.Load(filePath);
-                        NotifyPropertyChanged("Ribs");
-                        if (Ribs.Count > 0)
-                        {
-                            SelectedRib = Ribs[0];
-                            selectedRibIndex = 0;
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
             }
         }
     }

@@ -3,6 +3,7 @@
 Fixed
   Small speed up in hole fixing.
   Explore folder menu option wasn't working
+  Copying flexipath string from one tool to another wasn't always resulting in objects updating
 
 Changed
    Fonts on slicer dialog results

@@ -30,7 +30,7 @@ namespace Barnacle.Dialogs
                     if (PathText != "")
                     {
                         FlexiPath fp = new FlexiPath();
-                        if (fp.FromTextPath(PathText))
+                        if (fp.InterpretTextPath(PathText))
                         {
                             profile = fp.DisplayPointsF();
                             GenerateTriangles();

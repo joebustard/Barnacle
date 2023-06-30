@@ -41,7 +41,7 @@ namespace ScriptLanguage
                     if (pathText != "")
                     {
                         FlexiPath flexiPath = new FlexiPath();
-                        if (flexiPath.FromTextPath(pathText))
+                        if (flexiPath.InterpretTextPath(pathText))
                         {
                             List<System.Windows.Point> points = flexiPath.DisplayPoints();
 

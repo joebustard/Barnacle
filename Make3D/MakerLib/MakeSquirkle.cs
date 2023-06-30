@@ -138,7 +138,7 @@ namespace MakerLib
         private void GenerateFromPath(string pathtext)
         {
             FlexiPath flexiPath = new FlexiPath();
-            flexiPath.FromTextPath(pathtext);
+            flexiPath.InterpretTextPath(pathtext);
             List<System.Windows.Point> points = flexiPath.DisplayPoints();
             List<System.Windows.Point> tmp = new List<System.Windows.Point>();
             for (int i = 0; i < points.Count; i++)

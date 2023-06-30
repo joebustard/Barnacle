@@ -1060,7 +1060,7 @@ namespace Barnacle.UserControls
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
 
-            flexiPath.FromTextPath(v);
+            flexiPath.InterpretTextPath(v);
             PathText = flexiPath.ToPath(absolutePaths);
             PointsDirty = true;
             NotifyPropertyChanged("Points");
@@ -1160,9 +1160,10 @@ namespace Barnacle.UserControls
             if (pth != null && pth != "" && pth.StartsWith("M"))
             {
                 PathText = pth;
-                flexiPath.FromTextPath(pth);
+                flexiPath.InterpretTextPath(pth);
                 PointsDirty = true;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                NotifyPropertyChanged("Points");
             }
         }
 

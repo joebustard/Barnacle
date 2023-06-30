@@ -377,23 +377,7 @@ namespace Barnacle.LineLib
 
         public void FromString(string s)
         {
-            string coordPart;
-            string segpart;
-            if (!s.StartsWith("M"))
-            {
-                int index = s.IndexOf("|");
-                if (index > -1)
-                {
-                    coordPart = s.Substring(0, index);
-                    CoordsFromString(coordPart);
-                    segpart = s.Substring(index + 1);
-                    SegsFromString(segpart);
-                }
-            }
-            else
-            {
-                FromTextPath(s);
-            }
+            InterpretTextPath(s);
         }
 
         public void ClosePath()
@@ -406,7 +390,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public bool FromTextPath(string s)
+        public bool InterpretTextPath(string s)
         {
             List<FlexiPoint> pnts = new List<FlexiPoint>();
             List<FlexiSegment> segments = new List<FlexiSegment>();
@@ -467,12 +451,15 @@ namespace Barnacle.LineLib
                         case "RH":
                             {
                                 valid = GetNumber(blks[i + 1], ref x);
-                                x = x + pnts[pnts.Count - 1].X;
-                                y = pnts[pnts.Count - 1].Y;
-                                FlexiPoint fp = new FlexiPoint(x, y);
-                                pnts.Add(fp);
-                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
-                                segments.Add(sq);
+                                if (Math.Abs(x) >= 0.001)
+                                {
+                                    x = x + pnts[pnts.Count - 1].X;
+                                    y = pnts[pnts.Count - 1].Y;
+                                    FlexiPoint fp = new FlexiPoint(x, y);
+                                    pnts.Add(fp);
+                                    LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                    segments.Add(sq);
+                                }
                                 i++;
                             }
                             break;
@@ -492,12 +479,15 @@ namespace Barnacle.LineLib
                         case "RV":
                             {
                                 valid = GetNumber(blks[i + 1], ref y);
-                                x = pnts[pnts.Count - 1].X;
-                                y = y + pnts[pnts.Count - 1].Y;
-                                FlexiPoint fp = new FlexiPoint(x, y);
-                                pnts.Add(fp);
-                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
-                                segments.Add(sq);
+                                if (Math.Abs(y) >= 0.001)
+                                {
+                                    x = pnts[pnts.Count - 1].X;
+                                    y = y + pnts[pnts.Count - 1].Y;
+                                    FlexiPoint fp = new FlexiPoint(x, y);
+                                    pnts.Add(fp);
+                                    LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                    segments.Add(sq);
+                                }
                                 i++;
                             }
                             break;
@@ -505,12 +495,15 @@ namespace Barnacle.LineLib
                         case "RL":
                             {
                                 valid = GetCoord(blks[i + 1], ref x, ref y);
-                                x += pnts[pnts.Count - 1].X;
-                                y += pnts[pnts.Count - 1].Y;
-                                FlexiPoint fp = new FlexiPoint(x, y);
-                                pnts.Add(fp);
-                                LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
-                                segments.Add(sq);
+                                if (Math.Abs(x) >= 0.001 && Math.Abs(y) >= 0.001)
+                                {
+                                    x += pnts[pnts.Count - 1].X;
+                                    y += pnts[pnts.Count - 1].Y;
+                                    FlexiPoint fp = new FlexiPoint(x, y);
+                                    pnts.Add(fp);
+                                    LineSegment sq = new LineSegment(pnts.Count - 2, pnts.Count - 1);
+                                    segments.Add(sq);
+                                }
                                 i++;
                             }
                             break;

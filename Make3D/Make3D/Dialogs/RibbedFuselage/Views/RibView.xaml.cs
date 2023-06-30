@@ -57,7 +57,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             RibView rv = sender as RibView;
             FlexiPathEditorControl fc = rv.FlexiControl;
 
-            fc.ImagePath = vm.ImageFilePath;
+            if (!String.IsNullOrEmpty(vm.ImageFilePath))
+            {
+                fc.LoadImage(vm.ImageFilePath);
+            }
+
             fc.SetPath(vm.FlexiPathText);
         }
     }

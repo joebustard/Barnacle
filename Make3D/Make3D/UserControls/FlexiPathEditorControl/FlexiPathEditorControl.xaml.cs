@@ -588,7 +588,7 @@ namespace Barnacle.UserControls
 
         private void NotifyImageChanged()
         {
-            if (OnFlexiImageChanged != null)
+            if (OnFlexiImageChanged != null && vm != null)
             {
                 OnFlexiImageChanged(vm.ImagePath);
             }
@@ -596,7 +596,10 @@ namespace Barnacle.UserControls
 
         public void LoadImage(String fileName)
         {
-            vm?.LoadImage(fileName);
+            if (!String.IsNullOrEmpty(fileName))
+            {
+                vm?.LoadImage(fileName);
+            }
             imagePath = fileName;
             NotifyImageChanged();
         }

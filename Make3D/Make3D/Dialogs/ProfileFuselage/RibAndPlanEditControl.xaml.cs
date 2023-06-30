@@ -133,7 +133,7 @@ namespace Barnacle.Dialogs
             {
                 if (flexiPath != null)
                 {
-                    flexiPath.FromTextPath(value);
+                    flexiPath.InterpretTextPath(value);
                 }
             }
         }

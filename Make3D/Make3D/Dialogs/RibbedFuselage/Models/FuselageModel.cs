@@ -155,9 +155,116 @@ namespace Barnacle.RibbedFuselage.Models
             return name;
         }
 
-        public void CopyRib()
+        public struct NameRec
         {
-            throw new System.NotImplementedException();
+            public string newName;
+            public string originalName;
+            public int ribIndex;
+        }
+
+        private void RenameRibsAfterInsertions(string nameStart)
+        {
+            List<NameRec> nameRecs = new List<NameRec>();
+
+            int j = 0;
+            for (int i = 0; i < Ribs.Count; i++)
+            {
+                if (Ribs[i].Name.StartsWith(nameStart))
+                {
+                    NameRec rec = new NameRec();
+                    rec.ribIndex = i;
+                    rec.originalName = Ribs[i].Name;
+                    if (j == 0)
+                    {
+                        rec.newName = nameStart;
+                    }
+                    else
+                    {
+                        rec.newName = nameStart + j.ToString();
+                    }
+                    nameRecs.Add(rec);
+                    j++;
+                }
+            }
+
+            // now rename the ribs locally
+            for (int i = 0; i < nameRecs.Count; i++)
+            {
+                Ribs[nameRecs[i].ribIndex].Name = nameRecs[i].newName;
+            }
+        }
+
+        private const double defaultRibSpacing = 10;
+
+        public RibImageDetailsModel CloneRib(int ribNumber)
+        {
+            RibImageDetailsModel rib = null;
+            if (ribNumber != -1)
+            {
+                RibImageDetailsModel selectedRib = Ribs[ribNumber];
+                rib = selectedRib.Clone();
+                string nameStart = selectedRib.Name.Substring(0, 1);
+                int subName = 0;
+                foreach (RibImageDetailsModel rc in Ribs)
+                {
+                    if (rc.Name.StartsWith(nameStart))
+                    {
+                        subName++;
+                    }
+                }
+                rib.Name = nameStart + subName.ToString();
+                if (ribNumber < Ribs.Count - 1)
+                {
+                    rib.MarkerPosition = selectedRib.MarkerPosition + (Ribs[ribNumber + 1].MarkerPosition - selectedRib.MarkerPosition) / 2;
+                }
+                else
+                {
+                    rib.MarkerPosition += defaultRibSpacing;
+                }
+                Ribs.Insert(ribNumber + 1, rib);
+
+                RenameRibsAfterInsertions(nameStart);
+            }
+            return rib;
+        }
+
+        public void RenameAllRibs()
+        {
+            if (Ribs.Count > 0)
+            {
+                List<NameRec> nameRecs = new List<NameRec>();
+
+                int j = 1;
+                for (int i = 0; i < Ribs.Count; i++)
+                {
+                    NameRec rec = new NameRec();
+                    rec.ribIndex = i;
+                    rec.originalName = Ribs[i].Name;
+                    if (i <= 26)
+                    {
+                        rec.newName = ((char)('A' + i)).ToString();
+                    }
+                    else
+                    {
+                        rec.newName = "Z" + j.ToString();
+                        j++;
+                    }
+                    nameRecs.Add(rec);
+                }
+                NextNameLetter = (char)('A' + Ribs.Count);
+                NextNameNumber = 0;
+                if (Ribs.Count > 26)
+                {
+                    NextNameLetter = 'Z';
+                    NextNameNumber = Ribs.Count - 26;
+                }
+
+                // now rename the ribs locally
+                for (int i = 0; i < nameRecs.Count; i++)
+                {
+                    Ribs[nameRecs[i].ribIndex].Name = nameRecs[i].newName;
+                }
+            }
         }
 
         public bool DeleteRib(RibImageDetailsModel selectedRib)

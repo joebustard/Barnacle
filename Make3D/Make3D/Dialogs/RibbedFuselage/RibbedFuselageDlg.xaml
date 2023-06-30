@@ -82,11 +82,11 @@
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Delete the selected rib"
                     x:Name="DeleteRib" />
-                        <Button Command="{Binding RibCommand}" CommandParameter="Delete"
+                        <Button Command="{Binding RibCommand}" CommandParameter="Rename"
                     Content="Rename"
                     Grid.Row="5"
                     IsEnabled="{Binding ControlsEnabled}"
-                    ToolTip="Rename all the ribs starting at A. (Does not alter the file names)"
+                    ToolTip="Rename all the ribs starting at A. (Does not alter the file names). If there are more than 26 ribs then the Z ones will be numbered."
                     x:Name="RenameRibsButton" />
 
                         <Label FontSize="14"

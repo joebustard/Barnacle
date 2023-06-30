@@ -20,8 +20,15 @@
   </Class>
   <Class Name="Barnacle.RibbedFuselage.Models.FuselageModel">
     <Position X="8" Y="1.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="Barnacle.RibbedFuselage.Models.FuselageModel.NameRec" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Dialogs\RibbedFuselage\Models\FuselageModel.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAIAgIUEYAAhEAIBwBgAACQIAAAQAAAAAQQgAAAgAAA=</HashCode>
+      <HashCode>gAIAgIUEYAAhEAIBwBiACCQIAAAUAAAAAZQgAAAwAAA=</HashCode>
       <FileName>Dialogs\RibbedFuselage\Models\FuselageModel.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -31,7 +38,7 @@
   <Class Name="Barnacle.RibbedFuselage.ViewModels.FuselageViewModel">
     <Position X="5.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AALAgIEABAAAAIYAAAAAQAAAgAAQAEAAAREAAAEBAIA=</HashCode>
+      <HashCode>AADAgJEABAAQAoQAAAgAQAAIgAAAAkAAAREAAAEBAIA=</HashCode>
       <FileName>Dialogs\RibbedFuselage\ViewModels\FuselageViewModel.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -42,7 +49,7 @@
   <Class Name="Barnacle.Dialogs.RibbedFuselage.Models.RibImageDetailsModel">
     <Position X="10.75" Y="4" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABA=</HashCode>
       <FileName>Dialogs\RibbedFuselage\Models\RibImageDetailsModel.cs</FileName>
     </TypeIdentifier>
   </Class>
