@@ -169,6 +169,154 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Positioning">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition MinWidth="150"
+                                          Width="1*" />
+                        <ColumnDefinition Width="9*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1.25*" />
+                        <RowDefinition Height="2*" />
+                    </Grid.RowDefinitions>
+                    <UniformGrid Columns="2"
+                                 Grid.Column="0"
+                                 Grid.Row="0">
+                        <!--
+                        <Button Click="Front_Click"
+                                Content="Front"
+                                x:Name="FrontButton" Margin="2,2,2,2" />
+
+                        <Button Click="Back_Click"
+                                Content="Back"
+                                x:Name="BackButton" Margin="2,2,2,2" />
+
+                        <Button Click="Left_Click"
+                                Content="Left"
+                                x:Name="LeftButton" Margin="2,2,2,2" />
+
+                        <Button Click="Right_Click"
+                                Content="Right"
+                                x:Name="RightButton" Margin="2,2,2,2" />
+
+                        <Button Click="Top_Click"
+                                Content="Top"
+                                x:Name="TopButton" Margin="2,2,2,2" />
+
+                        <Button Click="Bottom_Click"
+                                Content="Bottom"
+                                x:Name="BottomButton" Margin="2,2,2,2" />
+                        -->
+                    </UniformGrid>
+
+                    <Border Background="AliceBlue"
+                            BorderBrush="Blue"
+                            BorderThickness="4"
+                            Grid.Column="1"
+                            Grid.Row="0"
+                            Grid.RowSpan="2"
+                            MouseMove="Viewport_MouseMove">
+                        <Viewport3D Name="viewport3D1"
+                                    MouseDown="Viewport_MouseDown"
+                                    MouseMove="Viewport_MouseMove"
+                                    MouseWheel="Viewport_MouseWheel">
+                            <Viewport3D.Camera>
+                                <PerspectiveCamera FieldOfView="{Binding FieldOfView}"
+                                                   LookDirection="{Binding LookDirection}"
+                                                   Position="{Binding CameraPosition}"
+                                                   x:Name="camMain">
+                                </PerspectiveCamera>
+                            </Viewport3D.Camera>
+                            <ModelVisual3D>
+                                <ModelVisual3D.Content>
+                                    <Model3DGroup>
+                                        <AmbientLight Color="#FF808080" />
+                                        <DirectionalLight Color="White"
+                                                          Direction="-1,-1,-1"
+                                                          x:Name="dirLightMain">
+                                        </DirectionalLight>
+                                    </Model3DGroup>
+                                </ModelVisual3D.Content>
+                            </ModelVisual3D>
+                            <ModelVisual3D x:Name="MyModel">
+                                <ModelVisual3D.Content>
+                                    <Model3DGroup x:Name="MyModelGroup">
+                                    </Model3DGroup>
+                                </ModelVisual3D.Content>
+                            </ModelVisual3D>
+                        </Viewport3D>
+                    </Border>
+                    <Grid Grid.Column="0"
+                          Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="30" />
+                        </Grid.RowDefinitions>
+                        <!--
+                        <Button Click="ZoomIn_Click"
+                                Content="+"
+                                Grid.Row="0"
+                                ToolTip="Zoom In"
+                                x:Name="ZoomIn" />
+
+                        <Button Click="ZoomReset_Click"
+                                Content="."
+                                Grid.Row="1"
+                                ToolTip="Zoom Reset"
+                                x:Name="ZoomReset" />
+
+                        <Button Click="ZoomOut_Click"
+                                Content="-"
+                                Grid.Row="2"
+                                ToolTip="Zoom Out"
+                                x:Name="ZoomOut" />
+
+                        <Button Click="ZoomFit_Click"
+                                Content="[ ]"
+                                Grid.Row="3"
+                                ToolTip="Zoom Fit"
+                                x:Name="ZoomFit" />
+                            -->
+                    </Grid>
+                    <UniformGrid Columns="1"
+                                 Grid.Row="2"
+                                 Margin="4,4,4,4" MaxHeight="200">
+                        <RadioButton Content="Whole"
+                                     GroupName="BodyMode"
+                                     IsChecked="{Binding WholeBody}" VerticalAlignment="Center" />
+                        <RadioButton Content="Front"
+                                     GroupName="BodyMode"
+                                     IsChecked="{Binding FrontBody}" VerticalAlignment="Center" Margin="0,4,0,0" />
+                        <RadioButton Content="Back"
+                                     GroupName="BodyMode"
+                                     IsChecked="{Binding BackBody}" VerticalAlignment="Center"  Margin="0,4,0,0" />
+                        <CheckBox Content="Autofit" IsChecked="{Binding AutoFit}" ToolTip="If consecutive ribs have the same path automatically interpolate virtual ribs in between."  Margin="0,4,0,0" />
+                        <StackPanel Orientation="Horizontal"  Margin="0,4,0,0">
+                            <Label VerticalAlignment="Center">
+                                Divisions
+                            </Label>
+                            <TextBox Text="{Binding NumberOfDivisions}"
+                                     VerticalContentAlignment="Center"
+                                     Width="60" Height="30" Margin="4,0,0,0" />
+                        </StackPanel>
+                        <!--
+                        <Button x:Name="ResetMarkers" Click="ResetMarkers_Click" Content="Reset Markers" ToolTip="Spread markers evenly"  Margin="0,4,0,0" />
+                  -->
+                    </UniformGrid>
+                    <TabControl Grid.Column="1"
+                                Grid.Row="2"
+                                Grid.RowSpan="2">
+                        <TabItem Header="Top Marker Positions">
+                            <local:ImageMarker x:Name="TopView" />
+                        </TabItem>
+                        <TabItem Header="Side Marker Positions">
+                            <local:ImageMarker x:Name="SideView" />
+                        </TabItem>
+                    </TabControl>
+                </Grid>
             </TabItem>
         </TabControl>
         <Grid Grid.ColumnSpan="2"

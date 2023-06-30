@@ -137,6 +137,7 @@
     <Compile Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml.cs">
       <DependentUpon>RibbedFuselageDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\RibbedFuselage\Views\ImageMarker.xaml.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Views\RibView.xaml.cs">
       <DependentUpon>RibView.xaml</DependentUpon>
     </Compile>
@@ -194,7 +195,6 @@
     <Compile Include="Dialogs\PlankWall\PlankWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\Dimension.cs" />
     <Compile Include="Dialogs\ProfileFuselage\ImageEdge.cs" />
-    <Compile Include="Dialogs\ProfileFuselage\ImageMarker.xaml.cs" />
     <Compile Include="Dialogs\ProfileFuselage\LetterMarker.cs" />
     <Compile Include="Dialogs\ProfileFuselage\NoteWindow.xaml.cs">
       <DependentUpon>NoteWindow.xaml</DependentUpon>
@@ -511,6 +511,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Dialogs\RibbedFuselage\Views\ImageMarker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Dialogs\RibbedFuselage\Views\RibView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -596,10 +600,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\PlankWall\PlankWallDlg.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Dialogs\ProfileFuselage\ImageMarker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
