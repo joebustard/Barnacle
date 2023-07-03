@@ -1109,9 +1109,9 @@ namespace Barnacle.Dialogs
             double bry = 0;
             Bitmap bmp = null;
             //get the flexipath from  the top and render the path onto an image
-            TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+           // TopViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
             TopView.WorkingImage = bmp;
-            TopView.SetupImage(bmp, tlx, tly, brx, bry);
+           // TopView.SetupImage( tlx, tly, brx, bry);
             TopView.UpdateDisplay();
         }
 
@@ -1123,9 +1123,9 @@ namespace Barnacle.Dialogs
             double bry = 0;
             //get the flexipath from  the side and render the path onto an image
             Bitmap bmp = null;
-            SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
-            SideView.WorkingImage = bmp;
-            SideView.SetupImage(bmp, tlx, tly, brx, bry);
+           // SideViewManager.RenderFlexipath(ref bmp, out tlx, out tly, out brx, out bry);
+          //  SideView.WorkingImage = bmp;
+          //  SideView.SetupImage(tlx, tly, brx, bry);
             SideView.UpdateDisplay();
         }
 

@@ -1,17 +1,18 @@
-<UserControl d:DesignHeight="450"
-             d:DesignWidth="800"
-             Loaded="UserControl_Loaded"
-             mc:Ignorable="d"
-             x:Class="Barnacle.Dialogs.ImageMarker"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:Barnacle.Dialogs"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+<UserControl
+    x:Class="Barnacle.Dialogs.ImageMarker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    Loaded="UserControl_Loaded"
+    SizeChanged="UserControl_SizeChanged"
+    mc:Ignorable="d">
     <UserControl.Resources>
         <ContextMenu x:Key="cmLetter">
-            <MenuItem Click="CopyItem_Click"
-                      Header="Copy" />
+            <MenuItem Click="CopyItem_Click" Header="Copy" />
         </ContextMenu>
     </UserControl.Resources>
     <Grid>
@@ -19,27 +20,28 @@
             <RowDefinition Height="30" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Label Content="{Binding HeaderText}"
-               Grid.Row="0"
-               HorizontalAlignment="Center"
-               x:Name="Header" />
+        <Label
+            x:Name="Header"
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            Content="{Binding HeaderText}" />
 
-        <Border BorderBrush="DarkBlue"
-                BorderThickness="2"
-                Grid.Row="1"
-                Padding="4,4,4,4">
-            <ScrollViewer HorizontalScrollBarVisibility="Visible"
-                          VerticalScrollBarVisibility="Visible">
-                <Canvas MouseMove="MainCanvas_MouseMove"
-                        MouseUp="MainCanvas_MouseUp"
-                        x:Name="mainCanvas"
-                        Width="2000"
-                        Height="1000">
+        <Border x:Name="ImageBorder"
+            Grid.Row="1"
+            Padding="4,4,4,4"
+            BorderBrush="DarkBlue"
+            BorderThickness="2">
+            <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible"                   >
+                <Canvas
+                    x:Name="mainCanvas"
+                    Width="1200"
+                    Height="800"
+                    MouseMove="MainCanvas_MouseMove"
+                    MouseUp="MainCanvas_MouseUp">
                     <Canvas.LayoutTransform>
                         <ScaleTransform x:Name="MainScale" />
                     </Canvas.LayoutTransform>
-                    <Image Margin="20,20"
-                           x:Name="MyImage" />
+                    <Image x:Name="MyImage" Margin="20,20" />
                 </Canvas>
             </ScrollViewer>
         </Border>

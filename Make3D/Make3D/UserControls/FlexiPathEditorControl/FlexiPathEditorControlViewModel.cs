@@ -693,11 +693,11 @@ namespace Barnacle.UserControls
             return added;
         }
 
-        internal void FromString(string s)
+        internal void FromString(string s, bool resetMode = true)
         {
             flexiPath.FromString(s);
             PathText = flexiPath.ToPath(absolutePaths);
-            if (s != "")
+            if (s != "" && resetMode )
             {
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }

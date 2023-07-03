@@ -490,10 +490,10 @@ namespace Barnacle.UserControls
             }
         }
 
-        internal void FromString(string s)
+        internal void FromString(string s, bool resetMode = true)
         {
             pathText = s;
-            vm?.FromString(s);
+            vm?.FromString(s, resetMode);
         }
 
         private void MainCanvas_SizeChanged(object sender, SizeChangedEventArgs e)

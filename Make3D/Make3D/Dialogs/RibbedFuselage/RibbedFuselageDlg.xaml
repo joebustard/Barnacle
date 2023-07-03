@@ -26,7 +26,7 @@
             <ColumnDefinition Width="10" />
         </Grid.ColumnDefinitions>
 
-        <TabControl Grid.Column="1" Grid.ColumnSpan="2">
+        <TabControl Grid.Column="1" Grid.ColumnSpan="2" SelectionChanged="TabControl_SelectionChanged">
             <TabItem Header="Ribs">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -308,7 +308,7 @@
                     </UniformGrid>
                     <TabControl Grid.Column="1"
                                 Grid.Row="2"
-                                Grid.RowSpan="2">
+                                Grid.RowSpan="2" SelectionChanged="ViewTabChanged">
                         <TabItem Header="Top Marker Positions">
                             <local:ImageMarker x:Name="TopView" />
                         </TabItem>

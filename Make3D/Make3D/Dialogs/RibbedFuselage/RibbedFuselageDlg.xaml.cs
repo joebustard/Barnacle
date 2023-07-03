@@ -1,7 +1,11 @@
 ﻿using Barnacle.Dialogs;
 using Barnacle.RibbedFuselage.ViewModels;
+using Barnacle.UserControls;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Barnacle.Dialogs
 {
@@ -49,7 +53,11 @@ namespace Barnacle.Dialogs
                     {
                         if (!String.IsNullOrEmpty(vm.TopPath))
                         {
-                            TopPathEditor.FromString(vm.TopPath);
+                            if (vm.TopPath != TopPathEditor.AbsolutePathString)
+                            {
+                                TopPathEditor.FromString(vm.TopPath, false);
+                                CopyPathToTopView();
+                            }
                         }
                     }
                     break;
@@ -58,7 +66,11 @@ namespace Barnacle.Dialogs
                     {
                         if (!String.IsNullOrEmpty(vm.SidePath))
                         {
-                            SidePathEditor.FromString(vm.SidePath);
+                            if (vm.SidePath != SidePathEditor.AbsolutePathString)
+                            {
+                                SidePathEditor.FromString(vm.SidePath, false);
+                                CopyPathToSideView();
+                            }
                         }
                     }
                     break;
@@ -68,6 +80,21 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void CopyPathToTopView()
+        {
+            //get the flexipath from  the top and render the path onto an image
+            List<PointF> pnts = TopPathEditor.DisplayPointsF();
+            TopView.OutlinePoints = pnts;
+        }
+       
+        private void CopyPathToSideView()
+        {
+
+            //get the flexipath from  the side and render the path onto an image          
+            List<PointF> pnts = SidePathEditor.DisplayPointsF();
+            SideView.OutlinePoints = pnts;
+
+        }
         private void TopPathChanged(string pathText)
         {
             if (vm != null)
@@ -105,6 +132,27 @@ namespace Barnacle.Dialogs
             if (vm.SelectedRibIndex != -1)
             {
                 RibList.ScrollIntoView(vm.SelectedRib);
+            }
+        }
+
+        private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void ViewTabChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            TabControl tc = sender as TabControl;
+            if ( tc != null )
+            {
+                if (tc.SelectedIndex ==0 )
+                {
+                    CopyPathToTopView();
+                }
+                else
+                {
+                    CopyPathToSideView();
+                }
             }
         }
     }

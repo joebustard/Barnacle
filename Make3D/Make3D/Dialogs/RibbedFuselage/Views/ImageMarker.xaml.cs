@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Runtime.CompilerServices;
@@ -11,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Image = System.Windows.Controls.Image;
 using Point = System.Windows.Point;
 
 namespace Barnacle.Dialogs
@@ -89,7 +91,20 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+        private List<PointF> outlinePoints;
+        public List<PointF> OutlinePoints
+        {
+            get { return outlinePoints; }
+            set
+            {
+                if (outlinePoints != value)
+                {
+                    outlinePoints = value;
 
+                    UpdateDisplay();
+                }
+            }
+        }
         public ImageMarker()
         {
             InitializeComponent();
@@ -126,24 +141,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public string ImageFilePath
-        {
-            get
-            {
-                return imageFilePath;
-            }
-            set
-            {
-                if (imageFilePath != value)
-                {
-                    imageFilePath = value;
-                    if (imageFilePath != "")
-                    {
-                        LoadImage();
-                    }
-                }
-            }
-        }
+
 
         public bool IsValid
         {
@@ -231,10 +229,150 @@ namespace Barnacle.Dialogs
 
             return bs;
         }
+        public struct Bounds
+        {
+            public double Left;
+            public double Right;
+            public double Top;
+            public double Bottom;
+            public double Width()
+            {
+                return Right - Left;
+            }
+
+            public double Height()
+            {
+                return Top - Bottom;
+            }
+
+        }
+        public Bounds outlineBounds;
+        private void ResetBounds()
+        {
+            outlineBounds.Left = double.MaxValue;
+            outlineBounds.Bottom = double.MaxValue;
+            outlineBounds.Right = double.MinValue;
+            outlineBounds.Top = double.MinValue;
+        }
+        private void AdjustBounds(PointF p)
+        {
+            if (p.X < outlineBounds.Left)
+            {
+                outlineBounds.Left = (double)p.X;
+            }
+
+            if (p.Y < outlineBounds.Bottom)
+            {
+                outlineBounds.Bottom = (double)p.Y;
+            }
+
+            if (p.X > outlineBounds.Right)
+            {
+                outlineBounds.Right = (double)p.X;
+            }
+
+            if (p.Y > outlineBounds.Top)
+            {
+                outlineBounds.Top = (double)p.Y;
+            }
+        }
+        private const int XOutlineOffset = 10;
+        private const int YOutlineOffset = 60;
+        internal System.Drawing.Point ScreenPoint(PointF p, double sc)
+        {
+            System.Drawing.Point np = new System.Drawing.Point();
+            np.X = (int)((p.X - (float)outlineBounds.Left) * sc) + XOutlineOffset;
+            np.Y = (int)((p.Y - (float)outlineBounds.Bottom) * sc) + YOutlineOffset;
+            return np;
+        }
+        internal void RenderFlexipath()
+        {
+            double sc = 10;
+            ResetBounds();
+            //int offset = 4;
+            if (outlinePoints != null && mainCanvas.ActualWidth > 0)
+            {
+                for (int i = 0; i < outlinePoints.Count; i++)
+                {
+                    AdjustBounds(outlinePoints[i]);
+                }
+                sc = CalcOutlineScale();
+                if (outlinePoints.Count > 0)
+                {
+
+                    //    outlineBounds.Left *= sc;
+                    outlineBounds.Top = outlineBounds.Bottom + sc * outlineBounds.Height();
+                    //  outlineBounds.Bottom *= sc;
+                    outlineBounds.Right = outlineBounds.Left + sc * outlineBounds.Width();
+
+                    workingImage = new Bitmap((int)(outlineBounds.Right) + 20 + XOutlineOffset, (int)(outlineBounds.Top) + YOutlineOffset + 20);
+                    using (var gfx = Graphics.FromImage(workingImage))
+                    using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
+                    {
+
+                        gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+                        gfx.Clear(System.Drawing.Color.White);
+                        for (int i = 0; i < outlinePoints.Count; i++)
+                        {
+                            int j = i + 1;
+                            if (j >= outlinePoints.Count)
+                            {
+                                j = 0;
+                            }
+                            var pt1 = ScreenPoint(outlinePoints[i], sc);
+                            var pt2 = ScreenPoint(outlinePoints[j], sc);
+                            gfx.DrawLine(pen, pt1, pt2);
+                        }
+                    }
+                }
+
+                tlx = XOutlineOffset;
+                tly = YOutlineOffset;
+                brx = tlx + (int)outlineBounds.Width();
+                bry = tly + (int)outlineBounds.Height();
+            }
+        }
+        private int canvasWidth;
+        public int CanvasWidth
+        {
+            get { return canvasWidth; }
+            set
+            {
+                if (canvasWidth != value)
+                {
+                    canvasWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private int canvasHeight;
+        public int CanvasHeight
+        {
+            get { return canvasHeight; }
+            set
+            {
+                if (canvasHeight != value)
+                {
+                    canvasHeight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private double CalcOutlineScale()
+        {
+            double winWidth = mainCanvas.ActualWidth;
+            winWidth = winWidth - XOutlineOffset - 20;
+            double sc = winWidth / outlineBounds.Width();
+            return sc;
+        }
 
         public void UpdateDisplay()
         {
             elements.Clear();
+            RenderFlexipath();
+            SetupImage();
             if (workingImage != null)
             {
                 Dimension pinDim = GetUpperAndLowerPoints(pinPos);
@@ -260,10 +398,11 @@ namespace Barnacle.Dialogs
                 // update the markers
                 // If there is a selected marker, do it last so it appears in front of the
                 // the others
-                foreach (LetterMarker mk in markers)
+                if (markers != null)
                 {
-                    //  if (selectedMarker != mk)
+                    foreach (LetterMarker mk in markers)
                     {
+
                         UpdateMarker(mk);
                     }
                 }
@@ -271,8 +410,12 @@ namespace Barnacle.Dialogs
                 {
                     //         UpdateMarker(selectedMarker);
                 }
+
+               // CanvasWidth = (int)ImageBorder.Width;
+               // CanvasHeight = (int)workingImage.Height;
             }
             UpdateCanvas();
+
         }
 
         internal void AddRib(string name)
@@ -370,7 +513,7 @@ namespace Barnacle.Dialogs
             Typeface typeface = new Typeface("Arial");
             double txtWidth = new FormattedText(c, CultureInfo.CurrentUICulture,
         FlowDirection.LeftToRight,
-        typeface, 14, Brushes.Black).Width;
+        typeface, 14, System.Windows.Media.Brushes.Black).Width;
             double brd = 4;
 
             Border br = new Border();
@@ -429,7 +572,7 @@ namespace Barnacle.Dialogs
         private void AddText(int x, int y, string text, System.Windows.Media.Color color, object tag, string s = "")
         {
             TextBlock textBlock = new TextBlock();
-            textBlock.FontFamily = new FontFamily("Arial");
+            textBlock.FontFamily = new System.Windows.Media.FontFamily("Arial");
             textBlock.FontSize = 14;
             textBlock.Text = text;
             textBlock.Foreground = new SolidColorBrush(color);
@@ -591,89 +734,22 @@ namespace Barnacle.Dialogs
             return x * 25.4;
         }
 
-        private void LoadImage()
+
+
+        public void SetupImage()
         {
-            isValid = false;
-            if (File.Exists(imageFilePath))
-            {
-                System.Drawing.Color c;
-                using (System.Drawing.Bitmap src = new System.Drawing.Bitmap(imageFilePath))
-                {
-                    workingImage = new System.Drawing.Bitmap(src);
-                    for (int px = 0; px < src.Width; px++)
-                    {
-                        for (int py = 0; py < src.Height; py++)
-                        {
-                            workingImage.SetPixel(px, py, System.Drawing.Color.White);
-                            c = src.GetPixel(px, py);
-                            if (c.R < 128 || c.G < 128 || c.B < 128)
-                            {
-                                if (px < tlx)
-                                {
-                                    tlx = px;
-                                }
-                                if (py < tly)
-                                {
-                                    tly = py;
-                                }
-                                if (px > brx)
-                                {
-                                    brx = px;
-                                }
-                                if (py > bry)
-                                {
-                                    bry = py;
-                                }
-                            }
-                        }
-                    }
+            leftLimit = tlx;
+            rightLimit = brx;
 
-                    // allow a little bit of extra space
-                    if (tlx > 0)
-                    {
-                        tlx--;
-                    }
-                    if (tly > 0)
-                    {
-                        tly++;
-                    }
-
-                    for (int px = tlx; px < src.Width; px++)
-                    {
-                        for (int py = tly; py < src.Height; py++)
-                        {
-                            c = src.GetPixel(px, py);
-                            if (c.R < 128 || c.G < 128 || c.B < 128)
-                            {
-                                workingImage.SetPixel(px - tlx + 1, py - tly + 1, System.Drawing.Color.Black);
-                            }
-                        }
-                    }
-                    brx -= tlx;
-                    tlx = 1;
-                    bry -= tly;
-                    tly = 1;
-                    SetupImage(workingImage, tlx, tly, brx, bry);
-                    isValid = true;
-                }
-                UpdateDisplay();
-            }
-            else
+            if (workingImage != null)
             {
-                MessageBox.Show($"Can't find image file {imageFilePath}");
-            }
-        }
+                im = new System.Windows.Controls.Image();
 
-        public void SetupImage(System.Drawing.Bitmap bmp, double tlx, double tly, double brx, double bry)
-        {
-            if (bmp != null)
-            {
-                im = new Image();
-                workingImage = bmp;
                 im.Source = loadBitmap(workingImage);
                 leftLimit = tlx;
                 rightLimit = brx;
             }
+
         }
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -780,6 +856,12 @@ namespace Barnacle.Dialogs
 
             MainScale.ScaleX = scale;
             MainScale.ScaleY = scale;
+            //RenderFlexipath();
+            UpdateDisplay();
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
             UpdateDisplay();
         }
     }
