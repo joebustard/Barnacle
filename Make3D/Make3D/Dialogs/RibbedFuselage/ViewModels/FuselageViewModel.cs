@@ -1,4 +1,5 @@
-﻿using Barnacle.Dialogs.RibbedFuselage.Models;
+﻿using Barnacle.Dialogs;
+using Barnacle.Dialogs.RibbedFuselage.Models;
 using Barnacle.RibbedFuselage.Models;
 using Barnacle.ViewModels;
 using System;
@@ -114,6 +115,35 @@ namespace Barnacle.RibbedFuselage.ViewModels
                     FuselageData.SetSidePath(sidePath);
                     NotifyPropertyChanged();
                 }
+            }
+        }
+
+        internal List<LetterMarker> GetMarkers()
+        {
+            List<LetterMarker> res = new List<LetterMarker>();
+            int nextY = 10;
+            foreach (MarkerModel m in fuselageData.Markers)
+            {
+                LetterMarker lm = new LetterMarker(m.Name, new System.Drawing.Point((int)m.Position, nextY));
+                res.Add(lm);
+                nextY = 40 - nextY;
+            }
+            return res;
+        }
+
+        internal void MoveMarker(string s, int x, bool finishedMove)
+        {
+            if (finishedMove)
+            {
+                foreach (MarkerModel m in fuselageData.Markers)
+                {
+                    if (m.Name == s)
+                    {
+                        m.Position = (double)x;
+                        break;
+                    }
+                }
+                // regenerate the 3d fuselage
             }
         }
 

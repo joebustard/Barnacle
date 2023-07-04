@@ -324,7 +324,7 @@ namespace Barnacle.RibbedFuselage.Models
                 }
 
                 XmlNodeList ml = sparNode.SelectNodes("Marker");
-                foreach (XmlNode nd in rl)
+                foreach (XmlNode nd in ml)
                 {
                     XmlElement el = nd as XmlElement;
                     MarkerModel mk = new MarkerModel();

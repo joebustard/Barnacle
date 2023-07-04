@@ -21,6 +21,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             TopPathEditor.OnFlexiImageChanged = TopImageChanged;
             TopPathEditor.OnFlexiPathTextChanged = TopPathChanged;
+
             SidePathEditor.OnFlexiImageChanged = SideImageChanged;
             SidePathEditor.OnFlexiPathTextChanged = SidePathChanged;
             vm = this.DataContext as FuselageViewModel;
@@ -82,19 +83,32 @@ namespace Barnacle.Dialogs
 
         private void CopyPathToTopView()
         {
+            TopView.Markers = vm.GetMarkers();
+            TopView.OnMarkerMoved = TopMarkerMoved;
             //get the flexipath from  the top and render the path onto an image
             List<PointF> pnts = TopPathEditor.DisplayPointsF();
             TopView.OutlinePoints = pnts;
         }
-       
+
+        private void TopMarkerMoved(string s, System.Drawing.Point p, bool finishedMove)
+        {
+            vm.MoveMarker(s, p.X, finishedMove);
+        }
+
+        private void SideMarkerMoved(string s, System.Drawing.Point p, bool finishedMove)
+        {
+            vm.MoveMarker(s, p.X, finishedMove);
+        }
+
         private void CopyPathToSideView()
         {
-
-            //get the flexipath from  the side and render the path onto an image          
+            SideView.Markers = vm.GetMarkers();
+            SideView.OnMarkerMoved = SideMarkerMoved;
+            //get the flexipath from  the side and render the path onto an image
             List<PointF> pnts = SidePathEditor.DisplayPointsF();
             SideView.OutlinePoints = pnts;
-
         }
+
         private void TopPathChanged(string pathText)
         {
             if (vm != null)
@@ -137,15 +151,14 @@ namespace Barnacle.Dialogs
 
         private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-
         }
 
         private void ViewTabChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             TabControl tc = sender as TabControl;
-            if ( tc != null )
+            if (tc != null)
             {
-                if (tc.SelectedIndex ==0 )
+                if (tc.SelectedIndex == 0)
                 {
                     CopyPathToTopView();
                 }
