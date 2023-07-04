@@ -83,11 +83,11 @@ namespace Barnacle.Dialogs
 
         private void CopyPathToTopView()
         {
-            TopView.Markers = vm.GetMarkers();
             TopView.OnMarkerMoved = TopMarkerMoved;
             //get the flexipath from  the top and render the path onto an image
             List<PointF> pnts = TopPathEditor.DisplayPointsF();
             TopView.OutlinePoints = pnts;
+            TopView.Markers = vm.GetMarkers();
         }
 
         private void TopMarkerMoved(string s, System.Drawing.Point p, bool finishedMove)
@@ -102,11 +102,11 @@ namespace Barnacle.Dialogs
 
         private void CopyPathToSideView()
         {
-            SideView.Markers = vm.GetMarkers();
             SideView.OnMarkerMoved = SideMarkerMoved;
             //get the flexipath from  the side and render the path onto an image
             List<PointF> pnts = SidePathEditor.DisplayPointsF();
             SideView.OutlinePoints = pnts;
+            SideView.Markers = vm.GetMarkers();
         }
 
         private void TopPathChanged(string pathText)

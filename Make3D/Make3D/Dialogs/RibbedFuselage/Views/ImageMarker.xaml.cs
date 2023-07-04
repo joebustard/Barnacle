@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -23,17 +22,23 @@ namespace Barnacle.Dialogs
     public partial class ImageMarker : UserControl, INotifyPropertyChanged
     {
         public List<LetterMarker> markers;
-
+        private bool convertMarkerPositionToScreen;
         public CopyLetter OnCopyLetter;
 
         public MarkerMoved OnMarkerMoved;
 
         public PinMoved OnPinMoved;
 
+        public Bounds outlineBounds;
+        private const int XOutlineOffset = 10;
+        private const int YOutlineOffset = 10;
+        private static double scale = 1.0;
         private int brx = int.MinValue;
 
         private int bry = int.MinValue;
 
+        private int canvasHeight;
+        private int canvasWidth;
         private List<Dimension> dimensions;
 
         private List<UIElement> elements;
@@ -46,6 +51,7 @@ namespace Barnacle.Dialogs
 
         private string imageFilePath;
 
+        private int imageMargin = 20;
         private bool isValid;
 
         private double leftLimit;
@@ -57,6 +63,7 @@ namespace Barnacle.Dialogs
 
         private bool notifyMoved;
         private Point oldPoint;
+        private List<PointF> outlinePoints;
         private int pinMargin = 30;
 
         private int pinPos;
@@ -64,8 +71,6 @@ namespace Barnacle.Dialogs
         private bool pinSelected;
 
         private double rightLimit;
-        private static double scale = 1.0;
-
         private LetterMarker selectedMarker = null;
 
         private int tlx = int.MaxValue;
@@ -78,35 +83,6 @@ namespace Barnacle.Dialogs
         private Point upperPoint;
 
         private System.Drawing.Bitmap workingImage;
-
-        public System.Drawing.Bitmap WorkingImage
-        {
-            get { return workingImage; }
-            set
-            {
-                if (workingImage != null)
-                {
-                    workingImage = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private List<PointF> outlinePoints;
-
-        public List<PointF> OutlinePoints
-        {
-            get { return outlinePoints; }
-            set
-            {
-                if (outlinePoints != value)
-                {
-                    outlinePoints = value;
-
-                    UpdateDisplay();
-                }
-            }
-        }
 
         public ImageMarker()
         {
@@ -122,6 +98,32 @@ namespace Barnacle.Dialogs
         public delegate void PinMoved(int x);
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public int CanvasHeight
+        {
+            get { return canvasHeight; }
+            set
+            {
+                if (canvasHeight != value)
+                {
+                    canvasHeight = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public int CanvasWidth
+        {
+            get { return canvasWidth; }
+            set
+            {
+                if (canvasWidth != value)
+                {
+                    canvasWidth = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
 
         public List<Dimension> Dimensions
         {
@@ -177,6 +179,21 @@ namespace Barnacle.Dialogs
                 if (markers != value)
                 {
                     markers = value;
+                    convertMarkerPositionToScreen = true;
+                }
+            }
+        }
+
+        public List<PointF> OutlinePoints
+        {
+            get { return outlinePoints; }
+            set
+            {
+                if (outlinePoints != value)
+                {
+                    outlinePoints = value;
+
+                    UpdateDisplay();
                 }
             }
         }
@@ -213,6 +230,19 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public System.Drawing.Bitmap WorkingImage
+        {
+            get { return workingImage; }
+            set
+            {
+                if (workingImage != null)
+                {
+                    workingImage = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public static BitmapSource loadBitmap(System.Drawing.Bitmap source)
         {
             IntPtr ip = source.GetHbitmap();
@@ -231,155 +261,80 @@ namespace Barnacle.Dialogs
             return bs;
         }
 
-        public struct Bounds
+        public void Clear()
         {
-            public double Left;
-            public double Right;
-            public double Top;
-            public double Bottom;
+            elements = new List<UIElement>();
 
-            public double Width()
-            {
-                return Right - Left;
-            }
-
-            public double Height()
-            {
-                return Top - Bottom;
-            }
+            totalTopMargin = pinMargin + letterMargin + gapBelowLetter;
+            markerTop = pinMargin + (letterMargin / 2) + 1;
+            selectedMarker = null;
+            pinSelected = false;
+            dimensions = new List<Dimension>();
+            isValid = false;
+            notifyMoved = false;
+            leftLimit = double.MaxValue;
+            rightLimit = double.MinValue;
+            workingImage = null;
         }
 
-        public Bounds outlineBounds;
-
-        private void ResetBounds()
+        public Dimension GetUpperAndLowerPoints(int x)
         {
-            outlineBounds.Left = double.MaxValue;
-            outlineBounds.Bottom = double.MaxValue;
-            outlineBounds.Right = double.MinValue;
-            outlineBounds.Top = double.MinValue;
-        }
-
-        private void AdjustBounds(PointF p)
-        {
-            if (p.X < outlineBounds.Left)
+            Dimension res = null;
+            Point up = new Point(0, 0);
+            Point down = new Point(0, 0);
+            int y = 0;
+            bool found = false;
+            if (workingImage != null)
             {
-                outlineBounds.Left = (double)p.X;
-            }
-
-            if (p.Y < outlineBounds.Bottom)
-            {
-                outlineBounds.Bottom = (double)p.Y;
-            }
-
-            if (p.X > outlineBounds.Right)
-            {
-                outlineBounds.Right = (double)p.X;
-            }
-
-            if (p.Y > outlineBounds.Top)
-            {
-                outlineBounds.Top = (double)p.Y;
-            }
-        }
-
-        private const int XOutlineOffset = 10;
-        private const int YOutlineOffset = 10;
-
-        internal System.Drawing.Point ScreenPoint(PointF p, double sc)
-        {
-            System.Drawing.Point np = new System.Drawing.Point();
-            np.X = (int)((p.X - (float)outlineBounds.Left) * sc) + XOutlineOffset;
-            np.Y = (int)((p.Y - (float)outlineBounds.Bottom) * sc) + YOutlineOffset;
-            return np;
-        }
-
-        private int imageMargin = 20;
-
-        internal void RenderFlexipath()
-        {
-            double sc = 10;
-            ResetBounds();
-            //int offset = 4;
-            if (outlinePoints != null && mainCanvas.ActualWidth > 0)
-            {
-                for (int i = 0; i < outlinePoints.Count; i++)
+                if (x >= 0 && x < workingImage.Width)
                 {
-                    AdjustBounds(outlinePoints[i]);
-                }
-                sc = CalcOutlineScale();
-                if (outlinePoints.Count > 0)
-                {
-                    //    outlineBounds.Left *= sc;
-                    outlineBounds.Top = outlineBounds.Bottom + sc * outlineBounds.Height();
-                    //  outlineBounds.Bottom *= sc;
-                    outlineBounds.Right = outlineBounds.Left + sc * outlineBounds.Width();
-
-                    workingImage = new Bitmap((int)(outlineBounds.Right) + imageMargin + XOutlineOffset, (int)(outlineBounds.Top) + YOutlineOffset + imageMargin);
-                    using (var gfx = Graphics.FromImage(workingImage))
-                    using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
+                    y = 0;
+                    while (y < workingImage.Height && !found)
                     {
-                        gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
-                        gfx.Clear(System.Drawing.Color.White);
-                        for (int i = 0; i < outlinePoints.Count; i++)
+                        System.Drawing.Color c = workingImage.GetPixel(x, y);
+                        if (c.R < 128)
                         {
-                            int j = i + 1;
-                            if (j >= outlinePoints.Count)
+                            found = true;
+                            up = new Point(x, y);
+                            break;
+                        }
+                        y++;
+                    }
+
+                    if (found)
+                    {
+                        found = false;
+                        y = workingImage.Height - 1;
+                        while (y > 0 && !found)
+                        {
+                            System.Drawing.Color c = workingImage.GetPixel(x, y);
+                            if (c.R < 128)
                             {
-                                j = 0;
+                                found = true;
+                                down = new Point(x, y);
                             }
-                            var pt1 = ScreenPoint(outlinePoints[i], sc);
-                            var pt2 = ScreenPoint(outlinePoints[j], sc);
-                            gfx.DrawLine(pen, pt1, pt2);
+                            y--;
                         }
                     }
-                    isValid = true;
                 }
-
-                tlx = XOutlineOffset;
-                tly = YOutlineOffset;
-                brx = tlx + (int)outlineBounds.Width();
-                bry = tly + (int)outlineBounds.Height();
-                LeftLimit = XOutlineOffset;
-                RightLimit = brx;
             }
+            res = new Dimension(up, down);
+            return res;
         }
 
-        private int canvasWidth;
-
-        public int CanvasWidth
+        public void SetupImage()
         {
-            get { return canvasWidth; }
-            set
+            leftLimit = tlx;
+            rightLimit = brx;
+
+            if (workingImage != null)
             {
-                if (canvasWidth != value)
-                {
-                    canvasWidth = value;
-                    NotifyPropertyChanged();
-                }
+                im = new System.Windows.Controls.Image();
+
+                im.Source = loadBitmap(workingImage);
+                leftLimit = tlx;
+                rightLimit = brx;
             }
-        }
-
-        private int canvasHeight;
-
-        public int CanvasHeight
-        {
-            get { return canvasHeight; }
-            set
-            {
-                if (canvasHeight != value)
-                {
-                    canvasHeight = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private double CalcOutlineScale()
-        {
-            double winWidth = mainCanvas.ActualWidth;
-            winWidth = winWidth - XOutlineOffset - 20;
-            double sc = winWidth / outlineBounds.Width();
-            return sc;
         }
 
         public void UpdateDisplay()
@@ -414,20 +369,39 @@ namespace Barnacle.Dialogs
                 // the others
                 if (markers != null)
                 {
+                    if (convertMarkerPositionToScreen)
+                    {
+                        ConvertMarkerPositionsToScreen();
+                    }
                     foreach (LetterMarker mk in markers)
                     {
-                        UpdateMarker(mk);
+                        if (mk != selectedMarker)
+                        {
+                            UpdateMarker(mk);
+                        }
                     }
-                }
-                if (selectedMarker != null)
-                {
-                    UpdateMarker(selectedMarker);
+                    if (selectedMarker != null)
+                    {
+                        UpdateMarker(selectedMarker);
+                    }
                 }
 
                 // CanvasWidth = (int)ImageBorder.Width;
                 // CanvasHeight = (int)workingImage.Height;
             }
             UpdateCanvas();
+        }
+
+        private void ConvertMarkerPositionsToScreen()
+        {
+            convertMarkerPositionToScreen = false;
+
+            foreach (LetterMarker mk in markers)
+            {
+                int y = mk.Position.Y;
+                mk.Position = ScreenPoint(mk.Position, renderScale);
+                mk.Position.Y = y;
+            }
         }
 
         internal void AddRib(string name)
@@ -456,6 +430,58 @@ namespace Barnacle.Dialogs
             return InchesToMM(posInches);
         }
 
+        private double renderScale = 10;
+
+        internal void RenderFlexipath()
+        {
+            ResetBounds();
+            //int offset = 4;
+            if (outlinePoints != null && mainCanvas.ActualWidth > 0)
+            {
+                for (int i = 0; i < outlinePoints.Count; i++)
+                {
+                    AdjustBounds(outlinePoints[i]);
+                }
+                renderScale = CalcOutlineScale();
+                if (outlinePoints.Count > 0)
+                {
+                    //    outlineBounds.Left *= sc;
+                    outlineBounds.Top = outlineBounds.Bottom + renderScale * outlineBounds.Height();
+                    //  outlineBounds.Bottom *= sc;
+                    outlineBounds.Right = outlineBounds.Left + renderScale * outlineBounds.Width();
+
+                    workingImage = new Bitmap((int)(outlineBounds.Right) + imageMargin + XOutlineOffset, (int)(outlineBounds.Top) + YOutlineOffset + imageMargin);
+                    using (var gfx = Graphics.FromImage(workingImage))
+                    using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
+                    {
+                        gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.Default;
+                        gfx.Clear(System.Drawing.Color.White);
+                        for (int i = 0; i < outlinePoints.Count; i++)
+                        {
+                            int j = i + 1;
+                            if (j >= outlinePoints.Count)
+                            {
+                                j = 0;
+                            }
+                            var pt1 = ScreenPoint(outlinePoints[i], renderScale);
+                            var pt2 = ScreenPoint(outlinePoints[j], renderScale);
+                            gfx.DrawLine(pen, pt1, pt2);
+                        }
+                    }
+                    isValid = true;
+                }
+
+                tlx = XOutlineOffset;
+                tly = YOutlineOffset;
+                brx = tlx + (int)outlineBounds.Width();
+                bry = tly + (int)outlineBounds.Height();
+                LeftLimit = XOutlineOffset;
+                RightLimit = brx;
+
+                System.Drawing.Point np = WorldPoint(ScreenPoint(new System.Drawing.Point(100, 100), renderScale), renderScale);
+            }
+        }
+
         internal void SetHeader(string v)
         {
             HeaderText = v;
@@ -468,6 +494,7 @@ namespace Barnacle.Dialogs
                 if (mk.Letter == s)
                 {
                     mk.Position = new System.Drawing.Point(x, mk.Position.Y);
+                    mk.Position = ScreenPoint(mk.Position, renderScale);
                     UpdateDisplay();
                 }
             }
@@ -578,6 +605,9 @@ namespace Barnacle.Dialogs
             {
                 l.ToolTip = s;
             }
+
+            l.MouseUp += Br_MouseUp;
+
             elements.Add(l);
         }
 
@@ -616,6 +646,29 @@ namespace Barnacle.Dialogs
             ply.MouseMove += Ply_MouseMove;
             ply.ToolTip = s;
             elements.Add(ply);
+        }
+
+        private void AdjustBounds(PointF p)
+        {
+            if (p.X < outlineBounds.Left)
+            {
+                outlineBounds.Left = (double)p.X;
+            }
+
+            if (p.Y < outlineBounds.Bottom)
+            {
+                outlineBounds.Bottom = (double)p.Y;
+            }
+
+            if (p.X > outlineBounds.Right)
+            {
+                outlineBounds.Right = (double)p.X;
+            }
+
+            if (p.Y > outlineBounds.Top)
+            {
+                outlineBounds.Top = (double)p.Y;
+            }
         }
 
         private void Br_MouseDown(object sender, MouseButtonEventArgs e)
@@ -662,7 +715,7 @@ namespace Barnacle.Dialogs
                         selectedMarker.Position = new System.Drawing.Point((int)p.X, selectedMarker.Position.Y);
                         if (OnMarkerMoved != null)
                         {
-                            OnMarkerMoved(selectedMarker.Letter, selectedMarker.Position, false);
+                            OnMarkerMoved(selectedMarker.Letter, WorldPoint(selectedMarker.Position, renderScale), false);
                         }
                         UpdateDisplay();
                     }
@@ -676,12 +729,42 @@ namespace Barnacle.Dialogs
             {
                 if (OnMarkerMoved != null && notifyMoved && selectedMarker != null)
                 {
-                    OnMarkerMoved(selectedMarker.Letter, selectedMarker.Position, true);
+                    OnMarkerMoved(selectedMarker.Letter, WorldPoint(selectedMarker.Position, renderScale), true);
                     notifyMoved = false;
                     UpdateDisplay();
                 }
             }
             selectedMarker = null;
+        }
+
+        private System.Drawing.Point WorldPoint(System.Drawing.Point position, double sc)
+        {
+            System.Drawing.Point np = new System.Drawing.Point();
+            np.X = position.X - XOutlineOffset;
+            np.X = (int)(np.X / sc);
+            np.X += (int)outlineBounds.Left;
+
+            np.Y = position.Y - YOutlineOffset;
+            np.Y = (int)(np.Y / sc);
+            np.Y += (int)outlineBounds.Bottom;
+
+            return np;
+        }
+
+        internal System.Drawing.Point ScreenPoint(PointF p, double sc)
+        {
+            System.Drawing.Point np = new System.Drawing.Point();
+            np.X = (int)((p.X - (float)outlineBounds.Left) * sc) + XOutlineOffset;
+            np.Y = (int)((p.Y - (float)outlineBounds.Bottom) * sc) + YOutlineOffset;
+            return np;
+        }
+
+        private double CalcOutlineScale()
+        {
+            double winWidth = mainCanvas.ActualWidth;
+            winWidth = winWidth - XOutlineOffset - 20;
+            double sc = winWidth / outlineBounds.Width();
+            return sc;
         }
 
         private void CopyItem_Click(object sender, RoutedEventArgs e)
@@ -697,51 +780,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public Dimension GetUpperAndLowerPoints(int x)
-        {
-            Dimension res = null;
-            Point up = new Point(0, 0);
-            Point down = new Point(0, 0);
-            int y = 0;
-            bool found = false;
-            if (workingImage != null)
-            {
-                if (x >= 0 && x < workingImage.Width)
-                {
-                    y = 0;
-                    while (y < workingImage.Height && !found)
-                    {
-                        System.Drawing.Color c = workingImage.GetPixel(x, y);
-                        if (c.R < 128)
-                        {
-                            found = true;
-                            up = new Point(x, y);
-                            break;
-                        }
-                        y++;
-                    }
-
-                    if (found)
-                    {
-                        found = false;
-                        y = workingImage.Height - 1;
-                        while (y > 0 && !found)
-                        {
-                            System.Drawing.Color c = workingImage.GetPixel(x, y);
-                            if (c.R < 128)
-                            {
-                                found = true;
-                                down = new Point(x, y);
-                            }
-                            y--;
-                        }
-                    }
-                }
-            }
-            res = new Dimension(up, down);
-            return res;
-        }
-
         private void Header_Loaded(object sender, RoutedEventArgs e)
         {
         }
@@ -749,21 +787,6 @@ namespace Barnacle.Dialogs
         private double InchesToMM(double x)
         {
             return x * 25.4;
-        }
-
-        public void SetupImage()
-        {
-            leftLimit = tlx;
-            rightLimit = brx;
-
-            if (workingImage != null)
-            {
-                im = new System.Windows.Controls.Image();
-
-                im.Source = loadBitmap(workingImage);
-                leftLimit = tlx;
-                rightLimit = brx;
-            }
         }
 
         private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
@@ -795,22 +818,6 @@ namespace Barnacle.Dialogs
             selectedMarker = null;
         }
 
-        public void Clear()
-        {
-            elements = new List<UIElement>();
-
-            totalTopMargin = pinMargin + letterMargin + gapBelowLetter;
-            markerTop = pinMargin + (letterMargin / 2) + 1;
-            selectedMarker = null;
-            pinSelected = false;
-            dimensions = new List<Dimension>();
-            isValid = false;
-            notifyMoved = false;
-            leftLimit = double.MaxValue;
-            rightLimit = double.MinValue;
-            workingImage = null;
-        }
-
         private void Ply_MouseMove(object sender, MouseEventArgs e)
         {
             if (pinSelected)
@@ -836,11 +843,20 @@ namespace Barnacle.Dialogs
             pinSelected = false;
         }
 
+        private void ResetBounds()
+        {
+            outlineBounds.Left = double.MaxValue;
+            outlineBounds.Bottom = double.MaxValue;
+            outlineBounds.Right = double.MinValue;
+            outlineBounds.Top = double.MinValue;
+        }
+
         private void UpdateCanvas()
         {
             mainCanvas.Children.Clear();
             if (im != null)
             {
+                // move the image down a bit so there is room for the markers
                 mainCanvas.Children.Add(im);
                 Canvas.SetTop(im, totalTopMargin);
             }
@@ -877,6 +893,24 @@ namespace Barnacle.Dialogs
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateDisplay();
+        }
+
+        public struct Bounds
+        {
+            public double Bottom;
+            public double Left;
+            public double Right;
+            public double Top;
+
+            public double Height()
+            {
+                return Top - Bottom;
+            }
+
+            public double Width()
+            {
+                return Right - Left;
+            }
         }
     }
 }
