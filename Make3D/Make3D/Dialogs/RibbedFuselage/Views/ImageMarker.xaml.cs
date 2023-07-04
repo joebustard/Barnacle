@@ -283,7 +283,7 @@ namespace Barnacle.Dialogs
         }
 
         private const int XOutlineOffset = 10;
-        private const int YOutlineOffset = 60;
+        private const int YOutlineOffset = 10;
 
         internal System.Drawing.Point ScreenPoint(PointF p, double sc)
         {
@@ -292,6 +292,8 @@ namespace Barnacle.Dialogs
             np.Y = (int)((p.Y - (float)outlineBounds.Bottom) * sc) + YOutlineOffset;
             return np;
         }
+
+        private int imageMargin = 20;
 
         internal void RenderFlexipath()
         {
@@ -312,7 +314,7 @@ namespace Barnacle.Dialogs
                     //  outlineBounds.Bottom *= sc;
                     outlineBounds.Right = outlineBounds.Left + sc * outlineBounds.Width();
 
-                    workingImage = new Bitmap((int)(outlineBounds.Right) + 20 + XOutlineOffset, (int)(outlineBounds.Top) + YOutlineOffset + 20);
+                    workingImage = new Bitmap((int)(outlineBounds.Right) + imageMargin + XOutlineOffset, (int)(outlineBounds.Top) + YOutlineOffset + imageMargin);
                     using (var gfx = Graphics.FromImage(workingImage))
                     using (var pen = new System.Drawing.Pen(System.Drawing.Color.Black))
                     {
@@ -330,12 +332,15 @@ namespace Barnacle.Dialogs
                             gfx.DrawLine(pen, pt1, pt2);
                         }
                     }
+                    isValid = true;
                 }
 
                 tlx = XOutlineOffset;
                 tly = YOutlineOffset;
                 brx = tlx + (int)outlineBounds.Width();
                 bry = tly + (int)outlineBounds.Height();
+                LeftLimit = XOutlineOffset;
+                RightLimit = brx;
             }
         }
 
@@ -416,7 +421,7 @@ namespace Barnacle.Dialogs
                 }
                 if (selectedMarker != null)
                 {
-                    //         UpdateMarker(selectedMarker);
+                    UpdateMarker(selectedMarker);
                 }
 
                 // CanvasWidth = (int)ImageBorder.Width;
@@ -675,8 +680,8 @@ namespace Barnacle.Dialogs
                     notifyMoved = false;
                     UpdateDisplay();
                 }
-                selectedMarker = null;
             }
+            selectedMarker = null;
         }
 
         private void CopyItem_Click(object sender, RoutedEventArgs e)
