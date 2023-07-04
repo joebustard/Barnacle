@@ -93,7 +93,7 @@ namespace Barnacle.Dialogs
 
         public delegate void CopyLetter(string name);
 
-        public delegate void MarkerMoved(string s, System.Drawing.Point p, bool finishedMove);
+        public delegate void MarkerMoved(string s, System.Windows.Point p, bool finishedMove);
 
         public delegate void PinMoved(int x);
 
@@ -277,7 +277,7 @@ namespace Barnacle.Dialogs
             workingImage = null;
         }
 
-        public Dimension GetUpperAndLowerPoints(int x)
+        public Dimension GetUpperAndLowerPoints(double x)
         {
             Dimension res = null;
             Point up = new Point(0, 0);
@@ -291,7 +291,7 @@ namespace Barnacle.Dialogs
                     y = 0;
                     while (y < workingImage.Height && !found)
                     {
-                        System.Drawing.Color c = workingImage.GetPixel(x, y);
+                        System.Drawing.Color c = workingImage.GetPixel((int)x, (int)y);
                         if (c.R < 128)
                         {
                             found = true;
@@ -307,7 +307,7 @@ namespace Barnacle.Dialogs
                         y = workingImage.Height - 1;
                         while (y > 0 && !found)
                         {
-                            System.Drawing.Color c = workingImage.GetPixel(x, y);
+                            System.Drawing.Color c = workingImage.GetPixel((int)x, (int)y);
                             if (c.R < 128)
                             {
                                 found = true;
@@ -398,9 +398,9 @@ namespace Barnacle.Dialogs
 
             foreach (LetterMarker mk in markers)
             {
-                int y = mk.Position.Y;
-                mk.Position = ScreenPoint(mk.Position, renderScale);
-                mk.Position.Y = y;
+                
+                mk.Position = MarkerPositionToScreen(mk.Position, renderScale);
+                
             }
         }
 
@@ -478,7 +478,7 @@ namespace Barnacle.Dialogs
                 LeftLimit = XOutlineOffset;
                 RightLimit = brx;
 
-                System.Drawing.Point np = WorldPoint(ScreenPoint(new System.Drawing.Point(100, 100), renderScale), renderScale);
+                //System.Drawing.Point np = WorldPoint(ScreenPoint(new System.Drawing.Point(100, 100), renderScale), renderScale);
             }
         }
 
@@ -487,14 +487,15 @@ namespace Barnacle.Dialogs
             HeaderText = v;
         }
 
-        internal void SetMarker(string s, int x)
+
+        internal void SetMarker(string s, double x)
         {
             foreach (LetterMarker mk in markers)
             {
                 if (mk.Letter == s)
                 {
-                    mk.Position = new System.Drawing.Point(x, mk.Position.Y);
-                    mk.Position = ScreenPoint(mk.Position, renderScale);
+                    mk.Position = new System.Windows.Point(x, mk.Position.Y);
+                    mk.Position = MarkerPositionToScreen(mk.Position, renderScale);
                     UpdateDisplay();
                 }
             }
@@ -545,15 +546,15 @@ namespace Barnacle.Dialogs
             el.MouseMove += Br_MouseMove;
         }
 
-        private void AddLetter(int x, int y, string c, object tag, string s)
+        private void AddLetter(double x, double y, string c, object tag, string s)
         {
             int by = bry + (2 * totalTopMargin);
-            AddLine(x, y, x, y + by, s);
+            AddLine((int)x, (int)y, (int)x, (int)(y + by), s);
             Typeface typeface = new Typeface("Arial");
             double txtWidth = new FormattedText(c, CultureInfo.CurrentUICulture,
         FlowDirection.LeftToRight,
         typeface, 14, System.Windows.Media.Brushes.Black).Width;
-            double brd = 4;
+            double brd = 5;
 
             Border br = new Border();
             Canvas.SetLeft(br, x - (txtWidth / 2) - brd);
@@ -571,12 +572,12 @@ namespace Barnacle.Dialogs
             br.ContextMenu = this.FindResource("cmLetter") as ContextMenu;
             br.ToolTip = s;
             elements.Add(br);
-            AddText(x - ((int)txtWidth / 2), y - 8, c, System.Windows.Media.Colors.Black, tag, s);
+            AddText((int)(x - ((int)txtWidth / 2)), (int)(y - 8), c, System.Windows.Media.Colors.Black, tag, s);
 
             br = new Border();
-            Canvas.SetLeft(br, x - txtWidth / 2);
+            Canvas.SetLeft(br, x - (txtWidth / 2) - brd);
             Canvas.SetTop(br, y - 10 + by);
-            br.Width = txtWidth;
+            br.Width = txtWidth + 2 * brd;
             br.Height = 20;
             br.BorderBrush = System.Windows.Media.Brushes.Black;
             br.Background = System.Windows.Media.Brushes.Yellow;
@@ -590,7 +591,7 @@ namespace Barnacle.Dialogs
 
             elements.Add(br);
             br.ToolTip = s;
-            AddText(x - ((int)txtWidth / 2) + 3, y - 8 + by, c, System.Windows.Media.Colors.Black, tag, s);
+            AddText((int)(x - ((int)txtWidth / 2) ), (int)(y - 8 + by), c, System.Windows.Media.Colors.Black, tag, s);
         }
 
         private void AddLine(int v1, int v2, int v3, int v4, string s = "")
@@ -712,10 +713,10 @@ namespace Barnacle.Dialogs
                     if (p.X >= leftLimit && p.X <= rightLimit)
                     {
                         notifyMoved = true;
-                        selectedMarker.Position = new System.Drawing.Point((int)p.X, selectedMarker.Position.Y);
+                        selectedMarker.Position = new System.Windows.Point((int)p.X, selectedMarker.Position.Y);
                         if (OnMarkerMoved != null)
                         {
-                            OnMarkerMoved(selectedMarker.Letter, WorldPoint(selectedMarker.Position, renderScale), false);
+                            OnMarkerMoved(selectedMarker.Letter, WorldXPoint(selectedMarker.Position, renderScale), false);
                         }
                         UpdateDisplay();
                     }
@@ -729,7 +730,7 @@ namespace Barnacle.Dialogs
             {
                 if (OnMarkerMoved != null && notifyMoved && selectedMarker != null)
                 {
-                    OnMarkerMoved(selectedMarker.Letter, WorldPoint(selectedMarker.Position, renderScale), true);
+                    OnMarkerMoved(selectedMarker.Letter, WorldXPoint(selectedMarker.Position, renderScale), true);
                     notifyMoved = false;
                     UpdateDisplay();
                 }
@@ -751,6 +752,19 @@ namespace Barnacle.Dialogs
             return np;
         }
 
+        private System.Windows.Point WorldXPoint(System.Windows.Point position, double sc)
+        {
+            System.Windows.Point np = new System.Windows.Point();
+            /*
+            np.X = position.X - XOutlineOffset;
+            np.X = (int)(np.X / sc);
+            np.X += (int)outlineBounds.Left;
+            */
+            np.Y = position.Y;
+            np.X = position.X - XOutlineOffset;
+            np.X = (np.X / outlineBounds.Width());
+            return np;
+        }
         internal System.Drawing.Point ScreenPoint(PointF p, double sc)
         {
             System.Drawing.Point np = new System.Drawing.Point();
@@ -759,11 +773,23 @@ namespace Barnacle.Dialogs
             return np;
         }
 
+        internal System.Windows.Point MarkerPositionToScreen(System.Windows.Point p, double sc)
+        {
+            System.Windows.Point np = new System.Windows.Point();
+            //np.X = (int)((p.X - (float)outlineBounds.Left) * sc) + XOutlineOffset;
+            np.Y = (int)p.Y;
+            
+            np.X = (int)(p.X * outlineBounds.Width());
+            np.X = np.X + XOutlineOffset;
+            np.Y = (int)p.Y;
+            return np;
+        }
         private double CalcOutlineScale()
         {
             double winWidth = mainCanvas.ActualWidth;
             winWidth = winWidth - XOutlineOffset - 20;
             double sc = winWidth / outlineBounds.Width();
+            sc = 5;
             return sc;
         }
 

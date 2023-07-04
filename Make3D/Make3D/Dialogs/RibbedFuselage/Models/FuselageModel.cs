@@ -194,7 +194,7 @@ namespace Barnacle.RibbedFuselage.Models
             }
         }
 
-        private const double defaultRibSpacing = 10;
+        private const double defaultRibSpacing = 0.1;
 
         public RibImageDetailsModel CloneRib(int ribNumber)
         {
@@ -224,6 +224,11 @@ namespace Barnacle.RibbedFuselage.Models
                 Ribs.Insert(ribNumber + 1, rib);
 
                 RenameRibsAfterInsertions(nameStart);
+                MarkerModel marker = new MarkerModel();
+                marker.Name = rib.Name;
+                marker.Position = rib.MarkerPosition;
+                markers.Add(marker);
+
             }
             return rib;
         }

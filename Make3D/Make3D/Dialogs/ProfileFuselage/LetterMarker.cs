@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System.Windows;
 
 namespace Barnacle.Dialogs
 {

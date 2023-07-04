@@ -209,7 +209,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void MarkerMoved(string s, System.Drawing.Point p, bool finishedMove)
+        public void MarkerMoved(string s, System.Windows.Point p, bool finishedMove)
         {
             dirty = true;
             TopView.SetMarker(s, p.X);
@@ -314,8 +314,8 @@ namespace Barnacle.Dialogs
 
         public void OnRibAdded(string name, RibAndPlanEditControl rc)
         {
-            int nextX = 0;
-            int nextY = 10;
+            double nextX = 0;
+            double nextY = 10;
             foreach (LetterMarker mk in markers)
             {
                 if (mk.Position.X >= nextX)
@@ -324,7 +324,7 @@ namespace Barnacle.Dialogs
                 }
                 nextY = 40 - nextY;
             }
-            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
+            CreateLetter(name, new System.Windows.Point(nextX, nextY), rc);
             TopView.AddRib(name);
             SideView.AddRib(name);
             dirty = true;
@@ -352,8 +352,8 @@ namespace Barnacle.Dialogs
 
         public void OnRibInserted(string name, RibAndPlanEditControl rc)
         {
-            int nextX = 10;
-            int nextY = 10;
+            double nextX = 10;
+            double nextY = 10;
             foreach (LetterMarker mk in markers)
             {
                 if (mk.Position.X >= nextX)
@@ -362,7 +362,7 @@ namespace Barnacle.Dialogs
                 }
                 nextY = 40 - nextY;
             }
-            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
+            CreateLetter(name, new System.Windows.Point(nextX, nextY), rc);
 
             TopView.AddRib(name);
             SideView.AddRib(name);
@@ -419,7 +419,7 @@ namespace Barnacle.Dialogs
             RibManager.CopyARib(name);
         }
 
-        private void CreateLetter(string v1, System.Drawing.Point v2, RibAndPlanEditControl rib)
+        private void CreateLetter(string v1, System.Windows.Point v2, RibAndPlanEditControl rib)
         {
             LetterMarker mk = new LetterMarker(v1, v2);
             mk.Rib = rib;
@@ -669,7 +669,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private bool LoadRib(XmlElement el, string pth, string nme, System.Drawing.Point position, double viewScale, string edgePath, double scx, double scy)
+        private bool LoadRib(XmlElement el, string pth, string nme, System.Windows.Point position, double viewScale, string edgePath, double scx, double scy)
         {
             bool res = true;
             try
@@ -704,8 +704,8 @@ namespace Barnacle.Dialogs
 
         private void OnRibInserted(string name, RibAndPlanEditControl rc, RibAndPlanEditControl after)
         {
-            int nextX = 0;
-            int nextY = 10;
+            double nextX = 0;
+            double nextY = 10;
             for (int i = 0; i < markers.Count; i++)
             {
                 if (markers[i].Rib == after)
@@ -725,7 +725,7 @@ namespace Barnacle.Dialogs
             {
                 nextX = markers[markers.Count - 1].Position.X + 10;
             }
-            CreateLetter(name, new System.Drawing.Point(nextX, nextY), rc);
+            CreateLetter(name, new System.Windows.Point(nextX, nextY), rc);
             SortRibs();
             TopView.AddRib(name);
             SideView.AddRib(name);
@@ -819,7 +819,7 @@ namespace Barnacle.Dialogs
                 rc.TurnOffGrid();
                 rc.SetImageSource();
                 rc.OnForceReload = RibManager.OnForceRibReload;
-                CreateLetter(nme, new System.Drawing.Point(pos, nextY), rc);
+                CreateLetter(nme, new System.Windows.Point(pos, nextY), rc);
                 RibManager.Ribs.Add(rc);
                 rc.GenerateProfilePoints();
             }
@@ -900,7 +900,7 @@ namespace Barnacle.Dialogs
                 int nextY = 10;
                 foreach (LetterMarker mk in markers)
                 {
-                    mk.Position = new System.Drawing.Point(mk.Position.X, nextY);
+                    mk.Position = new System.Windows.Point(mk.Position.X, nextY);
                     nextY = 40 - nextY;
                 }
                 SideView.Markers = markers;
@@ -1136,7 +1136,7 @@ namespace Barnacle.Dialogs
                 double markerDist = ((TopView.RightLimit - TopView.LeftLimit - 4) / (markers.Count - 1));
                 for (int i = 0; i < markers.Count; i++)
                 {
-                    markers[i].Position = new System.Drawing.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
+                    markers[i].Position = new System.Windows.Point((int)(TopView.LeftLimit + (i * markerDist)) + 2, markers[i].Position.Y);
                 }
                 UpdateDisplay();
             }

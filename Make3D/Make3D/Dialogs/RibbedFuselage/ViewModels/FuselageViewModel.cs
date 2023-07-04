@@ -124,14 +124,14 @@ namespace Barnacle.RibbedFuselage.ViewModels
             int nextY = 10;
             foreach (MarkerModel m in fuselageData.Markers)
             {
-                LetterMarker lm = new LetterMarker(m.Name, new System.Drawing.Point((int)m.Position, nextY));
+                LetterMarker lm = new LetterMarker(m.Name, new System.Windows.Point(m.Position, nextY));
                 res.Add(lm);
                 nextY = 40 - nextY;
             }
             return res;
         }
 
-        internal void MoveMarker(string s, int x, bool finishedMove)
+        internal void MoveMarker(string s, double x, bool finishedMove)
         {
             if (finishedMove)
             {
