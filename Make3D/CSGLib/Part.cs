@@ -271,7 +271,7 @@ namespace CSGLib
             int signFace1Vert1, signFace1Vert2, signFace1Vert3, signFace2Vert1, signFace2Vert2, signFace2Vert3;
             int numFacesBefore = NumFaces;
             int numFacesStart = NumFaces + obj.NumFaces;
-            int facesLimit = 100 * numFacesStart;
+            int facesLimit = 1000 * numFacesStart;
             if (facesLimit > 1000000)
             {
                 facesLimit = 1000000;
@@ -286,7 +286,7 @@ namespace CSGLib
                     {
                         if (progress != null)
                         {
-                            BooleanModeller.ReportProgress(v + $" {i} of {NumFaces} {(i*100)/NumFaces}%", 0, progress);
+                            BooleanModeller.ReportProgress(v + $" {i} of {NumFaces} {(i * 100) / NumFaces}%", 0, progress);
                         }
                     }
                     //if object1 face bound and object2 bound overlap ...
@@ -313,7 +313,6 @@ namespace CSGLib
                                 signFace1Vert1 = distFace1Vert1 > EqualityTolerance ? 1 : (distFace1Vert1 < -EqualityTolerance ? -1 : 0);
                                 signFace1Vert2 = distFace1Vert2 > EqualityTolerance ? 1 : (distFace1Vert2 < -EqualityTolerance ? -1 : 0);
                                 signFace1Vert3 = distFace1Vert3 > EqualityTolerance ? 1 : (distFace1Vert3 < -EqualityTolerance ? -1 : 0);
-
 
                                 if (!(signFace1Vert1 == signFace1Vert2 && signFace1Vert2 == signFace1Vert3))
                                 {

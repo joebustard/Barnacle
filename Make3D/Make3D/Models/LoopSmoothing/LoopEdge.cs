@@ -10,6 +10,7 @@ namespace Barnacle.Models.LoopSmoothing
             F2 = -1;
         }
 
+        public int Id { get; set; }
         public int End { get; set; }
 
         public LoopCoord Ep

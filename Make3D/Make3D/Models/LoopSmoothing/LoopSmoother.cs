@@ -1,4 +1,5 @@
 ﻿using Barnacle.Object3DLib;
+using OctTreeLib;
 using System;
 using System.Collections.Generic;
 using System.Windows.Media;
@@ -157,20 +158,21 @@ namespace Barnacle.Models.LoopSmoothing
             }
         }
 
-        private int FindEdge(int p1, int p2)
+        private int FindEdge(int p1, int p2, List<LoopEdge>[] buckets)
         {
             int e = -1;
             int i = 0;
-            foreach (LoopEdge ce in loopEdges)
+            List<LoopEdge> bucket = buckets[p1 % numEdgeBuckets];
+            foreach (LoopEdge ce in bucket)
             {
                 if (ce.Start == p1 && ce.End == p2)
                 {
-                    e = i;
+                    e = ce.Id;
                     break;
                 }
                 if (ce.Start == p2 && ce.End == p1)
                 {
-                    e = i;
+                    e = ce.Id;
                     break;
                 }
                 i++;
@@ -184,6 +186,14 @@ namespace Barnacle.Models.LoopSmoothing
             {
                 ce.MakeEdgePoint(loopFaces, loopPoints);
             }
+        }
+
+        private OctTree octTree;
+
+        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTree(vertices, minPoint, maxPoint, 200);
+            return octTree;
         }
 
         private void GenerateNewFaces()
@@ -212,16 +222,25 @@ namespace Barnacle.Models.LoopSmoothing
             }
         }
 
+        private const int numEdgeBuckets = 250;
+        private Bounds3D boundary;
+
         private void InitialiseData(Point3DCollection p3col, Int32Collection icol)
         {
             loopPoints.Clear();
             loopEdges.Clear();
             loopFaces.Clear();
-
+            boundary = new Bounds3D();
+            List<LoopEdge>[] edgebuckets = new List<LoopEdge>[numEdgeBuckets];
+            for (int i = 0; i < numEdgeBuckets; i++)
+            {
+                edgebuckets[i] = new List<LoopEdge>();
+            }
             foreach (Point3D p in p3col)
             {
                 LoopPoint cp = new LoopPoint(p);
                 loopPoints.Add(cp);
+                boundary.Adjust(p);
             }
 
             for (int i = 0; i < icol.Count; i += 3)
@@ -232,7 +251,7 @@ namespace Barnacle.Models.LoopSmoothing
                 f.P2 = icol[i + 1];
                 f.P3 = icol[i + 2];
 
-                int ei = FindEdge(f.P1, f.P2);
+                int ei = FindEdge(f.P1, f.P2, edgebuckets);
 
                 if (ei == -1)
                 {
@@ -244,7 +263,12 @@ namespace Barnacle.Models.LoopSmoothing
                     loopPoints[f.P1].Edges.Add(loopEdges.Count);
                     loopPoints[f.P2].Edges.Add(loopEdges.Count);
                     ei = loopEdges.Count;
+                    e1.Id = ei;
                     loopEdges.Add(e1);
+                    int bucketId = f.P1 % numEdgeBuckets;
+                    edgebuckets[bucketId].Add(e1);
+                    bucketId = f.P2 % numEdgeBuckets;
+                    edgebuckets[bucketId].Add(e1);
                 }
                 else
                 {
@@ -254,7 +278,7 @@ namespace Barnacle.Models.LoopSmoothing
 
                 f.E1 = ei;
 
-                ei = FindEdge(f.P2, f.P3);
+                ei = FindEdge(f.P2, f.P3, edgebuckets);
                 if (ei == -1)
                 {
                     LoopEdge e2 = new LoopEdge();
@@ -265,7 +289,13 @@ namespace Barnacle.Models.LoopSmoothing
                     loopPoints[f.P2].Edges.Add(loopEdges.Count);
                     loopPoints[f.P3].Edges.Add(loopEdges.Count);
                     ei = loopEdges.Count;
+                    e2.Id = ei;
                     loopEdges.Add(e2);
+
+                    int bucketId = f.P2 % numEdgeBuckets;
+                    edgebuckets[bucketId].Add(e2);
+                    bucketId = f.P3 % numEdgeBuckets;
+                    edgebuckets[bucketId].Add(e2);
                 }
                 else
                 {
@@ -275,7 +305,7 @@ namespace Barnacle.Models.LoopSmoothing
 
                 f.E2 = ei;
 
-                ei = FindEdge(f.P3, f.P1);
+                ei = FindEdge(f.P3, f.P1, edgebuckets);
                 if (ei == -1)
                 {
                     LoopEdge e3 = new LoopEdge();
@@ -286,7 +316,13 @@ namespace Barnacle.Models.LoopSmoothing
                     loopPoints[f.P3].Edges.Add(loopEdges.Count);
                     loopPoints[f.P1].Edges.Add(loopEdges.Count);
                     ei = loopEdges.Count;
+                    e3.Id = ei;
                     loopEdges.Add(e3);
+
+                    int bucketId = f.P3 % numEdgeBuckets;
+                    edgebuckets[bucketId].Add(e3);
+                    bucketId = f.P1 % numEdgeBuckets;
+                    edgebuckets[bucketId].Add(e3);
                 }
                 else
                 {
@@ -296,6 +332,14 @@ namespace Barnacle.Models.LoopSmoothing
                 f.E3 = ei;
             }
             //   Dump();
+            for (int i = 0; i < numEdgeBuckets; i++)
+            {
+                edgebuckets[i].Clear();
+            }
+            edgebuckets = null;
+            boundary.Lower = new Point3D(boundary.Lower.X - 1, boundary.Lower.Y - 1, boundary.Lower.Z - 1);
+            boundary.Upper = new Point3D(boundary.Upper.X + 1, boundary.Upper.Y + 1, boundary.Upper.Z + 1);
+            CreateOctree(boundary.Lower, boundary.Upper);
         }
 
         private void Log(String s)
@@ -305,12 +349,29 @@ namespace Barnacle.Models.LoopSmoothing
 
         private void MakeFace(LoopCoord ep1, LoopCoord ep2, LoopCoord ep3)
         {
-            int v1 = AddVertice(ep1.X, ep1.Y, ep1.Z);
-            int v2 = AddVertice(ep2.X, ep2.Y, ep2.Z);
-            int v3 = AddVertice(ep3.X, ep3.Y, ep3.Z);
+            int v1 = AddVerticeOctTree(ep1.X, ep1.Y, ep1.Z);
+            int v2 = AddVerticeOctTree(ep2.X, ep2.Y, ep2.Z);
+            int v3 = AddVerticeOctTree(ep3.X, ep3.Y, ep3.Z);
             faces.Add(v1);
             faces.Add(v2);
             faces.Add(v3);
+        }
+
+        public int AddVerticeOctTree(double x, double y, double z)
+        {
+            int res = -1;
+            if (octTree != null)
+            {
+                Point3D v = new Point3D(x, y, z);
+                res = octTree.PointPresent(v);
+
+                if (res == -1)
+                {
+                    res = vertices.Count;
+                    octTree.AddPoint(res, v);
+                }
+            }
+            return res;
         }
     }
 }

@@ -287,11 +287,12 @@ namespace MakerLib
                 }
             }
             //  DumpLayerImages(wrb, distVector);
+            DateTime start = DateTime.Now;
             List<Triangle> triangles = new List<Triangle>();
             triangles.Clear();
             CubeMarcher cm = new CubeMarcher();
             GridCell gc = new GridCell();
-
+            //     List<LerpBox> boxesToMarch = new List<LerpBox>();
             for (int py = 0; py < 2 * numberOfLayers - 1; py++)
             {
                 int ly = py;
@@ -313,42 +314,31 @@ namespace MakerLib
                         lb.SetVoxel(1, 1, 0, hx, hy, pz, distVector[hx, hy, pz].dv);
                         lb.SetVoxel(1, 1, 1, hx, hy, hz, distVector[hx, hy, hz].dv);
                         lb.SetVoxel(0, 1, 1, px, hy, hz, distVector[px, hy, hz].dv);
-                        /*
-                                                gc.p[0] = new XYZ(px, ly, pz);
-                                                gc.p[1] = new XYZ(hx, ly, pz);
-                                                gc.p[2] = new XYZ(hx, ly, hz);
-                                                gc.p[3] = new XYZ(px, ly, hz);
-                                                gc.p[4] = new XYZ(px, hy, pz);
-                                                gc.p[5] = new XYZ(hx, hy, pz);
-                                                gc.p[6] = new XYZ(hx, hy, hz);
-                                                gc.p[7] = new XYZ(px, hy, hz);
 
-                                                gc.val[0] = distVector[px, py, pz].dv;
-                                                gc.val[1] = distVector[hx, py, pz].dv;
-                                                gc.val[2] = distVector[hx, py, hz].dv;
-                                                gc.val[3] = distVector[px, py, hz].dv;
-                                                gc.val[4] = distVector[px, py + 1, pz].dv;
-                                                gc.val[5] = distVector[hx, py + 1, pz].dv;
-                                                gc.val[6] = distVector[hx, py + 1, hz].dv;
-                                                gc.val[7] = distVector[px, py + 1, hz].dv;
-                        */
                         if (lb.CornerMask != 0 && lb.CornerMask != 255)
                         {
                             List<LerpBox> divs = lb.Subdivide();
                             foreach (LerpBox subBox in divs)
                             {
                                 subBox.SetMask();
-                                if (subBox.CornerMask != 0 && subBox.CornerMask != 255)
+                                List<LerpBox> divs2 = subBox.Subdivide();
+                                foreach (LerpBox subBox2 in divs2)
                                 {
-                                    gc = subBox.ToGridCell();
+                                    subBox2.SetMask();
+                                    if (subBox2.CornerMask != 0 && subBox2.CornerMask != 255)
+                                    {
+                                        gc = subBox2.ToGridCell();
 
-                                    cm.Polygonise(gc, 0, triangles);
+                                        cm.Polygonise(gc, 0, triangles);
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            DateTime end = DateTime.Now;
+            System.Diagnostics.Debug.WriteLine($"Lerp time {end - start}");
             OctTree octTree = CreateOctree(new Point3D(-1, -1, -1),
                       new Point3D(imageWidth, 7, imageHeight));
             foreach (Triangle t in triangles)
