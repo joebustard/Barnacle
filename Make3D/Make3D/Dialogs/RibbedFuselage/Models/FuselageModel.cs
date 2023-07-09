@@ -49,6 +49,16 @@ namespace Barnacle.RibbedFuselage.Models
             TopImageDetails.FlexiPathText = pathText;
         }
 
+        internal String SidePath
+        {
+            get { return SideImageDetails.FlexiPathText; }
+        }
+
+        internal String TopPath
+        {
+            get { return TopImageDetails.FlexiPathText; }
+        }
+
         internal void SetSidePath(string pathText)
         {
             SideImageDetails.FlexiPathText = pathText;
@@ -89,7 +99,7 @@ namespace Barnacle.RibbedFuselage.Models
             marker.Position = nextNewMakerPosition;
             markers.Add(marker);
             nextNewMakerPosition += defaultMarkerSpacing;
-            if ( nextNewMakerPosition > 1.0)
+            if (nextNewMakerPosition > 1.0)
             {
                 nextNewMakerPosition = 1;
             }

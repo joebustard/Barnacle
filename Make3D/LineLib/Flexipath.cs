@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Windows;
 
 namespace Barnacle.LineLib
@@ -66,7 +67,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void AddCurve(Point p1, Point p2, Point p3)
+        public void AddCurve(System.Windows.Point p1, System.Windows.Point p2, System.Windows.Point p3)
         {
             int i = points.Count - 1;
             points.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
@@ -76,7 +77,7 @@ namespace Barnacle.LineLib
             segs.Add(bl);
         }
 
-        public void AddLine(Point p1)
+        public void AddLine(System.Windows.Point p1)
         {
             int i = points.Count - 1;
             points.Add(new FlexiPoint(p1, i + 1));
@@ -84,7 +85,7 @@ namespace Barnacle.LineLib
             segs.Add(ls);
         }
 
-        public void AddOrthoLockedLine(Point p1)
+        public void AddOrthoLockedLine(System.Windows.Point p1)
         {
             int i = points.Count - 1;
             double oldX = points[i].X;
@@ -104,7 +105,7 @@ namespace Barnacle.LineLib
             segs.Add(ls);
         }
 
-        public void AddQCurve(Point p1, Point p2)
+        public void AddQCurve(System.Windows.Point p1, System.Windows.Point p2)
         {
             int i = points.Count - 1;
             points.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
@@ -123,7 +124,7 @@ namespace Barnacle.LineLib
             double cy1 = lp.Y + 0.25 * (fp.Y - lp.Y);
             double cx2 = lp.X + 0.75 * (fp.X - lp.X);
             double cy2 = lp.Y + 0.75 * (fp.Y - lp.Y);
-            AddCurve(new Point(cx1, cy1), new Point(cx2, cy2), fp.ToPoint());
+            AddCurve(new System.Windows.Point(cx1, cy1), new System.Windows.Point(cx2, cy2), fp.ToPoint());
         }
 
         public void AppendClosingQuadCurveSegment()
@@ -134,7 +135,7 @@ namespace Barnacle.LineLib
             double cx1 = lp.X + 0.5 * (fp.X - lp.X);
             double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
 
-            AddQCurve(new Point(cx1, cy1), fp.ToPoint());
+            AddQCurve(new System.Windows.Point(cx1, cy1), fp.ToPoint());
         }
 
         public virtual void Clear()
@@ -143,7 +144,7 @@ namespace Barnacle.LineLib
             points.Clear();
         }
 
-        public void ConvertLineCurveSegment(int index, Point position)
+        public void ConvertLineCurveSegment(int index, System.Windows.Point position)
         {
             for (int i = 0; i < segs.Count; i++)
             {
@@ -169,7 +170,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void ConvertLineQuadCurveSegment(int index, Point position, bool centreControl = true)
+        public void ConvertLineQuadCurveSegment(int index, System.Windows.Point position, bool centreControl = true)
         {
             for (int i = 0; i < segs.Count; i++)
             {
@@ -205,13 +206,13 @@ namespace Barnacle.LineLib
                 int secondSeg = firstSeg + 1;
                 // collect the details of the points in case we need em later
                 int seg1P0 = segs[firstSeg].Start();
-                Point P0 = points[seg1P0].ToPoint();
+                System.Windows.Point P0 = points[seg1P0].ToPoint();
 
                 int seg2P0 = segs[secondSeg].Start();
-                Point targetPoint = points[seg2P0].ToPoint();
+                System.Windows.Point targetPoint = points[seg2P0].ToPoint();
 
                 int seg2P1 = segs[secondSeg].End();
-                Point P2 = points[seg2P1].ToPoint();
+                System.Windows.Point P2 = points[seg2P1].ToPoint();
 
                 double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
                 if (t != double.MinValue && t != 0)
@@ -220,13 +221,63 @@ namespace Barnacle.LineLib
                     // delete the second segment
                     DeleteSegmentStartingAt(seg1P0);
                     // calculate where the control point should be so cuve goes through target point
-                    Point P1 = new Point(0, 0);
+                    System.Windows.Point P1 = new System.Windows.Point(0, 0);
                     P1.X = (targetPoint.X - (1.0 - t) * t * P0.X - ((t * t) * P2.X)) / (2.0 * (1 - t) * t);
                     P1.Y = (targetPoint.Y - (1.0 - t) * t * P0.Y - ((t * t) * P2.Y)) / (2.0 * (1 - t) * t);
                     // convert seg1 to a quadratic bezier
                     ConvertLineQuadCurveSegment(seg1P0, P1, false);
                 }
             }
+        }
+        private double Distance(PointF point1, PointF point2)
+        {
+            double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
+            ((point2.Y - point1.Y) * (point2.Y - point1.Y));
+
+            return Math.Sqrt(diff);
+        }
+        double tlx;
+        double tly;
+        double brx;
+        double bry;
+        double pathWidth;
+        double pathHeight;
+        public void CalculatePathBounds()
+        {
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+            var pnts = DisplayPointsF();
+            double pathLength = 0;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if (i < pnts.Count - 1)
+                {
+                    pathLength += Distance(pnts[i], pnts[i + 1]);
+                }
+                if (pnts[i].X < tlx)
+                {
+                    tlx = pnts[i].X;
+                }
+
+                if (pnts[i].Y < tly)
+                {
+                    tly = pnts[i].Y;
+                }
+
+                if (pnts[i].X > brx)
+                {
+                    brx = pnts[i].X;
+                }
+
+                if (pnts[i].Y > bry)
+                {
+                    bry = pnts[i].Y;
+                }
+            }
+            pathWidth = brx - tlx;
+            pathHeight = bry - tly;
         }
 
         public void DeleteLastSegment()
@@ -236,6 +287,62 @@ namespace Barnacle.LineLib
                 segs[segs.Count - 1].DeletePoints(points);
                 segs.RemoveAt(segs.Count - 1);
             }
+        }
+        public struct Dimension
+        {
+            public double X;
+            public double Lower;
+            public double Upper;
+        }
+        public Dimension GetUpperAndLowerPoints(double x)
+        {
+            Dimension res = new Dimension();
+            res.Lower = double.MaxValue;
+            res.Upper = double.MinValue;
+            double px = (x * pathWidth) + tlx;
+
+            var pnts = DisplayPointsF();
+            if ((pnts[0].X != pnts[pnts.Count - 1].X) || (pnts[0].Y != pnts[pnts.Count - 1].Y))
+            {
+                pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
+            }
+
+
+            for (int i = 0; i < pnts.Count - 1; i++)
+            {
+                double y = 0;
+                double sx, sy, ex, ey;
+                if (pnts[i].X<= pnts[i + 1].X)
+                {
+                    sx = pnts[i].X;
+                    sy = pnts[i].Y;
+                    ex = pnts[i+1].X;
+                    ey = pnts[i+1].Y;
+                }
+                else
+                {
+                    ex = pnts[i].X;
+                    ey = pnts[i].Y;
+                    sx = pnts[i + 1].X;
+                    sy = pnts[i + 1].Y;
+                }
+                if (px >= sx && px <= ex)
+                {
+                    if (ex - sx > 0)
+                    {
+                        double t = (px - sx)/ ( ex-sx);
+                        y = sy + t * (ey - sy);
+                    }
+                    else
+                    {
+                        y = sy;
+                    }
+                    res.X = px;
+                    res.Lower = Math.Min(y, res.Lower);
+                    res.Upper = Math.Max(y, res.Upper);
+                }
+            }
+            return res;
         }
 
         public void DeleteSegment(int index)
@@ -302,11 +409,11 @@ namespace Barnacle.LineLib
             }
         }
 
-        public List<Point> DisplayPoints()
+        public List<System.Windows.Point> DisplayPoints()
         {
             // display points are NOT the same as the raw FlexiPoints;
             // Any curves etc may generate more intermediate display points
-            List<Point> res = new List<Point>();
+            List<System.Windows.Point> res = new List<System.Windows.Point>();
             if (Start != null)
             {
                 res.Add(Start.ToPoint());
@@ -641,7 +748,7 @@ namespace Barnacle.LineLib
             throw new NotImplementedException();
         }
 
-        public bool ConvertToQuadQuadAtSelected(Point position)
+        public bool ConvertToQuadQuadAtSelected(System.Windows.Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
@@ -674,7 +781,7 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public bool ConvertToCubic(Point position)
+        public bool ConvertToCubic(System.Windows.Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
@@ -733,7 +840,7 @@ namespace Barnacle.LineLib
             return result;
         }
 
-        public Point Centroid()
+        public System.Windows.Point Centroid()
         {
             double x = 0;
             double y = 0;
@@ -747,15 +854,15 @@ namespace Barnacle.LineLib
             }
             if (count > 0)
             {
-                return new Point(x / count, y / count);
+                return new System.Windows.Point(x / count, y / count);
             }
             else
             {
-                return new Point(0, 0);
+                return new System.Windows.Point(0, 0);
             }
         }
 
-        public void InsertCurveSegment(int index, Point position)
+        public void InsertCurveSegment(int index, System.Windows.Point position)
         {
             for (int i = 0; i < segs.Count; i++)
             {
@@ -775,7 +882,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public void InsertLineSegment(int pointIndex, Point position)
+        public void InsertLineSegment(int pointIndex, System.Windows.Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
@@ -810,7 +917,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public virtual bool SplitSelectedLineSegment(Point position)
+        public virtual bool SplitSelectedLineSegment(System.Windows.Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
@@ -846,7 +953,7 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public virtual void MoveTo(Point position)
+        public virtual void MoveTo(System.Windows.Point position)
         {
             double cx = 0;
             double cy = 0;
@@ -866,7 +973,7 @@ namespace Barnacle.LineLib
             }
         }
 
-        public bool SelectAtPoint(Point position, bool clear = true)
+        public bool SelectAtPoint(System.Windows.Point position, bool clear = true)
         {
             bool found = false;
             if (clear)
@@ -912,7 +1019,7 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public void SetPointPos(int index, Point position)
+        public void SetPointPos(int index, System.Windows.Point position)
         {
             if (index >= 0 && index < points.Count)
             {
@@ -1031,7 +1138,7 @@ namespace Barnacle.LineLib
                             break;
                     }
 
-                    FlexiPoint fp = new FlexiPoint(new Point(x, y), id, m);
+                    FlexiPoint fp = new FlexiPoint(new System.Windows.Point(x, y), id, m);
                     points.Add(fp);
                 }
             }

@@ -165,7 +165,11 @@ namespace Barnacle.Dialogs
             {
                 if (tc.SelectedIndex == 3)
                 {
-                 
+                    vm.ModelIsVisible = true;
+                }
+                else
+                {
+                    vm.ModelIsVisible = false;
                 }
             }
         }

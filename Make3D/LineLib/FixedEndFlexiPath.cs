@@ -96,7 +96,7 @@ namespace Barnacle.LineLib
 
         // This is similar to the base version but
         // we cant split the segment from the last point back to the first
-        public override bool SplitSelectedLineSegment(Point position)
+        public override bool SplitSelectedLineSegment(System.Windows.Point position)
         {
             bool found = false;
             for (int i = 0; i < segs.Count; i++)
