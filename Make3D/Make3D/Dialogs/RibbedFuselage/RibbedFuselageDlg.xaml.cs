@@ -76,6 +76,13 @@ namespace Barnacle.Dialogs
                     }
                     break;
 
+                case "Markers":
+                    {
+                        TopView.Markers = vm.GetMarkers();
+                        SideView.Markers = vm.GetMarkers();
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -153,6 +160,14 @@ namespace Barnacle.Dialogs
 
         private void TabControl_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
+            TabControl tc = sender as TabControl;
+            if (tc != null)
+            {
+                if (tc.SelectedIndex == 3)
+                {
+                 
+                }
+            }
         }
 
         private void ViewTabChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

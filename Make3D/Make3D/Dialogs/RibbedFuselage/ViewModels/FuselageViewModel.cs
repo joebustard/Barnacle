@@ -255,6 +255,7 @@ namespace Barnacle.RibbedFuselage.ViewModels
                     case "copy":
                         {
                             SelectedRib = fuselageData.CloneRib(SelectedRibIndex);
+                            NotifyPropertyChanged("Markers");
                         }
                         break;
 

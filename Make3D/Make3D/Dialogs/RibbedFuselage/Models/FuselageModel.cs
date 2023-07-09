@@ -14,7 +14,7 @@ namespace Barnacle.RibbedFuselage.Models
         private ObservableCollection<RibImageDetailsModel> ribs;
         private ImageDetailsModel sideImageDetails;
         private ImageDetailsModel topImageDetails;
-        private const double defaultMarkerSpacing = 10;
+        private const double defaultMarkerSpacing = 0.1;
 
         public FuselageModel()
         {
@@ -89,6 +89,10 @@ namespace Barnacle.RibbedFuselage.Models
             marker.Position = nextNewMakerPosition;
             markers.Add(marker);
             nextNewMakerPosition += defaultMarkerSpacing;
+            if ( nextNewMakerPosition > 1.0)
+            {
+                nextNewMakerPosition = 1;
+            }
         }
 
         public ObservableCollection<RibImageDetailsModel> Ribs
@@ -202,6 +206,17 @@ namespace Barnacle.RibbedFuselage.Models
             if (ribNumber != -1)
             {
                 RibImageDetailsModel selectedRib = Ribs[ribNumber];
+                double selectPos = FindMarkerPos(selectedRib.Name);
+                double clonePos = selectPos + defaultRibSpacing;
+                RibImageDetailsModel nextRib = null;
+                if (ribNumber < Ribs.Count - 1)
+                {
+                    nextRib = Ribs[ribNumber + 1];
+                    double nextRibPosition = FindMarkerPos(nextRib.Name);
+                    clonePos = selectPos + (nextRibPosition - selectPos) / 2.0;
+                }
+
+
                 rib = selectedRib.Clone();
                 string nameStart = selectedRib.Name.Substring(0, 1);
                 int subName = 0;
@@ -213,24 +228,29 @@ namespace Barnacle.RibbedFuselage.Models
                     }
                 }
                 rib.Name = nameStart + subName.ToString();
-                if (ribNumber < Ribs.Count - 1)
-                {
-                    rib.MarkerPosition = selectedRib.MarkerPosition + (Ribs[ribNumber + 1].MarkerPosition - selectedRib.MarkerPosition) / 2;
-                }
-                else
-                {
-                    rib.MarkerPosition += defaultRibSpacing;
-                }
+
                 Ribs.Insert(ribNumber + 1, rib);
 
                 RenameRibsAfterInsertions(nameStart);
                 MarkerModel marker = new MarkerModel();
                 marker.Name = rib.Name;
-                marker.Position = rib.MarkerPosition;
+                marker.Position = clonePos;
                 markers.Add(marker);
 
             }
             return rib;
+        }
+
+        private double FindMarkerPos(string name)
+        {
+            foreach (MarkerModel mk in markers)
+            {
+                if (mk.Name == name)
+                {
+                    return mk.Position;
+                }
+            }
+            return 0.0;
         }
 
         public void RenameAllRibs()
