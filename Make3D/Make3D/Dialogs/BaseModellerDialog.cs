@@ -102,6 +102,10 @@ namespace Barnacle.Dialogs
             {
                 return polarCamera;
             }
+            set
+            {
+                polarCamera = value;
+            }
         }
 
         public Point3D CameraPosition
@@ -138,6 +142,10 @@ namespace Barnacle.Dialogs
             get
             {
                 return tris;
+            }
+            set
+            {
+                tris = value;
             }
         }
 
@@ -232,9 +240,13 @@ namespace Barnacle.Dialogs
             {
                 return vertices;
             }
+            set
+            {
+                vertices = value;
+            }
         }
 
-        protected double FieldOfView
+        public double FieldOfView
         {
             get
             {

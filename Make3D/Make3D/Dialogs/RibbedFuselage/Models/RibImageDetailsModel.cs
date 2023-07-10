@@ -12,14 +12,14 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
 {
     internal class RibImageDetailsModel : ImageDetailsModel
     {
-
         public override void Load(XmlElement ele)
         {
             base.Load(ele);
-
         }
+
         public bool Dirty { get; set; }
         private List<PointF> profilePoints;
+
         public List<PointF> ProfilePoints
         {
             get { return profilePoints; }
@@ -32,10 +32,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
 
             return Math.Sqrt(diff);
         }
+
         public int NumDivisions { get; set; }
+
         public void GenerateProfilePoints()
         {
-
             double tlx;
             double tly;
             double brx;
@@ -49,7 +50,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             profilePoints = new List<PointF>();
             fp.FromString(FlexiPathText);
             List<PointF> pnts = fp.DisplayPointsF();
-            if (pnts != null)
+            if (pnts != null && pnts.Count > 0)
             {
                 pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
                 tlx = double.MaxValue;
@@ -185,10 +186,10 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
                 Dirty = false;
             }
         }
+
         public override void Save(XmlElement ele, XmlDocument doc)
         {
             base.Save(ele, doc);
-
         }
 
         internal RibImageDetailsModel Clone()
@@ -202,6 +203,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             cln.NumDivisions = NumDivisions;
             return cln;
         }
+
         internal RibImageDetailsModel()
         {
             NumDivisions = 100;

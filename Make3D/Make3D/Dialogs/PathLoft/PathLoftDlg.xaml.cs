@@ -118,8 +118,8 @@ namespace Barnacle.Dialogs
 
                 double mx = trx + pathXSize / 2.0;
                 double my = triy + pathYSize / 2.0;
-                double px;
-                double py;
+                // double px;
+                // double py;
                 pathPoints.Clear();
                 foreach (Point p in points)
                 {

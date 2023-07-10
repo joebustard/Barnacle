@@ -9,20 +9,23 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Forms;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle.RibbedFuselage.ViewModels
 {
     internal class FuselageViewModel : BaseModellerDialog, INotifyPropertyChanged
     {
+        private bool autoFit;
+        private bool backBody;
         private bool dirty;
 
         private string filePath;
 
+        private bool frontBody;
         private FuselageModel fuselageData;
 
         private RibImageDetailsModel selectedRib;
@@ -37,6 +40,23 @@ namespace Barnacle.RibbedFuselage.ViewModels
 
         private string topPath;
 
+        public override bool ShowAxies
+        {
+            get
+            {
+                return showAxies;
+            }
+            set
+            {
+                if (showAxies != value)
+                {
+                    showAxies = value;
+                    NotifyPropertyChanged();
+                    Redisplay();
+                }
+            }
+        }
+
         public FuselageViewModel()
         {
             FuselageData = new FuselageModel();
@@ -45,10 +65,50 @@ namespace Barnacle.RibbedFuselage.ViewModels
             SelectedRibIndex = -1;
             HorizontalResolution = 96;
             VerticalResolution = 96;
-
+            frontBody = false;
+            BackBody = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        public bool Autofit
+        {
+            get { return autoFit; }
+            set
+            {
+                autoFit = value;
+                if (ModelIsVisible)
+                {
+                    GenerateModel();
+                }
+            }
+        }
+
+        public bool BackBody
+        {
+            get { return backBody; }
+            set
+            {
+                backBody = value;
+                if (ModelIsVisible)
+                {
+                    GenerateModel();
+                }
+            }
+        }
+
+        public bool FrontBody
+        {
+            get { return frontBody; }
+            set
+            {
+                frontBody = value;
+                if (ModelIsVisible)
+                {
+                    GenerateModel();
+                }
+            }
+        }
 
         public FuselageModel FuselageData
         {
@@ -62,6 +122,8 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 }
             }
         }
+
+        public bool ModelIsVisible { get; set; }
 
         public RelayCommand RibCommand { get; set; }
 
@@ -123,104 +185,41 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 }
             }
         }
+
+        public String TopImage
+        {
+            get { return topImage; }
+            set
+            {
+                if (topImage != value)
+                {
+                    topImage = value;
+                    FuselageData?.SetTopImage(topImage);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string TopPath
+        {
+            get { return topPath; }
+            set
+            {
+                if (string.Compare(topPath, value) != 0)
+                {
+                    topPath = value;
+                    FuselageData.SetTopPath(topPath);
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         internal double HorizontalResolution { get; set; }
+
         internal double VerticalResolution { get; set; }
-        internal double GetXmm(double position)
-        {
-            double dpi = HorizontalResolution;
-            double posInches = position / dpi;
 
-            return InchesToMM(posInches);
-        }
-        private double InchesToMM(double x)
+        public void GenerateModel()
         {
-            return x * 25.4;
-        }
-
-        internal double GetYmm(double position)
-        {
-            double dpi = VerticalResolution;
-            double posInches = position / dpi;
-
-            return InchesToMM(posInches);
-        }
-        internal List<LetterMarker> GetMarkers()
-        {
-            List<LetterMarker> res = new List<LetterMarker>();
-            int nextY = 10;
-            foreach (MarkerModel m in fuselageData.Markers)
-            {
-                LetterMarker lm = new LetterMarker(m.Name, new System.Windows.Point(m.Position, nextY));
-                res.Add(lm);
-                nextY = 40 - nextY;
-            }
-            return res;
-        }
-
-        internal void MoveMarker(string s, double x, bool finishedMove)
-        {
-            if (finishedMove)
-            {
-                foreach (MarkerModel m in fuselageData.Markers)
-                {
-                    if (m.Name == s)
-                    {
-                        m.Position = (double)x;
-                        break;
-                    }
-                }
-                // regenerate the 3d fuselage
-                if (ModelIsVisible)
-                {
-                    GenerateModel();
-                }
-            }
-        }
-        private bool autoFit;
-        public bool Autofit
-        {
-            get { return autoFit; }
-            set
-            {
-                autoFit = value;
-                if (ModelIsVisible)
-                {
-                    GenerateModel();
-                }
-
-            }
-        }
-        private bool frontBody;
-        public bool FrontBody
-        {
-            get { return frontBody; }
-            set
-            {
-                frontBody = value;
-                if (ModelIsVisible)
-                {
-                    GenerateModel();
-                }
-
-            }
-        }
-        private bool backBody;
-        public bool BackBody
-        {
-            get { return backBody; }
-            set
-            {
-                backBody = value;
-                if (ModelIsVisible)
-                {
-                    GenerateModel();
-                }
-
-            }
-        }
-        private void GenerateModel()
-        {
-          
             try
             {
                 // clear out existing 3d model
@@ -243,12 +242,16 @@ namespace Barnacle.RibbedFuselage.ViewModels
                         List<double> ribXs = new List<double>();
                         List<Dimension> topDims = new List<Dimension>();
                         List<Dimension> sideDims = new List<Dimension>();
-
+                        // first get the x positins of the ribs and the height and width at that position from the top and side views.
+                        // generate the profile points for the ribs at the same time.
                         for (int i = 0; i < fuselageData.Ribs.Count; i++)
                         {
                             double x = fuselageData.Markers[i].Position;
 
                             RibImageDetailsModel cp;
+                            cp = fuselageData.Ribs[i];
+                            cp.GenerateProfilePoints();
+                            /*
                             if (fuselageData.Ribs[i].Dirty)
                             {
                                 cp = fuselageData.Ribs[i].Clone();
@@ -258,56 +261,62 @@ namespace Barnacle.RibbedFuselage.ViewModels
                             {
                                 cp = fuselageData.Ribs[i];
                             }
-                          /*
-                           *string cpPath = cp.GenPath();
-                            if (autoFit && theRibs.Count > 0)
-                            {
-                                string prevPath = theRibs[theRibs.Count - 1].PathText;
-
-                                if (cpPath == prevPath)
-                                {
-                                    if (x - prevX > 4)
-                                    {
-                                        double nx = prevX + 1;
-                                        while (nx < x)
-                                        {
-                                            RibAndPlanEditControl nr = RibManager.Ribs[i].Clone(false);
-                                            // nr.GenerateProfilePoints();
-                                            theRibs.Add(nr);
-                                            ribXs.Add(nx);
-                                            Dimension dp1 = TopView.GetUpperAndLowerPoints((int)nx);
-                                            topDims.Add(dp1);
-                                            dp1 = SideView.GetUpperAndLowerPoints((int)nx);
-                                            sideDims.Add(dp1);
-                                            nx += 4;
-                                        }
-                                    }
-                                }
-                            }
                             */
+                            /*
+                             *string cpPath = cp.GenPath();
+                              if (autoFit && theRibs.Count > 0)
+                              {
+                                  string prevPath = theRibs[theRibs.Count - 1].PathText;
+
+                                  if (cpPath == prevPath)
+                                  {
+                                      if (x - prevX > 4)
+                                      {
+                                          double nx = prevX + 1;
+                                          while (nx < x)
+                                          {
+                                              RibAndPlanEditControl nr = RibManager.Ribs[i].Clone(false);
+                                              // nr.GenerateProfilePoints();
+                                              theRibs.Add(nr);
+                                              ribXs.Add(nx);
+                                              Dimension dp1 = TopView.GetUpperAndLowerPoints((int)nx);
+                                              topDims.Add(dp1);
+                                              dp1 = SideView.GetUpperAndLowerPoints((int)nx);
+                                              sideDims.Add(dp1);
+                                              nx += 4;
+                                          }
+                                      }
+                                  }
+                              }
+                              */
                             theRibs.Add(cp);
-                            ribXs.Add(x);
+
                             var dp = topViewFlexiPath.GetUpperAndLowerPoints(x);
-                            topDims.Add(new Dimension(new System.Windows.Point(dp.X,dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+                            topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
                             dp = sideViewFlexiPath.GetUpperAndLowerPoints(x);
                             sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+                            ribXs.Add(dp.X);
                             prevX = x;
                         }
-
+                        // check that all the ribs have profile points. If they don't we can't generate the shape.
                         for (int i = 0; i < theRibs.Count; i++)
                         {
-                            if (theRibs[i].ProfilePoints.Count == 0)
+                            if (theRibs[i].ProfilePoints == null || theRibs[i].ProfilePoints.Count == 0)
                             {
                                 okToGenerate = false;
                                 break;
                             }
                         }
+
                         // do we have enough data to construct the model
                         if (theRibs.Count > 1 && okToGenerate)
                         {
                             // theRibs[0].GenerateProfilePoints();
                             int facesPerRib = theRibs[0].ProfilePoints.Count;
+
+                            // the indices of all the points generated for the shape
                             int[,] ribvertices = new int[theRibs.Count, facesPerRib];
+
                             // there should be a marker and hence a dimension for every rib.
                             // If ther isn't then somethins wrong
                             if (theRibs.Count != topDims.Count)
@@ -322,6 +331,8 @@ namespace Barnacle.RibbedFuselage.ViewModels
                                 // assume its whole model
                                 int start = 0;
                                 int end = facesPerRib;
+
+                                // are we only doing the front or back halves
                                 if (frontBody)
                                 {
                                     end = facesPerRib / 2;
@@ -331,8 +342,12 @@ namespace Barnacle.RibbedFuselage.ViewModels
                                     start = facesPerRib / 2;
                                 }
 
+                                // we need to record the left and right edge points so we can close them later
                                 List<PointF> leftEdge = new List<PointF>();
                                 List<PointF> rightEdge = new List<PointF>();
+
+                                // go through all the profile points for all the ribs,
+                                // converting to a 3d position
                                 double x = GetXmm(ribXs[0]);
                                 double leftx = x;
                                 double rightx = x;
@@ -341,7 +356,7 @@ namespace Barnacle.RibbedFuselage.ViewModels
                                 for (int i = 0; i < theRibs.Count; i++)
                                 {
                                     x = GetXmm(ribXs[i]);
-                                    //
+                                    // if this is the last rib cunt it as the right edge
                                     if (i == theRibs.Count - 1)
                                     {
                                         rightx = x;
@@ -379,6 +394,10 @@ namespace Barnacle.RibbedFuselage.ViewModels
                                     }
                                 }
                                 facesPerRib = leftEdge.Count;
+
+                                // Vertices now has all the points.
+                                // ribvertices has a row for each rib, and its columns are the indices of the 3d points
+                                // So now add triangle faces for consecutive pairs of points on each rib and the one after it.
                                 for (int ribIndex = 0; ribIndex < theRibs.Count - 1; ribIndex++)
                                 {
                                     for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
@@ -412,67 +431,15 @@ namespace Barnacle.RibbedFuselage.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "GenerateSkin");
+                System.Windows.MessageBox.Show(ex.Message, "GenerateSkin");
                 throw ex;
             }
         }
 
-        private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)
+        internal void HomeClick(object sender, RoutedEventArgs e)
         {
-            TriangulationPolygon ply = new TriangulationPolygon();
-
-            ply.Points = points.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(xo, yo + t.Points[0].X, z + t.Points[0].Y);
-                int c1 = AddVertice(xo, yo + t.Points[1].X, z + t.Points[1].Y);
-                int c2 = AddVertice(xo, yo + t.Points[2].X, z + t.Points[2].Y);
-                if (invert)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
-            }
+            base.Home_Click(sender, e);
         }
-
-
-        public String TopImage
-        {
-            get { return topImage; }
-            set
-            {
-                if (topImage != value)
-                {
-                    topImage = value;
-                    FuselageData?.SetTopImage(topImage);
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public string TopPath
-        {
-            get { return topPath; }
-            set
-            {
-                if (string.Compare(topPath, value) != 0)
-                {
-                    topPath = value;
-                    FuselageData.SetTopPath(topPath);
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool ModelIsVisible { get; set; }
 
         public void Load()
         {
@@ -500,7 +467,7 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    System.Windows.MessageBox.Show(ex.Message);
                 }
             }
         }
@@ -524,6 +491,61 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 Write(filePath);
                 dirty = false;
             }
+        }
+
+        internal List<LetterMarker> GetMarkers()
+        {
+            List<LetterMarker> res = new List<LetterMarker>();
+            int nextY = 10;
+            foreach (MarkerModel m in fuselageData.Markers)
+            {
+                LetterMarker lm = new LetterMarker(m.Name, new System.Windows.Point(m.Position, nextY));
+                res.Add(lm);
+                nextY = 40 - nextY;
+            }
+            return res;
+        }
+
+        internal double GetXmm(double position)
+        {
+            double dpi = HorizontalResolution;
+            double posInches = position / dpi;
+
+            return InchesToMM(posInches);
+        }
+
+        internal double GetYmm(double position)
+        {
+            double dpi = VerticalResolution;
+            double posInches = position / dpi;
+
+            return InchesToMM(posInches);
+        }
+
+        internal void MoveMarker(string s, double x, bool finishedMove)
+        {
+            if (finishedMove)
+            {
+                foreach (MarkerModel m in fuselageData.Markers)
+                {
+                    if (m.Name == s)
+                    {
+                        m.Position = (double)x;
+                        break;
+                    }
+                }
+                // regenerate the 3d fuselage
+                if (ModelIsVisible)
+                {
+                    GenerateModel();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private double InchesToMM(double x)
+        {
+            return x * 25.4;
         }
 
         private void NextRib()
@@ -619,6 +641,60 @@ namespace Barnacle.RibbedFuselage.ViewModels
                 filePath = saveFileDialog.FileName;
                 dirty = false;
             }
+        }
+
+        private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
+
+            ply.Points = points.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(xo, yo + t.Points[0].X, z + t.Points[0].Y);
+                int c1 = AddVertice(xo, yo + t.Points[1].X, z + t.Points[1].Y);
+                int c2 = AddVertice(xo, yo + t.Points[2].X, z + t.Points[2].Y);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
+
+        public void UpdateDisplay()
+        {
+            Redisplay();
+            ModelGroup.Children.Add(GetFuselageModel());
+            NotifyPropertyChanged("CameraPos");
+        }
+
+        protected GeometryModel3D GetFuselageModel()
+        {
+            MeshGeometry3D mesh = new MeshGeometry3D();
+            mesh.Positions = Vertices;
+            mesh.TriangleIndices = Faces;
+            mesh.Normals = null;
+            GeometryModel3D gm = new GeometryModel3D();
+            gm.Geometry = mesh;
+
+            DiffuseMaterial mt = new DiffuseMaterial();
+            mt.Color = meshColour;
+            mt.Brush = new SolidColorBrush(meshColour);
+            gm.Material = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = Colors.CornflowerBlue;
+            mtb.Brush = new SolidColorBrush(Colors.Green);
+            gm.BackMaterial = mtb;
+
+            return gm;
         }
 
         private void Write(string filePath)

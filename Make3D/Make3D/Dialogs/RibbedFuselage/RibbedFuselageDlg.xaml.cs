@@ -6,13 +6,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
 {
     /// <summary>
     /// Interaction logic for RibbedFuselageDlg.xaml
     /// </summary>
-    public partial class RibbedFuselageDlg : BaseModellerDialog
+    public partial class RibbedFuselageDlg
     {
         private FuselageViewModel vm;
 
@@ -26,6 +28,7 @@ namespace Barnacle.Dialogs
             SidePathEditor.OnFlexiPathTextChanged = SidePathChanged;
             vm = this.DataContext as FuselageViewModel;
             vm.PropertyChanged += Vm_PropertyChanged;
+            vm.ModelGroup = MyModelGroup;
         }
 
         private void Vm_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -166,6 +169,8 @@ namespace Barnacle.Dialogs
                 if (tc.SelectedIndex == 3)
                 {
                     vm.ModelIsVisible = true;
+                    vm.GenerateModel();
+                    vm.UpdateDisplay();
                 }
                 else
                 {
@@ -188,6 +193,11 @@ namespace Barnacle.Dialogs
                     CopyPathToSideView();
                 }
             }
+        }
+
+        private void Dialog_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateCameraPos();
         }
     }
 }
