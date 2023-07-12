@@ -217,6 +217,7 @@ namespace Barnacle.RibbedFuselage.Models
             {
                 RibImageDetailsModel selectedRib = Ribs[ribNumber];
                 double selectPos = FindMarkerPos(selectedRib.Name);
+                int selectedMarkerIndex = FindMarkerIndex(selectedRib.Name);
                 double clonePos = selectPos + defaultRibSpacing;
                 RibImageDetailsModel nextRib = null;
                 if (ribNumber < Ribs.Count - 1)
@@ -245,7 +246,15 @@ namespace Barnacle.RibbedFuselage.Models
                 MarkerModel marker = new MarkerModel();
                 marker.Name = rib.Name;
                 marker.Position = clonePos;
-                markers.Add(marker);
+                if (selectedMarkerIndex != -1)
+                { 
+                    
+                    markers.Insert(selectedMarkerIndex + 1, marker);
+                }
+                else
+                {
+                    markers.Add(marker);
+                }
 
             }
             return rib;
@@ -263,6 +272,19 @@ namespace Barnacle.RibbedFuselage.Models
             return 0.0;
         }
 
+        private int FindMarkerIndex(string name)
+        {
+            int res =  0;
+            foreach (MarkerModel mk in markers)
+            {
+                if (mk.Name == name)
+                {
+                    return res;
+                }
+                res++;
+            }
+            return -1;
+        }
         public void RenameAllRibs()
         {
             if (Ribs.Count > 0)
@@ -408,6 +430,20 @@ namespace Barnacle.RibbedFuselage.Models
             }
             doc.AppendChild(docNode);
             doc.Save(f);
+        }
+
+        internal void ResetMarkerPositions()
+        {
+            int mc = markers.Count-1;
+            if ( mc > 0)
+            {
+                double md = 1.0 / mc;
+                
+                for ( int i =0; i < markers.Count;i++)
+                {
+                    markers[i].Position = (double)i *md;
+                }
+            }
         }
     }
 }

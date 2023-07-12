@@ -10,7 +10,7 @@ using System.Xml;
 
 namespace Barnacle.RibbedFuselage
 {
-    internal class ImageDetailsModel : INotifyPropertyChanged
+    public class ImageDetailsModel : INotifyPropertyChanged
     {
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
@@ -82,14 +82,7 @@ namespace Barnacle.RibbedFuselage
             }
         }
 
-        public EditorSettingsModel EditorSettings
-        {
-            get => default;
-            set
-            {
-            }
-        }
-
+        
         private string displayFileName;
 
         public event PropertyChangedEventHandler PropertyChanged;

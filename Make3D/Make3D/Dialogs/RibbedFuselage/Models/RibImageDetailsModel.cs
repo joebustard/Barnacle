@@ -10,7 +10,7 @@ using System.Xml;
 
 namespace Barnacle.Dialogs.RibbedFuselage.Models
 {
-    internal class RibImageDetailsModel : ImageDetailsModel
+    public  class RibImageDetailsModel : ImageDetailsModel
     {
         public override void Load(XmlElement ele)
         {

@@ -180,6 +180,7 @@ namespace Barnacle.Dialogs
                 {
                     markers = value;
                     convertMarkerPositionToScreen = true;
+                    UpdateDisplay();
                 }
             }
         }

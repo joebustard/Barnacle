@@ -776,7 +776,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        protected int AddVertice(double x, double y, double z)
+        public int AddVertice(double x, double y, double z)
         {
             int res = AddVertice(new Point3D(x, y, z));
             return res;
@@ -889,7 +889,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        protected void ClearShape()
+        public void ClearShape()
         {
             spaceTreeRoot = null;
             Vertices.Clear();
@@ -996,7 +996,7 @@ namespace Barnacle.Dialogs
         protected virtual void Home_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeFront();
-            SetCameraDistance();
+           // SetCameraDistance();
             UpdateCameraPos();
         }
 

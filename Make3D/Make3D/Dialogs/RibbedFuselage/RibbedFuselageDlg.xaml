@@ -5,14 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         xmlns:ctrls="clr-namespace:Barnacle.UserControls"
-        xmlns:ViewModels="clr-namespace:Barnacle.RibbedFuselage.ViewModels"
+       
         xmlns:Views="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Views"
         xmlns:Models="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Models"
         mc:Ignorable="d"
         Title="Ribbed Fuselage" Height="450" Width="800" Loaded="Dialog_Loaded">
-    <Window.DataContext>
-        <ViewModels:FuselageViewModel />
-    </Window.DataContext>
+
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -302,9 +300,9 @@
                                      VerticalContentAlignment="Center"
                                      Width="60" Height="30" Margin="4,0,0,0" />
                         </StackPanel>
-                        <!--
-                        <Button x:Name="ResetMarkers" Click="ResetMarkers_Click" Content="Reset Markers" ToolTip="Spread markers evenly"  Margin="0,4,0,0" />
-                  -->
+
+                        <Button x:Name="ResetMarkers" Command="{Binding RibCommand}" CommandParameter="Reset" Content="Reset Markers" ToolTip="Spread markers evenly"  Margin="0,4,0,0" />
+                  
                     </UniformGrid>
                     <TabControl Grid.Column="1"
                                 Grid.Row="2"

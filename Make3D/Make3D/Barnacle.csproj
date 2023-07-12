@@ -316,7 +316,6 @@
     <Compile Include="Dialogs\RibbedFuselage\Models\EditorSettingsModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\FuselageModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\ImageDetailsModel.cs" />
-    <Compile Include="Dialogs\RibbedFuselage\ViewModels\FuselageViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControlViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml.cs">
       <DependentUpon>FlexiPathEditorControl.xaml</DependentUpon>
@@ -1189,6 +1188,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Dialogs\RibbedFuselage\ViewModels\" />
     <Folder Include="Dialogs\TankTrack\Links\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
