@@ -267,6 +267,14 @@
                     Command="{Binding PastePathCommand}"
                     Content="Paste"
                     Style="{StaticResource SmallButton}" />
+                <Label VerticalAlignment="Center" Margin="16,0,0,0" Content="Presets" />
+                <ComboBox  Margin="8,0,0,0" Width="100" ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" />
+                <Button
+                    Width="50"
+                    Margin="2,2,2,2"
+                    Command="{Binding ApplyPresetCommand}"
+                    Content="Apply"
+                    Style="{StaticResource SmallButton}" />
             </StackPanel>
         </Grid>
     </Border>

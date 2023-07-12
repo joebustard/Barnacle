@@ -111,6 +111,51 @@ namespace Barnacle.UserControls
             pointsDirty = true;
             CreatePens();
             CurrentPen = 2;
+            presets = new Dictionary<string, string>();
+            PresetNames = new List<string>();
+            LoadPresets();
+        }
+
+        private Dictionary<String, string> presets;
+
+        private void LoadPresets()
+        {
+            // can have two sets of presets
+            // one in the installed data and the other user defined.
+            try
+            {
+                string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PathPresets.txt";
+                LoadPresetFile(dataPath);
+                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\"
+                            + AppDomain.CurrentDomain.FriendlyName + "\\PathPresets.txt";
+                LoadPresetFile(dataPath);
+                foreach (String s in presets.Keys)
+                {
+                    PresetNames.Add(s);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void LoadPresetFile(string dataPath)
+        {
+            if (File.Exists(dataPath))
+            {
+                String[] lines = System.IO.File.ReadAllLines(dataPath);
+                if (lines.GetLength(0) > 0)
+                {
+                    for (int i = 0; i < lines.GetLength(0); i++)
+                    {
+                        string[] words = lines[i].Split('=');
+                        if (words.GetLength(0) == 2)
+                        {
+                            presets[words[0]] = words[1];
+                        }
+                    }
+                }
+            }
         }
 
         public int CurrentPen { get; set; }
@@ -697,7 +742,7 @@ namespace Barnacle.UserControls
         {
             flexiPath.FromString(s);
             PathText = flexiPath.ToPath(absolutePaths);
-            if (s != "" && resetMode )
+            if (s != "" && resetMode)
             {
                 selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
@@ -769,6 +814,7 @@ namespace Barnacle.UserControls
         }
 
         public bool PointsDirty { get; internal set; }
+        public List<string> PresetNames { get; set; }
 
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {

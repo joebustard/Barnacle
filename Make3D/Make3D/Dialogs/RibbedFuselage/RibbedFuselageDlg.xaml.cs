@@ -173,7 +173,7 @@ namespace Barnacle.Dialogs
                 {
                     topPath = value;
                     fuselageData.SetTopPath(topPath);
-                    NotifyPropertyChanged();
+
                     if (topPath != TopPathEditor.AbsolutePathString)
                     {
                         TopPathEditor.FromString(topPath, false);
@@ -185,7 +185,7 @@ namespace Barnacle.Dialogs
 
         internal double HorizontalResolution { get; set; }
 
-        public  ObservableCollection<RibImageDetailsModel> Ribs
+        public ObservableCollection<RibImageDetailsModel> Ribs
         {
             get { return fuselageData.Ribs; }
         }
@@ -362,10 +362,6 @@ namespace Barnacle.Dialogs
 
                                             v = (double)pnt.Y * (double)sideDims[i].Height;
                                             double y = -GetYmm(v + sideDims[i].P1.Y);
-                                            if (Double.IsInfinity(y))
-                                            {
-                                                bool imf = true;
-                                            }
                                             vert = AddVertice(Vertices, x, y, z);
                                             ribvertices[i, vindex] = vert;
                                             vindex++;
@@ -402,6 +398,7 @@ namespace Barnacle.Dialogs
                                         int v2 = ribvertices[ribIndex, ind2];
                                         int v3 = ribvertices[ribIndex + 1, pIndex];
                                         int v4 = ribvertices[ribIndex + 1, ind2];
+
                                         Faces.Add(v1);
                                         Faces.Add(v2);
                                         Faces.Add(v3);
@@ -515,8 +512,12 @@ namespace Barnacle.Dialogs
                         break;
                     }
                 }
-                // regenerate the 3d fuselage
-                UpdateModel();
+                if (finishedMove)
+                {
+                    // regenerate the 3d fuselage
+                    UpdateModel();
+                    Redisplay();
+                }
             }
         }
 
@@ -574,7 +575,7 @@ namespace Barnacle.Dialogs
                             RibImageDetailsModel rib = fuselageData.AddRib();
                             NotifyPropertyChanged("Ribs");
                             SelectedRib = rib;
-                            fuselageData.AddMarker(rib.Name);
+                            fuselageData.AddMarker(rib);
                             UpdateMarkers();
                             UpdateModel();
                         }
@@ -666,7 +667,6 @@ namespace Barnacle.Dialogs
             fuselageData.ResetMarkerPositions();
             TopView.Markers = GetMarkers();
             SideView.Markers = GetMarkers();
-
         }
 
         private void RibList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -699,7 +699,7 @@ namespace Barnacle.Dialogs
             MoveMarker(s, p.X, finishedMove);
             if (finishedMove)
             {
-                GenerateModel();
+                UpdateModel();
                 Redisplay();
             }
         }
@@ -717,8 +717,7 @@ namespace Barnacle.Dialogs
                 if (tc.SelectedIndex == 3)
                 {
                     ModelIsVisible = true;
-                    GenerateModel();
-                    Redisplay();
+                    UpdateModel();
                 }
                 else
                 {
@@ -737,7 +736,7 @@ namespace Barnacle.Dialogs
             MoveMarker(s, p.X, finishedMove);
             if (finishedMove)
             {
-                GenerateModel();
+                UpdateModel();
                 Redisplay();
             }
         }
@@ -745,8 +744,7 @@ namespace Barnacle.Dialogs
         private void TopPathChanged(string pathText)
         {
             TopPath = pathText;
-            GenerateModel();
-            Redisplay();
+            UpdateModel();
         }
 
         private void TriangulatePerimiter(List<PointF> points, double xo, double yo, double z, bool invert)
@@ -757,9 +755,9 @@ namespace Barnacle.Dialogs
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(xo, yo + t.Points[0].X, z + t.Points[0].Y);
-                int c1 = AddVertice(xo, yo + t.Points[1].X, z + t.Points[1].Y);
-                int c2 = AddVertice(xo, yo + t.Points[2].X, z + t.Points[2].Y);
+                int c0 = AddVertice(Vertices, xo, yo + t.Points[0].X, z + t.Points[0].Y);
+                int c1 = AddVertice(Vertices, xo, yo + t.Points[1].X, z + t.Points[1].Y);
+                int c2 = AddVertice(Vertices, xo, yo + t.Points[2].X, z + t.Points[2].Y);
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -797,15 +795,13 @@ namespace Barnacle.Dialogs
             {
                 case "Markers":
                     {
-                        TopView.Markers = GetMarkers();
-                        SideView.Markers = GetMarkers();
+                        UpdateMarkers();
                     }
                     break;
 
                 case "Model":
                     {
-                        GenerateModel();
-                        Redisplay();
+                        UpdateModel();
                     }
                     break;
 

@@ -92,11 +92,12 @@ namespace Barnacle.RibbedFuselage.Models
 
         private double nextNewMakerPosition;
 
-        internal void AddMarker(string name)
+        internal void AddMarker(RibImageDetailsModel rib)
         {
             MarkerModel marker = new MarkerModel();
-            marker.Name = name;
+            marker.Name = rib.Name;
             marker.Position = nextNewMakerPosition;
+            marker.AssociatedRib = rib;
             markers.Add(marker);
             nextNewMakerPosition += defaultMarkerSpacing;
             if (nextNewMakerPosition > 1.0)
@@ -227,7 +228,6 @@ namespace Barnacle.RibbedFuselage.Models
                     clonePos = selectPos + (nextRibPosition - selectPos) / 2.0;
                 }
 
-
                 rib = selectedRib.Clone();
                 string nameStart = selectedRib.Name.Substring(0, 1);
                 int subName = 0;
@@ -242,13 +242,12 @@ namespace Barnacle.RibbedFuselage.Models
 
                 Ribs.Insert(ribNumber + 1, rib);
 
-                RenameRibsAfterInsertions(nameStart);
                 MarkerModel marker = new MarkerModel();
                 marker.Name = rib.Name;
+                marker.AssociatedRib = rib;
                 marker.Position = clonePos;
                 if (selectedMarkerIndex != -1)
-                { 
-                    
+                {
                     markers.Insert(selectedMarkerIndex + 1, marker);
                 }
                 else
@@ -256,8 +255,21 @@ namespace Barnacle.RibbedFuselage.Models
                     markers.Add(marker);
                 }
 
+                RenameRibsAfterInsertions(nameStart);
+                RenameMarkers();
             }
             return rib;
+        }
+
+        private void RenameMarkers()
+        {
+            foreach (MarkerModel mk in Markers)
+            {
+                if (mk.AssociatedRib != null)
+                {
+                    mk.Name = mk.AssociatedRib.Name;
+                }
+            }
         }
 
         private double FindMarkerPos(string name)
@@ -274,7 +286,7 @@ namespace Barnacle.RibbedFuselage.Models
 
         private int FindMarkerIndex(string name)
         {
-            int res =  0;
+            int res = 0;
             foreach (MarkerModel mk in markers)
             {
                 if (mk.Name == name)
@@ -285,6 +297,7 @@ namespace Barnacle.RibbedFuselage.Models
             }
             return -1;
         }
+
         public void RenameAllRibs()
         {
             if (Ribs.Count > 0)
@@ -333,6 +346,14 @@ namespace Barnacle.RibbedFuselage.Models
                 {
                     Ribs.Remove(selectedRib);
                     deleted = true;
+                    for (int i = 0; i < Markers.Count; i++)
+                    {
+                        if (Markers[i].AssociatedRib == selectedRib)
+                        {
+                            Markers.Remove(Markers[i]);
+                            break;
+                        }
+                    }
                 }
             }
 
@@ -386,6 +407,13 @@ namespace Barnacle.RibbedFuselage.Models
                     XmlElement el = nd as XmlElement;
                     MarkerModel mk = new MarkerModel();
                     mk.Load(el);
+                    foreach (RibImageDetailsModel rib in ribs)
+                    {
+                        if (rib.Name == mk.Name)
+                        {
+                            mk.AssociatedRib = rib;
+                        }
+                    }
                     markers.Add(mk);
                 }
             }
@@ -434,14 +462,14 @@ namespace Barnacle.RibbedFuselage.Models
 
         internal void ResetMarkerPositions()
         {
-            int mc = markers.Count-1;
-            if ( mc > 0)
+            int mc = markers.Count - 1;
+            if (mc > 0)
             {
                 double md = 1.0 / mc;
-                
-                for ( int i =0; i < markers.Count;i++)
+
+                for (int i = 0; i < markers.Count; i++)
                 {
-                    markers[i].Position = (double)i *md;
+                    markers[i].Position = (double)i * md;
                 }
             }
         }

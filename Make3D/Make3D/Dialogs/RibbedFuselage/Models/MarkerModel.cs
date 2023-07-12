@@ -32,6 +32,13 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             get;
             set;
         }
+
+        public RibImageDetailsModel AssociatedRib
+        {
+            get;
+            set;
+        }
+
         public void Load(XmlElement ele)
         {
             if (ele.HasAttribute("Name"))
@@ -49,7 +56,6 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
         {
             ele.SetAttribute("Name", Name);
             ele.SetAttribute("Position", Position.ToString());
-
         }
     }
 }

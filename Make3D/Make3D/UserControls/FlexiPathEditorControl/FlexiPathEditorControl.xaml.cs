@@ -133,6 +133,19 @@ namespace Barnacle.UserControls
             }
         }
 
+        public List<String> PresetNames
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.PresetNames;
+                }
+                else
+                    return null;
+            }
+        }
+
         public string PathString
         {
             get { return vm?.PathText ?? ""; }
@@ -140,7 +153,11 @@ namespace Barnacle.UserControls
 
         public string AbsolutePathString
         {
-            get { return vm?.AbsPathText() ?? ""; }
+            get
+            {
+                pathText = vm?.AbsPathText() ?? "";
+                return pathText;
+            }
         }
 
         internal string GetPath()
@@ -152,6 +169,11 @@ namespace Barnacle.UserControls
         {
             pathText = v;
             vm?.SetPath(v);
+        }
+
+        internal void UpdatePath(string v)
+        {
+            pathText = v;
         }
 
         private string defaultImagePath;
@@ -214,8 +236,16 @@ namespace Barnacle.UserControls
                 double oy = double.NaN;
                 if (vm.SelectedPoint != -1)
                 {
-                    ox = vm.Points[vm.SelectedPoint].X;
-                    oy = vm.Points[vm.SelectedPoint].Y;
+                    if (vm.SelectedPoint < vm.Points.Count)
+
+                    {
+                        ox = vm.Points[vm.SelectedPoint].X;
+                        oy = vm.Points[vm.SelectedPoint].Y;
+                    }
+                    else
+                    {
+                        vm.SelectedPoint = -1;
+                    }
                 }
 
                 double rad = 6;

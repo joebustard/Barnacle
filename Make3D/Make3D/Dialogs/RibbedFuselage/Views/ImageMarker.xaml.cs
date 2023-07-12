@@ -399,9 +399,7 @@ namespace Barnacle.Dialogs
 
             foreach (LetterMarker mk in markers)
             {
-                
                 mk.Position = MarkerPositionToScreen(mk.Position, renderScale);
-                
             }
         }
 
@@ -487,7 +485,6 @@ namespace Barnacle.Dialogs
         {
             HeaderText = v;
         }
-
 
         internal void SetMarker(string s, double x)
         {
@@ -592,7 +589,7 @@ namespace Barnacle.Dialogs
 
             elements.Add(br);
             br.ToolTip = s;
-            AddText((int)(x - ((int)txtWidth / 2) ), (int)(y - 8 + by), c, System.Windows.Media.Colors.Black, tag, s);
+            AddText((int)(x - ((int)txtWidth / 2)), (int)(y - 8 + by), c, System.Windows.Media.Colors.Black, tag, s);
         }
 
         private void AddLine(int v1, int v2, int v3, int v4, string s = "")
@@ -673,6 +670,10 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private double previousMarkerLimit;
+
+        private double nextMarkerLimit;
+
         private void Br_MouseDown(object sender, MouseButtonEventArgs e)
         {
             pinSelected = false;
@@ -700,6 +701,31 @@ namespace Barnacle.Dialogs
                 {
                     MessageBox.Show($" ImageMarker br_MouseDown sender type {sender.ToString()}");
                 }
+                if (selectedMarker != null)
+                {
+                    SetMarkerLimits(selectedMarker);
+                }
+            }
+        }
+
+        private void SetMarkerLimits(LetterMarker mk)
+        {
+            previousMarkerLimit = LeftLimit;
+            nextMarkerLimit = RightLimit;
+            for (int i = 0; i < Markers.Count; i++)
+            {
+                if (selectedMarker == Markers[i])
+                {
+                    if (i > 0)
+                    {
+                        previousMarkerLimit = Markers[i - 1].Position.X;
+                    }
+
+                    if (i < Markers.Count - 1)
+                    {
+                        nextMarkerLimit = Markers[i + 1].Position.X;
+                    }
+                }
             }
         }
 
@@ -711,7 +737,7 @@ namespace Barnacle.Dialogs
                 double dx = p.X - oldPoint.X;
                 if (Math.Abs(dx) >= 1)
                 {
-                    if (p.X >= leftLimit && p.X <= rightLimit)
+                    if (p.X >= leftLimit && p.X <= rightLimit && p.X > previousMarkerLimit && p.X < nextMarkerLimit)
                     {
                         notifyMoved = true;
                         selectedMarker.Position = new System.Windows.Point((int)p.X, selectedMarker.Position.Y);
@@ -766,6 +792,7 @@ namespace Barnacle.Dialogs
             np.X = (np.X / outlineBounds.Width());
             return np;
         }
+
         internal System.Drawing.Point ScreenPoint(PointF p, double sc)
         {
             System.Drawing.Point np = new System.Drawing.Point();
@@ -779,12 +806,13 @@ namespace Barnacle.Dialogs
             System.Windows.Point np = new System.Windows.Point();
             //np.X = (int)((p.X - (float)outlineBounds.Left) * sc) + XOutlineOffset;
             np.Y = (int)p.Y;
-            
+
             np.X = (int)(p.X * outlineBounds.Width());
             np.X = np.X + XOutlineOffset;
             np.Y = (int)p.Y;
             return np;
         }
+
         private double CalcOutlineScale()
         {
             double winWidth = mainCanvas.ActualWidth;
