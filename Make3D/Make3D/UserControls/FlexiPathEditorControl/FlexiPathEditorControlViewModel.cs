@@ -20,54 +20,47 @@ namespace Barnacle.UserControls
 {
     public class FlexiPathEditorControlViewModel : INotifyPropertyChanged
     {
+        private bool absolutePaths;
         private BitmapImage backgroundImage;
         private bool canCNVDouble;
 
+        private string defaultImagePath;
+        private bool fixedEndPath = false;
+        private Point fixedPathEndPoint;
+        private Point fixedPathMidPoint;
+        private Point fixedPathStartPoint;
+        private Point fixedPolarGridCentre;
         private FlexiPath flexiPath;
+        private double gridHeight;
         private List<Shape> gridMarkers;
+        private GridSettings gridSettings;
+        private double gridWidth;
         private double gridX = 0;
         private double gridY = 0;
 
+        private string imagePath;
         private bool lineShape;
         private bool moving;
+        private bool openEndedPath;
+        private bool orthoLocked;
         private string pathText;
+        private List<PenSetting> Pens;
+        private PointGrid pointGrid;
+        private bool pointsDirty;
+        private PolarGrid polarGrid;
         private ObservableCollection<FlexiPoint> polyPoints; // SHOULD BE CALLED FLEXIPAHCONTROLPOINTS
         private string positionText;
+        private Dictionary<String, Preset> presets;
+        private RectangularGrid rectGrid;
         private double scale;
         private DpiScale screenDpi;
 
         private int selectedPoint;
-        private string defaultImagePath;
-        private List<PenSetting> Pens;
-
-        public string DefaultImagePath
-        {
-            get { return defaultImagePath; }
-            set
-            {
-                defaultImagePath = value;
-            }
-        }
+        private string selectedPreset;
 
         private SelectionModeType selectionMode;
 
-        private bool absolutePaths;
-
-        public bool AbsolutePaths
-        {
-            get { return absolutePaths; }
-            set
-            {
-                absolutePaths = value;
-            }
-        }
-
-        private bool pointsDirty;
-
-        public void SetOpenEnded(bool open)
-        {
-            flexiPath.OpenEndedPath = open;
-        }
+        private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
 
         private bool showOrtho;
 
@@ -75,11 +68,10 @@ namespace Barnacle.UserControls
 
         private bool snap;
 
-        private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
-
         public FlexiPathEditorControlViewModel()
         {
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
+            ApplyPresetCommand = new RelayCommand(OnApplyPreset);
             AddQuadBezierCommand = new RelayCommand(OnAddQuad);
             AddSegmentCommand = new RelayCommand(OnAddSegment);
             CNVDoubleSegCommand = new RelayCommand(OnCnvDoubleSegment);
@@ -111,141 +103,11 @@ namespace Barnacle.UserControls
             pointsDirty = true;
             CreatePens();
             CurrentPen = 2;
-            presets = new Dictionary<string, string>();
+            SelectedPreset = "";
+            ShowPresets = Visibility.Visible;
+            presets = new Dictionary<string, Preset>();
             PresetNames = new List<string>();
             LoadPresets();
-        }
-
-        private Dictionary<String, string> presets;
-
-        private void LoadPresets()
-        {
-            // can have two sets of presets
-            // one in the installed data and the other user defined.
-            try
-            {
-                string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PathPresets.txt";
-                LoadPresetFile(dataPath);
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\"
-                            + AppDomain.CurrentDomain.FriendlyName + "\\PathPresets.txt";
-                LoadPresetFile(dataPath);
-                foreach (String s in presets.Keys)
-                {
-                    PresetNames.Add(s);
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void LoadPresetFile(string dataPath)
-        {
-            if (File.Exists(dataPath))
-            {
-                String[] lines = System.IO.File.ReadAllLines(dataPath);
-                if (lines.GetLength(0) > 0)
-                {
-                    for (int i = 0; i < lines.GetLength(0); i++)
-                    {
-                        string[] words = lines[i].Split('=');
-                        if (words.GetLength(0) == 2)
-                        {
-                            presets[words[0]] = words[1];
-                        }
-                    }
-                }
-            }
-        }
-
-        public int CurrentPen { get; set; }
-
-        private void CreatePens()
-        {
-            Pens = new List<PenSetting>();
-            PenSetting ps = new PenSetting(6, Brushes.Yellow, 0.5);
-            ps.DashPattern.Add(2);
-            ps.DashPattern.Add(2);
-            Pens.Add(ps);
-
-            ps = new PenSetting(6, Brushes.Yellow, 1);
-            Pens.Add(ps);
-
-            ps = new PenSetting(6, Brushes.BlueViolet, 0.5);
-            ps.DashPattern.Add(2);
-            ps.DashPattern.Add(2);
-            Pens.Add(ps);
-
-            ps = new PenSetting(6, Brushes.BlueViolet, 1);
-            Pens.Add(ps);
-        }
-
-        public PenSetting GetPen()
-        {
-            if (Pens != null && CurrentPen < Pens.Count)
-            {
-                return Pens[CurrentPen];
-            }
-            return Pens[0];
-        }
-
-        private void OnToggleOrthoLock(object obj)
-        {
-            OrthoLocked = !OrthoLocked;
-        }
-
-        private void OnGridSettings(object obj)
-        {
-            GridSettingsDlg dlg = new GridSettingsDlg();
-            dlg.Settings = gridSettings;
-            if (dlg.ShowDialog() == true)
-            {
-                rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
-                polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
-                CreateGridMarkers();
-                // force a screen refresh
-                NotifyPropertyChanged("Points");
-            }
-        }
-
-        private bool fixedEndPath = false;
-
-        public bool FixedEndPath
-        {
-            get { return fixedEndPath; }
-            set
-            {
-                if (fixedEndPath != value)
-                {
-                    fixedEndPath = value;
-                    if (fixedEndPath)
-                    {
-                        FixedEndFlexiPath fep = new FixedEndFlexiPath();
-                        if (fixedPathStartPoint != null)
-                        {
-                            fep.SetBaseSegment(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
-                            gridSettings.SetPolarCentre(fixedPolarGridCentre.X, fixedPolarGridCentre.Y);
-                        }
-                        flexiPath = fep;
-                        polyPoints = flexiPath.FlexiPoints;
-                        SelectionMode = SelectionModeType.SelectSegmentAtPoint;
-                    }
-                }
-            }
-        }
-
-        private Point fixedPolarGridCentre;
-
-        public Point FixedPolarGridCentre
-        {
-            get { return FixedPolarGridCentre; }
-            set
-            {
-                if (value != fixedPolarGridCentre)
-                {
-                    fixedPolarGridCentre = value;
-                }
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -262,11 +124,22 @@ namespace Barnacle.UserControls
             MovePath
         };
 
+        public bool AbsolutePaths
+        {
+            get { return absolutePaths; }
+            set
+            {
+                absolutePaths = value;
+            }
+        }
+
         public ICommand AddCubicBezierCommand { get; set; }
 
         public ICommand AddQuadBezierCommand { get; set; }
 
         public ICommand AddSegmentCommand { get; set; }
+
+        public RelayCommand ApplyPresetCommand { get; private set; }
 
         public BitmapImage BackgroundImage
         {
@@ -313,8 +186,20 @@ namespace Barnacle.UserControls
             }
         }
 
+        public bool ContinuousPointsNotify { get; set; } = true;
+
         public ICommand CopyPathCommand { get; set; }
 
+        public int CurrentPen { get; set; }
+
+        public string DefaultImagePath
+        {
+            get { return defaultImagePath; }
+            set
+            {
+                defaultImagePath = value;
+            }
+        }
         public ICommand DeleteSegmentCommand { get; set; }
 
         public List<System.Windows.Point> DisplayPoints
@@ -322,9 +207,43 @@ namespace Barnacle.UserControls
             get { return flexiPath.DisplayPoints(); }
         }
 
+        public bool FixedEndPath
+        {
+            get { return fixedEndPath; }
+            set
+            {
+                if (fixedEndPath != value)
+                {
+                    fixedEndPath = value;
+                    if (fixedEndPath)
+                    {
+                        FixedEndFlexiPath fep = new FixedEndFlexiPath();
+                        if (fixedPathStartPoint != null)
+                        {
+                            fep.SetBaseSegment(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
+                            gridSettings.SetPolarCentre(fixedPolarGridCentre.X, fixedPolarGridCentre.Y);
+                        }
+                        flexiPath = fep;
+                        polyPoints = flexiPath.FlexiPoints;
+                        SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                    }
+                }
+            }
+        }
+
+        public Point FixedPolarGridCentre
+        {
+            get { return FixedPolarGridCentre; }
+            set
+            {
+                if (value != fixedPolarGridCentre)
+                {
+                    fixedPolarGridCentre = value;
+                }
+            }
+        }
+
         public ICommand GridCommand { get; set; }
-        public ICommand GridSettingsCommand { get; set; }
-        public ICommand PolarGridCommand { get; set; }
 
         public List<Shape> GridMarkers
         {
@@ -341,6 +260,8 @@ namespace Barnacle.UserControls
             }
         }
 
+        public ICommand GridSettingsCommand { get; set; }
+
         public double GridX
         {
             get { return gridX; }
@@ -353,7 +274,36 @@ namespace Barnacle.UserControls
             set { gridY = value; }
         }
 
-        private bool orthoLocked;
+        public string ImagePath
+        { get { return imagePath; } }
+
+        public RelayCommand LoadImageCommand { get; }
+
+        public ICommand MovePathCommand { get; set; }
+
+        public bool OpenEndedPath
+        {
+            get { return openEndedPath; }
+            set
+            {
+                openEndedPath = value;
+                if (flexiPath != null)
+                {
+                    flexiPath.OpenEndedPath = openEndedPath;
+                    if (openEndedPath)
+                    {
+                        ShowPresets = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        ShowPresets = Visibility.Visible;
+                    }
+                }
+                NotifyPropertyChanged();
+            }
+        }
+
+        public RelayCommand OrthoLockCommand { get; set; }
 
         public bool OrthoLocked
         {
@@ -371,11 +321,6 @@ namespace Barnacle.UserControls
                 }
             }
         }
-
-        public RelayCommand LoadImageCommand { get; }
-        public RelayCommand OrthoLockCommand { get; set; }
-
-        public ICommand MovePathCommand { get; set; }
 
         public ICommand PastePathCommand { get; set; }
 
@@ -413,6 +358,10 @@ namespace Barnacle.UserControls
             }
         }
 
+        public bool PointsDirty { get; internal set; }
+
+        public ICommand PolarGridCommand { get; set; }
+
         public String PositionText
         {
             get { return positionText; }
@@ -425,6 +374,8 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
+        public List<string> PresetNames { get; set; }
 
         public ICommand ResetPathCommand { get; set; }
 
@@ -449,9 +400,6 @@ namespace Barnacle.UserControls
                 screenDpi = value;
             }
         }
-
-        private double gridWidth;
-        private double gridHeight;
 
         public int SelectedPoint
         {
@@ -478,6 +426,18 @@ namespace Barnacle.UserControls
             }
         }
 
+        public string SelectedPreset
+        {
+            get { return selectedPreset; }
+            set
+            {
+                if (value != selectedPreset)
+                {
+                    selectedPreset = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public SelectionModeType SelectionMode
         {
             get
@@ -526,21 +486,21 @@ namespace Barnacle.UserControls
                 }
             }
         }
+        private Visibility showPresets;
 
-        /*
-        public bool ShowPolyGrid
+        public Visibility ShowPresets
         {
-            get { return showGrid; }
-            set
-            {
-                if (value != showGrid)
+            get { return showPresets; }
+            set {
+
+                if (showPresets != value)
                 {
-                    showGrid = value;
+                    showPresets = value;
                     NotifyPropertyChanged();
                 }
+
             }
         }
-        */
 
         public bool Snap
         {
@@ -555,17 +515,7 @@ namespace Barnacle.UserControls
             }
         }
 
-        internal List<System.Drawing.PointF> DisplayPointsF()
-        {
-            return flexiPath.DisplayPointsF();
-        }
-
         public ICommand ZoomCommand { get; set; }
-
-        private string imagePath;
-
-        public string ImagePath
-        { get { return imagePath; } }
 
         public bool ConvertLineAtPointToBezier(System.Windows.Point position, bool cubic)
         {
@@ -613,6 +563,27 @@ namespace Barnacle.UserControls
             return deleted;
         }
 
+        public PenSetting GetPen()
+        {
+            if (Pens != null && CurrentPen < Pens.Count)
+            {
+                return Pens[CurrentPen];
+            }
+            return Pens[0];
+        }
+
+        public void LoadImage(string f)
+        {
+            Uri fileUri = new Uri(f);
+            BitmapImage bmi = new BitmapImage();
+            bmi.BeginInit();
+            bmi.UriSource = fileUri;
+            bmi.EndInit();
+            BackgroundImage = bmi;
+            imagePath = f;
+            NotifyPropertyChanged("BackgroundImage");
+        }
+
         public bool MouseMove(MouseEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;
@@ -624,82 +595,6 @@ namespace Barnacle.UserControls
             {
                 updateRequired = NormalPathMove(e, position, updateRequired);
             }
-            return updateRequired;
-        }
-
-        private bool NormalPathMove(MouseEventArgs e, Point position, bool updateRequired)
-        {
-            System.Windows.Point snappedPos = SnapPositionToMM(position);
-            PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
-            if (selectedPoint != -1)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed && moving)
-                {
-                    // polyPoints[selectedPoint].X = position.X;
-                    // polyPoints[selectedPoint].Y = position.Y;
-                    flexiPath.SetPointPos(selectedPoint, snappedPos);
-                    PathText = flexiPath.ToPath(absolutePaths);
-                    updateRequired = true;
-                }
-                else
-                {
-                    moving = false;
-                }
-            }
-
-            return updateRequired;
-        }
-
-        private bool FixedEndPathMove(MouseEventArgs e, Point position, bool updateRequired)
-        {
-            if (selectedPoint != -1)
-            {
-                if (e.LeftButton == MouseButtonState.Pressed && moving)
-                {
-                    if (selectedPoint == 0)
-                    {
-                        if (position.Y > ToPixelY(polyPoints[polyPoints.Count - 1].Y))
-                        {
-                            position.Y = ToPixelY(polyPoints[polyPoints.Count - 1].Y);
-                        }
-                        position.X = ToPixelX(polyPoints[selectedPoint].X);
-
-                        System.Windows.Point snappedPos = SnapPositionToMM(position);
-                        snappedPos.X = polyPoints[selectedPoint].X;
-                        flexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PointsDirty = true;
-                    }
-                    else if (selectedPoint == polyPoints.Count - 1)
-                    {
-                        position.X = ToPixelX(polyPoints[selectedPoint].X);
-                        if (position.Y < ToPixelY(polyPoints[0].Y))
-                        {
-                            position.Y = ToPixelY(polyPoints[0].Y);
-                        }
-
-                        System.Windows.Point snappedPos = SnapPositionToMM(position);
-                        snappedPos.X = polyPoints[selectedPoint].X;
-                        flexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PointsDirty = true;
-                    }
-                    else
-                    {
-                        System.Windows.Point snappedPos = SnapPositionToMM(position);
-                        flexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PointsDirty = true;
-                    }
-
-                    PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
-
-                    PathText = flexiPath.ToPath(absolutePaths);
-                    updateRequired = true;
-                }
-                else
-                {
-                    moving = false;
-                }
-            }
-
             return updateRequired;
         }
 
@@ -720,6 +615,10 @@ namespace Barnacle.UserControls
             return found;
         }
 
+        public void SetOpenEnded(bool open)
+        {
+            flexiPath.OpenEndedPath = open;
+        }
         public bool SplitLineAtPoint(System.Windows.Point position)
         {
             bool added = false;
@@ -738,47 +637,14 @@ namespace Barnacle.UserControls
             return added;
         }
 
-        internal void FromString(string s, bool resetMode = true)
+        internal string AbsPathText()
         {
-            flexiPath.FromString(s);
-            PathText = flexiPath.ToPath(absolutePaths);
-            if (s != "" && resetMode)
-            {
-                selectionMode = SelectionModeType.SelectSegmentAtPoint;
-            }
-            PointsDirty = true;
+            return flexiPath.ToPath(true);
         }
 
-        private PointGrid pointGrid;
-        private RectangularGrid rectGrid;
-        private PolarGrid polarGrid;
-        private GridSettings gridSettings;
-
-        private void MakeGrid(double actualWidth, double actualHeight)
+        internal Point Centroid()
         {
-            if (rectGrid == null)
-            {
-                rectGrid = new RectangularGrid();
-            }
-            rectGrid.SetActualSize(ScreenDpi, actualWidth, actualHeight);
-            rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
-
-            if (polarGrid == null)
-            {
-                polarGrid = new PolarGrid();
-                polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
-            }
-            if (!fixedEndPath)
-            {
-                gridSettings.Centre = new Point(ToMMX(actualWidth / 2), ToMMY(actualHeight / 2));
-            }
-            polarGrid.SetActualSize(ScreenDpi, actualWidth, actualHeight);
-            polarGrid.SetPolarCentre(gridSettings.Centre);
-
-            if (pointGrid == null)
-            {
-                pointGrid = rectGrid;
-            }
+            return flexiPath.Centroid();
         }
 
         internal void CreateGrid(DpiScale dpiScale, double actualWidth, double actualHeight)
@@ -790,31 +656,21 @@ namespace Barnacle.UserControls
             CreateGridMarkers();
         }
 
-        private void CreateGridMarkers()
+        internal List<System.Drawing.PointF> DisplayPointsF()
         {
-            MakeGrid(gridWidth, gridHeight);
-            rectGrid.CreateMarkers(ScreenDpi);
-            polarGrid.CreateMarkers(ScreenDpi);
+            return flexiPath.DisplayPointsF();
         }
 
-        public bool ContinuousPointsNotify { get; set; } = true;
-        private bool openEndedPath;
-
-        public bool OpenEndedPath
+        internal void FromString(string s, bool resetMode = true)
         {
-            get { return openEndedPath; }
-            set
+            flexiPath.FromString(s);
+            PathText = flexiPath.ToPath(absolutePaths);
+            if (s != "" && resetMode)
             {
-                openEndedPath = value;
-                if (flexiPath != null)
-                {
-                    flexiPath.OpenEndedPath = openEndedPath;
-                }
+                selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
+            PointsDirty = true;
         }
-
-        public bool PointsDirty { get; internal set; }
-        public List<string> PresetNames { get; set; }
 
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
@@ -911,82 +767,24 @@ namespace Barnacle.UserControls
             return updateRequired;
         }
 
-        private bool NormalMouseUp(Point position, bool updateRequired)
+        internal void SetFixedEnds(Point fixedPathStartPoint, Point fixedPathMidPoint, Point fixedPathEndPoint)
         {
-            if (selectedPoint != -1 && moving)
+            this.fixedPathStartPoint = fixedPathStartPoint;
+            this.fixedPathMidPoint = fixedPathMidPoint;
+            this.fixedPathEndPoint = fixedPathEndPoint;
+        }
+
+        internal void SetPath(string v)
+        {
+            if (v != "")
             {
-                System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
-
-                polyPoints[selectedPoint].X = position.X;
-                polyPoints[selectedPoint].Y = position.Y;
-
-                flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
-
-                PointsDirty = true;
-                updateRequired = true;
-                selectedPoint = -1;
-                NotifyPropertyChanged("Points");
+                selectionMode = SelectionModeType.SelectSegmentAtPoint;
             }
+
+            flexiPath.InterpretTextPath(v);
             PathText = flexiPath.ToPath(absolutePaths);
-            moving = false;
-            return updateRequired;
-        }
-
-        private bool FixedEndMouseUp(Point position, bool updateRequired)
-        {
-            if (selectedPoint != -1)
-            {
-                if (moving)
-                {
-                    if (selectedPoint == 0)
-                    {
-                        if (position.Y > ToPixelY(polyPoints[polyPoints.Count - 1].Y))
-                        {
-                            position.Y = ToPixelY(polyPoints[polyPoints.Count - 1].Y);
-                        }
-                        position.X = ToPixelX(polyPoints[selectedPoint].X);
-                        //polyPoints[selectedPoint].Y = position.Y;
-                        System.Windows.Point snappedPos = SnapPositionToMM(position);
-                        snappedPos.X = polyPoints[selectedPoint].X;
-                        flexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PointsDirty = true;
-                    }
-                    else if (selectedPoint == polyPoints.Count - 1)
-                    {
-                        position.X = ToPixelX(polyPoints[selectedPoint].X);
-                        if (position.Y < ToPixelY(polyPoints[0].Y))
-                        {
-                            position.Y = ToPixelY(polyPoints[0].Y);
-                        }
-                        //  polyPoints[selectedPoint].Y = position.Y;
-                        System.Windows.Point snappedPos = SnapPositionToMM(position);
-                        snappedPos.X = polyPoints[selectedPoint].X;
-                        flexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PointsDirty = true;
-                    }
-                    else
-                    {
-                        polyPoints[selectedPoint].X = position.X;
-                        polyPoints[selectedPoint].Y = position.Y;
-                        System.Windows.Point snappedPos = SnapPositionToMM(position);
-                        flexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PointsDirty = true;
-                    }
-
-                    PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
-                    PathText = flexiPath.ToPath(absolutePaths);
-                    updateRequired = true;
-                    selectedPoint = -1;
-                    NotifyPropertyChanged("Points");
-                }
-            }
-            moving = false;
-            return updateRequired;
-        }
-
-        internal Point Centroid()
-        {
-            return flexiPath.Centroid();
+            PointsDirty = true;
+            NotifyPropertyChanged("Points");
         }
 
         internal void SetPolarGridCentre(Point fixedPolarGridCentre)
@@ -1044,21 +842,256 @@ namespace Barnacle.UserControls
             }
         }
 
-        public void LoadImage(string f)
+        private void CreateGridMarkers()
         {
-            Uri fileUri = new Uri(f);
-            BitmapImage bmi = new BitmapImage();
-            bmi.BeginInit();
-            bmi.UriSource = fileUri;
-            bmi.EndInit();
-            BackgroundImage = bmi;
-            imagePath = f;
-            NotifyPropertyChanged("BackgroundImage");
+            MakeGrid(gridWidth, gridHeight);
+            rectGrid.CreateMarkers(ScreenDpi);
+            polarGrid.CreateMarkers(ScreenDpi);
+        }
+
+        private void CreatePens()
+        {
+            Pens = new List<PenSetting>();
+            PenSetting ps = new PenSetting(6, Brushes.Yellow, 0.5);
+            ps.DashPattern.Add(2);
+            ps.DashPattern.Add(2);
+            Pens.Add(ps);
+
+            ps = new PenSetting(6, Brushes.Yellow, 1);
+            Pens.Add(ps);
+
+            ps = new PenSetting(6, Brushes.BlueViolet, 0.5);
+            ps.DashPattern.Add(2);
+            ps.DashPattern.Add(2);
+            Pens.Add(ps);
+
+            ps = new PenSetting(6, Brushes.BlueViolet, 1);
+            Pens.Add(ps);
+        }
+
+        private bool FixedEndMouseUp(Point position, bool updateRequired)
+        {
+            if (selectedPoint != -1)
+            {
+                if (moving)
+                {
+                    if (selectedPoint == 0)
+                    {
+                        if (position.Y > ToPixelY(polyPoints[polyPoints.Count - 1].Y))
+                        {
+                            position.Y = ToPixelY(polyPoints[polyPoints.Count - 1].Y);
+                        }
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+                        //polyPoints[selectedPoint].Y = position.Y;
+                        System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
+                        flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
+                    }
+                    else if (selectedPoint == polyPoints.Count - 1)
+                    {
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+                        if (position.Y < ToPixelY(polyPoints[0].Y))
+                        {
+                            position.Y = ToPixelY(polyPoints[0].Y);
+                        }
+                        //  polyPoints[selectedPoint].Y = position.Y;
+                        System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
+                        flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
+                    }
+                    else
+                    {
+                        polyPoints[selectedPoint].X = position.X;
+                        polyPoints[selectedPoint].Y = position.Y;
+                        System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
+                    }
+
+                    PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
+                    PathText = flexiPath.ToPath(absolutePaths);
+                    updateRequired = true;
+                    selectedPoint = -1;
+                    NotifyPropertyChanged("Points");
+                }
+            }
+            moving = false;
+            return updateRequired;
+        }
+
+        private bool FixedEndPathMove(MouseEventArgs e, Point position, bool updateRequired)
+        {
+            if (selectedPoint != -1)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed && moving)
+                {
+                    if (selectedPoint == 0)
+                    {
+                        if (position.Y > ToPixelY(polyPoints[polyPoints.Count - 1].Y))
+                        {
+                            position.Y = ToPixelY(polyPoints[polyPoints.Count - 1].Y);
+                        }
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+
+                        System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
+                        flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
+                    }
+                    else if (selectedPoint == polyPoints.Count - 1)
+                    {
+                        position.X = ToPixelX(polyPoints[selectedPoint].X);
+                        if (position.Y < ToPixelY(polyPoints[0].Y))
+                        {
+                            position.Y = ToPixelY(polyPoints[0].Y);
+                        }
+
+                        System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        snappedPos.X = polyPoints[selectedPoint].X;
+                        flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
+                    }
+                    else
+                    {
+                        System.Windows.Point snappedPos = SnapPositionToMM(position);
+                        flexiPath.SetPointPos(selectedPoint, snappedPos);
+                        PointsDirty = true;
+                    }
+
+                    PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
+
+                    PathText = flexiPath.ToPath(absolutePaths);
+                    updateRequired = true;
+                }
+                else
+                {
+                    moving = false;
+                }
+            }
+
+            return updateRequired;
+        }
+
+        private void LoadPresetFile(string dataPath, bool user)
+        {
+            if (File.Exists(dataPath))
+            {
+                String[] lines = System.IO.File.ReadAllLines(dataPath);
+                if (lines.GetLength(0) > 0)
+                {
+                    for (int i = 0; i < lines.GetLength(0); i++)
+                    {
+                        string[] words = lines[i].Split('=');
+                        if (words.GetLength(0) == 2)
+                        {
+                            Preset p = new Preset();
+                            p.Name = words[0];
+                            p.Path = words[1];
+                            p.User = user;
+                            presets[words[0]] = p;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void LoadPresets()
+        {
+            // can have two sets of presets
+            // one in the installed data and the other user defined.
+            try
+            {
+                string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
+                LoadPresetFile(dataPath, false);
+                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\"
+                            + AppDomain.CurrentDomain.FriendlyName + "\\PresetPaths.txt";
+                LoadPresetFile(dataPath, true);
+                foreach (String s in presets.Keys)
+                {
+                    PresetNames.Add(s);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void MakeGrid(double actualWidth, double actualHeight)
+        {
+            if (rectGrid == null)
+            {
+                rectGrid = new RectangularGrid();
+            }
+            rectGrid.SetActualSize(ScreenDpi, actualWidth, actualHeight);
+            rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
+
+            if (polarGrid == null)
+            {
+                polarGrid = new PolarGrid();
+                polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
+            }
+            if (!fixedEndPath)
+            {
+                gridSettings.Centre = new Point(ToMMX(actualWidth / 2), ToMMY(actualHeight / 2));
+            }
+            polarGrid.SetActualSize(ScreenDpi, actualWidth, actualHeight);
+            polarGrid.SetPolarCentre(gridSettings.Centre);
+
+            if (pointGrid == null)
+            {
+                pointGrid = rectGrid;
+            }
         }
 
         private void MoveWholePath(System.Windows.Point position)
         {
             flexiPath.MoveTo(position);
+        }
+
+        private bool NormalMouseUp(Point position, bool updateRequired)
+        {
+            if (selectedPoint != -1 && moving)
+            {
+                System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
+
+                polyPoints[selectedPoint].X = position.X;
+                polyPoints[selectedPoint].Y = position.Y;
+
+                flexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
+
+                PointsDirty = true;
+                updateRequired = true;
+                selectedPoint = -1;
+                NotifyPropertyChanged("Points");
+            }
+            PathText = flexiPath.ToPath(absolutePaths);
+            moving = false;
+            return updateRequired;
+        }
+
+        private bool NormalPathMove(MouseEventArgs e, Point position, bool updateRequired)
+        {
+            System.Windows.Point snappedPos = SnapPositionToMM(position);
+            PositionText = $"({position.X.ToString("F3")},{position.Y.ToString("F3")})";
+            if (selectedPoint != -1)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed && moving)
+                {
+                    // polyPoints[selectedPoint].X = position.X;
+                    // polyPoints[selectedPoint].Y = position.Y;
+                    flexiPath.SetPointPos(selectedPoint, snappedPos);
+                    PathText = flexiPath.ToPath(absolutePaths);
+                    updateRequired = true;
+                }
+                else
+                {
+                    moving = false;
+                }
+            }
+
+            return updateRequired;
         }
 
         private void OnAddCubic(object obj)
@@ -1076,6 +1109,17 @@ namespace Barnacle.UserControls
             SelectionMode = SelectionModeType.SplitLine;
         }
 
+        private void OnApplyPreset(object obj)
+        {
+            if (!String.IsNullOrEmpty(selectedPreset))
+            {
+                if (MessageBox.Show("This will replace the path completely. The old one can't be recovered. Continue", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    FromString(presets[selectedPreset].Path, true);
+                    NotifyPropertyChanged("Points");
+                }
+            }
+        }
         private void OnCnvDoubleSegment(object obj)
         {
             if (canCNVDouble)
@@ -1088,44 +1132,15 @@ namespace Barnacle.UserControls
             }
         }
 
-        internal string AbsPathText()
-        {
-            return flexiPath.ToPath(true);
-        }
-
         private void OnCopy(object obj)
         {
             PathText = flexiPath.ToPath(absolutePaths);
             System.Windows.Clipboard.SetText(PathText);
         }
 
-        internal void SetPath(string v)
-        {
-            if (v != "")
-            {
-                selectionMode = SelectionModeType.SelectSegmentAtPoint;
-            }
-
-            flexiPath.InterpretTextPath(v);
-            PathText = flexiPath.ToPath(absolutePaths);
-            PointsDirty = true;
-            NotifyPropertyChanged("Points");
-        }
-
         private void OnDeleteSegment(object obj)
         {
             SelectionMode = SelectionModeType.DeleteSegment;
-        }
-
-        private Point fixedPathStartPoint;
-        private Point fixedPathMidPoint;
-        private Point fixedPathEndPoint;
-
-        internal void SetFixedEnds(Point fixedPathStartPoint, Point fixedPathMidPoint, Point fixedPathEndPoint)
-        {
-            this.fixedPathStartPoint = fixedPathStartPoint;
-            this.fixedPathMidPoint = fixedPathMidPoint;
-            this.fixedPathEndPoint = fixedPathEndPoint;
         }
 
         private void OnGrid(object obj)
@@ -1150,25 +1165,17 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void OnPolarGrid(object obj)
+        private void OnGridSettings(object obj)
         {
-            switch (showGrid)
+            GridSettingsDlg dlg = new GridSettingsDlg();
+            dlg.Settings = gridSettings;
+            if (dlg.ShowDialog() == true)
             {
-                case GridSettings.GridStyle.Hidden:
-                case GridSettings.GridStyle.Rectangular:
-                    {
-                        pointGrid = polarGrid;
-                        ShowGrid = GridSettings.GridStyle.Polar;
-                        snap = true;
-                    }
-                    break;
-
-                case GridSettings.GridStyle.Polar:
-                    {
-                        ShowGrid = GridSettings.GridStyle.Hidden;
-                        snap = false;
-                    }
-                    break;
+                rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
+                polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
+                CreateGridMarkers();
+                // force a screen refresh
+                NotifyPropertyChanged("Points");
             }
         }
 
@@ -1218,6 +1225,28 @@ namespace Barnacle.UserControls
             SelectionMode = SelectionModeType.SelectSegmentAtPoint;
         }
 
+        private void OnPolarGrid(object obj)
+        {
+            switch (showGrid)
+            {
+                case GridSettings.GridStyle.Hidden:
+                case GridSettings.GridStyle.Rectangular:
+                    {
+                        pointGrid = polarGrid;
+                        ShowGrid = GridSettings.GridStyle.Polar;
+                        snap = true;
+                    }
+                    break;
+
+                case GridSettings.GridStyle.Polar:
+                    {
+                        ShowGrid = GridSettings.GridStyle.Hidden;
+                        snap = false;
+                    }
+                    break;
+            }
+        }
+
         private void OnResetPath(object obj)
         {
             flexiPath.Clear();
@@ -1242,6 +1271,11 @@ namespace Barnacle.UserControls
                 p.Visible = true;
             }
             NotifyPropertyChanged("Points");
+        }
+
+        private void OnToggleOrthoLock(object obj)
+        {
+            OrthoLocked = !OrthoLocked;
         }
 
         private void OnZoom(object obj)
@@ -1306,5 +1340,26 @@ namespace Barnacle.UserControls
             double res = ScreenDpi.PixelsPerInchY * y / 25.4;
             return res;
         }
+
+        public struct Preset
+        {
+            public String Name { get; set; }
+            public String Path { get; set; }
+            public bool User { get; set; }
+        }
+        /*
+        public bool ShowPolyGrid
+        {
+            get { return showGrid; }
+            set
+            {
+                if (value != showGrid)
+                {
+                    showGrid = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        */
     }
 }

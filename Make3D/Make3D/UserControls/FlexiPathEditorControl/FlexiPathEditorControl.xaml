@@ -252,7 +252,7 @@
             <StackPanel Grid.Row="2" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="Path" />
                 <TextBox
-                    Width="300"
+                    Width="200"
                     Margin="2,2,2,2"
                     Text="{Binding PathText}" />
                 <Button
@@ -267,14 +267,14 @@
                     Command="{Binding PastePathCommand}"
                     Content="Paste"
                     Style="{StaticResource SmallButton}" />
-                <Label VerticalAlignment="Center" Margin="16,0,0,0" Content="Presets" />
-                <ComboBox  Margin="8,0,0,0" Width="100" ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" />
+                <Label VerticalAlignment="Center" Margin="16,0,0,0" Content="Presets" Visibility="{Binding ShowPresets}"/>
+                <ComboBox  Margin="8,0,0,0" Width="150" ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" IsReadOnly="True" Visibility="{Binding ShowPresets}" />
                 <Button
                     Width="50"
                     Margin="2,2,2,2"
                     Command="{Binding ApplyPresetCommand}"
                     Content="Apply"
-                    Style="{StaticResource SmallButton}" />
+                    Style="{StaticResource SmallButton}" Visibility="{Binding ShowPresets}" />
             </StackPanel>
         </Grid>
     </Border>

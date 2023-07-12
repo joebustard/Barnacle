@@ -769,7 +769,7 @@ namespace Barnacle.LineLib
                             // Delete the last dummy segment
                             segs.RemoveAt(segs.Count - 1);
                             // Append a new curve
-                            AppendClosingCurveSegment();
+                            AppendClosingQuadCurveSegment();
 
                             segs[segs.Count - 1].Select(points);
                         }
