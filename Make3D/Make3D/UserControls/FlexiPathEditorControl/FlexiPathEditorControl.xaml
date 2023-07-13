@@ -18,7 +18,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="80" />
                 <RowDefinition />
-                <RowDefinition Height="25" />
+                <RowDefinition Height="54" />
             </Grid.RowDefinitions>
             <Border Grid.Row="0" Style="{StaticResource ControlBorder}">
                 <UniformGrid
@@ -116,7 +116,7 @@
                             x:Name="MovePathButton"
                             Command="{Binding MovePathCommand}"
                             Style="{StaticResource SmallButton}"
-                            ToolTip="Move entire path to clicked point">
+                            ToolTip="Drag the entire path around without modifying it's shape">
                             <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
                         </Button>
                     </Border>
@@ -132,6 +132,7 @@
                             <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
                         </Button>
                     </Border>
+
                     <Border
                         x:Name="GridBorder"
                         BorderThickness="4"
@@ -160,7 +161,7 @@
                         x:Name="GridSettingsButton"
                         Margin="2,2,2,2"
                         Command="{Binding GridSettingsCommand}"
-                        ToolTip="CHange the grid settings">
+                        ToolTip="Change the grid and line settings">
                         <Image Source="/Barnacle;component/Images/Buttons/Settings.png" />
                     </Button>
                     <Border
@@ -249,33 +250,42 @@
                     </Canvas.LayoutTransform>
                 </Canvas>
             </ScrollViewer>
-            <StackPanel Grid.Row="2" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="Path" />
-                <TextBox
-                    Width="200"
-                    Margin="2,2,2,2"
-                    Text="{Binding PathText}" />
-                <Button
-                    Width="50"
-                    Margin="2,2,2,2"
-                    Command="{Binding CopyPathCommand}"
-                    Content="Copy"
-                    Style="{StaticResource SmallButton}" />
-                <Button
-                    Width="50"
-                    Margin="2,2,2,2"
-                    Command="{Binding PastePathCommand}"
-                    Content="Paste"
-                    Style="{StaticResource SmallButton}" />
-                <Label VerticalAlignment="Center" Margin="16,0,0,0" Content="Presets" Visibility="{Binding ShowPresets}"/>
-                <ComboBox  Margin="8,0,0,0" Width="150" ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" IsReadOnly="True" Visibility="{Binding ShowPresets}" />
-                <Button
+            <Grid Grid.Column="1" Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="4" />
+                    <RowDefinition Height="1*" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Width="50" Content="Presets" Visibility="{Binding ShowPresets}" />
+                    <ComboBox  Margin="2,0,0,0" Width="250" ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" IsReadOnly="True" Visibility="{Binding ShowPresets}" />
+                    <Button
                     Width="50"
                     Margin="2,2,2,2"
                     Command="{Binding ApplyPresetCommand}"
                     Content="Apply"
                     Style="{StaticResource SmallButton}" Visibility="{Binding ShowPresets}" />
-            </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Row="2" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" Content="Path" Width="50" />
+                    <TextBox
+                    Width="250"
+                    Margin="2,2,2,2"
+                    Text="{Binding PathText}" />
+                    <Button
+                    Width="50"
+                    Margin="2,2,2,2"
+                    Command="{Binding CopyPathCommand}"
+                    Content="Copy"
+                    Style="{StaticResource SmallButton}" />
+                    <Button
+                    Width="50"
+                    Margin="2,2,2,2"
+                    Command="{Binding PastePathCommand}"
+                    Content="Paste"
+                    Style="{StaticResource SmallButton}" />
+                </StackPanel>
+            </Grid>
         </Grid>
     </Border>
 </UserControl>

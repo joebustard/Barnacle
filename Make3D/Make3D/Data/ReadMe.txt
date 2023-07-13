@@ -2,16 +2,20 @@
 ===========
 Fixed
   Small speed up in hole fixing.
+  Small speed up in smoothing. Still slow for objects with high vertice counts.
   Explore folder menu option wasn't working
   Copying flexipath string from one tool to another wasn't always resulting in objects updating
+  Converting final segment of flexipath to a quadratic bezier always gave a cubic bezier instead. Fixed
 
 Changed
    Fonts on slicer dialog results
+   Added Presets list to flexipath editor
 
 Added
    Path Loft tool
    Simple Hollow Box Tool
    Symbol tool to turn a character from a symbol font into a 3D object
+   Simple construction strip tool. Makes a strip with holes as found in childrens cnstruction sets.
 
 v1.0.3
 ===========

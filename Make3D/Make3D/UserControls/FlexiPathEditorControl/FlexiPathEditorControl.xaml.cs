@@ -672,6 +672,7 @@ namespace Barnacle.UserControls
                     break;
 
                 case FlexiPathEditorControlViewModel.SelectionModeType.MovePath:
+                case FlexiPathEditorControlViewModel.SelectionModeType.DraggingPath:
                     {
                         EnableSelectionModeBorder(MovePathBorder);
                     }

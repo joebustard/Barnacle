@@ -1181,6 +1181,7 @@
     <Resource Include="Images\Buttons\AutoFix.png" />
     <Resource Include="Images\Spinner.png" />
     <Resource Include="Data\PresetPaths.txt" />
+    <Resource Include="Images\Buttons\LineSize.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
