@@ -1,5 +1,7 @@
 ﻿using Barnacle.Models;
 using Barnacle.Object3DLib;
+using Barnacle.UserControls;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

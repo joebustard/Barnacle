@@ -999,10 +999,10 @@ namespace Barnacle.ViewModels
 
         private static void CleanFolder(string pth, string subName, string search)
         {
-            string targetFolder = pth + "\\" + subName;
+            string targetFolder = pth + System.IO.Path.DirectorySeparatorChar + subName;
             if (Directory.Exists(targetFolder))
             {
-                string[] filepaths = Directory.GetFiles(pth + "\\" + subName, search);
+                string[] filepaths = Directory.GetFiles(pth + System.IO.Path.DirectorySeparatorChar + subName, search);
                 foreach (string f in filepaths)
                 {
                     try

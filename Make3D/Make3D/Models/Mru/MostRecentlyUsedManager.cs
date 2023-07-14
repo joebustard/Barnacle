@@ -44,12 +44,12 @@ namespace Barnacle.Models.Mru
 
         public void SaveMru()
         {
-            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
             if (!Directory.Exists(mruPath))
             {
                 Directory.CreateDirectory(mruPath);
             }
-            StreamWriter fout = new StreamWriter(mruPath + "\\" + Name + ".txt");
+            StreamWriter fout = new StreamWriter(mruPath + System.IO.Path.DirectorySeparatorChar + Name + ".txt");
             foreach (MruEntry me in recentFilesList)
             {
                 fout.WriteLine(me.Path);
@@ -97,7 +97,7 @@ namespace Barnacle.Models.Mru
             int i = 0;
             while ((result.Length + fldrs[last].Length < max) && i < last)
             {
-                result += fldrs[i] + "\\";
+                result += fldrs[i] + System.IO.Path.DirectorySeparatorChar;
                 i++;
             }
             if (last != i)
@@ -110,11 +110,11 @@ namespace Barnacle.Models.Mru
 
         private void LoadMru()
         {
-            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
+            String mruPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar + System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
 
             if (Directory.Exists(mruPath))
             {
-                StreamReader fin = new StreamReader(mruPath + "\\" + Name + ".txt");
+                StreamReader fin = new StreamReader(mruPath + System.IO.Path.DirectorySeparatorChar + Name + ".txt");
                 while (!fin.EndOfStream)
                 {
                     String s = fin.ReadLine();

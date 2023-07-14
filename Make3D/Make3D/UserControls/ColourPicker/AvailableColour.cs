@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Barnacle.ViewModels
+namespace Barnacle.UserControls
 {
     public class AvailableColour
     {

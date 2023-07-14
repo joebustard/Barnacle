@@ -9,9 +9,13 @@ namespace ScriptLanguage
     {
         public static string PartsLibraryPath = "";
         private ParseTreeNode parseTree;
+
         //   public static MdiChildForm theForm;
         private static int nextObjectId;
-        public static int NextObjectId { get { return nextObjectId++; } set { nextObjectId = value; } }
+
+        public static int NextObjectId
+        { get { return nextObjectId++; } set { nextObjectId = value; } }
+
         // Instance constructor
         public Script()
         {

@@ -1354,7 +1354,7 @@ public String <PName>ToolTip
                 try
                 {
                     string templateRoot = AppDomain.CurrentDomain.BaseDirectory + "templates";
-                    string targetFolder = exportPath + "\\" + DialogName;
+                    string targetFolder = exportPath + System.IO.Path.DirectorySeparatorChar + DialogName;
 
                     CreateDialog(templateRoot, targetFolder);
                     CreateMaker(templateRoot, targetFolder);

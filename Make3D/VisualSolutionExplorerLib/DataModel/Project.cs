@@ -81,14 +81,14 @@ namespace VisualSolutionExplorer
 
         public string ProjectPathToAbsPath(string rf)
         {
-            string t = "\\" + System.IO.Path.GetFileName(BaseFolder);
+            string t = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.GetFileName(BaseFolder);
             if (rf.StartsWith(t))
             {
                 rf = rf.Substring(t.Length);
             }
-            if (!rf.StartsWith("\\"))
+            if (!rf.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
             {
-                rf = "\\" + rf;
+                rf = System.IO.Path.DirectorySeparatorChar + rf;
             }
             rf = BaseFolder + rf;
             return rf;
@@ -253,7 +253,7 @@ namespace VisualSolutionExplorer
                     pfo.ProjectFolders.Add(nf);
                     nf.ParentProject = this;
                     nf.Load(doc, fel);
-                   
+
                     if (FirstFile == "" && nf.ProjectFiles.Count > 0)
                     {
                         FirstFile = nf.ProjectFiles[0].FilePath;

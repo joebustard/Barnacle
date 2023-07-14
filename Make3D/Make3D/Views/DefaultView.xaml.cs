@@ -336,7 +336,7 @@ namespace Barnacle.Views
 
         private bool RunScript(string fileName)
         {
-            Dictionary<int, Object3D> content = new Dictionary<int,Object3D>();
+            Dictionary<int, Object3D> content = new Dictionary<int, Object3D>();
             bool result = false;
             NotificationManager.Notify("Select", "clear");
             if (File.Exists(fileName))
@@ -779,13 +779,13 @@ namespace Barnacle.Views
                         string targetFile = parameter2;
                         // if file is being dragged to the project root the target will end in \
                         // but if its dragged to a subfolder it wont.
-                        if (targetFile.EndsWith("\\"))
+                        if (targetFile.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                         {
                             targetFile += fName;
                         }
                         else
                         {
-                            targetFile += "\\" + fName;
+                            targetFile += System.IO.Path.DirectorySeparatorChar + fName;
                         }
                         if (File.Exists(targetFile))
                         {

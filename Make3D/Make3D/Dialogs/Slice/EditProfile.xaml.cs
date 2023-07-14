@@ -86,7 +86,7 @@ namespace Barnacle.Dialogs.Slice
             {
                 Directory.CreateDirectory(fileName);
             }
-            fileName += "\\" + ProfileName;
+            fileName += System.IO.Path.DirectorySeparatorChar + ProfileName;
             if (!fileName.ToLower().EndsWith(".profile"))
             {
                 fileName += ".profile";

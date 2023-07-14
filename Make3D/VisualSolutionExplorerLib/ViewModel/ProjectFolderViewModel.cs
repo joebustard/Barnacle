@@ -142,7 +142,7 @@ namespace VisualSolutionExplorer
                     string p = ParentProject.BaseFolder;
                     p = System.IO.Path.GetDirectoryName(p);
 
-                    string target = p + _folder.FolderPath + "\\" + ren;
+                    string target = p + _folder.FolderPath + System.IO.Path.DirectorySeparatorChar + ren;
                     if (fName.ToLower() != target.ToLower())
                     {
                         System.IO.File.Copy(fName, target);
@@ -218,7 +218,7 @@ namespace VisualSolutionExplorer
                 string newish = _folder.CopyFile(p1);
                 LoadChildren();
                 p1 = old;
-                p2 = _folder.FolderPath + "\\" + newish;
+                p2 = _folder.FolderPath + System.IO.Path.DirectorySeparatorChar + newish;
             }
             if (SolutionChanged != null)
             {

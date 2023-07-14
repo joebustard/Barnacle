@@ -67,9 +67,9 @@ namespace Barnacle.Dialogs
             bool ok = true;
             projName = (sender as TextBox).Text;
             string name = projName;
-            if (!name.StartsWith("\\"))
+            if (!name.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
             {
-                name = "\\" + name;
+                name = System.IO.Path.DirectorySeparatorChar.ToString() + name;
             }
             projPath = projectRoot + name;
             char[] illegal = System.IO.Path.GetInvalidPathChars();
@@ -103,7 +103,7 @@ namespace Barnacle.Dialogs
                 ok = false;
             }
 
-            // can't rcrrd max len
+            // can't exceed max len
             if (projPath.Length > 260)
             {
                 ok = false;

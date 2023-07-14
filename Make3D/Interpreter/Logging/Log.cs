@@ -7,8 +7,10 @@ namespace ScriptLanguage
     public class Log
     {
         protected List<LogEntry> logEntrys;
+
         public List<LogEntry> LogEntrys
         { get { return logEntrys; } }
+
         protected TextBox txtbox;
 
         private static Log singleton = null;
@@ -73,8 +75,8 @@ namespace ScriptLanguage
 
         public void Save()
         {
-            String logPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\"
-                             + AppDomain.CurrentDomain.FriendlyName + "\\";
+            String logPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar
+                             + AppDomain.CurrentDomain.FriendlyName + System.IO.Path.DirectorySeparatorChar;
             try
             {
                 System.IO.StreamWriter fout = new System.IO.StreamWriter(logPath + logFileName, true);

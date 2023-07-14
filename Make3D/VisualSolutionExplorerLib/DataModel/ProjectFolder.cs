@@ -133,7 +133,7 @@ namespace VisualSolutionExplorer
                 fi.RunFile = RunFile;
                 _projectFiles.Add(fi);
                 _projectFiles.Sort();
-                fi.FilePath = FolderPath + "\\" + fileName;
+                fi.FilePath = FolderPath + System.IO.Path.DirectorySeparatorChar + fileName;
 
                 return fi.FilePath;
             }
@@ -161,7 +161,7 @@ namespace VisualSolutionExplorer
             fo.ParentProject = this.ParentProject;
             _projectFolders.Add(fo);
             _projectFolders.Sort();
-            fo.FolderPath = FolderPath + "\\" + folderName;
+            fo.FolderPath = FolderPath + System.IO.Path.DirectorySeparatorChar + folderName;
             return fo.FolderPath;
         }
 
@@ -224,7 +224,7 @@ namespace VisualSolutionExplorer
 
         public void RepathSubFolders(String parentName)
         {
-            FolderPath = parentName + "\\" + FolderName;
+            FolderPath = parentName + System.IO.Path.DirectorySeparatorChar + FolderName;
             SetSubPaths();
         }
 
@@ -306,14 +306,14 @@ namespace VisualSolutionExplorer
                 pf.RunFile = RunFile;
                 pf.IsLibraryFile = IsInLibrary;
                 ProjectFiles.Add(pf);
-                pf.FilePath = FolderPath + "\\" + pf.FileName;
+                pf.FilePath = FolderPath + System.IO.Path.DirectorySeparatorChar + pf.FileName;
             }
         }
 
         internal bool AddFileToProject(string folderPath, string fName, bool allowDuplicates = true)
         {
             bool found = false;
-            if (folderPath == FolderPath || folderPath == FolderPath + "\\")
+            if (folderPath == FolderPath || folderPath == FolderPath + System.IO.Path.DirectorySeparatorChar)
             {
                 found = true;
                 bool add = true;
@@ -351,7 +351,7 @@ namespace VisualSolutionExplorer
         {
             if (TimeDependency != "")
             {
-                string srcFolder = baseFolder + "\\" + TimeDependency;
+                string srcFolder = baseFolder + System.IO.Path.DirectorySeparatorChar + TimeDependency;
                 foreach (ProjectFile pfc in _projectFiles)
                 {
                     pfc.OutOfDate = false;
@@ -388,7 +388,7 @@ namespace VisualSolutionExplorer
             ProjectFile fi = new ProjectFile(fileName);
             _projectFiles.Add(fi);
             _projectFiles.Sort();
-            fi.FilePath = FolderPath + "\\" + fileName;
+            fi.FilePath = FolderPath + System.IO.Path.DirectorySeparatorChar + fileName;
             return newName;
         }
 
@@ -548,7 +548,7 @@ namespace VisualSolutionExplorer
         internal void UpdatePath()
         {
             String pth = System.IO.Path.GetDirectoryName(FolderPath);
-            pth += "\\" + FolderName;
+            pth += System.IO.Path.DirectorySeparatorChar + FolderName;
             FolderPath = pth;
             SetSubPaths();
         }
@@ -679,7 +679,7 @@ namespace VisualSolutionExplorer
 
             foreach (ProjectFile fi in _projectFiles)
             {
-                fi.FilePath = FolderPath + "\\" + fi.FileName;
+                fi.FilePath = FolderPath + System.IO.Path.DirectorySeparatorChar + fi.FileName;
             }
         }
 

@@ -9,12 +9,13 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Barnacle.Views"
+        xmlns:uc="clr-namespace:Barnacle.UserControls"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ViewModels="clr-namespace:Barnacle.ViewModels"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         Width="500"
-        Height="500">
+        Height="500" Loaded="Window_Loaded">
     <Window.DataContext>
         <ViewModels:SettingsViewModel />
     </Window.DataContext>
@@ -79,6 +80,7 @@
                                VerticalAlignment="Center">
                             Tool Model Colour
                         </Label>
+                        <!--
                         <ComboBox Name="cmbColors" Grid.Column="1" ItemsSource="{Binding AvailableColours}" SelectedItem="{Binding ObjectColour}" Margin="0,4">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
@@ -89,6 +91,8 @@
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
+                        -->
+                        <uc:ColourPicker x:Name="ColourOfNewObject" Grid.Column="1" />
                     </Grid>
                     <Grid Grid.Column="1"
                           Grid.Row="5">
@@ -114,7 +118,7 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
-                                                        <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="1*" />
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0"  VerticalAlignment="Center">SD Card</Label>
                         <TextBox Grid.Column="1" Text="{Binding SDCardName}" Grid.ColumnSpan="5" ToolTip="The label of the SDCard that is used with the 3D Printer. If set Barnacle will enable some extra functions when this SD card is detected." Margin="2,2,2,2" />

@@ -105,7 +105,7 @@ namespace VisualSolutionExplorerLib.Dialogs
             }
             if (valid && FolderPath != "")
             {
-                String full = FolderPath + "\\" + FileName;
+                String full = FolderPath + System.IO.Path.DirectorySeparatorChar + FileName;
 
                 if (System.IO.File.Exists(full))
                 {

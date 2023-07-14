@@ -163,7 +163,7 @@ namespace VisualSolutionExplorer
         internal void UpdatePath()
         {
             String pth = System.IO.Path.GetDirectoryName(FilePath);
-            pth += "\\" + FileName;
+            pth += System.IO.Path.DirectorySeparatorChar + FileName;
             FilePath = pth;
         }
     }

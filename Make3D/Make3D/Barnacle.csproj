@@ -316,6 +316,9 @@
     <Compile Include="Dialogs\RibbedFuselage\Models\EditorSettingsModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\FuselageModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\ImageDetailsModel.cs" />
+    <Compile Include="UserControls\ColourPicker\ColourPicker.xaml.cs">
+      <DependentUpon>ColourPicker.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControlViewModel.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml.cs">
       <DependentUpon>FlexiPathEditorControl.xaml</DependentUpon>
@@ -336,7 +339,7 @@
       <DependentUpon>SpinControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\AboutViewModel.cs" />
-    <Compile Include="ViewModels\AvailableColour.cs" />
+    <Compile Include="UserControls\ColourPicker\AvailableColour.cs" />
     <Compile Include="ViewModels\Logging\Log.cs" />
     <Compile Include="ViewModels\Logging\LogEntry.cs" />
     <Compile Include="ViewModels\RichTextBoxExtensions.cs" />
@@ -766,6 +769,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="UserControls\ColourPicker\ColourPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\FlexiPathEditorControl\FlexiPathEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

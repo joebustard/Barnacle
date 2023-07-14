@@ -43,7 +43,7 @@ namespace Barnacle
             {
                 checkIds[idString] = 0;
             }
-            string s = undoFolderName + "\\" + idString + "_" + checkIds[idString].ToString() + ".bob";
+            string s = undoFolderName + System.IO.Path.DirectorySeparatorChar + idString + "_" + checkIds[idString].ToString() + ".bob";
             checkIds[idString] = checkIds[idString] - 1;
             return s;
         }
@@ -56,7 +56,7 @@ namespace Barnacle
             }
             checkIds[idString] = checkIds[idString] + 1;
 
-            return undoFolderName + "\\" + idString + "_" + checkIds[idString].ToString() + ".bob";
+            return undoFolderName + System.IO.Path.DirectorySeparatorChar + idString + "_" + checkIds[idString].ToString() + ".bob";
         }
 
         public static void Initialise(string ufn)

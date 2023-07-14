@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barnacle.UserControls;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -90,7 +91,6 @@ namespace Barnacle.UserControls
             }
         }
 
-
         private bool polar10Checked;
 
         public bool Polar10Checked
@@ -165,6 +165,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
         private bool rect10Checked;
 
         public bool Rect10Checked
@@ -224,6 +225,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
         private double polarAngle;
 
         public double PolarAngle
@@ -247,8 +249,21 @@ namespace Barnacle.UserControls
             }
         }
 
+        public AvailableColour LineColour
+        {
+            get; set;
+        }
+
+        private void ColourOfNewObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            LineColour = ColourOfNewObject.SelectedColour;
+        }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            LineColour = ColourPicker.FindAvailableColour(Colors.Black);
+            ColourOfNewObject.PropertyChanged += ColourOfNewObject_PropertyChanged;
+
             if (Settings == null)
             {
                 Rect10Checked = true;

@@ -67,7 +67,7 @@ namespace Barnacle.Models
                     }
                 }
                 name += ".stl";
-                name = exportPath + "\\" + name;
+                name = exportPath + System.IO.Path.DirectorySeparatorChar + name;
                 doc.AutoExport(name, allBounds);
             }
         }

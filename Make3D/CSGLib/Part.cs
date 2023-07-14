@@ -51,43 +51,31 @@ namespace CSGLib
     /// </summary>
     public class Part
     {
-        private CancellationToken cancelToken;
-
-        public void SetCancelationToken(CancellationToken cancellationToken)
-        {
-            cancelToken = cancellationToken;
-        }
-
-        private readonly int maxSplitLevel = 300;
-
         /// <summary>
         /// tolerance value to test equalities
         /// </summary>
         private static readonly double EqualityTolerance = 1e-8f;
+
+        private readonly int maxSplitLevel = 300;
 
         /// <summary>
         /// object representing the solid extremes
         /// </summary>
         private Bound _Bound;
 
+        private CancellationToken cancelToken;
+
         /// <summary>
         /// solid faces
         /// </summary>
         private List<Face> Faces;
 
+        private OctTree octTree;
+
         /// <summary>
         /// solid vertices
         /// </summary>
         private List<Vertex> Vertices;
-
-        private OctTree octTree;
-
-        public enum PartState
-        {
-            Good,
-            Bad,
-            Interupted
-        }
 
         /// <summary>
         /// Constructs a Object3d object based on a solid file.
@@ -131,6 +119,25 @@ namespace CSGLib
         {
         }
 
+        public enum PartState
+        {
+            Good,
+            Bad,
+            Interupted
+        }
+
+        /// <summary>
+        /// Gets the solid bound
+        /// </summary>
+        /// <returns>solid bound</returns>
+        public Bound Bound => _Bound;
+
+        /// <summary>
+        /// Gets the number of faces
+        /// </summary>
+        /// <returns>number of faces</returns>
+        public int NumFaces => Faces.Count;
+
         /// <summary>
         /// Classify faces as being inside, outside or on boundary of other object
         /// </summary>
@@ -161,24 +168,20 @@ namespace CSGLib
                 face = GetFace(i);
 
                 //if the face vertices aren't classified to make the simple classify
-                if (face.SimpleClassify() == false)
+                if (!face.SimpleClassify() && face.RayTraceClassify(otherObject))
                 {
-                    //makes the ray trace classification
-                    if (face.RayTraceClassify(otherObject))
+                    //mark the vertices
+                    if (face.V1.Status == Status.UNKNOWN)
                     {
-                        //mark the vertices
-                        if (face.V1.Status == Status.UNKNOWN)
-                        {
-                            face.V1.Mark(face.GetStatus());
-                        }
-                        if (face.V2.Status == Status.UNKNOWN)
-                        {
-                            face.V2.Mark(face.GetStatus());
-                        }
-                        if (face.V3.Status == Status.UNKNOWN)
-                        {
-                            face.V3.Mark(face.GetStatus());
-                        }
+                        face.V1.Mark(face.GetStatus());
+                    }
+                    if (face.V2.Status == Status.UNKNOWN)
+                    {
+                        face.V2.Mark(face.GetStatus());
+                    }
+                    if (face.V3.Status == Status.UNKNOWN)
+                    {
+                        face.V3.Mark(face.GetStatus());
                     }
                 }
             }
@@ -212,12 +215,6 @@ namespace CSGLib
         }
 
         /// <summary>
-        /// Gets the solid bound
-        /// </summary>
-        /// <returns>solid bound</returns>
-        public Bound Bound => _Bound;
-
-        /// <summary>
         /// Gets a face reference for a given position
         /// </summary>
         /// <param name="index">required face position</param>
@@ -235,12 +232,6 @@ namespace CSGLib
         }
 
         /// <summary>
-        /// Gets the number of faces
-        /// </summary>
-        /// <returns>number of faces</returns>
-        public int NumFaces => Faces.Count;
-
-        /// <summary>
         /// Inverts faces classified as INSIDE, making its normals point outside. Usually used into the second solid when the difference is applied.
         /// </summary>
         public void InvertInsideFaces()
@@ -254,6 +245,11 @@ namespace CSGLib
                     face.Invert();
                 }
             }
+        }
+
+        public void SetCancelationToken(CancellationToken cancellationToken)
+        {
+            cancelToken = cancellationToken;
         }
 
         /// <summary>
@@ -282,12 +278,9 @@ namespace CSGLib
                 //for each object1 face...
                 for (int i = 0; i < NumFaces && !cancelToken.IsCancellationRequested; i++)
                 {
-                    if (i % 100 == 0)
+                    if (i % 100 == 0 && progress != null)
                     {
-                        if (progress != null)
-                        {
-                            BooleanModeller.ReportProgress(v + $" {i} of {NumFaces} {(i * 100) / NumFaces}%", 0, progress);
-                        }
+                        BooleanModeller.ReportProgress(v + $" {i} of {NumFaces} {(i * 100) / NumFaces}%", 0, progress);
                     }
                     //if object1 face bound and object2 bound overlap ...
                     face1 = GetFace(i);
@@ -341,14 +334,12 @@ namespace CSGLib
                                         if (segment1.Intersect(segment2))
                                         {
                                             //PART II - SUBDIVIDING NON-COPLANAR POLYGONS
-                                            int lastNumFaces = NumFaces;
+
                                             SplitFace(i, segment1, segment2);
 
                                             //prevent from infinite loop (with a loss of faces...)
-                                            //                                            if (numFacesStart * 100 < NumFaces)
                                             if (NumFaces > facesLimit)
                                             {
-                                                //Logger.Log("possible infinite loop situation: terminating faces split");
                                                 return CSGState.Toolarge;
                                             }
 
@@ -379,9 +370,6 @@ namespace CSGLib
                                     }
                                 }
                             }
-                            else
-                            {
-                            }
                         }
                     }
                 }
@@ -400,28 +388,17 @@ namespace CSGLib
         /// <param name="v2">a face vertex</param>
         /// <param name="v3">a face vertex</param>
         /// <returns></returns>
-        private Face AddFace(Vertex v1, Vertex v2, Vertex v3, int splitLevel)
+        private void AddFace(Vertex v1, Vertex v2, Vertex v3, int splitLevel)
         {
             if (!(v1.Equals(v2) || v1.Equals(v3) || v2.Equals(v3)))
             {
                 Face face = new Face(v1, v2, v3);
                 face.SplitLevel = splitLevel;
-                //if (face.GetArea() > EqualityTolerance)
+
                 if (face.GetArea() > 0.00000001 && splitLevel < maxSplitLevel)
                 {
                     Faces.Add(face);
-                    return face;
                 }
-                else
-                {
-                    //Logger.Log("Reject Adding face with invalid area\r\n");
-                    return null;
-                }
-            }
-            else
-            {
-                //Logger.Log("Reject Adding invalid face\r\n");
-                return null;
             }
         }
 
@@ -436,22 +413,7 @@ namespace CSGLib
             int i;
             //if already there is an equal vertex, it is not inserted
             Vertex vertex = new Vertex(pos, status);
-            /*
-            int index = octTree.PointPresent(vertex);
-            if (index != -1 && index <Vertices.Count )
-            {
-                vertex = Vertices[index];
-                vertex.SetStatus(status);
-                return vertex;
-            }
-            else
-            {
-                octTree.AddPoint(Vertices.Count, vertex);
-                //Vertices.Add(vertex);
-                return vertex;
-            }
 
-*/
             for (i = 0; i < Vertices.Count; i++)
             {
                 if (vertex.Equals(Vertices[i]))
@@ -479,7 +441,6 @@ namespace CSGLib
         /// <param name="linedVertex">linedVertex what vertex is more lined with the interersection found</param>
         private void BreakFaceInFive(int facePos, Vector3D newPos1, Vector3D newPos2, int linedVertex)
         {
-            // Logger.Log("BreakFaceInFive\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -521,7 +482,6 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for the split</param>
         private void BreakFaceInFour(int facePos, Vector3D newPos1, Vector3D newPos2, Vertex endVertex)
         {
-            //  Logger.Log("BreakFaceInFour\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -560,7 +520,6 @@ namespace CSGLib
         /// <param name="splitEdge">edge that will be split</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos1, Vector3D newPos2, int splitEdge)
         {
-            // Logger.Log("BreakFaceInThree EDGE EDGE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -595,7 +554,6 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for the split</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos, Vertex endVertex)
         {
-            // Logger.Log("BreakFaceInThree VERTEX-FACE-FACE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -631,7 +589,6 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for the new faces creation</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos1, Vector3D newPos2, Vertex startVertex, Vertex endVertex)
         {
-            //  Logger.Log("BreakFaceInThree EDGE FACE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -683,7 +640,6 @@ namespace CSGLib
         /// <param name="newPos">new vertex position</param>
         private void BreakFaceInThree(int facePos, Vector3D newPos)
         {
-            //Logger.Log("BreakFaceInThree FACE FACE FACE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -702,7 +658,6 @@ namespace CSGLib
         /// <param name="splitEdge">edge that will be split</param>
         private void BreakFaceInTwo(int facePos, Vector3D newPos, int splitEdge)
         {
-            // Logger.Log("BreakFaceInTwo VERTEX EDGE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -733,7 +688,6 @@ namespace CSGLib
         /// <param name="endVertex">vertex used for splitting</param>
         private void BreakFaceInTwo(int facePos, Vector3D newPos, Vertex endVertex)
         {
-            //  Logger.Log("BreakFaceInThree VERTEX FACE EDGE\r\n");
             Face face = Faces[facePos];
             Faces.RemoveAt(facePos);
 
@@ -778,7 +732,6 @@ namespace CSGLib
         /// <param name="segment2">segment representing the intersection of other face with the plane of the current face plane</param>
         private void SplitFace(int facePos, Segment segment1, Segment segment2)
         {
-            // Logger.Log("SplitFace\r\n");
             Vector3D startPos, endPos;
             int startType, endType, middleType;
             double startDist, endDist;

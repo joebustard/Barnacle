@@ -81,9 +81,9 @@ namespace Barnacle.ViewModels
 
                     NotifyPropertyChanged();
                     string name = projectName;
-                    if (!name.StartsWith("\\"))
+                    if (!name.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()))
                     {
-                        name = "\\" + name;
+                        name = System.IO.Path.DirectorySeparatorChar + name;
                     }
                     projPath = projectRoot + name;
                     char[] illegal = System.IO.Path.GetInvalidPathChars();

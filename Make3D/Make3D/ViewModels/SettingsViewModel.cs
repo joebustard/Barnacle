@@ -1,4 +1,5 @@
 ﻿using Barnacle.Models;
+using Barnacle.UserControls;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +20,7 @@ namespace Barnacle.ViewModels
         private bool floorAll;
         private bool importSwapAxis;
         private string rotX;
-        private List<AvailableColour> availableColours;
+
         private string rotY;
 
         private string rotZ;
@@ -95,74 +96,10 @@ namespace Barnacle.ViewModels
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
             SlicerPath = Properties.Settings.Default.SlicerPath;
             SDCardName = Properties.Settings.Default.SDCardLabel;
-            SetAvailableColours();
-            ObjectColour = FindAvailableColour(DefaultObjectColour);
+            // SetAvailableColours();
+            ObjectColour = ColourPicker.FindAvailableColour(DefaultObjectColour);
+
             PlaceNewAtMarker = Project.SharedProjectSettings.PlaceNewAtMarker;
-        }
-
-        private AvailableColour FindAvailableColour(Color color)
-        {
-            AvailableColour res = null;
-            foreach (AvailableColour cl in AvailableColours)
-            {
-                if (cl.Colour.A == color.A &&
-                cl.Colour.R == color.R &&
-                cl.Colour.G == color.G &&
-                cl.Colour.B == color.B)
-                {
-                    res = cl;
-                    break;
-                }
-            }
-            return res;
-        }
-
-        private void SetAvailableColours()
-        {
-            string[] ignore =
-            {
-        "AliceBlue",
-        "Azure",
-        "Beige",
-        "Cornsilk",
-        "Ivory",
-        "GhostWhite",
-        "LavenderBlush",
-        "LightYellow",
-        "Linen",
-        "MintCream",
-        "OldLace",
-        "SeaShell",
-        "Snow",
-        "WhiteSmoke",
-        "Transparent"
-        };
-            List<AvailableColour> cls = new List<AvailableColour>();
-            Type colors = typeof(System.Drawing.Color);
-            PropertyInfo[] colorInfo = colors.GetProperties(BindingFlags.Public |
-                BindingFlags.Static);
-            foreach (PropertyInfo info in colorInfo)
-            {
-                var result = Array.Find(ignore, element => element == info.Name);
-                if (result == null || result == String.Empty)
-                {
-                    cls.Add(new AvailableColour(info.Name));
-                }
-            }
-            AvailableColours = cls;
-        }
-
-        public List<AvailableColour> AvailableColours
-        {
-            get { return availableColours; }
-            set
-            {
-                if (availableColours != value)
-                {
-                    availableColours = value;
-                    NotifyPropertyChanged();
-                }
-            }
         }
 
         public AvailableColour ObjectColour

@@ -1013,7 +1013,7 @@ namespace Barnacle.UserControls
             {
                 string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
                 LoadPresetFile(dataPath, false);
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\"
+                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar
                             + AppDomain.CurrentDomain.FriendlyName + "\\PresetPaths.txt";
                 LoadPresetFile(dataPath, true);
                 foreach (String s in presets.Keys)

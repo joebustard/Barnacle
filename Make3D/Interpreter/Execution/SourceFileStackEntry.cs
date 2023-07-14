@@ -131,7 +131,7 @@ namespace ScriptLanguage
                 {
                     if (!basefolder.EndsWith(@"\"))
                     {
-                        basefolder += "\\";
+                        basefolder += System.IO.Path.DirectorySeparatorChar;
                     }
                     string target = basefolder + FilePath;
                     if (System.IO.File.Exists(target))

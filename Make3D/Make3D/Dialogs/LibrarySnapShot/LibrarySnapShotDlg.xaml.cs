@@ -154,7 +154,7 @@ namespace Barnacle.Dialogs
             localDoc.ParentProject = BaseViewModel.PartLibraryProject;
             localDoc.Content.Add(Part);
 
-            localDoc.Save(PartPath + "\\" + PartName + ".txt");
+            localDoc.Save(PartPath + System.IO.Path.DirectorySeparatorChar + PartName + ".txt");
             BaseViewModel.PartLibraryProject.AddFileToFolder(PartProjectSection, PartName + ".txt", false);
             BaseViewModel.PartLibraryProject.Save();
             showFloor = false;
@@ -171,7 +171,7 @@ namespace Barnacle.Dialogs
         private void SnapShotTImer_Tick(object sender, EventArgs e)
         {
             snapShotTimer.Stop();
-            ImageCapture.ScreenCaptureElement(viewport3D1, PartPath + "\\" + PartName + ".png", true);
+            ImageCapture.ScreenCaptureElement(viewport3D1, PartPath + System.IO.Path.DirectorySeparatorChar + PartName + ".png", true);
             DialogResult = true;
             Close();
         }

@@ -14,6 +14,16 @@ namespace Barnacle.Views
         public Settings()
         {
             InitializeComponent();
+            ColourOfNewObject.PropertyChanged += ColourOfNewObject_PropertyChanged;
+        }
+
+        private void ColourOfNewObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            SettingsViewModel vm = DataContext as SettingsViewModel;
+            if (vm != null)
+            {
+                vm.ObjectColour = ColourOfNewObject.SelectedColour;
+            }
         }
 
         private void CancelButtonClicked(object sender, RoutedEventArgs e)
@@ -77,6 +87,12 @@ namespace Barnacle.Views
             {
                 vm.SlicerPath = dlg.SelectedPath;
             }
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SettingsViewModel vm = DataContext as SettingsViewModel;
+            ColourOfNewObject.SelectedColour = vm.ObjectColour;
         }
     }
 }
