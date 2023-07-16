@@ -97,6 +97,10 @@ namespace Barnacle.RibbedFuselage.Models
             MarkerModel marker = new MarkerModel();
             marker.Name = rib.Name;
             marker.Position = nextNewMakerPosition;
+            if (marker.Position > 1.0)
+            {
+                marker.Position = 1;
+            }
             marker.AssociatedRib = rib;
             markers.Add(marker);
             nextNewMakerPosition += defaultMarkerSpacing;
@@ -383,6 +387,7 @@ namespace Barnacle.RibbedFuselage.Models
                 {
                     Ribs[nameRecs[i].ribIndex].Name = nameRecs[i].newName;
                 }
+                RenameMarkers();
             }
         }
 

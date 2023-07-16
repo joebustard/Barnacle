@@ -230,7 +230,7 @@ namespace Barnacle.Dialogs
                         List<double> ribXs = new List<double>();
                         List<Dimension> topDims = new List<Dimension>();
                         List<Dimension> sideDims = new List<Dimension>();
-                        // first get the x positins of the ribs and the height and width at that position from the top and side views.
+                        // first get the x positions of the ribs and the height and width at that position from the top and side views.
                         // generate the profile points for the ribs at the same time.
                         for (int i = 0; i < fuselageData.Ribs.Count; i++)
                         {
