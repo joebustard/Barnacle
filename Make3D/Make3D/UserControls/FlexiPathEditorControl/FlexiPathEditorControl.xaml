@@ -235,11 +235,11 @@
             <ScrollViewer
                 Grid.Row="1"
                 HorizontalScrollBarVisibility="Visible"
-                VerticalScrollBarVisibility="Visible">
+                VerticalScrollBarVisibility="Visible" >
                 <Canvas
                     x:Name="MainCanvas"
                     MinWidth="800"
-                    MinHeight="800"
+                    MinHeight="1800"
                     Background="Transparent"
                     MouseDown="MainCanvas_MouseDown"
                     MouseMove="MainCanvas_MouseMove"
@@ -250,40 +250,54 @@
                     </Canvas.LayoutTransform>
                 </Canvas>
             </ScrollViewer>
-            <Grid Grid.Column="1" Grid.Row="2">
+            <Grid Grid.Row="2" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*" />
                     <RowDefinition Height="4" />
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Width="50" Content="Presets" Visibility="{Binding ShowPresets}" />
-                    <ComboBox  Margin="2,0,0,0" Width="250" ItemsSource="{Binding PresetNames}" SelectedItem="{Binding SelectedPreset}" IsReadOnly="True" Visibility="{Binding ShowPresets}" />
+                    <Label
+                        Width="50"
+                        VerticalAlignment="Center"
+                        Content="Presets"
+                        Visibility="{Binding ShowPresets}" />
+                    <ComboBox
+                        Width="250"
+                        Margin="2,0,0,0"
+                        IsReadOnly="True"
+                        ItemsSource="{Binding PresetNames}"
+                        SelectedItem="{Binding SelectedPreset}"
+                        Visibility="{Binding ShowPresets}" />
                     <Button
-                    Width="50"
-                    Margin="2,2,2,2"
-                    Command="{Binding ApplyPresetCommand}"
-                    Content="Apply"
-                    Style="{StaticResource SmallButton}" Visibility="{Binding ShowPresets}" />
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding ApplyPresetCommand}"
+                        Content="Apply"
+                        Style="{StaticResource SmallButton}"
+                        Visibility="{Binding ShowPresets}" />
                 </StackPanel>
                 <StackPanel Grid.Row="2" Orientation="Horizontal">
-                    <Label VerticalAlignment="Center" Content="Path" Width="50" />
+                    <Label
+                        Width="50"
+                        VerticalAlignment="Center"
+                        Content="Path" />
                     <TextBox
-                    Width="250"
-                    Margin="2,2,2,2"
-                    Text="{Binding PathText}" />
+                        Width="250"
+                        Margin="2,2,2,2"
+                        Text="{Binding PathText}" />
                     <Button
-                    Width="50"
-                    Margin="2,2,2,2"
-                    Command="{Binding CopyPathCommand}"
-                    Content="Copy"
-                    Style="{StaticResource SmallButton}" />
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding CopyPathCommand}"
+                        Content="Copy"
+                        Style="{StaticResource SmallButton}" />
                     <Button
-                    Width="50"
-                    Margin="2,2,2,2"
-                    Command="{Binding PastePathCommand}"
-                    Content="Paste"
-                    Style="{StaticResource SmallButton}" />
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding PastePathCommand}"
+                        Content="Paste"
+                        Style="{StaticResource SmallButton}" />
                 </StackPanel>
             </Grid>
         </Grid>

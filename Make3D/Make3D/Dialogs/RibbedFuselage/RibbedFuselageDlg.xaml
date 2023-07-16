@@ -74,15 +74,22 @@
                     ToolTip="Copy the selected rib and insert a copy immediatey after it"
                     x:Name="CopyRib" />
 
+                        <Button Command="{Binding RibCommand}" CommandParameter="Insert"
+                    Content="Insert"
+                    Grid.Row="4"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Insert a blank rib immediatey after the selected one."
+                    x:Name="InsertRib" />
+
                         <Button Command="{Binding RibCommand}" CommandParameter="Delete"
                     Content="Delete"
-                    Grid.Row="4"
+                    Grid.Row="5"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Delete the selected rib"
                     x:Name="DeleteRib" />
                         <Button Command="{Binding RibCommand}" CommandParameter="Rename"
                     Content="Rename"
-                    Grid.Row="5"
+                    Grid.Row="6"
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Rename all the ribs starting at A. (Does not alter the file names). If there are more than 26 ribs then the Z ones will be numbered."
                     x:Name="RenameRibsButton" />
@@ -117,6 +124,7 @@
                             <Button Grid.Column="0" Height="60" Content="&lt;" Command="{Binding RibCommand}" CommandParameter="Previous" />
                             <ListView Grid.Column="1" ItemsSource="{Binding Ribs}"
                       SelectedItem="{Binding SelectedRib}" SelectedIndex="{Binding SelectedRibIndex}" x:Name="RibList"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" SelectionChanged="RibList_SelectionChanged">
+                               
                                 <ListView.ItemTemplate>
 
                                     <DataTemplate DataType="Models:RibImageDetailsModel">

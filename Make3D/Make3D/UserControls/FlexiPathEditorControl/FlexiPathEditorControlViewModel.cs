@@ -60,7 +60,7 @@ namespace Barnacle.UserControls
 
         private SelectionModeType selectionMode;
 
-        private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
+    //    private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
 
         private bool showOrtho;
 
@@ -97,14 +97,14 @@ namespace Barnacle.UserControls
             scale = 1.0;
             lineShape = false;
             showOrtho = true;
-            ShowGrid = GridSettings.GridStyle.Rectangular;
+
             snap = true;
             gridSettings = new GridSettings();
+            ShowGrid = GridSettings.GridStyle.Rectangular;
+            gridSettings.Load();
             imagePath = "";
             pointsDirty = true;
-            CreatePens();
-            CurrentPen = 2;
-            SelectedPreset = "";
+            CreatePen();
             ShowPresets = Visibility.Visible;
             presets = new Dictionary<string, Preset>();
             PresetNames = new List<string>();
@@ -464,11 +464,11 @@ namespace Barnacle.UserControls
 
         public GridSettings.GridStyle ShowGrid
         {
-            get { return showGrid; }
+            get { return gridSettings.ShowGrid; }
             set
             {
-                showGrid = value;
-                if (showGrid == GridSettings.GridStyle.Hidden)
+                gridSettings.ShowGrid = value;
+                if (gridSettings.ShowGrid == GridSettings.GridStyle.Hidden)
                 {
                     Snap = false;
                 }
@@ -569,13 +569,11 @@ namespace Barnacle.UserControls
             return deleted;
         }
 
+        private PenSetting linePen;
         public PenSetting GetPen()
         {
-            if (Pens != null && CurrentPen < Pens.Count)
-            {
-                return Pens[CurrentPen];
-            }
-            return Pens[0];
+
+            return linePen;
         }
 
         public void LoadImage(string f)
@@ -857,24 +855,16 @@ namespace Barnacle.UserControls
             polarGrid.CreateMarkers(ScreenDpi);
         }
 
-        private void CreatePens()
+        private void CreatePen()
         {
             Pens = new List<PenSetting>();
-            PenSetting ps = new PenSetting(6, Brushes.Yellow, 0.5);
+            PenSetting ps = new PenSetting((int)gridSettings.LineThickness, 
+            new SolidColorBrush(gridSettings.LineColour), 
+            gridSettings.LineOpacity);
             ps.DashPattern.Add(2);
             ps.DashPattern.Add(2);
-            Pens.Add(ps);
+            linePen=ps;
 
-            ps = new PenSetting(6, Brushes.Yellow, 1);
-            Pens.Add(ps);
-
-            ps = new PenSetting(6, Brushes.BlueViolet, 0.5);
-            ps.DashPattern.Add(2);
-            ps.DashPattern.Add(2);
-            Pens.Add(ps);
-
-            ps = new PenSetting(6, Brushes.BlueViolet, 1);
-            Pens.Add(ps);
         }
 
         private bool FixedEndMouseUp(Point position, bool updateRequired)
@@ -1173,7 +1163,7 @@ namespace Barnacle.UserControls
 
         private void OnGrid(object obj)
         {
-            switch (showGrid)
+            switch (gridSettings.ShowGrid)
             {
                 case GridSettings.GridStyle.Hidden:
                 case GridSettings.GridStyle.Polar:
@@ -1202,8 +1192,10 @@ namespace Barnacle.UserControls
                 rectGrid.SetGridIntervals(gridSettings.RectangularGridSize, gridSettings.RectangularGridSize);
                 polarGrid.SetGridIntervals(gridSettings.PolarGridRadius, gridSettings.PolarGridAngle);
                 CreateGridMarkers();
+                CreatePen();
                 // force a screen refresh
                 NotifyPropertyChanged("Points");
+                gridSettings.Save();
             }
         }
 
@@ -1255,7 +1247,7 @@ namespace Barnacle.UserControls
 
         private void OnPolarGrid(object obj)
         {
-            switch (showGrid)
+            switch (gridSettings.ShowGrid)
             {
                 case GridSettings.GridStyle.Hidden:
                 case GridSettings.GridStyle.Rectangular:

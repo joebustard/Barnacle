@@ -49,6 +49,10 @@ namespace Barnacle.UserControls
             PolarAngle = 10;
             Polar10Checked = true;
             Rect10Checked = true;
+            LineThickness = 4;
+            LineColour = ColourPicker.FindAvailableColour(Colors.Yellow);
+            LineOpacity = 0.5;
+
         }
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
@@ -249,26 +253,89 @@ namespace Barnacle.UserControls
             }
         }
 
+        private AvailableColour lineColour;
         public AvailableColour LineColour
         {
-            get; set;
+            get
+            {
+                return lineColour;
+            }
+            set
+            {
+                if (value != lineColour)
+                {
+                    lineColour = value;
+                    ColourOfLine.SelectedColour = lineColour;
+                    if (Settings != null )
+                    {
+                        Settings.LineColour = lineColour.Colour;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private double lineOpacity;
+
+        public double LineOpacity
+        {
+            get { return lineOpacity; }
+            set
+            {
+                if (lineOpacity != value)
+                {
+                    lineOpacity = value;
+                    if (Settings != null)
+                    {
+                        Settings.LineOpacity = lineOpacity;
+                    }
+
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+
+        private double lineThickness;
+
+        public double LineThickness
+        {
+            get { return lineThickness; }
+            set
+            {
+                if (lineThickness != value)
+                {
+                    lineThickness = value;
+                    if ( Settings != null)
+                    {
+                        Settings.LineThickness = lineThickness;
+                    }
+                    NotifyPropertyChanged();
+                }
+            }
         }
 
         private void ColourOfNewObject_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            LineColour = ColourOfNewObject.SelectedColour;
+            LineColour = ColourOfLine.SelectedColour;
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            LineColour = ColourPicker.FindAvailableColour(Colors.Black);
-            ColourOfNewObject.PropertyChanged += ColourOfNewObject_PropertyChanged;
-
+           
+            
+            ColourOfLine.PropertyChanged += ColourOfNewObject_PropertyChanged;
+            ColourOfLine.NotifyPropertyChanged("AvailableColours");
+            
             if (Settings == null)
             {
                 Rect10Checked = true;
                 PolarAngle = 10;
                 Polar10Checked = true;
+                LineColour = ColourPicker.FindAvailableColour(Colors.Yellow);
+                LineOpacity =0.5;
+                LineThickness = 4;
+                ColourOfLine.SelectedColour = LineColour;
+
             }
             else
             {
@@ -326,6 +393,10 @@ namespace Barnacle.UserControls
                         break;
                 }
                 PolarAngle = Settings.PolarGridAngle;
+                LineColour = ColourPicker.FindAvailableColour(Settings.LineColour);
+                LineOpacity = Settings.LineOpacity;
+                LineThickness = Settings.LineThickness;
+                
             }
         }
     }

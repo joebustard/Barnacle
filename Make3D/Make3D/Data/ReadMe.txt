@@ -9,7 +9,9 @@ Fixed
 
 Changed
    Fonts on slicer dialog results
-   Added Presets list to flexipath editor
+   Added Presets list to flexipath editor. Some supplied in installation. User can create his own file.
+   Added colour, thickness and opacity settings for rendering flexipath curves.
+   Flexipath grid and line settings saved and restored
 
 Added
    Path Loft tool

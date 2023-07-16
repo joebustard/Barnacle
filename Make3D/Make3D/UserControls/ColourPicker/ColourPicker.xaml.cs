@@ -41,7 +41,7 @@ namespace Barnacle.UserControls
         {
             if (AvailableColours == null)
             {
-                SetAvailableColours();
+                AvailableColours = SetAvailableColours();
             }
             AvailableColour res = null;
             foreach (AvailableColour cl in AvailableColours)
@@ -58,9 +58,8 @@ namespace Barnacle.UserControls
             return res;
         }
 
-        private static List<AvailableColour> availableColours;
-
-        public static void SetAvailableColours()
+        private static List<AvailableColour> availableColours = SetAvailableColours();
+        public static List<AvailableColour> SetAvailableColours()
         {
             string[] ignore =
             {
@@ -92,7 +91,7 @@ namespace Barnacle.UserControls
                     cls.Add(new AvailableColour(info.Name));
                 }
             }
-            AvailableColours = cls;
+            return cls;
         }
 
         public static List<AvailableColour> AvailableColours
@@ -103,6 +102,7 @@ namespace Barnacle.UserControls
                 if (availableColours != value)
                 {
                     availableColours = value;
+                    
                 }
             }
         }
@@ -129,8 +129,9 @@ namespace Barnacle.UserControls
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            SetAvailableColours();
-            SelectedColour = FindAvailableColour(Colors.Black);
+            
+           //SelectedColour = FindAvailableColour(Colors.Black);
+            NotifyPropertyChanged("AvailableColours");
         }
     }
 }

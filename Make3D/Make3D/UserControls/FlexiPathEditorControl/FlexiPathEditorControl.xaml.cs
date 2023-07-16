@@ -762,6 +762,7 @@ namespace Barnacle.UserControls
                     image.Width = vm.BackgroundImage.Width;
                     image.Height = vm.BackgroundImage.Height;
                     MainCanvas.Children.Add(image);
+                    image.MouseUp += MainCanvas_MouseUp;
                 }
                 if (vm.ShowGrid != GridSettings.GridStyle.Hidden)
                 {

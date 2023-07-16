@@ -261,6 +261,55 @@ namespace Barnacle.RibbedFuselage.Models
             return rib;
         }
 
+        public RibImageDetailsModel InsertRib(int ribNumber)
+        {
+            RibImageDetailsModel rib = null;
+            if (ribNumber != -1)
+            {
+                RibImageDetailsModel selectedRib = Ribs[ribNumber];
+                double selectPos = FindMarkerPos(selectedRib.Name);
+                int selectedMarkerIndex = FindMarkerIndex(selectedRib.Name);
+                double clonePos = selectPos + defaultRibSpacing;
+                RibImageDetailsModel nextRib = null;
+                if (ribNumber < Ribs.Count - 1)
+                {
+                    nextRib = Ribs[ribNumber + 1];
+                    double nextRibPosition = FindMarkerPos(nextRib.Name);
+                    clonePos = selectPos + (nextRibPosition - selectPos) / 2.0;
+                }
+
+                rib = new RibImageDetailsModel();
+                string nameStart = selectedRib.Name.Substring(0, 1);
+                int subName = 0;
+                foreach (RibImageDetailsModel rc in Ribs)
+                {
+                    if (rc.Name.StartsWith(nameStart))
+                    {
+                        subName++;
+                    }
+                }
+                rib.Name = nameStart + subName.ToString();
+
+                Ribs.Insert(ribNumber + 1, rib);
+
+                MarkerModel marker = new MarkerModel();
+                marker.Name = rib.Name;
+                marker.AssociatedRib = rib;
+                marker.Position = clonePos;
+                if (selectedMarkerIndex != -1)
+                {
+                    markers.Insert(selectedMarkerIndex + 1, marker);
+                }
+                else
+                {
+                    markers.Add(marker);
+                }
+
+                RenameRibsAfterInsertions(nameStart);
+                RenameMarkers();
+            }
+            return rib;
+        }
         private void RenameMarkers()
         {
             foreach (MarkerModel mk in Markers)
@@ -344,6 +393,7 @@ namespace Barnacle.RibbedFuselage.Models
             {
                 if (Ribs.Contains(selectedRib))
                 {
+                    string nameStart = selectedRib.Name[0].ToString();
                     Ribs.Remove(selectedRib);
                     deleted = true;
                     for (int i = 0; i < Markers.Count; i++)
@@ -354,6 +404,8 @@ namespace Barnacle.RibbedFuselage.Models
                             break;
                         }
                     }
+                    RenameRibsAfterInsertions(nameStart);
+                    RenameMarkers();
                 }
             }
 

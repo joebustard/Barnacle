@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Xml;
 
 namespace Barnacle.RibbedFuselage
@@ -46,6 +47,20 @@ namespace Barnacle.RibbedFuselage
             }
         }
 
+        private Visibility noPathVisibility;
+        public Visibility NoPathVisibility
+        {
+            get { return noPathVisibility; }
+            set
+            {
+                if (noPathVisibility != value)
+                {
+                    noPathVisibility = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private string flexiPathText;
 
         /// <summary>
@@ -59,6 +74,14 @@ namespace Barnacle.RibbedFuselage
                 if (value != flexiPathText)
                 {
                     flexiPathText = value;
+                    if (String.IsNullOrEmpty(flexiPathText))
+                    {
+                        NoPathVisibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        NoPathVisibility = Visibility.Hidden;
+                    }
                     NotifyPropertyChanged();
                 }
             }
@@ -82,7 +105,7 @@ namespace Barnacle.RibbedFuselage
             }
         }
 
-        
+
         private string displayFileName;
 
         public event PropertyChangedEventHandler PropertyChanged;

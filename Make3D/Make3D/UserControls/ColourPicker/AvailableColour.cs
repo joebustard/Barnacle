@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media;
 
 namespace Barnacle.UserControls
 {
@@ -6,9 +7,9 @@ namespace Barnacle.UserControls
     {
         public String Name { get; set; }
         public string Title { get; set; }
-        public System.Drawing.Color Colour { get; set; }
+        public Color Colour { get; set; }
 
-        public AvailableColour(string n, string t, System.Drawing.Color c)
+        public AvailableColour(string n, string t, Color c)
         {
             Name = n;
             Title = t;
@@ -28,7 +29,7 @@ namespace Barnacle.UserControls
                 Title += name[i];
             }
 
-            Colour = System.Drawing.Color.FromName(name);
+            Colour = (Color)ColorConverter.ConvertFromString(Name);
         }
     }
 }

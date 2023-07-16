@@ -589,10 +589,19 @@ namespace Barnacle.Dialogs
                         }
                         break;
 
+                    case "insert":
+                        {
+                            SelectedRib = fuselageData.InsertRib(SelectedRibIndex);
+                            UpdateMarkers();
+                            UpdateModel();
+                        }
+                        break;
+
                     case "rename":
                         {
                             fuselageData.RenameAllRibs();
                             UpdateMarkers();
+                            UpdateModel();
                         }
                         break;
 
@@ -600,6 +609,11 @@ namespace Barnacle.Dialogs
                         {
                             if (fuselageData.DeleteRib(selectedRib))
                             {
+                            if ( selectedRibIndex >0)
+                            {
+                                    selectedRibIndex--;
+                                    SelectedRib = Ribs[selectedRibIndex];
+                            }
                                 UpdateMarkers();
                                 UpdateModel();
                             }

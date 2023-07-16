@@ -32,11 +32,11 @@
             <StackPanel Orientation="Horizontal" Grid.Column="1">
                 <Label FontSize="14" VerticalAlignment="Center" Content="Image :" />
                 <Label Content="{Binding DisplayFileName}"
-                           FontSize="14"
-                           Grid.Column="1"
+                           FontSize="14"                          
                            VerticalAlignment="Center"
                            x:Name="FNameLabel" Margin="8,0,0,0" />
             </StackPanel>
+            <Label Grid.Column="2" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" Background="Yellow" Content="No Path" Visibility="{Binding NoPathVisibility}"/>
         </Grid>
         <usercontrols:FlexiPathEditorControl x:Name="FlexiControl" Grid.Row="2" AbsolutePaths="True" ShowGrid="Hidden" />
     </Grid>
