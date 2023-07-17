@@ -56,7 +56,7 @@ namespace Barnacle.Dialogs
             DataContext = this;
         }
 
-        public bool Autofit
+        public bool AutoFit
         {
             get { return autoFit; }
             set
@@ -227,7 +227,7 @@ namespace Barnacle.Dialogs
 
                         bool okToGenerate = true;
                         double prevX = 0;
-                        List<RibImageDetailsModel> theRibs = new List<RibImageDetailsModel>();
+                        List<RibImageDetailsModel> generatingRibs = new List<RibImageDetailsModel>();
                         List<double> ribXs = new List<double>();
                         List<Dimension> topDims = new List<Dimension>();
                         List<Dimension> sideDims = new List<Dimension>();
@@ -251,46 +251,48 @@ namespace Barnacle.Dialogs
                                 cp = fuselageData.Ribs[i];
                             }
                             */
-                            /*
-                             *string cpPath = cp.GenPath();
-                              if (autoFit && theRibs.Count > 0)
-                              {
-                                  string prevPath = theRibs[theRibs.Count - 1].PathText;
+                            double autofirDx = 0.005;
+                            string cpPath = cp.FlexiPathText;
+                            
+                            if (autoFit && generatingRibs.Count > 0)
+                            {
+                                string prevPath = generatingRibs[generatingRibs.Count - 1].FlexiPathText;
 
-                                  if (cpPath == prevPath)
-                                  {
-                                      if (x - prevX > 4)
-                                      {
-                                          double nx = prevX + 1;
-                                          while (nx < x)
-                                          {
-                                              RibAndPlanEditControl nr = RibManager.Ribs[i].Clone(false);
-                                              // nr.GenerateProfilePoints();
-                                              theRibs.Add(nr);
-                                              ribXs.Add(nx);
-                                              Dimension dp1 = TopView.GetUpperAndLowerPoints((int)nx);
-                                              topDims.Add(dp1);
-                                              dp1 = SideView.GetUpperAndLowerPoints((int)nx);
-                                              sideDims.Add(dp1);
-                                              nx += 4;
-                                          }
-                                      }
-                                  }
-                              }
-                              */
-                            theRibs.Add(cp);
+                                if (cpPath == prevPath)
+                                {
+                                    if (x - prevX > autofirDx)
+                                    {
+                                        double nx = prevX + autofirDx;
+                                        while (nx < x - autofirDx)
+                                        {
+                                            RibImageDetailsModel nr = cp.Clone();
+                                            nr.GenerateProfilePoints();
+                                            generatingRibs.Add(nr);
+                                            var dp = topViewFlexiPath.GetUpperAndLowerPoints(nx);
+                                            topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+                                            dp = sideViewFlexiPath.GetUpperAndLowerPoints(x);
+                                            sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+                                            ribXs.Add(dp.X);
+                                            prevX = nx;
+                                            nx += autofirDx;
+                                        }
+                                    }
+                                }
+                            }
 
-                            var dp = topViewFlexiPath.GetUpperAndLowerPoints(x);
-                            topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
-                            dp = sideViewFlexiPath.GetUpperAndLowerPoints(x);
-                            sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
-                            ribXs.Add(dp.X);
+                            generatingRibs.Add(cp);
+
+                            var dp1 = topViewFlexiPath.GetUpperAndLowerPoints(x);
+                            topDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
+                            dp1 = sideViewFlexiPath.GetUpperAndLowerPoints(x);
+                            sideDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
+                            ribXs.Add(dp1.X);
                             prevX = x;
                         }
                         // check that all the ribs have profile points. If they don't we can't generate the shape.
-                        for (int i = 0; i < theRibs.Count; i++)
+                        for (int i = 0; i < generatingRibs.Count; i++)
                         {
-                            if (theRibs[i].ProfilePoints == null || theRibs[i].ProfilePoints.Count == 0)
+                            if (generatingRibs[i].ProfilePoints == null || generatingRibs[i].ProfilePoints.Count == 0)
                             {
                                 okToGenerate = false;
                                 break;
@@ -298,19 +300,19 @@ namespace Barnacle.Dialogs
                         }
 
                         // do we have enough data to construct the model
-                        if (theRibs.Count > 1 && okToGenerate)
+                        if (generatingRibs.Count > 1 && okToGenerate)
                         {
                             // theRibs[0].GenerateProfilePoints();
-                            int facesPerRib = theRibs[0].ProfilePoints.Count;
+                            int facesPerRib = generatingRibs[0].ProfilePoints.Count;
 
                             // the indices of all the points generated for the shape
-                            int[,] ribvertices = new int[theRibs.Count, facesPerRib];
+                            int[,] ribvertices = new int[generatingRibs.Count, facesPerRib];
 
                             // there should be a marker and hence a dimension for every rib.
                             // If ther isn't then somethins wrong
-                            if (theRibs.Count != topDims.Count)
+                            if (generatingRibs.Count != topDims.Count)
                             {
-                                System.Diagnostics.Debug.WriteLine($"Ribs {theRibs.Count} TopView Dimensions {topDims.Count}");
+                                System.Diagnostics.Debug.WriteLine($"Ribs {generatingRibs.Count} TopView Dimensions {topDims.Count}");
                             }
                             else
                             {
@@ -342,11 +344,11 @@ namespace Barnacle.Dialogs
                                 double rightx = x;
                                 int vert = 0;
                                 int vindex = 0;
-                                for (int i = 0; i < theRibs.Count; i++)
+                                for (int i = 0; i < generatingRibs.Count; i++)
                                 {
                                     x = GetXmm(ribXs[i]);
                                     // if this is the last rib cunt it as the right edge
-                                    if (i == theRibs.Count - 1)
+                                    if (i == generatingRibs.Count - 1)
                                     {
                                         rightx = x;
                                     }
@@ -354,9 +356,9 @@ namespace Barnacle.Dialogs
                                     vindex = 0;
                                     for (int proind = start; proind < end; proind++)
                                     {
-                                        if (proind < theRibs[i].ProfilePoints.Count)
+                                        if (proind < generatingRibs[i].ProfilePoints.Count)
                                         {
-                                            PointF pnt = theRibs[i].ProfilePoints[proind];
+                                            PointF pnt = generatingRibs[i].ProfilePoints[proind];
 
                                             double v = (double)pnt.X * (double)topDims[i].Height;
                                             double z = GetYmm(v + (double)topDims[i].P1.Y);
@@ -370,7 +372,7 @@ namespace Barnacle.Dialogs
                                             {
                                                 leftEdge.Add(new PointF((float)y, (float)z));
                                             }
-                                            if (i == theRibs.Count - 1)
+                                            if (i == generatingRibs.Count - 1)
                                             {
                                                 rightEdge.Add(new PointF((float)y, (float)z));
                                             }
@@ -386,7 +388,7 @@ namespace Barnacle.Dialogs
                                 // Vertices now has all the points.
                                 // ribvertices has a row for each rib, and its columns are the indices of the 3d points
                                 // So now add triangle faces for consecutive pairs of points on each rib and the one after it.
-                                for (int ribIndex = 0; ribIndex < theRibs.Count - 1; ribIndex++)
+                                for (int ribIndex = 0; ribIndex < generatingRibs.Count - 1; ribIndex++)
                                 {
                                     for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
                                     {
