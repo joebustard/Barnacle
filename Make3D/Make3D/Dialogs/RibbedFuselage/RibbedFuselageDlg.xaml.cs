@@ -251,7 +251,7 @@ namespace Barnacle.Dialogs
                                 cp = fuselageData.Ribs[i];
                             }
                             */
-                            double autofirDx = 0.005;
+                            double autofirDx = 0.01;
                             string cpPath = cp.FlexiPathText;
                             
                             if (autoFit && generatingRibs.Count > 0)
@@ -270,7 +270,7 @@ namespace Barnacle.Dialogs
                                             generatingRibs.Add(nr);
                                             var dp = topViewFlexiPath.GetUpperAndLowerPoints(nx);
                                             topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
-                                            dp = sideViewFlexiPath.GetUpperAndLowerPoints(x);
+                                            dp = sideViewFlexiPath.GetUpperAndLowerPoints(nx);
                                             sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
                                             ribXs.Add(dp.X);
                                             prevX = nx;
