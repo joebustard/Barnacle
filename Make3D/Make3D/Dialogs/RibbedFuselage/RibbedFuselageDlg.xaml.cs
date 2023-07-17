@@ -556,6 +556,7 @@ namespace Barnacle.Dialogs
                 SelectedRibIndex++;
                 SelectedRib = fuselageData.Ribs[selectedRibIndex];
             }
+            RibbedFuselage.ItemsControlExtensions.ScrollToCenterOfView(RibList, SelectedRib);
         }
 
         private void OnRibComand(object obj)
@@ -569,6 +570,7 @@ namespace Barnacle.Dialogs
                         {
                             RibImageDetailsModel rib = fuselageData.AddRib();
                             NotifyPropertyChanged("Ribs");
+                            SelectedRibIndex = fuselageData.Ribs.Count - 1;
                             SelectedRib = rib;
                             fuselageData.AddMarker(rib);
                             UpdateMarkers();
@@ -580,6 +582,7 @@ namespace Barnacle.Dialogs
                     case "copy":
                         {
                             SelectedRib = fuselageData.CloneRib(SelectedRibIndex);
+                            SelectedRibIndex = SelectedRibIndex + 1;
                             UpdateMarkers();
                             UpdateModel();
                             dirty = true;
@@ -589,6 +592,7 @@ namespace Barnacle.Dialogs
                     case "insert":
                         {
                             SelectedRib = fuselageData.InsertRib(SelectedRibIndex);
+                            SelectedRibIndex = SelectedRibIndex + 1;
                             UpdateMarkers();
                             UpdateModel();
                             dirty = true;
@@ -675,6 +679,7 @@ namespace Barnacle.Dialogs
                 SelectedRibIndex--;
                 SelectedRib = fuselageData.Ribs[selectedRibIndex];
             }
+            RibbedFuselage.ItemsControlExtensions.ScrollToCenterOfView(RibList, SelectedRib);
         }
 
         private void ResetRibs()

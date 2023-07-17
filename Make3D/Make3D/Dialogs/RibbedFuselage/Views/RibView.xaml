@@ -7,37 +7,39 @@
              xmlns:usercontrols="clr-namespace:Barnacle.UserControls"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="600" Loaded="UserControl_Loaded">
-    <Grid>
+    <Border Style="{StaticResource ControlBorder}">
+        <Grid>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="35" />
-            <RowDefinition Height="48" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid Grid.Row="0"
+            <Grid.RowDefinitions>
+                <RowDefinition Height="35" />
+
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0"
                       Margin="0,0,0,0"
                       VerticalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="2*" />
-            </Grid.ColumnDefinitions>
-            <StackPanel Orientation="Horizontal" Grid.Column="0">
-                <Label FontSize="14" VerticalAlignment="Center" Content="Rib :" />
-                <Label Content="{Binding Name}"
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" Grid.Column="0">
+                    <Label FontSize="14" VerticalAlignment="Center" Content="Rib :" Margin="4,0,0,0" />
+                    <Label Content="{Binding Name}"
                            FontSize="14"
                            VerticalAlignment="Center"
                            x:Name="HeaderLabel" Margin="8,0,0,0" />
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Grid.Column="1">
-                <Label FontSize="14" VerticalAlignment="Center" Content="Image :" />
-                <Label Content="{Binding DisplayFileName}"
-                           FontSize="14"                          
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Column="1">
+                    <Label FontSize="14" VerticalAlignment="Center" Content="Image :" />
+                    <Label Content="{Binding DisplayFileName}"
+                           FontSize="14"
                            VerticalAlignment="Center"
                            x:Name="FNameLabel" Margin="8,0,0,0" />
-            </StackPanel>
-            <Label Grid.Column="2" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" Background="Yellow" Content="No Path" Visibility="{Binding NoPathVisibility}"/>
+                </StackPanel>
+                <Label Grid.Column="2" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="Red" Background="Yellow" Content="No Path" Visibility="{Binding NoPathVisibility}" />
+            </Grid>
+            <usercontrols:FlexiPathEditorControl x:Name="FlexiControl" Grid.Row="2" AbsolutePaths="True" ShowGrid="Hidden" />
         </Grid>
-        <usercontrols:FlexiPathEditorControl x:Name="FlexiControl" Grid.Row="2" AbsolutePaths="True" ShowGrid="Hidden" />
-    </Grid>
+    </Border>
 </UserControl>
