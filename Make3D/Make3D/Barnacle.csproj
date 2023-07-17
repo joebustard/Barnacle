@@ -132,6 +132,7 @@
     <Compile Include="Dialogs\PathLoft\PathLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\PieDlg\PieDlg.xaml.cs" />
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\ItemControlExtensions.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\MarkerModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\RibImageDetailsModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml.cs">

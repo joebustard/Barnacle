@@ -60,7 +60,7 @@ namespace Barnacle.UserControls
 
         private SelectionModeType selectionMode;
 
-    //    private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
+        //    private GridSettings.GridStyle showGrid = GridSettings.GridStyle.Rectangular;
 
         private bool showOrtho;
 
@@ -570,9 +570,9 @@ namespace Barnacle.UserControls
         }
 
         private PenSetting linePen;
+
         public PenSetting GetPen()
         {
-
             return linePen;
         }
 
@@ -737,18 +737,22 @@ namespace Barnacle.UserControls
                             {
                                 SelectedPoint = i;
                                 minDist = dist;
+                                e.Handled = true;
                             }
                         }
                         if (SelectedPoint != -1)
                         {
                             Points[SelectedPoint].Selected = true;
                             moving = true;
+                            updateRequired = true;
                         }
+                        /*
                         if (e.LeftButton == MouseButtonState.Pressed)
                         {
                             e.Handled = true;
                             updateRequired = true;
                         }
+                        */
                     }
                 }
                 catch
@@ -858,13 +862,12 @@ namespace Barnacle.UserControls
         private void CreatePen()
         {
             Pens = new List<PenSetting>();
-            PenSetting ps = new PenSetting((int)gridSettings.LineThickness, 
-            new SolidColorBrush(gridSettings.LineColour), 
+            PenSetting ps = new PenSetting((int)gridSettings.LineThickness,
+            new SolidColorBrush(gridSettings.LineColour),
             gridSettings.LineOpacity);
             ps.DashPattern.Add(2);
             ps.DashPattern.Add(2);
-            linePen=ps;
-
+            linePen = ps;
         }
 
         private bool FixedEndMouseUp(Point position, bool updateRequired)

@@ -106,6 +106,7 @@ namespace Barnacle.Dialogs
             {
                 if (value != selectedRibIndex)
                 {
+                    oldSelectedRibIndex = selectedRibIndex;
                     selectedRibIndex = value;
                     NotifyPropertyChanged();
                 }
@@ -424,13 +425,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void HandleribComand(String prm)
-        {
-            if (!string.IsNullOrEmpty(prm))
-            {
-            }
-        }
-
         public void Load()
         {
             OpenFileDialog opDlg = new OpenFileDialog();
@@ -517,6 +511,7 @@ namespace Barnacle.Dialogs
                     // regenerate the 3d fuselage
                     UpdateModel();
                     Redisplay();
+                    dirty = true;
                 }
             }
         }
@@ -578,6 +573,7 @@ namespace Barnacle.Dialogs
                             fuselageData.AddMarker(rib);
                             UpdateMarkers();
                             UpdateModel();
+                            dirty = true;
                         }
                         break;
 
@@ -586,6 +582,7 @@ namespace Barnacle.Dialogs
                             SelectedRib = fuselageData.CloneRib(SelectedRibIndex);
                             UpdateMarkers();
                             UpdateModel();
+                            dirty = true;
                         }
                         break;
 
@@ -594,6 +591,7 @@ namespace Barnacle.Dialogs
                             SelectedRib = fuselageData.InsertRib(SelectedRibIndex);
                             UpdateMarkers();
                             UpdateModel();
+                            dirty = true;
                         }
                         break;
 
@@ -602,6 +600,7 @@ namespace Barnacle.Dialogs
                             fuselageData.RenameAllRibs();
                             UpdateMarkers();
                             UpdateModel();
+                            dirty = true;
                         }
                         break;
 
@@ -609,14 +608,15 @@ namespace Barnacle.Dialogs
                         {
                             if (fuselageData.DeleteRib(selectedRib))
                             {
-                            if ( selectedRibIndex >0)
-                            {
-                                    selectedRibIndex--;
+                                if (selectedRibIndex > 0)
+                                {
+                                    SelectedRibIndex--;
                                     SelectedRib = Ribs[selectedRibIndex];
-                            }
+                                }
                                 UpdateMarkers();
                                 UpdateModel();
                             }
+                            dirty = true;
                         }
                         break;
 
@@ -627,7 +627,7 @@ namespace Barnacle.Dialogs
                             if (Ribs.Count > 0)
                             {
                                 SelectedRib = Ribs[0];
-                                selectedRibIndex = 0;
+                                SelectedRibIndex = 0;
                             }
                         }
                         break;
@@ -655,6 +655,7 @@ namespace Barnacle.Dialogs
                             ResetRibs();
                             UpdateMarkers();
                             UpdateModel();
+                            dirty = true;
                         }
                         break;
                 }
@@ -683,11 +684,17 @@ namespace Barnacle.Dialogs
             SideView.Markers = GetMarkers();
         }
 
+        private int oldSelectedRibIndex = -1;
+
         private void RibList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (SelectedRibIndex != -1)
             {
-                RibList.ScrollIntoView(SelectedRib);
+                // RibList.ScrollIntoView(SelectedRib);
+                if (SelectedRibIndex != oldSelectedRibIndex)
+                {
+                    RibbedFuselage.ItemsControlExtensions.ScrollToCenterOfView(RibList, SelectedRib);
+                }
             }
         }
 
@@ -715,6 +722,7 @@ namespace Barnacle.Dialogs
             {
                 UpdateModel();
                 Redisplay();
+                dirty = true;
             }
         }
 
@@ -752,6 +760,7 @@ namespace Barnacle.Dialogs
             {
                 UpdateModel();
                 Redisplay();
+                dirty = true;
             }
         }
 
@@ -800,33 +809,6 @@ namespace Barnacle.Dialogs
                 {
                     CopyPathToSideView();
                 }
-            }
-        }
-
-        private void ChangeProp(string propertyName)
-        {
-            switch (propertyName)
-            {
-                case "Markers":
-                    {
-                        UpdateMarkers();
-                    }
-                    break;
-
-                case "Model":
-                    {
-                        UpdateModel();
-                    }
-                    break;
-
-                case "Ribs":
-                    {
-                        NotifyPropertyChanged("Ribs");
-                    }
-                    break;
-
-                default:
-                    break;
             }
         }
 
