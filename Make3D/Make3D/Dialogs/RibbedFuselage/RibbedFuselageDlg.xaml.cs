@@ -39,7 +39,7 @@ namespace Barnacle.Dialogs
             get { return numberOfDivisions; }
             set
             {
-                if (numberOfDivisions != value && numberOfDivisions >= 3 && numberOfDivisions <= 360)
+                if (numberOfDivisions != value && value >= 3 && value <= 360)
                 {
                     numberOfDivisions = value;
                     NotifyPropertyChanged();
@@ -309,7 +309,7 @@ namespace Barnacle.Dialogs
                             prevX = x;
                         }
 
-                        okToGenerate = CheckAllRibsHaveData(okToGenerate, generatingRibs);
+                        okToGenerate = CheckAllRibsHaveData(generatingRibs);
 
                         // do we have enough data to construct the model
                         if (generatingRibs.Count > 1 && okToGenerate)
@@ -463,8 +463,9 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private static bool CheckAllRibsHaveData(bool okToGenerate, List<RibImageDetailsModel> generatingRibs)
+        private  bool CheckAllRibsHaveData( List<RibImageDetailsModel> generatingRibs)
         {
+            bool okToGenerate = true;
             // check that all the ribs have profile points. If they don't we can't generate the shape.
             for (int i = 0; i < generatingRibs.Count; i++)
             {
