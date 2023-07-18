@@ -55,6 +55,7 @@ namespace Barnacle.EditorParameterLib
                 }
                 catch
                 {
+                    // if the conversion fails just use the supplied default
                 }
             }
             return res;
@@ -72,6 +73,7 @@ namespace Barnacle.EditorParameterLib
                 }
                 catch
                 {
+                    // if the conversion fails just use the supplied default
                 }
             }
             return res;
@@ -89,6 +91,7 @@ namespace Barnacle.EditorParameterLib
                 }
                 catch
                 {
+                    // if the conversion fails just use the supplied default
                 }
             }
             return res;
@@ -141,6 +144,16 @@ namespace Barnacle.EditorParameterLib
         }
 
         public void Set(string key, double val)
+        {
+            Set(key, val.ToString());
+        }
+
+        public void Set(string key, bool val)
+        {
+            Set(key, val.ToString());
+        }
+
+        public void Set(string key, int val)
         {
             Set(key, val.ToString());
         }
