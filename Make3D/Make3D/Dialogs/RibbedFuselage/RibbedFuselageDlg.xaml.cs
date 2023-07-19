@@ -61,7 +61,7 @@ namespace Barnacle.Dialogs
             SidePathEditor.OnFlexiPathTextChanged = SidePathChanged;
 
             ModelGroup = MyModelGroup;
-            ToolName = "RibFuselage";
+            ToolName = "ProfileFuselage";
             RibCommand = new RelayCommand(OnRibComand);
 
             SelectedRib = null;
@@ -463,7 +463,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private  bool CheckAllRibsHaveData( List<RibImageDetailsModel> generatingRibs)
+        private bool CheckAllRibsHaveData(List<RibImageDetailsModel> generatingRibs)
         {
             bool okToGenerate = true;
             // check that all the ribs have profile points. If they don't we can't generate the shape.

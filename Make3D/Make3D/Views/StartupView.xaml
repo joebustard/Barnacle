@@ -42,11 +42,22 @@
                VerticalContentAlignment="Stretch" />
 
         <Button Command="{Binding NewProjectCommand}"
+                Visibility="{Binding NewProjectVisible}"
                 Content="New Project"
                 Grid.Column="2"
-                Grid.Row="2"
-                Style="{StaticResource LargeButton}"
-                Visibility="{Binding NewProjectVisible}" />
+                Grid.Row="2">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+
+                    <Style.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Margin" Value="4,4,4,4" />
+                            <Setter Property="FontSize" Value="12" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
         <Button Command="{Binding BrowseProjectCommand}"
                 Content="Browse"
@@ -85,7 +96,7 @@
                    HorizontalContentAlignment="Center"
                    VerticalContentAlignment="Center"
                    Height="34">
-            Recent Projects
+                Recent Projects
             </Label>
         </Border>
         <Border Background="White"

@@ -820,14 +820,10 @@ namespace Barnacle.Dialogs
             SetImageSource();
         }
 
-        //   private SelectionModeType selectionMode;
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
 
-            //  ScrollView.ScrollToHorizontalOffset(scrollX);
-            //    ScrollView.ScrollToVerticalOffset(scrollY);
-            //selectionMode = SelectionModeType.SelectSegmentAtPoint;
             FlexiControl.AbsolutePaths = true;
             UpdateDisplay();
             loaded = true;
