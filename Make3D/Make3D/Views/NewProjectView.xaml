@@ -136,14 +136,41 @@
             <Button Command="{Binding BackCommand}"
                     Content="Back"
                     Grid.Column="1"
-                    Style="{StaticResource LargeButton}" />
+                     >
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+
+                        <Style.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Margin" Value="4,4,4,4" />
+                                <Setter Property="FontSize" Value="20" />
+                            </Trigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
 
             <Button Command="{Binding CreateCommand}"
                     Content="Create"
                     Grid.Column="3"
                     HorizontalAlignment="Right"
                     IsEnabled="{Binding OKEnabled}"
-                    Style="{StaticResource LargeButton}" IsDefault="True" />
+                    IsDefault="True" >
+                
+                <Button.Style>
+                    <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+
+                        <Style.Triggers>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Margin" Value="4,4,4,4" />
+                                <Setter Property="FontSize" Value="20" />
+                            </Trigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
     </Grid>
 </UserControl>

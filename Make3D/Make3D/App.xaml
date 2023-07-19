@@ -15,7 +15,7 @@
             <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
             <Setter Property="TextBlock.TextAlignment" Value="Center" />
             <Setter Property="TextBlock.FontSize" Value="14" />
-            <Setter Property="MinWidth" Value="75" />
+            
             <Setter Property="MaxHeight" Value="75" />
             <Setter Property="Button.Effect">
                 <Setter.Value>
@@ -49,14 +49,7 @@
                             <Trigger Property="Button.IsDefaulted" Value="True">
                                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                             </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="BurlyWood" />
-                                <Setter Property="BorderBrush" Value="#FF3C7FB1" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#FFC4E5F6" />
-                                <Setter Property="BorderBrush" Value="#FF2C628B" />
-                            </Trigger>
+                        
 
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Background" Value="#FFF4F4F4" />
@@ -89,46 +82,7 @@
                         Color="Black" />
                 </Setter.Value>
             </Setter>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            Background="White"
-                            BorderBrush="#ccc"
-                            BorderThickness="0,2,2,0"
-                            CornerRadius="{TemplateBinding Border.CornerRadius}">
-                            <ContentPresenter
-                                x:Name="contentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Border>
 
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Button.IsDefaulted" Value="True">
-                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="contentPresenter" Property="Border.Background"  Value="Red" />
-                                <Setter TargetName="contentPresenter" Property="Border.BorderBrush"  Value="#FF3C7FB1" />
-                                <Setter TargetName="contentPresenter" Property="Border.BorderThickness"  Value="6,6,6,6" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#FFC4E5F6" />
-                                <Setter Property="BorderBrush" Value="#FF2C628B" />
-                            </Trigger>
-
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="#FFF4F4F4" />
-                                <Setter Property="BorderBrush" Value="#FFADB2B5" />
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="Red" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
         </Style>
         <Style
             x:Key="LargeImageButton"
@@ -206,46 +160,12 @@
                         Color="Black" />
                 </Setter.Value>
             </Setter>
-            <Setter Property="Template">
-
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            Background="White"
-                            BorderBrush="#ccc"
-                            BorderThickness="0,2,3,0"
-                           CornerRadius="2,0,0,2">
-                            <ContentPresenter
-                                x:Name="contentPresenter"
-                                Margin="{TemplateBinding Padding}"
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                Content="{TemplateBinding Content}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="Button.IsDefaulted" Value="True">
-                                <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="TextElement.Background" TargetName="contentPresenter" Value="BurlyWood" />
-                                <Setter Property="Border.BorderBrush" TargetName="contentPresenter" Value="#FF3C7FB1" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="TextElement.Background" TargetName="contentPresenter" Value="#FFC4E5F6" />
-                                <Setter Property="Border.BorderBrush" TargetName="contentPresenter" Value="#FF2C628B" />
-                            </Trigger>
-
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="contentPresenter" Property="TextElement.Background" Value="#FFF4F4F4" />
-                                <Setter TargetName="contentPresenter" Property="Border.BorderBrush" Value="#FFADB2B5" />
-                                <Setter TargetName="contentPresenter" Property="TextElement.Foreground" Value="Red" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Margin" Value="2,2,2,2" />
+                    <Setter Property="FontSize" Value="12" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
         <Style
             x:Key="SmallButton"
@@ -257,6 +177,12 @@
             <Setter Property="HorizontalAlignment" Value="Stretch" />
             <Setter Property="VerticalAlignment" Value="Stretch" />
             <Setter Property="Border.CornerRadius" Value="2,0,2,0" />
+            <Style.Triggers>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Margin" Value="2,2,2,2" />
+                    <Setter Property="FontSize" Value="12" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style

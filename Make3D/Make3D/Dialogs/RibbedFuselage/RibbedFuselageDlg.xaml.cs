@@ -85,6 +85,7 @@ namespace Barnacle.Dialogs
             {
                 autoFit = value;
                 dirty = true;
+                NotifyPropertyChanged();
                 UpdateModel();
             }
         }
@@ -96,7 +97,10 @@ namespace Barnacle.Dialogs
             {
                 backBody = value;
                 dirty = true;
-                UpdateModel();
+                if (backBody)
+                {
+                    UpdateModel();
+                }
             }
         }
 
@@ -107,7 +111,10 @@ namespace Barnacle.Dialogs
             {
                 wholeBody = value;
                 dirty = true;
-                UpdateModel();
+                if (wholeBody)
+                {
+                    UpdateModel();
+                }
             }
         }
 
@@ -118,7 +125,10 @@ namespace Barnacle.Dialogs
             {
                 frontBody = value;
                 dirty = true;
-                UpdateModel();
+                if (frontBody)
+                {
+                    UpdateModel();
+                }
             }
         }
 
@@ -379,14 +389,16 @@ namespace Barnacle.Dialogs
 
                 // go through all the profile points for all the ribs,
                 // converting to a 3d position
-                double x = GetXmm(ribXs[0]);
+                //double x = GetXmm(ribXs[0]);
+                double x = ribXs[0];
                 double leftx = x;
                 double rightx = x;
                 int vert = 0;
                 int vindex = 0;
                 for (int i = 0; i < generatingRibs.Count; i++)
                 {
-                    x = GetXmm(ribXs[i]);
+                    //x = GetXmm(ribXs[i]);
+                    x = ribXs[i];
                     // if this is the last rib count it as the right edge and record its position
                     if (i == generatingRibs.Count - 1)
                     {
@@ -401,10 +413,12 @@ namespace Barnacle.Dialogs
                             PointF pnt = generatingRibs[i].ProfilePoints[proind];
 
                             double v = (double)pnt.X * topDims[i].Height;
-                            double z = GetYmm(v + topDims[i].P1.Y);
+                            //double z = GetYmm(v + topDims[i].P1.Y);
+                            double z = v + topDims[i].P1.Y;
 
                             v = (double)pnt.Y * sideDims[i].Height;
-                            double y = -GetYmm(v + sideDims[i].P1.Y);
+                            //double y = -GetYmm(v + sideDims[i].P1.Y);
+                            double y = -(v + sideDims[i].P1.Y);
                             vert = AddVertice(Vertices, x, y, z);
                             ribvertices[i, vindex] = vert;
                             vindex++;
@@ -599,6 +613,7 @@ namespace Barnacle.Dialogs
         {
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
+            LoadEditorParameters();
             loaded = true;
 
             Redisplay();
@@ -923,26 +938,26 @@ namespace Barnacle.Dialogs
 
                     dirty = false;
                 }
-                wholeBody = true;
-                frontBody = false;
-                backBody = false;
+                WholeBody = true;
+                FrontBody = false;
+                BackBody = false;
                 s = EditorParameters.Get("Model");
                 if (s == "Front")
                 {
-                    wholeBody = false;
-                    frontBody = true;
-                    backBody = false;
+                    WholeBody = false;
+                    FrontBody = true;
+                    BackBody = false;
                 }
                 else if (s == "Back")
                 {
-                    backBody = true;
-                    frontBody = false;
-                    wholeBody = false;
+                    BackBody = true;
+                    FrontBody = false;
+                    WholeBody = false;
                 }
 
                 NumberOfDivisions = EditorParameters.GetInt("NumberOfDivisions", 100);
 
-                autoFit = EditorParameters.GetBoolean("AutoFit");
+                AutoFit = EditorParameters.GetBoolean("AutoFit");
             }
         }
 

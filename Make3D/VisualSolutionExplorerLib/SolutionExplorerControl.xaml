@@ -30,7 +30,14 @@
                 <DataTrigger Binding="{Binding IsEditing}" Value="True">
                     <Setter Property="Visibility" Value="Hidden" />
                 </DataTrigger>
+                
+                    <Trigger Property="IsFocused" Value="True">
+                        <Setter Property="Background" Value="Yellow" />
+                        <Setter Property="FontSize" Value="12" />
+                    </Trigger>
+                
             </Style.Triggers>
+
         </Style>
         <Style x:Key="NameTextBox" TargetType="{x:Type TextBox}">
             <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -41,6 +48,10 @@
                 <DataTrigger Binding="{Binding IsEditing}" Value="False">
                     <Setter Property="Visibility" Value="Hidden" />
                 </DataTrigger>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="Background" Value="Yellow" />
+                    <Setter Property="FontSize" Value="12" />
+                </Trigger>
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
@@ -164,7 +175,7 @@
                         </TextBox>
                     </Grid>
                 </HierarchicalDataTemplate>
-                <HierarchicalDataTemplate DataType="{x:Type local:ProjectFileViewModel}" ItemsSource="{Binding Children}">
+                <HierarchicalDataTemplate DataType="{x:Type local:ProjectFileViewModel}" ItemsSource="{Binding Children}"  >
                     <!-- <Image Width="16" Height="16" Margin="3,0" Source="Images\File.png" Grid.Column="0" /> -->
                     <Grid>
                         <Grid.ColumnDefinitions>
@@ -181,7 +192,9 @@
                         <TextBlock
                             Grid.Column="1"
                             Text="{Binding FileName}"
-                            ToolTip="{Binding FileToolTip}">
+                            OverridesDefaultStyle="True"
+                            ToolTip="{Binding FileToolTip}" Style="{StaticResource NameTextBlock}">
+                            
                             <TextBlock.InputBindings>
                                 <MouseBinding
                                     Command="{Binding FileDoubleClickCommand}"
@@ -206,7 +219,7 @@
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
                         </TextBlock>
-                        <TextBox Grid.Column="1" Text="{Binding FileName, UpdateSourceTrigger=LostFocus}">
+                        <TextBox Grid.Column="1" Text="{Binding FileName, UpdateSourceTrigger=LostFocus}" OverridesDefaultStyle="True">
                             <TextBox.Style>
                                 <Style BasedOn="{StaticResource NameTextBox}" TargetType="{x:Type TextBox}" />
                             </TextBox.Style>

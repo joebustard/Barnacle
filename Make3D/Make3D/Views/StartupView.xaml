@@ -52,8 +52,9 @@
                     <Style.Triggers>
                         <Trigger Property="IsPressed" Value="True">
                             <Setter Property="Margin" Value="4,4,4,4" />
-                            <Setter Property="FontSize" Value="12" />
+                            <Setter Property="FontSize" Value="20" />
                         </Trigger>
+                       
                     </Style.Triggers>
                 </Style>
             </Button.Style>
@@ -63,15 +64,40 @@
                 Content="Browse"
                 Grid.Column="2"
                 Grid.Row="4"
-                Style="{StaticResource LargeButton}"
-                Visibility="{Binding BrowseProjectVisible}" />
+               
+                Visibility="{Binding BrowseProjectVisible}" >
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+
+                    <Style.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Margin" Value="4,4,4,4" />
+                            <Setter Property="FontSize" Value="20" />
+                        </Trigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
         <Button Command="{Binding OpenProjectCommand}"
                 Content="Open Project"
                 Grid.Column="1"
                 Grid.Row="6"
-                Style="{StaticResource LargeButton}"
+            
                 Visibility="{Binding OpenVisible}">
+            <Button.Style>
+                <Style TargetType="Button" BasedOn="{StaticResource LargeButton}">
+
+                    <Style.Triggers>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Margin" Value="4,4,4,4" />
+                            <Setter Property="FontSize" Value="20" />
+                        </Trigger>
+
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
         </Button>
         <Border Background="White"
                 BorderThickness="4"
