@@ -22,9 +22,9 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
         public Orientation PointOrientation { get; set; }
         private SpaceTreeNode spaceTreeRoot;
 
-        private Int32Collection tris;
+        protected Int32Collection tris;
 
-        private Point3DCollection vertices;
+        protected Point3DCollection vertices;
 
         public Point3DCollection Vertices
         {
@@ -38,7 +38,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             }
         }
 
-        private int AddVertice(Point3D v)
+        protected int AddVertice(Point3D v)
         {
             int res = -1;
             if (spaceTreeRoot != null)
@@ -70,6 +70,8 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             Faces = new Int32Collection();
             MeshColour = Colors.Gray;
             spaceTreeRoot = null;
+            rawPoints = new List<PointF>();
+            YOffset = 0;
         }
 
         public Int32Collection Faces
@@ -99,7 +101,8 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             spaceTreeRoot = null;
         }
 
-        private List<PointF> points;
+        protected List<PointF> points;
+        protected List<PointF> rawPoints;
 
         public GeometryModel3D GetModel()
         {
@@ -122,13 +125,24 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             return gm;
         }
 
-        internal void SetPoints(List<PointF> dp)
+        internal virtual void SetPoints(List<PointF> dp)
+        {
+            rawPoints.Clear();
+            foreach (PointF p in dp)
+            {
+                rawPoints.Add(p);
+            }
+
+            Regenerate();
+        }
+
+        private void Regenerate()
         {
             float left = float.MaxValue;
             float right = float.MinValue;
             float bottom = float.MaxValue;
             float top = float.MinValue;
-            foreach (PointF p in dp)
+            foreach (PointF p in rawPoints)
             {
                 left = Math.Min(left, p.X);
                 right = Math.Max(right, p.X);
@@ -138,56 +152,13 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             float dx = (right - left) / 2;
             float dy = (top - bottom) / 2;
             points = new List<PointF>();
-            foreach (PointF p in dp)
+            foreach (PointF p in rawPoints)
             {
                 points.Add(new PointF(p.X - left - dx, -(p.Y - bottom - dy)));
             }
             ClearShape();
-            switch (PointOrientation)
-            {
-                case Orientation.Top:
-                    {
-                        TriangulateTop(points, false);
-                    }
-                    break;
 
-                case Orientation.Side:
-                    {
-                        TriangulateSide(points, false);
-                    }
-                    break;
-
-                case Orientation.Accross:
-                    {
-                    }
-                    break;
-            }
-        }
-
-        private void TriangulateSide(List<PointF> points, bool invert)
-        {
-            TriangulationPolygon ply = new TriangulationPolygon();
-
-            ply.Points = points.ToArray();
-            List<Triangle> tris = ply.Triangulate();
-            foreach (Triangle t in tris)
-            {
-                int c0 = AddVertice(new Point3D(t.Points[0].X, t.Points[0].Y, 0.0));
-                int c1 = AddVertice(new Point3D(t.Points[1].X, t.Points[1].Y, 0.0));
-                int c2 = AddVertice(new Point3D(t.Points[2].X, t.Points[2].Y, 0.0));
-                if (invert)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-                }
-            }
+            TriangulateTop(points, false);
         }
 
         private void TriangulateTop(List<PointF> points, bool invert)
@@ -198,9 +169,9 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             List<Triangle> tris = ply.Triangulate();
             foreach (Triangle t in tris)
             {
-                int c0 = AddVertice(new Point3D(t.Points[0].X, 0.0, t.Points[0].Y));
-                int c1 = AddVertice(new Point3D(t.Points[1].X, 0.0, t.Points[1].Y));
-                int c2 = AddVertice(new Point3D(t.Points[2].X, 0.0, t.Points[2].Y));
+                int c0 = AddVertice(new Point3D(t.Points[0].X, YOffset, t.Points[0].Y));
+                int c1 = AddVertice(new Point3D(t.Points[1].X, YOffset, t.Points[1].Y));
+                int c2 = AddVertice(new Point3D(t.Points[2].X, YOffset, t.Points[2].Y));
                 if (invert)
                 {
                     Faces.Add(c0);
@@ -214,6 +185,12 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
                     Faces.Add(c2);
                 }
             }
+        }
+        private float YOffset;
+        internal void SetYOffset(float o)
+        {
+            YOffset = o;
+            Regenerate();
         }
     }
 }

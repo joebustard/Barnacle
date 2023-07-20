@@ -136,6 +136,7 @@
     <Compile Include="Dialogs\RibbedFuselage\Models\MarkerModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\PlateModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\RibImageDetailsModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\SidePlateModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml.cs">
       <DependentUpon>RibbedFuselageDlg.xaml</DependentUpon>
     </Compile>

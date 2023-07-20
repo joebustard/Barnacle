@@ -42,7 +42,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
         private PolarCamera polarCamera;
 
         private PlateModel topPlateModel;
-        private PlateModel sidePlateModel;
+        private SidePlateModel sidePlateModel;
         private List<PlateModel> ribPlates;
 
         public ImageMarker3d()
@@ -57,10 +57,10 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             meshColour = Colors.Gainsboro;
             topPlateModel = new PlateModel();
             topPlateModel.PointOrientation = PlateModel.Orientation.Top;
-            topPlateModel.MeshColour = Colors.LightGray;
-            sidePlateModel = new PlateModel();
+            topPlateModel.MeshColour = Colors.CornflowerBlue;
+            sidePlateModel = new SidePlateModel();
             sidePlateModel.PointOrientation = PlateModel.Orientation.Side;
-            topPlateModel.MeshColour = Colors.LightGray;
+            sidePlateModel.MeshColour = Colors.LightSteelBlue;
             ribPlates = new List<PlateModel>();
         }
 
@@ -198,6 +198,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             FlexiPath flexiPath = new FlexiPath();
             flexiPath.FromString(pth);
             sidePlateModel.SetPoints(flexiPath.DisplayPointsF());
+            topPlateModel.SetYOffset(sidePlateModel.MiddleOffset);
         }
 
         public void UpdateCameraPos()
