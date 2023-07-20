@@ -134,11 +134,15 @@
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
     <Compile Include="Dialogs\RibbedFuselage\ItemControlExtensions.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\MarkerModel.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Models\PlateModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\RibImageDetailsModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\RibbedFuselageDlg.xaml.cs">
       <DependentUpon>RibbedFuselageDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\RibbedFuselage\Views\ImageMarker.xaml.cs" />
+    <Compile Include="Dialogs\RibbedFuselage\Views\ImageMarker3d.xaml.cs">
+      <DependentUpon>ImageMarker3d.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\RibbedFuselage\Views\RibView.xaml.cs">
       <DependentUpon>RibView.xaml</DependentUpon>
     </Compile>
@@ -517,6 +521,10 @@
     <Page Include="Dialogs\RibbedFuselage\Views\ImageMarker.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RibbedFuselage\Views\ImageMarker3d.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RibbedFuselage\Views\RibView.xaml">
       <SubType>Designer</SubType>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         xmlns:ctrls="clr-namespace:Barnacle.UserControls"
-       
+
         xmlns:Views="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Views"
         xmlns:Models="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Models"
         mc:Ignorable="d"
@@ -124,7 +124,7 @@
                             <Button Grid.Column="0" Height="60" Content="&lt;" Command="{Binding RibCommand}" CommandParameter="Previous" />
                             <ListView Grid.Column="1" ItemsSource="{Binding Ribs}"
                       SelectedItem="{Binding SelectedRib}" SelectedIndex="{Binding SelectedRibIndex}" x:Name="RibList"  ScrollViewer.HorizontalScrollBarVisibility="Hidden" SelectionChanged="RibList_SelectionChanged">
-                               
+
                                 <ListView.ItemTemplate>
 
                                     <DataTemplate DataType="Models:RibImageDetailsModel">
@@ -261,31 +261,6 @@
                             <RowDefinition Height="30" />
                             <RowDefinition Height="30" />
                         </Grid.RowDefinitions>
-                        <!--
-                        <Button Click="ZoomIn_Click"
-                                Content="+"
-                                Grid.Row="0"
-                                ToolTip="Zoom In"
-                                x:Name="ZoomIn" />
-
-                        <Button Click="ZoomReset_Click"
-                                Content="."
-                                Grid.Row="1"
-                                ToolTip="Zoom Reset"
-                                x:Name="ZoomReset" />
-
-                        <Button Click="ZoomOut_Click"
-                                Content="-"
-                                Grid.Row="2"
-                                ToolTip="Zoom Out"
-                                x:Name="ZoomOut" />
-
-                        <Button Click="ZoomFit_Click"
-                                Content="[ ]"
-                                Grid.Row="3"
-                                ToolTip="Zoom Fit"
-                                x:Name="ZoomFit" />
-                            -->
                     </Grid>
                     <UniformGrid Columns="1"
                                  Grid.Row="2"
@@ -310,7 +285,6 @@
                         </StackPanel>
 
                         <Button x:Name="ResetMarkers" Command="{Binding RibCommand}" CommandParameter="Reset" Content="Reset Markers" ToolTip="Spread markers evenly"  Margin="0,4,0,0" />
-                  
                     </UniformGrid>
                     <TabControl Grid.Column="1"
                                 Grid.Row="2"
@@ -320,6 +294,9 @@
                         </TabItem>
                         <TabItem Header="Side Marker Positions">
                             <local:ImageMarker x:Name="SideView" />
+                        </TabItem>
+                        <TabItem Header="3D Marker Positions">
+                            <Views:ImageMarker3d x:Name="ThreeDView" />
                         </TabItem>
                     </TabControl>
                 </Grid>

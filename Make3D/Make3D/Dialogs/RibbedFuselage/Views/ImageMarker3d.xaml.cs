@@ -1,0 +1,350 @@
+﻿using Barnacle.Models;
+using Barnacle.Object3DLib;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using Barnacle.Dialogs.RibbedFuselage.Models;
+using Barnacle.LineLib;
+
+namespace Barnacle.Dialogs.RibbedFuselage.Views
+{
+    /// <summary>
+    /// Interaction logic for ImageMarker3d.xaml
+    /// </summary>
+    public partial class ImageMarker3d : UserControl, INotifyPropertyChanged
+    {
+        private Point3D cameraPosition;
+
+        private double fieldOfView;
+
+        private GeometryModel3D lastHitModel;
+
+        private Point3D lastHitPoint;
+        private Floor floor;
+        private Vector3D lookDirection;
+
+        private System.Windows.Media.Color meshColour;
+
+        private PolarCamera polarCamera;
+
+        private PlateModel topPlateModel;
+        private PlateModel sidePlateModel;
+        private List<PlateModel> ribPlates;
+
+        public ImageMarker3d()
+        {
+            InitializeComponent();
+            DataContext = this;
+            polarCamera = new PolarCamera(100);
+            polarCamera.HomeFront();
+            floor = new Floor();
+            LookDirection = new Vector3D(-polarCamera.CameraPos.X, -polarCamera.CameraPos.Y, -polarCamera.CameraPos.Z);
+            FieldOfView = 45;
+            meshColour = Colors.Gainsboro;
+            topPlateModel = new PlateModel();
+            topPlateModel.PointOrientation = PlateModel.Orientation.Top;
+            topPlateModel.MeshColour = Colors.LightGray;
+            sidePlateModel = new PlateModel();
+            sidePlateModel.PointOrientation = PlateModel.Orientation.Side;
+            topPlateModel.MeshColour = Colors.LightGray;
+            ribPlates = new List<PlateModel>();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public PolarCamera Camera
+        {
+            get
+            {
+                return polarCamera;
+            }
+            set
+            {
+                polarCamera = value;
+            }
+        }
+
+        public Point3D CameraPosition
+        {
+            get
+            {
+                return cameraPosition;
+            }
+
+            set
+            {
+                if (cameraPosition != value)
+                {
+                    cameraPosition = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public double FieldOfView
+        {
+            get
+            {
+                return fieldOfView;
+            }
+            set
+            {
+                if (fieldOfView != value)
+                {
+                    fieldOfView = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public Vector3D LookDirection
+        {
+            get
+            {
+                return lookDirection;
+            }
+            set
+            {
+                if (lookDirection != value)
+                {
+                    lookDirection = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public System.Windows.Media.Color MeshColour
+        {
+            get
+            {
+                return meshColour;
+            }
+            set
+            {
+                meshColour = value;
+            }
+        }
+
+        public void SetTopPoints()
+        {
+        }
+
+        public Model3DGroup ModelGroup { get; set; }
+
+        public void HitTest(Viewport3D viewport3D1, Point mouseposition)
+        {
+            Point3D testpoint3D = new Point3D(mouseposition.X, mouseposition.Y, 0);
+            Vector3D testdirection = new Vector3D(mouseposition.X, mouseposition.Y, 10);
+            PointHitTestParameters pointparams = new PointHitTestParameters(mouseposition);
+            RayHitTestParameters rayparams = new RayHitTestParameters(testpoint3D, testdirection);
+
+            //test for a result in the Viewport3D
+            VisualTreeHelper.HitTest(viewport3D1, null, HTResult, pointparams);
+        }
+
+        public HitTestResultBehavior HTResult(System.Windows.Media.HitTestResult rawresult)
+        {
+            HitTestResultBehavior result = HitTestResultBehavior.Continue;
+            RayHitTestResult rayResult = rawresult as RayHitTestResult;
+
+            if (rayResult != null)
+            {
+                RayMeshGeometry3DHitTestResult rayMeshResult = rayResult as RayMeshGeometry3DHitTestResult;
+
+                if (rayMeshResult != null)
+                {
+                    GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
+                    if (lastHitModel == null)
+                    {
+                        lastHitModel = hitgeo;
+                        lastHitPoint = rayMeshResult.PointHit;
+                    }
+                    result = HitTestResultBehavior.Stop;
+                }
+            }
+
+            return result;
+        }
+
+        public void Log(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
+
+        public virtual void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        internal void SetSidePath(string pth)
+        {
+            FlexiPath flexiPath = new FlexiPath();
+            flexiPath.FromString(pth);
+            sidePlateModel.SetPoints(flexiPath.DisplayPointsF());
+        }
+
+        public void UpdateCameraPos()
+        {
+            lookDirection.X = -polarCamera.CameraPos.X;
+            lookDirection.Y = -polarCamera.CameraPos.Y;
+            lookDirection.Z = -polarCamera.CameraPos.Z;
+            //lookDirection.Normalize();
+            CameraPosition = new Point3D(polarCamera.CameraPos.X, polarCamera.CameraPos.Y, polarCamera.CameraPos.Z);
+            LookDirection = new Vector3D(lookDirection.X, lookDirection.Y, lookDirection.Z);
+            NotifyPropertyChanged("LookDirection");
+            NotifyPropertyChanged("CameraPosition");
+        }
+
+        public void Redisplay()
+        {
+            if (ImageMarkerModelGroup != null)
+            {
+                ImageMarkerModelGroup.Children.Clear();
+                if (floor != null)
+                {
+                    ImageMarkerModelGroup.Children.Add(floor.FloorMesh);
+                }
+
+                /*
+                                if (floor != null && ShowFloor)
+                                {
+                                }
+
+                                if (axies != null && ShowAxies)
+                                {
+                                    foreach (GeometryModel3D m in axies.Group.Children)
+                                    {
+                                        ModelGroup.Children.Add(m);
+                                    }
+                                }
+                */
+
+                ImageMarkerModelGroup.Children.Add(topPlateModel.GetModel());
+                ImageMarkerModelGroup.Children.Add(sidePlateModel.GetModel());
+                foreach (PlateModel pm in ribPlates)
+                {
+                    ImageMarkerModelGroup.Children.Add(pm.GetModel());
+                }
+                NotifyPropertyChanged();
+            }
+        }
+
+        internal void SetTopPath(string pth)
+        {
+            FlexiPath flexiPath = new FlexiPath();
+            flexiPath.FromString(pth);
+            topPlateModel.SetPoints(flexiPath.DisplayPointsF());
+        }
+
+        protected void SetCameraDistance(bool sideView = false)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(topPlateModel.Vertices, ref min, ref max);
+            double w = max.X - min.X;
+            double h = max.Y - min.Y;
+            double d = max.Z - min.Z;
+            if (sideView)
+            {
+                Camera.DistanceToFit(d, h, w * 1.5);
+            }
+            else
+            {
+                Camera.DistanceToFit(w, h, d * 1.5);
+            }
+        }
+
+        protected virtual void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    oldMousePos = e.GetPosition(vp);
+                }
+            }
+        }
+
+        private Point oldMousePos;
+
+        protected virtual void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    Point pn = e.GetPosition(vp);
+                    double dx = pn.X - oldMousePos.X;
+                    double dy = pn.Y - oldMousePos.Y;
+                    polarCamera.Move(dx, -dy);
+                    UpdateCameraPos();
+                    oldMousePos = pn;
+                    e.Handled = true;
+                }
+            }
+        }
+
+        protected virtual void Viewport_MouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
+        {
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                double diff = Math.Sign(e.Delta) * 1;
+                polarCamera.Zoom(diff);
+                UpdateCameraPos();
+            }
+        }
+
+        private void MainCanvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            /*
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                if (selectedMarker != null)
+                {
+                    Br_MouseMove(sender, e);
+                }
+                else
+                if (pinSelected)
+                {
+                    Ply_MouseMove(sender, e);
+                }
+            }
+            */
+        }
+
+        private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            /*
+            Br_MouseUp(sender, e);
+
+            Ply_MouseUp(sender, e);
+            */
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdateCameraPos();
+            Redisplay();
+        }
+    }
+}

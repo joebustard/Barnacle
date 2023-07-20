@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
+using Barnacle.Dialogs.RibbedFuselage.Views;
 
 namespace Barnacle.Dialogs
 {
@@ -184,9 +185,11 @@ namespace Barnacle.Dialogs
                     sidePath = value;
                     fuselageData.SetSidePath(sidePath);
                     NotifyPropertyChanged();
+                    ThreeDView.SetSidePath(sidePath);
                     if (!String.IsNullOrEmpty(sidePath) && sidePath != SidePathEditor.AbsolutePathString)
                     {
                         SidePathEditor.FromString(sidePath, false);
+
                         CopyPathToSideView();
                     }
                 }
@@ -217,7 +220,7 @@ namespace Barnacle.Dialogs
                 {
                     topPath = value;
                     fuselageData.SetTopPath(topPath);
-
+                    ThreeDView.SetTopPath(topPath);
                     if (topPath != TopPathEditor.AbsolutePathString)
                     {
                         TopPathEditor.FromString(topPath, false);
@@ -887,13 +890,25 @@ namespace Barnacle.Dialogs
             System.Windows.Controls.TabControl tc = sender as System.Windows.Controls.TabControl;
             if (tc != null)
             {
-                if (tc.SelectedIndex == 0)
+                switch (tc.SelectedIndex)
                 {
-                    CopyPathToTopView();
-                }
-                else
-                {
-                    CopyPathToSideView();
+                    case 0:
+                        {
+                            CopyPathToTopView();
+                        }
+                        break;
+
+                    case 1:
+                        {
+                            CopyPathToSideView();
+                        }
+                        break;
+
+                    case 2:
+                        {
+                            ThreeDView.Redisplay();
+                        }
+                        break;
                 }
             }
         }
