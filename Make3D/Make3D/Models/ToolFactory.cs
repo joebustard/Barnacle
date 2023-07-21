@@ -124,6 +124,10 @@ namespace Barnacle.Models
                     res = new ShapedTiledRoofDlg();
                     break;
 
+                case "ShapedWing":
+                    res = new ShapedWingDlg();
+                    break;
+
                 case "Spring":
                     res = new SpringDlg();
                     break;
