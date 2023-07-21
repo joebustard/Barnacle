@@ -343,7 +343,7 @@ namespace Barnacle.Dialogs
             // copy the rib
             RibImageDetailsModel nr = cp.Clone();
             nr.NumDivisions = NumberOfDivisions;
-            nr.GenerateProfilePoints();
+            //  nr.GenerateProfilePoints();
             generatingRibs.Add(nr);
 
             // get the dimensions from the side and top at the intermediate point

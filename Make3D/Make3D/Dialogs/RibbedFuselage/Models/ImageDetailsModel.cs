@@ -13,6 +13,8 @@ namespace Barnacle.RibbedFuselage
 {
     public class ImageDetailsModel : INotifyPropertyChanged
     {
+        public bool Dirty { get; set; }
+
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -43,11 +45,13 @@ namespace Barnacle.RibbedFuselage
                 {
                     imageFilePath = value;
                     NotifyPropertyChanged();
+                    Dirty = true;
                 }
             }
         }
 
         private Visibility noPathVisibility;
+
         public Visibility NoPathVisibility
         {
             get { return noPathVisibility; }
@@ -83,6 +87,7 @@ namespace Barnacle.RibbedFuselage
                         NoPathVisibility = Visibility.Hidden;
                     }
                     NotifyPropertyChanged();
+                    Dirty = true;
                 }
             }
         }
@@ -101,10 +106,10 @@ namespace Barnacle.RibbedFuselage
                 {
                     name = value;
                     NotifyPropertyChanged();
+                    Dirty = true;
                 }
             }
         }
-
 
         private string displayFileName;
 
@@ -122,6 +127,7 @@ namespace Barnacle.RibbedFuselage
                 {
                     displayFileName = value;
                     NotifyPropertyChanged();
+                    Dirty = true;
                 }
             }
         }
