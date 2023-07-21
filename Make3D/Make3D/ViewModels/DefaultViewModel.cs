@@ -1160,6 +1160,7 @@ namespace Barnacle.ViewModels
             aircraftToolsToShow.Add(new ToolDef("Canvas Wing", true, "CanvasWing", "Create a wing that looks like canvas streteched over struts from a database of airfoil profiles."));
             aircraftToolsToShow.Add(new ToolDef("Propeller", true, "Propeller", "Create a propeller."));
             aircraftToolsToShow.Add(new ToolDef("Turbo Fan", true, "TurboFan", "Create a turbofan."));
+            aircraftToolsToShow.Add(new ToolDef("Shaped Wing", true, "ShapedWing", "Create a wing from a drawn outline using a profile a database of airfoil profiles."));
             SortMenu(aircraftToolsToShow);
             NotifyPropertyChanged("AircraftToolsToShow");
         }

@@ -149,6 +149,7 @@
     <Compile Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
+    <Compile Include="Dialogs\ShapedWing\ShapedWingDlg.xaml.cs" />
     <Compile Include="Dialogs\Spring\SpringDlg.xaml.cs" />
     <Compile Include="Dialogs\SymbolFont\SymbolFontDlg.xaml.cs" />
     <Compile Include="Dialogs\TexturedTube\TexturedTubeDlg.xaml.cs" />
@@ -539,6 +540,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\ShapedWing\ShapedWingDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
