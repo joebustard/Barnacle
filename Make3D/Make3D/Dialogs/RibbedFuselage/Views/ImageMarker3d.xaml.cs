@@ -58,10 +58,10 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             meshColour = Colors.Gainsboro;
             topPlateModel = new PlateModel();
             topPlateModel.PointOrientation = PlateModel.Orientation.Top;
-            topPlateModel.MeshColour = Colors.Red;
+            topPlateModel.MeshColour = Colors.LightBlue;
             sidePlateModel = new SidePlateModel();
             sidePlateModel.PointOrientation = PlateModel.Orientation.Side;
-            sidePlateModel.MeshColour = Colors.Blue;
+            sidePlateModel.MeshColour = Colors.LightGreen;
             ribPlates = new List<RibPlateModel>();
         }
 
@@ -399,7 +399,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
                     rdm.GenerateProfilePoints();
                 }
                 RibPlateModel plateModel = new RibPlateModel();
-                plateModel.MeshColour = Colors.Green;
+                plateModel.MeshColour = Colors.OrangeRed;
                 plateModel.SetPoints(rdm.ProfilePoints);
                 ribPlates.Add(plateModel);
             }
