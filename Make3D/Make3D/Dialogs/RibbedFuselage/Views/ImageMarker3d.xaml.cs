@@ -19,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Barnacle.Dialogs.RibbedFuselage.Models;
 using Barnacle.LineLib;
+using System.Collections.ObjectModel;
 
 namespace Barnacle.Dialogs.RibbedFuselage.Views
 {
@@ -43,7 +44,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
 
         private PlateModel topPlateModel;
         private SidePlateModel sidePlateModel;
-        private List<PlateModel> ribPlates;
+        private List<RibPlateModel> ribPlates;
 
         public ImageMarker3d()
         {
@@ -57,11 +58,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             meshColour = Colors.Gainsboro;
             topPlateModel = new PlateModel();
             topPlateModel.PointOrientation = PlateModel.Orientation.Top;
-            topPlateModel.MeshColour = Colors.CornflowerBlue;
+            topPlateModel.MeshColour = Colors.Red;
             sidePlateModel = new SidePlateModel();
             sidePlateModel.PointOrientation = PlateModel.Orientation.Side;
-            sidePlateModel.MeshColour = Colors.LightSteelBlue;
-            ribPlates = new List<PlateModel>();
+            sidePlateModel.MeshColour = Colors.Blue;
+            ribPlates = new List<RibPlateModel>();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -239,7 +240,7 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
 
                 ImageMarkerModelGroup.Children.Add(topPlateModel.GetModel());
                 ImageMarkerModelGroup.Children.Add(sidePlateModel.GetModel());
-                foreach (PlateModel pm in ribPlates)
+                foreach (RibPlateModel pm in ribPlates)
                 {
                     ImageMarkerModelGroup.Children.Add(pm.GetModel());
                 }
@@ -254,6 +255,14 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             topPlateModel.SetPoints(flexiPath.DisplayPointsF());
         }
 
+        internal void AddRibPath(string pth)
+        {
+            RibPlateModel rpm = new RibPlateModel();
+            FlexiPath flexiPath = new FlexiPath();
+            flexiPath.FromString(pth);
+            rpm.SetPoints(flexiPath.DisplayPointsF());
+            ribPlates.Add(rpm);
+        }
         protected void SetCameraDistance(bool sideView = false)
         {
             Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
@@ -269,6 +278,15 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             else
             {
                 Camera.DistanceToFit(w, h, d * 1.5);
+            }
+        }
+
+        internal void SetRipPosition(int i, double x, double lower1, double upper1, double lower2, double upper2)
+        {
+            if (i >= 0 && i < ribPlates.Count)
+            {
+
+                ribPlates[i].SetPositionAndScale(x+sidePlateModel.LeftOffset, sidePlateModel.MiddleOffset,lower1, upper1, lower2, upper2);
             }
         }
 
@@ -346,6 +364,45 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
         {
             UpdateCameraPos();
             Redisplay();
+        }
+        public List<LetterMarker> markers;
+        private bool convertMarkerPositionToScreen;
+
+        public List<LetterMarker> Markers
+
+        {
+            get
+            {
+                return markers;
+            }
+            set
+            {
+                if (markers != value)
+                {
+                    markers = value;
+                    convertMarkerPositionToScreen = true;
+                    if (markers != null)
+                    {
+
+                    }
+                }
+            }
+        }
+
+        internal void SetRibs(ObservableCollection<RibImageDetailsModel> ribs)
+        {
+            ribPlates.Clear();
+            foreach (RibImageDetailsModel rdm in ribs)
+            {
+                if (rdm.ProfilePoints == null)
+                {
+                    rdm.GenerateProfilePoints();
+                }
+                RibPlateModel plateModel = new RibPlateModel();
+                plateModel.MeshColour = Colors.Green;
+                plateModel.SetPoints(rdm.ProfilePoints);
+                ribPlates.Add(plateModel);
+            }
         }
     }
 }

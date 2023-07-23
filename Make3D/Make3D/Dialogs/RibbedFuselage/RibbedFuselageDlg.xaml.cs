@@ -252,6 +252,50 @@ namespace Barnacle.Dialogs
 
         internal double VerticalResolution { get; set; }
 
+        private void CalculateMainRibSizes()
+        {
+            if (fuselageData.Ribs != null && fuselageData.Ribs.Count > 1)
+            {
+                if (!String.IsNullOrEmpty(fuselageData.SidePath) && !String.IsNullOrEmpty(fuselageData.TopPath))
+                {
+                    FlexiPath topViewFlexiPath = new FlexiPath();
+                    topViewFlexiPath.FromString(fuselageData.TopPath);
+                    topViewFlexiPath.CalculatePathBounds();
+
+                    FlexiPath sideViewFlexiPath = new FlexiPath();
+                    sideViewFlexiPath.FromString(fuselageData.SidePath);
+                    sideViewFlexiPath.CalculatePathBounds();
+                    List<double> ribXs = new List<double>();
+                    List<Dimension> topDims = new List<Dimension>();
+                    List<Dimension> sideDims = new List<Dimension>();
+
+                    // first get the x positions of the ribs and the height and width at that position from the top and side views.
+                    // generate the profile points for the ribs at the same time.
+                    for (int i = 0; i < fuselageData.Ribs.Count; i++)
+                    {
+                        double x = fuselageData.Markers[i].Position;
+
+                        RibImageDetailsModel cp;
+                        cp = fuselageData.Ribs[i];
+                        cp.NumDivisions = numberOfDivisions;
+                        cp.GenerateProfilePoints();
+
+
+
+                        // calculate the top and side dimensions from the images at the ribs given position
+                        var dp1 = topViewFlexiPath.GetUpperAndLowerPoints(x);
+                        topDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
+                        var dp2 = sideViewFlexiPath.GetUpperAndLowerPoints(x);
+                        sideDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
+                        ribXs.Add(dp1.X);
+                        ThreeDView.SetRipPosition(i, dp1.X-ribXs[0], dp1.Lower, dp1.Upper, dp2.Lower, dp2.Upper);
+           
+                    }
+
+                    
+                }
+            }
+        }
         public void GenerateModel()
         {
             try
@@ -525,6 +569,7 @@ namespace Barnacle.Dialogs
                 TopPath = fuselageData.TopImageDetails.FlexiPathText;
                 SideImage = fuselageData.SideImageDetails.ImageFilePath;
                 SidePath = fuselageData.SideImageDetails.FlexiPathText;
+                RibsChanged();
             }
         }
 
@@ -654,6 +699,7 @@ namespace Barnacle.Dialogs
                             SelectedRibIndex = fuselageData.Ribs.Count - 1;
                             SelectedRib = rib;
                             fuselageData.AddMarker(rib);
+                            RibsChanged();
                             UpdateMarkers();
                             UpdateModel();
                             dirty = true;
@@ -664,6 +710,7 @@ namespace Barnacle.Dialogs
                         {
                             SelectedRib = fuselageData.CloneRib(SelectedRibIndex);
                             SelectedRibIndex = SelectedRibIndex + 1;
+                            RibsChanged();
                             UpdateMarkers();
                             UpdateModel();
                             dirty = true;
@@ -674,6 +721,7 @@ namespace Barnacle.Dialogs
                         {
                             SelectedRib = fuselageData.InsertRib(SelectedRibIndex);
                             SelectedRibIndex = SelectedRibIndex + 1;
+                            RibsChanged();
                             UpdateMarkers();
                             UpdateModel();
                             dirty = true;
@@ -697,6 +745,7 @@ namespace Barnacle.Dialogs
                                 {
                                     SelectedRibIndex--;
                                     SelectedRib = Ribs[selectedRibIndex];
+                                    RibsChanged();
                                 }
                                 UpdateMarkers();
                                 UpdateModel();
@@ -714,6 +763,7 @@ namespace Barnacle.Dialogs
                                 SelectedRib = Ribs[0];
                                 SelectedRibIndex = 0;
                             }
+                            RibsChanged();
                         }
                         break;
 
@@ -746,11 +796,19 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+        
+        private void RibsChanged()
+        {
+            ThreeDView.SetRibs(fuselageData.Ribs);
+            CalculateMainRibSizes();
+        }
 
         private void UpdateMarkers()
         {
             TopView.Markers = GetMarkers();
             SideView.Markers = GetMarkers();
+            ThreeDView.Markers = GetMarkers();
+            
         }
 
         private void PreviousRib()

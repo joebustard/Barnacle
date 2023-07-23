@@ -38,6 +38,11 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             }
         }
         public float MiddleOffset { get; set; } = 0;
+        public float LeftOffset { get; private set; }
+        public void Log(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
+        }
         internal override void SetPoints(List<PointF> dp)
         {
             float left = float.MaxValue;
@@ -54,10 +59,16 @@ namespace Barnacle.Dialogs.RibbedFuselage.Models
             float dx = (right - left) / 2;
             float dy = (top - bottom);
             MiddleOffset = dy / 2;
+            //LeftOffset = - left - dx;
+            LeftOffset = float.MaxValue;
             points = new List<PointF>();
+            Log("SidePlateModel : ");
             foreach (PointF p in dp)
             {
-                points.Add(new PointF(p.X - left - dx, -(p.Y - bottom)+dy));
+                float xn = p.X - left - dx;
+                Log($"{xn},{(-(p.Y - bottom) + dy)}");
+                LeftOffset = Math.Min(LeftOffset, xn);
+                points.Add(new PointF(xn, -(p.Y - bottom)+dy));
             }
             ClearShape();
 
