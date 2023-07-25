@@ -16,7 +16,7 @@
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="80" />
+                <RowDefinition Height="120" />
                 <RowDefinition />
                 <RowDefinition Height="54" />
             </Grid.RowDefinitions>
@@ -24,7 +24,7 @@
                 <UniformGrid
                     VerticalAlignment="Top"
                     Columns="9"
-                    Rows="2">
+                    Rows="3">
 
                     <Button
                         x:Name="ShowAllPointsButton"
@@ -93,6 +93,18 @@
                             Command="{Binding AddQuadBezierCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Convert a straight segment to a quadratic spline">
+                            <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
+                        </Button>
+                    </Border>
+                    <Border
+                        x:Name="SplitQuadBezierBorder"
+                        BorderThickness="4"
+                        CornerRadius="2">
+                        <Button
+                            x:Name="SplitQuadBezierButton"
+                            Command="{Binding SplitQuadBezierCommand}"
+                            Style="{StaticResource SmallButton}"
+                            ToolTip="Split a quadratic spline into two seperate curves">
                             <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
                         </Button>
                     </Border>

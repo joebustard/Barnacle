@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:Barnacle.Dialogs.RibbedFuselage.Views"
              xmlns:usercontrols="clr-namespace:Barnacle.UserControls"
              mc:Ignorable="d"
-             d:DesignHeight="600" d:DesignWidth="600" Loaded="UserControl_Loaded">
+             d:DesignHeight="700" d:DesignWidth="600" Loaded="UserControl_Loaded">
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
 

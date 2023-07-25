@@ -73,6 +73,7 @@ namespace Barnacle.UserControls
             AddCubicBezierCommand = new RelayCommand(OnAddCubic);
             ApplyPresetCommand = new RelayCommand(OnApplyPreset);
             AddQuadBezierCommand = new RelayCommand(OnAddQuad);
+            SplitQuadBezierCommand = new RelayCommand(OnSplitQuad);
             AddSegmentCommand = new RelayCommand(OnAddSegment);
             CNVDoubleSegCommand = new RelayCommand(OnCnvDoubleSegment);
             DeleteSegmentCommand = new RelayCommand(OnDeleteSegment);
@@ -111,6 +112,11 @@ namespace Barnacle.UserControls
             LoadPresets();
         }
 
+        private void OnSplitQuad(object obj)
+        {
+            SelectionMode = SelectionModeType.SplitQuad;
+        }
+
         private void OnLineStyle(object obj)
         {
         }
@@ -127,9 +133,9 @@ namespace Barnacle.UserControls
             DeleteSegment,
             ConvertToQuadBezier,
             MovePath,
-            DraggingPath
-        };
-
+            DraggingPath,
+            SplitQuad
+        }
         public bool AbsolutePaths
         {
             get { return absolutePaths; }
@@ -142,6 +148,7 @@ namespace Barnacle.UserControls
         public ICommand AddCubicBezierCommand { get; set; }
 
         public ICommand AddQuadBezierCommand { get; set; }
+        public ICommand SplitQuadBezierCommand { get; set; }
 
         public ICommand AddSegmentCommand { get; set; }
 
@@ -524,6 +531,31 @@ namespace Barnacle.UserControls
         public ICommand ZoomCommand { get; set; }
 
         public bool ConvertLineAtPointToBezier(System.Windows.Point position, bool cubic)
+        {
+            bool added = false;
+
+            position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
+            if (flexiPath.SelectAtPoint(position, true))
+            {
+                if (cubic)
+                {
+                    added = flexiPath.ConvertToCubic(position);
+                }
+                else
+                {
+                    added = flexiPath.ConvertToQuadQuadAtSelected(position);
+                }
+                if (added)
+                {
+                    PathText = flexiPath.ToPath(absolutePaths);
+                    NotifyPropertyChanged("Points");
+                }
+            }
+
+            return added;
+        }
+
+        public bool SplitQuadBezier(System.Windows.Point position, bool cubic)
         {
             bool added = false;
 

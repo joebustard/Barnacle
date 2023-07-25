@@ -65,6 +65,7 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
+           
             wallWidth = 2;
             textureDepth = 1;
             solidShape = true;

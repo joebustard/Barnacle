@@ -426,6 +426,7 @@ namespace Barnacle.UserControls
             DoButtonBorder(src, AddSegBorder);
             DoButtonBorder(src, AddBezierBorder);
             DoButtonBorder(src, AddQuadBezierBorder);
+            DoButtonBorder(src, SplitQuadBezierBorder);
             DoButtonBorder(src, DelSegBorder);
             DoButtonBorder(src, MovePathBorder);
         }
@@ -468,6 +469,13 @@ namespace Barnacle.UserControls
                     case FlexiPathEditorControlViewModel.SelectionModeType.ConvertToQuadBezier:
                         {
                             found = vm.ConvertLineAtPointToBezier(position, false);
+                            vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        }
+                        break;
+
+                    case FlexiPathEditorControlViewModel.SelectionModeType.SplitQuad:
+                        {
+                            found = vm.SplitQuadBezier(position, false);
                             vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
                         }
                         break;
@@ -665,6 +673,11 @@ namespace Barnacle.UserControls
                     }
                     break;
 
+                case FlexiPathEditorControlViewModel.SelectionModeType.SplitQuad:
+                    {
+                        EnableSelectionModeBorder(SplitQuadBezierBorder);
+                    }
+                    break;
                 case FlexiPathEditorControlViewModel.SelectionModeType.DeleteSegment:
                     {
                         EnableSelectionModeBorder(DelSegBorder);
