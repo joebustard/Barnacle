@@ -105,7 +105,7 @@
                             Command="{Binding SplitQuadBezierCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Split a quadratic spline into two seperate curves">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
+                            <Image Source="/Barnacle;component/Images/Buttons/SplitQuadBezier.png" />
                         </Button>
                     </Border>
                     <Border
@@ -247,7 +247,7 @@
             <ScrollViewer
                 Grid.Row="1"
                 HorizontalScrollBarVisibility="Visible"
-                VerticalScrollBarVisibility="Visible" >
+                VerticalScrollBarVisibility="Visible">
                 <Canvas
                     x:Name="MainCanvas"
                     MinWidth="800"

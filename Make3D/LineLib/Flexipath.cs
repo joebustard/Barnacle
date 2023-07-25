@@ -229,6 +229,7 @@ namespace Barnacle.LineLib
                 }
             }
         }
+
         private double Distance(PointF point1, PointF point2)
         {
             double diff = ((point2.X - point1.X) * (point2.X - point1.X)) +
@@ -236,12 +237,14 @@ namespace Barnacle.LineLib
 
             return Math.Sqrt(diff);
         }
-        double tlx;
-        double tly;
-        double brx;
-        double bry;
-        double pathWidth;
-        double pathHeight;
+
+        private double tlx;
+        private double tly;
+        private double brx;
+        private double bry;
+        private double pathWidth;
+        private double pathHeight;
+
         public void CalculatePathBounds()
         {
             tlx = double.MaxValue;
@@ -288,12 +291,14 @@ namespace Barnacle.LineLib
                 segs.RemoveAt(segs.Count - 1);
             }
         }
+
         public struct Dimension
         {
             public double X;
             public double Lower;
             public double Upper;
         }
+
         public Dimension GetUpperAndLowerPoints(double x)
         {
             Dimension res = new Dimension();
@@ -307,17 +312,16 @@ namespace Barnacle.LineLib
                 pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
             }
 
-
             for (int i = 0; i < pnts.Count - 1; i++)
             {
                 double y = 0;
                 double sx, sy, ex, ey;
-                if (pnts[i].X<= pnts[i + 1].X)
+                if (pnts[i].X <= pnts[i + 1].X)
                 {
                     sx = pnts[i].X;
                     sy = pnts[i].Y;
-                    ex = pnts[i+1].X;
-                    ey = pnts[i+1].Y;
+                    ex = pnts[i + 1].X;
+                    ey = pnts[i + 1].Y;
                 }
                 else
                 {
@@ -330,7 +334,7 @@ namespace Barnacle.LineLib
                 {
                     if (ex - sx > 0)
                     {
-                        double t = (px - sx)/ ( ex-sx);
+                        double t = (px - sx) / (ex - sx);
                         y = sy + t * (ey - sy);
                     }
                     else
@@ -480,6 +484,36 @@ namespace Barnacle.LineLib
 
             // Return the result.
             return area;
+        }
+
+        public bool SplitQuadCubic(System.Windows.Point position)
+        {
+            bool found = false;
+            for (int i = 0; i < segs.Count; i++)
+            {
+                if (segs[i].Selected)
+                {
+                    if (segs[i] is FlexiQuadBezier)
+                    {
+                        FlexiQuadBezier quad = segs[i] as FlexiQuadBezier;
+
+                        int start = quad.Start();
+                        int control = quad.P1;
+                        int end = quad.End();
+
+                        FlexiQuadBezier lowerQuad = new FlexiQuadBezier();
+                        lowerQuad.P0 = start;
+                        //    FlexiPoint lowerControl =
+                        lowerQuad.P2 = control;
+
+                        FlexiQuadBezier upperQuad = new FlexiQuadBezier();
+
+                        found = true;
+                    }
+                    break;
+                }
+            }
+            return found;
         }
 
         public void FromString(string s)

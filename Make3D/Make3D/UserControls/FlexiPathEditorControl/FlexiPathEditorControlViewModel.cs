@@ -136,6 +136,7 @@ namespace Barnacle.UserControls
             DraggingPath,
             SplitQuad
         }
+
         public bool AbsolutePaths
         {
             get { return absolutePaths; }
@@ -555,29 +556,23 @@ namespace Barnacle.UserControls
             return added;
         }
 
-        public bool SplitQuadBezier(System.Windows.Point position, bool cubic)
+        public bool SplitQuadBezier(System.Windows.Point position)
         {
-            bool added = false;
+            bool split = false;
 
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             if (flexiPath.SelectAtPoint(position, true))
             {
-                if (cubic)
-                {
-                    added = flexiPath.ConvertToCubic(position);
-                }
-                else
-                {
-                    added = flexiPath.ConvertToQuadQuadAtSelected(position);
-                }
-                if (added)
+                split = flexiPath.SplitQuadCubic(position);
+
+                if (split)
                 {
                     PathText = flexiPath.ToPath(absolutePaths);
                     NotifyPropertyChanged("Points");
                 }
             }
 
-            return added;
+            return split;
         }
 
         public bool DeleteSegment(System.Windows.Point position)

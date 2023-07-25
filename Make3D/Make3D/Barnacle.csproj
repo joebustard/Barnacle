@@ -1205,6 +1205,7 @@
     <Resource Include="Images\Spinner.png" />
     <Resource Include="Data\PresetPaths.txt" />
     <Resource Include="Images\Buttons\LineSize.png" />
+    <Resource Include="Images\Buttons\SplitQuadBezier.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
