@@ -115,6 +115,15 @@ namespace Barnacle.LineLib
             segs.Add(bl);
         }
 
+        public void AddClosingQCurve(System.Windows.Point p1)
+        {
+            int i = flexiPoints.Count - 1;
+            flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
+            
+
+            FlexiQuadBezier bl = new FlexiQuadBezier(i, i + 1, 0);
+            segs.Add(bl);
+        }
         public void AppendClosingCurveSegment()
         {
             // get current last point
@@ -135,7 +144,7 @@ namespace Barnacle.LineLib
             double cx1 = lp.X + 0.5 * (fp.X - lp.X);
             double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
 
-            AddQCurve(new System.Windows.Point(cx1, cy1), fp.ToPoint());
+            AddClosingQCurve(new System.Windows.Point(cx1, cy1));
         }
 
         public virtual void Clear()
@@ -516,7 +525,8 @@ namespace Barnacle.LineLib
 
                         x = Math.Pow((1 - splitT), 2) * p0.X + (2.0*(1-splitT)*splitT*p1.X)+(splitT * splitT * p1.X);
                         y = Math.Pow((1 - splitT), 2) * p0.Y + (2.0 * (1 - splitT) * splitT * p1.Y) + (splitT * splitT * p1.Y);
-                        System.Windows.Point lnp2 = new System.Windows.Point(x, y);
+                       // System.Windows.Point lnp2 = new System.Windows.Point(x, y);
+                        System.Windows.Point lnp2 = position;
 
                         // calculate points for higher curve
                         System.Windows.Point hnp0 = lnp2;
@@ -524,18 +534,40 @@ namespace Barnacle.LineLib
                         y = (1 - splitT) * p1.Y + (splitT * p2.Y);
                         System.Windows.Point hnp1 = new System.Windows.Point(x, y);
 
-                        x = Math.Pow((1 - splitT), 2) * p1.X + (2.0 * (1 - splitT) * splitT * p2.X) + (splitT * splitT * p2.X);
-                        y = Math.Pow((1 - splitT), 2) * p1.Y + (2.0 * (1 - splitT) * splitT * p2.Y) + (splitT * splitT * p2.Y);
-                        System.Windows.Point hnp2 = new System.Windows.Point(x, y);
+                        //x = Math.Pow((1 - splitT), 2) * p1.X + (2.0 * (1 - splitT) * splitT * p2.X) + (splitT * splitT * p2.X);
+                        //y = Math.Pow((1 - splitT), 2) * p1.Y + (2.0 * (1 - splitT) * splitT * p2.Y) + (splitT * splitT * p2.Y);
+                        //System.Windows.Point hnp2 = new System.Windows.Point(x, y);
+                        System.Windows.Point hnp2 = p2;
+
+                        // insert two new plexipoints
+                        FlexiPoints.Insert(startIndex + 1, new FlexiPoint(lnp1.X, lnp1.Y));
+                        FlexiPoints.Insert(startIndex + 2, new FlexiPoint(lnp2.X, lnp2.Y));
 
                         FlexiQuadBezier lowerQuad = new FlexiQuadBezier();
-                        lowerQuad.P0 = startIndex;
-                        
-                        //    FlexiPoint lowerControl =
-                        lowerQuad.P2 = controlIndex;
+                        lowerQuad.P0 = startIndex;                       
+                        lowerQuad.P1 = startIndex+1;
+                        lowerQuad.P2 = startIndex+2;
 
                         FlexiQuadBezier upperQuad = new FlexiQuadBezier();
+                        upperQuad.P0 = startIndex + 2;
+                        
+                        upperQuad.P1 = startIndex + 3;
+                        flexiPoints[startIndex + 3].X = hnp1.X;
+                        flexiPoints[startIndex + 3].Y = hnp1.Y;
 
+                        upperQuad.P2 = startIndex + 4;
+
+                        for ( int j = i+1; j < segs.Count; j ++)
+                        {
+                            segs[j].PointInserted(endIndex, 2);
+                        }
+
+                        segs[i] = lowerQuad;
+                        segs.Insert(i+1, upperQuad);
+                        if (upperQuad.P2 == flexiPoints.Count)
+                        {
+                            upperQuad.P2 = 0;
+                        }
                         found = true;
                     }
                     break;
