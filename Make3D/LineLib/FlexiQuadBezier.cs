@@ -65,6 +65,31 @@ namespace Barnacle.LineLib
                 res.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
             }
         }
+        public double FindT(Point position, ObservableCollection<FlexiPoint> pnts)
+        {
+            double minT = Double.MaxValue;
+            double minDist = Double.MaxValue;
+
+            double dt = 0.05;
+            for (double t = 0; t <= 1; t += dt)
+            {
+                Point p = GetCoord(t, pnts);
+                double dis = Distance(position, p);
+                if ( dis < minDist)
+                {
+                    minDist = dis;
+                    minT = t;
+                }
+            }
+
+            return minT;
+        }
+
+        private double Distance(Point p1, Point p2)
+        {
+            return Math.Sqrt((p1.X - p2.X) * (p1.X - p2.X) +
+                               (p1.Y - p2.Y) * (p1.Y - p2.Y) );
+        }
 
         public override double DistToPoint(Point position, ObservableCollection<FlexiPoint> points)
         {

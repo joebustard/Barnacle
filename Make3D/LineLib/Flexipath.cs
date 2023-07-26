@@ -10,13 +10,13 @@ namespace Barnacle.LineLib
     {
         private const double selectionDistance = 2;
         private bool closed;
-        protected ObservableCollection<FlexiPoint> points;
+        protected ObservableCollection<FlexiPoint> flexiPoints;
         protected List<FlexiSegment> segs;
 
         public FlexiPath()
         {
             segs = new List<FlexiSegment>();
-            points = new ObservableCollection<FlexiPoint>();
+            flexiPoints = new ObservableCollection<FlexiPoint>();
             closed = true;
             openEndedPath = false;
         }
@@ -37,17 +37,17 @@ namespace Barnacle.LineLib
 
         public ObservableCollection<FlexiPoint> FlexiPoints
         {
-            get { return points; }
-            set { points = value; }
+            get { return flexiPoints; }
+            set { flexiPoints = value; }
         }
 
         public FlexiPoint Start
         {
             get
             {
-                if (points != null && points.Count > 0 && points[0] != null)
+                if (flexiPoints != null && flexiPoints.Count > 0 && flexiPoints[0] != null)
                 {
-                    return points[0];
+                    return flexiPoints[0];
                 }
                 else
                 {
@@ -56,40 +56,40 @@ namespace Barnacle.LineLib
             }
             set
             {
-                if (points.Count == 0)
+                if (flexiPoints.Count == 0)
                 {
-                    points.Add(value);
+                    flexiPoints.Add(value);
                 }
                 else
                 {
-                    points[0] = value;
+                    flexiPoints[0] = value;
                 }
             }
         }
 
         public void AddCurve(System.Windows.Point p1, System.Windows.Point p2, System.Windows.Point p3)
         {
-            int i = points.Count - 1;
-            points.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
-            points.Add(new FlexiPoint(p2, i + 2, FlexiPoint.PointMode.Control2));
-            points.Add(new FlexiPoint(p3, i + 3));
+            int i = flexiPoints.Count - 1;
+            flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
+            flexiPoints.Add(new FlexiPoint(p2, i + 2, FlexiPoint.PointMode.Control2));
+            flexiPoints.Add(new FlexiPoint(p3, i + 3));
             FlexiCubicBezier bl = new FlexiCubicBezier(i, i + 1, i + 2, i + 3);
             segs.Add(bl);
         }
 
         public void AddLine(System.Windows.Point p1)
         {
-            int i = points.Count - 1;
-            points.Add(new FlexiPoint(p1, i + 1));
+            int i = flexiPoints.Count - 1;
+            flexiPoints.Add(new FlexiPoint(p1, i + 1));
             LineSegment ls = new LineSegment(i, i + 1);
             segs.Add(ls);
         }
 
         public void AddOrthoLockedLine(System.Windows.Point p1)
         {
-            int i = points.Count - 1;
-            double oldX = points[i].X;
-            double oldY = points[i].Y;
+            int i = flexiPoints.Count - 1;
+            double oldX = flexiPoints[i].X;
+            double oldY = flexiPoints[i].Y;
             double dx = Math.Abs(p1.X - oldX);
             double dy = Math.Abs(p1.Y - oldY);
             if (dx >= dy)
@@ -100,16 +100,16 @@ namespace Barnacle.LineLib
             {
                 p1.X = oldX;
             }
-            points.Add(new FlexiPoint(p1, i + 1));
+            flexiPoints.Add(new FlexiPoint(p1, i + 1));
             LineSegment ls = new LineSegment(i, i + 1);
             segs.Add(ls);
         }
 
         public void AddQCurve(System.Windows.Point p1, System.Windows.Point p2)
         {
-            int i = points.Count - 1;
-            points.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
-            points.Add(new FlexiPoint(p2, i + 2));
+            int i = flexiPoints.Count - 1;
+            flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
+            flexiPoints.Add(new FlexiPoint(p2, i + 2));
 
             FlexiQuadBezier bl = new FlexiQuadBezier(i, i + 1, i + 2);
             segs.Add(bl);
@@ -118,8 +118,8 @@ namespace Barnacle.LineLib
         public void AppendClosingCurveSegment()
         {
             // get current last point
-            FlexiPoint lp = points[points.Count - 1];
-            FlexiPoint fp = points[0];
+            FlexiPoint lp = flexiPoints[flexiPoints.Count - 1];
+            FlexiPoint fp = flexiPoints[0];
             double cx1 = lp.X + 0.25 * (fp.X - lp.X);
             double cy1 = lp.Y + 0.25 * (fp.Y - lp.Y);
             double cx2 = lp.X + 0.75 * (fp.X - lp.X);
@@ -130,8 +130,8 @@ namespace Barnacle.LineLib
         public void AppendClosingQuadCurveSegment()
         {
             // get current last point
-            FlexiPoint lp = points[points.Count - 1];
-            FlexiPoint fp = points[0];
+            FlexiPoint lp = flexiPoints[flexiPoints.Count - 1];
+            FlexiPoint fp = flexiPoints[0];
             double cx1 = lp.X + 0.5 * (fp.X - lp.X);
             double cy1 = lp.Y + 0.5 * (fp.Y - lp.Y);
 
@@ -141,7 +141,7 @@ namespace Barnacle.LineLib
         public virtual void Clear()
         {
             segs.Clear();
-            points.Clear();
+            flexiPoints.Clear();
         }
 
         public void ConvertLineCurveSegment(int index, System.Windows.Point position)
@@ -155,16 +155,16 @@ namespace Barnacle.LineLib
                     int c3 = c2 + 1;
                     int c4 = c3 + 1;
 
-                    points.Insert(index + 1, new FlexiPoint(position, c3, FlexiPoint.PointMode.Control2));
-                    points.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.Control1));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c3, FlexiPoint.PointMode.Control2));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.Control1));
 
                     FlexiCubicBezier ls = new FlexiCubicBezier(c1, c2, c3, c4);
                     // starting at segment i +1, if the point id is c2 or more
                     PointInserted(segs, i + 1, c2, 2);
                     segs[i] = ls;
-                    ls.ResetControlPoints(points);
+                    ls.ResetControlPoints(flexiPoints);
                     DeselectAll();
-                    ls.Select(points);
+                    ls.Select(flexiPoints);
                     break;
                 }
             }
@@ -180,7 +180,7 @@ namespace Barnacle.LineLib
                     int c2 = c1 + 1;
                     int c3 = c2 + 1;
 
-                    points.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.ControlQ));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, c2, FlexiPoint.PointMode.ControlQ));
 
                     FlexiQuadBezier ls = new FlexiQuadBezier(c1, c2, c3);
                     // starting at segment i +1, if the point id is c2 or more
@@ -188,10 +188,10 @@ namespace Barnacle.LineLib
                     segs[i] = ls;
                     if (centreControl)
                     {
-                        ls.ResetControlPoints(points);
+                        ls.ResetControlPoints(flexiPoints);
                     }
                     DeselectAll();
-                    ls.Select(points);
+                    ls.Select(flexiPoints);
                     break;
                 }
             }
@@ -206,13 +206,13 @@ namespace Barnacle.LineLib
                 int secondSeg = firstSeg + 1;
                 // collect the details of the points in case we need em later
                 int seg1P0 = segs[firstSeg].Start();
-                System.Windows.Point P0 = points[seg1P0].ToPoint();
+                System.Windows.Point P0 = flexiPoints[seg1P0].ToPoint();
 
                 int seg2P0 = segs[secondSeg].Start();
-                System.Windows.Point targetPoint = points[seg2P0].ToPoint();
+                System.Windows.Point targetPoint = flexiPoints[seg2P0].ToPoint();
 
                 int seg2P1 = segs[secondSeg].End();
-                System.Windows.Point P2 = points[seg2P1].ToPoint();
+                System.Windows.Point P2 = flexiPoints[seg2P1].ToPoint();
 
                 double t = DistToLine.FindTOfClosestToLine(targetPoint, P0, P2);
                 if (t != double.MinValue && t != 0)
@@ -287,7 +287,7 @@ namespace Barnacle.LineLib
         {
             if (segs.Count > 0)
             {
-                segs[segs.Count - 1].DeletePoints(points);
+                segs[segs.Count - 1].DeletePoints(flexiPoints);
                 segs.RemoveAt(segs.Count - 1);
             }
         }
@@ -354,7 +354,7 @@ namespace Barnacle.LineLib
             if (index >= 0 && index < segs.Count && segs.Count > 3)
             {
                 int numPointsRemoved = segs[index].NumberOfPoints() - 1;
-                segs[index].DeletePoints(points);
+                segs[index].DeletePoints(flexiPoints);
                 segs.RemoveAt(index);
                 PointsRemoved(segs, index, numPointsRemoved);
             }
@@ -369,7 +369,7 @@ namespace Barnacle.LineLib
                     if (segs[i].Start() == index)
                     {
                         int numPointsRemoved = segs[i].NumberOfPoints() - 1;
-                        segs[i].DeletePoints(points);
+                        segs[i].DeletePoints(flexiPoints);
                         segs.RemoveAt(i);
 
                         PointsRemoved(segs, i, numPointsRemoved);
@@ -377,7 +377,7 @@ namespace Barnacle.LineLib
                         DeselectAll();
                         if (i < segs.Count)
                         {
-                            segs[i].Select(points);
+                            segs[i].Select(flexiPoints);
                         }
                         break;
                     }
@@ -409,7 +409,7 @@ namespace Barnacle.LineLib
         {
             foreach (FlexiSegment sg in segs)
             {
-                sg.Deselect(points);
+                sg.Deselect(flexiPoints);
             }
         }
 
@@ -423,7 +423,7 @@ namespace Barnacle.LineLib
                 res.Add(Start.ToPoint());
                 foreach (FlexiSegment sg in segs)
                 {
-                    sg.DisplayPoints(res, points);
+                    sg.DisplayPoints(res, flexiPoints);
                 }
             }
             return res;
@@ -439,7 +439,7 @@ namespace Barnacle.LineLib
                 res.Add(new System.Drawing.PointF((float)Start.ToPoint().X, (float)Start.ToPoint().Y));
                 foreach (FlexiSegment sg in segs)
                 {
-                    sg.DisplayPointsF(res, points);
+                    sg.DisplayPointsF(res, flexiPoints);
                 }
             }
             //  We want a consistent orientaion of the final points, no matter how the user
@@ -497,14 +497,42 @@ namespace Barnacle.LineLib
                     {
                         FlexiQuadBezier quad = segs[i] as FlexiQuadBezier;
 
-                        int start = quad.Start();
-                        int control = quad.P1;
-                        int end = quad.End();
+                        double splitT = quad.FindT(position, flexiPoints);
+                        int startIndex = quad.Start();
+                        int controlIndex = quad.P1;
+                        int endIndex = quad.End();
+
+
+                        System.Windows.Point p0 = flexiPoints[startIndex].ToPoint(); 
+                        System.Windows.Point p1 = flexiPoints[controlIndex].ToPoint();
+                        System.Windows.Point p2 = flexiPoints[endIndex].ToPoint();
+
+                        // calculate  points for lower curve
+                        double x, y;
+                        System.Windows.Point lnp0 = p0;
+                        x = (1 - splitT) * p0.X + ( splitT * p1.X);
+                        y = (1 - splitT) * p0.Y + (splitT * p1.Y);
+                        System.Windows.Point lnp1 = new System.Windows.Point(x, y);
+
+                        x = Math.Pow((1 - splitT), 2) * p0.X + (2.0*(1-splitT)*splitT*p1.X)+(splitT * splitT * p1.X);
+                        y = Math.Pow((1 - splitT), 2) * p0.Y + (2.0 * (1 - splitT) * splitT * p1.Y) + (splitT * splitT * p1.Y);
+                        System.Windows.Point lnp2 = new System.Windows.Point(x, y);
+
+                        // calculate points for higher curve
+                        System.Windows.Point hnp0 = lnp2;
+                        x = (1 - splitT) * p1.X + (splitT * p2.X);
+                        y = (1 - splitT) * p1.Y + (splitT * p2.Y);
+                        System.Windows.Point hnp1 = new System.Windows.Point(x, y);
+
+                        x = Math.Pow((1 - splitT), 2) * p1.X + (2.0 * (1 - splitT) * splitT * p2.X) + (splitT * splitT * p2.X);
+                        y = Math.Pow((1 - splitT), 2) * p1.Y + (2.0 * (1 - splitT) * splitT * p2.Y) + (splitT * splitT * p2.Y);
+                        System.Windows.Point hnp2 = new System.Windows.Point(x, y);
 
                         FlexiQuadBezier lowerQuad = new FlexiQuadBezier();
-                        lowerQuad.P0 = start;
+                        lowerQuad.P0 = startIndex;
+                        
                         //    FlexiPoint lowerControl =
-                        lowerQuad.P2 = control;
+                        lowerQuad.P2 = controlIndex;
 
                         FlexiQuadBezier upperQuad = new FlexiQuadBezier();
 
@@ -526,7 +554,7 @@ namespace Barnacle.LineLib
             if (segs.Count >= 2 && openEndedPath == false)
             {
                 // create a separate segment that goes back to point zero
-                LineSegment sq = new LineSegment(points.Count - 1, 0);
+                LineSegment sq = new LineSegment(flexiPoints.Count - 1, 0);
                 segs.Add(sq);
             }
         }
@@ -752,17 +780,17 @@ namespace Barnacle.LineLib
             }
             if (valid && pnts.Count > 2)
             {
-                points.Clear();
+                flexiPoints.Clear();
                 int i = 0;
                 foreach (FlexiPoint f in pnts)
                 {
                     f.Id = i;
-                    points.Add(f);
+                    flexiPoints.Add(f);
                     i++;
                 }
 
                 // auto close
-                if (points[0].X != points[i - 1].X || points[0].Y != points[i - 1].Y)
+                if (flexiPoints[0].X != flexiPoints[i - 1].X || flexiPoints[0].Y != flexiPoints[i - 1].Y)
                 {
                     if (openEndedPath == false)
                     {
@@ -805,7 +833,7 @@ namespace Barnacle.LineLib
                             // Append a new curve
                             AppendClosingQuadCurveSegment();
 
-                            segs[segs.Count - 1].Select(points);
+                            segs[segs.Count - 1].Select(flexiPoints);
                         }
                         found = true;
                     }
@@ -838,7 +866,7 @@ namespace Barnacle.LineLib
                             // Append a new curve
                             AppendClosingCurveSegment();
 
-                            segs[segs.Count - 1].Select(points);
+                            segs[segs.Count - 1].Select(flexiPoints);
                         }
                         found = true;
                     }
@@ -854,7 +882,7 @@ namespace Barnacle.LineLib
             res.Add(Start);
             foreach (FlexiSegment sg in segs)
             {
-                sg.GetSegmentPoints(res, points);
+                sg.GetSegmentPoints(res, flexiPoints);
             }
             return res;
         }
@@ -880,7 +908,7 @@ namespace Barnacle.LineLib
             double y = 0;
             int count = 0;
 
-            foreach (FlexiPoint p in points)
+            foreach (FlexiPoint p in flexiPoints)
             {
                 x += p.X;
                 y += p.Y;
@@ -903,14 +931,14 @@ namespace Barnacle.LineLib
                 if (segs[i].Start() == index)
                 {
                     int end = segs[i].End();
-                    points.Insert(index + 1, new FlexiPoint(position, index + 3, FlexiPoint.PointMode.Control2));
-                    points.Insert(index + 1, new FlexiPoint(position, index + 2, FlexiPoint.PointMode.Control1));
-                    points.Insert(index + 1, new FlexiPoint(position, index + 1));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 3, FlexiPoint.PointMode.Control2));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 2, FlexiPoint.PointMode.Control1));
+                    flexiPoints.Insert(index + 1, new FlexiPoint(position, index + 1));
 
                     FlexiCubicBezier ls = new FlexiCubicBezier(index + 1, index + 2, index + 3, index + 4);
                     PointInserted(segs, i + 1, index + 1, 3);
                     segs.Insert(i + 1, ls);
-                    ls.ResetControlPoints(points);
+                    ls.ResetControlPoints(flexiPoints);
                     break;
                 }
             }
@@ -924,13 +952,13 @@ namespace Barnacle.LineLib
                 if (segs[i].Start() == pointIndex)
                 {
                     int end = segs[i].End();
-                    points.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
+                    flexiPoints.Insert(pointIndex + 1, new FlexiPoint(position, pointIndex + 1));
 
                     LineSegment ls = new LineSegment(pointIndex + 1, pointIndex + 2);
                     PointInserted(segs, i + 1, pointIndex + 1, 1);
                     segs.Insert(i + 1, ls);
                     DeselectAll();
-                    segs[i + 1].Select(points);
+                    segs[i + 1].Select(flexiPoints);
                     found = true;
                     break;
                 }
@@ -941,12 +969,12 @@ namespace Barnacle.LineLib
                 // the last point back to the first
                 if (segs[segs.Count - 1].End() == pointIndex)
                 {
-                    FlexiPoint np = new FlexiPoint(position, points.Count);
-                    points.Add(np);
+                    FlexiPoint np = new FlexiPoint(position, flexiPoints.Count);
+                    flexiPoints.Add(np);
                     LineSegment ls = new LineSegment(segs[segs.Count - 1].End(), np.Id);
                     segs.Add(ls);
                     DeselectAll();
-                    ls.Select(points);
+                    ls.Select(flexiPoints);
                 }
             }
         }
@@ -971,13 +999,13 @@ namespace Barnacle.LineLib
                         {
                             // add a new flexipoint at the given position
                             FlexiPoint fx = new FlexiPoint(position.X, position.Y);
-                            points.Add(fx);
+                            flexiPoints.Add(fx);
                             // Make the existing segment refr to this point
-                            (segs[i] as LineSegment).P1 = points.Count - 1;
-                            segs[i].Deselect(points);
+                            (segs[i] as LineSegment).P1 = flexiPoints.Count - 1;
+                            segs[i].Deselect(flexiPoints);
                             // now reclose the path to linkback up to the first path
                             ClosePath();
-                            segs[i + 1].Select(points);
+                            segs[i + 1].Select(flexiPoints);
                         }
                         found = true;
                     }
@@ -991,16 +1019,16 @@ namespace Barnacle.LineLib
         {
             double cx = 0;
             double cy = 0;
-            foreach (FlexiPoint p in points)
+            foreach (FlexiPoint p in flexiPoints)
             {
                 cx += p.X;
                 cy += p.Y;
             }
-            cx /= points.Count;
-            cy /= points.Count;
+            cx /= flexiPoints.Count;
+            cy /= flexiPoints.Count;
             double dx = position.X - cx;
             double dy = position.Y - cy;
-            foreach (FlexiPoint p in points)
+            foreach (FlexiPoint p in flexiPoints)
             {
                 p.X += dx;
                 p.Y += dy;
@@ -1018,7 +1046,7 @@ namespace Barnacle.LineLib
             FlexiSegment closest = null;
             foreach (FlexiSegment sg in segs)
             {
-                double d = sg.DistToPoint(position, points);
+                double d = sg.DistToPoint(position, flexiPoints);
                 if (d < selectionDistance)
                 {
                     if (d < minDistance)
@@ -1033,8 +1061,8 @@ namespace Barnacle.LineLib
             // should the imaginary segment fro the last point back to the first be included
             if (closed)
             {
-                LineSegment ls = new LineSegment(points.Count - 1, 0);
-                double d = ls.DistToPoint(position, points);
+                LineSegment ls = new LineSegment(flexiPoints.Count - 1, 0);
+                double d = ls.DistToPoint(position, flexiPoints);
                 if (d < selectionDistance)
                 {
                     if (d < minDistance)
@@ -1047,7 +1075,7 @@ namespace Barnacle.LineLib
             }
             if (closest != null)
             {
-                closest.Select(points);
+                closest.Select(flexiPoints);
                 closest.Selected = true;
             }
             return found;
@@ -1055,10 +1083,10 @@ namespace Barnacle.LineLib
 
         public void SetPointPos(int index, System.Windows.Point position)
         {
-            if (index >= 0 && index < points.Count)
+            if (index >= 0 && index < flexiPoints.Count)
             {
-                points[index].X = position.X;
-                points[index].Y = position.Y;
+                flexiPoints[index].X = position.X;
+                flexiPoints[index].Y = position.Y;
             }
         }
 
@@ -1067,10 +1095,10 @@ namespace Barnacle.LineLib
             string result = "";
             double ox;
             double oy;
-            if (points.Count > 1)
+            if (flexiPoints.Count > 1)
             {
-                ox = points[0].X;
-                oy = points[0].Y;
+                ox = flexiPoints[0].X;
+                oy = flexiPoints[0].Y;
 
                 if (absolute)
                 {
@@ -1082,7 +1110,7 @@ namespace Barnacle.LineLib
                 }
                 foreach (FlexiSegment sq in segs)
                 {
-                    result += sq.ToPath(points, ref ox, ref oy);
+                    result += sq.ToPath(flexiPoints, ref ox, ref oy);
                 }
             }
             return result;
@@ -1091,7 +1119,7 @@ namespace Barnacle.LineLib
         public override string ToString()
         {
             string s = "";
-            foreach (FlexiPoint p in points)
+            foreach (FlexiPoint p in flexiPoints)
             {
                 s += p.ToString() + "\n";
             }
@@ -1140,7 +1168,7 @@ namespace Barnacle.LineLib
 
         private void CoordsFromString(string coordPart)
         {
-            points.Clear();
+            flexiPoints.Clear();
             string[] coords = coordPart.Split('\n');
             for (int i = 0; i < coords.GetLength(0); i++)
             {
@@ -1173,7 +1201,7 @@ namespace Barnacle.LineLib
                     }
 
                     FlexiPoint fp = new FlexiPoint(new System.Windows.Point(x, y), id, m);
-                    points.Add(fp);
+                    flexiPoints.Add(fp);
                 }
             }
         }
@@ -1220,9 +1248,9 @@ namespace Barnacle.LineLib
                 segs[i].PointInserted(v2, numInserted);
             }
 
-            for (int i = 0; i < points.Count; i++)
+            for (int i = 0; i < flexiPoints.Count; i++)
             {
-                points[i].Id = i;
+                flexiPoints[i].Id = i;
             }
         }
 

@@ -74,7 +74,7 @@ namespace Barnacle.LineLib
         public override void Clear()
         {
             segs.Clear();
-            points.Clear();
+            flexiPoints.Clear();
             if (fixedStartPoint != null)
             {
                 Start = fixedStartPoint;

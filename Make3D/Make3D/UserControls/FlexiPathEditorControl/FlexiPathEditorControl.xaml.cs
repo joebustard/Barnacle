@@ -475,7 +475,7 @@ namespace Barnacle.UserControls
 
                     case FlexiPathEditorControlViewModel.SelectionModeType.SplitQuad:
                         {
-                            found = vm.SplitQuadBezier(position, false);
+                            found = vm.SplitQuadBezier(position);
                             vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
                         }
                         break;
