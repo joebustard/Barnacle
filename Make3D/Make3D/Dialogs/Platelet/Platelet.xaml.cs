@@ -59,13 +59,13 @@ namespace Barnacle.Dialogs
         public Platelet()
         {
             InitializeComponent();
-            
+
             ToolName = "Platelet";
             DataContext = this;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
-           
+
             wallWidth = 2;
             textureDepth = 1;
             solidShape = true;
@@ -883,7 +883,7 @@ namespace Barnacle.Dialogs
                         top = points[i].Y;
                     }
                 }
-                for (int i = 0; i < points.Count; i++)
+                for (int i = 0; i < points.Count - 1; i++)
                 {
                     tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
@@ -894,7 +894,9 @@ namespace Barnacle.Dialogs
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
                 // generate side triangles so original points are already in list
-                Point[] clk = OrderClockwise(tmp.ToArray());
+                //    Point[] clk = OrderClockwise(tmp.ToArray());
+
+                Point[] clk = tmp.ToArray();
                 tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
