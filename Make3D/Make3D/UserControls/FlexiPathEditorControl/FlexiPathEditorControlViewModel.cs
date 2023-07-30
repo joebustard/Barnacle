@@ -605,14 +605,17 @@ namespace Barnacle.UserControls
 
         public void LoadImage(string f)
         {
-            Uri fileUri = new Uri(f);
-            BitmapImage bmi = new BitmapImage();
-            bmi.BeginInit();
-            bmi.UriSource = fileUri;
-            bmi.EndInit();
-            BackgroundImage = bmi;
-            imagePath = f;
-            NotifyPropertyChanged("BackgroundImage");
+            if (!String.IsNullOrEmpty(f))
+            {
+                Uri fileUri = new Uri(f);
+                BitmapImage bmi = new BitmapImage();
+                bmi.BeginInit();
+                bmi.UriSource = fileUri;
+                bmi.EndInit();
+                BackgroundImage = bmi;
+                imagePath = f;
+                NotifyPropertyChanged("BackgroundImage");
+            }
         }
 
         public bool MouseMove(MouseEventArgs e, System.Windows.Point position)

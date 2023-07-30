@@ -112,6 +112,12 @@
                     IsEnabled="{Binding ControlsEnabled}"
                     ToolTip="Save a ribs definition file"
                     x:Name="SaveRibs" />
+                        <Button Command="{Binding RibCommand}" CommandParameter="SaveAs"
+                    Content="Save As"
+                    Grid.Row="10"
+                    IsEnabled="{Binding ControlsEnabled}"
+                    ToolTip="Save a ribs definition file"
+                    x:Name="SaveRibsAs" />
                     </Grid>
                     <Border Grid.Column="1"
                 Style="{StaticResource ControlBorder}">
