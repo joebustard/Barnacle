@@ -162,7 +162,14 @@ namespace Barnacle.UserControls
 
         internal string GetPath()
         {
-            return vm.AbsPathText();
+            if (vm == null)
+            {
+                return "";
+            }
+            else
+            {
+                return vm.AbsPathText();
+            }
         }
 
         internal void SetPath(string v)
@@ -678,6 +685,7 @@ namespace Barnacle.UserControls
                         EnableSelectionModeBorder(SplitQuadBezierBorder);
                     }
                     break;
+
                 case FlexiPathEditorControlViewModel.SelectionModeType.DeleteSegment:
                     {
                         EnableSelectionModeBorder(DelSegBorder);

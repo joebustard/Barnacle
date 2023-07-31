@@ -1,3 +1,4 @@
+using Barnacle.LineLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -25,6 +26,8 @@ namespace Barnacle.Dialogs
         private string rootGroup;
         private string selectedRootAirfoil;
         private string warningText;
+        private List<Point> selectedWingProfilePoints;
+        private double selectedWingProfileLength;
         private readonly string defaultWingShape = "M 0,0 RL 10.000,10.000 RL 100.000,10.000 RQ 10.000,10.000 0.000,20.000 RL -100.000,20.000 RL -10.000,20.000";
 
         public ShapedWingDlg()
@@ -42,6 +45,7 @@ namespace Barnacle.Dialogs
             airFoilDoc.XmlResolver = null;
             rootairfoilNames = new List<string>();
             airfoilGroups = new List<string>();
+            selectedWingProfilePoints = null;
         }
 
         public List<string> AirfoilGroups
@@ -149,6 +153,10 @@ namespace Barnacle.Dialogs
                 if (selectedRootAirfoil != value)
                 {
                     selectedRootAirfoil = value;
+                    if (!String.IsNullOrEmpty(selectedRootAirfoil) && !String.IsNullOrEmpty(rootGroup))
+                    {
+                        selectedWingProfilePoints = GetProfilePoints(rootGroup, selectedRootAirfoil, ref selectedWingProfileLength);
+                    }
                     NotifyPropertyChanged();
                     Update();
                 }
@@ -216,91 +224,149 @@ namespace Barnacle.Dialogs
         {
             ClearShape();
 
+            FlexiPath flexipath = new FlexiPath();
+            flexipath.FromString(PathEditor.GetPath());
+            flexipath.CalculatePathBounds();
+            List<double> ribX = new List<double>();
+            List<Point>[] ribs = new List<Point>[numDivisions];
             if (displayPoints != null)
             {
-                List<System.Windows.Point> line = new List<System.Windows.Point>();
-                double top = 0;
-                for (int i = 0; i < displayPoints.Count; i++)
+                if (numDivisions > 0)
                 {
-                    if (displayPoints[i].Y > top)
+                    int ribIndex = 0;
+                    double dt = 1.0 / (numDivisions - 1);
+                    for (double t = 0; t <= 1; t += dt)
                     {
-                        top = displayPoints[i].Y;
+                        // get the basic size of the wing rib
+                        var dp = flexipath.GetUpperAndLowerPoints(t);
+                        ribX.Add(dp.X);
+                        var si = dp.Upper - dp.Lower;
+                        ribs[ribIndex] = new List<Point>();
+                        for (double m = 0; m < 1.0; m += 0.05)
+                        {
+                            Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
+
+                            Point scaledPoint = new Point(wp.X * si + dp.Lower, wp.Y * si);
+                            ribs[ribIndex].Add(scaledPoint);
+                        }
+                        ribIndex++;
                     }
                 }
-                foreach (Point p in displayPoints)
-                {
-                    line.Add(new Point(p.X, top - p.Y));
-                }
-                int numSpokes = numDivisions;
-                double deltaTheta = 360.0 / numSpokes; // in degrees
-                Point3D[,] spokeVertices = new Point3D[numSpokes, line.Count];
-                for (int i = 0; i < line.Count; i++)
-                {
-                    spokeVertices[0, i] = new Point3D(line[i].X, line[i].Y, 0);
-                }
 
-                for (int i = 1; i < numSpokes; i++)
+                for (int i = 0; i < numDivisions - 1; i++)
                 {
-                    double theta = i * deltaTheta;
-                    double rad = Math.PI * theta / 180.0;
-                    for (int j = 0; j < line.Count; j++)
+                    for (int j = 0; j < ribs[0].Count; j++)
                     {
-                        double x = spokeVertices[0, j].X * Math.Cos(rad);
-                        double z = spokeVertices[0, j].X * Math.Sin(rad);
-                        spokeVertices[i, j] = new Point3D(x, spokeVertices[0, j].Y, z);
+                        int k = j + 1;
+                        if (k >= ribs[0].Count)
+                        {
+                            k = 0;
+                        }
+                        int p0 = AddVertice(ribX[i], ribs[i][j].X, ribs[i][j].Y);
+                        int p1 = AddVertice(ribX[i], ribs[i][k].X, ribs[i][k].Y);
+                        int p2 = AddVertice(ribX[i + 1], ribs[i + 1][k].X, ribs[i + 1][k].Y);
+                        int p3 = AddVertice(ribX[i + 1], ribs[i + 1][j].X, ribs[i + 1][j].Y);
+
+                        AddFace(p0, p2, p1);
+                        AddFace(p0, p2, p2);
                     }
                 }
-                Vertices.Clear();
-                Vertices.Add(new Point3D(0, 0, 0));
-                for (int i = 0; i < numSpokes; i++)
-                {
-                    for (int j = 0; j < line.Count; j++)
-                    {
-                        Vertices.Add(spokeVertices[i, j]);
-                    }
-                }
-                int topPoint = Vertices.Count;
-                Vertices.Add(new Point3D(0, 20, 0));
-                Faces.Clear();
-                int spOff;
-                int spOff2;
-                for (int i = 0; i < numSpokes; i++)
-                {
-                    spOff = i * line.Count + 1;
-                    spOff2 = (i + 1) * line.Count + 1;
-                    if (i == numSpokes - 1)
-                    {
-                        spOff2 = 1;
-                    }
-                    // base
-                    Faces.Add(0);
-                    Faces.Add(spOff2);
-                    Faces.Add(spOff);
-
-                    for (int j = 0; j < line.Count - 1; j++)
-                    {
-                        Faces.Add(spOff + j);
-                        Faces.Add(spOff2 + j);
-                        Faces.Add(spOff2 + j + 1);
-
-                        Faces.Add(spOff + j);
-                        Faces.Add(spOff2 + j + 1);
-                        Faces.Add(spOff + j + 1);
-                    }
-
-                    // Top
-                    Faces.Add(spOff + line.Count - 1);
-                    Faces.Add(spOff2 + line.Count - 1);
-                    Faces.Add(topPoint);
-                }
-
-                spOff = (numSpokes - 1) * line.Count + 1;
-                spOff2 = 1;
-                // base
-                Faces.Add(0);
-                Faces.Add(spOff2);
-                Faces.Add(spOff);
             }
+        }
+
+        private Point GetProfileAt(List<Point> profile, double length, double t)
+        {
+            Point res = new Point(0, 0);
+            if (t > 1)
+            {
+                t = 0;
+            }
+            double targetDist = length * t;
+
+            int i = 0;
+            double running = 0;
+            bool done = false;
+            while (!done)
+            {
+                int j = i + 1;
+                if (j >= profile.Count)
+                {
+                    j = 0;
+                }
+                double diff = Distance(profile[i], profile[j]);
+
+                if (running <= targetDist && running + diff >= targetDist)
+                {
+                    double hang = targetDist - running;
+                    hang = hang / diff;
+
+                    double x = profile[i].X + (hang * (profile[j].X - profile[i].X));
+                    double y = profile[i].Y + (hang * (profile[j].Y - profile[i].Y));
+                    res = new Point(x, y);
+                    done = true;
+                }
+                else
+                {
+                    running += diff;
+                    i++;
+                }
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        /// Gets the points defining te profile of an aerofoil from the database file
+        /// </summary>
+        /// <param name="grpName"></param>
+        /// <param name="airfoil"></param>
+        /// <param name="dist"></param>
+        /// <returns></returns>
+        private List<Point> GetProfilePoints(string grpName, string airfoil, ref double dist)
+        {
+            List<Point> res = new List<Point>();
+            String content = "";
+            XmlNode root = airFoilDoc.SelectSingleNode("Airfoils");
+            XmlNodeList grps = root.SelectNodes("grp");
+            foreach (XmlNode gn in grps)
+            {
+                if ((gn as XmlElement).GetAttribute("Name") == grpName)
+                {
+                    XmlNodeList afs = gn.SelectNodes("af");
+                    foreach (XmlNode af in afs)
+                    {
+                        if ((af as XmlElement).GetAttribute("Name") == airfoil)
+                        {
+                            content = af.InnerText;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            dist = 0;
+
+            if (content != "")
+            {
+                string[] words = content.Split(',');
+                for (int i = 0; i < words.GetLength(0); i += 2)
+                {
+                    words[i] = words[i].Trim();
+                    double x = 1 - Convert.ToDouble(words[i]);
+                    double y = Convert.ToDouble(words[i + 1]);
+                    res.Add(new Point(x, y));
+                }
+
+                for (int i = 1; i < res.Count; i++)
+                {
+                    double dx = res[i].X - res[i - 1].X;
+                    double dy = res[i].Y - res[i - 1].Y;
+                    double d = Math.Sqrt(dx * dx + dy * dy);
+                    dist += d;
+                }
+            }
+            return res;
         }
 
         private void GenerateWing()

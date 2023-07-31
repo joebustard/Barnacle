@@ -119,11 +119,11 @@ namespace Barnacle.LineLib
         {
             int i = flexiPoints.Count - 1;
             flexiPoints.Add(new FlexiPoint(p1, i + 1, FlexiPoint.PointMode.Control1));
-            
 
             FlexiQuadBezier bl = new FlexiQuadBezier(i, i + 1, 0);
             segs.Add(bl);
         }
+
         public void AppendClosingCurveSegment()
         {
             // get current last point
@@ -435,6 +435,16 @@ namespace Barnacle.LineLib
                     sg.DisplayPoints(res, flexiPoints);
                 }
             }
+            bool anticlockwise = SignedPolygonArea(res) > 0;
+            if (anticlockwise)
+            {
+                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                for (int i = 0; i < res.Count; i++)
+                {
+                    tmp.Insert(0, res[i]);
+                }
+                res = tmp;
+            }
             return res;
         }
 
@@ -495,6 +505,24 @@ namespace Barnacle.LineLib
             return area;
         }
 
+        private double SignedPolygonArea(List<System.Windows.Point> fpoints)
+        {
+            // Get the areas.
+            double area = 0;
+            // Add the first point to the end.
+            int num_points = fpoints.Count - 1;
+
+            for (int i = 0; i < num_points; i++)
+            {
+                area +=
+                    (fpoints[i + 1].X - fpoints[i].X) *
+                    (fpoints[i + 1].Y + fpoints[i].Y) / 2;
+            }
+
+            // Return the result.
+            return area;
+        }
+
         public bool SplitQuadCubic(System.Windows.Point position)
         {
             bool found = false;
@@ -511,21 +539,20 @@ namespace Barnacle.LineLib
                         int controlIndex = quad.P1;
                         int endIndex = quad.End();
 
-
-                        System.Windows.Point p0 = flexiPoints[startIndex].ToPoint(); 
+                        System.Windows.Point p0 = flexiPoints[startIndex].ToPoint();
                         System.Windows.Point p1 = flexiPoints[controlIndex].ToPoint();
                         System.Windows.Point p2 = flexiPoints[endIndex].ToPoint();
 
                         // calculate  points for lower curve
                         double x, y;
                         System.Windows.Point lnp0 = p0;
-                        x = (1 - splitT) * p0.X + ( splitT * p1.X);
+                        x = (1 - splitT) * p0.X + (splitT * p1.X);
                         y = (1 - splitT) * p0.Y + (splitT * p1.Y);
                         System.Windows.Point lnp1 = new System.Windows.Point(x, y);
 
-                        x = Math.Pow((1 - splitT), 2) * p0.X + (2.0*(1-splitT)*splitT*p1.X)+(splitT * splitT * p1.X);
+                        x = Math.Pow((1 - splitT), 2) * p0.X + (2.0 * (1 - splitT) * splitT * p1.X) + (splitT * splitT * p1.X);
                         y = Math.Pow((1 - splitT), 2) * p0.Y + (2.0 * (1 - splitT) * splitT * p1.Y) + (splitT * splitT * p1.Y);
-                       // System.Windows.Point lnp2 = new System.Windows.Point(x, y);
+                        // System.Windows.Point lnp2 = new System.Windows.Point(x, y);
                         System.Windows.Point lnp2 = position;
 
                         // calculate points for higher curve
@@ -544,26 +571,26 @@ namespace Barnacle.LineLib
                         FlexiPoints.Insert(startIndex + 2, new FlexiPoint(lnp2.X, lnp2.Y));
 
                         FlexiQuadBezier lowerQuad = new FlexiQuadBezier();
-                        lowerQuad.P0 = startIndex;                       
-                        lowerQuad.P1 = startIndex+1;
-                        lowerQuad.P2 = startIndex+2;
+                        lowerQuad.P0 = startIndex;
+                        lowerQuad.P1 = startIndex + 1;
+                        lowerQuad.P2 = startIndex + 2;
 
                         FlexiQuadBezier upperQuad = new FlexiQuadBezier();
                         upperQuad.P0 = startIndex + 2;
-                        
+
                         upperQuad.P1 = startIndex + 3;
                         flexiPoints[startIndex + 3].X = hnp1.X;
                         flexiPoints[startIndex + 3].Y = hnp1.Y;
 
                         upperQuad.P2 = startIndex + 4;
 
-                        for ( int j = i+1; j < segs.Count; j ++)
+                        for (int j = i + 1; j < segs.Count; j++)
                         {
                             segs[j].PointInserted(endIndex, 2);
                         }
 
                         segs[i] = lowerQuad;
-                        segs.Insert(i+1, upperQuad);
+                        segs.Insert(i + 1, upperQuad);
                         if (upperQuad.P2 == flexiPoints.Count)
                         {
                             upperQuad.P2 = 0;
