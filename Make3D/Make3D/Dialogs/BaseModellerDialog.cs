@@ -17,6 +17,7 @@ namespace Barnacle.Dialogs
     public class BaseModellerDialog : Window, INotifyPropertyChanged
     {
         protected Axies axies;
+        protected string defaultImagePath;
         protected Floor floor;
         protected Grid3D grid;
         protected GeometryModel3D lastHitModel;
@@ -35,6 +36,7 @@ namespace Barnacle.Dialogs
 
         private PolarCamera polarCamera;
 
+        private SpaceTreeNode spaceTreeRoot;
         private Int32Collection tris;
 
         private Point3DCollection vertices;
@@ -58,12 +60,6 @@ namespace Barnacle.Dialogs
             bounds = new Bounds3D();
             spaceTreeRoot = null;
         }
-
-        public void Debug(string txt, [CallerMemberName] string caller = "")
-        {
-            System.Diagnostics.Debug.WriteLine($" {caller}: {txt}");
-        }
-
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds
@@ -78,21 +74,6 @@ namespace Barnacle.Dialogs
                 {
                     bounds = value;
                 }
-            }
-        }
-
-        protected void Get2DBounds(List<Point> pnts, ref double tlx, ref double tly, ref double brx, ref double bry)
-        {
-            tlx = double.MaxValue;
-            tly = double.MaxValue;
-            brx = double.MinValue;
-            bry = double.MinValue;
-            foreach (Point p in pnts)
-            {
-                if (p.X < tlx) tlx = p.X;
-                if (p.X > brx) brx = p.X;
-                if (p.Y < tly) tly = p.Y;
-                if (p.Y > bry) bry = p.Y;
             }
         }
 
@@ -125,6 +106,15 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public string DefaultImagePath
+        {
+            get { return defaultImagePath; }
+            set
+            {
+                defaultImagePath = value;
+            }
+        }
+
         public EditorParameters EditorParameters
         {
             get
@@ -146,6 +136,22 @@ namespace Barnacle.Dialogs
             set
             {
                 tris = value;
+            }
+        }
+
+        public double FieldOfView
+        {
+            get
+            {
+                return fieldOfView;
+            }
+            set
+            {
+                if (fieldOfView != value)
+                {
+                    fieldOfView = value;
+                    NotifyPropertyChanged();
+                }
             }
         }
 
@@ -246,19 +252,42 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double FieldOfView
+        public static void CreateCanvasGrid(Canvas cnv, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
         {
-            get
+            DpiScale sc = VisualTreeHelper.GetDpi(cnv);
+
+            double aw = cnv.ActualWidth;
+            double ah = cnv.ActualHeight;
+            CreateGrid(sc, aw, ah, out gridX, out gridY, gridSizeMM, markers);
+        }
+
+        public static void CreateGrid(DpiScale sc, double aw, double ah, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
+        {
+            double x = 0;
+            double y = 0;
+            gridX = (sc.PixelsPerInchX / 25.4) * gridSizeMM;
+
+            gridY = (sc.PixelsPerInchY / 25.4) * gridSizeMM;
+
+            while (x < aw)
             {
-                return fieldOfView;
-            }
-            set
-            {
-                if (fieldOfView != value)
+                y = 0;
+                while (y < ah)
                 {
-                    fieldOfView = value;
-                    NotifyPropertyChanged();
+                    Ellipse el = new Ellipse();
+                    Canvas.SetLeft(el, x - 1);
+                    Canvas.SetTop(el, y - 1);
+                    el.Width = 3;
+                    el.Height = 3;
+                    el.Fill = Brushes.AliceBlue;
+                    el.Stroke = Brushes.CadetBlue;
+                    if (markers != null)
+                    {
+                        markers.Add(el);
+                    }
+                    y += gridY;
                 }
+                x += gridX;
             }
         }
 
@@ -269,6 +298,31 @@ namespace Barnacle.Dialogs
             double x = h * Math.Sin(theta);
             double z = h * Math.Cos(theta);
             return center + new Vector3D(x, y, z);
+        }
+
+        public void AddFace(int c0, int c1, int c2)
+        {
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+        }
+
+        public int AddVertice(double x, double y, double z)
+        {
+            int res = AddVertice(new Point3D(x, y, z));
+            return res;
+        }
+
+        public void ClearShape()
+        {
+            spaceTreeRoot = null;
+            Vertices.Clear();
+            Faces.Clear();
+        }
+
+        public void Debug(string txt, [CallerMemberName] string caller = "")
+        {
+            System.Diagnostics.Debug.WriteLine($" {caller}: {txt}");
         }
 
         public void GenerateSphere(Point3DCollection verts, Int32Collection faces, Point3D center, double radius, int numTheta, int numPhi)
@@ -308,21 +362,6 @@ namespace Barnacle.Dialogs
                 }
                 theta += dtheta;
             }
-        }
-
-        public void AddFace(int c0, int c1, int c2)
-        {
-            Faces.Add(c0);
-            Faces.Add(c1);
-            Faces.Add(c2);
-        }
-
-        protected Point CalcPoint(double theta, double r)
-        {
-            Point p = new Point();
-            p.X = r * Math.Sin(theta);
-            p.Y = r * Math.Cos(theta);
-            return p;
         }
 
         public void HitTest(Viewport3D viewport3D1, Point mouseposition)
@@ -371,6 +410,34 @@ namespace Barnacle.Dialogs
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        public Point[] OrderAntiClockwise(Point[] points)
+        {
+            double mX = 0;
+            double my = 0;
+            foreach (Point p in points)
+            {
+                mX += p.X;
+                my += p.Y;
+            }
+            mX /= points.Length;
+            my /= points.Length;
+            return points.OrderByDescending(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
+        }
+
+        public Point[] OrderClockwise(Point[] points)
+        {
+            double mX = 0;
+            double my = 0;
+            foreach (Point p in points)
+            {
+                mX += p.X;
+                my += p.Y;
+            }
+            mX /= points.Length;
+            my /= points.Length;
+            return points.OrderBy(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
         }
 
         public void UpdateCameraPos()
@@ -776,14 +843,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public int AddVertice(double x, double y, double z)
-        {
-            int res = AddVertice(new Point3D(x, y, z));
-            return res;
-        }
-
-        private SpaceTreeNode spaceTreeRoot;
-
         protected int AddVertice(Point3DCollection verts, double x, double y, double z)
         {
             int res = -1;
@@ -828,21 +887,18 @@ namespace Barnacle.Dialogs
             return res;
         }
 
+        protected Point CalcPoint(double theta, double r)
+        {
+            Point p = new Point();
+            p.X = r * Math.Sin(theta);
+            p.Y = r * Math.Cos(theta);
+            return p;
+        }
+
         protected virtual void Cancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
             Close();
-        }
-
-        protected string defaultImagePath;
-
-        public string DefaultImagePath
-        {
-            get { return defaultImagePath; }
-            set
-            {
-                defaultImagePath = value;
-            }
         }
 
         protected void CentreVertices()
@@ -889,13 +945,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public void ClearShape()
-        {
-            spaceTreeRoot = null;
-            Vertices.Clear();
-            Faces.Clear();
-        }
-
         // run around around a list of points
         // assume the start and end are linked.
         protected void CreateSideFaces(List<Point> points, double thickness, bool rev, double zOff = 0)
@@ -935,6 +984,10 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected double DegToRad(double deg)
+        {
+            return deg * Math.PI / 180;
+        }
         protected double Distance(Point p1, Point p2)
         {
             double dx = p2.X - p1.X;
@@ -962,6 +1015,20 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected void Get2DBounds(List<Point> pnts, ref double tlx, ref double tly, ref double brx, ref double bry)
+        {
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+            foreach (Point p in pnts)
+            {
+                if (p.X < tlx) tlx = p.X;
+                if (p.X > brx) brx = p.X;
+                if (p.Y < tly) tly = p.Y;
+                if (p.Y > bry) bry = p.Y;
+            }
+        }
         protected Bounds3D GetBounds3D(Point3DCollection pnts)
         {
             Bounds3D bnds = new Bounds3D();
@@ -1034,6 +1101,24 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected void SetCameraDistance(bool sideView = false)
+        {
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(Vertices, ref min, ref max);
+            double w = max.X - min.X;
+            double h = max.Y - min.Y;
+            double d = max.Z - min.Z;
+            if (sideView)
+            {
+                Camera.DistanceToFit(d, h, w * 1.5);
+            }
+            else
+            {
+                Camera.DistanceToFit(w, h, d * 1.5);
+            }
+        }
+
         protected virtual void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -1074,95 +1159,9 @@ namespace Barnacle.Dialogs
                 UpdateCameraPos();
             }
         }
-
-        protected void SetCameraDistance(bool sideView = false)
-        {
-            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-            PointUtils.MinMax(Vertices, ref min, ref max);
-            double w = max.X - min.X;
-            double h = max.Y - min.Y;
-            double d = max.Z - min.Z;
-            if (sideView)
-            {
-                Camera.DistanceToFit(d, h, w * 1.5);
-            }
-            else
-            {
-                Camera.DistanceToFit(w, h, d * 1.5);
-            }
-        }
-
         private double InchesToMM(double x)
         {
             return x * 25.4;
-        }
-
-        public static void CreateGrid(DpiScale sc, double aw, double ah, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
-        {
-            double x = 0;
-            double y = 0;
-            gridX = (sc.PixelsPerInchX / 25.4) * gridSizeMM;
-
-            gridY = (sc.PixelsPerInchY / 25.4) * gridSizeMM;
-
-            while (x < aw)
-            {
-                y = 0;
-                while (y < ah)
-                {
-                    Ellipse el = new Ellipse();
-                    Canvas.SetLeft(el, x - 1);
-                    Canvas.SetTop(el, y - 1);
-                    el.Width = 3;
-                    el.Height = 3;
-                    el.Fill = Brushes.AliceBlue;
-                    el.Stroke = Brushes.CadetBlue;
-                    if (markers != null)
-                    {
-                        markers.Add(el);
-                    }
-                    y += gridY;
-                }
-                x += gridX;
-            }
-        }
-
-        public Point[] OrderClockwise(Point[] points)
-        {
-            double mX = 0;
-            double my = 0;
-            foreach (Point p in points)
-            {
-                mX += p.X;
-                my += p.Y;
-            }
-            mX /= points.Length;
-            my /= points.Length;
-            return points.OrderBy(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
-        }
-
-        public Point[] OrderAntiClockwise(Point[] points)
-        {
-            double mX = 0;
-            double my = 0;
-            foreach (Point p in points)
-            {
-                mX += p.X;
-                my += p.Y;
-            }
-            mX /= points.Length;
-            my /= points.Length;
-            return points.OrderByDescending(v => Math.Atan2(v.Y - my, v.X - mX)).ToArray();
-        }
-
-        public static void CreateCanvasGrid(Canvas cnv, out double gridX, out double gridY, double gridSizeMM, List<Shape> markers)
-        {
-            DpiScale sc = VisualTreeHelper.GetDpi(cnv);
-
-            double aw = cnv.ActualWidth;
-            double ah = cnv.ActualHeight;
-            CreateGrid(sc, aw, ah, out gridX, out gridY, gridSizeMM, markers);
         }
     }
 }

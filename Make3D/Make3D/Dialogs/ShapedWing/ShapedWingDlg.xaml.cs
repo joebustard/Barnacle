@@ -1,4 +1,5 @@
 using Barnacle.LineLib;
+using PolygonTriangulationLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,6 +47,7 @@ namespace Barnacle.Dialogs
             rootairfoilNames = new List<string>();
             airfoilGroups = new List<string>();
             selectedWingProfilePoints = null;
+            dihedralAngle = 0.0;
         }
 
         public List<string> AirfoilGroups
@@ -81,7 +83,7 @@ namespace Barnacle.Dialogs
                     }
 
                     NotifyPropertyChanged();
-                    Update();
+                    UpdateDisplay();
                 }
             }
         }
@@ -158,7 +160,7 @@ namespace Barnacle.Dialogs
                         selectedWingProfilePoints = GetProfilePoints(rootGroup, selectedRootAirfoil, ref selectedWingProfileLength);
                     }
                     NotifyPropertyChanged();
-                    Update();
+                    UpdateDisplay();
                 }
             }
         }
@@ -223,11 +225,12 @@ namespace Barnacle.Dialogs
         private void GenerateWing()
         {
             ClearShape();
-
+            bool needToCloseRight = false;
             FlexiPath flexipath = new FlexiPath();
             flexipath.FromString(PathEditor.GetPath());
             flexipath.CalculatePathBounds();
             List<double> ribX = new List<double>();
+            List<double> dihedralOffset = new List<double>();
             List<Point>[] ribs = new List<Point>[numDivisions];
             double minX = double.MaxValue;
             if (displayPoints != null)
@@ -241,12 +244,28 @@ namespace Barnacle.Dialogs
                         // get the basic size of the wing rib
                         var dp = flexipath.GetUpperAndLowerPoints(t);
                         ribX.Add(dp.X);
+                        if (Math.Abs(1-t)<0.000001)
+                        {
+                            if (dp.Upper - dp.Lower > 0.001)
+                            {
+                                needToCloseRight = true;
+                            }
+                        }
+                        if (dihedralAngle == 0.0)
+                        {
+                            dihedralOffset.Add(0);
+                        }
+                        else
+                        {
+                            double da = Math.Sin(DegToRad(dihedralAngle)) * dp.X;
+                            dihedralOffset.Add(da);
+                        }
                         var si = dp.Upper - dp.Lower;
                         ribs[ribIndex] = new List<Point>();
                         for (double m = 0.0; m <= 1.0; m += 0.05)
                         {
                             Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
-                            double px = -(wp.X * si + dp.Lower);
+                            double px = -((1.0 - wp.X) * si + dp.Lower);
                             Point scaledPoint = new Point(px, (wp.Y * si));
                             ribs[ribIndex].Add(scaledPoint);
                             minX = Math.Min(minX, px);
@@ -257,6 +276,7 @@ namespace Barnacle.Dialogs
                 }
 
                 minX = Math.Abs(minX);
+
                 for (int i = 0; i < numDivisions - 1; i++)
                 {
                     for (int j = 0; j < ribs[0].Count; j++)
@@ -266,18 +286,75 @@ namespace Barnacle.Dialogs
                         {
                             k = 0;
                         }
-                        int p0 = AddVertice(ribX[i], ribs[i][j].X + minX, ribs[i][j].Y);
-                        int p1 = AddVertice(ribX[i], ribs[i][k].X + minX, ribs[i][k].Y);
-                        int p2 = AddVertice(ribX[i + 1], ribs[i + 1][k].X + minX, ribs[i + 1][k].Y);
-                        int p3 = AddVertice(ribX[i + 1], ribs[i + 1][j].X + minX, ribs[i + 1][j].Y);
+                        int p0 = AddVertice(ribX[i], ribs[i][j].X + minX, ribs[i][j].Y + dihedralOffset[i]);
+                        int p1 = AddVertice(ribX[i], ribs[i][k].X + minX, ribs[i][k].Y + dihedralOffset[i]);
+                        int p2 = AddVertice(ribX[i + 1], ribs[i + 1][k].X + minX, ribs[i + 1][k].Y + dihedralOffset[i + 1]);
+                        int p3 = AddVertice(ribX[i + 1], ribs[i + 1][j].X + minX, ribs[i + 1][j].Y + dihedralOffset[i + 1]);
 
-                        AddFace(p0, p1, p2);
-                        AddFace(p0, p2, p3);
+                        AddFace(p0, p2, p1);
+                        AddFace(p0, p3, p2);
                     }
+                }
+
+                // close the root side
+                List<System.Drawing.PointF> side = new List<System.Drawing.PointF>();
+                for (int j = 0; j < ribs[0].Count; j++)
+                {
+                    int k = j + 1;
+                    if (k >= ribs[0].Count)
+                    {
+                        k = 0;
+                    }
+                    System.Drawing.PointF pl = new System.Drawing.PointF((float)(ribs[0][j].X + minX), (float)(ribs[0][j].Y));
+                    side.Add(pl);
+                }
+                TriangulatePerimiter(side, ribX[0], true);
+
+                // do we need to close the right
+                // if it was round we might not
+                if (needToCloseRight)
+                {
+                    side.Clear();
+
+                    for (int j = 0; j < ribs[0].Count; j++)
+                    {
+                        int k = j + 1;
+                        if (k >= ribs[0].Count)
+                        {
+                            k = 0;
+                        }
+                        System.Drawing.PointF pl = new System.Drawing.PointF((float)(ribs[ribs.Length-1][j].X + minX), (float)(ribs[ribs.Length - 1][j].Y));
+                        side.Add(pl);
+                    }
+                    TriangulatePerimiter(side, ribX[ribs.Length - 1], false);
                 }
             }
         }
+        private void TriangulatePerimiter(List<System.Drawing.PointF> points, double xo, bool invert)
+        {
+            TriangulationPolygon ply = new TriangulationPolygon();
 
+            ply.Points = points.ToArray();
+            List<Triangle> tris = ply.Triangulate();
+            foreach (Triangle t in tris)
+            {
+                int c0 = AddVertice(Vertices, xo, t.Points[0].X, t.Points[0].Y);
+                int c1 = AddVertice(Vertices, xo, t.Points[1].X, t.Points[1].Y);
+                int c2 = AddVertice(Vertices, xo, t.Points[2].X, t.Points[2].Y);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+            }
+        }
         private Point GetProfileAt(List<Point> profile, double length, double t)
         {
             Point res = new Point(0, 0);
@@ -386,6 +463,7 @@ namespace Barnacle.Dialogs
                 PathEditor.FromString(defaultWingShape);
             }
             NumDivisions = EditorParameters.GetInt("NumDivisions", 80);
+            DihedralAngle = EditorParameters.GetDouble("Dihedral", 0);
             string imageName = EditorParameters.Get("ImagePath");
             if (imageName != "")
             {
@@ -409,6 +487,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("Path", PathEditor.AbsolutePathString);
             EditorParameters.Set("NumDivisions", NumDivisions.ToString());
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
+            EditorParameters.Set("Dihedral", dihedralAngle.ToString());
         }
 
         private void SetProfiles(string grpName, List<string> names)
@@ -430,12 +509,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void Update()
-        {
-            // EnableControlsForShape();
-            GenerateWing();
-            Redisplay();
-        }
+
 
         private void UpdateDisplay()
         {
