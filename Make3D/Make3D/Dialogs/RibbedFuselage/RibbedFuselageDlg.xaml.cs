@@ -22,35 +22,20 @@ namespace Barnacle.Dialogs
     {
         private bool autoFit;
         private bool backBody;
-        private bool wholeBody;
         private bool dirty;
         private string filePath;
         private bool frontBody;
         private FuselageModel fuselageData;
+        private bool loaded;
+        private int numberOfDivisions;
+        private int oldSelectedRibIndex = -1;
         private RibImageDetailsModel selectedRib;
         private int selectedRibIndex;
         private String sideImage;
         private string sidePath;
         private String topImage;
         private string topPath;
-        private int numberOfDivisions;
-
-        public int NumberOfDivisions
-        {
-            get { return numberOfDivisions; }
-            set
-            {
-                if (numberOfDivisions != value && value >= 3 && value <= 360)
-                {
-                    numberOfDivisions = value;
-                    NotifyPropertyChanged();
-                    UpdateModel();
-                }
-            }
-        }
-
-        private bool loaded;
-
+        private bool wholeBody;
         public RibbedFuselageDlg()
         {
             InitializeComponent();
@@ -105,20 +90,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public bool WholeBody
-        {
-            get { return wholeBody; }
-            set
-            {
-                wholeBody = value;
-                dirty = true;
-                if (wholeBody)
-                {
-                    UpdateModel();
-                }
-            }
-        }
-
         public bool FrontBody
         {
             get { return frontBody; }
@@ -133,18 +104,27 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void UpdateModel()
-        {
-            if (ModelIsVisible && loaded)
-            {
-                GenerateModel();
-                Redisplay();
-            }
-        }
-
         public bool ModelIsVisible { get; set; }
 
+        public int NumberOfDivisions
+        {
+            get { return numberOfDivisions; }
+            set
+            {
+                if (numberOfDivisions != value && value >= 3 && value <= 360)
+                {
+                    numberOfDivisions = value;
+                    NotifyPropertyChanged();
+                    UpdateModel();
+                }
+            }
+        }
         public RelayCommand RibCommand { get; set; }
+
+        public ObservableCollection<RibImageDetailsModel> Ribs
+        {
+            get { return fuselageData.Ribs; }
+        }
 
         public int SelectedRibIndex
         {
@@ -230,12 +210,20 @@ namespace Barnacle.Dialogs
             }
         }
 
-        internal double HorizontalResolution { get; set; }
-
-        public ObservableCollection<RibImageDetailsModel> Ribs
+        public bool WholeBody
         {
-            get { return fuselageData.Ribs; }
+            get { return wholeBody; }
+            set
+            {
+                wholeBody = value;
+                dirty = true;
+                if (wholeBody)
+                {
+                    UpdateModel();
+                }
+            }
         }
+        internal double HorizontalResolution { get; set; }
 
         internal RibImageDetailsModel SelectedRib
         {
@@ -252,50 +240,6 @@ namespace Barnacle.Dialogs
 
         internal double VerticalResolution { get; set; }
 
-        private void CalculateMainRibSizes()
-        {
-            if (fuselageData.Ribs != null && fuselageData.Ribs.Count > 1)
-            {
-                if (!String.IsNullOrEmpty(fuselageData.SidePath) && !String.IsNullOrEmpty(fuselageData.TopPath))
-                {
-                    FlexiPath topViewFlexiPath = new FlexiPath();
-                    topViewFlexiPath.FromString(fuselageData.TopPath);
-                    topViewFlexiPath.CalculatePathBounds();
-
-                    FlexiPath sideViewFlexiPath = new FlexiPath();
-                    sideViewFlexiPath.FromString(fuselageData.SidePath);
-                    sideViewFlexiPath.CalculatePathBounds();
-                    List<double> ribXs = new List<double>();
-                    List<Dimension> topDims = new List<Dimension>();
-                    List<Dimension> sideDims = new List<Dimension>();
-
-                    // first get the x positions of the ribs and the height and width at that position from the top and side views.
-                    // generate the profile points for the ribs at the same time.
-                    for (int i = 0; i < fuselageData.Ribs.Count; i++)
-                    {
-                        double x = fuselageData.Markers[i].Position;
-
-                        RibImageDetailsModel cp;
-                        cp = fuselageData.Ribs[i];
-                        cp.NumDivisions = numberOfDivisions;
-                        cp.GenerateProfilePoints();
-
-
-
-                        // calculate the top and side dimensions from the images at the ribs given position
-                        var dp1 = topViewFlexiPath.GetUpperAndLowerPoints(x);
-                        topDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
-                        var dp2 = sideViewFlexiPath.GetUpperAndLowerPoints(x);
-                        sideDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
-                        ribXs.Add(dp1.X);
-                        ThreeDView.SetRipPosition(i, dp1.X-ribXs[0], dp1.Lower, dp1.Upper, dp2.Lower, dp2.Upper);
-           
-                    }
-
-                    
-                }
-            }
-        }
         public void GenerateModel()
         {
             try
@@ -382,164 +326,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void CreateIntermediateRib(FlexiPath topViewFlexiPath, FlexiPath sideViewFlexiPath, List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims, RibImageDetailsModel cp, double nx)
-        {
-            // copy the rib
-            RibImageDetailsModel nr = cp.Clone();
-            nr.NumDivisions = NumberOfDivisions;
-            //  nr.GenerateProfilePoints();
-            generatingRibs.Add(nr);
-
-            // get the dimensions from the side and top at the intermediate point
-            var dp = topViewFlexiPath.GetUpperAndLowerPoints(nx);
-            topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
-            dp = sideViewFlexiPath.GetUpperAndLowerPoints(nx);
-            sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
-            ribXs.Add(dp.X);
-        }
-
-        private void GenerateFaces(List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims)
-        {
-            int facesPerRib = generatingRibs[0].ProfilePoints.Count;
-
-            // the indices of all the points generated for the shape
-            int[,] ribvertices = new int[generatingRibs.Count, facesPerRib];
-
-            // there should be a marker and hence a dimension for every rib.
-            // If ther isn't then somethins wrong
-            if (generatingRibs.Count != topDims.Count)
-            {
-                System.Diagnostics.Debug.WriteLine($"Ribs {generatingRibs.Count} TopView Dimensions {topDims.Count}");
-            }
-            else
-            {
-                // work out the range of faces we are going to do based upon whether we
-                // are doing the whole model or just front or back
-
-                // assume its whole model
-                int start = 0;
-                int end = facesPerRib;
-
-                // are we only doing the front or back halves
-                if (frontBody)
-                {
-                    end = facesPerRib / 2;
-                }
-                if (backBody)
-                {
-                    start = facesPerRib / 2;
-                }
-
-                // we need to record the left and right edge points so we can close them later
-                List<PointF> leftEdge = new List<PointF>();
-                List<PointF> rightEdge = new List<PointF>();
-
-                // go through all the profile points for all the ribs,
-                // converting to a 3d position
-                //double x = GetXmm(ribXs[0]);
-                double x = ribXs[0];
-                double leftx = x;
-                double rightx = x;
-                int vert = 0;
-                int vindex = 0;
-                for (int i = 0; i < generatingRibs.Count; i++)
-                {
-                    //x = GetXmm(ribXs[i]);
-                    x = ribXs[i];
-                    // if this is the last rib count it as the right edge and record its position
-                    if (i == generatingRibs.Count - 1)
-                    {
-                        rightx = x;
-                    }
-
-                    vindex = 0;
-                    for (int proind = start; proind < end; proind++)
-                    {
-                        if (proind < generatingRibs[i].ProfilePoints.Count)
-                        {
-                            PointF pnt = generatingRibs[i].ProfilePoints[proind];
-
-                            double v = (double)pnt.X * topDims[i].Height;
-                            //double z = GetYmm(v + topDims[i].P1.Y);
-                            double z = v + topDims[i].P1.Y;
-
-                            v = (double)pnt.Y * sideDims[i].Height;
-                            //double y = -GetYmm(v + sideDims[i].P1.Y);
-                            double y = -(v + sideDims[i].P1.Y);
-                            vert = AddVertice(Vertices, x, y, z);
-                            ribvertices[i, vindex] = vert;
-                            vindex++;
-                            if (i == 0)
-                            {
-                                leftEdge.Add(new PointF((float)y, (float)z));
-                            }
-                            if (i == generatingRibs.Count - 1)
-                            {
-                                rightEdge.Add(new PointF((float)y, (float)z));
-                            }
-                        }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine($"ERROR proind {proind} ProfilePoints Count");
-                        }
-                    }
-                }
-                facesPerRib = leftEdge.Count;
-
-                // Vertices now has all the points.
-                // ribvertices has a row for each rib, and its columns are the indices of the 3d points
-                // So now add triangle faces for consecutive pairs of points on each rib and the one after it.
-                for (int ribIndex = 0; ribIndex < generatingRibs.Count - 1; ribIndex++)
-                {
-                    for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
-                    {
-                        int ind2 = pIndex + 1;
-                        if (ind2 >= facesPerRib)
-                        {
-                            ind2 = 0;
-                        }
-                        int v1 = ribvertices[ribIndex, pIndex];
-                        int v2 = ribvertices[ribIndex, ind2];
-                        int v3 = ribvertices[ribIndex + 1, pIndex];
-                        int v4 = ribvertices[ribIndex + 1, ind2];
-
-                        Faces.Add(v1);
-                        Faces.Add(v2);
-                        Faces.Add(v3);
-
-                        Faces.Add(v3);
-                        Faces.Add(v2);
-                        Faces.Add(v4);
-                    }
-                }
-
-                // close off the left
-                TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
-
-                // close off the right
-                TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
-
-                // move everything to the centre and floor it
-                CentreVertices();
-            }
-        }
-
-        private bool CheckAllRibsHaveData(List<RibImageDetailsModel> generatingRibs)
-        {
-            bool okToGenerate = true;
-            // check that all the ribs have profile points. If they don't we can't generate the shape.
-            for (int i = 0; i < generatingRibs.Count; i++)
-            {
-                if (generatingRibs[i].ProfilePoints == null || generatingRibs[i].ProfilePoints.Count == 0)
-                {
-                    okToGenerate = false;
-                    break;
-                }
-            }
-
-            return okToGenerate;
-        }
-
         public void Load()
         {
             OpenFileDialog opDlg = new OpenFileDialog();
@@ -555,21 +341,6 @@ namespace Barnacle.Dialogs
                 {
                     System.Windows.MessageBox.Show(ex.Message);
                 }
-            }
-        }
-
-        private void Read(string fileName)
-        {
-            if (fuselageData != null)
-            {
-                fuselageData.Load(fileName);
-                NotifyPropertyChanged("Ribs");
-
-                TopImage = fuselageData.TopImageDetails.ImageFilePath;
-                TopPath = fuselageData.TopImageDetails.FlexiPathText;
-                SideImage = fuselageData.SideImageDetails.ImageFilePath;
-                SidePath = fuselageData.SideImageDetails.FlexiPathText;
-                RibsChanged();
             }
         }
 
@@ -637,6 +408,78 @@ namespace Barnacle.Dialogs
             }
         }
 
+        protected override void Ok_Click(object sender, RoutedEventArgs e)
+        {
+            if (dirty && MessageBox.Show("Data has changed. Save it before closing", "Warning", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
+            {
+                Save();
+            }
+            SaveEditorParmeters();
+            base.Ok_Click(sender, e);
+        }
+
+        private void CalculateMainRibSizes()
+        {
+            if (fuselageData.Ribs != null && fuselageData.Ribs.Count > 1)
+            {
+                if (!String.IsNullOrEmpty(fuselageData.SidePath) && !String.IsNullOrEmpty(fuselageData.TopPath))
+                {
+                    double minY = double.MaxValue;
+                    FlexiPath topViewFlexiPath = new FlexiPath();
+                    topViewFlexiPath.FromString(fuselageData.TopPath);
+                    topViewFlexiPath.CalculatePathBounds();
+
+                    FlexiPath sideViewFlexiPath = new FlexiPath();
+                    sideViewFlexiPath.FromString(fuselageData.SidePath);
+                    sideViewFlexiPath.CalculatePathBounds();
+                    List<double> ribXs = new List<double>();
+                    List<Dimension> topDims = new List<Dimension>();
+                    List<Dimension> sideDims = new List<Dimension>();
+
+                    // first get the x positions of the ribs and the height and width at that position from the top and side views.
+                    // generate the profile points for the ribs at the same time.
+                    for (int i = 0; i < fuselageData.Ribs.Count; i++)
+                    {
+                        double x = fuselageData.Markers[i].Position;
+
+                        RibImageDetailsModel cp;
+                        cp = fuselageData.Ribs[i];
+                        cp.NumDivisions = numberOfDivisions;
+                        cp.GenerateProfilePoints();
+
+                        // calculate the top and side dimensions from the images at the ribs given position
+                        var dp1 = topViewFlexiPath.GetUpperAndLowerPoints(x);
+                        topDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp1.Lower), new System.Windows.Point(dp1.X, dp1.Upper)));
+                        var dp2 = sideViewFlexiPath.GetUpperAndLowerPoints(x);
+                        sideDims.Add(new Dimension(new System.Windows.Point(dp1.X, dp2.Lower), new System.Windows.Point(dp1.X, dp2.Upper)));
+                        ribXs.Add(dp1.X);
+                        minY = Math.Min(minY, dp2.Lower);
+
+                        ThreeDView.SetRibPosition(i, dp1.X - ribXs[0], dp1.Lower, dp1.Upper, dp2.Lower, dp2.Upper);
+
+                    }
+
+                    ThreeDView.MoveRibsUp(minY);
+                }
+            }
+        }
+
+        private bool CheckAllRibsHaveData(List<RibImageDetailsModel> generatingRibs)
+        {
+            bool okToGenerate = true;
+            // check that all the ribs have profile points. If they don't we can't generate the shape.
+            for (int i = 0; i < generatingRibs.Count; i++)
+            {
+                if (generatingRibs[i].ProfilePoints == null || generatingRibs[i].ProfilePoints.Count == 0)
+                {
+                    okToGenerate = false;
+                    break;
+                }
+            }
+
+            return okToGenerate;
+        }
+
         private void CopyPathToSideView()
         {
             SideView.OnMarkerMoved = SideMarkerMoved;
@@ -657,6 +500,22 @@ namespace Barnacle.Dialogs
             SideView.Markers = GetMarkers();
         }
 
+        private void CreateIntermediateRib(FlexiPath topViewFlexiPath, FlexiPath sideViewFlexiPath, List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims, RibImageDetailsModel cp, double nx)
+        {
+            // copy the rib
+            RibImageDetailsModel nr = cp.Clone();
+            nr.NumDivisions = NumberOfDivisions;
+
+            generatingRibs.Add(nr);
+
+            // get the dimensions from the side and top at the intermediate point
+            var dp = topViewFlexiPath.GetUpperAndLowerPoints(nx);
+            topDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+            dp = sideViewFlexiPath.GetUpperAndLowerPoints(nx);
+            sideDims.Add(new Dimension(new System.Windows.Point(dp.X, dp.Lower), new System.Windows.Point(dp.X, dp.Upper)));
+            ribXs.Add(dp.X);
+        }
+
         private void Dialog_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateCameraPos();
@@ -667,9 +526,172 @@ namespace Barnacle.Dialogs
             Redisplay();
         }
 
+        private void GenerateFaces(List<RibImageDetailsModel> generatingRibs, List<double> ribXs, List<Dimension> topDims, List<Dimension> sideDims)
+        {
+            int facesPerRib = generatingRibs[0].ProfilePoints.Count;
+
+            // the indices of all the points generated for the shape
+            int[,] ribvertices = new int[generatingRibs.Count, facesPerRib];
+
+            // there should be a marker and hence a dimension for every rib.
+            // If ther isn't then somethins wrong
+            if (generatingRibs.Count != topDims.Count)
+            {
+                System.Diagnostics.Debug.WriteLine($"Ribs {generatingRibs.Count} TopView Dimensions {topDims.Count}");
+            }
+            else
+            {
+
+                // work out the range of faces we are going to do based upon whether we
+                // are doing the whole model or just front or back
+
+                // assume its whole model
+                int start = 0;
+                int end = facesPerRib;
+
+                // are we only doing the front or back halves
+                if (frontBody)
+                {
+                    end = facesPerRib / 2;
+                }
+                if (backBody)
+                {
+                    start = facesPerRib / 2;
+                }
+
+                // we need to record the left and right edge points so we can close them later
+                List<PointF> leftEdge = new List<PointF>();
+                List<PointF> rightEdge = new List<PointF>();
+
+                // go through all the profile points for all the ribs,
+                // converting to a 3d position
+              
+                double x = ribXs[0];
+                double leftx = x;
+                double rightx = x;
+                int vert = 0;
+                int vindex = 0;
+                for (int i = 0; i < generatingRibs.Count; i++)
+                {
+                  
+                    x = ribXs[i];
+                    // if this is the last rib count it as the right edge and record its position
+                    if (i == generatingRibs.Count - 1)
+                    {
+                        rightx = x;
+                    }
+
+                    vindex = 0;
+                    for (int proind = start; proind < end; proind++)
+                    {
+                        if (proind < generatingRibs[i].ProfilePoints.Count)
+                        {
+                            PointF pnt = generatingRibs[i].ProfilePoints[proind];
+
+                            double v = (double)pnt.X * topDims[i].Height;
+                           
+                            double z = v + topDims[i].P1.Y;
+
+                            v = (double)pnt.Y * sideDims[i].Height;
+                           
+                            double y = -(v + sideDims[i].P1.Y);
+                            vert = AddVertice(Vertices, x, y, z);
+                            ribvertices[i, vindex] = vert;
+                            vindex++;
+                            if (i == 0)
+                            {
+                                leftEdge.Add(new PointF((float)y, (float)z));
+                            }
+                            if (i == generatingRibs.Count - 1)
+                            {
+                                rightEdge.Add(new PointF((float)y, (float)z));
+                            }
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine($"ERROR proind {proind} ProfilePoints Count");
+                        }
+                    }
+                }
+                facesPerRib = leftEdge.Count;
+
+                // Vertices now has all the points.
+                // ribvertices has a row for each rib, and its columns are the indices of the 3d points
+                // So now add triangle faces for consecutive pairs of points on each rib and the one after it.
+                for (int ribIndex = 0; ribIndex < generatingRibs.Count - 1; ribIndex++)
+                {
+                    for (int pIndex = 0; pIndex < facesPerRib; pIndex++)
+                    {
+                        int ind2 = pIndex + 1;
+                        if (ind2 >= facesPerRib)
+                        {
+                            ind2 = 0;
+                        }
+                        int v1 = ribvertices[ribIndex, pIndex];
+                        int v2 = ribvertices[ribIndex, ind2];
+                        int v3 = ribvertices[ribIndex + 1, pIndex];
+                        int v4 = ribvertices[ribIndex + 1, ind2];
+
+                        Faces.Add(v1);
+                        Faces.Add(v2);
+                        Faces.Add(v3);
+
+                        Faces.Add(v3);
+                        Faces.Add(v2);
+                        Faces.Add(v4);
+                    }
+                }
+
+                // close off the left
+                TriangulatePerimiter(leftEdge, leftx, 0, 0, true);
+
+                // close off the right
+                TriangulatePerimiter(rightEdge, rightx, 0, 0, false);
+
+                // move everything to the centre and floor it
+                CentreVertices();
+            }
+        }
+
         private double InchesToMM(double x)
         {
             return x * 25.4;
+        }
+
+        private void LoadEditorParameters()
+        {
+            string s = EditorParameters.Get("FilePath");
+            if (s != "")
+            {
+                if (System.IO.File.Exists(s))
+                {
+                    filePath = s;
+
+                    Read(filePath);
+
+                    dirty = false;
+                }
+                WholeBody = true;
+                FrontBody = false;
+                BackBody = false;
+                s = EditorParameters.Get("Model");
+                if (s == "Front")
+                {
+                    WholeBody = false;
+                    FrontBody = true;
+                    BackBody = false;
+                }
+                else if (s == "Back")
+                {
+                    BackBody = true;
+                    FrontBody = false;
+                    WholeBody = false;
+                }
+
+                NumberOfDivisions = EditorParameters.GetInt("NumberOfDivisions", 100);
+
+                AutoFit = EditorParameters.GetBoolean("AutoFit");
+            }
         }
 
         private void NextRib()
@@ -773,6 +795,12 @@ namespace Barnacle.Dialogs
                         }
                         break;
 
+                    case "saveas":
+                        {
+                            SaveAs();
+                        }
+                        break;
+
                     case "previous":
                         {
                             PreviousRib();
@@ -796,20 +824,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-        
-        private void RibsChanged()
-        {
-            ThreeDView.SetRibs(fuselageData.Ribs);
-            CalculateMainRibSizes();
-        }
-
-        private void UpdateMarkers()
-        {
-            TopView.Markers = GetMarkers();
-            SideView.Markers = GetMarkers();
-            ThreeDView.Markers = GetMarkers();
-            
-        }
 
         private void PreviousRib()
         {
@@ -824,6 +838,21 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void Read(string fileName)
+        {
+            if (fuselageData != null)
+            {
+                fuselageData.Load(fileName);
+                NotifyPropertyChanged("Ribs");
+
+                TopImage = fuselageData.TopImageDetails.ImageFilePath;
+                TopPath = fuselageData.TopImageDetails.FlexiPathText;
+                SideImage = fuselageData.SideImageDetails.ImageFilePath;
+                SidePath = fuselageData.SideImageDetails.FlexiPathText;
+                RibsChanged();
+            }
+        }
+
         private void ResetRibs()
         {
             fuselageData.ResetMarkerPositions();
@@ -831,18 +860,23 @@ namespace Barnacle.Dialogs
             SideView.Markers = GetMarkers();
         }
 
-        private int oldSelectedRibIndex = -1;
-
         private void RibList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             if (SelectedRibIndex != -1)
             {
                 // RibList.ScrollIntoView(SelectedRib);
-                if (SelectedRibIndex != oldSelectedRibIndex)
+                if (SelectedRibIndex != oldSelectedRibIndex && SelectedRibIndex >= 0 && SelectedRibIndex < Ribs.Count)
                 {
+                    selectedRib = Ribs[SelectedRibIndex];
                     RibbedFuselage.ItemsControlExtensions.ScrollToCenterOfView(RibList, SelectedRib);
                 }
             }
+        }
+
+        private void RibsChanged()
+        {
+            ThreeDView.SetRibs(fuselageData.Ribs);
+            CalculateMainRibSizes();
         }
 
         private void SaveAs()
@@ -855,6 +889,24 @@ namespace Barnacle.Dialogs
                 filePath = saveFileDialog.FileName;
                 dirty = false;
             }
+        }
+
+        private void SaveEditorParmeters()
+        {
+            // save the parameters for the tool
+            EditorParameters.Set("FilePath", filePath);
+            String m = "Whole";
+            if (backBody)
+            {
+                m = "Back";
+            }
+            if (frontBody)
+            {
+                m = "Front";
+            }
+            EditorParameters.Set("Model", m);
+            EditorParameters.Set("NumberOfDivisions", numberOfDivisions.ToString());
+            EditorParameters.Set("AutoFit", autoFit.ToString());
         }
 
         private void SideImageChanged(string imagePath)
@@ -943,6 +995,22 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void UpdateMarkers()
+        {
+            TopView.Markers = GetMarkers();
+            SideView.Markers = GetMarkers();
+            ThreeDView.Markers = GetMarkers();
+
+        }
+
+        private void UpdateModel()
+        {
+            if (ModelIsVisible && loaded)
+            {
+                GenerateModel();
+                Redisplay();
+            }
+        }
         private void ViewTabChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             System.Windows.Controls.TabControl tc = sender as System.Windows.Controls.TabControl;
@@ -977,71 +1045,6 @@ namespace Barnacle.Dialogs
             {
                 fuselageData.Save(filePath);
             }
-        }
-
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-
-            EditorParameters.Set("FilePath", filePath);
-            String m = "Whole";
-            if (backBody)
-            {
-                m = "Back";
-            }
-            if (frontBody)
-            {
-                m = "Front";
-            }
-            EditorParameters.Set("Model", m);
-            EditorParameters.Set("NumberOfDivisions", numberOfDivisions.ToString());
-            EditorParameters.Set("AutoFit", autoFit.ToString());
-        }
-
-        private void LoadEditorParameters()
-        {
-            string s = EditorParameters.Get("FilePath");
-            if (s != "")
-            {
-                if (System.IO.File.Exists(s))
-                {
-                    filePath = s;
-
-                    Read(filePath);
-
-                    dirty = false;
-                }
-                WholeBody = true;
-                FrontBody = false;
-                BackBody = false;
-                s = EditorParameters.Get("Model");
-                if (s == "Front")
-                {
-                    WholeBody = false;
-                    FrontBody = true;
-                    BackBody = false;
-                }
-                else if (s == "Back")
-                {
-                    BackBody = true;
-                    FrontBody = false;
-                    WholeBody = false;
-                }
-
-                NumberOfDivisions = EditorParameters.GetInt("NumberOfDivisions", 100);
-
-                AutoFit = EditorParameters.GetBoolean("AutoFit");
-            }
-        }
-
-        protected override void Ok_Click(object sender, RoutedEventArgs e)
-        {
-            if (dirty && MessageBox.Show("Data has changed. Save it before closing", "Warning", System.Windows.MessageBoxButton.YesNo) == System.Windows.MessageBoxResult.Yes)
-            {
-                Save();
-            }
-            SaveEditorParmeters();
-            base.Ok_Click(sender, e);
         }
     }
 }

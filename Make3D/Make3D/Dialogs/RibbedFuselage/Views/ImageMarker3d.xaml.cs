@@ -281,12 +281,24 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             }
         }
 
-        internal void SetRipPosition(int i, double x, double lower1, double upper1, double lower2, double upper2)
+        internal void SetRibPosition(int i, double x, double lower1, double upper1, double lower2, double upper2)
         {
             if (i >= 0 && i < ribPlates.Count)
             {
 
-                ribPlates[i].SetPositionAndScale(x+sidePlateModel.LeftOffset, sidePlateModel.MiddleOffset,lower1, upper1, lower2, upper2);
+                ribPlates[i].SetPositionAndScale(x + sidePlateModel.LeftOffset, sidePlateModel.MiddleOffset, lower1, upper1, lower2, upper2);
+            }
+        }
+
+        internal void MoveRibsUp(double minY)
+        {
+            Vector3D v = new Vector3D(0,minY+ sidePlateModel.MiddleOffset, 0);
+            for (int i = 0; i < ribPlates.Count; i++)
+            {
+                for (int j = 0; j < ribPlates[i].Vertices.Count; j++)
+                {
+                    ribPlates[i].Vertices[j] += v;
+                }
             }
         }
 
