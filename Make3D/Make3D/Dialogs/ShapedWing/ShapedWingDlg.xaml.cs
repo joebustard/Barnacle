@@ -220,7 +220,7 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private void GenerateShape()
+        private void GenerateWing()
         {
             ClearShape();
 
@@ -229,6 +229,7 @@ namespace Barnacle.Dialogs
             flexipath.CalculatePathBounds();
             List<double> ribX = new List<double>();
             List<Point>[] ribs = new List<Point>[numDivisions];
+            double minX = double.MaxValue;
             if (displayPoints != null)
             {
                 if (numDivisions > 0)
@@ -242,17 +243,20 @@ namespace Barnacle.Dialogs
                         ribX.Add(dp.X);
                         var si = dp.Upper - dp.Lower;
                         ribs[ribIndex] = new List<Point>();
-                        for (double m = 0; m < 1.0; m += 0.05)
+                        for (double m = 0.0; m <= 1.0; m += 0.05)
                         {
                             Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
-
-                            Point scaledPoint = new Point(wp.X * si + dp.Lower, wp.Y * si);
+                            double px = -(wp.X * si + dp.Lower);
+                            Point scaledPoint = new Point(px, (wp.Y * si));
                             ribs[ribIndex].Add(scaledPoint);
+                            minX = Math.Min(minX, px);
                         }
+
                         ribIndex++;
                     }
                 }
 
+                minX = Math.Abs(minX);
                 for (int i = 0; i < numDivisions - 1; i++)
                 {
                     for (int j = 0; j < ribs[0].Count; j++)
@@ -262,13 +266,13 @@ namespace Barnacle.Dialogs
                         {
                             k = 0;
                         }
-                        int p0 = AddVertice(ribX[i], ribs[i][j].X, ribs[i][j].Y);
-                        int p1 = AddVertice(ribX[i], ribs[i][k].X, ribs[i][k].Y);
-                        int p2 = AddVertice(ribX[i + 1], ribs[i + 1][k].X, ribs[i + 1][k].Y);
-                        int p3 = AddVertice(ribX[i + 1], ribs[i + 1][j].X, ribs[i + 1][j].Y);
+                        int p0 = AddVertice(ribX[i], ribs[i][j].X + minX, ribs[i][j].Y);
+                        int p1 = AddVertice(ribX[i], ribs[i][k].X + minX, ribs[i][k].Y);
+                        int p2 = AddVertice(ribX[i + 1], ribs[i + 1][k].X + minX, ribs[i + 1][k].Y);
+                        int p3 = AddVertice(ribX[i + 1], ribs[i + 1][j].X + minX, ribs[i + 1][j].Y);
 
-                        AddFace(p0, p2, p1);
-                        AddFace(p0, p2, p2);
+                        AddFace(p0, p1, p2);
+                        AddFace(p0, p2, p3);
                     }
                 }
             }
@@ -369,10 +373,6 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private void GenerateWing()
-        {
-        }
-
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
@@ -398,7 +398,7 @@ namespace Barnacle.Dialogs
             displayPoints = pnts;
             if (PathEditor.PathClosed)
             {
-                GenerateShape();
+                GenerateWing();
                 Redisplay();
             }
         }
@@ -441,7 +441,7 @@ namespace Barnacle.Dialogs
         {
             if (loaded)
             {
-                GenerateShape();
+                GenerateWing();
                 Redisplay();
             }
         }
