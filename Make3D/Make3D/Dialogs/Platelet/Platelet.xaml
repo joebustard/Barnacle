@@ -64,12 +64,12 @@
                         </ModelVisual3D.Content>
                     </ModelVisual3D>
                 </Viewport3D>
-               
-                    <TabControl Grid.Row="1">
-                        <TabItem Header="Solid">
-                            <Grid>
+
+                <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedShape}">
+                    <TabItem Header="Solid">
+                        <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" MaxWidth="80" />
+                                <ColumnDefinition Width="1*" MaxWidth="120" />
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
@@ -82,18 +82,25 @@
                                 <RowDefinition Height="1*" />
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
-                            <Label VerticalAlignment="Center" Grid.Column="0" Grid.Row="0" Content="Width" />
-                            <TextBox  Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"
-                        Width="50" Margin="0,2,0,0"
-
-                        VerticalContentAlignment="Center"
-                        Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Content="Width" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
                         </Grid>
-                        </TabItem>
+                    </TabItem>
                     <TabItem Header="Hollow">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" MaxWidth="80" />
+                                <ColumnDefinition Width="1*" MaxWidth="120" />
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
@@ -106,24 +113,177 @@
                                 <RowDefinition Height="1*" />
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
-                                <Label VerticalAlignment="Center" Content="Wall"
-Margin="0,0,4,0"
-HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Content="Width" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
 
-                                <TextBox
-                           Width="100"
-                            HorizontalAlignment="Left"
-                    Visibility="{Binding ShowWidth}"
-                            VerticalAlignment="Center"
-                            Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}" />
-                            </StackPanel>
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="Wall Thickness"
+                                Visibility="{Binding ShowWidth}" />
+
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding ShowWidth}" />
+
                         </Grid>
                     </TabItem>
                     <TabItem Header="Textured">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="1*" MaxWidth="80" />
+                                <ColumnDefinition Width="19" MaxWidth="120" />
+                                <ColumnDefinition Width="68*" />
+                                <ColumnDefinition Width="100" />
+                                <ColumnDefinition Width="87*" />
+                                <ColumnDefinition Width="87*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                                <RowDefinition Height="1*" />
+                            </Grid.RowDefinitions>
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,5"
+                                VerticalAlignment="Center"
+                                Content="Width" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="Texture Depth"
+                                Visibility="{Binding ShowTextures}" />
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="2"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding TextureDepth}"
+                                Visibility="{Binding ShowTextures}" />
+
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,4,0,5"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="Textures"
+                                Visibility="{Binding ShowTextures}" />
+
+                            <ComboBox
+                                Grid.Row="2"
+                                Grid.Column="2"
+                                Width="100"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                ItemsSource="{Binding TextureItems}"
+                                SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding ShowTextures}" />
+
+
+                            <Label
+                                Grid.Row="3"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,5,0,4"
+                                VerticalAlignment="Center"
+                                Content="Tile"
+                                Visibility="{Binding ShowTextures}" />
+                            <RadioButton
+                                Grid.Row="3"
+                                Grid.Column="2"
+                                Margin="0,5"
+                                VerticalAlignment="Center"
+                                Content="Clipped"
+                                GroupName="ScaleGroup"
+                                IsChecked="{Binding ClippedTile}"
+                                ToolTip="Tile the pattern and clip it against the edges."
+                                Visibility="{Binding ShowTextures}" />
+                            <RadioButton
+                                Grid.Row="3"
+                                Grid.Column="3"
+                                Margin="8,5,0,5"
+                                VerticalAlignment="Center"
+                                Content="Fitted"
+                                GroupName="ScaleGroup"
+                                IsChecked="{Binding FittedTile}"
+                                ToolTip="Tile the pattern, scale to ensure whole repeats"
+                                Visibility="{Binding ShowTextures}" />
+
+                            <Label
+                                Grid.Row="4"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                Margin="0,4,0,5"
+                                VerticalAlignment="Center"
+                                Content="Single"
+                                Visibility="{Binding ShowTextures}" />
+                            <RadioButton
+                                Grid.Row="4"
+                                Grid.Column="2"
+                                Margin="0,5"
+                                VerticalAlignment="Center"
+                                Content="Clipped"
+                                GroupName="ScaleGroup"
+                                IsChecked="{Binding ClippedSingle}"
+                                ToolTip="Put the pattern on once. If it doesn't fit clip it"
+                                Visibility="{Binding ShowTextures}" />
+                            <RadioButton
+                                Grid.Row="4"
+                                Grid.Column="3"
+                                Margin="8,5,0,5"
+                                VerticalAlignment="Center"
+                                Content="Fitted"
+                                GroupName="ScaleGroup"
+                                IsChecked="{Binding FittedSingle}"
+                                ToolTip="Put the pattern on once and scale it to fit"
+                                Visibility="{Binding ShowTextures}" />
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="Box">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" MaxWidth="120" />
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
@@ -136,84 +296,64 @@ HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
                                 <RowDefinition Height="1*" />
                                 <RowDefinition Height="1*" />
                             </Grid.RowDefinitions>
+                            <Label
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                VerticalAlignment="Center"
+                                Content="Width" />
+                            <TextBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding PlateWidth, UpdateSourceTrigger=PropertyChanged}" />
 
-                            <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="3">
-                                <ComboBox
-                    HorizontalAlignment="Left"
-                            Width="100"
+                            <Label
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="Wall Thickness"
+                                Visibility="{Binding ShowWidth}" />
 
-                            VerticalContentAlignment="Center"
-                            ItemsSource="{Binding TextureItems}"
-                            SelectedItem="{Binding SelectedTexture, UpdateSourceTrigger=PropertyChanged}"
-                            Visibility="{Binding ShowTextures}" />
-                                <Label VerticalAlignment="Center" Content="Depth"
-HorizontalAlignment="Right" Margin="4,0,4,0"
-Visibility="{Binding ShowTextures}" />
-                                <TextBox
-                            Width="40"
-                    Visibility="{Binding ShowTextures}"
-                            VerticalAlignment="Center"
-                            Text="{Binding TextureDepth}" />
-                                <!--      <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup" IsChecked="{Binding LargeTexture}" Content="Large" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
-                        <RadioButton Margin="4,0,0,0" GroupName="TextureSizeGroup"  IsChecked="{Binding SmallTexture}" Content="Small" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding ShowWidth}" />
 
-                        <CheckBox Margin="4,0,0,0" IsChecked="{Binding TileTexture}" Content="Tile" VerticalAlignment="Center" Visibility="{Binding ShowTextures}" />
-                        -->
-                            </StackPanel>
-                            <Label VerticalAlignment="Center" Grid.Row="4" Grid.Column="0" Content="Tile" Visibility="{Binding ShowTextures}" />
-                            <RadioButton GroupName="ScaleGroup" Grid.Row="4" Grid.Column="1"  Content="Clipped" VerticalAlignment="Center" ToolTip="Tile the pattern and clip it against the edges."
-                IsChecked="{Binding ClippedTile}"  Visibility="{Binding ShowTextures}" />
-                            <RadioButton GroupName="ScaleGroup" Grid.Row="4" Grid.Column="2"  Content="Fitted" VerticalAlignment="Center" ToolTip="Tile the pattern, scale to ensure whole repeats" Margin="8,0,0,0"
-                IsChecked="{Binding FittedTile}"  Visibility="{Binding ShowTextures}" />
 
-                            <Label VerticalAlignment="Center" Grid.Row="5" Grid.Column="0" Content="Single" Visibility="{Binding ShowTextures}" />
-                            <RadioButton Grid.Row="5" Grid.Column="1" GroupName="ScaleGroup"  Content="Clipped" VerticalAlignment="Center" ToolTip="Put the pattern on once. If it doesn't fit clip it"
-                IsChecked="{Binding ClippedSingle}"  Visibility="{Binding ShowTextures}" />
-                            <RadioButton Grid.Row="5" Grid.Column="2" GroupName="ScaleGroup"  Content="Fitted" VerticalAlignment="Center" ToolTip="Put the pattern on once and scale it to fit" Margin="8,0,0,0"
-                IsChecked="{Binding FittedSingle}"  Visibility="{Binding ShowTextures}" />
+                            <Label
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Content="Base Thickness"
+                                Visibility="{Binding ShowWidth}" />
+
+                            <TextBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Width="50"
+                                Margin="0,2,0,0"
+                                HorizontalAlignment="Left"
+                                VerticalContentAlignment="Center"
+                                Text="{Binding BaseWidth, UpdateSourceTrigger=PropertyChanged}"
+                                Visibility="{Binding ShowWidth}" />
+
                         </Grid>
                     </TabItem>
                 </TabControl>
-                 
-        <!--          
 
-                    <RadioButton
-                    VerticalAlignment="Center"
-                    Grid.Column="0" Grid.Row="1"
-                        Content="Solid"
-                        GroupName="HollowGroup"
-                        IsChecked="{Binding SolidShape}" />
 
-                <RadioButton
-                
-                    Grid.Column="0" Grid.Row="2"
-
-                        VerticalAlignment="Center"
-                        Content="Hollow"
-                        GroupName="HollowGroup"
-                        IsChecked="{Binding HollowShape}" />
-                    <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2">
-                        <Label VerticalAlignment="Center" Content="Wall"
-Margin="0,0,4,0"
-HorizontalAlignment="Right" Visibility="{Binding ShowWidth}" />
-
-                        <TextBox
-                           Width="100"
-                            HorizontalAlignment="Left"
-                    Visibility="{Binding ShowWidth}"
-                            VerticalAlignment="Center"
-                            Text="{Binding WallWidth, UpdateSourceTrigger=PropertyChanged}" />
-                    </StackPanel>
-                 
-                    <RadioButton
-                    Grid.Column="0" Grid.Row="3"
-                        VerticalAlignment="Center"
-                        Content="Textured"
-                        GroupName="HollowGroup"
-                        IsChecked="{Binding TexturedShape}" />
-
-                </Grid>
-                -->
             </Grid>
         </Border>
         <Border

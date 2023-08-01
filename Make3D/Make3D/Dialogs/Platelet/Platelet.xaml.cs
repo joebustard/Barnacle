@@ -120,6 +120,36 @@ namespace Barnacle.Dialogs
             }
         }
 
+
+        private bool boxShape;
+        public bool BoxShape
+        {
+            get
+            {
+                return boxShape;
+            }
+            set
+            {
+                if (boxShape != value)
+                {
+                    boxShape = value;
+                    if (boxShape == true)
+                    {
+                        ShowWidth = Visibility.Visible;
+                        ShowTextures = Visibility.Hidden;
+                    }
+                    else
+                    {
+                        ShowWidth = Visibility.Hidden;
+                    }
+
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+
         public bool LargeTexture
         {
             get
@@ -147,6 +177,28 @@ namespace Barnacle.Dialogs
                     if (value > 0 && value <= 500)
                     {
                         plateWidth = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        private double baseWidth;
+        public double BaseWidth
+        {
+            get { return baseWidth; }
+            set
+            {
+                if (baseWidth != value)
+                {
+                    if (value > 0 && value <= 500)
+                    {
+                        baseWidth = value;
+                        if ( baseWidth > plateWidth)
+                        {
+                            baseWidth = plateWidth;
+                        }
                         NotifyPropertyChanged();
                         UpdateDisplay();
                     }
@@ -321,6 +373,83 @@ namespace Barnacle.Dialogs
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+        private int selectedShape;
+        public int SelectedShape
+        {
+            get { return selectedShape; }
+            set
+            {
+                if (selectedShape != value)
+                {
+                    selectedShape = value;
+                    ShapeChanged();
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+        private void SetShapeTab()
+        {
+            if (SolidShape)
+            {
+                SelectedShape = 0;
+            }
+            if (HollowShape)
+            {
+                SelectedShape = 1;
+            }
+            if (TexturedShape)
+            {
+                SelectedShape = 2;
+            }
+            if (BoxShape)
+            {
+                SelectedShape = 3;
+            }
+        }
+        private void ShapeChanged()
+        {
+            switch (selectedShape)
+            {
+
+                case 0:
+                    {
+                        HollowShape = false;
+                        TexturedShape = false;
+                        BoxShape = false;
+                        SolidShape = true;
+
+                    }
+                    break;
+
+                case 1:
+                    {
+                        SolidShape = false;
+                        TexturedShape = false;
+                        BoxShape = false;
+                        HollowShape = true;
+
+                    }
+                    break;
+
+                case 2:
+                    {
+                        SolidShape = false;
+                        HollowShape = false;
+                        BoxShape = false;
+                        TexturedShape = true;
+                    }
+                    break;
+
+                case 3:
+                    {
+                        SolidShape = false;
+                        HollowShape = false;
+                        TexturedShape = false;
+                        BoxShape = true;
+                    }
+                    break;
             }
         }
 
@@ -764,7 +893,7 @@ namespace Barnacle.Dialogs
                         tmp.Insert(0, new System.Windows.Point(x, y));
                     }
                 }
-                Point[] clik = OrderAntiClockwise(tmp.ToArray());
+               // Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
                 {
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
@@ -843,6 +972,178 @@ namespace Barnacle.Dialogs
             }
         }
 
+
+        private void GenerateBox()
+        {
+            List<System.Windows.Point> points = displayPoints;
+            List<System.Drawing.PointF> outerPolygon = new List<System.Drawing.PointF>();
+            List<System.Drawing.PointF> innerPolygon = new List<System.Drawing.PointF>();
+            ClearShape();
+            List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+            double top = 0;
+            double lx = double.MaxValue;
+            double rx = double.MinValue;
+            double ty = double.MinValue;
+            double by = double.MaxValue;
+            if (points != null)
+            {
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if (points[i].X < lx)
+                    {
+                        lx = points[i].X;
+                    }
+                    if (points[i].X > rx)
+                    {
+                        rx = points[i].X;
+                    }
+                    if (points[i].Y > ty)
+                    {
+                        ty = points[i].Y;
+                    }
+                    if (points[i].Y < by)
+                    {
+                        by = points[i].Y;
+                    }
+                }
+
+                // user may have  chosen a wallwidth that means the inside walls overlap
+                // DOnt allow that.
+                double actualWallWidth = wallWidth;
+                double d = ((rx - lx) / 2) - 0.1;
+                if (d < actualWallWidth)
+                {
+                    actualWallWidth = d;
+                }
+                d = ((ty - by) / 2) - 0.1;
+                if (d <= actualWallWidth)
+                {
+                    actualWallWidth = d;
+                }
+
+                top = ty;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if (PathEditor.LocalImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                    }
+                    else
+                    {
+                        double x = PathEditor.ToMM(points[i].X);
+                        double y = PathEditor.ToMM(top - points[i].Y);
+                        tmp.Insert(0, new System.Windows.Point(x, y));
+                    }
+                }
+              //  Point[] clik = OrderAntiClockwise(tmp.ToArray());
+                for (int i = 0; i < tmp.Count - 1; i++)
+                {
+                    outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
+                }
+                outerPolygon = LineUtils.RemoveCoplanarSegments(outerPolygon);
+
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    innerPolygon.Add(new System.Drawing.PointF((float)outerPolygon[i].X, (float)outerPolygon[i].Y));
+                }
+                innerPolygon = LineUtils.GetEnlargedPolygon(innerPolygon, -(float)actualWallWidth);
+
+                tmp.Clear();
+                for (int i = outerPolygon.Count - 1; i >= 0; i--)
+                {
+                    tmp.Add(new System.Windows.Point(outerPolygon[i].X, outerPolygon[i].Y));
+                }
+
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
+          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));                // generate side triangles so original points are already in list
+                                                                                    // Point[] clk = OrderClockwise(tmp.ToArray());
+                                                                                    //  tmp = clk.ToList();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+
+                tmp.Clear();
+                for (int i = 0; i < innerPolygon.Count; i++)
+                {
+                    tmp.Add(new System.Windows.Point(innerPolygon[i].X, innerPolygon[i].Y));
+                }
+                // generate side triangles so original points are already in list
+                //  clk = OrderAntiClockwise(tmp.ToArray());
+                //  tmp = clk.ToList();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+
+                for (int i = 0; i < outerPolygon.Count; i++)
+                {
+                    int j = i + 1;
+                    if (j == outerPolygon.Count)
+                    {
+                        j = 0;
+                    }
+                    int c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, 0.0);
+                    int c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, 0.0);
+                    int c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, 0.0);
+                    int c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+
+                    c0 = AddVerticeOctTree(outerPolygon[i].X, outerPolygon[i].Y, plateWidth);
+                    c1 = AddVerticeOctTree(innerPolygon[i].X, innerPolygon[i].Y, plateWidth);
+                    c2 = AddVerticeOctTree(innerPolygon[j].X, innerPolygon[j].Y, plateWidth);
+                    c3 = AddVerticeOctTree(outerPolygon[j].X, outerPolygon[j].Y, plateWidth);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+
+                ply.Points = outerPolygon.ToArray();
+                List<Triangle> tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
+                    int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
+                    int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                }
+
+                ply.Points = innerPolygon.ToArray();
+                 tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, baseWidth);
+                    int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, baseWidth);
+                    int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, baseWidth);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                }
+                CentreVertices();
+            }
+        }
+
+
         private void GenerateShape()
         {
             if (loaded)
@@ -851,20 +1152,20 @@ namespace Barnacle.Dialogs
                 {
                     GenerateSolid();
                 }
-                else
+                else if (HollowShape)
                 {
-                    if (HollowShape)
-                    {
-                        GenerateHollow();
-                    }
-                    else
-                    {
-                        if (TexturedShape)
-                        {
-                            GenerateTexturedShape();
-                        }
-                    }
+                    GenerateHollow();
                 }
+                else if (TexturedShape)
+                {
+                    GenerateTexturedShape();
+                }
+                else if (BoxShape)
+                {
+                    GenerateBox();
+                }
+
+
             }
         }
 
@@ -896,8 +1197,8 @@ namespace Barnacle.Dialogs
                 // generate side triangles so original points are already in list
                 //    Point[] clk = OrderClockwise(tmp.ToArray());
 
-                Point[] clk = tmp.ToArray();
-                tmp = clk.ToList();
+               // Point[] clk = tmp.ToArray();
+              //  tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);
@@ -1197,6 +1498,7 @@ namespace Barnacle.Dialogs
             FittedTile = EditorParameters.GetBoolean("FittedTile", false);
             ClippedSingle = EditorParameters.GetBoolean("ClippedSingle", false);
             FittedSingle = EditorParameters.GetBoolean("FittedSingle", false);
+            BaseWidth = EditorParameters.GetDouble("BaseWidth", 2);
         }
 
         private void PathPointsChanged(List<System.Windows.Point> pnts)
@@ -1462,6 +1764,7 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("FittedTile", FittedTile.ToString());
             EditorParameters.Set("ClippedSingle", ClippedSingle.ToString());
             EditorParameters.Set("FittedSingle", FittedSingle.ToString());
+            EditorParameters.Set("BaseWidth", BaseWidth.ToString());
         }
 
         private List<System.Drawing.PointF> ShrinkPolygon(List<System.Drawing.PointF> ply, double offset)
@@ -1513,6 +1816,7 @@ namespace Barnacle.Dialogs
             LoadEditorParameters();
             PathEditor.DefaultImagePath = DefaultImagePath;
             PathEditor.OpenEndedPath = false;
+            SetShapeTab();
             loaded = true;
             GenerateShape();
             UpdateCameraPos();

@@ -8,14 +8,20 @@ Fixed
   Converting final segment of flexipath to a quadratic bezier always gave a cubic bezier instead. Fixed
 
 Changed
-   Fonts on slicer dialog results
-   Added Presets list to flexipath editor. Some supplied in installation. User can create his own file.
+   Fonts on slicer dialog results enlarged.
+   Added presets list to flexipath editor. Some supplied in installation. User can create his own file.
    Added colour, thickness and opacity settings for rendering flexipath curves.
-   Flexipath grid and line settings saved and restored
+   Added split quad bezier into two quad beziers that pass through the same points
+   Flexipath grid and line settings saved and restored. Shared across all tools that use a flexipath.
+   Aircraft Profile Fuselage uses the same flexipath control as the other tools.
+     Improved the fuselage model generation.
 
 Added
+   Shaped aircraft wing tool. Similar to the basic wing tool but allows the outline of the wing to drawn so
+   curved wings like those of a Spitfire can be created.
    Path Loft tool
    Simple Hollow Box Tool
+   Box option on platelet.
    Symbol tool to turn a character from a symbol font into a 3D object
    Simple construction strip tool. Makes a strip with holes as found in childrens cnstruction sets.
 
