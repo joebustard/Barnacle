@@ -171,6 +171,7 @@
                     </Border>
                     <Button
                         x:Name="GridSettingsButton"
+                        Style="{StaticResource SmallButton}"
                         Margin="2,2,2,2"
                         Command="{Binding GridSettingsCommand}"
                         ToolTip="Change the grid and line settings">
@@ -219,6 +220,7 @@
                     <Button
                         x:Name="ImageButton"
                         Margin="2,2,2,2"
+                        Style="{StaticResource SmallButton}"
                         Command="{Binding LoadImageCommand}"
                         ToolTip="Set a background image to overlay the editing polygon on">
                         <Image Source="/Barnacle;component/Images/Buttons/Image.png" />
@@ -229,6 +231,7 @@
                         CornerRadius="2">
                         <Button
                             x:Name="OrthoLockButton"
+                            Style="{StaticResource SmallButton}"
                             Command="{Binding OrthoLockCommand}"
                             ToolTip="If on then new segments will be orthogonally locked while they are being added. That is, either horizontal or vertical.">
                             <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
