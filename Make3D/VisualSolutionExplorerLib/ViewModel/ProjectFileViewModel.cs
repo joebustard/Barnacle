@@ -206,6 +206,7 @@ namespace VisualSolutionExplorer
             else
             {
                 NotifySolutionChanged("SelectFile", _projectFile.FilePath, "");
+                IsSelected = true;
             }
         }
 

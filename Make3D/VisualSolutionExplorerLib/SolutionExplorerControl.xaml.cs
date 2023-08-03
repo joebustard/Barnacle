@@ -193,6 +193,12 @@ namespace VisualSolutionExplorer
                     ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
                     pfovm.IsEditing = false;
                 }
+
+                if (ob is ProjectFileViewModel)
+                {
+                    ProjectFileViewModel pfivm = ob as ProjectFileViewModel;
+                    pfivm.IsSelected = true;
+                }
             }
         }
     }
