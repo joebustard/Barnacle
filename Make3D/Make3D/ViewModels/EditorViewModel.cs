@@ -3382,6 +3382,16 @@ namespace Barnacle.ViewModels
         {
             if (Properties.Settings.Default.SlicerPath != "")
             {
+                if (Document.Dirty)
+                {
+                    if (MessageBox.Show("Save current document first?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                    {
+                        if (Document.FilePath != "")
+                        {
+                            Document.Save(Document.FilePath);
+                        }
+                    }
+                }
                 string s = param.ToString();
                 SliceControl dlg = new SliceControl();
                 dlg.ModelMode = s;

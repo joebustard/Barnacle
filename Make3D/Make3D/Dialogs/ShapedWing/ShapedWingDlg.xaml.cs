@@ -262,7 +262,7 @@ namespace Barnacle.Dialogs
                         }
                         var si = dp.Upper - dp.Lower;
                         ribs[ribIndex] = new List<Point>();
-                        for (double m = 0.0; m <= 1.0; m += 0.05)
+                        for (double m = 0.0; m <= 1.0; m += dt)
                         {
                             Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
                             double px = -((1.0 - wp.X) * si + dp.Lower);

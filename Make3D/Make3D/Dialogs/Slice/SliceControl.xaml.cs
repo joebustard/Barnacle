@@ -278,7 +278,14 @@ namespace Barnacle.Dialogs.Slice
 
         private void CopySingleFile(string fn, string trg, string name)
         {
-            File.Copy(fn, trg, true);
+            try
+            {
+                File.Copy(fn, trg, true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void DelProfileClicked(object sender, RoutedEventArgs e)
