@@ -722,6 +722,13 @@ namespace Barnacle.Dialogs
                         GenerateTyreProfile3(tyreInner, tyreOutter, tyreThickness, 2.5, false);
                     }
                     break;
+                case "6":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile4(tyreInner, tyreOutter, tyreThickness);
+                    }
+                    break;
             }
         }
 
@@ -742,6 +749,30 @@ namespace Barnacle.Dialogs
             SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
         }
 
+        private void GenerateTyreProfile4(double inner, double outter, double t)
+        {
+            List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
+
+            double cx = inner;
+
+            int rotDivisions = 36;
+            polarProfile.Add(Polar(cx, 0, 0.8*t));
+            polarProfile.Add(Polar(cx + (0.5 * (outter - inner)), 0, t));
+            polarProfile.Add(Polar(cx + (0.66     * (outter - inner)), 0, 0.99 *t));
+            polarProfile.Add(Polar(cx + (0.77 * (outter - inner)), 0, 0.94 * t));
+            polarProfile.Add(Polar(cx + (0.88 * (outter - inner)), 0, 0.85*t));
+            polarProfile.Add(Polar(cx + (0.95 * (outter - inner)), 0, 0.8 * t));
+            polarProfile.Add(Polar(outter, 0, 0.6 * t));
+            polarProfile.Add(Polar(outter, 0, 0.4 * t));
+            polarProfile.Add(Polar(cx + (0.95 * (outter - inner)), 0, 0.2 * t));
+            polarProfile.Add(Polar(cx + (0.88 * (outter - inner)), 0, 0.15 *t));
+            polarProfile.Add(Polar(cx + (0.77 * (outter - inner)), 0, 0.06 * t));
+            polarProfile.Add(Polar(cx + (0.66 * (outter - inner)), 0, 0.01 * t));
+            polarProfile.Add(Polar(cx + (0.5 * (outter - inner)), 0, 0));
+            polarProfile.Add(Polar(cx, 0, 0.2 * t));
+
+            SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
+        }
         private void GenerateTyreProfile2(double inner, double outter, double t)
         {
             List<PolarCoordinate> polarProfile1 = new List<PolarCoordinate>();
@@ -1158,6 +1189,7 @@ namespace Barnacle.Dialogs
             tyreStyles.Add("3");
             tyreStyles.Add("4");
             tyreStyles.Add("5");
+            tyreStyles.Add("6");
             SelectedTyreStyle = "1";
 
             LoadEditorParameters();
