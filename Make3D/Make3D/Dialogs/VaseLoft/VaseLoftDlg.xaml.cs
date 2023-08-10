@@ -26,6 +26,8 @@ namespace Barnacle.Dialogs
             numDivisions = 80;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.ToolName = ToolName;
+            PathEditor.HasPresets = false;
         }
 
         public int NumDivisions

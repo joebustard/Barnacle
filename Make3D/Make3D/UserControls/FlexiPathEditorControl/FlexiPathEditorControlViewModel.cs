@@ -90,6 +90,7 @@ namespace Barnacle.UserControls
             LoadImageCommand = new RelayCommand(OnLoadImage);
             OrthoLockCommand = new RelayCommand(OnToggleOrthoLock);
             LineStyleCommand = new RelayCommand(OnLineStyle);
+            SavePresetCommand = new RelayCommand(OnSavePreset);
             fixedEndPath = false;
             flexiPath = new FlexiPath();
             polyPoints = flexiPath.FlexiPoints;
@@ -106,15 +107,49 @@ namespace Barnacle.UserControls
             imagePath = "";
             pointsDirty = true;
             CreatePen();
+            editedPresetText = "";
             ShowPresets = Visibility.Visible;
             presets = new Dictionary<string, Preset>();
             PresetNames = new List<string>();
+            ToolName = "";
             LoadPresets();
         }
 
-        private void OnSplitQuad(object obj)
+        private void OnSavePreset(object obj)
         {
-            SelectionMode = SelectionModeType.SplitQuad;
+            String preset = editedPresetText;
+            if (!String.IsNullOrEmpty(preset))
+            {
+                if (presets.ContainsKey(preset))
+                {
+                    MessageBox.Show("A preset with that name already exists", "Error");
+                }
+                else
+                {
+                    SaveAsPreset(toolName, preset, PathText);
+                }
+            }
+        }
+
+        private void SaveAsPreset(string toolName, string preset, string pathText)
+        {
+            if (!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(preset) && !String.IsNullOrEmpty(pathText))
+            {
+                string dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
+                System.IO.File.AppendAllText(dataPath, $"{preset}={pathText}\n");
+
+                Preset p = new Preset();
+                p.Name = preset;
+                p.Path = pathText;
+                p.User = true;
+                presets[preset] = p;
+                PresetNames.Clear();
+                foreach (String s in presets.Keys)
+                {
+                    PresetNames.Add(s);
+                }
+                NotifyPropertyChanged("PresetNames");
+            }
         }
 
         private void OnLineStyle(object obj)
@@ -242,6 +277,7 @@ namespace Barnacle.UserControls
                         polyPoints = flexiPath.FlexiPoints;
                         SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                         ShowPresets = Visibility.Hidden;
+                        ShowSavePresets = Visibility.Hidden;
                     }
                 }
             }
@@ -317,6 +353,7 @@ namespace Barnacle.UserControls
 
         public RelayCommand OrthoLockCommand { get; set; }
         public RelayCommand LineStyleCommand { get; private set; }
+        public RelayCommand SavePresetCommand { get; private set; }
 
         public bool OrthoLocked
         {
@@ -516,6 +553,36 @@ namespace Barnacle.UserControls
             }
         }
 
+        private String editedPresetText;
+
+        public String EditedPresetText
+        {
+            get { return editedPresetText; }
+            set
+            {
+                if (editedPresetText != value)
+                {
+                    editedPresetText = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        private Visibility showSavePresets;
+
+        public Visibility ShowSavePresets
+        {
+            get { return showSavePresets; }
+            set
+            {
+                if (showSavePresets != value)
+                {
+                    showSavePresets = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public bool Snap
         {
             get { return snap; }
@@ -637,6 +704,31 @@ namespace Barnacle.UserControls
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        private string toolName;
+
+        public string ToolName
+        {
+            get { return toolName; }
+            set
+            {
+                if (toolName != value)
+                {
+                    toolName = value;
+                    if (!String.IsNullOrEmpty(toolName))
+                    {
+                        LoadPresets();
+                        if (ShowPresets == Visibility.Visible)
+                        {
+                            ShowSavePresets = Visibility.Visible;
+                        }
+                    }
+                    else
+                    {
+                    }
+                }
             }
         }
 
@@ -1036,9 +1128,13 @@ namespace Barnacle.UserControls
             {
                 string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
                 LoadPresetFile(dataPath, false);
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar
-                            + AppDomain.CurrentDomain.FriendlyName + "\\PresetPaths.txt";
+
+                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
                 LoadPresetFile(dataPath, true);
+
+                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
+                LoadPresetFile(dataPath, true);
+
                 foreach (String s in presets.Keys)
                 {
                     PresetNames.Add(s);
@@ -1110,6 +1206,11 @@ namespace Barnacle.UserControls
             PathText = flexiPath.ToPath(absolutePaths);
             moving = false;
             return updateRequired;
+        }
+
+        private void OnSplitQuad(object obj)
+        {
+            SelectionMode = SelectionModeType.SplitQuad;
         }
 
         private bool NormalPathMove(MouseEventArgs e, Point position, bool updateRequired)

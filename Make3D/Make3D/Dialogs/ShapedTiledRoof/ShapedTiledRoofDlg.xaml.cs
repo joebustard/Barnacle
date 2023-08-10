@@ -28,6 +28,8 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.ToolName = ToolName;
+            PathEditor.HasPresets = true;
             loaded = false;
             tileLength = 3.486;
             tileHeight = 2.17;

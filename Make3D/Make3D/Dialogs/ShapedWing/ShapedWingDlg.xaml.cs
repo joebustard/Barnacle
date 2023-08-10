@@ -41,6 +41,8 @@ namespace Barnacle.Dialogs
             numDivisions = 80;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.ToolName = ToolName;
+            PathEditor.HasPresets = true;
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
             airFoilDoc = new XmlDocument();
             airFoilDoc.XmlResolver = null;
@@ -244,7 +246,7 @@ namespace Barnacle.Dialogs
                         // get the basic size of the wing rib
                         var dp = flexipath.GetUpperAndLowerPoints(t);
                         ribX.Add(dp.X);
-                        if (Math.Abs(1-t)<0.000001)
+                        if (Math.Abs(1 - t) < 0.000001)
                         {
                             if (dp.Upper - dp.Lower > 0.001)
                             {
@@ -323,13 +325,14 @@ namespace Barnacle.Dialogs
                         {
                             k = 0;
                         }
-                        System.Drawing.PointF pl = new System.Drawing.PointF((float)(ribs[ribs.Length-1][j].X + minX), (float)(ribs[ribs.Length - 1][j].Y));
+                        System.Drawing.PointF pl = new System.Drawing.PointF((float)(ribs[ribs.Length - 1][j].X + minX), (float)(ribs[ribs.Length - 1][j].Y));
                         side.Add(pl);
                     }
                     TriangulatePerimiter(side, ribX[ribs.Length - 1], false);
                 }
             }
         }
+
         private void TriangulatePerimiter(List<System.Drawing.PointF> points, double xo, bool invert)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -355,6 +358,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private Point GetProfileAt(List<Point> profile, double length, double t)
         {
             Point res = new Point(0, 0);
@@ -508,8 +512,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-
 
         private void UpdateDisplay()
         {

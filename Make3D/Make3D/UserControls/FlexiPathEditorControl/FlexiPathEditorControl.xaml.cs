@@ -52,6 +52,8 @@ namespace Barnacle.UserControls
 
         private Point fixedPathMidPoint;
 
+        public bool HasPresets { get; internal set; }
+
         public Point FixedPathMidPoint
         {
             get { return fixedPathMidPoint; }
@@ -74,6 +76,21 @@ namespace Barnacle.UserControls
                 if (value != fixedPathEndPoint)
                 {
                     fixedPathEndPoint = value;
+                }
+            }
+        }
+
+        private string toolName;
+
+        public string ToolName
+        {
+            get { return toolName; }
+            set
+            {
+                toolName = value;
+                if (vm != null)
+                {
+                    vm.ToolName = toolName;
                 }
             }
         }
@@ -947,6 +964,17 @@ namespace Barnacle.UserControls
                         }
                     }
                     vm.SelectedPoint = -1;
+                    vm.ToolName = ToolName;
+                    vm.ShowPresets = Visibility.Hidden;
+                    vm.ShowSavePresets = Visibility.Hidden;
+                    if (HasPresets)
+                    {
+                        vm.ShowPresets = Visibility.Visible;
+                        if (!String.IsNullOrEmpty(toolName))
+                        {
+                            vm.ShowSavePresets = Visibility.Visible;
+                        }
+                    }
                 }
             }
             UpdateDisplay();

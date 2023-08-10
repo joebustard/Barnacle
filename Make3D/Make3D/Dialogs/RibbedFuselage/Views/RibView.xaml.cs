@@ -29,6 +29,8 @@ namespace Barnacle.Dialogs.RibbedFuselage.Views
             InitializeComponent();
             FlexiControl.OnFlexiImageChanged = ImageChanged;
             FlexiControl.OnFlexiPathTextChanged = PathChanged;
+            FlexiControl.ToolName = "Ribs";
+            FlexiControl.HasPresets = true;
         }
 
         private void PathChanged(string pathText)

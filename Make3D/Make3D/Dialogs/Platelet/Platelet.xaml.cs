@@ -65,6 +65,8 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.ToolName = ToolName;
+            PathEditor.HasPresets = true;
 
             wallWidth = 2;
             textureDepth = 1;
@@ -120,8 +122,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private bool boxShape;
+
         public bool BoxShape
         {
             get
@@ -148,7 +150,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
 
         public bool LargeTexture
         {
@@ -185,6 +186,7 @@ namespace Barnacle.Dialogs
         }
 
         private double baseWidth;
+
         public double BaseWidth
         {
             get { return baseWidth; }
@@ -195,7 +197,7 @@ namespace Barnacle.Dialogs
                     if (value > 0 && value <= 500)
                     {
                         baseWidth = value;
-                        if ( baseWidth > plateWidth)
+                        if (baseWidth > plateWidth)
                         {
                             baseWidth = plateWidth;
                         }
@@ -375,7 +377,9 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private int selectedShape;
+
         public int SelectedShape
         {
             get { return selectedShape; }
@@ -389,6 +393,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private void SetShapeTab()
         {
             if (SolidShape)
@@ -408,18 +413,17 @@ namespace Barnacle.Dialogs
                 SelectedShape = 3;
             }
         }
+
         private void ShapeChanged()
         {
             switch (selectedShape)
             {
-
                 case 0:
                     {
                         HollowShape = false;
                         TexturedShape = false;
                         BoxShape = false;
                         SolidShape = true;
-
                     }
                     break;
 
@@ -429,7 +433,6 @@ namespace Barnacle.Dialogs
                         TexturedShape = false;
                         BoxShape = false;
                         HollowShape = true;
-
                     }
                     break;
 
@@ -893,7 +896,7 @@ namespace Barnacle.Dialogs
                         tmp.Insert(0, new System.Windows.Point(x, y));
                     }
                 }
-               // Point[] clik = OrderAntiClockwise(tmp.ToArray());
+                // Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
                 {
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
@@ -972,7 +975,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-
         private void GenerateBox()
         {
             List<System.Windows.Point> points = displayPoints;
@@ -1036,7 +1038,7 @@ namespace Barnacle.Dialogs
                         tmp.Insert(0, new System.Windows.Point(x, y));
                     }
                 }
-              //  Point[] clik = OrderAntiClockwise(tmp.ToArray());
+                //  Point[] clik = OrderAntiClockwise(tmp.ToArray());
                 for (int i = 0; i < tmp.Count - 1; i++)
                 {
                     outerPolygon.Add(new System.Drawing.PointF((float)tmp[i].X, (float)tmp[i].Y));
@@ -1124,11 +1126,10 @@ namespace Barnacle.Dialogs
                     Faces.Add(c0);
                     Faces.Add(c2);
                     Faces.Add(c1);
-
                 }
 
                 ply.Points = innerPolygon.ToArray();
-                 tris = ply.Triangulate();
+                tris = ply.Triangulate();
                 foreach (Triangle t in tris)
                 {
                     int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, baseWidth);
@@ -1137,12 +1138,10 @@ namespace Barnacle.Dialogs
                     Faces.Add(c0);
                     Faces.Add(c1);
                     Faces.Add(c2);
-
                 }
                 CentreVertices();
             }
         }
-
 
         private void GenerateShape()
         {
@@ -1164,8 +1163,6 @@ namespace Barnacle.Dialogs
                 {
                     GenerateBox();
                 }
-
-
             }
         }
 
@@ -1197,8 +1194,8 @@ namespace Barnacle.Dialogs
                 // generate side triangles so original points are already in list
                 //    Point[] clk = OrderClockwise(tmp.ToArray());
 
-               // Point[] clk = tmp.ToArray();
-              //  tmp = clk.ToList();
+                // Point[] clk = tmp.ToArray();
+                //  tmp = clk.ToList();
                 for (int i = 0; i < tmp.Count; i++)
                 {
                     CreateSideFace(tmp, i);

@@ -93,6 +93,8 @@ namespace Barnacle.Dialogs
             loaded = false;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             pathPoints = new List<Point>();
+            PathEditor.ToolName = ToolName;
+            PathEditor.HasPresets = false;
         }
 
         private double pathXSize;

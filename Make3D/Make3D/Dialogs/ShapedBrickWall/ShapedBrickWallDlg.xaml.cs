@@ -29,6 +29,8 @@ namespace Barnacle.Dialogs
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.AbsolutePaths = true;
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.ToolName = ToolName;
+            PathEditor.HasPresets = true;
             brickLength = 3;
             brickHeight = 1.1;
             brickDepth = 0.25;

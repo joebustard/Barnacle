@@ -280,15 +280,23 @@
                     <ComboBox
                         Width="250"
                         Margin="2,0,0,0"
-                        IsReadOnly="True"
+                        IsReadOnly="False"
                         ItemsSource="{Binding PresetNames}"
                         SelectedItem="{Binding SelectedPreset}"
-                        Visibility="{Binding ShowPresets}" />
+                        Text="{Binding EditedPresetText}"
+                        Visibility="{Binding ShowPresets}" IsEditable="True" />
                     <Button
                         Width="50"
                         Margin="2,2,2,2"
                         Command="{Binding ApplyPresetCommand}"
                         Content="Apply"
+                        Style="{StaticResource SmallButton}"
+                        Visibility="{Binding ShowSavePresets}" />
+                    <Button
+                        Width="50"
+                        Margin="2,2,2,2"
+                        Command="{Binding SavePresetCommand}"
+                        Content="Save"
                         Style="{StaticResource SmallButton}"
                         Visibility="{Binding ShowPresets}" />
                 </StackPanel>

@@ -76,7 +76,7 @@ namespace ScriptLanguage
         public void Save()
         {
             String logPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + System.IO.Path.DirectorySeparatorChar
-                             + AppDomain.CurrentDomain.FriendlyName + System.IO.Path.DirectorySeparatorChar;
+                             + "Barnacle" + System.IO.Path.DirectorySeparatorChar;
             try
             {
                 System.IO.StreamWriter fout = new System.IO.StreamWriter(logPath + logFileName, true);
