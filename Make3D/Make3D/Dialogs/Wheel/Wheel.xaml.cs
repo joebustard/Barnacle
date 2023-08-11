@@ -722,11 +722,28 @@ namespace Barnacle.Dialogs
                         GenerateTyreProfile3(tyreInner, tyreOutter, tyreThickness, 2.5, false);
                     }
                     break;
+
                 case "6":
                     {
                         double tyreInner = actualRimOutter;
                         double tyreOutter = tyreInner + tyreDepth;
-                        GenerateTyreProfile4(tyreInner, tyreOutter, tyreThickness);
+                        GenerateTyreProfile4(tyreInner, tyreOutter, tyreThickness, 0.5, 0.4);
+                    }
+                    break;
+
+                case "7":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile4(tyreInner, tyreOutter, tyreThickness, 0.7, 0.6);
+                    }
+                    break;
+
+                case "8":
+                    {
+                        double tyreInner = actualRimOutter;
+                        double tyreOutter = tyreInner + tyreDepth;
+                        GenerateTyreProfile4(tyreInner, tyreOutter, tyreThickness, 0.8, 0.2);
                     }
                     break;
             }
@@ -749,30 +766,37 @@ namespace Barnacle.Dialogs
             SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
         }
 
-        private void GenerateTyreProfile4(double inner, double outter, double t)
+        private void GenerateTyreProfile4(double inner, double outter, double tyreThickness, double curvepoint, double treadwidth)
         {
             List<PolarCoordinate> polarProfile = new List<PolarCoordinate>();
-
+            double depth = outter - inner;
+            double low = 0.5 - treadwidth / 2.0;
+            double high = 0.5 + treadwidth / 2.0;
             double cx = inner;
 
             int rotDivisions = 36;
-            polarProfile.Add(Polar(cx, 0, 0.8*t));
-            polarProfile.Add(Polar(cx + (0.5 * (outter - inner)), 0, t));
-            polarProfile.Add(Polar(cx + (0.66     * (outter - inner)), 0, 0.99 *t));
-            polarProfile.Add(Polar(cx + (0.77 * (outter - inner)), 0, 0.94 * t));
-            polarProfile.Add(Polar(cx + (0.88 * (outter - inner)), 0, 0.85*t));
-            polarProfile.Add(Polar(cx + (0.95 * (outter - inner)), 0, 0.8 * t));
-            polarProfile.Add(Polar(outter, 0, 0.6 * t));
-            polarProfile.Add(Polar(outter, 0, 0.4 * t));
-            polarProfile.Add(Polar(cx + (0.95 * (outter - inner)), 0, 0.2 * t));
-            polarProfile.Add(Polar(cx + (0.88 * (outter - inner)), 0, 0.15 *t));
-            polarProfile.Add(Polar(cx + (0.77 * (outter - inner)), 0, 0.06 * t));
-            polarProfile.Add(Polar(cx + (0.66 * (outter - inner)), 0, 0.01 * t));
-            polarProfile.Add(Polar(cx + (0.5 * (outter - inner)), 0, 0));
-            polarProfile.Add(Polar(cx, 0, 0.2 * t));
+
+            polarProfile.Add(Polar(cx, 0, tyreThickness));
+
+            for (double theta = 0; theta < Math.PI / 2; theta += 0.1)
+            {
+                double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
+                double tz = (low * Math.Cos(theta) + high) * tyreThickness;
+                polarProfile.Add(Polar(tx, 0, tz));
+            }
+
+            for (double theta = Math.PI / 2; theta > 0; theta -= 0.1)
+            {
+                double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
+                double tz = low - (low * Math.Cos(theta)) * tyreThickness;
+                polarProfile.Add(Polar(tx, 0, tz));
+            }
+
+            polarProfile.Add(Polar(cx, 0, 0));
 
             SweepPolarProfileTheta(polarProfile, cx, 0, 360, rotDivisions, false, true, true);
         }
+
         private void GenerateTyreProfile2(double inner, double outter, double t)
         {
             List<PolarCoordinate> polarProfile1 = new List<PolarCoordinate>();
@@ -1190,6 +1214,8 @@ namespace Barnacle.Dialogs
             tyreStyles.Add("4");
             tyreStyles.Add("5");
             tyreStyles.Add("6");
+            tyreStyles.Add("7");
+            tyreStyles.Add("8");
             SelectedTyreStyle = "1";
 
             LoadEditorParameters();

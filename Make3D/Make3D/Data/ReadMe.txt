@@ -24,6 +24,7 @@ Added
    Box option on platelet.
    Symbol tool to turn a character from a symbol font into a 3D object
    Simple construction strip tool. Makes a strip with holes as found in childrens cnstruction sets.
+   A couple of extra tyre shapes to the wheel.
 
 v1.0.3
 ===========
