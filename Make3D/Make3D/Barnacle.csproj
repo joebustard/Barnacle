@@ -1206,6 +1206,9 @@
     <Resource Include="Data\PresetPaths.txt" />
     <Resource Include="Images\Buttons\LineSize.png" />
     <Resource Include="Images\Buttons\SplitQuadBezier.png" />
+    <Resource Include="Images\Buttons\Mirror.png" />
+    <Resource Include="Images\Buttons\MirrorLeft.png" />
+    <Resource Include="Images\Buttons\MirrorRight.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

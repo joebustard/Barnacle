@@ -818,6 +818,26 @@
                                              x:Name="FoldZDown" />
                         </Custom:RibbonMenuButton>
                     </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton Label="Mirror"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Mirror.png"
+                                             x:Name="Mirror">
+                        <Custom:RibbonButton Command="{Binding MirrorCommand}"
+                                             CommandParameter="Left"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Left"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/MirrorLeft.png"
+                                             ToolTip="Mirror selected object to its left side"
+                                             VerticalAlignment="Top"
+                                             x:Name="MirrorLeft" />
+                        <Custom:RibbonButton Command="{Binding MirrorCommand}"
+                                             CommandParameter="Right"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Right"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/MirrorRight.png"
+                                             ToolTip="Mirror selected object to its right side"
+                                             VerticalAlignment="Top"
+                                             x:Name="MirrorRight" />
+                    </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup"
                                     Header="Shapes"

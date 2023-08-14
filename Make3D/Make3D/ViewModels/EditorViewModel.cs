@@ -179,6 +179,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
 
             NotificationManager.Subscribe("Editor", "AddObjectToLibrary", OnAddObjectToLibrary);
+            NotificationManager.Subscribe("Editor", "Mirror", OnMirror);
 
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
@@ -193,6 +194,105 @@ namespace Barnacle.ViewModels
             isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void OnMirror(object param)
+        {
+            string s = param.ToString();
+            if (selectedItems == null || selectedItems.Count != 1)
+            {
+                MessageBox.Show("Mirror operation requires a single selected object");
+            }
+            else
+            {
+                MirrorObject(s);
+            }
+        }
+
+        private void MirrorObject(string s)
+        {
+            bool confirmed = true;
+            Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+            if (ob is Group3D)
+            {
+                MessageBoxResult res = MessageBox.Show("The object will have to be converted to a mesh first. Convert now.", "Warning", MessageBoxButton.OKCancel);
+                confirmed = res == MessageBoxResult.OK;
+                if (confirmed)
+                {
+                    Document.Content.Remove(ob);
+
+                    Object3D it = ob.ConvertToMesh();
+                    it.Remesh();
+                    Document.Content.Add(it);
+                    Document.Dirty = true;
+                    ob = it;
+                }
+            }
+            if (confirmed)
+            {
+                CheckPoint();
+                Bounds3D bnds = new Bounds3D();
+
+                foreach (P3D p in ob.RelativeObjectVertices)
+                {
+                    bnds.Adjust(new Point3D((double)p.X, (double)p.Y, (double)p.Z));
+                }
+                int numPoints = ob.RelativeObjectVertices.Count;
+                int numFaces = ob.TriangleIndices.Count;
+                switch (s.ToLower())
+                {
+                    case "left":
+                        {
+                            double ox = 2 * bnds.Lower.X;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+
+                            for (int f = 0; f < numFaces; f += 3)
+                            {
+                                int v0 = ob.TriangleIndices[f] + numPoints;
+                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
+                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
+                                ob.TriangleIndices.Add(v0);
+                                ob.TriangleIndices.Add(v2);
+                                ob.TriangleIndices.Add(v1);
+                            }
+                        }
+                        break;
+
+                    case "right":
+                        {
+                            double ox = bnds.Upper.X + bnds.Width + bnds.Lower.X;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(ox - op.X, op.Y, op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+
+                            for (int f = 0; f < numFaces; f += 3)
+                            {
+                                int v0 = ob.TriangleIndices[f] + numPoints;
+                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
+                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
+                                ob.TriangleIndices.Add(v0);
+                                ob.TriangleIndices.Add(v2);
+                                ob.TriangleIndices.Add(v1);
+                            }
+                        }
+                        break;
+                }
+                RemoveDuplicateVertices(ob);
+                ob.Remesh();
+
+                ob.CalcScale(false);
+                allBounds += ob.AbsoluteBounds;
+                GeometryModel3D gm = GetMesh(ob);
+                RegenerateDisplayList();
+            }
         }
 
         private void AutoFix(object param)

@@ -63,6 +63,7 @@ namespace Barnacle.ViewModels
         private SubViewManager subViewMan;
 
         public RelayCommand AutoFixCommand { get; set; }
+        public RelayCommand MirrorCommand { get; private set; }
 
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
@@ -91,6 +92,7 @@ namespace Barnacle.ViewModels
             settingsLoaded = false;
             subViewMan = new SubViewManager();
             AutoFixCommand = new RelayCommand(OnAutoFix);
+            MirrorCommand = new RelayCommand(OnMirror);
             NewCommand = new RelayCommand(OnNew);
             NewProjectCommand = new RelayCommand(OnNewProject);
             OpenProjectCommand = new RelayCommand(OnOpenProject);
@@ -197,6 +199,12 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnMirror(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify("Mirror", s);
         }
 
         private void GroupSelected(object param)
