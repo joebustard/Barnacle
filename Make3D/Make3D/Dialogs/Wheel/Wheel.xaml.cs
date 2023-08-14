@@ -778,7 +778,7 @@ namespace Barnacle.Dialogs
 
             polarProfile.Add(Polar(cx, 0, tyreThickness));
 
-            for (double theta = 0; theta < Math.PI / 2; theta += 0.1)
+            for (double theta = 0; theta <= Math.PI / 2; theta += 0.1)
             {
                 double tx = cx + curvepoint + ((2 * theta) / Math.PI * depth);
                 double tz = (low * Math.Cos(theta) + high) * tyreThickness;

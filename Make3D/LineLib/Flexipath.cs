@@ -292,6 +292,42 @@ namespace Barnacle.LineLib
             pathHeight = bry - tly;
         }
 
+        public void CalculatePathBounds(List<PointF> pnts)
+        {
+            tlx = double.MaxValue;
+            tly = double.MaxValue;
+            brx = double.MinValue;
+            bry = double.MinValue;
+          
+            double pathLength = 0;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                if (i < pnts.Count - 1)
+                {
+                    pathLength += Distance(pnts[i], pnts[i + 1]);
+                }
+                if (pnts[i].X < tlx)
+                {
+                    tlx = pnts[i].X;
+                }
+
+                if (pnts[i].Y < tly)
+                {
+                    tly = pnts[i].Y;
+                }
+
+                if (pnts[i].X > brx)
+                {
+                    brx = pnts[i].X;
+                }
+
+                if (pnts[i].Y > bry)
+                {
+                    bry = pnts[i].Y;
+                }
+            }
+
+        }
         public void DeleteLastSegment()
         {
             if (segs.Count > 0)
@@ -308,36 +344,64 @@ namespace Barnacle.LineLib
             public double Upper;
         }
 
-        public Dimension GetUpperAndLowerPoints(double x)
+        public Dimension GetUpperAndLowerPoints(double x, bool autoclose = true)
         {
             Dimension res = new Dimension();
             res.Lower = double.MaxValue;
             res.Upper = double.MinValue;
-            double px = (x * pathWidth) + tlx;
+            
 
             var pnts = DisplayPointsF();
-            if ((pnts[0].X != pnts[pnts.Count - 1].X) || (pnts[0].Y != pnts[pnts.Count - 1].Y))
+            if (autoclose)
             {
-                pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
+                if ((pnts[0].X != pnts[pnts.Count - 1].X) || (pnts[0].Y != pnts[pnts.Count - 1].Y))
+                {
+                    pnts.Add(new PointF(pnts[0].X, pnts[0].Y));
+                }
             }
-
-            for (int i = 0; i < pnts.Count - 1; i++)
+            else
             {
+                bool more;
+                do
+                {
+                    more = false;
+                    if ( pnts.Count > 4)
+                    {
+                        double dx = Math.Abs(pnts[0].X - pnts[pnts.Count - 1].X);
+                        double dy = Math.Abs(pnts[0].Y - pnts[pnts.Count - 1].Y);
+                        if ( dx <0.0001 && dy <0.0001)
+                        {
+                            pnts.RemoveAt(pnts.Count - 1);
+                            more = true;
+                        }
+                    }
+                } while (more);
+
+            }
+            CalculatePathBounds(pnts);
+            double px = (x * pathWidth) + tlx;
+            for (int i = 0; i < pnts.Count; i++)
+            {
+                int j = i + 1;
+                if ( j == pnts.Count)
+                {
+                    j = 0;
+                }
                 double y = 0;
                 double sx, sy, ex, ey;
-                if (pnts[i].X <= pnts[i + 1].X)
+                if (pnts[i].X <= pnts[j].X)
                 {
                     sx = pnts[i].X;
                     sy = pnts[i].Y;
-                    ex = pnts[i + 1].X;
-                    ey = pnts[i + 1].Y;
+                    ex = pnts[j].X;
+                    ey = pnts[j].Y;
                 }
                 else
                 {
                     ex = pnts[i].X;
                     ey = pnts[i].Y;
-                    sx = pnts[i + 1].X;
-                    sy = pnts[i + 1].Y;
+                    sx = pnts[j].X;
+                    sy = pnts[j].Y;
                 }
                 if (px >= sx && px <= ex)
                 {
@@ -345,14 +409,19 @@ namespace Barnacle.LineLib
                     {
                         double t = (px - sx) / (ex - sx);
                         y = sy + t * (ey - sy);
+                        res.X = px;
+                        res.Lower = Math.Min(y, res.Lower);
+                        res.Upper = Math.Max(y, res.Upper);
                     }
                     else
                     {
-                        y = sy;
+                        res.X = px;
+                        res.Lower = Math.Min(sy, res.Lower);
+                        res.Upper = Math.Max(sy, res.Upper);
+                        res.Lower = Math.Min(ey, res.Lower);
+                        res.Upper = Math.Max(ey, res.Upper);
                     }
-                    res.X = px;
-                    res.Lower = Math.Min(y, res.Lower);
-                    res.Upper = Math.Max(y, res.Upper);
+                    
                 }
             }
             return res;

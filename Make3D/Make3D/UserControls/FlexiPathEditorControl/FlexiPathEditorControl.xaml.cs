@@ -408,7 +408,7 @@ namespace Barnacle.UserControls
             ln.Y1 = ToPixelY(p1.Y);
             ln.X2 = ToPixelX(p2.X);
             ln.Y2 = ToPixelY(p2.Y);
-
+            ln.MouseUp += MainCanvas_MouseUp;
             MainCanvas.Children.Add(ln);
         }
 

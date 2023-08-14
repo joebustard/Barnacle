@@ -233,18 +233,18 @@ namespace Barnacle.Dialogs
             flexipath.CalculatePathBounds();
             List<double> ribX = new List<double>();
             List<double> dihedralOffset = new List<double>();
-            List<Point>[] ribs = new List<Point>[numDivisions];
+            List<Point>[] divisions = new List<Point>[numDivisions];
             double minX = double.MaxValue;
             if (displayPoints != null)
             {
                 if (numDivisions > 0)
                 {
-                    int ribIndex = 0;
+                    int currentDivision = 0;
                     double dt = 1.0 / (numDivisions - 1);
                     for (double t = 0; t <= 1; t += dt)
                     {
                         // get the basic size of the wing rib
-                        var dp = flexipath.GetUpperAndLowerPoints(t);
+                        var dp = flexipath.GetUpperAndLowerPoints(t,false);
                         ribX.Add(dp.X);
                         if (Math.Abs(1 - t) < 0.000001)
                         {
@@ -263,51 +263,52 @@ namespace Barnacle.Dialogs
                             dihedralOffset.Add(da);
                         }
                         var si = dp.Upper - dp.Lower;
-                        ribs[ribIndex] = new List<Point>();
+                        divisions[currentDivision] = new List<Point>();
                         for (double m = 0.0; m <= 1.0; m += dt)
                         {
                             Point wp = GetProfileAt(selectedWingProfilePoints, selectedWingProfileLength, m);
                             double px = -((1.0 - wp.X) * si + dp.Lower);
                             Point scaledPoint = new Point(px, (wp.Y * si));
-                            ribs[ribIndex].Add(scaledPoint);
+                            divisions[currentDivision].Add(scaledPoint);
                             minX = Math.Min(minX, px);
                         }
 
-                        ribIndex++;
+                        currentDivision++;
                     }
                 }
 
                 minX = Math.Abs(minX);
 
+                
                 for (int i = 0; i < numDivisions - 1; i++)
                 {
-                    for (int j = 0; j < ribs[0].Count; j++)
+                    for (int j = 0; j < divisions[0].Count; j++)
                     {
                         int k = j + 1;
-                        if (k >= ribs[0].Count)
+                        if (k >= divisions[0].Count)
                         {
                             k = 0;
                         }
-                        int p0 = AddVertice(ribX[i], ribs[i][j].X + minX, ribs[i][j].Y + dihedralOffset[i]);
-                        int p1 = AddVertice(ribX[i], ribs[i][k].X + minX, ribs[i][k].Y + dihedralOffset[i]);
-                        int p2 = AddVertice(ribX[i + 1], ribs[i + 1][k].X + minX, ribs[i + 1][k].Y + dihedralOffset[i + 1]);
-                        int p3 = AddVertice(ribX[i + 1], ribs[i + 1][j].X + minX, ribs[i + 1][j].Y + dihedralOffset[i + 1]);
+                        int p0 = AddVertice(ribX[i], divisions[i][j].X + minX, divisions[i][j].Y + dihedralOffset[i]);
+                        int p1 = AddVertice(ribX[i], divisions[i][k].X + minX, divisions[i][k].Y + dihedralOffset[i]);
+                        int p2 = AddVertice(ribX[i + 1], divisions[i + 1][k].X + minX, divisions[i + 1][k].Y + dihedralOffset[i + 1]);
+                        int p3 = AddVertice(ribX[i + 1], divisions[i + 1][j].X + minX, divisions[i + 1][j].Y + dihedralOffset[i + 1]);
 
                         AddFace(p0, p2, p1);
                         AddFace(p0, p3, p2);
                     }
                 }
-
+               
                 // close the root side
                 List<System.Drawing.PointF> side = new List<System.Drawing.PointF>();
-                for (int j = 0; j < ribs[0].Count; j++)
+                for (int j = 0; j < divisions[0].Count; j++)
                 {
                     int k = j + 1;
-                    if (k >= ribs[0].Count)
+                    if (k >= divisions[0].Count)
                     {
                         k = 0;
                     }
-                    System.Drawing.PointF pl = new System.Drawing.PointF((float)(ribs[0][j].X + minX), (float)(ribs[0][j].Y));
+                    System.Drawing.PointF pl = new System.Drawing.PointF((float)(divisions[0][j].X + minX), (float)(divisions[0][j].Y));
                     side.Add(pl);
                 }
                 TriangulatePerimiter(side, ribX[0], true);
@@ -318,18 +319,19 @@ namespace Barnacle.Dialogs
                 {
                     side.Clear();
 
-                    for (int j = 0; j < ribs[0].Count; j++)
+                    for (int j = 0; j < divisions[0].Count; j++)
                     {
                         int k = j + 1;
-                        if (k >= ribs[0].Count)
+                        if (k >= divisions[0].Count)
                         {
                             k = 0;
                         }
-                        System.Drawing.PointF pl = new System.Drawing.PointF((float)(ribs[ribs.Length - 1][j].X + minX), (float)(ribs[ribs.Length - 1][j].Y));
+                        System.Drawing.PointF pl = new System.Drawing.PointF((float)(divisions[divisions.Length - 1][j].X + minX), (float)(divisions[divisions.Length - 1][j].Y));
                         side.Add(pl);
                     }
-                    TriangulatePerimiter(side, ribX[ribs.Length - 1], false);
+                    TriangulatePerimiter(side, ribX[divisions.Length - 1], false);
                 }
+                
             }
         }
 
