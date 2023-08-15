@@ -837,6 +837,22 @@
                                              ToolTip="Mirror selected object to its right side"
                                              VerticalAlignment="Top"
                                              x:Name="MirrorRight" />
+                        <Custom:RibbonButton Command="{Binding MirrorCommand}"
+                                             CommandParameter="Front"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Front"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/MirrorFront.png"
+                                             ToolTip="Mirror selected object to its front"
+                                             VerticalAlignment="Top"
+                                             x:Name="MirrorFront" />
+                        <Custom:RibbonButton Command="{Binding MirrorCommand}"
+                                             CommandParameter="Back"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Back"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/MirrorBack.png"
+                                             ToolTip="Mirror selected object to its front"
+                                             VerticalAlignment="Top"
+                                             x:Name="MirrorBack" />
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="ToolGroup"

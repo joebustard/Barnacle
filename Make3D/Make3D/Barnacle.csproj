@@ -1209,6 +1209,8 @@
     <Resource Include="Images\Buttons\Mirror.png" />
     <Resource Include="Images\Buttons\MirrorLeft.png" />
     <Resource Include="Images\Buttons\MirrorRight.png" />
+    <Resource Include="Images\Buttons\MirrorBack.png" />
+    <Resource Include="Images\Buttons\MirrorFront.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

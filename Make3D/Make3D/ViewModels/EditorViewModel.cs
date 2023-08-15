@@ -284,6 +284,50 @@ namespace Barnacle.ViewModels
                             }
                         }
                         break;
+
+                    case "front":
+                        {
+                            double oz = 2 * bnds.Upper.Z;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+
+                            for (int f = 0; f < numFaces; f += 3)
+                            {
+                                int v0 = ob.TriangleIndices[f] + numPoints;
+                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
+                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
+                                ob.TriangleIndices.Add(v0);
+                                ob.TriangleIndices.Add(v2);
+                                ob.TriangleIndices.Add(v1);
+                            }
+                        }
+                        break;
+
+                    case "back":
+                        {
+                            double oz = 2 * bnds.Lower.Z;
+                            for (int i = 0; i < numPoints; i++)
+                            {
+                                P3D op = ob.RelativeObjectVertices[i];
+                                P3D np = new P3D(op.X, op.Y, oz - op.Z);
+                                ob.RelativeObjectVertices.Add(np);
+                            }
+
+                            for (int f = 0; f < numFaces; f += 3)
+                            {
+                                int v0 = ob.TriangleIndices[f] + numPoints;
+                                int v1 = ob.TriangleIndices[f + 1] + numPoints;
+                                int v2 = ob.TriangleIndices[f + 2] + numPoints;
+                                ob.TriangleIndices.Add(v0);
+                                ob.TriangleIndices.Add(v2);
+                                ob.TriangleIndices.Add(v1);
+                            }
+                        }
+                        break;
                 }
                 RemoveDuplicateVertices(ob);
                 ob.Remesh();
