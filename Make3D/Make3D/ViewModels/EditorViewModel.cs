@@ -1229,12 +1229,15 @@ namespace Barnacle.ViewModels
 
         private void AlignSelectedObjects(string s)
         {
-            if (s == "Floor")
+            if (s == "Centre")
+            {
+                MoveSelectionToCentre();
+            }
+            else if (s == "Floor")
             {
                 FloorSelectedObjects();
             }
-            else
-            if (selectedObjectAdorner.SelectedObjects.Count > 0)
+            else if (selectedObjectAdorner.SelectedObjects.Count > 0)
             {
                 Bounds3D bns = new Bounds3D(selectedObjectAdorner.SelectedObjects[0].AbsoluteBounds);
                 double midX = bns.MidPoint().X;
@@ -1298,7 +1301,7 @@ namespace Barnacle.ViewModels
                             }
                             break;
 
-                        case "Centre":
+                        case "Centres":
                             {
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - bns.MidPoint().X);
                                 dAbsZ = ob.Position.Z - (ob.AbsoluteBounds.MidPoint().Z - bns.MidPoint().Z);

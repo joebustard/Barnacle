@@ -377,7 +377,7 @@
                                              HorizontalAlignment="Stretch"
                                              Label="Center"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
-                                             ToolTip="Align objects so they are all centered on the first selected."
+                                             ToolTip="Move selected objects to centre of bed"
                                              VerticalAlignment="Top"
                                              x:Name="CentreAlignment" />
                         <Custom:RibbonButton Command="{Binding MarkerCommand}"
@@ -439,6 +439,14 @@
                                              ToolTip="Align objects so their back edges match the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="BackAlignment" />
+                        <Custom:RibbonButton Command="{Binding AlignCommand}"
+                                             CommandParameter="Centres"
+                                             HorizontalAlignment="Stretch"
+                                             Label="Centres"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/AlignBack.png"
+                                             ToolTip="Align objects so their centres match the first selected."
+                                             VerticalAlignment="Top"
+                                             x:Name="CentersAlignment" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Stack"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Stack.png"
