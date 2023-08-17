@@ -54,6 +54,7 @@ namespace Barnacle.ViewModels
                 {
                     editingActive = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged("CanScale");
                     NotifyPropertyChanged("ControlsEnabled");
                 }
             }
@@ -136,7 +137,7 @@ namespace Barnacle.ViewModels
         {
             get
             {
-                return canScale;
+                return canScale && controlsEnabled;
             }
             set
             {
@@ -203,6 +204,7 @@ namespace Barnacle.ViewModels
                 {
                     controlsEnabled = value;
                     NotifyPropertyChanged();
+                    NotifyPropertyChanged("CanScale");
                 }
             }
         }
