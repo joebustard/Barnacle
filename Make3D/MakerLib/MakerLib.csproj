@@ -67,6 +67,7 @@
     <Compile Include="MakePulley.cs" />
     <Compile Include="MakeRailWheel.cs" />
     <Compile Include="MakerBase.cs" />
+    <Compile Include="MakeRectGrille.cs" />
     <Compile Include="MakeReuleaux.cs" />
     <Compile Include="MakeRoofRidge.cs" />
     <Compile Include="MakeShapedBrickWall.cs" />

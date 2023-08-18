@@ -882,6 +882,11 @@
                                              x:Name="DecorativeTools">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                                             ItemsSource="{Binding GrilleToolsToShow}"
+                                             Label="Grille"
+                                             x:Name="GrilleTools">
+                    </Custom:RibbonMenuButton>
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding LoftedToolsToShow}"
                                              Label="Lofted"
                                              x:Name="LoftTools">

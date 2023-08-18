@@ -25,6 +25,7 @@ namespace Barnacle.ViewModels
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
         public List<ToolDef> buildingToolsToShow;
+        public List<ToolDef> grilleToolsToShow;
 
         private static string statusBlockText1;
         private static string statusBlockText2;
@@ -1107,6 +1108,22 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public List<ToolDef> GrilleToolsToShow
+        {
+            get
+            {
+                return grilleToolsToShow;
+            }
+            set
+            {
+                if (grilleToolsToShow != value)
+                {
+                    grilleToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand ViewCommand { get; set; }
 
         public bool WingEnabled
@@ -1196,6 +1213,14 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("MechanicalToolsToShow");
         }
 
+        private void CreateGrilleToolMenu()
+        {
+            grilleToolsToShow = new List<ToolDef>();
+            grilleToolsToShow.Add(new ToolDef("Rect Grille", true, "RectGrille", "Create a rectangular grille."));
+
+            NotifyPropertyChanged("GrilleToolsToShow");
+        }
+
         private void CreateLoftingMenu()
         {
             loftedToolsToShow = new List<ToolDef>();
@@ -1283,6 +1308,7 @@ namespace Barnacle.ViewModels
             CreateDecorativeToolMenu();
             CreateBuildingMenu();
             CreateMechanicalToolMenu();
+            CreateGrilleToolMenu();
         }
 
         private void CreateVehicleToolMenu()

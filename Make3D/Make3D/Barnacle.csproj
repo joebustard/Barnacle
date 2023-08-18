@@ -132,6 +132,7 @@
     <Compile Include="Dialogs\PathLoft\PathLoftDlg.xaml.cs" />
     <Compile Include="Dialogs\PieDlg\PieDlg.xaml.cs" />
     <Compile Include="Dialogs\Pill\PillDlg.xaml.cs" />
+    <Compile Include="Dialogs\RectGrille\RectGrilleDlg.xaml.cs" />
     <Compile Include="Dialogs\RibbedFuselage\ItemControlExtensions.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\MarkerModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\PlateModel.cs" />
@@ -514,6 +515,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\Pill\PillDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RectGrille\RectGrilleDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -104,6 +104,10 @@ namespace Barnacle.Models
                     res = new RailWheelDlg();
                     break;
 
+                case "RectGrille":
+                    res = new RectGrilleDlg();
+                    break;
+
                 case "RoofRidge":
                     res = new RoofRidgeDlg();
                     break;

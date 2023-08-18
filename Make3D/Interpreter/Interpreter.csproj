@@ -71,6 +71,7 @@
     <Compile Include="SolidFunctions\MakePathLoftNode.cs" />
     <Compile Include="SolidFunctions\MakePieNode.cs" />
     <Compile Include="SolidFunctions\MakePillNode.cs" />
+    <Compile Include="SolidFunctions\MakeRectGrilleNode.cs" />
     <Compile Include="SolidFunctions\MakeRoofRidgeNode.cs" />
     <Compile Include="SolidFunctions\MakeSpringNode.cs" />
     <Compile Include="Operators\ParenthesisNode.cs" />

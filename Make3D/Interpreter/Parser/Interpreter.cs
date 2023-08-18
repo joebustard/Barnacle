@@ -93,6 +93,7 @@ namespace ScriptLanguage
                 "makepie",
                 "makepulley",
                 "makereuleaux",
+                "makerectgrille",
                 "makeroofridge",
                 "makeshapedbrickwall",
                 "makespring",
@@ -165,6 +166,47 @@ namespace ScriptLanguage
             if (parsed && coll.Count() == exprCount)
             {
                 MakeBoxNode mn = new MakeBoxNode(coll);
+                mn.IsInLibrary = tokeniser.InIncludeFile();
+                exp = mn;
+            }
+
+            return exp;
+        }
+
+        private ExpressionNode ParseMakeRectGrilleFunction(string parentName)
+        {
+            ExpressionNode exp = null;
+            String label = "MakeRectGrille";
+            String commaError = $"{label} expected ,";
+            bool parsed = true;
+            ExpressionCollection coll = new ExpressionCollection();
+            int exprCount = 8;
+
+            for (int i = 0; i < exprCount && parsed; i++)
+            {
+                ExpressionNode paramExp = ParseExpressionNode(parentName);
+                if (paramExp != null)
+                {
+                    if (i < exprCount - 1)
+                    {
+                        if (CheckForComma() == false)
+                        {
+                            ReportSyntaxError(commaError);
+                            parsed = false;
+                        }
+                    }
+                    coll.Add(paramExp);
+                }
+                else
+                {
+                    String expError = $"{label} error parsing parameter expression number {i + 1} ";
+                    ReportSyntaxError(expError);
+                    parsed = false;
+                }
+            }
+            if (parsed && coll.Count() == exprCount)
+            {
+                MakeRectGrilleNode mn = new MakeRectGrilleNode(coll);
                 mn.IsInLibrary = tokeniser.InIncludeFile();
                 exp = mn;
             }
@@ -2690,6 +2732,12 @@ namespace ScriptLanguage
                         case "makereuleaux":
                             {
                                 exp = ParseMakeReuleauxFunction(parentName);
+                            }
+                            break;
+
+                        case "makerectgrille":
+                            {
+                                exp = ParseMakeRectGrilleFunction(parentName);
                             }
                             break;
 
