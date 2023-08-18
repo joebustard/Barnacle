@@ -376,7 +376,7 @@
                                              CommandParameter="Centre"
                                              HorizontalAlignment="Stretch"
                                              Label="Center"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Centre.png"
                                              ToolTip="Move selected objects to centre of bed"
                                              VerticalAlignment="Top"
                                              x:Name="CentreAlignment" />
@@ -443,7 +443,7 @@
                                              CommandParameter="Centres"
                                              HorizontalAlignment="Stretch"
                                              Label="Centres"
-                                             SmallImageSource="/Barnacle;component/Images/Buttons/AlignBack.png"
+                                             SmallImageSource="/Barnacle;component/Images/Buttons/Centres.png"
                                              ToolTip="Align objects so their centres match the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="CentersAlignment" />
