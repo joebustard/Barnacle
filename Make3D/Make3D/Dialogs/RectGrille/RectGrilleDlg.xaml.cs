@@ -78,7 +78,7 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double mingrillWidth = 5;
+        private const double mingrillWidth = 1;
         private const double maxgrillWidth = 200;
         private double grillWidth;
 
@@ -366,9 +366,16 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            RectGrilleMaker maker = new RectGrilleMaker(
-                grillLength, grillHeight, makeEdge, edgeThickness, verticalBars, verticalBarThickness, horizontalBars, horizontalBarThickness
-                );
+            RectGrilleMaker maker = new RectGrilleMaker(grillLength, 
+            grillHeight, 
+            grillWidth,
+            makeEdge, 
+            edgeThickness, 
+            verticalBars, 
+            verticalBarThickness, 
+            horizontalBars, 
+            horizontalBarThickness );
+
             maker.Generate(Vertices, Faces);
             CentreVertices();
         }

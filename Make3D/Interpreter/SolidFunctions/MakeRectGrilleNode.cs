@@ -11,6 +11,7 @@ namespace ScriptLanguage
     {
         private ExpressionNode grillLengthExp;
         private ExpressionNode grillHeightExp;
+        private ExpressionNode grillWidthExp;
         private ExpressionNode makeEdgeExp;
         private ExpressionNode edgeThicknessExp;
         private ExpressionNode verticalBarsExp;
@@ -20,11 +21,12 @@ namespace ScriptLanguage
 
         public MakeRectGrilleNode
             (
-            ExpressionNode grillLength, ExpressionNode grillHeight, ExpressionNode makeEdge, ExpressionNode edgeThickness, ExpressionNode verticalBars, ExpressionNode verticalBarThickness, ExpressionNode horizontalBars, ExpressionNode horizontalBarThickness
+            ExpressionNode grillLength, ExpressionNode grillHeight, ExpressionNode grillWidth, ExpressionNode makeEdge, ExpressionNode edgeThickness, ExpressionNode verticalBars, ExpressionNode verticalBarThickness, ExpressionNode horizontalBars, ExpressionNode horizontalBarThickness
             )
         {
             this.grillLengthExp = grillLength;
             this.grillHeightExp = grillHeight;
+            this.grillWidthExp = grillWidth;
             this.makeEdgeExp = makeEdge;
             this.edgeThicknessExp = edgeThickness;
             this.verticalBarsExp = verticalBars;
@@ -38,12 +40,13 @@ namespace ScriptLanguage
         {
             this.grillLengthExp = coll.Get(0);
             this.grillHeightExp = coll.Get(1);
-            this.makeEdgeExp = coll.Get(2);
-            this.edgeThicknessExp = coll.Get(3);
-            this.verticalBarsExp = coll.Get(4);
-            this.verticalBarThicknessExp = coll.Get(5);
-            this.horizontalBarsExp = coll.Get(6);
-            this.horizontalBarThicknessExp = coll.Get(7);
+            this.grillWidthExp = coll.Get(2);
+            this.makeEdgeExp = coll.Get(3);
+            this.edgeThicknessExp = coll.Get(4);
+            this.verticalBarsExp = coll.Get(5);
+            this.verticalBarThicknessExp = coll.Get(6);
+            this.horizontalBarsExp = coll.Get(7);
+            this.horizontalBarThicknessExp = coll.Get(8);
         }
 
         /// Execute this node
@@ -53,11 +56,15 @@ namespace ScriptLanguage
         {
             bool result = false;
 
-            double valGrillLength = 0; double valGrillHeight = 0; bool valMakeEdge = false; double valEdgeThickness = 0; double valVerticalBars = 0; double valVerticalBarThickness = 0; double valHorizontalBars = 0; double valHorizontalBarThickness = 0;
+            double valGrillLength = 0; 
+            double valGrillHeight = 0;
+            double valGrillWidth = 0;
+            bool valMakeEdge = false; double valEdgeThickness = 0; double valVerticalBars = 0; double valVerticalBarThickness = 0; double valHorizontalBars = 0; double valHorizontalBarThickness = 0;
 
             if (
                EvalExpression(grillLengthExp, ref valGrillLength, "GrillLength", "MakeRectGrille") &&
                EvalExpression(grillHeightExp, ref valGrillHeight, "GrillHeight", "MakeRectGrille") &&
+               EvalExpression(grillWidthExp, ref valGrillWidth, "GrillWidth", "MakeRectGrille") &&
                EvalExpression(makeEdgeExp, ref valMakeEdge, "MakeEdge", "MakeRectGrille") &&
                EvalExpression(edgeThicknessExp, ref valEdgeThickness, "EdgeThickness", "MakeRectGrille") &&
                EvalExpression(verticalBarsExp, ref valVerticalBars, "VerticalBars", "MakeRectGrille") &&
@@ -80,6 +87,11 @@ namespace ScriptLanguage
                     inRange = false;
                 }
 
+                if (valGrillWidth < 1 || valGrillWidth > 200)
+                {
+                    Log.Instance().AddEntry("MakeRectGrille : GrillWidth value out of range (1..200)");
+                    inRange = false;
+                }
                 if (valEdgeThickness < 1 || valEdgeThickness > 200)
                 {
                     Log.Instance().AddEntry("MakeRectGrille : EdgeThickness value out of range (1..200)");
@@ -122,7 +134,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    RectGrilleMaker maker = new RectGrilleMaker(valGrillLength, valGrillHeight, valMakeEdge, valEdgeThickness, valVerticalBars, valVerticalBarThickness, valHorizontalBars, valHorizontalBarThickness);
+                    RectGrilleMaker maker = new RectGrilleMaker(valGrillLength, valGrillHeight, valGrillWidth, valMakeEdge, valEdgeThickness, valVerticalBars, valVerticalBarThickness, valHorizontalBars, valHorizontalBarThickness);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
@@ -152,6 +164,7 @@ namespace ScriptLanguage
 
             result += grillLengthExp.ToRichText() + ", ";
             result += grillHeightExp.ToRichText() + ", ";
+            result += grillWidthExp.ToRichText() + ", ";
             result += makeEdgeExp.ToRichText() + ", ";
             result += edgeThicknessExp.ToRichText() + ", ";
             result += verticalBarsExp.ToRichText() + ", ";
@@ -168,6 +181,7 @@ namespace ScriptLanguage
 
             result += grillLengthExp.ToString() + ", ";
             result += grillHeightExp.ToString() + ", ";
+            result += grillWidthExp.ToString() + ", ";
             result += makeEdgeExp.ToString() + ", ";
             result += edgeThicknessExp.ToString() + ", ";
             result += verticalBarsExp.ToString() + ", ";
