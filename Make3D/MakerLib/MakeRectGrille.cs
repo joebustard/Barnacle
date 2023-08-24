@@ -168,6 +168,7 @@ namespace MakerLib
             double vOff = (grilleLength) / (verticalBars + 1);
             double hOff = (grilleHeight) / (horizontalBars + 1);
             double oldy = 0;
+            double sx = 0;
             double sy = 0;
             double dy = 0;
             for (int i = 1; i <= horizontalBars; i++)
@@ -176,7 +177,7 @@ namespace MakerLib
                 sy = y - horizontalBarThickness / 2;
 
                 double oldx = 0;
-                double sx = 0;
+
                 double dx = 0;
                 bool closeLeft = false;
 
@@ -204,14 +205,42 @@ namespace MakerLib
                 Box(oldx, sy, 0, dx, horizontalBarThickness, grilleWidth, false, true, true, true);
 
                 dy = sy - oldy;
-                //        Box(0, oldy, 0, fl, dy, grilleWidth, true, true, false, false);
-                //         Box(fRight, oldy, 0, fl, dy, grilleWidth, true, true, false, false);
 
                 oldy = y + horizontalBarThickness / 2;
             }
-            dy = grilleHeight - oldy;
-            //    Box(0, oldy, 0, fl, dy, grilleWidth, true, true, false, false);
-            //    Box(fRight, oldy, 0, fl, dy, grilleWidth, true, true, false, false);
+
+            // part 2
+            for (int i = 1; i <= verticalBars; i++)
+            {
+                x = (i * vOff);
+                sx = x - horizontalBarThickness / 2;
+
+                oldy = 0;
+
+                bool closeBottom = false;
+
+                for (int j = 1; j <= horizontalBars; j++)
+                {
+                    y = (j * hOff);
+                    if (j == 1)
+                    {
+                        closeBottom = true;
+                    }
+                    else
+                    {
+                        closeBottom = false;
+                    }
+
+                    sy = y - horizontalBarThickness / 2;
+
+                    dy = sy - oldy;
+                    Box(sx, oldy, 0, verticalBarThickness, dy, grilleWidth, true, true, false, closeBottom);
+
+                    oldy = y + horizontalBarThickness / 2;
+                }
+                dy = grilleHeight - oldy;
+                Box(sx, oldy, 0, verticalBarThickness, dy, grilleWidth, true, true, true, false);
+            }
         }
 
         private void MakeFrameCorners(double fl, double fRight, double fTop)
@@ -253,10 +282,10 @@ namespace MakerLib
             {
                 y = fl + (j * hOff);
                 sy = y - horizontalBarThickness / 2;
-                Box(sx, sy, 0, verticalBarThickness, horizontalBarThickness, grilleWidth, true, false, false, false);
+
                 dy = sy - oldy;
-                Box(sx, oldy, 0, verticalBarThickness, dy, grilleWidth, false, true, false, false);
-                oldy = sy + horizontalBarThickness / 2;
+                Box(sx, oldy, 0, verticalBarThickness, dy, grilleWidth, true, true, false, false);
+                oldy = y + horizontalBarThickness / 2;
             }
             dy = fTop - oldy;
 

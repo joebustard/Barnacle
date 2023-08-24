@@ -160,6 +160,7 @@ namespace Barnacle.Dialogs
                     if (!String.IsNullOrEmpty(selectedRootAirfoil) && !String.IsNullOrEmpty(rootGroup))
                     {
                         selectedWingProfilePoints = GetProfilePoints(rootGroup, selectedRootAirfoil, ref selectedWingProfileLength);
+                        ProfileDisplayer.ProfilePnts = selectedWingProfilePoints;
                     }
                     NotifyPropertyChanged();
                     UpdateDisplay();
@@ -244,7 +245,7 @@ namespace Barnacle.Dialogs
                     for (double t = 0; t <= 1; t += dt)
                     {
                         // get the basic size of the wing rib
-                        var dp = flexipath.GetUpperAndLowerPoints(t,false);
+                        var dp = flexipath.GetUpperAndLowerPoints(t, false);
                         ribX.Add(dp.X);
                         if (Math.Abs(1 - t) < 0.000001)
                         {
@@ -279,7 +280,6 @@ namespace Barnacle.Dialogs
 
                 minX = Math.Abs(minX);
 
-                
                 for (int i = 0; i < numDivisions - 1; i++)
                 {
                     for (int j = 0; j < divisions[0].Count; j++)
@@ -298,7 +298,7 @@ namespace Barnacle.Dialogs
                         AddFace(p0, p3, p2);
                     }
                 }
-               
+
                 // close the root side
                 List<System.Drawing.PointF> side = new List<System.Drawing.PointF>();
                 for (int j = 0; j < divisions[0].Count; j++)
@@ -331,7 +331,6 @@ namespace Barnacle.Dialogs
                     }
                     TriangulatePerimiter(side, ribX[divisions.Length - 1], false);
                 }
-                
             }
         }
 
@@ -521,6 +520,7 @@ namespace Barnacle.Dialogs
             {
                 GenerateWing();
                 Redisplay();
+                ProfileDisplayer.Refresh();
             }
         }
 

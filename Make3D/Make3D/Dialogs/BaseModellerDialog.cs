@@ -60,6 +60,7 @@ namespace Barnacle.Dialogs
             bounds = new Bounds3D();
             spaceTreeRoot = null;
         }
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds
@@ -988,6 +989,7 @@ namespace Barnacle.Dialogs
         {
             return deg * Math.PI / 180;
         }
+
         protected double Distance(Point p1, Point p2)
         {
             double dx = p2.X - p1.X;
@@ -1029,6 +1031,7 @@ namespace Barnacle.Dialogs
                 if (p.Y > bry) bry = p.Y;
             }
         }
+
         protected Bounds3D GetBounds3D(Point3DCollection pnts)
         {
             Bounds3D bnds = new Bounds3D();
@@ -1063,7 +1066,7 @@ namespace Barnacle.Dialogs
         protected virtual void Home_Click(object sender, RoutedEventArgs e)
         {
             Camera.HomeFront();
-           // SetCameraDistance();
+            // SetCameraDistance();
             UpdateCameraPos();
         }
 
@@ -1159,6 +1162,7 @@ namespace Barnacle.Dialogs
                 UpdateCameraPos();
             }
         }
+
         private double InchesToMM(double x)
         {
             return x * 25.4;
