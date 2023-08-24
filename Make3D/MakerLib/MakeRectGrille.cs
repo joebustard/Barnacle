@@ -59,100 +59,132 @@ namespace MakerLib
             double fl = edgeThickness;
 
             double innerLength = grillLength - (2 * fl);
+            double innerHeight = grillHeight - (2 * fl);
+
             double vbarlength = verticalBars * verticalBarThickness;
-            
-            double vOff = (innerLength ) / (verticalBars);
+
+            double vOff = (innerLength) / (verticalBars + 1);
             double gl = vOff - (verticalBarThickness / 2);
 
-            double innerHeight = grillHeight - (2 * fl);
-            double hbarlength =  horizontalBars * horizontalBarThickness;
-            double hOff = innerHeight / (horizontalBars+1);
-            
-            double hl = hOff - (horizontalBarThickness/2) ;
+
+            double hbarlength = horizontalBars * horizontalBarThickness;
+            double hOff = (innerHeight) / (horizontalBars + 1);
+
+            double hl = hOff - (horizontalBarThickness / 2);
 
 
-            // bottom left corner
+            // basic corners
             double x = 0;
             double y = 0;
-            Box(x, y, 0, fl, fl, grillWidth, true, false, false, true);
-            Box(x+grillLength-fl, y, 0, fl, fl, grillWidth, false, true, false, true);
-            Box(x, y+grillHeight-fl, 0, fl, fl, grillWidth, true, false, true, false);
-            Box(x + grillLength - fl, y + grillHeight - fl, 0, fl, fl, grillWidth, false, true, true, false);
+            double fRight = grillLength - fl;
+            double fTop = grillHeight - fl;
+            MakeFrameCorners(fl, fRight, fTop);
+            // left right frames
+            y = FrameSides(fl, hOff, vOff, y, fRight, fTop);
 
+            // top and bottom of frame
+            x = FrameTopBottom(fl, hOff, vOff, x, fRight, fTop);
+
+        }
+
+        private double FrameTopBottom(double fl,  double hOff, double vOff, double x, double fRight, double fTop)
+        {
+            double oldx = fl;
+            double sx = 0;
+            double dx = 0;
+            for (int i = 1; i <= verticalBars; i++)
+            {
+                x = fl + (i * vOff);
+                sx = x - verticalBarThickness / 2;
+                Box(sx, 0, 0, verticalBarThickness, fl, grillWidth, false, false, false, true);
+                Box(sx, fTop, 0, verticalBarThickness, fl, grillWidth, false, false, true, false);
+                dx = sx - oldx;
+                Box(oldx, 0, 0, dx, fl, grillWidth, false, false, true, true);
+                Box(oldx, fTop, 0, dx, fl, grillWidth, false, false, true, true);
+                /*
+                  double oldy = fl;
+                  double sy = 0;
+                  double dy = 0;
+                  double y;
+                  for (int j = 1; j <= horizontalBars; j++)
+                  {
+                      y = fl + (j * hOff);
+                      sy = y - horizontalBarThickness / 2;
+                      Box(sx, sy, 0, verticalBarThickness, horizontalBarThickness, grillWidth, true, false, false, false);
+                      dy = sy - oldy;
+                      Box(sx, oldy, 0, verticalBarThickness, dy, grillWidth, false, true, false, false);
+                      oldy = sy + horizontalBarThickness / 2;
+
+                  }
+                  dy = fTop - oldx;
+
+                  Box(sx, oldy, 0, dx, fl, grillWidth, false, false, true, true);
+                  */
+                //Box(sx, oldy, 0, dx, fl, grillWidth, false, false, true, true);
+                oldx = x + verticalBarThickness / 2;
+            }
+            dx = fRight - oldx;
+            Box(oldx, 0, 0, dx, fl, grillWidth, false, false, true, true);
+            Box(oldx, fTop, 0, dx, fl, grillWidth, false, false, true, true);
+            return x;
+        }
+
+        private double FrameSides(double fl, double hOff, double vOff, double y, double fRight, double fTop)
+        {
+            double oldy = fl;
+            double sy = 0;
+            double dy = 0;
             for (int i = 1; i <= horizontalBars; i++)
             {
                 y = fl + (i * hOff);
-                Box(x, y- horizontalBarThickness / 2, 0, fl, horizontalBarThickness, grillWidth, true, false, false, false);
-                Box(x+grillLength-fl, y - horizontalBarThickness / 2, 0, fl, horizontalBarThickness, grillWidth, false, true, false, false);
+                sy = y - horizontalBarThickness / 2;
+                Box(0, sy, 0, fl, horizontalBarThickness, grillWidth, true, false, false, false);
+                Box(fRight, sy, 0, fl, horizontalBarThickness, grillWidth, false, true, false, false);
 
+                MakeHorizontalCrossbars(fl, vOff, fRight, sy);
+
+                dy = sy - oldy;
+                Box(0, oldy, 0, fl, dy, grillWidth, true, true, false, false);
+                Box(fRight, oldy, 0, fl, dy, grillWidth, true, true, false, false);
+
+                oldy = y + horizontalBarThickness / 2;
             }
-            y = fl;
-            for (int i = 0; i <= horizontalBars; i++)
-            {
-                y = fl + (i * hOff);
-                if (i > 0)
-                {
-                    y = fl + (i *hOff+(horizontalBarThickness/2));
-                }
-                Box(x, y , 0, fl, hl, grillWidth, true, true, false, false);
-                Box(x + grillLength - fl, y , 0, fl, hl, grillWidth, true, true, false, false);
-  
-            }
-
-
-
-
-            /*
-                        for ( int i = 1; i <= verticalBars; i ++)
-                        {
-                            x = fl + (i * vOff) - (verticalBarThickness/2);
-                            Box(x, y, 0, verticalBarThickness, fl, grillWidth, false, false, false, true);
-                         }
-                        for (int i = 1; i <= verticalBars+1; i++)
-                        {
-                            x =  (i * vOff)-gl- verticalBarThickness / 2;
-                            x += fl;
-                            Box(x, y, 0, gl, fl, grillWidth, false, false, true, true);
-                        }
-
-                        x = grillLength - fl;
-                        Box(x, y, 0, fl, fl, grillWidth, false, true, false, true);
-
-                        // top of frame
-                        x = 0;
-                        y = grillHeight - fl;
-                        Box(x, y, 0, fl, fl, grillWidth, true, false, true, false);
-
-                        for (int i = 1; i <= verticalBars; i++)
-                        {
-                            x = fl + (i * vOff) - (verticalBarThickness / 2);
-                            Box(x, y, 0, verticalBarThickness, fl, grillWidth, false, false, true, false);
-                        }
-                        for (int i = 1; i <= verticalBars + 1; i++)
-                        {
-                            x = (i * vOff) - gl - verticalBarThickness / 2;
-                            x += fl;
-                            Box(x, y, 0, gl, fl, grillWidth, false, false, true, true);
-                        }
-
-                        x = grillLength - fl;
-                        Box(x, y, 0, fl, fl, grillWidth, false, true, true, false);
-
-                        // left of frame
-                        x = 0;
-                        for (int i = 1; i <= horizontalBars; i++)
-                        {
-                            y = fl + (i * hOff) - (horizontalBarThickness / 2);
-                            Box(x, y, 0, fl, horizontalBarThickness, grillWidth, true, false, false, false);
-                        }
-                        for (int i = 1; i <= verticalBars + 1; i++)
-                        {
-                            y = (i * hOff) - hl - horizontalBarThickness / 2;
-                            y += fl;
-                            Box(x, y, 0, fl, hl, grillWidth, true, true, false,false);
-                        }
-                        */
+            dy = fTop - oldy;
+            Box(0, oldy, 0, fl, dy, grillWidth, true, true, false, false);
+            Box(fRight, oldy, 0, fl, dy, grillWidth, true, true, false, false);
+            return y;
         }
+
+        private void MakeHorizontalCrossbars(double fl, double vOff, double fRight, double sy)
+        {
+            double oldx = fl;
+            double sx = 0;
+            double dx = 0;
+            double x;
+            for (int j = 1; j <= verticalBars; j++)
+            {
+                x = fl + (j * vOff);
+                sx = x - verticalBarThickness / 2;
+                Box(sx, sy, 0, verticalBarThickness, horizontalBarThickness, grillWidth, false, false, false, false);
+
+                dx = sx - oldx;
+                Box(oldx, sy, 0, dx, horizontalBarThickness, grillWidth, false, false, true, true);
+
+                oldx = x + verticalBarThickness / 2;
+            }
+            dx = fRight - oldx;
+            Box(oldx, sy, 0, dx, horizontalBarThickness, grillWidth, false, false, true, true);
+            //    Box(oldx, sy, 0, dx, horizontalBarThickness, grillWidth, false, false, true, true);
+        }
+
+        private void MakeFrameCorners(double fl, double fRight, double fTop)
+        {
+            Box(0, 0, 0, fl, fl, grillWidth, true, false, false, true);
+            Box(fRight, 0, 0, fl, fl, grillWidth, false, true, false, true);
+            Box(0, fTop, 0, fl, fl, grillWidth, true, false, true, false);
+            Box(fRight, fTop, 0, fl, fl, grillWidth, false, true, true, false);
+        }
+
         private void Box(double x, double y, double z, double l, double h, double w, bool left, bool right, bool top, bool bottom)
         {
 
