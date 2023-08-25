@@ -41,29 +41,14 @@ namespace Barnacle.UserControls
         public void Refresh()
         {
             profileCanvas.Children.Clear();
-            
+
             double border = 8;
             double hc = profileCanvas.ActualHeight / 2.0;
             double h = (profileCanvas.ActualHeight - 2 * border);
             double w = (profileCanvas.ActualWidth - 2 * border);
-            double yscale = w/h;
+            double yscale = w / h;
             double xscale = 1;
-            
 
-            Line ln = new Line();
-            ln.Stroke = Brushes.Blue;
-            ln.StrokeThickness = 2;
-            DoubleCollection dc = new DoubleCollection();
-            dc.Add(0.25);
-            dc.Add(0.5);
-            dc.Add(0.25);
-            ln.StrokeDashArray = dc;
-            ln.X1 = border;
-            ln.Y1 = hc;
-            ln.X2 = w - border;
-            ln.Y2 = hc;
-
-            profileCanvas.Children.Add(ln);
             if (profilePnts != null && profilePnts.Count > 0)
             {
                 Polyline pln = new Polyline();
@@ -73,7 +58,6 @@ namespace Barnacle.UserControls
                 pln.Fill = Brushes.Red;
                 double miny = double.MaxValue;
                 double maxy = double.MinValue;
-
 
                 foreach (Point p in profilePnts)
                 {
@@ -93,6 +77,21 @@ namespace Barnacle.UserControls
                 }
                 profileCanvas.Children.Add(pln);
             }
+
+            Line ln = new Line();
+            ln.Stroke = Brushes.Blue;
+            ln.StrokeThickness = 2;
+            DoubleCollection dc = new DoubleCollection();
+            dc.Add(0.25);
+            dc.Add(0.5);
+            dc.Add(0.25);
+            ln.StrokeDashArray = dc;
+            ln.X1 = border;
+            ln.Y1 = hc;
+            ln.X2 = w - border;
+            ln.Y2 = hc;
+
+            profileCanvas.Children.Add(ln);
         }
 
         public AeroProfileDisplayer()

@@ -229,6 +229,9 @@ namespace Barnacle.Dialogs
                 {
                     selectedRootAirfoil = value;
                     NotifyPropertyChanged();
+                    // get the raw profile points so they can be drawn on the profile display
+                    double tmp = 0;
+                    RootDisplay.ProfilePnts = GetProfilePoints(RootGroup, SelectedRootAirfoil, ref tmp);
                     Update();
                 }
             }
@@ -533,8 +536,8 @@ namespace Barnacle.Dialogs
             {
                 tl = rootLength;
             }
-            List<Point> innerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, rootLength, ref innerEdgeLength);
-            List<Point> outerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, tl, ref outerEdgeLength);
+            List<Point> innerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, ref innerEdgeLength);
+            List<Point> outerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, ref outerEdgeLength);
             Point p1 = GetProfileAt(innerProfile, innerEdgeLength, startT);
 
             Point p2 = GetProfileAt(innerProfile, innerEdgeLength, endT);
@@ -779,7 +782,7 @@ namespace Barnacle.Dialogs
                     outerZ = innerZ + strutGap;
                     theta = (Math.PI * dihedralAngle) / 180;
                     double diy = 0;
-                    List<Point> innerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, innerStrutLength, ref innerEdgeLength);
+                    List<Point> innerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, ref innerEdgeLength);
 
                     if (innerProfile.Count > 0)
                     {
@@ -787,7 +790,7 @@ namespace Barnacle.Dialogs
                         {
                             double outerEdgeLength = 0;
 
-                            List<Point> outerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, outerStrutLength, ref outerEdgeLength);
+                            List<Point> outerProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, ref outerEdgeLength);
 
                             if (outerProfile.Count > 0)
                             {
@@ -975,7 +978,7 @@ namespace Barnacle.Dialogs
             return res;
         }
 
-        private List<Point> GetProfilePoints(string grpName, string airfoil, double len, ref double dist)
+        private List<Point> GetProfilePoints(string grpName, string airfoil, ref double dist)
         {
             List<Point> res = new List<Point>();
             String content = "";
@@ -1203,6 +1206,7 @@ namespace Barnacle.Dialogs
             EnableControlsForShape();
             GenerateWing();
             Redisplay();
+            RootDisplay.Refresh();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -1222,6 +1226,11 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
             GenerateWing();
             Redisplay();
+        }
+
+        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RootDisplay.Refresh();
         }
     }
 }

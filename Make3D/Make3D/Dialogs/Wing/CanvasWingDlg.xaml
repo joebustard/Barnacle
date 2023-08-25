@@ -7,10 +7,11 @@
                           xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
+                          xmlns:uc="clr-namespace:Barnacle.UserControls"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                           Width="1000"
-                          Height="450">
+                          Height="450" SizeChanged="BaseModellerDialog_SizeChanged">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -33,12 +34,15 @@
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0"
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Model
+                    Model
                 </Label>
                 <RadioButton Content="Whole"
                              GroupName="ModelButGroup"
@@ -59,7 +63,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Wing Shape
+                    Wing Shape
                 </Label>
                 <ComboBox ItemsSource="{Binding ShapeNames}"
                           Margin="0,0,10,0"
@@ -67,7 +71,7 @@
                           Width="100" />
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Tip Shape
+                    Tip Shape
                 </Label>
                 <ComboBox ItemsSource="{Binding TipShapeNames}"
                           Margin="0,0,10,0"
@@ -78,7 +82,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Span
+                    Span
                 </Label>
                 <TextBox Text="{Binding Span}"
                          VerticalAlignment="Center"
@@ -86,7 +90,7 @@
                 <Label Margin="8,0,0,0"
                        VerticalAlignment="Center"
                        Width="80">
-                Root Length
+                    Root Length
                 </Label>
                 <TextBox Margin="0,0,8,0"
                          Text="{Binding RootLength}"
@@ -95,23 +99,19 @@
                 <Label VerticalAlignment="Center"
                        Visibility="{Binding TipControlsVisible}"
                        Width="80">
-                Tip Length
+                    Tip Length
                 </Label>
                 <TextBox Text="{Binding TipLength}"
                          VerticalAlignment="Center"
                          Visibility="{Binding TipControlsVisible}"
                          Width="30" />
             </StackPanel>
-      <!--
-                <Label Width="80">Tip Profile</Label>
-                <ComboBox Width="100" Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding AirfoilGroups}" SelectedItem="{Binding TipGroup}" />
-                <ComboBox Width="100" Margin="0,0,10,0" VerticalAlignment="Center" ItemsSource="{Binding TipAirfoilNames}" SelectedItem="{Binding SelectedTipAirfoil}" />
-                -->
+
             <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Profile
+                    Profile
                 </Label>
                 <ComboBox ItemsSource="{Binding AirfoilGroups}"
                           Margin="0,0,10,0"
@@ -124,11 +124,12 @@
                           VerticalAlignment="Center"
                           Width="100" />
             </StackPanel>
-            <StackPanel Grid.Row="4"
+            <uc:AeroProfileDisplayer Margin="80,0,0,0" x:Name="RootDisplay" Grid.Row="4" Grid.RowSpan="2" Width="280" HorizontalAlignment="Left" />
+            <StackPanel Grid.Row="6"
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                No. Of Struts
+                    No. Of Struts
                 </Label>
                 <TextBox Margin="0,0,8,0"
                          Text="{Binding NumStruts}"
@@ -136,29 +137,29 @@
                          Width="30" />
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Dip ( % )
+                    Dip ( % )
                 </Label>
                 <TextBox Text="{Binding DipPercent}"
                          VerticalAlignment="Center"
                          Width="30" />
             </StackPanel>
-            <StackPanel Grid.Row="5"
+            <StackPanel Grid.Row="7"
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Visibility="{Binding SweepControlsVisible}"
                        Width="80">
-                Sweep Angle
+                    Sweep Angle
                 </Label>
                 <TextBox Text="{Binding SweepAngle}"
                          VerticalAlignment="Center"
                          Visibility="{Binding SweepControlsVisible}"
                          Width="30" />
             </StackPanel>
-            <StackPanel Grid.Row="6"
+            <StackPanel Grid.Row="8"
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="80">
-                Dihedral
+                    Dihedral
                 </Label>
                 <TextBox Text="{Binding DihedralAngle}"
                          VerticalAlignment="Center"
