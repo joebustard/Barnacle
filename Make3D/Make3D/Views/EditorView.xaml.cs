@@ -1,11 +1,14 @@
 ﻿using Barnacle.Models;
 using Barnacle.ViewModels;
+using ImageUtils;
+using Microsoft.Win32;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
 
 namespace Barnacle.Views
 {
@@ -17,6 +20,8 @@ namespace Barnacle.Views
         private GeometryModel3D lastHitModel;
         private Point3D lastHitPoint;
         private Point lastMousePos;
+        private String screenShotTarget;
+        private DispatcherTimer snapShotTimer;
         private EditorViewModel vm;
 
         public EditorView()
@@ -27,6 +32,7 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("Editor", "KeyUp", OnKeyUp);
             NotificationManager.Subscribe("Editor", "KeyDown", OnKeyDown);
             NotificationManager.Subscribe("Editor", "Settings", OnSettings);
+            NotificationManager.Subscribe("Editor", "ScreenShot", OnScreenShot);
             UpdateDisplay(null);
 
             vm = DataContext as EditorViewModel;
@@ -60,7 +66,6 @@ namespace Barnacle.Views
                     GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
                     if (lastHitModel == null)
                     {
-                        // UpdateResultInfo(rayMeshResult);
                         lastHitModel = hitgeo;
                         lastHitPoint = rayMeshResult.PointHit;
                     }
@@ -162,6 +167,26 @@ namespace Barnacle.Views
             }
         }
 
+        private void OnScreenShot(object param)
+        {
+            screenShotTarget = "";
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.Filter = "Portable Network Images (*.png)|*.png";
+            if (dlg.ShowDialog() == true)
+            {
+                if (!String.IsNullOrEmpty(dlg.FileName))
+                {
+                    screenShotTarget = dlg.FileName;
+                    // ont take snap shot imediately, wait half a second for screen to update
+                    TimeSpan interval = new TimeSpan(0, 0, 0, 0, 500);
+                    snapShotTimer = new DispatcherTimer();
+                    snapShotTimer.Interval = interval;
+                    snapShotTimer.Tick += SnapShotTimer_Tick;
+                    snapShotTimer.Start();
+                }
+            }
+        }
+
         private void OnSettings(object param)
         {
             Settings dlg = new Settings();
@@ -169,6 +194,15 @@ namespace Barnacle.Views
             {
                 BaseViewModel.Project.Save();
                 BaseViewModel.Document.SaveGlobalSettings();
+            }
+        }
+
+        private void SnapShotTimer_Tick(object sender, EventArgs e)
+        {
+            snapShotTimer.Stop();
+            if (!String.IsNullOrEmpty(screenShotTarget))
+            {
+                ImageCapture.ScreenCaptureElement(viewport3D1, screenShotTarget, false);
             }
         }
 

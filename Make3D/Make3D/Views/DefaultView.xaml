@@ -1030,6 +1030,16 @@
                               VerticalAlignment="Top"
                               x:Name="SelectBuildPlateNames" />
                 </Custom:RibbonGroup>
+                <Custom:RibbonGroup Name="UtilsGroup"
+                                    Header="Utils"
+                                    LargeImageSource="/Barnacle;component/Images/Buttons/Camera.png">
+                    <Custom:RibbonButton Command="{Binding ScreenShotCommand}"
+                                         HorizontalAlignment="Stretch"
+                                         Label="Screen Shot"
+                                         SmallImageSource="/Barnacle;component/Images/Buttons/Camera.png"
+                                         VerticalAlignment="Top"
+                                         x:Name="ScreenShotButton" />
+                </Custom:RibbonGroup>
                 <Custom:RibbonGroup Name="HelpGroup"
                                     Header="Help"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/question1.png">

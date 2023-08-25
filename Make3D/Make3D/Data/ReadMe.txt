@@ -1,33 +1,60 @@
 ﻿v1.0.4
 ===========
+
+Added
+   Shaped aircraft wing tool. Similar to the basic wing and canvas wing tools but allows the outline of the wing to drawn so
+   curved wings like those of a Spitfire can be created.
+
+   All three wing tools now render an outline image of the wing profile
+
+   Path Loft tool
+
+   Simple Hollow Box Tool
+
+   Box option on platelet.
+
+   Rectangular grille tool
+
+   Symbol tool to turn a character from a symbol font into a 3D object
+
+   Simple construction strip tool. Makes a strip with holes as found in children's cnstruction sets.
+
+   A couple of extra tyre shapes to the wheel.
+
+   Mirror object option
+
+   First cut of screen capture
+
 Fixed
   Small speed up in hole fixing.
+
   Small speed up in smoothing. Still slow for objects with high vertice counts.
+
   Explore folder menu option wasn't working
+
   Copying flexipath string from one tool to another wasn't always resulting in objects updating
+
   Converting final segment of flexipath to a quadratic bezier always gave a cubic bezier instead. Fixed
 
 Changed
    Fonts on slicer dialog results enlarged.
+
    Added presets list to flexipath editor. Some supplied in installation. User can create his own file.
+
    Added colour, thickness and opacity settings for rendering flexipath curves.
+
    Added split quad bezier into two quad beziers that pass through the same points
+
    Flexipath grid and line settings saved and restored. Shared across all tools that use a flexipath.
+
    Aircraft Profile Fuselage uses the same flexipath control as the other tools.
      Improved the fuselage model generation.
-   Enable the rotation preset buttons even when no object selected
-   Object properties palette changes size of selected object as text changes, not after focus lost
+  
+  Enable the rotation preset buttons even when no object selected
+  
+  Object properties palette changes size of selected object as text changes, not after focus lost
 
-Added
-   Shaped aircraft wing tool. Similar to the basic wing tool but allows the outline of the wing to drawn so
-   curved wings like those of a Spitfire can be created.
-   Path Loft tool
-   Simple Hollow Box Tool
-   Box option on platelet.
-   Symbol tool to turn a character from a symbol font into a 3D object
-   Simple construction strip tool. Makes a strip with holes as found in childrens cnstruction sets.
-   A couple of extra tyre shapes to the wheel.
-   Mirror option
+
 
 v1.0.3
 ===========

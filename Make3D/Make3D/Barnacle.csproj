@@ -1225,6 +1225,7 @@
     <Resource Include="Images\Buttons\MirrorFront.png" />
     <Resource Include="Images\Buttons\Centre.png" />
     <Resource Include="Images\Buttons\Centres.png" />
+    <Resource Include="Images\Buttons\Camera.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

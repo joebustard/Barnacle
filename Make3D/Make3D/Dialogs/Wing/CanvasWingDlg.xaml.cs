@@ -528,6 +528,11 @@ namespace Barnacle.Dialogs
             Close();
         }
 
+        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RootDisplay.Refresh();
+        }
+
         private double CloseMissingHalfOfWing(double innerEdgeLength, double startT, double endT)
         {
             double outerEdgeLength = 0;
@@ -1226,11 +1231,6 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
             GenerateWing();
             Redisplay();
-        }
-
-        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            RootDisplay.Refresh();
         }
     }
 }

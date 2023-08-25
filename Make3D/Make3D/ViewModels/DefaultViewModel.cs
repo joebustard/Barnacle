@@ -93,6 +93,13 @@ namespace Barnacle.ViewModels
             settingsLoaded = false;
             subViewMan = new SubViewManager();
             AutoFixCommand = new RelayCommand(OnAutoFix);
+            CopyCommand = new RelayCommand(OnCopy);
+            CloneInPlaceCommand = new RelayCommand(OnCloneInPlace);
+            CircularPasteCommand = new RelayCommand(OnCircularPaste);
+            CutCommand = new RelayCommand(OnCut);
+            FixHolesCommand = new RelayCommand(OnFixHoles);
+            InsertCommand = new RelayCommand(OnInsert);
+            ManifoldCommand = new RelayCommand(OnManifoldTest);
             MirrorCommand = new RelayCommand(OnMirror);
             NewCommand = new RelayCommand(OnNew);
             NewProjectCommand = new RelayCommand(OnNewProject);
@@ -101,19 +108,16 @@ namespace Barnacle.ViewModels
             OpenRecentFileCommand = new RelayCommand(OnOpenRecent);
             SaveCommand = new RelayCommand(OnSave);
             SaveAsCommand = new RelayCommand(OnSaveAs);
-            InsertCommand = new RelayCommand(OnInsert);
+
             ReferenceCommand = new RelayCommand(OnReference);
-            ManifoldCommand = new RelayCommand(OnManifoldTest);
-            FixHolesCommand = new RelayCommand(OnFixHoles);
+            ScreenShotCommand = new RelayCommand(OnScreenShot);
+
             UndoCommand = new RelayCommand(OnUndo);
             //   RedoCommand = new RelayCommand(OnRedo);
-            CopyCommand = new RelayCommand(OnCopy);
-            CloneInPlaceCommand = new RelayCommand(OnCloneInPlace);
+
             PasteCommand = new RelayCommand(OnPaste);
             PasteAtCommand = new RelayCommand(OnPasteAt);
             MultiPasteCommand = new RelayCommand(OnMultiPaste);
-            CircularPasteCommand = new RelayCommand(OnCircularPaste);
-            CutCommand = new RelayCommand(OnCut);
 
             AddCommand = new RelayCommand(OnAdd);
 
@@ -200,6 +204,11 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnScreenShot(object obj)
+        {
+            NotificationManager.Notify("ScreenShot", null);
         }
 
         private void OnMirror(object obj)
@@ -690,7 +699,7 @@ namespace Barnacle.ViewModels
         public ICommand RedoCommand { get; set; }
 
         public ICommand ReferenceCommand { get; set; }
-
+        public RelayCommand ScreenShotCommand { get; private set; }
         public ICommand ResetOriginCommand { get; set; }
 
         public bool RightTextAlignment
