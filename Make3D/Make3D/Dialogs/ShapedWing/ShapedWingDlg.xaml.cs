@@ -557,5 +557,10 @@ namespace Barnacle.Dialogs
 
             UpdateDisplay();
         }
+
+        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ProfileDisplayer.Refresh();
+        }
     }
 }

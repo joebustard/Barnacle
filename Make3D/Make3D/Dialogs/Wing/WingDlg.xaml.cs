@@ -642,7 +642,7 @@ namespace Barnacle.Dialogs
             {
                 double rootEdgeLength = 0;
                 List<Point> rootProfile = GetProfilePoints(RootGroup, SelectedRootAirfoil, rootLength, ref rootEdgeLength);
-
+                RootDisplay.ProfilePnts = rootProfile;
                 if (rootProfile.Count > 0)
                 {
                     if (TipGroup != "" && SelectedTipAirfoil != "")
@@ -654,7 +654,7 @@ namespace Barnacle.Dialogs
                             tl = rootLength;
                         }
                         List<Point> tipProfile = GetProfilePoints(TipGroup, SelectedTipAirfoil, tl, ref tipEdgeLength);
-
+                        TipDisplay.ProfilePnts = tipProfile;
                         if (tipProfile.Count > 0)
                         {
                             ClearShape();
@@ -1027,6 +1027,7 @@ namespace Barnacle.Dialogs
             EnableControlsForShape();
             GenerateWing();
             Redisplay();
+            RootDisplay.Refresh();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -1046,6 +1047,12 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
             GenerateWing();
             Redisplay();
+        }
+
+        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RootDisplay.Refresh();
+        TipDisplay.Refresh(); 
         }
     }
 }

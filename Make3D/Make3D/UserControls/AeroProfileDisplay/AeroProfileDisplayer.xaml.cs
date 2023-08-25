@@ -41,11 +41,14 @@ namespace Barnacle.UserControls
         public void Refresh()
         {
             profileCanvas.Children.Clear();
+            
             double border = 8;
+            double hc = profileCanvas.ActualHeight / 2.0;
             double h = (profileCanvas.ActualHeight - 2 * border);
             double w = (profileCanvas.ActualWidth - 2 * border);
-
-            double hc = h / 2.0;
+            double yscale = w/h;
+            double xscale = 1;
+            
 
             Line ln = new Line();
             ln.Stroke = Brushes.Blue;
@@ -61,18 +64,35 @@ namespace Barnacle.UserControls
             ln.Y2 = hc;
 
             profileCanvas.Children.Add(ln);
-
-            Polyline pln = new Polyline();
-            pln.Stroke = Brushes.Black;
-            pln.StrokeThickness = 2;
-            pln.Points = new PointCollection();
-            pln.Fill = Brushes.Red;
-            foreach (Point p in profilePnts)
+            if (profilePnts != null && profilePnts.Count > 0)
             {
-                Point n = new Point(p.X * w + border, ((1 - p.Y) * h) - hc);
-                pln.Points.Add(n);
+                Polyline pln = new Polyline();
+                pln.Stroke = Brushes.Black;
+                pln.StrokeThickness = 2;
+                pln.Points = new PointCollection();
+                pln.Fill = Brushes.Red;
+                double miny = double.MaxValue;
+                double maxy = double.MinValue;
+
+
+                foreach (Point p in profilePnts)
+                {
+                    miny = Math.Min(p.Y, miny);
+                    maxy = Math.Max(p.Y, maxy);
+                }
+                double ydiff = maxy - miny;
+                while (ydiff * yscale > 1.0)
+                {
+                    yscale = yscale * 0.9;
+                    xscale = xscale * 0.9;
+                }
+                foreach (Point p in profilePnts)
+                {
+                    Point n = new Point(p.X * w * xscale + border, (-p.Y * h * yscale) + hc);
+                    pln.Points.Add(n);
+                }
+                profileCanvas.Children.Add(pln);
             }
-            profileCanvas.Children.Add(pln);
         }
 
         public AeroProfileDisplayer()

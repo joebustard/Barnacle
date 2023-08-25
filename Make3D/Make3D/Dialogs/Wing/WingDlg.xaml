@@ -9,8 +9,9 @@
                           xmlns:local="clr-namespace:Barnacle.Dialogs"
                           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:uc="clr-namespace:Barnacle.UserControls"
                           Width="1000"
-                          Height="450">
+                          Height="450" SizeChanged="BaseModellerDialog_SizeChanged">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -24,6 +25,10 @@
         <Grid Grid.Column="1"
               Grid.Row="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
+                <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
                 <RowDefinition Height="30" />
@@ -113,7 +118,8 @@
                           VerticalAlignment="Center"
                           Width="100" />
             </StackPanel>
-            <StackPanel Grid.Row="4"
+            <uc:AeroProfileDisplayer Margin="80,0,0,0" x:Name="RootDisplay" Grid.Row="4" Grid.RowSpan="2" Width="280"/>
+            <StackPanel Grid.Row="6"
                         Orientation="Horizontal">
                 <Label Margin="4,0,0,0"
                        VerticalAlignment="Center"
@@ -141,7 +147,8 @@
                           VerticalAlignment="Center"
                           Width="100" />
             </StackPanel>
-            <StackPanel Grid.Row="5"
+            <uc:AeroProfileDisplayer Margin="80,0,0,0" x:Name="TipDisplay" Grid.Row="7" Grid.RowSpan="2" Width="280"/>
+            <StackPanel Grid.Row="9"
                         Orientation="Horizontal">
                 <Label Margin="4,0,0,0"
                        VerticalAlignment="Center"
@@ -154,7 +161,7 @@
                          Visibility="{Binding SweepControlsVisible}"
                          Width="30" />
             </StackPanel>
-            <StackPanel Grid.Row="6"
+            <StackPanel Grid.Row="10"
                         Orientation="Horizontal">
                 <Label Margin="4,0,0,0"
                        VerticalAlignment="Center"
