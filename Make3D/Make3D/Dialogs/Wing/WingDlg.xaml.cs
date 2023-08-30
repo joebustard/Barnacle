@@ -484,6 +484,12 @@ namespace Barnacle.Dialogs
             Close();
         }
 
+        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            RootDisplay.Refresh();
+            TipDisplay.Refresh();
+        }
+
         private void CloseMissingHalfOfWing(double rootEdgeLength, List<Point> rootProfile, double tipEdgeLength, double tl, List<Point> tipProfile, double startT, double endT)
         {
             Point p1 = GetProfileAt(rootProfile, rootEdgeLength, startT);
@@ -531,7 +537,7 @@ namespace Barnacle.Dialogs
                     }
                     Point elp = GetEllipsePoint(mainRad, sideRad, t);
                     triEdge.Add(elp);
-                    //  Point3D p = new Point3D(tX + elp.X + mainRad, tY, tZ + elp.Y);
+
                     Point3D p = new Point3D(elp.X, tY, elp.Y);
                     tipEdge.Add(p);
                 }
@@ -958,7 +964,6 @@ namespace Barnacle.Dialogs
             tipShapeNames.Add("Ellipse 2");
             tipShapeNames.Add("Ellipse 3");
             tipShapeNames.Add("Ellipse 4");
-
             NotifyPropertyChanged("TipShapeNames");
         }
 
@@ -1047,12 +1052,6 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
             GenerateWing();
             Redisplay();
-        }
-
-        private void BaseModellerDialog_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            RootDisplay.Refresh();
-        TipDisplay.Refresh(); 
         }
     }
 }

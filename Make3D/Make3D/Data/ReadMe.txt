@@ -36,6 +36,9 @@ Fixed
 
   Converting final segment of flexipath to a quadratic bezier always gave a cubic bezier instead. Fixed
 
+  Exporting/slicing a file that comprised references to models in other files could cause rotation issues. Fixed 
+  Text tool not updating combobox with the font name when text reopened. Fixed
+
 Changed
    Fonts on slicer dialog results enlarged.
 

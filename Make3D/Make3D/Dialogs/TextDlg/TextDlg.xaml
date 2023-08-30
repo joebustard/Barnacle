@@ -54,7 +54,7 @@
                 <ComboBox ItemsSource="{Binding SystemFonts}"
                           Margin="8,2,0,0"
                           SelectedItem="{Binding SelectedFont}"
-                          Width="200" />
+                          Width="200" x:Name="FontCombo"/>
             </StackPanel>
             <StackPanel Grid.Row="3"
                         Orientation="Horizontal">

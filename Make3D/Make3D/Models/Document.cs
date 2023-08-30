@@ -549,6 +549,7 @@ namespace Barnacle.Models
                     if (ProjectSettings.FloorAll)
                     {
                         clone.MoveToFloor();
+                        clone.Remesh();
                     }
                     exportList.Add(clone);
                 }

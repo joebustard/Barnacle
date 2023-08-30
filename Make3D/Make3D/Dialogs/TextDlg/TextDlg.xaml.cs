@@ -234,6 +234,8 @@ namespace Barnacle.Dialogs
 
             foreach (var f in fonts)
                 _systemFonts.Add(f);
+
+            NotifyPropertyChanged("SystemFonts");
         }
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
@@ -333,7 +335,15 @@ namespace Barnacle.Dialogs
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
-
+            NotifyPropertyChanged("SelectedFont");
+            for (int i = 0; i < SystemFonts.Count; i++)
+            {
+                if (SystemFonts[i].Source == SelectedFont)
+                {
+                    FontCombo.SelectedIndex = i;
+                    break;
+                }
+            }
             UpdateDisplay();
         }
     }

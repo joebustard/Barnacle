@@ -96,6 +96,7 @@ namespace Barnacle.Object3DLib
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
 
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
+            res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
             res.Color = this.Color;
             res.leftObject = this.leftObject.Clone(useIndices);
             res.rightObject = this.rightObject.Clone(useIndices);

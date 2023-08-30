@@ -159,13 +159,7 @@ namespace Barnacle.Object3DLib
         }
 
         public string PrimType { get => primType; set => primType = value; }
-        /*
-        public Point3DCollection RelativeObjectVertices
-        {
-            get { return relativeObjectVertices; }
-            set { relativeObjectVertices = value; }
-        }
-        */
+
 
         public List<P3D> RelativeObjectVertices
         {
@@ -470,7 +464,7 @@ namespace Barnacle.Object3DLib
 
                 default:
                     {
-                        //   obj.LoadObject(pth + obType+".txt");
+
                     }
                     break;
             }
@@ -509,8 +503,7 @@ namespace Barnacle.Object3DLib
             res.Description = this.Description;
             res.primType = this.primType;
             res.scale = new Scale3D(this.scale.X, this.scale.Y, this.scale.Z);
-            res.rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
-            res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
+
             res.Color = this.Color;
             res.Exportable = this.Exportable;
             if (res.PrimType != "Mesh")
@@ -519,12 +512,7 @@ namespace Barnacle.Object3DLib
             }
             else
             {
-                /*
-                foreach (Point3D p in this.relativeObjectVertices)
-                {
-                    res.relativeObjectVertices.Add(new Point3D(p.X, p.Y, p.Z));
-                }
-                */
+
                 foreach (P3D p in this.relativeObjectVertices)
                 {
                     P3D p3d = new P3D();
@@ -555,6 +543,9 @@ namespace Barnacle.Object3DLib
                 EditorParameter np = new EditorParameter(ep.Name, ep.Value);
                 res.EditorParameters.Parameters.Add(np);
             }
+            
+            res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
+            res.Rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
             res.Remesh();
             return res;
         }
@@ -563,7 +554,6 @@ namespace Barnacle.Object3DLib
         {
             var hullMaker = new ConvexHullCalculator();
 
-            //hullMaker.GeneratePoint3DHull(RelativeObjectVertices, TriangleIndices);
             Point3DCollection tmp = new Point3DCollection();
             PointUtils.P3DToPointCollection(relativeObjectVertices, tmp);
             hullMaker.GeneratePoint3DHull(tmp, TriangleIndices);
@@ -593,12 +583,11 @@ namespace Barnacle.Object3DLib
         {
             if (PrimType == "Mesh")
             {
-                // Point3DCollection tmp = new Point3DCollection();
-                // foreach (Point3D v in relativeObjectVertices)
+
                 List<P3D> tmp = new List<P3D>();
                 foreach (P3D v in relativeObjectVertices)
                 {
-                    //Point3D pn = new Point3D(-v.X, v.Y, v.Z);
+
                     P3D pn = new P3D(-v.X, v.Y, v.Z);
                     tmp.Add(pn);
                 }
@@ -665,99 +654,7 @@ namespace Barnacle.Object3DLib
             return true;
         }
 
-        /*
-        public void LoadObject(string v)
-        {
-            relativeObjectVertices.Clear();
-            absoluteObjectVertices.Clear();
-            Scale = new Scale3D();
-            Position = new Point3D();
-            triangleIndices.Clear();
-            normals.Clear();
-            if (File.Exists(v))
-            {
-                string[] lines = File.ReadAllLines(v);
-                foreach (string s in lines)
-                {
-                    string t = s.Trim();
-                    if (t != "")
-                    {
-                        if (!t.StartsWith("#)"))
-                        {
-                            if (t.StartsWith("v "))
-                            {
-                                t = t.Replace("  ", " ");
-                                string[] words = t.Split(' ');
-                                double x = Convert.ToDouble(words[1]);
-                                double y = Convert.ToDouble(words[2]);
-                                double z = Convert.ToDouble(words[3]);
-                               // Point3D p = new Point3D(x, y, z);
-                                P3D p = new P3D(x, y, z);
-                                relativeObjectVertices.Add(p);
-                            }
-
-                            if (t.StartsWith("vn "))
-                            {
-                                t = t.Replace("  ", " ");
-                                string[] words = t.Split(' ');
-                                double x = Convert.ToDouble(words[1]);
-                                double y = Convert.ToDouble(words[2]);
-                                double z = Convert.ToDouble(words[3]);
-                                Vector3D p = new Vector3D(x, y, z);
-                                normals.Add(p);
-                            }
-                            if (t.StartsWith("f "))
-                            {
-                                t = t.Replace("  ", " ");
-                                string[] words = t.Split(' ');
-                                if (words.GetLength(0) == 4)
-                                {
-                                    int ind = Convert.ToInt32(words[1]);
-                                    triangleIndices.Add(ind - 1);
-                                    ind = Convert.ToInt32(words[2]);
-                                    triangleIndices.Add(ind - 1);
-                                    ind = Convert.ToInt32(words[3]);
-                                    triangleIndices.Add(ind - 1);
-                                }
-                                else
-                                {
-                                    List<int> indices = new List<int>();
-
-                                    double cx = 0;
-                                    double cy = 0;
-                                    double cz = 0;
-                                    for (int j = 1; j < words.GetLength(0); j++)
-                                    {
-                                        int pi = Convert.ToInt32(words[j]);
-                                        indices.Add(pi);
-                                        cx += relativeObjectVertices[pi].X;
-                                        cy += relativeObjectVertices[pi].Y;
-                                        cz += relativeObjectVertices[pi].Z;
-                                    }
-                                    cx = cx / indices.Count;
-                                    cy = cy / indices.Count;
-                                    cz = cz / indices.Count;
-                                    //relativeObjectVertices.Add(new Point3D(cx, cy, cz));
-                                    relativeObjectVertices.Add(new P3D((float)cx, (float)cy, (float)cz));
-                                    int id = relativeObjectVertices.Count - 1;
-                                    for (int j = 0; j < indices.Count - 1; j++)
-                                    {
-                                        triangleIndices.Add(indices[j]);
-                                        triangleIndices.Add(indices[j + 1]);
-                                        triangleIndices.Add(id);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                Unitise();
-                RelativeToAbsolute();
-                surfaceMesh.Positions = absoluteObjectVertices;
-                surfaceMesh.TriangleIndices = triangleIndices;
-                surfaceMesh.Normals = normals;
-            }
-        }*/
+       
 
         public void MoveOriginToCentroid()
         {
@@ -768,7 +665,6 @@ namespace Barnacle.Object3DLib
             double dy = -(min.Y + (max.Y - min.Y) / 2.0);
             double dz = -(min.Z + (max.Z - min.Z) / 2.0);
 
-            //   Point3DCollection pn = new Point3DCollection();
             List<P3D> pn = new List<P3D>();
             for (int i = 0; i < RelativeObjectVertices.Count; i++)
             {
@@ -1126,79 +1022,7 @@ namespace Barnacle.Object3DLib
             relativeObjectVertices = tmp;
         }
 
-        /*
-                public void Unitise()
-                {
-                    // a quick function to convert the coordinates of an object read in, into a unit sized object
-                    // centered on 0,0,0
-                    Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
-                    Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
-                    foreach (Point3D pt in relativeObjectVertices)
-                    {
-                        if (pt.X < min.X)
-                        {
-                            min.X = pt.X;
-                        }
-                        if (pt.Y < min.Y)
-                        {
-                            min.Y = pt.Y;
-                        }
-                        if (pt.Z < min.Z)
-                        {
-                            min.Z = pt.Z;
-                        }
-
-                        if (pt.X > max.X)
-                        {
-                            max.X = pt.X;
-                        }
-                        if (pt.Y > max.Y)
-                        {
-                            max.Y = pt.Y;
-                        }
-                        if (pt.Z > max.Z)
-                        {
-                            max.Z = pt.Z;
-                        }
-                    }
-
-                    double scaleX = 1.0;
-                    double dx = max.X - min.X;
-                    if (dx > 0)
-                    {
-                        scaleX /= dx;
-                    }
-                    double scaleY = 1.0;
-                    double dY = max.Y - min.Y;
-                    if (dY > 0)
-                    {
-                        scaleY /= dY;
-                    }
-
-                    double scaleZ = 1.0;
-                    double dZ = max.Z - min.Z;
-                    if (dZ > 0)
-                    {
-                        scaleZ /= dZ;
-                    }
-
-                    for (int i = 0; i < relativeObjectVertices.Count; i++)
-                    {
-                        Point3D moved = new Point3D(relativeObjectVertices[i].X - min.X,
-                                                     relativeObjectVertices[i].Y - min.Y,
-                                                     relativeObjectVertices[i].Z - min.Z);
-                        moved.X *= scaleX;
-                        moved.Y *= scaleY;
-                        moved.Z *= scaleZ;
-
-                        moved.X -= 0.5;
-                        moved.Y -= 0.5;
-                        moved.Z -= 0.5;
-                        relativeObjectVertices[i] = moved;
-                    }
-                    Scale = new Scale3D(scaleX, scaleY, scaleZ);
-                }
-        */
+     
 
         public virtual XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
