@@ -67,6 +67,8 @@ namespace Barnacle.Dialogs
             PathEditor.DefaultImagePath = DefaultImagePath;
             PathEditor.ToolName = ToolName;
             PathEditor.HasPresets = true;
+            PathEditor.SupportsHoles = true;
+
 
             wallWidth = 2;
             textureDepth = 1;

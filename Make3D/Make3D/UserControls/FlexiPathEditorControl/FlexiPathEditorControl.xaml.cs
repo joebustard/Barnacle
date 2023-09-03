@@ -52,6 +52,7 @@ namespace Barnacle.UserControls
 
         private Point fixedPathMidPoint;
 
+        public bool SupportsHoles { get; internal set; }
         public bool HasPresets { get; internal set; }
 
         public Point FixedPathMidPoint
@@ -934,6 +935,7 @@ namespace Barnacle.UserControls
                     vm.FixedPolarGridCentre = fixedPolarGridCentre;
                     vm.FixedEndPath = fixedEndPath;
                     vm.OpenEndedPath = openEndedPath;
+                    vm.SupportsHoles = SupportsHoles;
                     vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     vm.ShowGrid = showGrid;
                     ShowGridStatus();

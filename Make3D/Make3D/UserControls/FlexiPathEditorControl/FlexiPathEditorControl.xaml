@@ -239,12 +239,29 @@
                     </Border>
                     <CheckBox
                         Grid.ColumnSpan="2"
-                        Margin="8,0,0,0"
+                        Margin="8,0,2,0"
                         VerticalAlignment="Center"
                         IsChecked="{Binding ShowOrtho}"
                         ToolTip="Show orthogononal guides and highlight orthogonal points">
                         Ortho Lines
                     </CheckBox>
+                    <ComboBox Grid.ColumnSpan="2" ItemsSource="{Binding CurveNames}" Visibility="{Binding ShowHoleControls}" ToolTip="Choose the outline or one of the holes"/>
+                    <Button
+                            x:Name="AddHoleButton"
+                            Style="{StaticResource SmallButton}"
+                            Command="{Binding HoleCommand}"
+                            CommandParameter="Add"
+                            ToolTip="Add a new Hole" Visibility="{Binding ShowHoleControls}">
+                        <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                    </Button>
+                    <Button
+                            x:Name="DeleteHoleButton"
+                            Style="{StaticResource SmallButton}"
+                            Command="{Binding HoleCommand}"
+                            CommandParameter="Delete"
+                            ToolTip="Add a new Hole" Visibility="{Binding ShowHoleControls}">
+                        <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                    </Button>
                 </UniformGrid>
             </Border>
             <ScrollViewer

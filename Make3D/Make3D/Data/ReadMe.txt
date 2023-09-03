@@ -1,4 +1,13 @@
-﻿v1.0.4
+﻿v1.0.5
+===========
+Added
+
+Fixed
+
+Changed
+Default Z Seam type to random
+
+v1.0.4
 ===========
 
 Added

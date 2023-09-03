@@ -15,7 +15,7 @@
             <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
             <Setter Property="TextBlock.TextAlignment" Value="Center" />
             <Setter Property="TextBlock.FontSize" Value="14" />
-            
+
             <Setter Property="MaxHeight" Value="75" />
             <Setter Property="Button.Effect">
                 <Setter.Value>
@@ -35,7 +35,7 @@
                             Background="White"
                             BorderBrush="#ccc"
                             BorderThickness="0,2,3,0"
-                           CornerRadius="2,0,0,2">
+                            CornerRadius="2,0,0,2">
                             <ContentPresenter
                                 x:Name="contentPresenter"
                                 Margin="{TemplateBinding Padding}"
@@ -49,7 +49,7 @@
                             <Trigger Property="Button.IsDefaulted" Value="True">
                                 <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
                             </Trigger>
-                        
+
 
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter Property="Background" Value="#FFF4F4F4" />
@@ -141,7 +141,7 @@
             <Setter Property="CornerRadius" Value="6,0,6,0" />
         </Style>
 
-        <!-- default button -->
+        <!--  default button  -->
         <Style BasedOn="{StaticResource RoundedButton}" TargetType="Button">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="Background" Value="{StaticResource ControlBackBrush}" />
