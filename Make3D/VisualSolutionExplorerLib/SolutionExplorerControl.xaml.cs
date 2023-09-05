@@ -170,7 +170,7 @@ namespace VisualSolutionExplorer
         {
             startPoint = e.GetPosition(null);
         }
-
+        private object selectedTreeObject;
         private void TreeView_SelectedItemChanged(object sender, System.Windows.RoutedPropertyChangedEventArgs<object> e)
         {
             TreeView item = sender as TreeView;
@@ -182,6 +182,12 @@ namespace VisualSolutionExplorer
                 {
                     ProjectFolderViewModel pfovm = ob as ProjectFolderViewModel;
                     pfovm.IsEditing = false;
+                }
+                if (ob is ProjectFileViewModel)
+                {
+                    ProjectFileViewModel pfivm = ob as ProjectFileViewModel;
+                   // pfivm.IsSelected = false;
+                    pfivm.IsEditing = false;
                 }
             }
             if (e.NewValue != null)
@@ -198,7 +204,20 @@ namespace VisualSolutionExplorer
                 {
                     ProjectFileViewModel pfivm = ob as ProjectFileViewModel;
                     pfivm.IsSelected = true;
+                    pfivm.IsEditing = false;
                 }
+            }
+           // selectedTreeObject = e.NewValue;
+        }
+
+        private void TextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+       
+            
+            if ( e.Key == Key.Enter)
+            {
+                viewModel.StopAllEditing();
+
             }
         }
     }

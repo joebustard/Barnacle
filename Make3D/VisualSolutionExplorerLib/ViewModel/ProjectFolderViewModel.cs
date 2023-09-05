@@ -199,6 +199,16 @@ namespace VisualSolutionExplorer
             }
         }
 
+        public override void StopAllEditing()
+        {
+            IsEditing = false;
+          
+           foreach (TreeViewItemViewModel it in Children)
+           {
+                it.StopAllEditing();
+           }
+        }
+
         public void NotifySolutionChanged(string e, string p1, string p2)
         {
             if (e == "RemoveFile")

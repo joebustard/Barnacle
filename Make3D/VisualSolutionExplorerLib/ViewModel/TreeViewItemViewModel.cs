@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 
 namespace VisualSolutionExplorer
@@ -126,6 +127,11 @@ namespace VisualSolutionExplorer
         {
             if (this.PropertyChanged != null)
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public  virtual void StopAllEditing()
+        {
+            
         }
     }
 }

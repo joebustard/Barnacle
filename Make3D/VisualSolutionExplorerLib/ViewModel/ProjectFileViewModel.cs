@@ -105,7 +105,10 @@ namespace VisualSolutionExplorer
                 return icon;
             }
         }
-
+        public override void StopAllEditing()
+        {
+            IsEditing = false;         
+        }
         public IconType IconToShow
         {
             get

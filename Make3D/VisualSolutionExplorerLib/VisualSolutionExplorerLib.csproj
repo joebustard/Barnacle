@@ -64,6 +64,7 @@
     <Compile Include="DataModel\ProjectFile.cs" />
     <Compile Include="DataModel\ProjectFolder.cs" />
     <Compile Include="DataModel\ProjectSettings.cs" />
+    <Compile Include="DataStyleSelector.cs" />
     <Compile Include="Dialogs\ConfirmName.xaml.cs">
       <DependentUpon>ConfirmName.xaml</DependentUpon>
     </Compile>

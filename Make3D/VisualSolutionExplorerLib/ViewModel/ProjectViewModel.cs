@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -185,6 +186,14 @@ namespace VisualSolutionExplorer
                 pfm.Sort();
             }
             NotifyPropertyChanged("Folders");
+        }
+
+        internal void StopAllEditing()
+        {
+            foreach (ProjectFolderViewModel pfm in folders)
+            {
+                pfm.StopAllEditing();
+            }
         }
     }
 }
