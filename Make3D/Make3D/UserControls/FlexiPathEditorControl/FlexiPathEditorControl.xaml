@@ -16,227 +16,243 @@
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="120" />
+                <RowDefinition Height="160" />
                 <RowDefinition />
                 <RowDefinition Height="54" />
             </Grid.RowDefinitions>
-            <Border Grid.Row="0" Style="{StaticResource ControlBorder}">
-                <UniformGrid
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="120" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Border Grid.Row="0" Style="{StaticResource ControlBorder}">
+                    <UniformGrid
                     VerticalAlignment="Top"
                     Columns="9"
                     Rows="3">
 
-                    <Button
+                        <Button
                         x:Name="ShowAllPointsButton"
                         Margin="4,4,4,4"
                         Command="{Binding ShowAllPointsCommand}"
                         Style="{StaticResource SmallButton}"
                         ToolTip="Show all the control points on the path">
-                        <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
-                    </Button>
+                            <Image Source="/Barnacle;component/Images/Buttons/SeeAllPoints.png" ToolTip="Show all the control points on the path" />
+                        </Button>
 
-                    <Border
+                        <Border
                         x:Name="PickBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="PickButton"
                             Command="{Binding PickCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Select a segment or point">
-                            <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/SelectSegment.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="AddSegBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="AddSegButton"
                             Command="{Binding AddSegmentCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Insert a straight segment">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/AddSegment.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="CNVDoubleSegBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="CNVSegButton"
                             Command="{Binding CNVDoubleSegCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Convert two selected straight segments into a Quadratic spline"
                             Visibility="{Binding CNVDoubleVisible}">
-                            <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/CNVDoubleSegment.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="AddBezierBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="AddBezierButton"
                             Command="{Binding AddCubicBezierCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Convert a straight segment to a cubic spline">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/AddSpline.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="AddQuadBezierBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="AddQuadBezierButton"
                             Command="{Binding AddQuadBezierCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Convert a straight segment to a quadratic spline">
-                            <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/AddQuadBezier.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="SplitQuadBezierBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="SplitQuadBezierButton"
                             Command="{Binding SplitQuadBezierCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Split a quadratic spline into two seperate curves">
-                            <Image Source="/Barnacle;component/Images/Buttons/SplitQuadBezier.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/SplitQuadBezier.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="DelSegBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="DelSegButton"
                             Command="{Binding DeleteSegmentCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Delete a segment">
-                            <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/DeleteSegment.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="MovePathBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="MovePathButton"
                             Command="{Binding MovePathCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Drag the entire path around without modifying it's shape">
-                            <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/MovePath.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="ResetPathBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="ResetPathButton"
                             Command="{Binding ResetPathCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Reset the entire path">
-                            <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
-                        </Button>
-                    </Border>
+                                <Image Source="/Barnacle;component/Images/Buttons/ResetPath.png" />
+                            </Button>
+                        </Border>
 
-                    <Border
+                        <Border
                         x:Name="GridBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="GridButton"
                             Command="{Binding GridCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Turn on/off grid and snapping">
-                            <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/ShowGrid.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="PolarGridBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="PolarGridButton"
                             Command="{Binding PolarGridCommand}"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Turn on/off polar grid and snapping">
-                            <Image Source="/Barnacle;component/Images/Buttons/ShowPolarGrid.png" />
-                        </Button>
-                    </Border>
-                    <Button
+                                <Image Source="/Barnacle;component/Images/Buttons/ShowPolarGrid.png" />
+                            </Button>
+                        </Border>
+                        <Button
                         x:Name="GridSettingsButton"
                         Style="{StaticResource SmallButton}"
                         Margin="2,2,2,2"
                         Command="{Binding GridSettingsCommand}"
                         ToolTip="Change the grid and line settings">
-                        <Image Source="/Barnacle;component/Images/Buttons/Settings.png" />
-                    </Button>
-                    <Border
+                            <Image Source="/Barnacle;component/Images/Buttons/Settings.png" />
+                        </Button>
+                        <Border
                         x:Name="ZoomOutBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="ZoomOutButton"
                             Command="{Binding ZoomCommand}"
                             CommandParameter="Out"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Zoom Out">
-                            <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/ZoomMinus.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="ZoomResetBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="ZoomResetButton"
                             Command="{Binding ZoomCommand}"
                             CommandParameter="Reset"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Zoom Reset">
-                            <Image Source="/Barnacle;component/Images/Buttons/Zoom.png" />
-                        </Button>
-                    </Border>
-                    <Border
+                                <Image Source="/Barnacle;component/Images/Buttons/Zoom.png" />
+                            </Button>
+                        </Border>
+                        <Border
                         x:Name="ZoomInBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="ZoomInButton"
                             Command="{Binding ZoomCommand}"
                             CommandParameter="In"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Zoom In">
-                            <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png" />
-                        </Button>
-                    </Border>
+                                <Image Source="/Barnacle;component/Images/Buttons/ZoomPlus.png" />
+                            </Button>
+                        </Border>
 
-                    <Button
+                        <Button
                         x:Name="ImageButton"
                         Margin="2,2,2,2"
                         Style="{StaticResource SmallButton}"
                         Command="{Binding LoadImageCommand}"
                         ToolTip="Set a background image to overlay the editing polygon on">
-                        <Image Source="/Barnacle;component/Images/Buttons/Image.png" />
-                    </Button>
-                    <Border
+                            <Image Source="/Barnacle;component/Images/Buttons/Image.png" />
+                        </Button>
+                        <Border
                         x:Name="OrthoLockBorder"
                         BorderThickness="4"
                         CornerRadius="2">
-                        <Button
+                            <Button
                             x:Name="OrthoLockButton"
                             Style="{StaticResource SmallButton}"
                             Command="{Binding OrthoLockCommand}"
                             ToolTip="If on then new segments will be orthogonally locked while they are being added. That is, either horizontal or vertical.">
-                            <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
-                        </Button>
-                    </Border>
+                                <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                            </Button>
+                        </Border>
+                        <CheckBox
+                        Grid.ColumnSpan="2"
+                        Margin="8,0,2,0"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding ShowOrtho}"
+                        ToolTip="Show orthogononal guides and highlight orthogonal points">
+                            Ortho Lines
+                        </CheckBox>
+                    </UniformGrid>
+                </Border>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
                     <CheckBox
                         Grid.ColumnSpan="2"
                         Margin="8,0,2,0"
@@ -245,7 +261,7 @@
                         ToolTip="Show orthogononal guides and highlight orthogonal points">
                         Ortho Lines
                     </CheckBox>
-                    <ComboBox Grid.ColumnSpan="2" ItemsSource="{Binding CurveNames}" Visibility="{Binding ShowHoleControls}" ToolTip="Choose the outline or one of the holes"/>
+                    <ComboBox Grid.ColumnSpan="2" ItemsSource="{Binding CurveNames}" Visibility="{Binding ShowHoleControls}" ToolTip="Choose the outline or one of the holes" />
                     <Button
                             x:Name="AddHoleButton"
                             Style="{StaticResource SmallButton}"
@@ -262,8 +278,8 @@
                             ToolTip="Add a new Hole" Visibility="{Binding ShowHoleControls}">
                         <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
                     </Button>
-                </UniformGrid>
-            </Border>
+                </StackPanel>
+            </Grid>
             <ScrollViewer
                 Grid.Row="1"
                 HorizontalScrollBarVisibility="Visible"

@@ -31,11 +31,17 @@ namespace Barnacle.RibbedFuselage.Models
             TopImageDetails = new ImageDetailsModel();
         }
 
+        private string description;
+
         public String Description
         {
-            get => default;
+            get { return description; }
             set
             {
+                if (description != value)
+                {
+                    description = value;
+                }
             }
         }
 
@@ -82,11 +88,14 @@ namespace Barnacle.RibbedFuselage.Models
             }
         }
 
+        private string name;
+
         public String Name
         {
-            get => default;
+            get { return name; }
             set
             {
+                name = value;
             }
         }
 
@@ -314,6 +323,7 @@ namespace Barnacle.RibbedFuselage.Models
             }
             return rib;
         }
+
         private void RenameMarkers()
         {
             foreach (MarkerModel mk in Markers)

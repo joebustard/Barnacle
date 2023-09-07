@@ -92,14 +92,14 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="templates\Blank.xaml">
+    <AdditionalFiles Include="templates\Blank.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
-    </None>
-    <None Include="templates\Blank.xaml.cs" />
-    <None Include="templates\Maker.cs" />
+    </AdditionalFiles>
+    <AdditionalFiles Include="templates\Blank.xaml.cs" />
+    <AdditionalFiles Include="templates\Maker.cs" />
     <None Include="templates\Node.cs" />
-    <None Include="templates\Parser.cs" />
+    <AdditionalFiles Include="templates\Parser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

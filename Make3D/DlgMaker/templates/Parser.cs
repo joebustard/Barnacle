@@ -1,40 +1,40 @@
-﻿private ExpressionNode ParseMake//TOOLNAMEFunction(string parentName)
+﻿private ExpressionNode ParseMakeTOOLNAMEFunction(string parentName)
 {
     ExpressionNode exp = null;
-    String label = "Make//TOOLNAME";
+    String label = "MakeTOOLNAME";
     String commaError = $"{label} expected ,";
     bool parsed = true;
     ExpressionCollection coll = new ExpressionCollection();
-int exprCount =//PARAMCOUNT;
+    int exprCount =//PARAMCOUNT;
 
     for (int i = 0; i < exprCount && parsed; i++)
     {
-    ExpressionNode paramExp = ParseExpressionNode(parentName);
-    if (paramExp != null)
-    {
-        if (i < exprCount - 1)
+        ExpressionNode paramExp = ParseExpressionNode(parentName);
+        if (paramExp != null)
         {
-            if (CheckForComma() == false)
+            if (i < exprCount - 1)
             {
-                ReportSyntaxError(commaError);
-                parsed = false;
+                if (CheckForComma() == false)
+                {
+                    ReportSyntaxError(commaError);
+                    parsed = false;
+                }
             }
+            coll.Add(paramExp);
         }
-        coll.Add(paramExp);
+        else
+        {
+            String expError = $"{label} error parsing parameter expression number {i + 1} ";
+            ReportSyntaxError(expError);
+            parsed = false;
+        }
     }
-    else
+    if (parsed && coll.Count() == exprCount)
     {
-        String expError = $"{label} error parsing parameter expression number {i + 1} ";
-        ReportSyntaxError(expError);
-        parsed = false;
-    }
-}
-if (parsed && coll.Count() == exprCount)
-{
-    Make//TOOLNAMENode mn = new Make//TOOLNAMENode(coll);
+        MakeTOOLNAMENode mn = new MakeTOOLNAMENode(coll);
         mn.IsInLibrary = tokeniser.InIncludeFile();
-    exp = mn;
-}
+        exp = mn;
+    }
 
-return exp;
+    return exp;
 }

@@ -298,7 +298,7 @@ namespace Barnacle.LineLib
             tly = double.MaxValue;
             brx = double.MinValue;
             bry = double.MinValue;
-          
+
             double pathLength = 0;
             for (int i = 0; i < pnts.Count; i++)
             {
@@ -326,8 +326,8 @@ namespace Barnacle.LineLib
                     bry = pnts[i].Y;
                 }
             }
-
         }
+
         public void DeleteLastSegment()
         {
             if (segs.Count > 0)
@@ -349,7 +349,6 @@ namespace Barnacle.LineLib
             Dimension res = new Dimension();
             res.Lower = double.MaxValue;
             res.Upper = double.MinValue;
-            
 
             var pnts = DisplayPointsF();
             if (autoclose)
@@ -365,25 +364,24 @@ namespace Barnacle.LineLib
                 do
                 {
                     more = false;
-                    if ( pnts.Count > 4)
+                    if (pnts.Count > 4)
                     {
                         double dx = Math.Abs(pnts[0].X - pnts[pnts.Count - 1].X);
                         double dy = Math.Abs(pnts[0].Y - pnts[pnts.Count - 1].Y);
-                        if ( dx <0.0001 && dy <0.0001)
+                        if (dx < 0.0001 && dy < 0.0001)
                         {
                             pnts.RemoveAt(pnts.Count - 1);
                             more = true;
                         }
                     }
                 } while (more);
-
             }
             CalculatePathBounds(pnts);
             double px = (x * pathWidth) + tlx;
             for (int i = 0; i < pnts.Count; i++)
             {
                 int j = i + 1;
-                if ( j == pnts.Count)
+                if (j == pnts.Count)
                 {
                     j = 0;
                 }
@@ -421,7 +419,6 @@ namespace Barnacle.LineLib
                         res.Lower = Math.Min(ey, res.Lower);
                         res.Upper = Math.Max(ey, res.Upper);
                     }
-                    
                 }
             }
             return res;
@@ -1170,41 +1167,44 @@ namespace Barnacle.LineLib
             {
                 DeselectAll();
             }
-            double minDistance = double.MaxValue;
-            FlexiSegment closest = null;
-            foreach (FlexiSegment sg in segs)
+            if (segs != null && segs.Count > 0)
             {
-                double d = sg.DistToPoint(position, flexiPoints);
-                if (d < selectionDistance)
+                double minDistance = double.MaxValue;
+                FlexiSegment closest = null;
+                foreach (FlexiSegment sg in segs)
                 {
-                    if (d < minDistance)
+                    double d = sg.DistToPoint(position, flexiPoints);
+                    if (d < selectionDistance)
                     {
-                        minDistance = d;
-                        closest = sg;
-                        found = true;
+                        if (d < minDistance)
+                        {
+                            minDistance = d;
+                            closest = sg;
+                            found = true;
+                        }
                     }
                 }
-            }
 
-            // should the imaginary segment fro the last point back to the first be included
-            if (closed)
-            {
-                LineSegment ls = new LineSegment(flexiPoints.Count - 1, 0);
-                double d = ls.DistToPoint(position, flexiPoints);
-                if (d < selectionDistance)
+                // should the imaginary segment fro the last point back to the first be included
+                if (closed)
                 {
-                    if (d < minDistance)
+                    LineSegment ls = new LineSegment(flexiPoints.Count - 1, 0);
+                    double d = ls.DistToPoint(position, flexiPoints);
+                    if (d < selectionDistance)
                     {
-                        minDistance = d;
-                        closest = ls;
-                        found = true;
+                        if (d < minDistance)
+                        {
+                            minDistance = d;
+                            closest = ls;
+                            found = true;
+                        }
                     }
                 }
-            }
-            if (closest != null)
-            {
-                closest.Select(flexiPoints);
-                closest.Selected = true;
+                if (closest != null)
+                {
+                    closest.Select(flexiPoints);
+                    closest.Selected = true;
+                }
             }
             return found;
         }

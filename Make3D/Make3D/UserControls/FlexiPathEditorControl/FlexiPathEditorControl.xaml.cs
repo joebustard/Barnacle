@@ -243,12 +243,15 @@ namespace Barnacle.UserControls
 
         private void DisplayLines()
         {
-            List<System.Windows.Point> points = vm.DisplayPoints;
-            if (points != null && points.Count >= 2)
+            for (int l = 0; l < vm.NumberOfPaths; l++)
             {
-                for (int i = 0; i < points.Count - 1; i++)
+                List<System.Windows.Point> points = vm.GetDisplayPointsForPath(l);
+                if (points != null && points.Count >= 2)
                 {
-                    DrawLine(i, i + 1, points);
+                    for (int i = 0; i < points.Count - 1; i++)
+                    {
+                        DrawLine(i, i + 1, points);
+                    }
                 }
             }
         }

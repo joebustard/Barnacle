@@ -322,7 +322,6 @@
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
     <Compile Include="Models\ZipUtils.cs" />
-    <Compile Include="Dialogs\RibbedFuselage\Models\EditorSettingsModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\FuselageModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\ImageDetailsModel.cs" />
     <Compile Include="UserControls\AeroProfileDisplay\AeroProfileDisplayer.xaml.cs">
@@ -339,6 +338,7 @@
     <Compile Include="UserControls\FlexiPathEditorControl\GridSettingsDlg.xaml.cs">
       <DependentUpon>GridSettingsDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\FlexiPathEditorControl\PathManager.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PenSetting.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PointGrid.cs" />
     <Compile Include="UserControls\FlexiPathEditorControl\PolarGrid.cs" />

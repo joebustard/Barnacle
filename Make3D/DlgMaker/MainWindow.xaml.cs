@@ -1307,9 +1307,9 @@ public String <PName>ToolTip
                     while (!fin.EndOfStream)
                     {
                         String l = fin.ReadLine();
-                        l = l.Replace(@"//TOOLNAME", ToolName);
+                        l = l.Replace(@"TOOLNAME", ToolName);
                         l = l.Replace(@"//FIELDS", fields);
-                        l = l.Replace(@"//CONSTRUCTORPARAMS", constructorParams);
+                        l = l.Replace(@"/*CONSTRUCTORPARAMS*/", constructorParams);
                         l = l.Replace(@"//FIELDCOPY", fieldCopy);
 
                         fout.WriteLine(l);
@@ -1336,7 +1336,7 @@ public String <PName>ToolTip
                     while (!fin.EndOfStream)
                     {
                         String l = fin.ReadLine();
-                        l = l.Replace("//TOOLNAME", ToolName);
+                        l = l.Replace("TOOLNAME", ToolName);
                         l = l.Replace(@"//PARAMCOUNT", paramCount);
 
                         fout.WriteLine(l);
