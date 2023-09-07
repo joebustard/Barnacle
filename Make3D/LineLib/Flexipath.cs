@@ -710,6 +710,7 @@ namespace Barnacle.LineLib
                                     valid = GetCoord(blks[i + 1], ref x, ref y);
                                     FlexiPoint fp = new FlexiPoint(x, y);
                                     pnts.Add(fp);
+                                    Start = fp;
                                     i++;
                                 }
                                 else

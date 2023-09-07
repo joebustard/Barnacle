@@ -24,7 +24,7 @@ namespace Barnacle.UserControls
         private List<FlexiPath> allPaths;
         private BitmapImage backgroundImage;
         private bool canCNVDouble;
-
+        private string selectedCurveName;
         private ObservableCollection<string> curveNames;
         private string defaultImagePath;
         private String editedPresetText;
@@ -70,6 +70,36 @@ namespace Barnacle.UserControls
         private bool snap;
         private bool supportsHoles;
         private string toolName;
+        public string SelectedCurveName
+        {
+            get { return selectedCurveName; }
+            set
+            {
+                if (value != selectedCurveName)
+                {
+                    selectedCurveName = value;
+                    NotifyPropertyChanged();
+                    SwitchPath(selectedCurveName);
+                    NotifyPropertyChanged("Points");
+                }
+            }
+        }
+
+        private void SwitchPath(string name)
+        {
+            ClearPointSelections();
+            for (int i = 0; i < curveNames.Count; i++)
+            {
+                if (curveNames[i] == name)
+                {
+                    selectedFlexiPath = allPaths[i];
+                    selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
+                    selectedPoint = -1;
+                    SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                    break;
+                }
+            }
+        }
 
         public FlexiPathEditorControlViewModel()
         {
@@ -105,6 +135,7 @@ namespace Barnacle.UserControls
             selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
             curveNames = new ObservableCollection<string>();
             curveNames.Add("Outside");
+            selectedCurveName = "Outside";
 
             selectedPoint = -1;
             SelectionMode = SelectionModeType.StartPoint;
@@ -334,7 +365,8 @@ namespace Barnacle.UserControls
                             fep.SetBaseSegment(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
                             gridSettings.SetPolarCentre(fixedPolarGridCentre.X, fixedPolarGridCentre.Y);
                         }
-                        selectedFlexiPath = fep;
+                        allPaths[0] = fep;
+                        selectedFlexiPath = allPaths[0];
                         selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
                         SelectionMode = SelectionModeType.SelectSegmentAtPoint;
                         ShowPresets = Visibility.Hidden;
@@ -796,8 +828,32 @@ namespace Barnacle.UserControls
             bool found;
             position = new System.Windows.Point(ToMMX(position.X), ToMMY(position.Y));
             found = selectedFlexiPath.SelectAtPoint(position, !shift);
+            if (!found && allPaths.Count > 1)
+            {
+                for (int i = 0; i < allPaths.Count; i++)
+                {
+                    if (allPaths[i] != selectedFlexiPath)
+                    {
+                        found = allPaths[i].SelectAtPoint(position, !shift);
+                        if (found)
+                        {
+                            SelectedClickedCurve(i);
+                        }
+                    }
+                }
+            }
             CanCNVDouble = selectedFlexiPath.HasTwoConsecutiveLineSegmentsSelected();
             return found;
+        }
+
+        private void SelectedClickedCurve(int i)
+        {
+            selectedFlexiPath = allPaths[i];
+            selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
+            selectedPoint = -1;
+            selectedCurveName = curveNames[i];
+            NotifyPropertyChanged("SelectedCurveName");
+            NotifyPropertyChanged("Points");
         }
 
         public void SetOpenEnded(bool open)
