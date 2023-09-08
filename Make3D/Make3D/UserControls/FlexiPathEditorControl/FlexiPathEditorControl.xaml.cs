@@ -241,6 +241,30 @@ namespace Barnacle.UserControls
             return vm?.DisplayPoints;
         }
 
+        public List<Point> GetOutsidePoints()
+        {
+            if (vm != null)
+            {
+                return vm.DisplayOutsidePoints;
+            }
+            else
+            {
+                return new List<Point>();
+            }
+        }
+
+        public List<Point> GetPathPoints(int i)
+        {
+            if (vm != null)
+            {
+                return vm.GetDisplayPointsForPath(i);
+            }
+            else
+            {
+                return new List<Point>();
+            }
+        }
+
         private void DisplayLines()
         {
             for (int l = 0; l < vm.NumberOfPaths; l++)
@@ -926,6 +950,21 @@ namespace Barnacle.UserControls
             }
         }
 
+        public int NumberOfPaths
+        {
+            get
+            {
+                if (vm != null)
+                {
+                    return vm.NumberOfPaths;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -1040,6 +1079,18 @@ namespace Barnacle.UserControls
             }
             else
                 return new Point(0, 0);
+        }
+
+        internal bool HasHoles()
+        {
+            if (vm != null)
+            {
+                return vm.NumberOfPaths > 1;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

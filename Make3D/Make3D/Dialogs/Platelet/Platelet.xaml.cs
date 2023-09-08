@@ -69,7 +69,6 @@ namespace Barnacle.Dialogs
             PathEditor.HasPresets = true;
             PathEditor.SupportsHoles = true;
 
-
             wallWidth = 2;
             textureDepth = 1;
             solidShape = true;
@@ -796,6 +795,36 @@ namespace Barnacle.Dialogs
             Faces.Add(c2);
         }
 
+        private void CreateInverseSideFace(List<System.Windows.Point> pnts, int i, bool autoclose = true)
+        {
+            int v = i + 1;
+
+            if (v == pnts.Count)
+            {
+                if (autoclose)
+                {
+                    v = 0;
+                }
+                else
+                {
+                    // dont process the final point if caller doesn't want it
+                    return;
+                }
+            }
+
+            int c0 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, 0.0);
+            int c1 = AddVerticeOctTree(pnts[i].X, pnts[i].Y, plateWidth);
+            int c2 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, plateWidth);
+            int c3 = AddVerticeOctTree(pnts[v].X, pnts[v].Y, 0.0);
+            Faces.Add(c0);
+            Faces.Add(c1);
+            Faces.Add(c2);
+
+            Faces.Add(c0);
+            Faces.Add(c2);
+            Faces.Add(c3);
+        }
+
         private void CreateTheBack(List<Point> tmp)
         {
             // triangulate the basic polygon
@@ -836,7 +865,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateHollow()
         {
-            List<System.Windows.Point> points = displayPoints;
+            List<System.Windows.Point> points = PathEditor.GetOutsidePoints(); ;
             List<System.Drawing.PointF> outerPolygon = new List<System.Drawing.PointF>();
             List<System.Drawing.PointF> innerPolygon = new List<System.Drawing.PointF>();
             ClearShape();
@@ -979,7 +1008,7 @@ namespace Barnacle.Dialogs
 
         private void GenerateBox()
         {
-            List<System.Windows.Point> points = displayPoints;
+            List<System.Windows.Point> points = PathEditor.GetOutsidePoints();
             List<System.Drawing.PointF> outerPolygon = new List<System.Drawing.PointF>();
             List<System.Drawing.PointF> innerPolygon = new List<System.Drawing.PointF>();
             ClearShape();
@@ -1170,10 +1199,111 @@ namespace Barnacle.Dialogs
 
         private void GenerateSolid()
         {
-            ClearShape();
-            if (displayPoints?.Count > 3)
+            if (PathEditor.HasHoles())
             {
-                List<System.Windows.Point> points = displayPoints;
+                GenerateSoldWithHoles();
+            }
+            else
+            {
+                GenerateSoldWithOutHoles();
+            }
+        }
+
+        private void GenerateSoldWithHoles()
+        {
+            ClearShape();
+            List<System.Windows.Point> points = PathEditor.GetOutsidePoints();
+            if (points != null && points.Count > 3)
+            {
+                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                double top = 0;
+                for (int i = 0; i < points.Count; i++)
+                {
+                    if (points[i].Y > top)
+                    {
+                        top = points[i].Y;
+                    }
+                }
+                for (int i = 0; i < points.Count - 1; i++)
+                {
+                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                }
+                double lx, rx, ty, by;
+                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+
+                OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
+          new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
+
+                // generate side triangles so original points are already in list
+                //    Point[] clk = OrderClockwise(tmp.ToArray());
+
+                // Point[] clk = tmp.ToArray();
+                //  tmp = clk.ToList();
+                for (int i = 0; i < tmp.Count; i++)
+                {
+                    CreateSideFace(tmp, i);
+                }
+
+                // Now create the side faces for the holes
+                for (int ip = 1; ip < PathEditor.NumberOfPaths; ip++)
+                {
+                    List<System.Windows.Point> holePoints = PathEditor.GetPathPoints(ip);
+                    tmp.Clear();
+                    for (int i = 0; i < holePoints.Count; i++)
+                    {
+                        if (holePoints[i].Y > top)
+                        {
+                            top = holePoints[i].Y;
+                        }
+                    }
+                    for (int i = 0; i < holePoints.Count - 1; i++)
+                    {
+                        tmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
+                    }
+
+                    for (int i = 0; i < tmp.Count; i++)
+                    {
+                        CreateInverseSideFace(tmp, i);
+                    }
+                }
+
+                /*
+                // triangulate the basic polygon
+                TriangulationPolygon ply = new TriangulationPolygon();
+                List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                foreach (System.Windows.Point p in tmp)
+                {
+                    pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
+                }
+                ply.Points = pf.ToArray();
+                List<Triangle> tris = ply.Triangulate();
+                foreach (Triangle t in tris)
+                {
+                    int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
+                    int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
+                    int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, plateWidth);
+                    c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, plateWidth);
+                    c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, plateWidth);
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+                }
+                */
+                CentreVertices();
+            }
+        }
+
+        private void GenerateSoldWithOutHoles()
+        {
+            ClearShape();
+            List<System.Windows.Point> points = PathEditor.GetOutsidePoints();
+            if (points != null && points.Count > 3)
+            {
                 List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                 double top = 0;
                 for (int i = 0; i < points.Count; i++)
@@ -1239,7 +1369,7 @@ namespace Barnacle.Dialogs
                 PathCentroid = PathEditor.Centroid();
                 if (displayPoints?.Count > 3)
                 {
-                    List<System.Windows.Point> points = displayPoints;
+                    List<System.Windows.Point> points = PathEditor.GetOutsidePoints();
 
                     List<System.Windows.Point> tmp = new List<System.Windows.Point>();
                     InvertVertical(points, tmp);
