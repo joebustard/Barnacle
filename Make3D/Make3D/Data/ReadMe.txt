@@ -3,9 +3,10 @@
 Added
 
 Fixed
+	Prevent preset names being loaded twice in flexipathcontrol 
 
 Changed
-Default Z Seam type to random
+	Default Z Seam type to random
 
 v1.0.4
 ===========

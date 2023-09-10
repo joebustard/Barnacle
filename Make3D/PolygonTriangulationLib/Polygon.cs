@@ -229,7 +229,7 @@ namespace PolygonTriangulationLib
         // For a nice, detailed explanation of this method,
         // see Ian Garton's Web page:
         // http://www-cgrl.cs.mcgill.ca/~godfried/teaching/cg-projects/97/Ian/cutting_ears.html
-        public List<Triangle> Triangulate()
+        public List<Triangle> Triangulate( bool allowDuplicatePoints = false)
         {
             List<Triangle> triangles = new List<Triangle>();
             if (Points != null)
@@ -250,7 +250,7 @@ namespace PolygonTriangulationLib
                 while (pgon.Points.Length > 3 && more)
                 {
                     // Remove an ear from the polygon.
-                    more = pgon.RemoveEar(triangles);
+                    more = pgon.RemoveEar(triangles,allowDuplicatePoints);
                 }
                 if (pgon.Points.Length == 3)
                 {
@@ -277,7 +277,7 @@ namespace PolygonTriangulationLib
         }
 
         // Return true if the three points form an ear.
-        private static bool FormsEar(PointF[] points, int A, int B, int C)
+        private static bool FormsEar(PointF[] points, int A, int B, int C, bool allowDuplicatePoints)
         {
             // See if the angle ABC is concave.
             if (GetAngle(
@@ -300,11 +300,42 @@ namespace PolygonTriangulationLib
             {
                 if ((i != A) && (i != B) && (i != C))
                 {
-                    if (triangle.PointInPolygon(points[i].X, points[i].Y))
+                    if (!allowDuplicatePoints)
                     {
-                        // This point is in the triangle
-                        // do this is not an ear.
-                        return false;
+                        if (triangle.PointInPolygon(points[i].X, points[i].Y))
+                        {
+                            // This point is in the triangle
+                            // do this is not an ear.
+                            return false;
+                        }
+                        
+                    }
+                    else
+                    {
+                        bool dup = false;
+                        if (points[i].X == points[A].X && points[i].Y == points[A].Y)
+                        {
+                            dup = true;
+                        }
+
+                        if (points[i].X == points[B].X && points[i].Y == points[B].Y)
+                        {
+                            dup = true;
+                        }
+
+                        if (points[i].X == points[C].X && points[i].Y == points[C].Y)
+                        {
+                            dup = true;
+                        }
+                        if (!dup)
+                        {
+                            if (triangle.PointInPolygon(points[i].X, points[i].Y))
+                            {
+                                // This point is in the triangle
+                                // do this is not an ear.
+                                return false;
+                            }
+                        }
                     }
                 }
             }
@@ -563,7 +594,7 @@ namespace PolygonTriangulationLib
         }
 
         // Find the indexes of three points that form an "ear."
-        private void FindEar(ref int A, ref int B, ref int C)
+        private void FindEar(ref int A, ref int B, ref int C, bool allowDuplicatePoints)
         {
             int num_points = Points.Length;
 
@@ -572,7 +603,7 @@ namespace PolygonTriangulationLib
                 B = (A + 1) % num_points;
                 C = (B + 1) % num_points;
 
-                if (FormsEar(Points, A, B, C)) return;
+                if (FormsEar(Points, A, B, C, allowDuplicatePoints)) return;
             }
 
             // We should never get here because there should
@@ -618,12 +649,12 @@ namespace PolygonTriangulationLib
 
         // Remove an ear from the polygon and
         // add it to the triangles array.
-        private bool RemoveEar(List<Triangle> triangles)
+        private bool RemoveEar(List<Triangle> triangles, bool allowDuplicatePoints)
         {
             bool removed = false;
             // Find an ear.
             int A = 0, B = 0, C = 0;
-            FindEar(ref A, ref B, ref C);
+            FindEar(ref A, ref B, ref C, allowDuplicatePoints);
             if ((A >= 0 && A < Points.Length) &&
                  (B >= 0 && B < Points.Length) &&
                  (C >= 0 && C < Points.Length))

@@ -1200,6 +1200,7 @@ namespace Barnacle.UserControls
             // one in the installed data and the other user defined.
             try
             {
+                presets.Clear();
                 string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
                 LoadPresetFile(dataPath, false);
 

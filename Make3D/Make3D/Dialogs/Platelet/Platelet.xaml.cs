@@ -1215,7 +1215,7 @@ namespace Barnacle.Dialogs
             List<System.Windows.Point> points = PathEditor.GetOutsidePoints();
             if (points != null && points.Count > 3)
             {
-                List<System.Windows.Point> tmp = new List<System.Windows.Point>();
+                List<System.Windows.Point> outLineTmp = new List<System.Windows.Point>();
                 double top = 0;
                 for (int i = 0; i < points.Count; i++)
                 {
@@ -1226,10 +1226,10 @@ namespace Barnacle.Dialogs
                 }
                 for (int i = 0; i < points.Count - 1; i++)
                 {
-                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                    outLineTmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                 }
                 double lx, rx, ty, by;
-                CalculateExtents(tmp, out lx, out rx, out ty, out by);
+                CalculateExtents(outLineTmp, out lx, out rx, out ty, out by);
 
                 OctTree octTree = CreateOctree(new Point3D(-lx, -by, -1.5 * (plateWidth + textureDepth)),
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
@@ -1239,16 +1239,17 @@ namespace Barnacle.Dialogs
 
                 // Point[] clk = tmp.ToArray();
                 //  tmp = clk.ToList();
-                for (int i = 0; i < tmp.Count; i++)
+                for (int i = 0; i < outLineTmp.Count; i++)
                 {
-                    CreateSideFace(tmp, i);
+                    CreateSideFace(outLineTmp, i);
                 }
-
+                List<List<Point>> allHoles = new List<List<Point>>();
                 // Now create the side faces for the holes
                 for (int ip = 1; ip < PathEditor.NumberOfPaths; ip++)
                 {
+                    List<Point> holeTmp = new List<Point>();
                     List<System.Windows.Point> holePoints = PathEditor.GetPathPoints(ip);
-                    tmp.Clear();
+
                     for (int i = 0; i < holePoints.Count; i++)
                     {
                         if (holePoints[i].Y > top)
@@ -1258,27 +1259,49 @@ namespace Barnacle.Dialogs
                     }
                     for (int i = 0; i < holePoints.Count - 1; i++)
                     {
-                        tmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
+                        holeTmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
                     }
 
-                    for (int i = 0; i < tmp.Count; i++)
+                    for (int i = 0; i < holeTmp.Count; i++)
                     {
-                        CreateInverseSideFace(tmp, i);
+                        CreateInverseSideFace(holeTmp, i);
                     }
+                    allHoles.Add(holeTmp);
+                }
+                ReverseDirection(allHoles);
+                int outerPointIndex;
+                int holePointIndex;
+                while (allHoles.Count > 0)
+                {
+                    outerPointIndex = -1;
+                    holePointIndex = -1;
+                    int closestHole = FindClosestHole(outLineTmp, allHoles, out outerPointIndex, out holePointIndex);
+                    if ( closestHole != -1)
+                    {
+                        outLineTmp = JoinHoleToOutline(outLineTmp, allHoles[closestHole], outerPointIndex, holePointIndex);
+                        allHoles.RemoveAt(closestHole);
+                        
+                        }
                 }
 
-                /*
+                for (int i = 0; i < outLineTmp.Count; i++)
+                {
+                    CreateSideFace(outLineTmp, i);
+                }
+                
                 // triangulate the basic polygon
                 TriangulationPolygon ply = new TriangulationPolygon();
                 List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
-                foreach (System.Windows.Point p in tmp)
+                foreach (System.Windows.Point p in outLineTmp)
                 {
                     pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Y));
                 }
                 ply.Points = pf.ToArray();
-                List<Triangle> tris = ply.Triangulate();
+                List<Triangle> tris = ply.Triangulate(true);
+                //for ( int ti = 0; ti < tris.Count; ti++)
                 foreach (Triangle t in tris)
                 {
+                   // Triangle t = tris[ti];
                     int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
                     int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
                     int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
@@ -1293,9 +1316,74 @@ namespace Barnacle.Dialogs
                     Faces.Add(c1);
                     Faces.Add(c2);
                 }
-                */
+                
                 CentreVertices();
             }
+        }
+
+        private List<Point> JoinHoleToOutline(List<Point> outLineTmp, List<Point> points, int outerPointIndex, int holePointIndex)
+        {
+            List<Point> combined = new List<Point>();
+           for ( int si = 0; si <= outerPointIndex; si ++)
+           {
+                combined.Add(outLineTmp[si]);
+           }
+
+            for (int hi = holePointIndex; hi < points.Count; hi++)
+            {
+                combined.Add(points[hi]);
+            }
+            for (int hi = 0; hi <= holePointIndex; hi++)
+            {
+                combined.Add(points[hi]);
+            }
+            for (int si = outerPointIndex; si < outLineTmp.Count; si++)
+            {
+                combined.Add(outLineTmp[si]);
+            }
+            return combined;
+        }
+
+        private void ReverseDirection(List<List<Point>> allHoles)
+        {
+            for (int i = 0; i < allHoles.Count; i++)
+            {
+                List<Point> tmp = new List<Point>();
+                foreach (Point p in allHoles[i])
+                {
+                    tmp.Insert(0, p);
+                }
+                allHoles[i] = tmp;
+            }
+        }
+
+        private int FindClosestHole(List<Point> outLine, List<List<Point>> allHoles, out int op, out int hp)
+        {
+            op = -1;
+            hp = -1;
+            int closestHole = -1;
+            double closestDist = double.MaxValue;
+            for (int edgeIndex = 0; edgeIndex< outLine.Count; edgeIndex ++)
+            {
+                Point edgePoint = outLine[edgeIndex];
+                for (int holeIndex = 0; holeIndex < allHoles.Count; holeIndex++)
+                {
+                    for (int j = 0; j < allHoles[holeIndex].Count; j++)
+                    {
+                        double dx = allHoles[holeIndex][j].X - edgePoint.X;
+                        double dy = allHoles[holeIndex][j].Y - edgePoint.Y;
+                        double dist = Math.Sqrt((dx * dx) + (dy * dy));
+                        if ( dist < closestDist)
+                        {
+                            closestDist = dist;
+                            closestHole = holeIndex;
+                            op = edgeIndex;
+                            hp = j;
+                        }
+                    }
+                }
+            }
+            return closestHole;
         }
 
         private void GenerateSoldWithOutHoles()
