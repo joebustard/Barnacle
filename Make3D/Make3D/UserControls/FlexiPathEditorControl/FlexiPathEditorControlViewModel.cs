@@ -2,6 +2,7 @@
 
 using Barnacle.ViewModels;
 using Microsoft.Win32;
+using PolygonLibrary;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1013,27 +1014,71 @@ namespace Barnacle.UserControls
             }
             else
             {
+                bool okToSet = true;
                 if (orthoLocked)
                 {
-                    selectedFlexiPath.AddOrthoLockedLine(new System.Windows.Point(position.X, position.Y));
-                    moving = false;
+                    position = selectedFlexiPath.OrthoLockPosition(position);
+                    if (editingHole)
+                    {
+                        okToSet = PointInOutline(position);
+                    }
+                    if (okToSet)
+                    {
+                        selectedFlexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
+                        moving = false;
+                        SelectionMode = SelectionModeType.AppendPoint;
+                        selectedPoint = selectedFlexiPathControlPoints.Count - 1;
+                        PointsDirty = true;
+                    }
                 }
                 else
                 {
-                    selectedFlexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
-                    moving = true;
+                    if (editingHole)
+                    {
+                        okToSet = PointInOutline(position);
+                    }
+                    if (okToSet)
+                    {
+
+
+                        selectedFlexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
+                        moving = true;
+                        SelectionMode = SelectionModeType.AppendPoint;
+                        selectedPoint = selectedFlexiPathControlPoints.Count - 1;
+                        PointsDirty = true;
+
+                    }
                 }
-                SelectionMode = SelectionModeType.AppendPoint;
-                selectedPoint = selectedFlexiPathControlPoints.Count - 1;
-                PointsDirty = true;
             }
         }
+
+        private bool PointInOutline(Point position)
+        {
+            bool inside = false;
+            ConvexPolygon2D path = new ConvexPolygon2D(allPaths[0].DisplayPoints().ToArray());
+            ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
+            if (interceptor.IsPointInsidePoly(position, path))
+            {
+                inside = true;
+            }
+            return inside;
+        }
+
+       
 
         private void AddStartPointToPoly(System.Windows.Point position)
         {
             position = SnapPositionToMM(position);
-            selectedFlexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
-            SelectionMode = SelectionModeType.AppendPoint;
+            bool okToSet = true;
+            if ( editingHole )
+            {
+                okToSet = PointInOutline(position);
+            }
+            if (okToSet)
+            {
+                selectedFlexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
+                SelectionMode = SelectionModeType.AppendPoint;
+            }
         }
 
         private void ClearPointSelections()
@@ -1266,16 +1311,23 @@ namespace Barnacle.UserControls
                 if (selectedPoint != -1 && moving)
                 {
                     System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
+                    bool okToSet = true;
+                    if ( editingHole)
+                    {
+                        okToSet = PointInOutline(positionSnappedToMM);
+                    }
+                    if (okToSet)
+                    {
+                        selectedFlexiPathControlPoints[selectedPoint].X = position.X;
+                        selectedFlexiPathControlPoints[selectedPoint].Y = position.Y;
 
-                    selectedFlexiPathControlPoints[selectedPoint].X = position.X;
-                    selectedFlexiPathControlPoints[selectedPoint].Y = position.Y;
+                        selectedFlexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
 
-                    selectedFlexiPath.SetPointPos(selectedPoint, positionSnappedToMM);
-
-                    PointsDirty = true;
-                    updateRequired = true;
-                    selectedPoint = -1;
-                    NotifyPropertyChanged("Points");
+                        PointsDirty = true;
+                        updateRequired = true;
+                        selectedPoint = -1;
+                        NotifyPropertyChanged("Points");
+                    }
                 }
             }
             PathText = selectedFlexiPath.ToPath(absolutePaths);
@@ -1302,9 +1354,17 @@ namespace Barnacle.UserControls
                     {
                         // polyPoints[selectedPoint].X = position.X;
                         // polyPoints[selectedPoint].Y = position.Y;
-                        selectedFlexiPath.SetPointPos(selectedPoint, snappedPos);
-                        PathText = selectedFlexiPath.ToPath(absolutePaths);
-                        updateRequired = true;
+                        bool okToSet = true;
+                        if ( editingHole)
+                        {
+                            okToSet = PointInOutline(snappedPos);
+                        }
+                        if (okToSet)
+                        {
+                            selectedFlexiPath.SetPointPos(selectedPoint, snappedPos);
+                            PathText = selectedFlexiPath.ToPath(absolutePaths);
+                            updateRequired = true;
+                        }
                     }
                     else
                     {
@@ -1423,6 +1483,7 @@ namespace Barnacle.UserControls
                             NotifyPropertyChanged("SelectedCurveName");
                             selectedPoint = -1;
                             SelectionMode = SelectionModeType.StartPoint;
+                            editingHole = true;
                         }
                     }
                     break;
@@ -1455,6 +1516,7 @@ namespace Barnacle.UserControls
                             selectedCurveName = curveNames[0];
                             NotifyPropertyChanged("CurveNames");
                             NotifyPropertyChanged("SelectedCurveName");
+                            editingHole = false;
                         }
                     }
                     break;
@@ -1643,6 +1705,7 @@ namespace Barnacle.UserControls
             selectedCurveName = curveNames[i];
             NotifyPropertyChanged("SelectedCurveName");
             NotifyPropertyChanged("Points");
+            editingHole = i > 0;
         }
 
         private System.Windows.Point SnapPositionToMM(System.Windows.Point pos)
@@ -1658,7 +1721,7 @@ namespace Barnacle.UserControls
             }
             return result;
         }
-
+        private bool editingHole = false;
         private void SwitchPath(string name)
         {
             ClearPointSelections();
@@ -1670,6 +1733,7 @@ namespace Barnacle.UserControls
                     selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
                     selectedPoint = -1;
                     SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                    editingHole = i > 0;
                     break;
                 }
             }

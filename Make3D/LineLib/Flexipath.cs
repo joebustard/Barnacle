@@ -85,22 +85,22 @@ namespace Barnacle.LineLib
             segs.Add(ls);
         }
 
-        public void AddOrthoLockedLine(System.Windows.Point p1)
+        public void AddOrthoLockedLine(System.Windows.Point position)
         {
             int i = flexiPoints.Count - 1;
             double oldX = flexiPoints[i].X;
             double oldY = flexiPoints[i].Y;
-            double dx = Math.Abs(p1.X - oldX);
-            double dy = Math.Abs(p1.Y - oldY);
+            double dx = Math.Abs(position.X - oldX);
+            double dy = Math.Abs(position.Y - oldY);
             if (dx >= dy)
             {
-                p1.Y = oldY;
+                position.Y = oldY;
             }
             else
             {
-                p1.X = oldX;
+                position.X = oldX;
             }
-            flexiPoints.Add(new FlexiPoint(p1, i + 1));
+            flexiPoints.Add(new FlexiPoint(position, i + 1));
             LineSegment ls = new LineSegment(i, i + 1);
             segs.Add(ls);
         }
@@ -929,6 +929,25 @@ namespace Barnacle.LineLib
                 segs.AddRange(segments);
             }
             return valid;
+        }
+
+        public System.Windows.Point OrthoLockPosition(System.Windows.Point position)
+        {
+            int i = flexiPoints.Count - 1;
+            double oldX = flexiPoints[i].X;
+            double oldY = flexiPoints[i].Y;
+            double dx = Math.Abs(position.X - oldX);
+            double dy = Math.Abs(position.Y - oldY);
+            if (dx >= dy)
+            {
+                position.Y = oldY;
+            }
+            else
+            {
+                position.X = oldX;
+            }
+
+            return position;
         }
 
         public int FindSegmentThatEndsOnPointIndex(int selectedPoint)
