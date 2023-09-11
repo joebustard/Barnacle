@@ -120,9 +120,9 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public override void MoveTo(Point position)
+        public override Point MoveTo(Point position)
         {
-            // FixedEndFlexi paths can't move, because they are fixed !
+            return new Point(0, 0);
         }
     }
 }

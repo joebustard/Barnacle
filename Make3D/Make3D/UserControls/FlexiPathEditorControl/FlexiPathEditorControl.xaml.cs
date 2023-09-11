@@ -576,7 +576,7 @@ namespace Barnacle.UserControls
             if (vm.MouseUp(e, position))
             {
                 UpdateDisplay();
-                //  NotifyPathPointsChanged();
+                NotifyPathPointsChanged();
             }
         }
 

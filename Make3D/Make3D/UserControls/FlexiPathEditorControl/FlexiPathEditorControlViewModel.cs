@@ -1039,14 +1039,11 @@ namespace Barnacle.UserControls
                     }
                     if (okToSet)
                     {
-
-
                         selectedFlexiPath.AddLine(new System.Windows.Point(position.X, position.Y));
                         moving = true;
                         SelectionMode = SelectionModeType.AppendPoint;
                         selectedPoint = selectedFlexiPathControlPoints.Count - 1;
                         PointsDirty = true;
-
                     }
                 }
             }
@@ -1064,13 +1061,11 @@ namespace Barnacle.UserControls
             return inside;
         }
 
-       
-
         private void AddStartPointToPoly(System.Windows.Point position)
         {
             position = SnapPositionToMM(position);
             bool okToSet = true;
-            if ( editingHole )
+            if (editingHole)
             {
                 okToSet = PointInOutline(position);
             }
@@ -1294,7 +1289,15 @@ namespace Barnacle.UserControls
 
         private void MoveWholePath(System.Windows.Point position)
         {
-            selectedFlexiPath.MoveTo(position);
+            System.Windows.Point offset = selectedFlexiPath.MoveTo(position);
+            if (!editingHole)
+            {
+                for (int i = 1; i < allPaths.Count; i++)
+                {
+                    allPaths[i].MoveByOffset(offset);
+                    PointsDirty = true;
+                }
+            }
         }
 
         private bool NormalMouseUp(Point position, bool updateRequired)
@@ -1312,7 +1315,7 @@ namespace Barnacle.UserControls
                 {
                     System.Windows.Point positionSnappedToMM = SnapPositionToMM(position);
                     bool okToSet = true;
-                    if ( editingHole)
+                    if (editingHole)
                     {
                         okToSet = PointInOutline(positionSnappedToMM);
                     }
@@ -1355,7 +1358,7 @@ namespace Barnacle.UserControls
                         // polyPoints[selectedPoint].X = position.X;
                         // polyPoints[selectedPoint].Y = position.Y;
                         bool okToSet = true;
-                        if ( editingHole)
+                        if (editingHole)
                         {
                             okToSet = PointInOutline(snappedPos);
                         }
@@ -1721,7 +1724,9 @@ namespace Barnacle.UserControls
             }
             return result;
         }
+
         private bool editingHole = false;
+
         private void SwitchPath(string name)
         {
             ClearPointSelections();

@@ -1160,7 +1160,16 @@ namespace Barnacle.LineLib
             return found;
         }
 
-        public virtual void MoveTo(System.Windows.Point position)
+        public void MoveByOffset(System.Windows.Point offset)
+        {
+            foreach (FlexiPoint p in flexiPoints)
+            {
+                p.X += offset.X;
+                p.Y += offset.Y;
+            }
+        }
+
+        public virtual System.Windows.Point MoveTo(System.Windows.Point position)
         {
             double cx = 0;
             double cy = 0;
@@ -1178,6 +1187,7 @@ namespace Barnacle.LineLib
                 p.X += dx;
                 p.Y += dy;
             }
+            return new System.Windows.Point(dx, dy);
         }
 
         public bool SelectAtPoint(System.Windows.Point position, bool clear = true)
