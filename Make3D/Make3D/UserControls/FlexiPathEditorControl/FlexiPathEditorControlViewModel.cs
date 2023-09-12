@@ -1295,9 +1295,10 @@ namespace Barnacle.UserControls
                 for (int i = 1; i < allPaths.Count; i++)
                 {
                     allPaths[i].MoveByOffset(offset);
-                    PointsDirty = true;
+                   
                 }
             }
+            PointsDirty = true;
         }
 
         private bool NormalMouseUp(Point position, bool updateRequired)
@@ -1308,6 +1309,7 @@ namespace Barnacle.UserControls
                 MoveWholePath(position);
                 updateRequired = true;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                
             }
             else
             {
