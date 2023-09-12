@@ -121,6 +121,7 @@
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ImagePlaque\ImagePlaqueDlg.xaml.cs" />
     <Compile Include="Dialogs\LibrarySnapShot\LibrarySnapShotDlg.xaml.cs">
       <DependentUpon>LibrarySnapShotDlg.xaml</DependentUpon>
     </Compile>
@@ -500,6 +501,10 @@
     <Page Include="Dialogs\DecimatorSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ImagePlaque\ImagePlaqueDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\LibrarySnapShot\LibrarySnapShotDlg.xaml">
       <SubType>Designer</SubType>

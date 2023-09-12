@@ -59,6 +59,10 @@ namespace Barnacle.Models
                     res = new FiletDlg();
                     break;
 
+                case "ImagePlaque":
+                    res = new ImagePlaqueDlg();
+                    break;
+
                 case "ParabolicDish":
                     res = new ParabolicDishDlg();
                     break;
