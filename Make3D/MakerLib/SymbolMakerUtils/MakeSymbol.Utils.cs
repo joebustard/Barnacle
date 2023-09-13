@@ -16,7 +16,7 @@ namespace MakerLib
             DrawingContext drawingContext = drawingVisual.RenderOpen();
 
             FormattedText ft = new FormattedText(v, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                                   new Typeface(fontName), 100, System.Windows.Media.Brushes.Black);
+                                   new Typeface(fontName), 120, System.Windows.Media.Brushes.Black);
             ft.SetFontStretch(FontStretches.Normal);
             Size sz = new Size(ft.Width, ft.Height);
 

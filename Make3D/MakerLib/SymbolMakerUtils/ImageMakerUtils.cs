@@ -172,10 +172,24 @@ namespace MakerLib
                     for (int pz = 0; pz < imageHeight; pz++)
                     {
                         visited[px, py, pz] = false;
+                    }
+                }
+            }
 
-                        if (White(px, py, pz, mock3D))
+            QuickMap(mock3D, distVector, visited, imageWidth, imageHeight, 2);
+
+            for (int px = 0; px < imageWidth; px++)
+            {
+                for (int py = 0; py < numberOfLayers; py++)
+                {
+                    for (int pz = 0; pz < imageHeight; pz++)
+                    {
+                        if (visited[px, py, pz] == false)
                         {
-                            GenerateSeeds(mock3D, queue, px, py, pz, false);
+                            if (White(px, py, pz, mock3D))
+                            {
+                                GenerateSeeds(mock3D, queue, px, py, pz, false);
+                            }
                         }
                     }
                 }
@@ -205,9 +219,22 @@ namespace MakerLib
                     for (int pz = 0; pz < imageHeight; pz++)
                     {
                         visited[px, py, pz] = false;
-                        if (Black(px, py, pz, mock3D))
+                    }
+                }
+            }
+            QuickMap(mock3D, distVector, visited, imageWidth, imageHeight, 2);
+            for (int px = 0; px < imageWidth; px++)
+            {
+                for (int py = 0; py < numberOfLayers; py++)
+                {
+                    for (int pz = 0; pz < imageHeight; pz++)
+                    {
+                        if (visited[px, py, pz] == false)
                         {
-                            GenerateSeeds(mock3D, queue, px, py, pz, true);
+                            if (Black(px, py, pz, mock3D))
+                            {
+                                GenerateSeeds(mock3D, queue, px, py, pz, true);
+                            }
                         }
                     }
                 }
@@ -306,6 +333,108 @@ namespace MakerLib
                 Faces.Add(p0);
                 Faces.Add(p1);
                 Faces.Add(p2);
+            }
+        }
+
+        private int minDim = 100;
+        private int cellSize = 10;
+
+        private void QuickMap(Mock3DBitmap mock3D, DistVector[,,] distVector, bool[,,] visited, int imageWidth, int imageHeight, int layer)
+        {
+            if (imageWidth > minDim && imageHeight > minDim)
+            {
+                byte empty = 0;
+                byte white = 1;
+                byte black = 2;
+                int mapWidth = (imageWidth / cellSize) + 1;
+                int mapHeight = (imageHeight / cellSize) + 1;
+                byte[,] map = new byte[mapWidth, mapHeight];
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < mapHeight; j++)
+                    {
+                        map[i, j] = empty;
+                    }
+                }
+
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < mapHeight; j++)
+                    {
+                        int tlx = (i * cellSize) - 1;
+                        int tly = (j * cellSize) - 1;
+                        int brx = tlx + cellSize + 2;
+                        int bry = tly + cellSize + 2;
+                        bool done = false;
+                        for (int x = tlx; x <= brx && !done; x++)
+                        {
+                            for (int y = tly; y <= bry && !done; y++)
+                            {
+                                //     for ( int z = 0; z< numberOfLayers && !done; z++)
+                                int z = layer;
+                                {
+                                    if (White(x, layer, y, mock3D))
+                                    {
+                                        map[i, j] = (byte)(map[i, j] | white);
+                                    }
+                                    else
+                                    {
+                                        if (Black(x, layer, y, mock3D))
+                                        {
+                                            map[i, j] = (byte)(map[i, j] | black);
+                                        }
+                                    }
+                                    if (map[i, j] == 3)
+                                    {
+                                        done = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                for (int i = 0; i < mapWidth; i++)
+                {
+                    for (int j = 0; j < mapHeight; j++)
+                    {
+                        int tlx = (i * cellSize);
+                        int tly = (j * cellSize);
+                        int brx = tlx + cellSize;
+                        int bry = tly + cellSize;
+
+                        for (int x = tlx; x <= brx; x++)
+                        {
+                            for (int y = tly; y <= bry; y++)
+                            {
+                                //  for (int z = 0; z < numberOfLayers && !done; z++)
+                                int z = layer;
+                                {
+                                    if (map[i, j] == white)
+                                    {
+                                        visited[x, y, z] = true;
+                                        distVector[x, layer, y] = new DistVector();
+                                        distVector[x, layer, y].dx = 1000;
+                                        distVector[x, layer, y].dy = 1000;
+                                        distVector[x, layer, y].dz = 1000;
+                                        distVector[x, layer, y].inside = false;
+                                        distVector[x, layer, y].dv = 100000;
+                                    }
+                                    else if (map[i, j] == black)
+                                    {
+                                        visited[x, y, z] = true;
+                                        distVector[x, layer, y] = new DistVector();
+                                        distVector[x, layer, y].dx = -1000;
+                                        distVector[x, layer, y].dy = -1000;
+                                        distVector[x, layer, y].dz = -1000;
+                                        distVector[x, layer, y].inside = true;
+                                        distVector[x, layer, y].dv = -100000;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
