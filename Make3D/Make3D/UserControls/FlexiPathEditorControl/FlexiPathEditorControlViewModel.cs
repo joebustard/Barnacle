@@ -1241,6 +1241,7 @@ namespace Barnacle.UserControls
             try
             {
                 presets.Clear();
+                PresetNames.Clear();
                 string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
                 LoadPresetFile(dataPath, false);
 

@@ -16,7 +16,7 @@
     <Border Style="{StaticResource ControlBorder}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="160" />
+                <RowDefinition Height="150" />
                 <RowDefinition />
                 <RowDefinition Height="54" />
             </Grid.RowDefinitions>
@@ -261,7 +261,7 @@
                             Command="{Binding HoleCommand}"
                             CommandParameter="Add"
                             ToolTip="Add a new Hole" Visibility="{Binding ShowHoleControls}" Margin="4,0,0,0">
-                        <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                        <Image Source="/Barnacle;component/Images/Buttons/AddHole.png" />
                     </Button>
                     <Button
                             x:Name="DeleteHoleButton"
@@ -269,7 +269,7 @@
                             Command="{Binding HoleCommand}"
                             CommandParameter="Delete"
                             ToolTip="Add a new Hole" Visibility="{Binding ShowHoleControls}" Margin="4,0,0,0">
-                        <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                        <Image Source="/Barnacle;component/Images/Buttons/RemoveHole.png" />
                     </Button>
                 </StackPanel>
             </Grid>

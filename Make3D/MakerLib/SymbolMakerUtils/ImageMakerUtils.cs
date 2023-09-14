@@ -270,7 +270,7 @@ namespace MakerLib
                     }
                 }
             }
-            //  DumpLayerImages(wrb, distVector);
+            DumpLayerImages(wrb, distVector);
             DateTime start = DateTime.Now;
             List<Triangle> triangles = new List<Triangle>();
             triangles.Clear();
@@ -309,7 +309,7 @@ namespace MakerLib
                                 foreach (LerpBox subBox2 in divs2)
                                 {
                                     subBox2.SetMask();
-                                    if (subBox2.CornerMask != 0 && subBox2.CornerMask != 255)
+                                if (subBox2.CornerMask != 0 && subBox2.CornerMask != 255)
                                     {
                                         gc = subBox2.ToGridCell();
 
@@ -370,16 +370,16 @@ namespace MakerLib
                         {
                             for (int y = tly; y <= bry && !done; y++)
                             {
-                                //     for ( int z = 0; z< numberOfLayers && !done; z++)
-                                int z = layer;
+                                for ( int z = 0; z< numberOfLayers ; z++)
+                                //int z = layer;
                                 {
-                                    if (White(x, layer, y, mock3D))
+                                    if (White(x, z, y, mock3D))
                                     {
                                         map[i, j] = (byte)(map[i, j] | white);
                                     }
                                     else
                                     {
-                                        if (Black(x, layer, y, mock3D))
+                                        if (Black(x, z, y, mock3D))
                                         {
                                             map[i, j] = (byte)(map[i, j] | black);
                                         }
@@ -407,28 +407,33 @@ namespace MakerLib
                         {
                             for (int y = tly; y <= bry; y++)
                             {
-                                //  for (int z = 0; z < numberOfLayers && !done; z++)
-                                int z = layer;
+                                if (x < imageWidth && y < imageHeight)
                                 {
-                                    if (map[i, j] == white)
+                                    for (int z = 0; z < numberOfLayers ; z++)
+                                  
                                     {
-                                        visited[x, y, z] = true;
-                                        distVector[x, layer, y] = new DistVector();
-                                        distVector[x, layer, y].dx = 1000;
-                                        distVector[x, layer, y].dy = 1000;
-                                        distVector[x, layer, y].dz = 1000;
-                                        distVector[x, layer, y].inside = false;
-                                        distVector[x, layer, y].dv = 100000;
-                                    }
-                                    else if (map[i, j] == black)
-                                    {
-                                        visited[x, y, z] = true;
-                                        distVector[x, layer, y] = new DistVector();
-                                        distVector[x, layer, y].dx = -1000;
-                                        distVector[x, layer, y].dy = -1000;
-                                        distVector[x, layer, y].dz = -1000;
-                                        distVector[x, layer, y].inside = true;
-                                        distVector[x, layer, y].dv = -100000;
+                                        if (map[i, j] == white)
+                                        {
+                                            visited[x, z, y] = true;
+                                            
+                                                        distVector[x, z, y] = new DistVector();
+                                                        distVector[x, z, y].dx = 1000;
+                                                        distVector[x, z, y].dy = 1000;
+                                                        distVector[x, z, y].dz = 1000;
+                                                        distVector[x, z, y].inside = false;
+                                                        distVector[x, z, y].dv = 100000;
+                                                  
+                                        }
+                                        else if (map[i, j] == black)
+                                        {
+                                            visited[x, z, y] = true;
+                                            distVector[x, z, y] = new DistVector();
+                                            distVector[x, z, y].dx = -1000;
+                                            distVector[x, z, y].dy = -1000;
+                                            distVector[x, z, y].dz = -1000;
+                                            distVector[x, z, y].inside = true;
+                                            distVector[x, z, y].dv = -100000;
+                                        }
                                     }
                                 }
                             }

@@ -1231,6 +1231,8 @@
     <Resource Include="Images\Buttons\Centre.png" />
     <Resource Include="Images\Buttons\Centres.png" />
     <Resource Include="Images\Buttons\Camera.png" />
+    <Resource Include="Images\Buttons\AddHole.png" />
+    <Resource Include="Images\Buttons\RemoveHole.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
