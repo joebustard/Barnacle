@@ -1296,7 +1296,6 @@ namespace Barnacle.UserControls
                 for (int i = 1; i < allPaths.Count; i++)
                 {
                     allPaths[i].MoveByOffset(offset);
-                   
                 }
             }
             PointsDirty = true;
@@ -1310,7 +1309,6 @@ namespace Barnacle.UserControls
                 MoveWholePath(position);
                 updateRequired = true;
                 SelectionMode = SelectionModeType.SelectSegmentAtPoint;
-                
             }
             else
             {
@@ -1603,19 +1601,45 @@ namespace Barnacle.UserControls
 
         private void OnResetPath(object obj)
         {
-            selectedFlexiPath.Clear();
-            SelectedPoint = -1;
-            if (!fixedEndPath)
+            bool clear = true;
+            if (selectedFlexiPath == allPaths[0] && allPaths.Count > 1)
             {
-                SelectionMode = SelectionModeType.StartPoint;
+                MessageBoxResult res = MessageBox.Show("Resetting outline will remove all holes too. Do you want to continue?", "Warning", MessageBoxButton.YesNo);
+                if (res == MessageBoxResult.No)
+                {
+                    clear = false;
+                }
+                else
+                {
+                    ClearAllHoles();
+                }
             }
-            else
+            if (clear)
             {
-                SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                selectedFlexiPath.Clear();
+                SelectedPoint = -1;
+                if (!fixedEndPath)
+                {
+                    SelectionMode = SelectionModeType.StartPoint;
+                }
+                else
+                {
+                    SelectionMode = SelectionModeType.SelectSegmentAtPoint;
+                }
+                PathText = "";
+                PointsDirty = true;
+                NotifyPropertyChanged("Points");
             }
-            PathText = "";
-            PointsDirty = true;
-            NotifyPropertyChanged("Points");
+        }
+
+        private void ClearAllHoles()
+        {
+            while (allPaths.Count > 1)
+            {
+                curveNames.RemoveAt(allPaths.Count - 1);
+                allPaths.RemoveAt(allPaths.Count - 1);
+            }
+            NotifyPropertyChanged("CurveNames");
         }
 
         private void OnSavePreset(object obj)

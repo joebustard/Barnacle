@@ -1276,19 +1276,18 @@ namespace Barnacle.Dialogs
                     outerPointIndex = -1;
                     holePointIndex = -1;
                     int closestHole = FindClosestHole(outLineTmp, allHoles, out outerPointIndex, out holePointIndex);
-                    if ( closestHole != -1)
+                    if (closestHole != -1)
                     {
                         outLineTmp = JoinHoleToOutline(outLineTmp, allHoles[closestHole], outerPointIndex, holePointIndex);
                         allHoles.RemoveAt(closestHole);
-                        
-                        }
+                    }
                 }
 
                 for (int i = 0; i < outLineTmp.Count; i++)
                 {
                     CreateSideFace(outLineTmp, i);
                 }
-                
+
                 // triangulate the basic polygon
                 TriangulationPolygon ply = new TriangulationPolygon();
                 List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
@@ -1301,7 +1300,7 @@ namespace Barnacle.Dialogs
                 //for ( int ti = 0; ti < tris.Count; ti++)
                 foreach (Triangle t in tris)
                 {
-                   // Triangle t = tris[ti];
+                    // Triangle t = tris[ti];
                     int c0 = AddVerticeOctTree(t.Points[0].X, t.Points[0].Y, 0.0);
                     int c1 = AddVerticeOctTree(t.Points[1].X, t.Points[1].Y, 0.0);
                     int c2 = AddVerticeOctTree(t.Points[2].X, t.Points[2].Y, 0.0);
@@ -1316,7 +1315,7 @@ namespace Barnacle.Dialogs
                     Faces.Add(c1);
                     Faces.Add(c2);
                 }
-                
+
                 CentreVertices();
             }
         }
@@ -1324,10 +1323,10 @@ namespace Barnacle.Dialogs
         private List<Point> JoinHoleToOutline(List<Point> outLineTmp, List<Point> points, int outerPointIndex, int holePointIndex)
         {
             List<Point> combined = new List<Point>();
-           for ( int si = 0; si <= outerPointIndex; si ++)
-           {
+            for (int si = 0; si <= outerPointIndex; si++)
+            {
                 combined.Add(outLineTmp[si]);
-           }
+            }
 
             for (int hi = holePointIndex; hi < points.Count; hi++)
             {
@@ -1363,7 +1362,7 @@ namespace Barnacle.Dialogs
             hp = -1;
             int closestHole = -1;
             double closestDist = double.MaxValue;
-            for (int edgeIndex = 0; edgeIndex< outLine.Count; edgeIndex ++)
+            for (int edgeIndex = 0; edgeIndex < outLine.Count; edgeIndex++)
             {
                 Point edgePoint = outLine[edgeIndex];
                 for (int holeIndex = 0; holeIndex < allHoles.Count; holeIndex++)
@@ -1373,7 +1372,7 @@ namespace Barnacle.Dialogs
                         double dx = allHoles[holeIndex][j].X - edgePoint.X;
                         double dy = allHoles[holeIndex][j].Y - edgePoint.Y;
                         double dist = Math.Sqrt((dx * dx) + (dy * dy));
-                        if ( dist < closestDist)
+                        if (dist < closestDist)
                         {
                             closestDist = dist;
                             closestHole = holeIndex;
@@ -1721,7 +1720,7 @@ namespace Barnacle.Dialogs
         private void PathPointsChanged(List<System.Windows.Point> pnts)
         {
             displayPoints = pnts;
-            if (PathEditor.PathClosed)
+            if (PathEditor.PathClosed || pnts.Count == 0)
             {
                 GenerateShape();
                 Redisplay();
