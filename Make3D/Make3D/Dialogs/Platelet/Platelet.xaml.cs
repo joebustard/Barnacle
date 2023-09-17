@@ -1235,10 +1235,7 @@ namespace Barnacle.Dialogs
           new Point3D(+rx, +ty, 1.5 * (plateWidth + textureDepth)));
 
                 // generate side triangles so original points are already in list
-                //    Point[] clk = OrderClockwise(tmp.ToArray());
 
-                // Point[] clk = tmp.ToArray();
-                //  tmp = clk.ToList();
                 for (int i = 0; i < outLineTmp.Count; i++)
                 {
                     CreateSideFace(outLineTmp, i);
@@ -1271,7 +1268,8 @@ namespace Barnacle.Dialogs
                 ReverseDirection(allHoles);
                 int outerPointIndex;
                 int holePointIndex;
-                while (allHoles.Count > 0)
+                
+                while (allHoles.Count > 0  )
                 {
                     outerPointIndex = -1;
                     holePointIndex = -1;
@@ -1280,6 +1278,10 @@ namespace Barnacle.Dialogs
                     {
                         outLineTmp = JoinHoleToOutline(outLineTmp, allHoles[closestHole], outerPointIndex, holePointIndex);
                         allHoles.RemoveAt(closestHole);
+                    }
+                    else
+                    {
+                        allHoles.RemoveAt(0);
                     }
                 }
 
@@ -1693,11 +1695,14 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.LoadImage(imageName);
             }
-
-            String s = EditorParameters.Get("Path");
-            if (s != "")
+            int numPaths = EditorParameters.GetInt("NumPath",0);
+            for (int i = 0; i < numPaths; i++)
             {
-                PathEditor.FromString(s);
+                String s = EditorParameters.Get("Path_"+i.ToString());
+                if (s != "")
+                {
+                    PathEditor.SetPath(s, i);
+                }
             }
             WallWidth = EditorParameters.GetDouble("WallWidth", 2);
             PlateWidth = EditorParameters.GetDouble("PlateWidth", 10);
@@ -1965,7 +1970,12 @@ namespace Barnacle.Dialogs
         private void SaveEditorParmeters()
         {
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
-            EditorParameters.Set("Path", PathEditor.PathString);
+            EditorParameters.Set("NumPath", PathEditor.NumberOfPaths);
+            
+            for ( int i=0; i <  PathEditor.NumberOfPaths; i ++)
+            {
+                EditorParameters.Set("Path_"+i.ToString(), PathEditor.GetPathText(i));
+            }
             EditorParameters.Set("WallWidth", WallWidth.ToString());
             EditorParameters.Set("PlateWidth", PlateWidth.ToString());
             EditorParameters.Set("TextureDepth", TextureDepth.ToString());
@@ -2028,7 +2038,7 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             loaded = false;
-            //   LoadTextureNames();
+
             LoadEditorParameters();
             PathEditor.DefaultImagePath = DefaultImagePath;
             PathEditor.OpenEndedPath = false;

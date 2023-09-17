@@ -106,6 +106,8 @@ namespace Barnacle.UserControls
             fixedPathMidPoint = new Point(20, 50);
             fixedPathEndPoint = new Point(0, 90);
             fixedPolarGridCentre = new Point(0, 50);
+            initialPaths = new List<string>();
+
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
@@ -239,6 +241,11 @@ namespace Barnacle.UserControls
         public List<Point> GetPoints()
         {
             return vm?.DisplayPoints;
+        }
+
+        public String GetPathText(int index)
+        {
+            return vm?.GetPathText(index);
         }
 
         public List<Point> GetOutsidePoints()
@@ -1019,6 +1026,13 @@ namespace Barnacle.UserControls
                             vm.ShowSavePresets = Visibility.Visible;
                         }
                     }
+                    if (initialPaths.Count > 0)
+                    {
+                        for (int i = 0; i < initialPaths.Count; i++)
+                        {
+                            vm.SetPath(initialPaths[i], i);
+                        }
+                    }
                 }
             }
             UpdateDisplay();
@@ -1090,6 +1104,19 @@ namespace Barnacle.UserControls
             else
             {
                 return false;
+            }
+        }
+        private List<string> initialPaths;
+        internal void SetPath(string s, int i)
+        {
+            if (vm != null)
+            {
+                vm.SetPath(s, i);
+            }
+            else
+            {
+                initialPaths.Add(s);
+
             }
         }
     }

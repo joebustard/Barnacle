@@ -27,13 +27,13 @@ namespace Barnacle.UserControls
         private ObservableCollection<string> curveNames;
         private string defaultImagePath;
         private String editedPresetText;
+        private bool editingHole = false;
         private bool fixedEndPath = false;
         private Point fixedPathEndPoint;
         private Point fixedPathMidPoint;
         private Point fixedPathStartPoint;
         private Point fixedPolarGridCentre;
         private double gridHeight;
-        private List<Shape> gridMarkers;
         private GridSettings gridSettings;
         private double gridWidth;
         private double gridX = 0;
@@ -96,6 +96,7 @@ namespace Barnacle.UserControls
             LineStyleCommand = new RelayCommand(OnLineStyle);
             SavePresetCommand = new RelayCommand(OnSavePreset);
             HoleCommand = new RelayCommand(OnHoleCommand);
+            FlipCommand = new RelayCommand(OnFlip);
             fixedEndPath = false;
             supportsHoles = false;
             showHoleControls = Visibility.Hidden;
@@ -300,6 +301,8 @@ namespace Barnacle.UserControls
             }
         }
 
+        public RelayCommand FlipCommand { get; private set; }
+
         public ICommand GridCommand { get; set; }
 
         public List<Shape> GridMarkers
@@ -417,7 +420,20 @@ namespace Barnacle.UserControls
             }
         }
 
-        public bool PointsDirty { get; internal set; }
+        public bool PointsDirty
+        {
+            get { return pointsDirty; }
+            set
+            {
+                if (value != pointsDirty)
+                {
+                    pointsDirty = value;
+                    NotifyPropertyChanged();
+                }
+
+            }
+
+        }
 
         public ICommand PolarGridCommand { get; set; }
 
@@ -862,6 +878,16 @@ namespace Barnacle.UserControls
             return res;
         }
 
+        internal string GetPathText(int index)
+        {
+            string res = "";
+            if (index >= 0 && index <= allPaths.Count)
+            {
+                res = allPaths[index].ToPath(true);
+            }
+            return res;
+        }
+
         internal bool MouseDown(MouseButtonEventArgs e, System.Windows.Point position)
         {
             bool updateRequired = false;
@@ -982,6 +1008,26 @@ namespace Barnacle.UserControls
             NotifyPropertyChanged("Points");
         }
 
+        internal void SetPath(string s, int i)
+        {
+            if (i >= allPaths.Count)
+            {
+                allPaths.Add(new FlexiPath());
+            }
+            allPaths[i].FromString(s);
+            if (i == 0)
+            {
+                curveNames.Clear();
+                curveNames.Add("Outside");
+                nextHoleId = 1;
+            }
+            else
+            {
+                curveNames.Add("Hole " + (nextHoleId).ToString());
+                nextHoleId++;
+            }
+        }
+
         internal void SetPolarGridCentre(Point fixedPolarGridCentre)
         {
             throw new NotImplementedException();
@@ -1049,18 +1095,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        private bool PointInOutline(Point position)
-        {
-            bool inside = false;
-            ConvexPolygon2D path = new ConvexPolygon2D(allPaths[0].DisplayPoints().ToArray());
-            ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
-            if (interceptor.IsPointInsidePoly(position, path))
-            {
-                inside = true;
-            }
-            return inside;
-        }
-
         private void AddStartPointToPoly(System.Windows.Point position)
         {
             position = SnapPositionToMM(position);
@@ -1074,6 +1108,16 @@ namespace Barnacle.UserControls
                 selectedFlexiPath.Start = new FlexiPoint(new System.Windows.Point(position.X, position.Y), 0);
                 SelectionMode = SelectionModeType.AppendPoint;
             }
+        }
+
+        private void ClearAllHoles()
+        {
+            while (allPaths.Count > 1)
+            {
+                curveNames.RemoveAt(allPaths.Count - 1);
+                allPaths.RemoveAt(allPaths.Count - 1);
+            }
+            NotifyPropertyChanged("CurveNames");
         }
 
         private void ClearPointSelections()
@@ -1429,6 +1473,29 @@ namespace Barnacle.UserControls
             SelectionMode = SelectionModeType.DeleteSegment;
         }
 
+        private void OnFlip(object obj)
+        {
+            string cmd = obj.ToString();
+            switch (cmd.ToLower())
+            {
+                case "horizontal":
+                    {
+                        selectedFlexiPath.FlipHorizontal();
+                        pointsDirty = true;
+                    }
+                    break;
+
+                case "vertical":
+                    {
+                        selectedFlexiPath.FlipVertical();
+                        pointsDirty = true;
+                    }
+                    break;
+
+            }
+            PathText = selectedFlexiPath.ToPath(absolutePaths);
+            NotifyPropertyChanged("Points");
+        }
         private void OnGrid(object obj)
         {
             switch (gridSettings.ShowGrid)
@@ -1480,7 +1547,7 @@ namespace Barnacle.UserControls
                             allPaths.Add(nfp);
                             selectedFlexiPath = nfp;
                             selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
-                            curveNames.Add("Hole" + (nextHoleId).ToString());
+                            curveNames.Add("Hole " + (nextHoleId).ToString());
                             nextHoleId++;
                             selectedCurveName = curveNames[curveNames.Count - 1];
                             NotifyPropertyChanged("CurveNames");
@@ -1632,16 +1699,6 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void ClearAllHoles()
-        {
-            while (allPaths.Count > 1)
-            {
-                curveNames.RemoveAt(allPaths.Count - 1);
-                allPaths.RemoveAt(allPaths.Count - 1);
-            }
-            NotifyPropertyChanged("CurveNames");
-        }
-
         private void OnSavePreset(object obj)
         {
             String preset = editedPresetText;
@@ -1706,6 +1763,17 @@ namespace Barnacle.UserControls
             }
         }
 
+        private bool PointInOutline(Point position)
+        {
+            bool inside = false;
+            ConvexPolygon2D path = new ConvexPolygon2D(allPaths[0].DisplayPoints().ToArray());
+            ConvexPolygon2DHelper interceptor = new ConvexPolygon2DHelper();
+            if (interceptor.IsPointInsidePoly(position, path))
+            {
+                inside = true;
+            }
+            return inside;
+        }
         private void SaveAsPreset(string toolName, string preset, string pathText)
         {
             if (!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(preset) && !String.IsNullOrEmpty(pathText))
@@ -1751,9 +1819,6 @@ namespace Barnacle.UserControls
             }
             return result;
         }
-
-        private bool editingHole = false;
-
         private void SwitchPath(string name)
         {
             ClearPointSelections();

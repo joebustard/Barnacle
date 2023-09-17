@@ -179,6 +179,35 @@ namespace Barnacle.LineLib
             }
         }
 
+        public void FlipHorizontal()
+        {
+            double low = double.MaxValue;
+            double high = double.MinValue;
+            for ( int i= 0; i <flexiPoints.Count; i ++)
+            {
+                low = Math.Min(low, flexiPoints[i].X);
+                high = Math.Max(high, flexiPoints[i].X);
+            }
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                flexiPoints[i].X = low + (high - flexiPoints[i].X);
+            }
+        }
+        public void FlipVertical()
+        {
+            double low = double.MaxValue;
+            double high = double.MinValue;
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                low = Math.Min(low, flexiPoints[i].Y);
+                high = Math.Max(high, flexiPoints[i].Y);
+            }
+            for (int i = 0; i < flexiPoints.Count; i++)
+            {
+                flexiPoints[i].Y = low + (high - flexiPoints[i].Y);
+            }
+        }
+
         public void ConvertLineQuadCurveSegment(int index, System.Windows.Point position, bool centreControl = true)
         {
             for (int i = 0; i < segs.Count; i++)
