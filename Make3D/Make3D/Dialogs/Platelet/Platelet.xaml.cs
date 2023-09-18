@@ -1224,9 +1224,20 @@ namespace Barnacle.Dialogs
                         top = points[i].Y;
                     }
                 }
-                for (int i = 0; i < points.Count - 1; i++)
+                for (int i = 0; i < points.Count; i++)
                 {
-                    outLineTmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                    if (PathEditor.LocalImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                        outLineTmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                    }
+                    else
+                    {
+                        double x = PathEditor.ToMM(points[i].X);
+                        double y = PathEditor.ToMM(top - points[i].Y);
+                        outLineTmp.Insert(0, new System.Windows.Point(x, y));
+                    }
                 }
                 double lx, rx, ty, by;
                 CalculateExtents(outLineTmp, out lx, out rx, out ty, out by);
@@ -1254,9 +1265,20 @@ namespace Barnacle.Dialogs
                             top = holePoints[i].Y;
                         }
                     }
-                    for (int i = 0; i < holePoints.Count - 1; i++)
+                    for (int i = 0; i < holePoints.Count-1; i++)
                     {
-                        holeTmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
+                        if (PathEditor.LocalImage == null)
+                        {
+                            // flipping coordinates so have to reverse polygon too
+                            //tmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
+                            holeTmp.Add(new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
+                        }
+                        else
+                        {
+                            double x = PathEditor.ToMM(holePoints[i].X);
+                            double y = PathEditor.ToMM(top - holePoints[i].Y);
+                            holeTmp.Insert(0, new System.Windows.Point(x, y));
+                        }
                     }
 
                     for (int i = 0; i < holeTmp.Count; i++)
@@ -1402,9 +1424,24 @@ namespace Barnacle.Dialogs
                         top = points[i].Y;
                     }
                 }
-                for (int i = 0; i < points.Count - 1; i++)
+                //       for (int i = 0; i < points.Count - 1; i++)
+                //       {
+                //           tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                //       }
+                for (int i = 0; i < points.Count; i++)
                 {
-                    tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                    if (PathEditor.LocalImage == null)
+                    {
+                        // flipping coordinates so have to reverse polygon too
+                        //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
+                        tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                    }
+                    else
+                    {
+                        double x = PathEditor.ToMM(points[i].X);
+                        double y = PathEditor.ToMM(top - points[i].Y);
+                        tmp.Insert(0, new System.Windows.Point(x, y));
+                    }
                 }
                 double lx, rx, ty, by;
                 CalculateExtents(tmp, out lx, out rx, out ty, out by);

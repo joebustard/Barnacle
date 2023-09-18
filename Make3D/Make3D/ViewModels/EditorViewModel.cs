@@ -3401,11 +3401,11 @@ namespace Barnacle.ViewModels
 
         private void OnPasteAt(object param)
         {
-            if (ObjectClipboard.HasItems() && floorMarker != null)
+            if (ObjectClipboard.HasItems() && floorMarker != null  )
             {
                 CheckPoint();
                 RecalculateAllBounds();
-                selectedObjectAdorner.Clear();
+                selectedObjectAdorner?.Clear();
                 foreach (Object3D cl in ObjectClipboard.Items)
                 {
                     Object3D o = cl.Clone();
