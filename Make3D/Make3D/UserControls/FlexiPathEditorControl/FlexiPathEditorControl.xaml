@@ -248,7 +248,7 @@
                             CommandParameter="Horizontal"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Flip the points in the current path horizontally">
-                            <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                            <Image Source="/Barnacle;component/Images/Buttons/FlipH.png" />
                         </Button>
 
                         <Button
@@ -257,7 +257,7 @@
                             CommandParameter="Vertical"
                             Style="{StaticResource SmallButton}"
                             ToolTip="Flip the points in the current path vertically">
-                            <Image Source="/Barnacle;component/Images/Buttons/OrthoPath.png" />
+                            <Image Source="/Barnacle;component/Images/Buttons/FLipV.png" />
                         </Button>
                         <CheckBox
                             Margin="8,0,2,0"
@@ -292,7 +292,17 @@
                         Command="{Binding HoleCommand}"
                         CommandParameter="Delete"
                         Style="{StaticResource SmallButton}"
-                        ToolTip="Add a new Hole"
+                        ToolTip="Delete Hole"
+                        Visibility="{Binding ShowHoleControls}">
+                        <Image Source="/Barnacle;component/Images/Buttons/RemoveHole.png" />
+                    </Button>
+                    <Button
+                        x:Name="DeleteAllHoleButton"
+                        Margin="4,0,0,0"
+                        Command="{Binding HoleCommand}"
+                        CommandParameter="DeleteAll"
+                        Style="{StaticResource SmallButton}"
+                        ToolTip="Delete all holes"
                         Visibility="{Binding ShowHoleControls}">
                         <Image Source="/Barnacle;component/Images/Buttons/RemoveHole.png" />
                     </Button>

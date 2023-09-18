@@ -430,9 +430,7 @@ namespace Barnacle.UserControls
                     pointsDirty = value;
                     NotifyPropertyChanged();
                 }
-
             }
-
         }
 
         public ICommand PolarGridCommand { get; set; }
@@ -1491,11 +1489,11 @@ namespace Barnacle.UserControls
                         pointsDirty = true;
                     }
                     break;
-
             }
             PathText = selectedFlexiPath.ToPath(absolutePaths);
             NotifyPropertyChanged("Points");
         }
+
         private void OnGrid(object obj)
         {
             switch (gridSettings.ShowGrid)
@@ -1555,6 +1553,8 @@ namespace Barnacle.UserControls
                             selectedPoint = -1;
                             SelectionMode = SelectionModeType.StartPoint;
                             editingHole = true;
+                            PointsDirty = true;
+                            NotifyPropertyChanged("Points");
                         }
                     }
                     break;
@@ -1588,7 +1588,30 @@ namespace Barnacle.UserControls
                             NotifyPropertyChanged("CurveNames");
                             NotifyPropertyChanged("SelectedCurveName");
                             editingHole = false;
+                            PointsDirty = true;
+                            NotifyPropertyChanged("Points");
                         }
+                    }
+                    break;
+
+                case "deleteall":
+                    {
+                        while (allPaths.Count > 1)
+                        {
+                            allPaths.RemoveAt(1);
+                        }
+                        curveNames.Clear();
+                        curveNames.Add("Outline");
+
+                        selectedPoint = -1;
+                        selectedFlexiPath = allPaths[0];
+                        selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
+                        selectedCurveName = curveNames[0];
+                        NotifyPropertyChanged("CurveNames");
+                        NotifyPropertyChanged("SelectedCurveName");
+                        editingHole = false;
+                        PointsDirty = true;
+                        NotifyPropertyChanged("Points");
                     }
                     break;
             }
@@ -1774,6 +1797,7 @@ namespace Barnacle.UserControls
             }
             return inside;
         }
+
         private void SaveAsPreset(string toolName, string preset, string pathText)
         {
             if (!String.IsNullOrEmpty(toolName) && !String.IsNullOrEmpty(preset) && !String.IsNullOrEmpty(pathText))
@@ -1819,6 +1843,7 @@ namespace Barnacle.UserControls
             }
             return result;
         }
+
         private void SwitchPath(string name)
         {
             ClearPointSelections();
