@@ -107,7 +107,6 @@ namespace Barnacle.UserControls
             fixedPathEndPoint = new Point(0, 90);
             fixedPolarGridCentre = new Point(0, 50);
             initialPaths = new List<string>();
-
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
@@ -1003,17 +1002,7 @@ namespace Barnacle.UserControls
                             vm.LoadImage(vm.ImagePath);
                         }
                     }
-                    if (pathText != null)
-                    {
-                        vm.FromString(pathText);
-                    }
-                    else
-                    {
-                        if (!String.IsNullOrEmpty(vm.PathText))
-                        {
-                            vm.FromString(vm.PathText);
-                        }
-                    }
+
                     vm.SelectedPoint = -1;
                     vm.ToolName = ToolName;
                     vm.ShowPresets = Visibility.Hidden;
@@ -1032,7 +1021,10 @@ namespace Barnacle.UserControls
                         {
                             vm.SetPath(initialPaths[i], i);
                         }
+                        vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
                     }
+                    SetSelectionModeBorderColours();
+                    NotifyPathPointsChanged();
                 }
             }
             UpdateDisplay();
@@ -1106,7 +1098,9 @@ namespace Barnacle.UserControls
                 return false;
             }
         }
+
         private List<string> initialPaths;
+
         internal void SetPath(string s, int i)
         {
             if (vm != null)
@@ -1116,7 +1110,6 @@ namespace Barnacle.UserControls
             else
             {
                 initialPaths.Add(s);
-
             }
         }
     }

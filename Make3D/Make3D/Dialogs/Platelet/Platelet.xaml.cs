@@ -1230,7 +1230,7 @@ namespace Barnacle.Dialogs
                     {
                         // flipping coordinates so have to reverse polygon too
                         //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        outLineTmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                        outLineTmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                     }
                     else
                     {
@@ -1265,13 +1265,13 @@ namespace Barnacle.Dialogs
                             top = holePoints[i].Y;
                         }
                     }
-                    for (int i = 0; i < holePoints.Count-1; i++)
+                    for (int i = 0; i < holePoints.Count - 1; i++)
                     {
                         if (PathEditor.LocalImage == null)
                         {
                             // flipping coordinates so have to reverse polygon too
                             //tmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
-                            holeTmp.Add(new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
+                            holeTmp.Insert(0, new System.Windows.Point(holePoints[i].X, top - holePoints[i].Y));
                         }
                         else
                         {
@@ -1290,8 +1290,8 @@ namespace Barnacle.Dialogs
                 ReverseDirection(allHoles);
                 int outerPointIndex;
                 int holePointIndex;
-                
-                while (allHoles.Count > 0  )
+
+                while (allHoles.Count > 0)
                 {
                     outerPointIndex = -1;
                     holePointIndex = -1;
@@ -1434,7 +1434,7 @@ namespace Barnacle.Dialogs
                     {
                         // flipping coordinates so have to reverse polygon too
                         //tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
-                        tmp.Add(new System.Windows.Point(points[i].X, top - points[i].Y));
+                        tmp.Insert(0, new System.Windows.Point(points[i].X, top - points[i].Y));
                     }
                     else
                     {
@@ -1732,10 +1732,10 @@ namespace Barnacle.Dialogs
             {
                 PathEditor.LoadImage(imageName);
             }
-            int numPaths = EditorParameters.GetInt("NumPath",0);
+            int numPaths = EditorParameters.GetInt("NumPath", 0);
             for (int i = 0; i < numPaths; i++)
             {
-                String s = EditorParameters.Get("Path_"+i.ToString());
+                String s = EditorParameters.Get("Path_" + i.ToString());
                 if (s != "")
                 {
                     PathEditor.SetPath(s, i);
@@ -2008,10 +2008,10 @@ namespace Barnacle.Dialogs
         {
             EditorParameters.Set("ImagePath", PathEditor.ImagePath);
             EditorParameters.Set("NumPath", PathEditor.NumberOfPaths);
-            
-            for ( int i=0; i <  PathEditor.NumberOfPaths; i ++)
+
+            for (int i = 0; i < PathEditor.NumberOfPaths; i++)
             {
-                EditorParameters.Set("Path_"+i.ToString(), PathEditor.GetPathText(i));
+                EditorParameters.Set("Path_" + i.ToString(), PathEditor.GetPathText(i));
             }
             EditorParameters.Set("WallWidth", WallWidth.ToString());
             EditorParameters.Set("PlateWidth", PlateWidth.ToString());
