@@ -788,21 +788,21 @@ namespace Barnacle.UserControls
         public double ToMMX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = 25.4 * x / sc.PixelsPerInchX;
+            double res = (25.4 * x / sc.PixelsPerInchX)*sc.DpiScaleX;
             return res;
         }
 
         public double ToMM(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = 25.4 * x / sc.PixelsPerInchX;
+            double res = (25.4 * x / sc.PixelsPerInchX) * sc.DpiScaleX;
             return res;
         }
 
         public double ToMMY(double y)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = 25.4 * y / sc.PixelsPerInchY;
+            double res = (25.4 * y / sc.PixelsPerInchY) * sc.DpiScaleY; ;
             return res;
         }
 
@@ -970,7 +970,7 @@ namespace Barnacle.UserControls
                 }
             }
         }
-
+        public DpiScale ScreenDpi { get; set; }
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -984,7 +984,8 @@ namespace Barnacle.UserControls
                     vm.FixedEndPath = fixedEndPath;
                     vm.OpenEndedPath = openEndedPath;
                     vm.SupportsHoles = SupportsHoles;
-                    vm.CreateGrid(VisualTreeHelper.GetDpi(MainCanvas), MainCanvas.ActualWidth, MainCanvas.ActualHeight);
+                    ScreenDpi = VisualTreeHelper.GetDpi(MainCanvas);
+                    vm.CreateGrid(ScreenDpi, MainCanvas.ActualWidth, MainCanvas.ActualHeight);
                     vm.ShowGrid = showGrid;
                     ShowGridStatus();
                     vm.AbsolutePaths = absolutePaths;

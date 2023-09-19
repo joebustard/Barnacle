@@ -22,7 +22,8 @@ namespace Barnacle.UserControls
     {
         private bool absolutePaths;
         private List<FlexiPath> allPaths;
-        private BitmapImage backgroundImage;
+       // private BitmapImage backgroundImage;
+        private BitmapSource backgroundImage;
         private bool canCNVDouble;
         private ObservableCollection<string> curveNames;
         private string defaultImagePath;
@@ -163,7 +164,8 @@ namespace Barnacle.UserControls
 
         public RelayCommand ApplyPresetCommand { get; private set; }
 
-        public BitmapImage BackgroundImage
+        //public BitmapImage BackgroundImage
+        public BitmapSource BackgroundImage
         {
             get { return backgroundImage; }
 
@@ -738,7 +740,28 @@ namespace Barnacle.UserControls
                 bmi.BeginInit();
                 bmi.UriSource = fileUri;
                 bmi.EndInit();
-                BackgroundImage = bmi;
+
+                var dpi = screenDpi;
+                if (bmi.DpiX == dpi.PixelsPerInchX && bmi.DpiY == dpi.PixelsPerInchY)
+                {
+                    //use the BitmapImage as it is
+                    BackgroundImage = bmi;
+                }
+                else
+                {
+                    //create a new BitmapSource and use dpi to set its DPI without changing any pixels
+                    PixelFormat pf = PixelFormats.Bgr32;
+                    int rawStride = (bmi.PixelWidth * pf.BitsPerPixel + 7) / 8;
+                    byte[] rawImage = new byte[rawStride * bmi.PixelHeight];
+                    bmi.CopyPixels(rawImage, rawStride, 0);
+                    BitmapSource bitmapSource = BitmapSource.Create(bmi.PixelWidth, bmi.PixelHeight,
+                    dpi.PixelsPerInchX/ dpi.DpiScaleX, dpi.PixelsPerInchY/dpi.DpiScaleY, pf, null, rawImage, rawStride);
+                    
+                    BackgroundImage = bitmapSource;
+                }
+
+
+               
                 imagePath = f;
                 NotifyPropertyChanged("BackgroundImage");
             }
@@ -1025,6 +1048,8 @@ namespace Barnacle.UserControls
                 nextHoleId++;
             }
         }
+
+
 
         internal void SetPolarGridCentre(Point fixedPolarGridCentre)
         {
