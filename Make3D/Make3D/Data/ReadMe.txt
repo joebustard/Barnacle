@@ -1,7 +1,7 @@
 ﻿v1.0.5
 ===========
 Added
- Basic hole support in platelet
+	Basic hole support in platelet
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 

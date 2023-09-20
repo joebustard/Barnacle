@@ -259,17 +259,16 @@
                             ToolTip="Flip the points in the current path vertically">
                             <Image Source="/Barnacle;component/Images/Buttons/FLipV.png" />
                         </Button>
-                        <CheckBox
+                    </UniformGrid>
+                </Border>
+                <StackPanel Grid.Row="1" Orientation="Horizontal">
+                    <CheckBox
                             Margin="8,0,2,0"
                             VerticalAlignment="Center"
                             IsChecked="{Binding ShowOrtho}"
                             ToolTip="Show orthogononal guides and highlight orthogonal points">
-                            Ortho Lines
-                        </CheckBox>
-                    </UniformGrid>
-                </Border>
-                <StackPanel Grid.Row="1" Orientation="Horizontal">
-
+                        Highlight Orthogonal Points
+                    </CheckBox>
                     <ComboBox
                         Width="120"
                         ItemsSource="{Binding CurveNames}"
@@ -304,7 +303,7 @@
                         Style="{StaticResource SmallButton}"
                         ToolTip="Delete all holes"
                         Visibility="{Binding ShowHoleControls}">
-                        <Image Source="/Barnacle;component/Images/Buttons/RemoveHole.png" />
+                        <Image Source="/Barnacle;component/Images/Buttons/RemoveAllHoles.png" />
                     </Button>
                 </StackPanel>
             </Grid>
