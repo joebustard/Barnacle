@@ -3401,11 +3401,25 @@ namespace Barnacle.ViewModels
 
         private void OnPasteAt(object param)
         {
-            if (ObjectClipboard.HasItems() && floorMarker != null  )
+            if (ObjectClipboard.HasItems() && floorMarker != null)
             {
                 CheckPoint();
                 RecalculateAllBounds();
                 selectedObjectAdorner?.Clear();
+                Point collectionCentre = new Point(0, 0);
+                // if we have more than one object being pasted at the marker
+                // we want to keep the relative positions the same as the original but treat the marker as there new centre.
+                // If there is only one object, it should just be positioned directly at the marker
+                if (ObjectClipboard.Items.Count > 1)
+                {
+                    foreach (Object3D cl in ObjectClipboard.Items)
+                    {
+                        collectionCentre.X = collectionCentre.X + cl.Position.X;
+                        collectionCentre.Y = collectionCentre.Y + cl.Position.Z;
+                    }
+                    collectionCentre.X /= ObjectClipboard.Items.Count;
+                    collectionCentre.Y /= ObjectClipboard.Items.Count;
+                }
                 foreach (Object3D cl in ObjectClipboard.Items)
                 {
                     Object3D o = cl.Clone();
@@ -3417,7 +3431,18 @@ namespace Barnacle.ViewModels
                     {
                         //    (o as Group3D).Init();
                     }
-                    o.Position = new Point3D(floorMarker.Position.X, floorMarker.Position.Y, floorMarker.Position.Z);
+
+                    if (ObjectClipboard.Items.Count > 1)
+                    {
+                        double offsetX = o.Position.X - collectionCentre.X;
+                        double offsetZ = o.Position.Z - collectionCentre.Y;
+
+                        o.Position = new Point3D(floorMarker.Position.X + offsetX, floorMarker.Position.Y, floorMarker.Position.Z + offsetZ);
+                    }
+                    else
+                    {
+                        o.Position = new Point3D(floorMarker.Position.X, floorMarker.Position.Y, floorMarker.Position.Z);
+                    }
                     o.Remesh();
                     o.MoveToFloor();
                     o.CalcScale(false);

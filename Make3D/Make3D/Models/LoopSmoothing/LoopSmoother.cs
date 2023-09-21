@@ -50,26 +50,6 @@ namespace Barnacle.Models.LoopSmoothing
             icol = faces;
         }
 
-        protected int AddVertice(double x, double y, double z)
-        {
-            int res = -1;
-            for (int i = 0; i < vertices.Count; i++)
-            {
-                if (PointUtils.equals(vertices[i], x, y, z))
-                {
-                    res = i;
-                    break;
-                }
-            }
-
-            if (res == -1)
-            {
-                vertices.Add(new Point3D(x, y, z));
-                res = vertices.Count - 1;
-            }
-            return res;
-        }
-
         private void CalculateNewPoints()
         {
             int n;
@@ -88,11 +68,7 @@ namespace Barnacle.Models.LoopSmoothing
                     if (ed.Start == i)
                     {
                         n++;
-                        /*
-                        lc.X += loopPoints[ed.End].X;
-                        lc.Y += loopPoints[ed.End].Y;
-                        lc.Z += loopPoints[ed.End].Z;
-                        */
+
                         lc.X += ed.Ep.X;
                         lc.Y += ed.Ep.Y;
                         lc.Z += ed.Ep.Z;
@@ -102,11 +78,7 @@ namespace Barnacle.Models.LoopSmoothing
                         if (ed.End == i)
                         {
                             n++;
-                            /*
-                            lc.X += loopPoints[ed.Start].X;
-                            lc.Y += loopPoints[ed.Start].Y;
-                            lc.Z += loopPoints[ed.Start].Z;
-                            */
+
                             lc.X += ed.Ep.X;
                             lc.Y += ed.Ep.Y;
                             lc.Z += ed.Ep.Z;

@@ -5,9 +5,11 @@ Added
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
+	Somehow lost ability to rename file in solution. Fixed.
 
 Changed
 	Default Z Seam type to random
+	Make "Paste At" preserve the relative positions if there are multiple objects in the clip board
 
 v1.0.4
 ===========
