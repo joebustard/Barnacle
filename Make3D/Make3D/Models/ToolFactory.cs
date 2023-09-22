@@ -112,6 +112,10 @@ namespace Barnacle.Models
                     res = new RectGrilleDlg();
                     break;
 
+                case "RoundGrille":
+                    res = new RoundGrilleDlg();
+                    break;
+
                 case "RoofRidge":
                     res = new RoofRidgeDlg();
                     break;

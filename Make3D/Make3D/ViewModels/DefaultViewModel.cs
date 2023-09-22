@@ -1227,7 +1227,8 @@ namespace Barnacle.ViewModels
         {
             grilleToolsToShow = new List<ToolDef>();
             grilleToolsToShow.Add(new ToolDef("Rect Grille", true, "RectGrille", "Create a rectangular grille."));
-
+            grilleToolsToShow.Add(new ToolDef("Round Grille", true, "RoundGrille", "Create a round grille."));
+            SortMenu(mechanicalToolsToShow);
             NotifyPropertyChanged("GrilleToolsToShow");
         }
 

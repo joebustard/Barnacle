@@ -151,6 +151,7 @@
       <DependentUpon>RibView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml.cs" />
+    <Compile Include="Dialogs\RoundGrille\RoundGrilleDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedBrickWall\ShapedBrickWallDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedTiledRoof\ShapedTiledRoofDlg.xaml.cs" />
     <Compile Include="Dialogs\ShapedWing\ShapedWingDlg.xaml.cs" />
@@ -547,6 +548,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\RoofRidge\RoofRidgeDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\RoundGrille\RoundGrilleDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
