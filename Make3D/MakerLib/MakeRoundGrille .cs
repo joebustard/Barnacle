@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -17,6 +19,65 @@ namespace MakerLib
         private double verticalBars;
         private double verticalBarThickness;
         private double innerRadius;
+        private double cx = 0.0;
+        private double cy = 0.0;
+        private double cz = 0.0;
+        private double innerDiameter;
+
+        public struct PolarPoint
+        {
+            public double theta;
+            public double r;
+            public double X;
+            public double y;
+            public bool vertical;
+            public bool barId;
+        }
+
+        private List<PolarPoint> spokePoints;
+
+        private void SortSpokesByTheta()
+        {
+            if (spokePoints != null && spokePoints.Count > 1)
+            {
+                bool swapped = true;
+                while (swapped)
+                {
+                    swapped = false;
+                    for (int i = 0; i < spokePoints.Count; i++)
+                    {
+                        if (spokePoints[i].theta > spokePoints[i + 1].theta)
+                        {
+                            swapped = true;
+                            PolarPoint tmp = spokePoints[i];
+                            spokePoints[i] = spokePoints[i + 1];
+                            spokePoints[i + 1] = tmp;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void MakeVerticalBarPolarCoords()
+        {
+            if (verticalBars > 0)
+            {
+                double vspacing = innerDiameter / (verticalBars + 1);
+                for (int i = 0; i < verticalBars; i++)
+                {
+                    // work out where vertical bar crosses the x axies.
+                    double vx = (cx - innerRadius) + (i * vspacing);
+                    // distance of this from the centre
+                    double vdx = Math.Abs(cx - vx);
+                    double vdx1 = vdx - (verticalBarThickness / 2.0);
+                    double vdx2 = vdx + (verticalBarThickness / 2.0);
+                    double h1 = Math.Sqrt((innerRadius * innerRadius) - (vdx1 * vdx1));
+                    double h2 = Math.Sqrt((innerRadius * innerRadius) - (vdx2 * vdx2));
+
+                    // so we should have
+                }
+            }
+        }
 
         public RoundGrilleMaker(double grilleRadius, double grillWidth, bool makeEdge, double edgeThickness, double verticalBars, double verticalBarThickness, double horizontalBars, double horizontalBarThickness)
         {
@@ -30,6 +91,7 @@ namespace MakerLib
             this.horizontalBars = horizontalBars;
             this.horizontalBarThickness = horizontalBarThickness;
             this.innerRadius = grilleRadius - edgeThickness;
+            this.innerDiameter = 2.0 * this.innerRadius;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)

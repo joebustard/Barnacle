@@ -443,7 +443,7 @@ namespace Barnacle.Dialogs
         {
             loaded = false;
             grilleRadius = 30;
-            GrillHeight = 40;
+            // GrillHeight = 40;
             GrillWidth = 5;
             MakeEdge = true;
             EdgeThickness = 1;
