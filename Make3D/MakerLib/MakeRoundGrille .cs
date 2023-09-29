@@ -31,7 +31,7 @@ namespace MakerLib
             public double X;
             public double y;
             public bool vertical;
-            public bool barId;
+            public string barId;
         }
 
         private List<PolarPoint> spokePoints;
@@ -44,7 +44,7 @@ namespace MakerLib
                 while (swapped)
                 {
                     swapped = false;
-                    for (int i = 0; i < spokePoints.Count; i++)
+                    for (int i = 0; i < spokePoints.Count - 1; i++)
                     {
                         if (spokePoints[i].theta > spokePoints[i + 1].theta)
                         {
@@ -66,16 +66,59 @@ namespace MakerLib
                 for (int i = 0; i < verticalBars; i++)
                 {
                     // work out where vertical bar crosses the x axies.
-                    double vx = (cx - innerRadius) + (i * vspacing);
+                    double vx = (cx - innerRadius) + ((i + 1) * vspacing);
+                    double vx1 = vx - (verticalBarThickness / 2.0);
+                    double vx2 = vx + (verticalBarThickness / 2.0);
                     // distance of this from the centre
-                    double vdx = Math.Abs(cx - vx);
-                    double vdx1 = vdx - (verticalBarThickness / 2.0);
-                    double vdx2 = vdx + (verticalBarThickness / 2.0);
+                    double vdx1 = Math.Abs(cx - vx1);
+                    double vdx2 = Math.Abs(cx - vx2);
+
                     double h1 = Math.Sqrt((innerRadius * innerRadius) - (vdx1 * vdx1));
+
+                    PolarPoint p1 = new PolarPoint();
+                    p1.barId = "V" + i.ToString();
+                    p1.X = vx1;
+                    p1.y = cy + h1;
+                    double t = Math.Atan2(vdx1, h1 + cy);
+                    p1.theta = t;
+                    p1.r = innerRadius;
+                    p1.vertical = true;
+                    spokePoints.Add(p1);
+
+                    p1 = new PolarPoint();
+                    p1.barId = "V" + i.ToString();
+                    p1.X = vx1;
+                    p1.y = cy - h1;
+                    t = Math.Atan2(vdx1, cy - h1);
+                    p1.theta = t;
+                    p1.r = innerRadius;
+                    p1.vertical = true;
+                    spokePoints.Add(p1);
+
                     double h2 = Math.Sqrt((innerRadius * innerRadius) - (vdx2 * vdx2));
 
-                    // so we should have
+                    PolarPoint p2 = new PolarPoint();
+                    p2.barId = "V" + i.ToString();
+                    p2.X = vx2;
+                    p2.y = cy + h2;
+                    t = Math.Atan2(vdx2, h2 + cy);
+                    p2.theta = t;
+                    p2.r = innerRadius;
+                    p2.vertical = true;
+                    spokePoints.Add(p2);
+
+                    p2 = new PolarPoint();
+                    p2.barId = "V" + i.ToString();
+                    p2.X = vx2;
+                    p2.y = cy - h1;
+                    t = Math.Atan2(vdx2, cy - h2);
+                    p2.theta = t;
+                    p2.r = innerRadius;
+                    p2.vertical = true;
+                    spokePoints.Add(p2);
                 }
+
+                // so we should have a list
             }
         }
 
@@ -100,6 +143,7 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
+            spokePoints = new List<PolarPoint>();
 
             if (makeEdge)
             {
@@ -155,6 +199,8 @@ namespace MakerLib
 
         private void GenerateWithEdge()
         {
+            MakeVerticalBarPolarCoords();
+            SortSpokesByTheta();
         }
 
         private void GenerateWithoutEdge()
