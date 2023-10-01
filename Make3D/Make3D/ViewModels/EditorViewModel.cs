@@ -3372,88 +3372,113 @@ namespace Barnacle.ViewModels
             {
                 CheckPoint();
                 RecalculateAllBounds();
-                selectedObjectAdorner?.Clear();
-                foreach (Object3D cl in ObjectClipboard.Items)
+
+                if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
                 {
-                    Object3D o = cl.Clone();
-                    if (Document.ContainsName(o.Name))
+                    Object3D old = selectedObjectAdorner.SelectedObjects[0];
+                    MessageBoxResult res = MessageBox.Show("Do you want to replace " + old.Name+"?", "Info", MessageBoxButton.YesNo);
+                    if ( res == MessageBoxResult.Yes)
                     {
-                        o.Name = Document.DuplicateName(o.Name);
+                        Document.Content.Remove(old);
+                        PasteAt(old.Position);                       
                     }
-                    if (o is Group3D)
+                    else
                     {
-                        //    (o as Group3D).Init();
+                        OrdinaryPaste();
                     }
-                    o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2, 0, 0);
-                    o.Remesh();
-                    o.MoveToFloor();
-                    o.CalcScale(false);
-                    allBounds += o.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(o);
-                    Document.Content.Add(o);
-                    Document.Dirty = true;
+                }
+                else
+                {
+                    OrdinaryPaste();
                 }
 
-                RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged", null);
-            }
+            }      
         }
 
+        private void OrdinaryPaste()
+        {
+            selectedObjectAdorner?.Clear();
+            foreach (Object3D cl in ObjectClipboard.Items)
+            {
+                Object3D o = cl.Clone();
+                if (Document.ContainsName(o.Name))
+                {
+                    o.Name = Document.DuplicateName(o.Name);
+                }
+
+                o.Position = new Point3D(allBounds.Upper.X + o.AbsoluteBounds.Width / 2, 0, 0);
+                o.Remesh();
+                o.MoveToFloor();
+                o.CalcScale(false);
+                allBounds += o.AbsoluteBounds;
+                GeometryModel3D gm = GetMesh(o);
+                Document.Content.Add(o);
+                Document.Dirty = true;
+            }
+            RegenerateDisplayList();
+            NotificationManager.Notify("ObjectNamesChanged", null);
+        }
+
+        private void PasteAt( Point3D targetPoint)
+        {
+            CheckPoint();
+            RecalculateAllBounds();
+            selectedObjectAdorner?.Clear();
+            Point collectionCentre = new Point(0, 0);
+            // if we have more than one object being pasted at the marker
+            // we want to keep the relative positions the same as the original but treat the marker as there new centre.
+            // If there is only one object, it should just be positioned directly at the marker
+            if (ObjectClipboard.Items.Count > 1)
+            {
+                foreach (Object3D cl in ObjectClipboard.Items)
+                {
+                    collectionCentre.X = collectionCentre.X + cl.Position.X;
+                    collectionCentre.Y = collectionCentre.Y + cl.Position.Z;
+                }
+                collectionCentre.X /= ObjectClipboard.Items.Count;
+                collectionCentre.Y /= ObjectClipboard.Items.Count;
+            }
+            foreach (Object3D cl in ObjectClipboard.Items)
+            {
+                Object3D o = cl.Clone();
+                if (Document.ContainsName(o.Name))
+                {
+                    o.Name = Document.DuplicateName(o.Name);
+                }
+                if (o is Group3D)
+                {
+                    //    (o as Group3D).Init();
+                }
+
+                if (ObjectClipboard.Items.Count > 1)
+                {
+                    double offsetX = o.Position.X - collectionCentre.X;
+                    double offsetZ = o.Position.Z - collectionCentre.Y;
+
+                    o.Position = new Point3D(targetPoint.X + offsetX, targetPoint.Y, targetPoint.Z + offsetZ);
+                }
+                else
+                {
+                    o.Position = new Point3D(targetPoint.X, targetPoint.Y, targetPoint.Z);
+                }
+                o.Remesh();
+                o.MoveToFloor();
+                o.CalcScale(false);
+                allBounds += o.AbsoluteBounds;
+                GeometryModel3D gm = GetMesh(o);
+                Document.Content.Add(o);
+                Document.Dirty = true;
+            }
+
+            RegenerateDisplayList();
+            NotificationManager.Notify("ObjectNamesChanged", null);
+
+        }
         private void OnPasteAt(object param)
         {
             if (ObjectClipboard.HasItems() && floorMarker != null)
             {
-                CheckPoint();
-                RecalculateAllBounds();
-                selectedObjectAdorner?.Clear();
-                Point collectionCentre = new Point(0, 0);
-                // if we have more than one object being pasted at the marker
-                // we want to keep the relative positions the same as the original but treat the marker as there new centre.
-                // If there is only one object, it should just be positioned directly at the marker
-                if (ObjectClipboard.Items.Count > 1)
-                {
-                    foreach (Object3D cl in ObjectClipboard.Items)
-                    {
-                        collectionCentre.X = collectionCentre.X + cl.Position.X;
-                        collectionCentre.Y = collectionCentre.Y + cl.Position.Z;
-                    }
-                    collectionCentre.X /= ObjectClipboard.Items.Count;
-                    collectionCentre.Y /= ObjectClipboard.Items.Count;
-                }
-                foreach (Object3D cl in ObjectClipboard.Items)
-                {
-                    Object3D o = cl.Clone();
-                    if (Document.ContainsName(o.Name))
-                    {
-                        o.Name = Document.DuplicateName(o.Name);
-                    }
-                    if (o is Group3D)
-                    {
-                        //    (o as Group3D).Init();
-                    }
-
-                    if (ObjectClipboard.Items.Count > 1)
-                    {
-                        double offsetX = o.Position.X - collectionCentre.X;
-                        double offsetZ = o.Position.Z - collectionCentre.Y;
-
-                        o.Position = new Point3D(floorMarker.Position.X + offsetX, floorMarker.Position.Y, floorMarker.Position.Z + offsetZ);
-                    }
-                    else
-                    {
-                        o.Position = new Point3D(floorMarker.Position.X, floorMarker.Position.Y, floorMarker.Position.Z);
-                    }
-                    o.Remesh();
-                    o.MoveToFloor();
-                    o.CalcScale(false);
-                    allBounds += o.AbsoluteBounds;
-                    GeometryModel3D gm = GetMesh(o);
-                    Document.Content.Add(o);
-                    Document.Dirty = true;
-                }
-
-                RegenerateDisplayList();
-                NotificationManager.Notify("ObjectNamesChanged", null);
+                PasteAt(floorMarker.Position);
             }
         }
 

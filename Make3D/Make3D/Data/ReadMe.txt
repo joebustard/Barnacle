@@ -8,8 +8,9 @@ Fixed
 	Somehow lost ability to rename file in solution. Fixed.
 
 Changed
-	Default Z Seam type to random
+	Default slice Z Seam type to random
 	Make "Paste At" preserve the relative positions if there are multiple objects in the clip board
+	Make "Paste" offer to replace object if a single one is selected as the target
 
 v1.0.4
 ===========
