@@ -1395,7 +1395,10 @@ namespace Barnacle.ViewModels
                     }
                 }
             }
-            selectedObjectAdorner.GenerateAdornments();
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.GenerateAdornments();
+            }
         }
 
         private void BackCamera()
@@ -2017,12 +2020,15 @@ namespace Barnacle.ViewModels
         private void FloorSelectedObjects()
         {
             document.Dirty = true;
-            for (int i = 0; i < selectedObjectAdorner.SelectedObjects.Count; i++)
+            if (selectedObjectAdorner != null)
             {
-                Object3D ob = selectedObjectAdorner.SelectedObjects[i];
+                for (int i = 0; i < selectedObjectAdorner.SelectedObjects.Count; i++)
+                {
+                    Object3D ob = selectedObjectAdorner.SelectedObjects[i];
 
-                ob.MoveToFloor();
-                ob.Remesh();
+                    ob.MoveToFloor();
+                    ob.Remesh();
+                }
             }
         }
 

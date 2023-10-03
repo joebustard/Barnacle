@@ -507,7 +507,10 @@ M84 ; Disable stepper motors
             if (ModelMode == "SliceModel")
             {
                 string fullPath = modelPath;
-                await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                if (!String.IsNullOrEmpty(fullPath))
+                {
+                    await Task.Run(() => SliceSingleModel(fullPath, exportPath, printerPath));
+                }
             }
             else
             {
