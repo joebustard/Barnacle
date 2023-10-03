@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -32,6 +33,7 @@ namespace MakerLib
             public double y;
             public bool vertical;
             public string barId;
+            public int index;
         }
 
         private List<PolarPoint> spokePoints;
@@ -58,8 +60,11 @@ namespace MakerLib
             }
         }
 
+        private List<double> verticalXs;
+
         private void MakeVerticalBarPolarCoords()
         {
+            verticalXs = new List<double>();
             if (verticalBars > 0)
             {
                 double vspacing = innerDiameter / (verticalBars + 1);
@@ -67,6 +72,7 @@ namespace MakerLib
                 {
                     // work out where vertical bar crosses the x axies.
                     double vx = (cx - innerRadius) + ((i + 1) * vspacing);
+                    verticalXs.Add(vx);
                     double vx1 = vx - (verticalBarThickness / 2.0);
                     double vx2 = vx + (verticalBarThickness / 2.0);
                     // distance of this from the centre
@@ -83,6 +89,7 @@ namespace MakerLib
                     p1.theta = t;
                     p1.r = innerRadius;
                     p1.vertical = true;
+                    p1.index = 0;
                     spokePoints.Add(p1);
 
                     p1 = new PolarPoint();
@@ -93,6 +100,7 @@ namespace MakerLib
                     p1.theta = t;
                     p1.r = innerRadius;
                     p1.vertical = true;
+                    p1.index = 1;
                     spokePoints.Add(p1);
 
                     double h2 = Math.Sqrt((innerRadius * innerRadius) - (vdx2 * vdx2));
@@ -105,6 +113,7 @@ namespace MakerLib
                     p2.theta = t;
                     p2.r = innerRadius;
                     p2.vertical = true;
+                    p2.index = 3;
                     spokePoints.Add(p2);
 
                     p2 = new PolarPoint();
@@ -115,6 +124,7 @@ namespace MakerLib
                     p2.theta = t;
                     p2.r = innerRadius;
                     p2.vertical = true;
+                    p2.index = 4;
                     spokePoints.Add(p2);
                 }
 
@@ -201,6 +211,29 @@ namespace MakerLib
         {
             MakeVerticalBarPolarCoords();
             SortSpokesByTheta();
+            GenerateOuterEdge();
+        }
+
+        private void GenerateOuterEdge()
+        {
+            double theta = 0;
+            double dt = Math.PI / 100;
+            double theta2 = theta + dt;
+            while (Math.PI * 2 - theta2 > 0.0001)
+            {
+                Point pn0 = CalcPoint(theta, grilleRadius);
+                Point pn1 = CalcPoint(theta2, grilleRadius);
+
+                int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+
+                int p2 = AddVertice(cx + pn0.X, cy + edgeThickness, cz + pn0.Y);
+                int p3 = AddVertice(cx + pn1.X, cy + edgeThickness, cz + pn1.Y);
+                AddFace(p0, p2, p1);
+                AddFace(p1, p2, p3);
+                theta = theta + dt;
+                theta2 = theta + dt;
+            }
         }
 
         private void GenerateWithoutEdge()
