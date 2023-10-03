@@ -30,6 +30,8 @@ namespace Barnacle.Dialogs
             DataContext = this;
             removeHoles = true;
             removeDuplicates = true;
+            CanFix = true;
+            CanClose = true;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
