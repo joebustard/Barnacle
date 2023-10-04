@@ -211,7 +211,82 @@ namespace MakerLib
         {
             MakeVerticalBarPolarCoords();
             SortSpokesByTheta();
+            DumpSpokes();
             GenerateOuterEdge();
+            GenerateInnerEdge();
+        }
+
+        private void DumpSpokes()
+        {
+            for (int i = 0; i < spokePoints.Count; i++)
+            {
+                System.Diagnostics.Debug.WriteLine($"{spokePoints[i].barId},{spokePoints[i].index},{spokePoints[i].theta},{spokePoints[i].X},{spokePoints[i].y}");
+            }
+        }
+
+        private void GenerateInnerEdge()
+        {
+            double theta = 0;
+            double dt = Math.PI / 100;
+            double theta2 = theta + dt;
+            Point pn0;
+            int p0 = 0;
+            int p1 = 0;
+            int p2 = 0;
+            int p3 = 0;
+
+            Point pn1;
+            while (Math.PI * 2 - theta2 > 0.0001)
+            {
+                double phi = theta;
+                double phi2 = theta2;
+                if (ValidInner(ref phi, ref phi2))
+                {
+                    pn0 = CalcPoint(phi, innerRadius);
+                    pn1 = CalcPoint(phi2, innerRadius);
+
+                    p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                    p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+
+                    p2 = AddVertice(cx + pn0.X, cy + edgeThickness, cz + pn0.Y);
+                    p3 = AddVertice(cx + pn1.X, cy + edgeThickness, cz + pn1.Y);
+                    AddFace(p0, p2, p1);
+                    AddFace(p1, p2, p3);
+                }
+
+                theta = theta + dt;
+                theta2 = theta + dt;
+            }
+        }
+
+        private bool ValidInner(ref double phi, ref double phi2)
+        {
+            bool res = true;
+            for (int i = 0; i < spokePoints.Count - 1; i++)
+            {
+                if (spokePoints[i].barId == spokePoints[i + 1].barId)
+                {
+                    if (phi < spokePoints[i].theta && phi2 < spokePoints[i + 1].theta)
+                    {
+                        phi2 = spokePoints[i + 1].theta;
+                    }
+                    else
+                    {
+                        if (phi > spokePoints[i].theta && phi < spokePoints[i + 1].theta && phi2 > spokePoints[i + 1].theta)
+                        {
+                            phi = spokePoints[i + 1].theta;
+                        }
+                        else
+                        {
+                            if (phi > spokePoints[i].theta && phi <= spokePoints[i + 1].theta && phi2 > spokePoints[i].theta && phi2 <= spokePoints[i + 1].theta)
+                            {
+                                res = false;
+                            }
+                        }
+                    }
+                }
+            }
+            return res;
         }
 
         private void GenerateOuterEdge()
@@ -219,21 +294,41 @@ namespace MakerLib
             double theta = 0;
             double dt = Math.PI / 100;
             double theta2 = theta + dt;
+            Point pn0;
+            int p0;
+            int p1;
+            int p2;
+            int p3;
+
+            Point pn1;
             while (Math.PI * 2 - theta2 > 0.0001)
             {
-                Point pn0 = CalcPoint(theta, grilleRadius);
-                Point pn1 = CalcPoint(theta2, grilleRadius);
+                pn0 = CalcPoint(theta, grilleRadius);
+                pn1 = CalcPoint(theta2, grilleRadius);
 
-                int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
-                int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+                p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
 
-                int p2 = AddVertice(cx + pn0.X, cy + edgeThickness, cz + pn0.Y);
-                int p3 = AddVertice(cx + pn1.X, cy + edgeThickness, cz + pn1.Y);
+                p2 = AddVertice(cx + pn0.X, cy + edgeThickness, cz + pn0.Y);
+                p3 = AddVertice(cx + pn1.X, cy + edgeThickness, cz + pn1.Y);
                 AddFace(p0, p2, p1);
                 AddFace(p1, p2, p3);
                 theta = theta + dt;
                 theta2 = theta + dt;
             }
+
+            // close last step of ring
+            theta2 = 2.0 * Math.PI;
+            pn0 = CalcPoint(theta, grilleRadius);
+            pn1 = CalcPoint(theta2, grilleRadius);
+
+            p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+            p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+
+            p2 = AddVertice(cx + pn0.X, cy + edgeThickness, cz + pn0.Y);
+            p3 = AddVertice(cx + pn1.X, cy + edgeThickness, cz + pn1.Y);
+            AddFace(p0, p2, p1);
+            AddFace(p1, p2, p3);
         }
 
         private void GenerateWithoutEdge()
