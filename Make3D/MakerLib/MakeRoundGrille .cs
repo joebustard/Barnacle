@@ -76,8 +76,8 @@ namespace MakerLib
                     double vx1 = vx - (verticalBarThickness / 2.0);
                     double vx2 = vx + (verticalBarThickness / 2.0);
                     // distance of this from the centre
-                    double vdx1 = Math.Abs(cx - vx1);
-                    double vdx2 = Math.Abs(cx - vx2);
+                    double vdx1 = cx - vx1;
+                    double vdx2 = cx - vx2;
 
                     double h1 = Math.Sqrt((innerRadius * innerRadius) - (vdx1 * vdx1));
 
@@ -85,8 +85,10 @@ namespace MakerLib
                     p1.barId = "V" + i.ToString();
                     p1.X = vx1;
                     p1.y = cy + h1;
-                    double t = Math.Atan2(vdx1, h1 + cy);
+                    double t = Math.Atan2(h1 + cy, vdx1);
+
                     p1.theta = t;
+
                     p1.r = innerRadius;
                     p1.vertical = true;
                     p1.index = 0;
@@ -96,7 +98,8 @@ namespace MakerLib
                     p1.barId = "V" + i.ToString();
                     p1.X = vx1;
                     p1.y = cy - h1;
-                    t = Math.Atan2(vdx1, cy - h1);
+                    t = Math.Atan2(cy - h1, vdx1);
+
                     p1.theta = t;
                     p1.r = innerRadius;
                     p1.vertical = true;
@@ -109,7 +112,8 @@ namespace MakerLib
                     p2.barId = "V" + i.ToString();
                     p2.X = vx2;
                     p2.y = cy + h2;
-                    t = Math.Atan2(vdx2, h2 + cy);
+                    t = Math.Atan2(h2 + cy, vdx2);
+
                     p2.theta = t;
                     p2.r = innerRadius;
                     p2.vertical = true;
@@ -120,7 +124,8 @@ namespace MakerLib
                     p2.barId = "V" + i.ToString();
                     p2.X = vx2;
                     p2.y = cy - h1;
-                    t = Math.Atan2(vdx2, cy - h2);
+                    t = Math.Atan2(cy - h2, vdx2);
+
                     p2.theta = t;
                     p2.r = innerRadius;
                     p2.vertical = true;
