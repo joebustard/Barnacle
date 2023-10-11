@@ -30,13 +30,19 @@ namespace MakerLib
             public double theta;
             public double r;
             public double X;
-            public double y;
+            public double Y;
             public bool vertical;
             public string barId;
             public int index;
         }
 
-        private List<PolarPoint> spokePoints;
+        public struct GapDef
+        {
+            public PolarPoint Start;
+            public PolarPoint Finish;
+        }
+
+        private List<GapDef> spokePoints;
 
         private void SortSpokesByTheta()
         {
@@ -48,10 +54,10 @@ namespace MakerLib
                     swapped = false;
                     for (int i = 0; i < spokePoints.Count - 1; i++)
                     {
-                        if (spokePoints[i].theta > spokePoints[i + 1].theta)
+                        if (spokePoints[i].Finish.theta > spokePoints[i + 1].Start.theta)
                         {
                             swapped = true;
-                            PolarPoint tmp = spokePoints[i];
+                            GapDef tmp = spokePoints[i];
                             spokePoints[i] = spokePoints[i + 1];
                             spokePoints[i + 1] = tmp;
                         }
@@ -79,58 +85,81 @@ namespace MakerLib
                     double vdx1 = cx - vx1;
                     double vdx2 = cx - vx2;
 
+                    //Uppers
                     double h1 = Math.Sqrt((innerRadius * innerRadius) - (vdx1 * vdx1));
-
+                    double h2 = Math.Sqrt((innerRadius * innerRadius) - (vdx2 * vdx2));
                     PolarPoint p1 = new PolarPoint();
                     p1.barId = "V" + i.ToString();
                     p1.X = vx1;
-                    p1.y = cy + h1;
-                    double t = Math.Atan2(h1 + cy, vdx1);
+                    p1.Y = cy + h1;
+                    double t1 = Math.Atan2(h1 + cy, vdx1);
 
-                    p1.theta = t;
+                    p1.theta = t1;
 
                     p1.r = innerRadius;
                     p1.vertical = true;
                     p1.index = 0;
-                    spokePoints.Add(p1);
 
-                    p1 = new PolarPoint();
-                    p1.barId = "V" + i.ToString();
-                    p1.X = vx1;
-                    p1.y = cy - h1;
-                    t = Math.Atan2(cy - h1, vdx1);
-
-                    p1.theta = t;
-                    p1.r = innerRadius;
-                    p1.vertical = true;
-                    p1.index = 1;
-                    spokePoints.Add(p1);
-
-                    double h2 = Math.Sqrt((innerRadius * innerRadius) - (vdx2 * vdx2));
+                    //spokePoints.Add(p1);
 
                     PolarPoint p2 = new PolarPoint();
                     p2.barId = "V" + i.ToString();
                     p2.X = vx2;
-                    p2.y = cy + h2;
-                    t = Math.Atan2(h2 + cy, vdx2);
+                    p2.Y = cy + h2;
+                    double t2 = Math.Atan2(cy - h1, vdx2);
 
-                    p2.theta = t;
+                    p2.theta = t2;
                     p2.r = innerRadius;
                     p2.vertical = true;
-                    p2.index = 3;
-                    spokePoints.Add(p2);
+                    p2.index = 1;
 
-                    p2 = new PolarPoint();
-                    p2.barId = "V" + i.ToString();
-                    p2.X = vx2;
-                    p2.y = cy - h1;
-                    t = Math.Atan2(cy - h2, vdx2);
+                    GapDef upper = new GapDef();
+                    if (p1.theta > p2.theta)
+                    {
+                        upper.Start = p2;
+                        upper.Finish = p1;
+                    }
+                    else
+                    {
+                        upper.Start = p1;
+                        upper.Finish = p2;
+                    }
+                    spokePoints.Add(upper);
 
-                    p2.theta = t;
-                    p2.r = innerRadius;
-                    p2.vertical = true;
-                    p2.index = 4;
-                    spokePoints.Add(p2);
+                    PolarPoint p3 = new PolarPoint();
+                    p3.barId = "V" + i.ToString();
+                    p3.X = vx1;
+                    p3.Y = cy - h1;
+                    double t3 = Math.Atan2(cy - h1, vdx1);
+
+                    p3.theta = t3;
+                    p3.r = innerRadius;
+                    p3.vertical = true;
+                    p3.index = 3;
+                    //  spokePoints.Add(p2);
+
+                    PolarPoint p4 = new PolarPoint();
+                    p4.barId = "V" + i.ToString();
+                    p4.X = vx2;
+                    p4.Y = cy - h2;
+                    double t4 = Math.Atan2(cy - h2, vdx2);
+
+                    p4.theta = t4;
+                    p4.r = innerRadius;
+                    p4.vertical = true;
+                    p4.index = 4;
+                    GapDef lower = new GapDef();
+                    if (p3.theta > p4.theta)
+                    {
+                        lower.Start = p4;
+                        lower.Finish = p3;
+                    }
+                    else
+                    {
+                        lower.Start = p3;
+                        lower.Finish = p4;
+                    }
+                    spokePoints.Add(lower);
                 }
 
                 // so we should have a list
@@ -158,7 +187,7 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
-            spokePoints = new List<PolarPoint>();
+            spokePoints = new List<GapDef>();
 
             if (makeEdge)
             {
@@ -215,8 +244,9 @@ namespace MakerLib
         private void GenerateWithEdge()
         {
             MakeVerticalBarPolarCoords();
-            SortSpokesByTheta();
             DumpSpokes();
+            //    SortSpokesByTheta();
+
             GenerateOuterEdge();
             GenerateInnerEdge();
         }
@@ -225,13 +255,15 @@ namespace MakerLib
         {
             for (int i = 0; i < spokePoints.Count; i++)
             {
-                System.Diagnostics.Debug.WriteLine($"{spokePoints[i].barId},{spokePoints[i].index},{spokePoints[i].theta},{spokePoints[i].X},{spokePoints[i].y}");
+                System.Diagnostics.Debug.WriteLine("----");
+                System.Diagnostics.Debug.WriteLine($" Start {spokePoints[i].Start.barId},{spokePoints[i].Start.index},{spokePoints[i].Start.theta},{spokePoints[i].Start.X},{spokePoints[i].Start.Y}");
+                System.Diagnostics.Debug.WriteLine($" Finish {spokePoints[i].Finish.barId},{spokePoints[i].Finish.index},{spokePoints[i].Finish.theta},{spokePoints[i].Finish.X},{spokePoints[i].Finish.Y}");
             }
         }
 
         private void GenerateInnerEdge()
         {
-            double theta = 0;
+            double theta = -Math.PI;
             double dt = Math.PI / 100;
             double theta2 = theta + dt;
             Point pn0;
@@ -241,7 +273,7 @@ namespace MakerLib
             int p3 = 0;
 
             Point pn1;
-            while (Math.PI * 2 - theta2 > 0.0001)
+            while (Math.PI - theta2 > 0.0001)
             {
                 double phi = theta;
                 double phi2 = theta2;
@@ -267,36 +299,37 @@ namespace MakerLib
         private bool ValidInner(ref double phi, ref double phi2)
         {
             bool res = true;
-            for (int i = 0; i < spokePoints.Count - 1; i++)
+            for (int i = 0; i < spokePoints.Count - 1 && res; i++)
             {
-                if (spokePoints[i].barId == spokePoints[i + 1].barId)
+                if (phi < spokePoints[i].Start.theta && phi2 >= spokePoints[i].Start.theta && phi2 < spokePoints[i].Finish.theta)
                 {
-                    if (phi < spokePoints[i].theta && phi2 < spokePoints[i + 1].theta)
+                    phi2 = spokePoints[i].Start.theta;
+                }
+                else
+                {
+                    if (phi > spokePoints[i].Start.theta && phi <= spokePoints[i].Finish.theta && phi2 > spokePoints[i].Finish.theta)
                     {
-                        phi2 = spokePoints[i + 1].theta;
+                        phi = spokePoints[i].Finish.theta;
                     }
                     else
                     {
-                        if (phi > spokePoints[i].theta && phi < spokePoints[i + 1].theta && phi2 > spokePoints[i + 1].theta)
+                        if (phi > spokePoints[i].Start.theta &&
+                            phi <= spokePoints[i].Finish.theta &&
+                            phi2 > spokePoints[i].Start.theta &&
+                            phi2 <= spokePoints[i].Finish.theta)
                         {
-                            phi = spokePoints[i + 1].theta;
-                        }
-                        else
-                        {
-                            if (phi > spokePoints[i].theta && phi <= spokePoints[i + 1].theta && phi2 > spokePoints[i].theta && phi2 <= spokePoints[i + 1].theta)
-                            {
-                                res = false;
-                            }
+                            res = false;
                         }
                     }
                 }
             }
+
             return res;
         }
 
         private void GenerateOuterEdge()
         {
-            double theta = 0;
+            double theta = -Math.PI;
             double dt = Math.PI / 100;
             double theta2 = theta + dt;
             Point pn0;
@@ -306,7 +339,7 @@ namespace MakerLib
             int p3;
 
             Point pn1;
-            while (Math.PI * 2 - theta2 > 0.0001)
+            while (Math.PI - theta2 > 0.0001)
             {
                 pn0 = CalcPoint(theta, grilleRadius);
                 pn1 = CalcPoint(theta2, grilleRadius);
