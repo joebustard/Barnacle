@@ -38,5 +38,8 @@
     <Setting Name="SDCardLabel" Type="System.String" Scope="User">
       <Value Profile="(Default)">Print3D</Value>
     </Setting>
+    <Setting Name="ConfirmNameAfterCSG" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

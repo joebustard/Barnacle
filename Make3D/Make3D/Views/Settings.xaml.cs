@@ -61,6 +61,7 @@ namespace Barnacle.Views
                     BaseViewModel.Document.ProjectSettings = BaseViewModel.Project.SharedProjectSettings;
                     Properties.Settings.Default.SlicerPath = vm.SlicerPath;
                     Properties.Settings.Default.SDCardLabel = vm.SDCardName;
+                    Properties.Settings.Default.ConfirmNameAfterCSG = vm.ConfirmNameAfterCSG;
                     Properties.Settings.Default.Save();
                 }
                 catch (Exception)

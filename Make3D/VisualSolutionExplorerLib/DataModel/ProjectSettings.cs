@@ -17,7 +17,7 @@ namespace VisualSolutionExplorer
             ExportAxisSwap = true;
             ImportAxisSwap = true;
             FloorAll = true;
-            VersionExport = false ;
+            VersionExport = false;
             ClearPreviousVersionsOnExport = true;
             ExportEmptyFiles = false;
             AutoSaveScript = true;
@@ -89,6 +89,7 @@ namespace VisualSolutionExplorer
                 string s = ele.GetAttribute("PlaceNewAtMarker");
                 PlaceNewAtMarker = Convert.ToBoolean(s);
             }
+
             if (ele.HasAttribute("VersionExport"))
             {
                 string s = ele.GetAttribute("VersionExport");

@@ -47,6 +47,21 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private bool confirmNameAfterCSG;
+
+        public bool ConfirmNameAfterCSG
+        {
+            get { return confirmNameAfterCSG; }
+            set
+            {
+                if (value != confirmNameAfterCSG)
+                {
+                    confirmNameAfterCSG = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private String sdCardName;
 
         public String SDCardName
@@ -96,6 +111,7 @@ namespace Barnacle.ViewModels
             DefaultObjectColour = Project.SharedProjectSettings.DefaultObjectColour;
             SlicerPath = Properties.Settings.Default.SlicerPath;
             SDCardName = Properties.Settings.Default.SDCardLabel;
+            ConfirmNameAfterCSG = Properties.Settings.Default.ConfirmNameAfterCSG;
             // SetAvailableColours();
             ObjectColour = ColourPicker.FindAvailableColour(DefaultObjectColour);
 

@@ -2352,6 +2352,12 @@ namespace Barnacle.ViewModels
                 {
                     Undo();
                 }
+                else
+                {
+                    res = true;
+                    selectedItems.Clear();
+                    selectedItems.Add(leftie);
+                }
                 csgCancelation = null;
                 InfoWindow.Instance().Hide();
             }
@@ -2988,8 +2994,26 @@ namespace Barnacle.ViewModels
             else
             {
                 csgCancelation = new CancellationTokenSource();
-                await MakeGroup3D(s);
+                bool groupOpDone = await MakeGroup3D(s);
+                if (groupOpDone)
+                {
+                    Object3D ob = selectedItems[0];
+                    selectedObjectAdorner.Clear();
+                    selectedItems.Clear();
+
+                    if (Properties.Settings.Default.ConfirmNameAfterCSG)
+                    {
+                        ConfirmObjectNameDlg dlg = new ConfirmObjectNameDlg();
+                        dlg.ObjectName = ob.Name;
+                        if (dlg.ShowDialog() == true)
+                        {
+                            ob.Name = dlg.ObjectName;
+                        }
+                    }
+                    SelectObject(ob);
+                }
                 RegenerateDisplayList();
+                SetSelectionColours();
                 NotificationManager.Notify("ObjectNamesChanged", null);
             }
         }
@@ -3382,11 +3406,11 @@ namespace Barnacle.ViewModels
                 if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count == 1)
                 {
                     Object3D old = selectedObjectAdorner.SelectedObjects[0];
-                    MessageBoxResult res = MessageBox.Show("Do you want to replace " + old.Name+"?", "Info", MessageBoxButton.YesNo);
-                    if ( res == MessageBoxResult.Yes)
+                    MessageBoxResult res = MessageBox.Show("Do you want to replace " + old.Name + "?", "Info", MessageBoxButton.YesNo);
+                    if (res == MessageBoxResult.Yes)
                     {
                         Document.Content.Remove(old);
-                        PasteAt(old.Position);                       
+                        PasteAt(old.Position);
                     }
                     else
                     {
@@ -3397,8 +3421,7 @@ namespace Barnacle.ViewModels
                 {
                     OrdinaryPaste();
                 }
-
-            }      
+            }
         }
 
         private void OrdinaryPaste()
@@ -3425,7 +3448,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("ObjectNamesChanged", null);
         }
 
-        private void PasteAt( Point3D targetPoint)
+        private void PasteAt(Point3D targetPoint)
         {
             CheckPoint();
             RecalculateAllBounds();
@@ -3478,8 +3501,8 @@ namespace Barnacle.ViewModels
 
             RegenerateDisplayList();
             NotificationManager.Notify("ObjectNamesChanged", null);
-
         }
+
         private void OnPasteAt(object param)
         {
             if (ObjectClipboard.HasItems() && floorMarker != null)
@@ -3950,6 +3973,30 @@ namespace Barnacle.ViewModels
                 // append the the object to the existing list of
                 selectedObjectAdorner.AdornObject(ob);
             }
+            UpdateSelectionDisplay();
+        }
+
+        private void SelectObject(Object3D ob)
+        {
+            ResetSelection();
+            selectedItems.Add(ob);
+            if (selectedObjectAdorner == null)
+            {
+                MakeSizeAdorner();
+            }
+            selectedObjectAdorner.AdornObject(ob);
+            SetSelectionColours();
+            NotificationManager.Notify("ObjectSelected", ob);
+            if (selectedItems.Count == 1)
+            {
+                PassOnGroupStatus(ob);
+            }
+            else
+            {
+                NotificationManager.Notify("GroupSelected", false);
+            }
+
+            EnableTool(ob);
             UpdateSelectionDisplay();
         }
 

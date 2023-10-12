@@ -2,6 +2,7 @@
 ===========
 Added
 	Basic hole support in platelet
+	Option to prompt for new object name after group operation
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 

@@ -116,6 +116,9 @@
     <Compile Include="Dialogs\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ConfirmObjectName\ConfirmObjectNameDlg.xaml.cs">
+      <DependentUpon>ConfirmObjectNameDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
@@ -488,6 +491,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\BusyControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ConfirmObjectName\ConfirmObjectNameDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
