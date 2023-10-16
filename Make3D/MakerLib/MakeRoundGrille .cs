@@ -272,10 +272,41 @@ namespace MakerLib
                     Point p4 = new Point(b.G2.Finish.X, b.G2.Finish.Y);
                     SideWall(p1, p4);
                     SideWall(p3, p2);
+                    VBottom(b.G1, b.G2);
                 }
             }
         }
 
+        private void VBottom(GapDef a, GapDef b)
+        {
+            double dt = (a.Finish.theta - a.Start.theta) / 10.0;
+
+            double theta = a.Start.theta;
+            while (theta < a.Finish.Theta)
+            {
+                Point pn0 = CalcPoint(theta, innerRadius);
+
+                Point pn1 = CalcPoint(theta + dt, innerRadius);
+                Point pn2 = CalcPoint(-theta, innerRadius);
+                Point pn3 = CalcPoint(-theta - dt, innerRadius);
+                int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+
+                int p2 = AddVertice(cx + pn2.X, cy, cz + pn2.Y);
+                int p3 = AddVertice(cx + pn3.X, cy, cz + pn3.Y);
+                AddFace(p0, p2, p1);
+                AddFace(p1, p2, p3);
+
+                p0 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
+                p1 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
+
+                p2 = AddVertice(cx + pn2.X, cy + grilleWidth, cz + pn2.Y);
+                p3 = AddVertice(cx + pn3.X, cy + grilleWidth, cz + pn3.Y);
+                AddFace(p0, p1, p2);
+                AddFace(p1, p3, p2);
+                theta += dt;
+            }
+        }
         private void SideWall(Point p1, Point p2)
         {
             int v0 = AddVertice(p1.X, 0, p1.Y);
