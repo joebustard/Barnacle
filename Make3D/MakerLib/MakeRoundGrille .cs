@@ -131,6 +131,8 @@ namespace MakerLib
                 }
                 if (ValidInner(ref phi, ref phi2))
                 {
+
+                    // inner
                     pn0 = CalcPoint(phi, innerRadius);
                     pn1 = CalcPoint(phi2, innerRadius);
 
@@ -141,6 +143,18 @@ namespace MakerLib
                     p3 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
                     AddFace(p0, p1, p2);
                     AddFace(p1, p3, p2);
+
+                    pn0 = CalcPoint(phi, grilleRadius);
+                    pn1 = CalcPoint(phi2, grilleRadius);
+
+                    p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                    p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+
+                    p2 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
+                    p3 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
+                    AddFace(p0, p2, p1);
+                    AddFace(p1, p2, p3);
+                    
                 }
 
                 theta = theta + dt;
@@ -204,29 +218,38 @@ namespace MakerLib
                 {
                     theta2 = Math.PI;
                 }
-                pn0 = CalcPoint(theta, innerRadius);
-                pn1 = CalcPoint(theta2, innerRadius);
-                pn2 = CalcPoint(theta, grilleRadius);
-                pn3 = CalcPoint(theta2, grilleRadius);
 
-                // bottom
-                p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
-                p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+                double phi = theta;
+                double phi2 = theta2;
+                if (phi2 > Math.PI)
+                {
+                    phi2 = Math.PI;
+                }
+                if (ValidInner(ref phi, ref phi2))
+                {
+                    pn0 = CalcPoint(theta, innerRadius);
+                    pn1 = CalcPoint(theta2, innerRadius);
+                    pn2 = CalcPoint(theta, grilleRadius);
+                    pn3 = CalcPoint(theta2, grilleRadius);
 
-                p2 = AddVertice(cx + pn2.X, cy, cz + pn2.Y);
-                p3 = AddVertice(cx + pn3.X, cy, cz + pn3.Y);
-                AddFace(p0, p2, p1);
-                AddFace(p1, p2, p3);
+                    // bottom
+                    p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                    p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
 
-                // top
-                p0 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
-                p1 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
+                    p2 = AddVertice(cx + pn2.X, cy, cz + pn2.Y);
+                    p3 = AddVertice(cx + pn3.X, cy, cz + pn3.Y);
+                    AddFace(p0, p2, p1);
+                    AddFace(p1, p2, p3);
 
-                p2 = AddVertice(cx + pn2.X, cy + grilleWidth, cz + pn2.Y);
-                p3 = AddVertice(cx + pn3.X, cy + grilleWidth, cz + pn3.Y);
-                AddFace(p0, p1, p2);
-                AddFace(p1, p3, p2);
+                    // top
+                    p0 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
+                    p1 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
 
+                    p2 = AddVertice(cx + pn2.X, cy + grilleWidth, cz + pn2.Y);
+                    p3 = AddVertice(cx + pn3.X, cy + grilleWidth, cz + pn3.Y);
+                    AddFace(p0, p1, p2);
+                    AddFace(p1, p3, p2);
+                }
                 theta = theta + dt;
             }
         }
@@ -238,7 +261,7 @@ namespace MakerLib
             MakeVerticalBarPolarCoords();
             SortSpokesByTheta();
             DumpSpokes();
-            GenerateOuterEdge();
+        //    GenerateOuterEdge();
             GenerateInnerEdge();
             GenerateRing();
             if (verticalBars > 0 && horizontalBars > 0)
