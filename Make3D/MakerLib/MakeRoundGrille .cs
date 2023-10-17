@@ -110,6 +110,7 @@ namespace MakerLib
         }
 
         private void GenerateInnerEdge()
+        
         {
             double theta = -Math.PI;
             double dt = Math.PI / divisions;
@@ -227,10 +228,10 @@ namespace MakerLib
                 }
                 if (ValidInner(ref phi, ref phi2))
                 {
-                    pn0 = CalcPoint(theta, innerRadius);
-                    pn1 = CalcPoint(theta2, innerRadius);
-                    pn2 = CalcPoint(theta, grilleRadius);
-                    pn3 = CalcPoint(theta2, grilleRadius);
+                    pn0 = CalcPoint(phi, innerRadius);
+                    pn1 = CalcPoint(phi2, innerRadius);
+                    pn2 = CalcPoint(phi, grilleRadius);
+                    pn3 = CalcPoint(phi2, grilleRadius);
 
                     // bottom
                     p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
@@ -295,38 +296,96 @@ namespace MakerLib
                     Point p4 = new Point(b.G2.Finish.X, b.G2.Finish.Y);
                     SideWall(p1, p4);
                     SideWall(p3, p2);
-                    VBottom(b.G1, b.G2);
+                    VTopAndBottom(b.G1, b.G2);
+                    RingGap(b.G1, b.G2);
                 }
             }
         }
 
-        private void VBottom(GapDef a, GapDef b)
+        private void RingGap(GapDef a, GapDef b)
         {
             double dt = (a.Finish.theta - a.Start.theta) / 10.0;
 
             double theta = a.Start.theta;
-            while (theta < a.Finish.Theta)
+            while (theta < a.Finish.theta)
             {
                 Point pn0 = CalcPoint(theta, innerRadius);
-
                 Point pn1 = CalcPoint(theta + dt, innerRadius);
+                Point pn2 = CalcPoint(theta, grilleRadius);
+                Point pn3 = CalcPoint(theta + dt, grilleRadius);
+                int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+                int p2 = AddVertice(cx + pn2.X, cy, cz + pn2.Y);
+                int p3 = AddVertice(cx + pn3.X, cy, cz + pn3.Y);
+                AddFace(p0, p2, p1);
+                AddFace(p1, p2, p3);
+                int up0 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
+                int up1 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
+                int up2 = AddVertice(cx + pn2.X, cy + grilleWidth, cz + pn2.Y);
+                int up3 = AddVertice(cx + pn3.X, cy + grilleWidth, cz + pn3.Y);
+                AddFace(up0, up1, up2);
+                AddFace(up1, up3, up2);
+                AddFace(p2, up2, p3);
+                AddFace(up2, up3, p3);              
+                theta += dt;
+            }
+            theta = b.Start.theta;
+            while (theta <b.Finish.theta)
+            {
+                Point pn0 = CalcPoint(theta, innerRadius);
+                Point pn1 = CalcPoint(theta + dt, innerRadius);
+                Point pn2 = CalcPoint(theta, grilleRadius);
+                Point pn3 = CalcPoint(theta + dt, grilleRadius);
+                int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
+                int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
+                int p2 = AddVertice(cx + pn2.X, cy, cz + pn2.Y);
+                int p3 = AddVertice(cx + pn3.X, cy, cz + pn3.Y);
+                AddFace(p0, p2, p1);
+                AddFace(p1, p2, p3);
+                int up0 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
+                int up1 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
+                int up2 = AddVertice(cx + pn2.X, cy + grilleWidth, cz + pn2.Y);
+                int up3 = AddVertice(cx + pn3.X, cy + grilleWidth, cz + pn3.Y);
+                AddFace(up0, up1, up2);
+                AddFace(up1, up3, up2);
+                AddFace(p2, up2, p3);
+                AddFace(up2, up3, p3);
+                theta += dt;
+            }
+        }
+
+        private void VTopAndBottom(GapDef a, GapDef b)
+        {
+            double dt = (a.Finish.theta - a.Start.theta) / 10.0;
+
+            double theta = a.Start.theta;
+            while (theta < a.Finish.theta)
+            {
+                double g = dt;
+                if ( theta +g > a.Finish.theta)
+                {
+                    g = a.Finish.theta - theta;
+                }
+                Point pn0 = CalcPoint(theta, innerRadius);
+
+                Point pn1 = CalcPoint(theta + g, innerRadius);
                 Point pn2 = CalcPoint(-theta, innerRadius);
-                Point pn3 = CalcPoint(-theta - dt, innerRadius);
+                Point pn3 = CalcPoint(-theta - g, innerRadius);
                 int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
                 int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
 
                 int p2 = AddVertice(cx + pn2.X, cy, cz + pn2.Y);
                 int p3 = AddVertice(cx + pn3.X, cy, cz + pn3.Y);
-                AddFace(p0, p2, p1);
-                AddFace(p1, p2, p3);
+                AddFace(p0, p1, p2);
+                AddFace(p1, p3, p2);
 
                 p0 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
                 p1 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
 
                 p2 = AddVertice(cx + pn2.X, cy + grilleWidth, cz + pn2.Y);
                 p3 = AddVertice(cx + pn3.X, cy + grilleWidth, cz + pn3.Y);
-                AddFace(p0, p1, p2);
-                AddFace(p1, p3, p2);
+                AddFace(p0, p2, p1);
+                AddFace(p1, p2, p3);
                 theta += dt;
             }
         }
