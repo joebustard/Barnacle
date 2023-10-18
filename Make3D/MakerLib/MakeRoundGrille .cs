@@ -24,6 +24,7 @@ namespace MakerLib
         private double verticalBars;
         private double verticalBarThickness;
         private List<double> verticalXs;
+        private List<double> horizontalYs;
 
         public RoundGrilleMaker(double grilleRadius, double grillWidth, bool makeEdge, double edgeThickness, double verticalBars, double verticalBarThickness, double horizontalBars, double horizontalBarThickness)
         {
@@ -57,47 +58,7 @@ namespace MakerLib
             }
         }
 
-        private void Box(double x, double y, double z, double l, double h, double w, bool left, bool right, bool top, bool bottom)
-        {
-            // back
-            int v0 = AddVertice(x, y, z);
-            int v1 = AddVertice(x, y + h, z);
-            int v2 = AddVertice(x + l, y + h, z);
-            int v3 = AddVertice(x + l, y, z);
-            AddFace(v0, v1, v2);
-            AddFace(v0, v2, v3);
-
-            // front
-            int v4 = AddVertice(x, y, z + w);
-            int v5 = AddVertice(x, y + h, z + w);
-            int v6 = AddVertice(x + l, y + h, z + w);
-            int v7 = AddVertice(x + l, y, z + w);
-            AddFace(v4, v6, v5);
-            AddFace(v4, v7, v6);
-            if (left)
-            {
-                AddFace(v0, v5, v1);
-                AddFace(v0, v4, v5);
-            }
-
-            if (right)
-            {
-                AddFace(v3, v2, v6);
-                AddFace(v3, v6, v7);
-            }
-
-            if (top)
-            {
-                AddFace(v1, v6, v2);
-                AddFace(v1, v5, v6);
-            }
-
-            if (bottom)
-            {
-                AddFace(v0, v3, v7);
-                AddFace(v0, v7, v4);
-            }
-        }
+       
 
         private void DumpSpokes()
         {
@@ -110,7 +71,7 @@ namespace MakerLib
         }
 
         private void GenerateInnerEdge()
-        
+       
         {
             double theta = -Math.PI;
             double dt = Math.PI / divisions;
@@ -160,40 +121,6 @@ namespace MakerLib
 
                 theta = theta + dt;
                 theta2 = theta + dt;
-            }
-        }
-
-        private void GenerateOuterEdge()
-        {
-            double theta = -Math.PI;
-
-            double dt = Math.PI / divisions;
-            double theta2 = theta + dt;
-            Point pn0;
-            int p0;
-            int p1;
-            int p2;
-            int p3;
-
-            Point pn1;
-            while (theta < Math.PI)
-            {
-                theta2 = theta + dt;
-                if (theta2 > Math.PI)
-                {
-                    theta2 = Math.PI;
-                }
-                pn0 = CalcPoint(theta, grilleRadius);
-                pn1 = CalcPoint(theta2, grilleRadius);
-
-                p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
-                p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
-
-                p2 = AddVertice(cx + pn0.X, cy + grilleWidth, cz + pn0.Y);
-                p3 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
-                AddFace(p0, p2, p1);
-                AddFace(p1, p2, p3);
-                theta = theta + dt;
             }
         }
 
@@ -256,26 +183,32 @@ namespace MakerLib
         }
 
         private List<Bar> vBars;
+        private List<Bar> hBars;
 
         private void GenerateWithEdge()
         {
-            MakeVerticalBarPolarCoords();
-            SortSpokesByTheta();
-            DumpSpokes();
-        //    GenerateOuterEdge();
-            GenerateInnerEdge();
-            GenerateRing();
+
             if (verticalBars > 0 && horizontalBars > 0)
             {
                 GenerateCrossingGrid();
             }
             else if (verticalBars > 0)
             {
+                MakeVerticalBarPolarCoords();
+                SortSpokesByTheta();
+                DumpSpokes();
+                GenerateInnerEdge();
+                GenerateRing();
                 GenerateVerticalBars();
             }
             else
             if (horizontalBars > 0)
             {
+                MakeHorizontalBarPolarCoords();
+                SortSpokesByTheta();
+                DumpSpokes();
+                GenerateInnerEdge();
+                GenerateRing();
                 GenerateHorizontalBars();
             }
         }
@@ -407,6 +340,110 @@ namespace MakerLib
         {
         }
 
+        private void MakeHorizontalBarPolarCoords()
+        {
+            horizontalYs = new List<double>();
+            hBars = new List<Bar>();
+            if (horizontalBars > 0)
+            {
+                double hspacing = innerDiameter / (horizontalBars + 1);
+                for (int i = 0; i < horizontalBars; i++)
+                {
+                    Bar bar = new Bar();
+
+                    // work out where vertical bar crosses the x axies.
+                    double hy = (cy - innerRadius) + ((i + 1) * hspacing);
+                    horizontalYs.Add(hy);
+                    double hy1 = hy - (horizontalBarThickness / 2.0);
+                    double hy2 = hy + (horizontalBarThickness / 2.0);
+                    // distance of this from the centre
+                    double hdy1 = cy - hy1;
+                    double hdy2 = cy - hy2;
+
+                    //Uppers
+                    double h1 = Math.Sqrt((innerRadius * innerRadius) - (hdy1 * hdy1));
+                    double h2 = Math.Sqrt((innerRadius * innerRadius) - (hdy2 * hdy2));
+                    PolarPoint p1 = new PolarPoint();
+                    p1.barId = "H" + i.ToString();
+                    p1.X = cx + h1;
+                    p1.Y = hy1;
+                    double t1 = Math.Atan2(h1 + cy, hdy1);
+
+                    p1.theta = t1;
+
+                    p1.r = innerRadius;
+                    p1.vertical = false;
+                    p1.index = 0;
+
+                    //spokePoints.Add(p1);
+
+                    PolarPoint p2 = new PolarPoint();
+                    p2.barId = "H" + i.ToString();
+                    p2.X = cx+h2;
+                    p2.Y = hy2;
+                    double t2 = Math.Atan2(h2 + cy, hdy2);
+
+                    p2.theta = t2;
+                    p2.r = innerRadius;
+                    p2.vertical = false;
+                    p2.index = 1;
+
+                    GapDef upper = new GapDef();
+                    if (p1.theta > p2.theta)
+                    {
+                        upper.Start = p2;
+                        upper.Finish = p1;
+                    }
+                    else
+                    {
+                        upper.Start = p1;
+                        upper.Finish = p2;
+                    }
+                    spokePoints.Add(upper);
+                    bar.G1 = upper;
+
+                    PolarPoint p3 = new PolarPoint();
+                    p3.barId = "H" + i.ToString();
+                    p3.X = cx-h1;
+                    p3.Y = hy1;
+                    double t3 = Math.Atan2(cy - h1, hdy1);
+
+                    p3.theta = t3;
+                    p3.r = innerRadius;
+                    p3.vertical = false;
+                    p3.index = 3;
+                    //  spokePoints.Add(p2);
+
+                    PolarPoint p4 = new PolarPoint();
+                    p4.barId = "H" + i.ToString();
+                    p4.X = cx-h2;
+                    p4.Y = hy2;
+                    double t4 = Math.Atan2(cy - h2, hdy2);
+
+                    p4.theta = t4;
+                    p4.r = innerRadius;
+                    p4.vertical = false;
+                    p4.index = 4;
+                    GapDef lower = new GapDef();
+                    if (p3.theta > p4.theta)
+                    {
+                        lower.Start = p4;
+                        lower.Finish = p3;
+                    }
+                    else
+                    {
+                        lower.Start = p3;
+                        lower.Finish = p4;
+                    }
+                    spokePoints.Add(lower);
+                    bar.G2 = lower;
+
+                    hBars.Add(bar);
+                }
+
+                // so we should have a list
+            }
+        }
         private void MakeVerticalBarPolarCoords()
         {
             verticalXs = new List<double>();
