@@ -58,8 +58,6 @@ namespace MakerLib
             }
         }
 
-       
-
         private void DumpSpokes()
         {
             for (int i = 0; i < spokePoints.Count; i++)
@@ -71,7 +69,7 @@ namespace MakerLib
         }
 
         private void GenerateInnerEdge()
-       
+
         {
             double theta = -Math.PI;
             double dt = Math.PI / divisions;
@@ -93,7 +91,6 @@ namespace MakerLib
                 }
                 if (ValidInner(ref phi, ref phi2))
                 {
-
                     // inner
                     pn0 = CalcPoint(phi, innerRadius);
                     pn1 = CalcPoint(phi2, innerRadius);
@@ -116,7 +113,6 @@ namespace MakerLib
                     p3 = AddVertice(cx + pn1.X, cy + grilleWidth, cz + pn1.Y);
                     AddFace(p0, p2, p1);
                     AddFace(p1, p2, p3);
-                    
                 }
 
                 theta = theta + dt;
@@ -187,7 +183,6 @@ namespace MakerLib
 
         private void GenerateWithEdge()
         {
-
             if (verticalBars > 0 && horizontalBars > 0)
             {
                 GenerateCrossingGrid();
@@ -215,6 +210,20 @@ namespace MakerLib
 
         private void GenerateHorizontalBars()
         {
+            if (hBars != null && hBars.Count > 0)
+            {
+                foreach (Bar b in hBars)
+                {
+                    Point p1 = new Point(b.G1.Start.X, b.G1.Start.Y);
+                    Point p2 = new Point(b.G1.Finish.X, b.G1.Finish.Y);
+                    Point p3 = new Point(b.G2.Start.X, b.G2.Start.Y);
+                    Point p4 = new Point(b.G2.Finish.X, b.G2.Finish.Y);
+                    SideWall(p1, p4);
+                    SideWall(p3, p2);
+                    //   VTopAndBottom(b.G1, b.G2);
+                    RingGap(b.G1, b.G2);
+                }
+            }
         }
 
         private void GenerateVerticalBars()
@@ -237,10 +246,15 @@ namespace MakerLib
 
         private void RingGap(GapDef a, GapDef b)
         {
-            double dt = (a.Finish.theta - a.Start.theta) / 10.0;
-
-            double theta = a.Start.theta;
-            while (theta < a.Finish.theta)
+            double startAngle = a.Start.theta;
+            double endAngle = a.Finish.theta;
+            if (startAngle > 0 && endAngle < 0)
+            {
+                endAngle += Math.PI * 2.0;
+            }
+            double dt = (endAngle - startAngle) / 10.0;
+            double theta = startAngle;
+            while (theta < endAngle)
             {
                 Point pn0 = CalcPoint(theta, innerRadius);
                 Point pn1 = CalcPoint(theta + dt, innerRadius);
@@ -259,11 +273,18 @@ namespace MakerLib
                 AddFace(up0, up1, up2);
                 AddFace(up1, up3, up2);
                 AddFace(p2, up2, p3);
-                AddFace(up2, up3, p3);              
+                AddFace(up2, up3, p3);
                 theta += dt;
             }
-            theta = b.Start.theta;
-            while (theta <b.Finish.theta)
+
+            startAngle = b.Start.theta;
+            endAngle = b.Finish.theta;
+            if (startAngle > 0 && endAngle < 0)
+            {
+                endAngle += Math.PI * 2.0;
+            }
+            theta = startAngle;
+            while (theta < endAngle)
             {
                 Point pn0 = CalcPoint(theta, innerRadius);
                 Point pn1 = CalcPoint(theta + dt, innerRadius);
@@ -295,7 +316,7 @@ namespace MakerLib
             while (theta < a.Finish.theta)
             {
                 double g = dt;
-                if ( theta +g > a.Finish.theta)
+                if (theta + g > a.Finish.theta)
                 {
                     g = a.Finish.theta - theta;
                 }
@@ -322,6 +343,7 @@ namespace MakerLib
                 theta += dt;
             }
         }
+
         private void SideWall(Point p1, Point p2)
         {
             int v0 = AddVertice(p1.X, 0, p1.Y);
@@ -367,7 +389,7 @@ namespace MakerLib
                     p1.barId = "H" + i.ToString();
                     p1.X = cx + h1;
                     p1.Y = hy1;
-                    double t1 = Math.Atan2(h1 + cy, hdy1);
+                    double t1 = Math.Atan2(hdy1, h1);
 
                     p1.theta = t1;
 
@@ -379,34 +401,34 @@ namespace MakerLib
 
                     PolarPoint p2 = new PolarPoint();
                     p2.barId = "H" + i.ToString();
-                    p2.X = cx+h2;
+                    p2.X = cx + h2;
                     p2.Y = hy2;
-                    double t2 = Math.Atan2(h2 + cy, hdy2);
+                    double t2 = Math.Atan2(hdy2, h2);
 
                     p2.theta = t2;
                     p2.r = innerRadius;
                     p2.vertical = false;
                     p2.index = 1;
 
-                    GapDef upper = new GapDef();
+                    GapDef right = new GapDef();
                     if (p1.theta > p2.theta)
                     {
-                        upper.Start = p2;
-                        upper.Finish = p1;
+                        right.Start = p2;
+                        right.Finish = p1;
                     }
                     else
                     {
-                        upper.Start = p1;
-                        upper.Finish = p2;
+                        right.Start = p1;
+                        right.Finish = p2;
                     }
-                    spokePoints.Add(upper);
-                    bar.G1 = upper;
+                    spokePoints.Add(right);
+                    bar.G1 = right;
 
                     PolarPoint p3 = new PolarPoint();
                     p3.barId = "H" + i.ToString();
-                    p3.X = cx-h1;
+                    p3.X = cx - h1;
                     p3.Y = hy1;
-                    double t3 = Math.Atan2(cy - h1, hdy1);
+                    double t3 = Math.Atan2(hdy1, -h1);
 
                     p3.theta = t3;
                     p3.r = innerRadius;
@@ -416,27 +438,45 @@ namespace MakerLib
 
                     PolarPoint p4 = new PolarPoint();
                     p4.barId = "H" + i.ToString();
-                    p4.X = cx-h2;
+                    p4.X = cx - h2;
                     p4.Y = hy2;
-                    double t4 = Math.Atan2(cy - h2, hdy2);
+                    double t4 = Math.Atan2(hdy2, -h2);
 
                     p4.theta = t4;
                     p4.r = innerRadius;
                     p4.vertical = false;
                     p4.index = 4;
-                    GapDef lower = new GapDef();
-                    if (p3.theta > p4.theta)
+                    GapDef left = new GapDef();
+                    if (Math.Sign(p3.theta) == Math.Sign(p4.theta))
                     {
-                        lower.Start = p4;
-                        lower.Finish = p3;
+                        if (p3.theta > p4.theta)
+                        {
+                            left.Start = p4;
+                            left.Finish = p3;
+                        }
+                        else
+                        {
+                            left.Start = p3;
+                            left.Finish = p4;
+                        }
                     }
                     else
                     {
-                        lower.Start = p3;
-                        lower.Finish = p4;
+                        if (Math.Sign(p3.theta) == 1)
+                        {
+                            left.Start = p3;
+                            left.Finish = p4;
+                        }
+                        else
+                        {
+                            {
+                                left.Start = p4;
+                                left.Finish = p3;
+                            }
+                        }
                     }
-                    spokePoints.Add(lower);
-                    bar.G2 = lower;
+                    spokePoints.Add(left);
+                    bar.G2 = left;
 
                     hBars.Add(bar);
                 }
@@ -444,6 +484,7 @@ namespace MakerLib
                 // so we should have a list
             }
         }
+
         private void MakeVerticalBarPolarCoords()
         {
             verticalXs = new List<double>();
@@ -559,6 +600,15 @@ namespace MakerLib
                     swapped = false;
                     for (int i = 0; i < spokePoints.Count - 1; i++)
                     {
+                        // special case for horizontal bars where start  is positive
+                        // but end is negative i.e. jumping from just below PI to just over -PI
+                        double startAngle = spokePoints[i].Start.theta;
+                        double endAngle = spokePoints[i].Finish.theta;
+                        if (startAngle > 0 && endAngle < 0)
+                        {
+                            endAngle += Math.PI * 2.0;
+                        }
+
                         if (spokePoints[i].Finish.theta > spokePoints[i + 1].Start.theta)
                         {
                             swapped = true;
@@ -576,28 +626,64 @@ namespace MakerLib
             bool res = true;
             for (int i = 0; i < spokePoints.Count && res; i++)
             {
-                // does segment overlap start of gap, if so clip end
-                if (phi < spokePoints[i].Start.theta && phi2 >= spokePoints[i].Start.theta && phi2 < spokePoints[i].Finish.theta)
+                //check for special case where horizontal bar starts close to PI and ends just
+                // over -PI
+                if (spokePoints[i].Start.theta > 0 && spokePoints[i].Finish.theta < 0)
                 {
-                    phi2 = spokePoints[i].Start.theta;
-                }
-                else
-                {
-                    // does segment overlap end of gap, if so clip start
-                    if (phi >= spokePoints[i].Start.theta && phi <= spokePoints[i].Finish.theta && phi2 > spokePoints[i].Finish.theta)
+                    double TwoPi = Math.PI * 2.0;
+                    if (phi < spokePoints[i].Start.theta && phi2 >= spokePoints[i].Start.theta && phi2 < spokePoints[i].Finish.theta + TwoPi)
+                    {
+                        phi2 = spokePoints[i].Start.theta;
+                    }
+                    else
+                    if (phi < spokePoints[i].Finish.theta && phi2 >= spokePoints[i].Finish.theta)
                     {
                         phi = spokePoints[i].Finish.theta;
                     }
                     else
+                         if (phi >= spokePoints[i].Start.theta &&
+                                phi <= spokePoints[i].Finish.theta + TwoPi &&
+                                phi2 >= spokePoints[i].Start.theta &&
+                                phi2 <= spokePoints[i].Finish.theta + TwoPi)
                     {
-                        // is entire seqment inside a gap
-                        if (phi >= spokePoints[i].Start.theta &&
-                            phi <= spokePoints[i].Finish.theta &&
-                            phi2 >= spokePoints[i].Start.theta &&
-                            phi2 <= spokePoints[i].Finish.theta)
+                        // tell caller not use do this seqment at all
+                        res = false;
+                    }
+                    else
+                        if (phi >= -Math.PI &&
+                                phi <= spokePoints[i].Finish.theta &&
+                                phi2 >= -Math.PI &&
+                                phi2 <= spokePoints[i].Finish.theta + TwoPi)
+                    {
+                        // tell caller not use do this seqment at all
+                        res = false;
+                    }
+                }
+                else
+                {
+                    // does segment overlap start of gap, if so clip end
+                    if (phi < spokePoints[i].Start.theta && phi2 >= spokePoints[i].Start.theta && phi2 < spokePoints[i].Finish.theta)
+                    {
+                        phi2 = spokePoints[i].Start.theta;
+                    }
+                    else
+                    {
+                        // does segment overlap end of gap, if so clip start
+                        if (phi >= spokePoints[i].Start.theta && phi <= spokePoints[i].Finish.theta && phi2 > spokePoints[i].Finish.theta)
                         {
-                            // tell caller not use do this seqment at all
-                            res = false;
+                            phi = spokePoints[i].Finish.theta;
+                        }
+                        else
+                        {
+                            // is entire seqment inside a gap
+                            if (phi >= spokePoints[i].Start.theta &&
+                                phi <= spokePoints[i].Finish.theta &&
+                                phi2 >= spokePoints[i].Start.theta &&
+                                phi2 <= spokePoints[i].Finish.theta)
+                            {
+                                // tell caller not use do this seqment at all
+                                res = false;
+                            }
                         }
                     }
                 }

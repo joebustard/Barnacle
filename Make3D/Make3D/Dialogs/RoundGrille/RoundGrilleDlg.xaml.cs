@@ -394,11 +394,11 @@ namespace Barnacle.Dialogs
 
             EdgeThickness = EditorParameters.GetDouble("EdgeThickness", 1);
 
-            VerticalBars = EditorParameters.GetDouble("VerticalBars", 3);
+            VerticalBars = EditorParameters.GetDouble("VerticalBars", 0);
 
             VerticalBarThickness = EditorParameters.GetDouble("VerticalBarThickness", 2);
 
-            HorizontalBars = EditorParameters.GetDouble("HorizontalBars", 3);
+            HorizontalBars = EditorParameters.GetDouble("HorizontalBars", 1);
 
             HorizontalBarThickness = EditorParameters.GetDouble("HorizontalBarThickness", 2);
         }
