@@ -70,8 +70,127 @@ namespace MakerLib
             }
         }
 
+        internal struct Crossing
+        {
+            internal Point p0;
+            internal Point p1;
+            internal Point p2;
+            internal Point p3;
+        }
+
         private void GenerateCrossingGrid()
         {
+            double w = verticalBarThickness / 2.0;
+            double h = horizontalBarThickness / 2.0;
+            // do the front and back of the crossings
+            Crossing[,] crossings = new Crossing[(int)verticalBars, (int)horizontalBars];
+
+            // just add the litle front and back squares where the verticals and horizontals cross.
+            // Record where they are in the crossing structs.
+            // These are useful later
+            for (int i = 0; i < verticalBars; i++)
+            {
+                double px = verticalXs[i];
+                for (int j = 0; j < horizontalBars; j++)
+                {
+                    double py = horizontalYs[j];
+                    crossings[i, j] = new Crossing();
+
+                    crossings[i, j].p0 = new Point(px - w, py + h);
+                    crossings[i, j].p1 = new Point(px + w, py + h);
+                    crossings[i, j].p2 = new Point(px + w, py - h);
+                    crossings[i, j].p3 = new Point(px - w, py - h);
+
+                    int v0 = AddVertice(px - w, cy + grilleWidth, py + h);
+                    int v1 = AddVertice(px + w, cy + grilleWidth, py + h);
+                    int v2 = AddVertice(px + w, cy + grilleWidth, py - h);
+                    int v3 = AddVertice(px - w, cy + grilleWidth, py - h);
+
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
+
+                    v0 = AddVertice(px - w, cy, py + h);
+                    v1 = AddVertice(px + w, cy, py + h);
+                    v2 = AddVertice(px + w, cy, py - h);
+                    v3 = AddVertice(px - w, cy, py - h);
+
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
+                }
+            }
+
+            // add the crossing boxes in the middle
+            if (verticalBars > 1)
+            {
+                for (int i = 0; i < verticalBars - 1; i++)
+                {
+                    for (int j = 0; j < horizontalBars; j++)
+                    {
+                        // create a box from the right of the current crossing to the left of the next one
+                        int v4 = AddVertice(crossings[i, j].p1.X, cy, crossings[i, j].p1.Y);
+                        int v5 = AddVertice(crossings[i + 1, j].p0.X, cy, crossings[i + 1, j].p0.Y);
+                        int v6 = AddVertice(crossings[i + 1, j].p3.X, cy, crossings[i + 1, j].p3.Y);
+                        int v7 = AddVertice(crossings[i, j].p2.X, cy, crossings[i, j].p2.Y);
+
+                        int v8 = AddVertice(crossings[i, j].p1.X, cy + grilleWidth, crossings[i, j].p1.Y);
+                        int v9 = AddVertice(crossings[i + 1, j].p0.X, cy + grilleWidth, crossings[i + 1, j].p0.Y);
+                        int v10 = AddVertice(crossings[i + 1, j].p3.X, cy + grilleWidth, crossings[i + 1, j].p3.Y);
+                        int v11 = AddVertice(crossings[i, j].p2.X, cy + grilleWidth, crossings[i, j].p2.Y);
+
+                        // bottom
+                        AddFace(v4, v6, v5);
+                        AddFace(v4, v6, v7);
+
+                        // top
+                        AddFace(v8, v9, v10);
+                        AddFace(v8, v10, v11);
+
+                        //front
+                        AddFace(v4, v5, v9);
+                        AddFace(v4, v9, v8);
+
+                        //Back
+                        AddFace(v7, v10, v6);
+                        AddFace(v7, v11, v10);
+                    }
+                }
+            }
+
+            if (horizontalBars > 1)
+            {
+                for (int i = 0; i < verticalBars; i++)
+                {
+                    for (int j = 0; j < horizontalBars - 1; j++)
+                    {
+                        // create a box from the right of the current crossing to the left of the next one
+                        int v4 = AddVertice(crossings[i, j].p0.X, cy, crossings[i, j].p0.Y);
+                        int v5 = AddVertice(crossings[i, j].p1.X, cy, crossings[i, j].p1.Y);
+                        int v6 = AddVertice(crossings[i, j + 1].p2.X, cy, crossings[i, j + 1].p2.Y);
+                        int v7 = AddVertice(crossings[i, j + 1].p3.X, cy, crossings[i, j + 1].p3.Y);
+
+                        int v8 = AddVertice(crossings[i, j].p0.X, cy + grilleWidth, crossings[i, j].p0.Y);
+                        int v9 = AddVertice(crossings[i, j].p1.X, cy + grilleWidth, crossings[i, j].p1.Y);
+                        int v10 = AddVertice(crossings[i, j + 1].p2.X, cy + grilleWidth, crossings[i, j + 1].p2.Y);
+                        int v11 = AddVertice(crossings[i, j + 1].p3.X, cy + grilleWidth, crossings[i, j + 1].p3.Y);
+
+                        // bottom
+                        AddFace(v4, v5, v6);
+                        AddFace(v4, v7, v6);
+
+                        // top
+                        AddFace(v8, v10, v9);
+                        AddFace(v8, v11, v10);
+
+                        //left
+                        AddFace(v4, v11, v8);
+                        AddFace(v4, v7, v11);
+
+                        //Right
+                        AddFace(v5, v9, v10);
+                        AddFace(v5, v10, v6);
+                    }
+                }
+            }
         }
 
         private void GenerateHorizontalBars()
@@ -93,7 +212,6 @@ namespace MakerLib
         }
 
         private void GenerateInnerEdge()
-
         {
             double theta = -Math.PI;
             double dt = Math.PI / divisions;
@@ -224,6 +342,12 @@ namespace MakerLib
         {
             if (verticalBars > 0 && horizontalBars > 0)
             {
+                MakeVerticalBarPolarCoords();
+                MakeHorizontalBarPolarCoords();
+                SortSpokesByTheta();
+                DumpSpokes();
+                GenerateInnerEdge();
+                GenerateRing();
                 GenerateCrossingGrid();
             }
             else if (verticalBars > 0)
@@ -257,7 +381,7 @@ namespace MakerLib
             hBars = new List<Bar>();
             if (horizontalBars > 0)
             {
-                double hspacing = innerDiameter / (horizontalBars + 1);
+                double hspacing = (innerDiameter) / (horizontalBars + 1);
                 for (int i = 0; i < horizontalBars; i++)
                 {
                     Bar bar = new Bar();
@@ -372,9 +496,12 @@ namespace MakerLib
         {
             verticalXs = new List<double>();
             vBars = new List<Bar>();
+            double halfBarWidth = (verticalBarThickness);
             if (verticalBars > 0)
             {
-                double vspacing = innerDiameter / (verticalBars + 1);
+                // double availableSpace = (innerDiameter - (verticalBars * verticalBarThickness));
+                double availableSpace = (innerDiameter);
+                double vspacing = availableSpace / (verticalBars + 1);
                 for (int i = 0; i < verticalBars; i++)
                 {
                     Bar bar = new Bar();
@@ -382,11 +509,15 @@ namespace MakerLib
                     // work out where vertical bar crosses the x axies.
                     double vx = (cx - innerRadius) + ((i + 1) * vspacing);
                     verticalXs.Add(vx);
-                    double vx1 = vx - (verticalBarThickness / 2.0);
-                    double vx2 = vx + (verticalBarThickness / 2.0);
+                    double vx1 = vx - halfBarWidth;
+                    double vx2 = vx + halfBarWidth;
                     // distance of this from the centre
                     double vdx1 = cx - vx1;
                     double vdx2 = cx - vx2;
+                    if (Math.Abs(vdx1) > innerRadius || Math.Abs(vdx2) > innerRadius)
+                    {
+                        bool buggered = true;
+                    }
 
                     //Uppers
                     double h1 = Math.Sqrt((innerRadius * innerRadius) - (vdx1 * vdx1));
@@ -395,8 +526,8 @@ namespace MakerLib
                     p1.barId = "V" + i.ToString();
                     p1.X = vx1;
                     p1.Y = cy + h1;
-                    double t1 = Math.Atan2(h1 + cy, vdx1);
-
+                    // double t1 = Math.Atan2(h1 + cy, vdx1);
+                    double t1 = Math.Atan2(h1, vx1);
                     p1.theta = t1;
 
                     p1.r = innerRadius;
@@ -407,7 +538,8 @@ namespace MakerLib
                     p2.barId = "V" + i.ToString();
                     p2.X = vx2;
                     p2.Y = cy + h2;
-                    double t2 = Math.Atan2(h2 + cy, vdx2);
+                    //double t2 = Math.Atan2(h2 + cy, vdx2);
+                    double t2 = Math.Atan2(h2, vx2);
 
                     p2.theta = t2;
                     p2.r = innerRadius;
@@ -684,13 +816,22 @@ namespace MakerLib
         {
             double startAngle = a.Start.theta;
             double endAngle = a.Finish.theta;
-            if ( startAngle >0 && endAngle <0)
+            if (startAngle > 0 && endAngle < 0)
             {
                 endAngle += Math.PI * 2.0;
             }
+
+            double startAngle2 = b.Start.theta;
+            double endAngle2 = b.Finish.theta;
+            if (startAngle2 > 0 && endAngle2 < 0)
+            {
+                endAngle2 += Math.PI * 2.0;
+            }
+
             double dt = (endAngle - startAngle) / 10.0;
 
             double theta = startAngle;
+            double phi = endAngle2;
             while (theta < endAngle)
             {
                 double g = dt;
@@ -699,10 +840,10 @@ namespace MakerLib
                     g = endAngle - theta;
                 }
                 Point pn0 = CalcPoint(theta, innerRadius);
-
                 Point pn1 = CalcPoint(theta + g, innerRadius);
-                Point pn2 = CalcPoint(-theta, innerRadius);
-                Point pn3 = CalcPoint(-theta - g, innerRadius);
+
+                Point pn2 = CalcPoint(phi, innerRadius);
+                Point pn3 = CalcPoint(phi - g, innerRadius);
                 int p0 = AddVertice(cx + pn0.X, cy, cz + pn0.Y);
                 int p1 = AddVertice(cx + pn1.X, cy, cz + pn1.Y);
 
@@ -719,8 +860,10 @@ namespace MakerLib
                 AddFace(p0, p2, p1);
                 AddFace(p1, p2, p3);
                 theta += dt;
+                phi -= dt;
             }
         }
+
         public struct Bar
         {
             public GapDef G1;

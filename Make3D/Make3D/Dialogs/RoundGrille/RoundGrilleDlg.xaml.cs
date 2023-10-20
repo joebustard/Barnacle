@@ -368,14 +368,13 @@ namespace Barnacle.Dialogs
         {
             ClearShape();
             RoundGrilleMaker maker = new RoundGrilleMaker(grilleRadius,
-
-            grillWidth,
-            makeEdge,
-            edgeThickness,
-            verticalBars,
-            verticalBarThickness,
-            horizontalBars,
-            horizontalBarThickness);
+                                                            grillWidth,
+                                                            makeEdge,
+                                                            edgeThickness,
+                                                            verticalBars,
+                                                            verticalBarThickness,
+                                                            horizontalBars,
+                                                             horizontalBarThickness);
 
             maker.Generate(Vertices, Faces);
             CentreVertices();
@@ -394,11 +393,11 @@ namespace Barnacle.Dialogs
 
             EdgeThickness = EditorParameters.GetDouble("EdgeThickness", 1);
 
-            VerticalBars = EditorParameters.GetDouble("VerticalBars", 0);
+            VerticalBars = EditorParameters.GetDouble("VerticalBars", 3);
 
             VerticalBarThickness = EditorParameters.GetDouble("VerticalBarThickness", 2);
 
-            HorizontalBars = EditorParameters.GetDouble("HorizontalBars", 1);
+            HorizontalBars = EditorParameters.GetDouble("HorizontalBars", 3);
 
             HorizontalBarThickness = EditorParameters.GetDouble("HorizontalBarThickness", 2);
         }

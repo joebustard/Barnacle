@@ -42,33 +42,33 @@
                 <TextBox Margin="8,0,0,0" Text="{Binding GrillHeight}" Width="150" ToolTip="{Binding GrillHeightToolTip}" />
             </StackPanel>
             -->
-            <StackPanel Grid.Row="3" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Width="100">Width</Label>
+            <StackPanel Grid.Row="2" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="100">Height</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding GrillWidth}" Width="150" ToolTip="{Binding GrillWidthToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="4" Orientation="Horizontal">
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <CheckBox Content="Make Frame" IsChecked="{Binding MakeEdge}" VerticalAlignment="Center" Width="100" />
                 <Label Margin="8,0,0,0" VerticalAlignment="Center" Width="50">Edge</Label>
                 <TextBox Text="{Binding EdgeThickness}" Width="100" ToolTip="{Binding EdgeThicknessToolTip}" />
             </StackPanel>
 
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Vertical Bars</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding VerticalBars}" Width="150" ToolTip="{Binding VerticalBarsToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">V Thickness</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding VerticalBarThickness}" Width="150" ToolTip="{Binding VerticalBarThicknessToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">Horizontal Bars</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBars}" Width="150" ToolTip="{Binding HorizontalBarsToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
+            <StackPanel Grid.Row="7" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Width="100">H Thickness</Label>
                 <TextBox Margin="8,0,0,0" Text="{Binding HorizontalBarThickness}" Width="150" ToolTip="{Binding HorizontalBarThicknessToolTip}" />
             </StackPanel>
-            <StackPanel Grid.Row="9" Orientation="Horizontal">
+            <StackPanel Grid.Row="8" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
         </Grid>
