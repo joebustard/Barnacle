@@ -190,6 +190,52 @@ namespace MakerLib
                         AddFace(v5, v10, v6);
                     }
                 }
+
+                for (int i = 0; i < horizontalBars; i++)
+                {
+                    if (hBars[i].G2.Start.X < cx)
+                    {
+                        double startAngle = hBars[i].G2.Start.theta;
+                        double endAngle = hBars[i].G2.Finish.theta;
+                        if (startAngle > 0 && endAngle < 0)
+                        {
+                            startAngle += Math.PI * 2.0;
+                        }
+                        double dt = (endAngle - startAngle) / 10.0;
+                        double dy = horizontalBarThickness / 10.0;
+                        double y = hBars[(int)horizontalBars - i - 1].G2.Start.Y;
+                        y += horizontalBarThickness;
+                        double theta = startAngle;
+                        while (theta < endAngle)
+                        {
+                            Point p0 = CalcPoint(theta, innerRadius);
+                            Point p1 = CalcPoint(theta + dt, innerRadius);
+                            Point p2 = new Point(minGridX, y);
+                            Point p3 = new Point(minGridX, y - dy);
+
+                            int v0 = AddVertice(p0.X, cy, p0.Y);
+                            int v1 = AddVertice(p1.X, cy, p1.Y);
+                            int v2 = AddVertice(p2.X, cy, p2.Y);
+                            int v3 = AddVertice(p3.X, cy, p3.Y);
+
+                            AddFace(v0, v1, v2);
+                            AddFace(v1, v3, v2);
+
+                            v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                            v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                            v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
+                            v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
+
+                            AddFace(v0, v2, v1);
+                            AddFace(v1, v2, v3);
+
+                            y -= dy;
+                            theta += dt; ;
+                        }
+                    }
+
+                    RingGap(hBars[i].G1, hBars[i].G2);
+                }
             }
         }
 
@@ -268,12 +314,12 @@ namespace MakerLib
 
             double dt = Math.PI / divisions;
             double theta2 = theta + dt;
-            Point pn0;
+
             int p0;
             int p1;
             int p2;
             int p3;
-
+            Point pn0;
             Point pn1;
             Point pn2;
             Point pn3;
@@ -492,11 +538,16 @@ namespace MakerLib
             }
         }
 
+        private double minGridX;
+        private double maxGridX;
+
         private void MakeVerticalBarPolarCoords()
         {
+            maxGridX = Double.MinValue;
+            minGridX = Double.MaxValue;
             verticalXs = new List<double>();
             vBars = new List<Bar>();
-            double halfBarWidth = (verticalBarThickness);
+            double halfBarWidth = (verticalBarThickness / 2.0);
             if (verticalBars > 0)
             {
                 // double availableSpace = (innerDiameter - (verticalBars * verticalBarThickness));
@@ -596,6 +647,10 @@ namespace MakerLib
                     bar.G2 = lower;
 
                     vBars.Add(bar);
+                    minGridX = Math.Min(minGridX, vx1);
+                    minGridX = Math.Min(minGridX, vx2);
+                    maxGridX = Math.Max(maxGridX, vx1);
+                    maxGridX = Math.Max(maxGridX, vx2);
                 }
             }
         }
