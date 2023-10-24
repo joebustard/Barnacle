@@ -122,101 +122,49 @@ namespace MakerLib
             // add the crossing boxes in the middle
             if (verticalBars > 1)
             {
-                for (int i = 0; i < verticalBars - 1; i++)
-                {
-                    for (int j = 0; j < horizontalBars; j++)
-                    {
-                        // create a box from the right of the current crossing to the left of the next one
-                        int v4 = AddVertice(crossings[i, j].p1.X, cy, crossings[i, j].p1.Y);
-                        int v5 = AddVertice(crossings[i + 1, j].p0.X, cy, crossings[i + 1, j].p0.Y);
-                        int v6 = AddVertice(crossings[i + 1, j].p3.X, cy, crossings[i + 1, j].p3.Y);
-                        int v7 = AddVertice(crossings[i, j].p2.X, cy, crossings[i, j].p2.Y);
-
-                        int v8 = AddVertice(crossings[i, j].p1.X, cy + grilleWidth, crossings[i, j].p1.Y);
-                        int v9 = AddVertice(crossings[i + 1, j].p0.X, cy + grilleWidth, crossings[i + 1, j].p0.Y);
-                        int v10 = AddVertice(crossings[i + 1, j].p3.X, cy + grilleWidth, crossings[i + 1, j].p3.Y);
-                        int v11 = AddVertice(crossings[i, j].p2.X, cy + grilleWidth, crossings[i, j].p2.Y);
-
-                        // bottom
-                        AddFace(v4, v6, v5);
-                        AddFace(v4, v6, v7);
-
-                        // top
-                        AddFace(v8, v9, v10);
-                        AddFace(v8, v10, v11);
-
-                        //front
-                        AddFace(v4, v5, v9);
-                        AddFace(v4, v9, v8);
-
-                        //Back
-                        AddFace(v7, v10, v6);
-                        AddFace(v7, v11, v10);
-                    }
-                }
+                CreateHorizontalCentralBars(crossings);
             }
 
             if (horizontalBars > 1)
             {
-                for (int i = 0; i < verticalBars; i++)
-                {
-                    for (int j = 0; j < horizontalBars - 1; j++)
-                    {
-                        // create a box from the right of the current crossing to the left of the next one
-                        int v4 = AddVertice(crossings[i, j].p0.X, cy, crossings[i, j].p0.Y);
-                        int v5 = AddVertice(crossings[i, j].p1.X, cy, crossings[i, j].p1.Y);
-                        int v6 = AddVertice(crossings[i, j + 1].p2.X, cy, crossings[i, j + 1].p2.Y);
-                        int v7 = AddVertice(crossings[i, j + 1].p3.X, cy, crossings[i, j + 1].p3.Y);
-
-                        int v8 = AddVertice(crossings[i, j].p0.X, cy + grilleWidth, crossings[i, j].p0.Y);
-                        int v9 = AddVertice(crossings[i, j].p1.X, cy + grilleWidth, crossings[i, j].p1.Y);
-                        int v10 = AddVertice(crossings[i, j + 1].p2.X, cy + grilleWidth, crossings[i, j + 1].p2.Y);
-                        int v11 = AddVertice(crossings[i, j + 1].p3.X, cy + grilleWidth, crossings[i, j + 1].p3.Y);
-
-                        // bottom
-                        AddFace(v4, v5, v6);
-                        AddFace(v4, v7, v6);
-
-                        // top
-                        AddFace(v8, v10, v9);
-                        AddFace(v8, v11, v10);
-
-                        //left
-                        AddFace(v4, v11, v8);
-                        AddFace(v4, v7, v11);
-
-                        //Right
-                        AddFace(v5, v9, v10);
-                        AddFace(v5, v10, v6);
-                    }
-                }
+                CreateVerticalCentralBars(crossings);
 
                 for (int i = 0; i < horizontalBars; i++)
                 {
+                    // connect central horizontal bars to ring to their left
                     if (hBars[i].G2.Start.X < cx)
                     {
+                        // left of center, top and bottom
                         double startAngle = hBars[i].G2.Start.theta;
                         double endAngle = hBars[i].G2.Finish.theta;
                         if (startAngle > 0 && endAngle < 0)
                         {
-                            startAngle += Math.PI * 2.0;
+                            endAngle += Math.PI * 2.0;
                         }
                         double dt = (endAngle - startAngle) / 10.0;
                         double dy = horizontalBarThickness / 10.0;
                         double y = hBars[(int)horizontalBars - i - 1].G2.Start.Y;
                         y += horizontalBarThickness;
                         double theta = startAngle;
+                        Point p0;
+                        Point p1;
+                        Point p2;
+                        Point p3;
+                        int v0;
+                        int v1;
+                        int v2;
+                        int v3;
                         while (theta < endAngle)
                         {
-                            Point p0 = CalcPoint(theta, innerRadius);
-                            Point p1 = CalcPoint(theta + dt, innerRadius);
-                            Point p2 = new Point(minGridX, y);
-                            Point p3 = new Point(minGridX, y - dy);
+                            p0 = CalcPoint(theta, innerRadius);
+                            p1 = CalcPoint(theta + dt, innerRadius);
+                            p2 = new Point(minGridX, y);
+                            p3 = new Point(minGridX, y - dy);
 
-                            int v0 = AddVertice(p0.X, cy, p0.Y);
-                            int v1 = AddVertice(p1.X, cy, p1.Y);
-                            int v2 = AddVertice(p2.X, cy, p2.Y);
-                            int v3 = AddVertice(p3.X, cy, p3.Y);
+                            v0 = AddVertice(p0.X, cy, p0.Y);
+                            v1 = AddVertice(p1.X, cy, p1.Y);
+                            v2 = AddVertice(p2.X, cy, p2.Y);
+                            v3 = AddVertice(p3.X, cy, p3.Y);
 
                             AddFace(v0, v1, v2);
                             AddFace(v1, v3, v2);
@@ -232,9 +180,156 @@ namespace MakerLib
                             y -= dy;
                             theta += dt; ;
                         }
+
+                        p0 = CalcPoint(endAngle, innerRadius);
+                        p1 = new Point(minGridX, y);
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        AddFace(v0, v2, v1);
+                        AddFace(v0, v3, v2);
+
+                        p0 = CalcPoint(startAngle, innerRadius);
+                        p1 = new Point(minGridX, y + horizontalBarThickness);
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        AddFace(v0, v1, v2);
+                        AddFace(v0, v2, v3);
+
+                        // right of center
+                        startAngle = hBars[i].G1.Start.theta;
+                        endAngle = hBars[i].G1.Finish.theta;
+                        if (startAngle > 0 && endAngle < 0)
+                        {
+                            endAngle += Math.PI * 2.0;
+                        }
+                        dt = (endAngle - startAngle) / 10.0;
+                        dy = horizontalBarThickness / 10.0;
+                        y = hBars[(int)horizontalBars - i - 1].G1.Start.Y;
+                        y -= horizontalBarThickness;
+                        theta = startAngle;
+                        while (theta < endAngle)
+                        {
+                            p0 = new Point(maxGridX, y);
+                            p1 = new Point(maxGridX, y + dy);
+                            p2 = CalcPoint(theta, innerRadius);
+                            p3 = CalcPoint(theta + dt, innerRadius);
+
+                            v0 = AddVertice(p0.X, cy, p0.Y);
+                            v1 = AddVertice(p1.X, cy, p1.Y);
+                            v2 = AddVertice(p2.X, cy, p2.Y);
+                            v3 = AddVertice(p3.X, cy, p3.Y);
+
+                            AddFace(v0, v2, v1);
+                            AddFace(v1, v2, v3);
+
+                            v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                            v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                            v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
+                            v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
+
+                            AddFace(v0, v1, v2);
+                            AddFace(v1, v3, v2);
+
+                            y += dy;
+                            theta += dt; ;
+                        }
+
+                        p0 = CalcPoint(endAngle, innerRadius);
+                        p1 = new Point(maxGridX, y);
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        AddFace(v0, v2, v1);
+                        AddFace(v0, v3, v2);
+
+                        p0 = CalcPoint(startAngle, innerRadius);
+                        p1 = new Point(maxGridX, y - horizontalBarThickness);
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        AddFace(v0, v1, v2);
+                        AddFace(v0, v2, v3);
                     }
 
                     RingGap(hBars[i].G1, hBars[i].G2);
+                }
+            }
+        }
+
+        private void CreateVerticalCentralBars(Crossing[,] crossings)
+        {
+            for (int i = 0; i < verticalBars; i++)
+            {
+                for (int j = 0; j < horizontalBars - 1; j++)
+                {
+                    // create a box from the right of the current crossing to the left of the next one
+                    int v4 = AddVertice(crossings[i, j].p0.X, cy, crossings[i, j].p0.Y);
+                    int v5 = AddVertice(crossings[i, j].p1.X, cy, crossings[i, j].p1.Y);
+                    int v6 = AddVertice(crossings[i, j + 1].p2.X, cy, crossings[i, j + 1].p2.Y);
+                    int v7 = AddVertice(crossings[i, j + 1].p3.X, cy, crossings[i, j + 1].p3.Y);
+
+                    int v8 = AddVertice(crossings[i, j].p0.X, cy + grilleWidth, crossings[i, j].p0.Y);
+                    int v9 = AddVertice(crossings[i, j].p1.X, cy + grilleWidth, crossings[i, j].p1.Y);
+                    int v10 = AddVertice(crossings[i, j + 1].p2.X, cy + grilleWidth, crossings[i, j + 1].p2.Y);
+                    int v11 = AddVertice(crossings[i, j + 1].p3.X, cy + grilleWidth, crossings[i, j + 1].p3.Y);
+
+                    // bottom
+                    AddFace(v4, v5, v6);
+                    AddFace(v4, v7, v6);
+
+                    // top
+                    AddFace(v8, v10, v9);
+                    AddFace(v8, v11, v10);
+
+                    //left
+                    AddFace(v4, v11, v8);
+                    AddFace(v4, v7, v11);
+
+                    //Right
+                    AddFace(v5, v9, v10);
+                    AddFace(v5, v10, v6);
+                }
+            }
+        }
+
+        private void CreateHorizontalCentralBars(Crossing[,] crossings)
+        {
+            for (int i = 0; i < verticalBars - 1; i++)
+            {
+                for (int j = 0; j < horizontalBars; j++)
+                {
+                    // create a box from the right of the current crossing to the left of the next one
+                    int v4 = AddVertice(crossings[i, j].p1.X, cy, crossings[i, j].p1.Y);
+                    int v5 = AddVertice(crossings[i + 1, j].p0.X, cy, crossings[i + 1, j].p0.Y);
+                    int v6 = AddVertice(crossings[i + 1, j].p3.X, cy, crossings[i + 1, j].p3.Y);
+                    int v7 = AddVertice(crossings[i, j].p2.X, cy, crossings[i, j].p2.Y);
+
+                    int v8 = AddVertice(crossings[i, j].p1.X, cy + grilleWidth, crossings[i, j].p1.Y);
+                    int v9 = AddVertice(crossings[i + 1, j].p0.X, cy + grilleWidth, crossings[i + 1, j].p0.Y);
+                    int v10 = AddVertice(crossings[i + 1, j].p3.X, cy + grilleWidth, crossings[i + 1, j].p3.Y);
+                    int v11 = AddVertice(crossings[i, j].p2.X, cy + grilleWidth, crossings[i, j].p2.Y);
+
+                    // bottom
+                    AddFace(v4, v6, v5);
+                    AddFace(v4, v6, v7);
+
+                    // top
+                    AddFace(v8, v9, v10);
+                    AddFace(v8, v10, v11);
+
+                    //front
+                    AddFace(v4, v5, v9);
+                    AddFace(v4, v9, v8);
+
+                    //Back
+                    AddFace(v7, v10, v6);
+                    AddFace(v7, v11, v10);
                 }
             }
         }
