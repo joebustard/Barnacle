@@ -123,142 +123,281 @@ namespace MakerLib
             if (verticalBars > 1)
             {
                 CreateHorizontalCentralBars(crossings);
+                CreateVerticalBarEdges();
             }
 
             if (horizontalBars > 1)
             {
                 CreateVerticalCentralBars(crossings);
 
-                for (int i = 0; i < horizontalBars; i++)
+                CreateHorizontalBarEdges();
+            }
+        }
+
+        private void CreateVerticalBarEdges()
+        {
+            for (int i = 0; i < verticalBars; i++)
+            {
+                // connect central vertical bars to ring to their top
+                // if (vBars[i].G2.Start.X < cx)
                 {
-                    // connect central horizontal bars to ring to their left
-                    if (hBars[i].G2.Start.X < cx)
+                    double startAngle = vBars[i].G2.Start.theta;
+                    double endAngle = vBars[i].G2.Finish.theta;
+                    if (startAngle > 0 && endAngle < 0)
                     {
-                        // left of center, top and bottom
-                        double startAngle = hBars[i].G2.Start.theta;
-                        double endAngle = hBars[i].G2.Finish.theta;
-                        if (startAngle > 0 && endAngle < 0)
-                        {
-                            endAngle += Math.PI * 2.0;
-                        }
-                        double dt = (endAngle - startAngle) / 10.0;
-                        double dy = horizontalBarThickness / 10.0;
-                        double y = hBars[(int)horizontalBars - i - 1].G2.Start.Y;
-                        y += horizontalBarThickness;
-                        double theta = startAngle;
-                        Point p0;
-                        Point p1;
-                        Point p2;
-                        Point p3;
-                        int v0;
-                        int v1;
-                        int v2;
-                        int v3;
-                        while (theta < endAngle)
-                        {
-                            p0 = CalcPoint(theta, innerRadius);
-                            p1 = CalcPoint(theta + dt, innerRadius);
-                            p2 = new Point(minGridX, y);
-                            p3 = new Point(minGridX, y - dy);
+                        endAngle += Math.PI * 2.0;
+                    }
+                    double dt = (endAngle - startAngle) / 10.0;
+                    double dx = verticalBarThickness / 10.0;
+                    double x = vBars[(int)verticalBars - i - 1].G2.Finish.X;
+                    // x += verticalBarThickness;
+                    double theta = startAngle;
+                    Point p0;
+                    Point p1;
+                    Point p2;
+                    Point p3;
+                    int v0;
+                    int v1;
+                    int v2;
+                    int v3;
+                    while (theta < endAngle)
+                    {
+                        p0 = CalcPoint(theta, innerRadius);
+                        p1 = CalcPoint(theta + dt, innerRadius);
+                        p2 = new Point(x, minGridY);
+                        p3 = new Point(x + dx, minGridY);
 
-                            v0 = AddVertice(p0.X, cy, p0.Y);
-                            v1 = AddVertice(p1.X, cy, p1.Y);
-                            v2 = AddVertice(p2.X, cy, p2.Y);
-                            v3 = AddVertice(p3.X, cy, p3.Y);
-
-                            AddFace(v0, v1, v2);
-                            AddFace(v1, v3, v2);
-
-                            v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
-                            v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
-                            v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
-                            v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
-
-                            AddFace(v0, v2, v1);
-                            AddFace(v1, v2, v3);
-
-                            y -= dy;
-                            theta += dt; ;
-                        }
-
-                        p0 = CalcPoint(endAngle, innerRadius);
-                        p1 = new Point(minGridX, y);
                         v0 = AddVertice(p0.X, cy, p0.Y);
                         v1 = AddVertice(p1.X, cy, p1.Y);
-                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
-                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
-                        AddFace(v0, v2, v1);
-                        AddFace(v0, v3, v2);
+                        v2 = AddVertice(p2.X, cy, p2.Y);
+                        v3 = AddVertice(p3.X, cy, p3.Y);
 
-                        p0 = CalcPoint(startAngle, innerRadius);
-                        p1 = new Point(minGridX, y + horizontalBarThickness);
-                        v0 = AddVertice(p0.X, cy, p0.Y);
-                        v1 = AddVertice(p1.X, cy, p1.Y);
-                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
-                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
                         AddFace(v0, v1, v2);
-                        AddFace(v0, v2, v3);
+                        AddFace(v1, v3, v2);
 
-                        // right of center
-                        startAngle = hBars[i].G1.Start.theta;
-                        endAngle = hBars[i].G1.Finish.theta;
-                        if (startAngle > 0 && endAngle < 0)
-                        {
-                            endAngle += Math.PI * 2.0;
-                        }
-                        dt = (endAngle - startAngle) / 10.0;
-                        dy = horizontalBarThickness / 10.0;
-                        y = hBars[(int)horizontalBars - i - 1].G1.Start.Y;
-                        y -= horizontalBarThickness;
-                        theta = startAngle;
-                        while (theta < endAngle)
-                        {
-                            p0 = new Point(maxGridX, y);
-                            p1 = new Point(maxGridX, y + dy);
-                            p2 = CalcPoint(theta, innerRadius);
-                            p3 = CalcPoint(theta + dt, innerRadius);
+                        v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
+                        v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
 
-                            v0 = AddVertice(p0.X, cy, p0.Y);
-                            v1 = AddVertice(p1.X, cy, p1.Y);
-                            v2 = AddVertice(p2.X, cy, p2.Y);
-                            v3 = AddVertice(p3.X, cy, p3.Y);
-
-                            AddFace(v0, v2, v1);
-                            AddFace(v1, v2, v3);
-
-                            v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
-                            v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
-                            v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
-                            v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
-
-                            AddFace(v0, v1, v2);
-                            AddFace(v1, v3, v2);
-
-                            y += dy;
-                            theta += dt; ;
-                        }
-
-                        p0 = CalcPoint(endAngle, innerRadius);
-                        p1 = new Point(maxGridX, y);
-                        v0 = AddVertice(p0.X, cy, p0.Y);
-                        v1 = AddVertice(p1.X, cy, p1.Y);
-                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
-                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
                         AddFace(v0, v2, v1);
-                        AddFace(v0, v3, v2);
+                        AddFace(v1, v2, v3);
 
-                        p0 = CalcPoint(startAngle, innerRadius);
-                        p1 = new Point(maxGridX, y - horizontalBarThickness);
-                        v0 = AddVertice(p0.X, cy, p0.Y);
-                        v1 = AddVertice(p1.X, cy, p1.Y);
-                        v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
-                        v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
-                        AddFace(v0, v1, v2);
-                        AddFace(v0, v2, v3);
+                        x += dx;
+                        theta += dt; ;
                     }
 
-                    RingGap(hBars[i].G1, hBars[i].G2);
+                    p0 = CalcPoint(endAngle, innerRadius);
+                    p1 = new Point(x, minGridY);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
+
+                    p0 = CalcPoint(startAngle, innerRadius);
+                    p1 = new Point(x - verticalBarThickness, minGridY);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
+
+                    startAngle = vBars[i].G1.Start.theta;
+                    endAngle = vBars[i].G1.Finish.theta;
+                    if (startAngle > 0 && endAngle < 0)
+                    {
+                        endAngle += Math.PI * 2.0;
+                    }
+                    dt = (endAngle - startAngle) / 10.0;
+
+                    x = vBars[i].G1.Start.X;
+                    // x += verticalBarThickness;
+                    theta = startAngle;
+
+                    while (theta < endAngle)
+                    {
+                        p0 = CalcPoint(theta, innerRadius);
+                        p1 = CalcPoint(theta + dt, innerRadius);
+                        p2 = new Point(x, maxGridY);
+                        p3 = new Point(x - dx, maxGridY);
+
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p2.X, cy, p2.Y);
+                        v3 = AddVertice(p3.X, cy, p3.Y);
+
+                        AddFace(v0, v1, v2);
+                        AddFace(v1, v3, v2);
+
+                        v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
+                        v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
+
+                        AddFace(v0, v2, v1);
+                        AddFace(v1, v2, v3);
+
+                        x -= dx;
+                        theta += dt;
+                    }
+
+                    p0 = CalcPoint(endAngle, innerRadius);
+                    p1 = new Point(x, maxGridY);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
+
+                    p0 = CalcPoint(startAngle, innerRadius);
+                    p1 = new Point(x + verticalBarThickness, maxGridY);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
                 }
+
+                RingGap(vBars[i].G1, vBars[i].G2);
+            }
+        }
+
+        private void CreateHorizontalBarEdges()
+        {
+            for (int i = 0; i < horizontalBars; i++)
+            {
+                // connect central horizontal bars to ring to their left
+                if (hBars[i].G2.Start.X < cx)
+                {
+                    // left of center, top and bottom
+                    double startAngle = hBars[i].G2.Start.theta;
+                    double endAngle = hBars[i].G2.Finish.theta;
+                    if (startAngle > 0 && endAngle < 0)
+                    {
+                        endAngle += Math.PI * 2.0;
+                    }
+                    double dt = (endAngle - startAngle) / 10.0;
+                    double dy = horizontalBarThickness / 10.0;
+                    double y = hBars[(int)horizontalBars - i - 1].G2.Start.Y;
+                    y += horizontalBarThickness;
+                    double theta = startAngle;
+                    Point p0;
+                    Point p1;
+                    Point p2;
+                    Point p3;
+                    int v0;
+                    int v1;
+                    int v2;
+                    int v3;
+                    while (theta < endAngle)
+                    {
+                        p0 = CalcPoint(theta, innerRadius);
+                        p1 = CalcPoint(theta + dt, innerRadius);
+                        p2 = new Point(minGridX, y);
+                        p3 = new Point(minGridX, y - dy);
+
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p2.X, cy, p2.Y);
+                        v3 = AddVertice(p3.X, cy, p3.Y);
+
+                        AddFace(v0, v1, v2);
+                        AddFace(v1, v3, v2);
+
+                        v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
+                        v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
+
+                        AddFace(v0, v2, v1);
+                        AddFace(v1, v2, v3);
+
+                        y -= dy;
+                        theta += dt; ;
+                    }
+
+                    p0 = CalcPoint(endAngle, innerRadius);
+                    p1 = new Point(minGridX, y);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
+
+                    p0 = CalcPoint(startAngle, innerRadius);
+                    p1 = new Point(minGridX, y + horizontalBarThickness);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
+
+                    // right of center
+                    startAngle = hBars[i].G1.Start.theta;
+                    endAngle = hBars[i].G1.Finish.theta;
+                    if (startAngle > 0 && endAngle < 0)
+                    {
+                        endAngle += Math.PI * 2.0;
+                    }
+                    dt = (endAngle - startAngle) / 10.0;
+                    dy = horizontalBarThickness / 10.0;
+                    y = hBars[(int)horizontalBars - i - 1].G1.Start.Y;
+                    y -= horizontalBarThickness;
+                    theta = startAngle;
+                    while (theta < endAngle)
+                    {
+                        p0 = new Point(maxGridX, y);
+                        p1 = new Point(maxGridX, y + dy);
+                        p2 = CalcPoint(theta, innerRadius);
+                        p3 = CalcPoint(theta + dt, innerRadius);
+
+                        v0 = AddVertice(p0.X, cy, p0.Y);
+                        v1 = AddVertice(p1.X, cy, p1.Y);
+                        v2 = AddVertice(p2.X, cy, p2.Y);
+                        v3 = AddVertice(p3.X, cy, p3.Y);
+
+                        AddFace(v0, v2, v1);
+                        AddFace(v1, v2, v3);
+
+                        v0 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                        v1 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                        v2 = AddVertice(p2.X, cy + grilleWidth, p2.Y);
+                        v3 = AddVertice(p3.X, cy + grilleWidth, p3.Y);
+
+                        AddFace(v0, v1, v2);
+                        AddFace(v1, v3, v2);
+
+                        y += dy;
+                        theta += dt; ;
+                    }
+
+                    p0 = CalcPoint(endAngle, innerRadius);
+                    p1 = new Point(maxGridX, y);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v2, v1);
+                    AddFace(v0, v3, v2);
+
+                    p0 = CalcPoint(startAngle, innerRadius);
+                    p1 = new Point(maxGridX, y - horizontalBarThickness);
+                    v0 = AddVertice(p0.X, cy, p0.Y);
+                    v1 = AddVertice(p1.X, cy, p1.Y);
+                    v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
+                    v3 = AddVertice(p0.X, cy + grilleWidth, p0.Y);
+                    AddFace(v0, v1, v2);
+                    AddFace(v0, v2, v3);
+                }
+
+                RingGap(hBars[i].G1, hBars[i].G2);
             }
         }
 
@@ -518,6 +657,8 @@ namespace MakerLib
 
         private void MakeHorizontalBarPolarCoords()
         {
+            maxGridY = Double.MinValue;
+            minGridY = Double.MaxValue;
             horizontalYs = new List<double>();
             hBars = new List<Bar>();
             if (horizontalBars > 0)
@@ -629,12 +770,18 @@ namespace MakerLib
                     bar.G2 = left;
 
                     hBars.Add(bar);
+                    minGridY = Math.Min(minGridY, hy1);
+                    minGridY = Math.Min(minGridY, hy2);
+                    maxGridY = Math.Max(maxGridY, hy1);
+                    maxGridY = Math.Max(maxGridY, hy2);
                 }
             }
         }
 
         private double minGridX;
         private double maxGridX;
+        private double minGridY;
+        private double maxGridY;
 
         private void MakeVerticalBarPolarCoords()
         {
