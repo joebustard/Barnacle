@@ -164,8 +164,11 @@ namespace MakerLib
                     {
                         p0 = CalcPoint(theta, innerRadius);
                         p1 = CalcPoint(theta + dt, innerRadius);
-                        p2 = new Point(x, minGridY);
-                        p3 = new Point(x + dx, minGridY);
+                        //  p2 = new Point(x, minGridY);
+                        //  p3 = new Point(x + dx, minGridY);
+
+                        p2 = new Point(p0.X, minGridY);
+                        p3 = new Point(p1.X, minGridY);
 
                         v0 = AddVertice(p0.X, cy, p0.Y);
                         v1 = AddVertice(p1.X, cy, p1.Y);
@@ -184,11 +187,13 @@ namespace MakerLib
                         AddFace(v1, v2, v3);
 
                         x += dx;
-                        theta += dt; ;
+                        theta += dt;
                     }
-
+                    x -= dx;
                     p0 = CalcPoint(endAngle, innerRadius);
-                    p1 = new Point(x, minGridY);
+                    // p1 = new Point(x, minGridY);
+
+                    p1 = new Point(p0.X, minGridY);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -221,8 +226,10 @@ namespace MakerLib
                     {
                         p0 = CalcPoint(theta, innerRadius);
                         p1 = CalcPoint(theta + dt, innerRadius);
-                        p2 = new Point(x, maxGridY);
-                        p3 = new Point(x - dx, maxGridY);
+                        //   p2 = new Point(x, maxGridY);
+                        //   p3 = new Point(x - dx, maxGridY);
+                        p2 = new Point(p0.X, maxGridY);
+                        p3 = new Point(p1.X, maxGridY);
 
                         v0 = AddVertice(p0.X, cy, p0.Y);
                         v1 = AddVertice(p1.X, cy, p1.Y);
@@ -243,9 +250,10 @@ namespace MakerLib
                         x -= dx;
                         theta += dt;
                     }
-
+                    x += dx;
                     p0 = CalcPoint(endAngle, innerRadius);
-                    p1 = new Point(x, maxGridY);
+                    // p1 = new Point(x, maxGridY);
+                    p1 = new Point(p0.X, maxGridY);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -254,7 +262,8 @@ namespace MakerLib
                     AddFace(v0, v3, v2);
 
                     p0 = CalcPoint(startAngle, innerRadius);
-                    p1 = new Point(x + verticalBarThickness, maxGridY);
+                    p1 = new Point(p0.X, maxGridY);
+                    // p1 = new Point(x + verticalBarThickness, maxGridY);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -298,8 +307,8 @@ namespace MakerLib
                     {
                         p0 = CalcPoint(theta, innerRadius);
                         p1 = CalcPoint(theta + dt, innerRadius);
-                        p2 = new Point(minGridX, y);
-                        p3 = new Point(minGridX, y - dy);
+                        p2 = new Point(minGridX, p0.Y);
+                        p3 = new Point(minGridX, p1.Y);
 
                         v0 = AddVertice(p0.X, cy, p0.Y);
                         v1 = AddVertice(p1.X, cy, p1.Y);
@@ -320,9 +329,9 @@ namespace MakerLib
                         y -= dy;
                         theta += dt; ;
                     }
-
+                    y += dy;
                     p0 = CalcPoint(endAngle, innerRadius);
-                    p1 = new Point(minGridX, y);
+                    p1 = new Point(minGridX, p0.Y);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -331,7 +340,8 @@ namespace MakerLib
                     AddFace(v0, v3, v2);
 
                     p0 = CalcPoint(startAngle, innerRadius);
-                    p1 = new Point(minGridX, y + horizontalBarThickness);
+                    //  p1 = new Point(minGridX, y + horizontalBarThickness);
+                    p1 = new Point(minGridX, p0.Y);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -353,10 +363,10 @@ namespace MakerLib
                     theta = startAngle;
                     while (theta < endAngle)
                     {
-                        p0 = new Point(maxGridX, y);
-                        p1 = new Point(maxGridX, y + dy);
                         p2 = CalcPoint(theta, innerRadius);
                         p3 = CalcPoint(theta + dt, innerRadius);
+                        p0 = new Point(maxGridX, p2.Y);
+                        p1 = new Point(maxGridX, p3.Y);
 
                         v0 = AddVertice(p0.X, cy, p0.Y);
                         v1 = AddVertice(p1.X, cy, p1.Y);
@@ -377,9 +387,10 @@ namespace MakerLib
                         y += dy;
                         theta += dt; ;
                     }
-
+                    y -= dy;
                     p0 = CalcPoint(endAngle, innerRadius);
-                    p1 = new Point(maxGridX, y);
+                    // p1 = new Point(maxGridX, y);
+                    p1 = new Point(maxGridX, p0.Y);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -388,7 +399,8 @@ namespace MakerLib
                     AddFace(v0, v3, v2);
 
                     p0 = CalcPoint(startAngle, innerRadius);
-                    p1 = new Point(maxGridX, y - horizontalBarThickness);
+                    //      p1 = new Point(maxGridX, y - horizontalBarThickness);
+                    p1 = new Point(maxGridX, p0.Y);
                     v0 = AddVertice(p0.X, cy, p0.Y);
                     v1 = AddVertice(p1.X, cy, p1.Y);
                     v2 = AddVertice(p1.X, cy + grilleWidth, p1.Y);
@@ -610,8 +622,8 @@ namespace MakerLib
                     Point p2 = new Point(b.G1.Finish.X, b.G1.Finish.Y);
                     Point p3 = new Point(b.G2.Start.X, b.G2.Start.Y);
                     Point p4 = new Point(b.G2.Finish.X, b.G2.Finish.Y);
-                    SideWall(p1, p4);
-                    SideWall(p3, p2);
+                    SideWall(p3, p1);
+                    SideWall(p2, p4);
                     VTopAndBottom(b.G1, b.G2);
                     RingGap(b.G1, b.G2);
                 }
@@ -624,8 +636,10 @@ namespace MakerLib
             {
                 MakeVerticalBarPolarCoords();
                 MakeHorizontalBarPolarCoords();
-                SortSpokesByTheta();
+                System.Diagnostics.Debug.WriteLine("Before Sort");
                 DumpSpokes();
+                SortSpokesByTheta();
+
                 GenerateInnerEdge();
                 GenerateRing();
                 GenerateCrossingGrid();
@@ -663,13 +677,15 @@ namespace MakerLib
             hBars = new List<Bar>();
             if (horizontalBars > 0)
             {
-                double hspacing = (innerDiameter) / (horizontalBars + 1);
+                double availableSpace = (innerDiameter - 2 * verticalBarThickness);
+                double hspacing = (availableSpace) / (horizontalBars + 1);
+                double origin = cy - innerRadius + verticalBarThickness;
                 for (int i = 0; i < horizontalBars; i++)
                 {
                     Bar bar = new Bar();
 
                     // work out where vertical bar crosses the x axies.
-                    double hy = (cy - innerRadius) + ((i + 1) * hspacing);
+                    double hy = origin + ((i + 1) * hspacing);
                     horizontalYs.Add(hy);
                     double hy1 = hy - (horizontalBarThickness / 2.0);
                     double hy2 = hy + (horizontalBarThickness / 2.0);
@@ -792,15 +808,16 @@ namespace MakerLib
             double halfBarWidth = (verticalBarThickness / 2.0);
             if (verticalBars > 0)
             {
-                // double availableSpace = (innerDiameter - (verticalBars * verticalBarThickness));
-                double availableSpace = (innerDiameter);
-                double vspacing = availableSpace / (verticalBars + 1);
+                double availableSpace = (innerDiameter - 2 * horizontalBarThickness);
+                double vspacing = (availableSpace) / (verticalBars + 1);
+                double origin = cx - innerRadius + horizontalBarThickness;
+
                 for (int i = 0; i < verticalBars; i++)
                 {
                     Bar bar = new Bar();
 
                     // work out where vertical bar crosses the x axies.
-                    double vx = (cx - innerRadius) + ((i + 1) * vspacing);
+                    double vx = origin + ((i + 1) * vspacing);
                     verticalXs.Add(vx);
                     double vx1 = vx - halfBarWidth;
                     double vx2 = vx + halfBarWidth;
@@ -981,6 +998,7 @@ namespace MakerLib
                     swapped = false;
                     for (int i = 0; i < spokePoints.Count - 1; i++)
                     {
+                        /*
                         // special case for horizontal bars where start  is positive
                         // but end is negative i.e. jumping from just below PI to just over -PI
                         double startAngle = spokePoints[i].Start.theta;
@@ -991,6 +1009,8 @@ namespace MakerLib
                         }
 
                         if (spokePoints[i].Finish.theta > spokePoints[i + 1].Start.theta)
+                            */
+                        if (spokePoints[i].Start.theta > spokePoints[i + 1].Start.theta)
                         {
                             swapped = true;
                             GapDef tmp = spokePoints[i];

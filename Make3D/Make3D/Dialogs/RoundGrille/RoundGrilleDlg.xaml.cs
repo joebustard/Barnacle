@@ -186,9 +186,18 @@ namespace Barnacle.Dialogs
                 {
                     if (value >= minverticalBars && value <= maxverticalBars)
                     {
-                        verticalBars = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
+                        if (verticalBarThickness * value < SpaceAvailable() - value)
+                        {
+                            verticalBars = value;
+                            NotifyPropertyChanged();
+                            UpdateDisplay();
+                            warningMask = (byte)(warningMask & 0xFE);
+                        }
+                        else
+                        {
+                            warningMask = (byte)(warningMask | verticalWontFit);
+                        }
+                        SetWarning();
                     }
                 }
             }
@@ -205,6 +214,10 @@ namespace Barnacle.Dialogs
         private const double minverticalBarThickness = 1;
         private const double maxverticalBarThickness = 100;
         private double verticalBarThickness;
+        private byte warningMask;
+        private const byte verticalWontFit = 0x01;
+        private const byte horizontalWontFit = 0x02;
+        private const byte neitherWillFit = 0x03;
 
         public double VerticalBarThickness
         {
@@ -218,11 +231,50 @@ namespace Barnacle.Dialogs
                 {
                     if (value >= minverticalBarThickness && value <= maxverticalBarThickness)
                     {
-                        verticalBarThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
+                        if (verticalBars * value < SpaceAvailable() - value)
+                        {
+                            verticalBarThickness = value;
+                            NotifyPropertyChanged();
+                            UpdateDisplay();
+                            warningMask = (byte)(warningMask & 0xFE);
+                        }
+                        else
+                        {
+                            warningMask = (byte)(warningMask | verticalWontFit);
+                        }
+                        SetWarning();
                     }
                 }
+            }
+        }
+
+        private void SetWarning()
+        {
+            switch (warningMask)
+            {
+                case verticalWontFit:
+                    {
+                        WarningText = "The vertical bars won't fit in the frame";
+                    }
+                    break;
+
+                case horizontalWontFit:
+                    {
+                        WarningText = "The horizontal bars won't fit in the frame";
+                    }
+                    break;
+
+                case neitherWillFit:
+                    {
+                        WarningText = "Neither the horizontal or vertical bars will fit in the frame";
+                    }
+                    break;
+
+                default:
+                    {
+                        WarningText = "";
+                    }
+                    break;
             }
         }
 
@@ -250,9 +302,18 @@ namespace Barnacle.Dialogs
                 {
                     if (value >= minhorizontalBars && value <= maxhorizontalBars)
                     {
-                        horizontalBars = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
+                        if (horizontalBarThickness * value < SpaceAvailable() - value)
+                        {
+                            horizontalBars = value;
+                            NotifyPropertyChanged();
+                            UpdateDisplay();
+                            warningMask = (byte)(warningMask & 0xFD);
+                        }
+                        else
+                        {
+                            warningMask = (byte)(warningMask | horizontalWontFit);
+                        }
+                        SetWarning();
                     }
                 }
             }
@@ -282,9 +343,18 @@ namespace Barnacle.Dialogs
                 {
                     if (value >= minhorizontalBarThickness && value <= maxhorizontalBarThickness)
                     {
-                        horizontalBarThickness = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
+                        if (value * horizontalBars < SpaceAvailable() - value)
+                        {
+                            horizontalBarThickness = value;
+                            NotifyPropertyChanged();
+                            UpdateDisplay();
+                            warningMask = (byte)(warningMask & 0xFD);
+                        }
+                        else
+                        {
+                            warningMask = (byte)(warningMask | horizontalWontFit);
+                        }
+                        SetWarning();
                     }
                 }
             }
@@ -367,17 +437,50 @@ namespace Barnacle.Dialogs
         private void GenerateShape()
         {
             ClearShape();
-            RoundGrilleMaker maker = new RoundGrilleMaker(grilleRadius,
-                                                            grillWidth,
-                                                            makeEdge,
-                                                            edgeThickness,
-                                                            verticalBars,
-                                                            verticalBarThickness,
-                                                            horizontalBars,
-                                                             horizontalBarThickness);
+            if (ParametersValid())
+            {
+                RoundGrilleMaker maker = new RoundGrilleMaker(grilleRadius,
+                                                                grillWidth,
+                                                                makeEdge,
+                                                                edgeThickness,
+                                                                verticalBars,
+                                                                verticalBarThickness,
+                                                                horizontalBars,
+                                                                 horizontalBarThickness);
 
-            maker.Generate(Vertices, Faces);
-            CentreVertices();
+                maker.Generate(Vertices, Faces);
+                CentreVertices();
+            }
+        }
+
+        private bool ParametersValid()
+        {
+            bool result = true;
+            double spaceAvailable = SpaceAvailable(); ;
+
+            if (verticalBars * VerticalBarThickness > spaceAvailable - verticalBarThickness)
+            {
+                result = false;
+            }
+            if (horizontalBars * HorizontalBarThickness > spaceAvailable - horizontalBarThickness)
+            {
+                result = false;
+            }
+            return result;
+        }
+
+        private double SpaceAvailable()
+        {
+            double spaceAvailable = 0;
+            if (makeEdge)
+            {
+                spaceAvailable = (grilleRadius - edgeThickness) * 2.0;
+            }
+            else
+            {
+                spaceAvailable = grilleRadius * 2.0;
+            }
+            return spaceAvailable;
         }
 
         private void LoadEditorParameters()
