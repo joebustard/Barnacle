@@ -2359,7 +2359,7 @@ namespace Barnacle.ViewModels
                     selectedItems.Add(leftie);
                 }
                 csgCancelation = null;
-                InfoWindow.Instance().Hide();
+                InfoWindow.Instance().Close();
             }
             NotificationManager.Notify("SuspendEditing", false);
             isEditingEnabled = true;
@@ -3004,6 +3004,7 @@ namespace Barnacle.ViewModels
                     if (Properties.Settings.Default.ConfirmNameAfterCSG)
                     {
                         ConfirmObjectNameDlg dlg = new ConfirmObjectNameDlg();
+                        dlg.Owner = Application.Current.MainWindow;
                         dlg.ObjectName = ob.Name;
                         if (dlg.ShowDialog() == true)
                         {

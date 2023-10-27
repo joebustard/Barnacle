@@ -28,6 +28,7 @@ namespace Barnacle.Dialogs
             if (instance == null)
             {
                 instance = new InfoWindow();
+                instance.Owner = Application.Current.MainWindow;
             }
             else
             {
@@ -74,9 +75,10 @@ namespace Barnacle.Dialogs
             instance.InfoLabel.Content = s;
             Refresh(instance.InfoLabel);
         }
+
         public void UpdateText(String s)
         {
-            instance.InfoLabel.Content = s;            
+            instance.InfoLabel.Content = s;
         }
     }
 }

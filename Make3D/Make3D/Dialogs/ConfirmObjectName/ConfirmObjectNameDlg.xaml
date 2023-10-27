@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
 
-        Title="Confirm Object Name" Height="125" Width="400">
+        Title="Confirm Object Name" Height="125" Width="400" WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
