@@ -1037,6 +1037,10 @@
       <Project>{BF1D777E-DF33-4C03-80A6-9ECB741746F1}</Project>
       <Name>PolygonTriangulationLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\PrintPlacementLib\PrintPlacementLib.csproj">
+      <Project>{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}</Project>
+      <Name>PrintPlacementLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TemplateLib\TemplateLib.csproj">
       <Project>{a1e87ea7-c89a-4eba-8fb7-4e3fc8cfc521}</Project>
       <Name>TemplateLib</Name>

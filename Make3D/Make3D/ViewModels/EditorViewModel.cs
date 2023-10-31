@@ -14,6 +14,7 @@ using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
 using PlacementLib;
+using PrintPlacementLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -2904,9 +2905,15 @@ namespace Barnacle.ViewModels
         private void OnDistribute(object param)
         {
             string s = param.ToString();
+            if (s == "Spiral")
+            {
+                SpiralArranger();
+                document.Dirty = true;
+            }
+            else
             if (s == "Optimum")
             {
-                OptimisePlacement();
+                OptimumArranger();
                 document.Dirty = true;
             }
             else
@@ -3822,7 +3829,36 @@ namespace Barnacle.ViewModels
             Undo();
         }
 
-        private void OptimisePlacement()
+        private void OptimumArranger()
+        {
+            CheckPoint();
+            PrintPlacement arr = new PrintPlacement();
+            foreach (Object3D ob in Document.Content)
+            {
+                if (ob.Exportable)
+                {
+                    arr.AddComponent(ob,
+                                     new Point(ob.AbsoluteBounds.Lower.X, ob.AbsoluteBounds.Lower.Z),
+                                     new Point(ob.AbsoluteBounds.Upper.X, ob.AbsoluteBounds.Upper.Z));
+                }
+            }
+            arr.Clearance = 3;
+            arr.SetBedSize(200, 200);
+            arr.Arrange();
+
+            foreach (PrintPlacement.Component c in arr.Results)
+            {
+                Object3D o = c.Shape as Object3D;
+                double dx = c.Position.X - c.OriginalPosition.X;
+                double dy = c.Position.Y - c.OriginalPosition.Y;
+                o.Position = new Point3D(o.Position.X + dx - arr.BedWidth / 2, o.Position.Y, o.Position.Z + dy - arr.BedHeight / 2);
+            }
+            MoveAllToCentre();
+            RegenerateDisplayList();
+            Document.Dirty = true;
+        }
+
+        private void SpiralArranger()
         {
             CheckPoint();
             Arranger arr = new Arranger();

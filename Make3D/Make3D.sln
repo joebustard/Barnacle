@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32602.291
+# Visual Studio 15
+VisualStudioVersion = 15.0.34112.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -60,6 +60,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FixLib", "FixLib\FixLib.csproj", "{8D134779-2F91-45C5-A145-3EB4BE6644A9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctTreeLib", "OctTreeLib\OctTreeLib.csproj", "{0D9BB88E-B275-4E45-8EA9-AEC204588A7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintPlacementLib", "PrintPlacementLib\PrintPlacementLib.csproj", "{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -165,6 +167,10 @@ Global
 		{0D9BB88E-B275-4E45-8EA9-AEC204588A7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D9BB88E-B275-4E45-8EA9-AEC204588A7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D9BB88E-B275-4E45-8EA9-AEC204588A7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
