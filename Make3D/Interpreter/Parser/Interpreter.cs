@@ -95,6 +95,7 @@ namespace ScriptLanguage
                 "makepulley",
                 "makereuleaux",
                 "makerectgrille",
+                "makeroundgrille",
                 "makeroofridge",
                 "makeshapedbrickwall",
                 "makespring",

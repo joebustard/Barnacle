@@ -4,6 +4,8 @@ Added
 	Basic hole support in platelet
 	Option to prompt for new object name after group operation
 	Round Grille Tool
+	Ctrl+S up|down|left|right shortcut keys for stacking
+	Ctrl+L up|down|left|right shortcut keys for alignment
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 

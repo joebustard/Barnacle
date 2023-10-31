@@ -138,6 +138,24 @@ namespace ScriptLanguage
                     {
                         result = ReadTarget(target);
                     }
+                    else
+                    {
+                        target = AppContext.BaseDirectory;
+                        target = System.IO.Path.Combine(target, FilePath);
+                        if (System.IO.File.Exists(target))
+                        {
+                            result = ReadTarget(target);
+                        }
+                    }
+                }
+                else
+                {
+                   string  target = AppContext.BaseDirectory;
+                    target = System.IO.Path.Combine(target, FilePath);
+                    if (System.IO.File.Exists(target))
+                    {
+                        result = ReadTarget(target);
+                    }
                 }
             }
             return result;

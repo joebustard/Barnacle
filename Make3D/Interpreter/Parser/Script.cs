@@ -20,7 +20,7 @@ namespace ScriptLanguage
         public Script()
         {
             parseTree = null;
-            //ResultArtefacts = new List<Object3D>();
+           
             ResultArtefacts = new Dictionary<int, Object3D>();
         }
 

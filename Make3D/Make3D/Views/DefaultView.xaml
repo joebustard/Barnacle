@@ -468,7 +468,7 @@
                                              VerticalAlignment="Top"
                                              x:Name="StackRightAlignment" />
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
-                                             CommandParameter="StackY"
+                                             CommandParameter="StackAbove"
                                              HorizontalAlignment="Stretch"
                                              Label="Above"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
@@ -484,7 +484,7 @@
                                              VerticalAlignment="Top"
                                              x:Name="StackBelowAlignment" />
                         <Custom:RibbonButton Command="{Binding AlignCommand}"
-                                             CommandParameter="StackZ"
+                                             CommandParameter="StackFront"
                                              HorizontalAlignment="Stretch"
                                              Label="In Front"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"

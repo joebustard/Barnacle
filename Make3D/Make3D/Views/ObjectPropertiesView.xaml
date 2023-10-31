@@ -72,7 +72,8 @@
             Grid.Row="1"
             Grid.ColumnSpan="3"
             FontSize="14"
-            Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding ObjectName, UpdateSourceTrigger=PropertyChanged}" />
         <Grid Grid.Row="2" Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -81,8 +82,9 @@
             <ComboBox
                 Name="cmbColors"
                 Grid.Column="0"
+                IsEnabled="{Binding ControlsEnabled}"
                 ItemsSource="{Binding AvailableColours}"
-                SelectedItem="{Binding ObjectColour}" IsEnabled="{Binding ControlsEnabled}">
+                SelectedItem="{Binding ObjectColour}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -102,7 +104,8 @@
                 VerticalAlignment="Center"
                 Content="Export"
                 IsChecked="{Binding Exportable}"
-                ToolTip="This object should be included in exports and references" IsEnabled="{Binding ControlsEnabled}" />
+                IsEnabled="{Binding ControlsEnabled}"
+                ToolTip="This object should be included in exports and references" />
         </Grid>
         <Label
             Grid.Row="3"
@@ -124,12 +127,14 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             FontSize="14"
-            Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding PositionX, UpdateSourceTrigger=PropertyChanged}" />
         <UniformGrid
             Grid.Row="4"
             Grid.RowSpan="2"
             Grid.Column="2"
-            Columns="1" IsEnabled="{Binding ControlsEnabled}">
+            Columns="1"
+            IsEnabled="{Binding ControlsEnabled}">
             <Button
                 Command="{Binding NudgeCommand}"
                 CommandParameter="X+"
@@ -156,12 +161,14 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             FontSize="14"
-            Text="{Binding PositionY, UpdateSourceTrigger=PropertyChanged}"  IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding PositionY, UpdateSourceTrigger=PropertyChanged}" />
         <UniformGrid
             Grid.Row="6"
             Grid.RowSpan="2"
             Grid.Column="2"
-            Columns="1" IsEnabled="{Binding ControlsEnabled}">
+            Columns="1"
+            IsEnabled="{Binding ControlsEnabled}">
             <Button
                 Command="{Binding NudgeCommand}"
                 CommandParameter="Y+"
@@ -188,12 +195,14 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             FontSize="14"
-            Text="{Binding PositionZ, UpdateSourceTrigger=PropertyChanged}"  IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding PositionZ, UpdateSourceTrigger=PropertyChanged}" />
         <UniformGrid
             Grid.Row="8"
             Grid.RowSpan="2"
             Grid.Column="2"
-            Columns="1"  IsEnabled="{Binding ControlsEnabled}">
+            Columns="1"
+            IsEnabled="{Binding ControlsEnabled}">
             <Button
                 Command="{Binding NudgeCommand}"
                 CommandParameter="Z+"
@@ -210,7 +219,8 @@
             Grid.Row="10"
             Grid.ColumnSpan="3"
             VerticalAlignment="Stretch"
-            Rows="1" IsEnabled="{Binding ControlsEnabled}">
+            IsEnabled="{Binding ControlsEnabled}"
+            Rows="1">
             <Button
                 x:Name="SetFloor"
                 Command="{Binding MoveToFloorCommand}"
@@ -256,7 +266,7 @@
             Grid.ColumnSpan="2"
             FontSize="14"
             IsEnabled="{Binding CanScale}"
-            Text="{Binding ScaleX,UpdateSourceTrigger=PropertyChanged }" />
+            Text="{Binding ScaleX, UpdateSourceTrigger=PropertyChanged}" />
         <Label
             Grid.Row="13"
             Grid.RowSpan="2"
@@ -271,7 +281,7 @@
             Grid.ColumnSpan="2"
             FontSize="14"
             IsEnabled="{Binding CanScale}"
-            Text="{Binding ScaleY,UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ScaleY, UpdateSourceTrigger=PropertyChanged}" />
         <Label
             Grid.Row="14"
             Grid.RowSpan="2"
@@ -286,7 +296,7 @@
             Grid.ColumnSpan="2"
             FontSize="14"
             IsEnabled="{Binding CanScale}"
-            Text="{Binding ScaleZ,UpdateSourceTrigger=PropertyChanged}" />
+            Text="{Binding ScaleZ, UpdateSourceTrigger=PropertyChanged}" />
         <Label
             Grid.Row="15"
             Grid.ColumnSpan="3"
@@ -345,12 +355,14 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             FontSize="14"
-            Text="{Binding RotationX}"  IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding RotationX}" />
         <UniformGrid
             Grid.Row="19"
             Grid.RowSpan="2"
             Grid.Column="2"
-            Columns="1"  IsEnabled="{Binding ControlsEnabled}">
+            Columns="1"
+            IsEnabled="{Binding ControlsEnabled}">
             <Button
                 Command="{Binding RotateXCommand}"
                 CommandParameter="+"
@@ -380,12 +392,14 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             FontSize="14"
-            Text="{Binding RotationY}"  IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding RotationY}" />
         <UniformGrid
             Grid.Row="21"
             Grid.RowSpan="2"
             Grid.Column="2"
-            Columns="1" IsEnabled="{Binding ControlsEnabled}">
+            Columns="1"
+            IsEnabled="{Binding ControlsEnabled}">
             <Button
                 Command="{Binding RotateYCommand}"
                 CommandParameter="+"
@@ -415,12 +429,14 @@
             Grid.RowSpan="2"
             Grid.Column="1"
             FontSize="14"
-            Text="{Binding RotationZ}" IsEnabled="{Binding ControlsEnabled}" />
+            IsEnabled="{Binding ControlsEnabled}"
+            Text="{Binding RotationZ}" />
         <UniformGrid
             Grid.Row="23"
             Grid.RowSpan="2"
             Grid.Column="2"
-            Columns="1" IsEnabled="{Binding ControlsEnabled}">
+            Columns="1"
+            IsEnabled="{Binding ControlsEnabled}">
             <Button
                 Command="{Binding RotateZCommand}"
                 CommandParameter="+"

@@ -707,279 +707,410 @@ namespace Barnacle.ViewModels
                 HandleKeyWhenEditingDisabled(key);
             }
         }
-
+        private String holdKey = "";
         private void HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl)
         {
-            switch (key)
+            if (holdKey != "")
             {
-                case Key.Up:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (ctrl)
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
-                                }
-                                else
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
-                                }
-                            }
-                            else
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
-                                }
-                                else
-                                {
-                                    // If R is down treat as rotate
-                                    if (Keyboard.IsKeyDown(Key.R))
-                                    {
-                                        KeyboardRotation rd = GetRotationDirection(Key.Up);
-                                        OnKeyRotate(rd);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Down:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (ctrl)
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
-                                }
-                                else
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
-                                }
-                            }
-                            else
-                            {
-                                if (shift)
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
-                                }
-                                else
-                                {
-                                    // If R is down treat as rotate
-                                    if (Keyboard.IsKeyDown(Key.R))
-                                    {
-                                        KeyboardRotation rd = GetRotationDirection(Key.Down);
-                                        OnKeyRotate(rd);
-                                    }
-                                    else
-                                    {
-                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Left:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (shift)
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
-                            }
-                            else
-                            {
-                                // If R is down treat as rotate
-                                if (Keyboard.IsKeyDown(Key.R))
-                                {
-                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                    KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
-                                    OnKeyRotate(rd);
-                                }
-                                else
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.Right:
-                    {
-                        if (selectedObjectAdorner != null)
-                        {
-                            CheckPointForNudge();
-                            if (shift)
-                            {
-                                selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
-                            }
-                            else
-                            {
-                                if (Keyboard.IsKeyDown(Key.R))
-                                {
-                                    bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
-                                    KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
-                                    OnKeyRotate(rd);
-                                }
-                                else
-                                {
-                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case Key.A:
-                    {
-                        if (ctrl)
-                        {
-                            SelectAll();
-                        }
-                    }
-                    break;
-
-                case Key.C:
-                    {
-                        if (ctrl)
-                        {
-                            OnCopy(null);
-                        }
-                        else
-                        {
-                            CheckPoint();
-                            MoveSelectionToCentre();
-                        }
-                    }
-                    break;
-
-                case Key.E:
-                    {
-                        CheckEditSelection();
-                    }
-                    break;
-
-                case Key.V:
-                    {
-                        if (ctrl)
-                        {
-                            OnPaste(null);
-                        }
-                    }
-                    break;
-
-                case Key.F:
-                    {
-                        if (ctrl)
-                        {
-                            CheckPoint();
-                            FloorAllObjects();
-                            RegenerateDisplayList();
-                        }
-                        else
-                        {
-                            CheckPoint();
-                            AlignSelectedObjects("Floor");
-                            RegenerateDisplayList();
-                        }
-                    }
-                    break;
-
-                case Key.K:
-                    {
-                        OnCloneInPlace(null);
-                    }
-                    break;
-
-                case Key.M:
-                    {
-                        CheckPoint();
-                        MoveToMarker(null);
-                        RegenerateDisplayList();
-                    }
-                    break;
-
-                case Key.Delete:
-                    {
-                        OnCut(null);
-                    }
-                    break;
-
-                case Key.Z:
-                    {
-                        if (ctrl)
-                        {
-                            Undo();
-                        }
-                        else
-                        {
-                            CheckPoint();
-                            MoveSelectionToZero();
-                        }
-                    }
-                    break;
-
-                case Key.H:
-                    {
-                        showAdorners = false;
-                        RegenerateDisplayList();
-                    }
-                    break;
-
-                case Key.Home:
-                    {
-                        HomeCamera();
-                    }
-                    break;
-
-                case Key.Escape:
-                    {
-                        if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
-                        {
-                            csgCancelation.Cancel();
-                        }
-                    }
-                    break;
-
-                case Key.F5:
-                    {
-                        RotateCamera(-0.5, 0.0);
-                    }
-                    break;
-
-                case Key.F6:
-                    {
-                        RotateCamera(0.5, 0.0);
-                    }
-                    break;
-
-                case Key.F7:
-                    {
-                        RotateCamera(0.0, -0.5);
-                    }
-                    break;
-
-                case Key.F8:
-                    {
-                        RotateCamera(0.0, 0.5);
-                    }
-                    break;
+                HandleHeldKey(key, shift, ctrl);
             }
+            else
+            {
+                switch (key)
+                {
+                    case Key.Up:
+                        {
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (ctrl)
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 0.1);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Back, 1.0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 0.1);
+                                    }
+                                    else
+                                    {
+                                        // If R is down treat as rotate
+                                        if (Keyboard.IsKeyDown(Key.R))
+                                        {
+                                            KeyboardRotation rd = GetRotationDirection(Key.Up);
+                                            OnKeyRotate(rd);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Up, 1.0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.Down:
+                        {
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (ctrl)
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 0.1);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Forward, 1.0);
+                                    }
+                                }
+                                else
+                                {
+                                    if (shift)
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 0.1);
+                                    }
+                                    else
+                                    {
+                                        // If R is down treat as rotate
+                                        if (Keyboard.IsKeyDown(Key.R))
+                                        {
+                                            KeyboardRotation rd = GetRotationDirection(Key.Down);
+                                            OnKeyRotate(rd);
+                                        }
+                                        else
+                                        {
+                                            selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Down, 1.0);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.Left:
+                        {
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 0.1);
+                                }
+                                else
+                                {
+                                    // If R is down treat as rotate
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                        KeyboardRotation rd = GetRotationDirection(Key.Left, ctrlDown);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Left, 1.0);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.Right:
+                        {
+                            if (selectedObjectAdorner != null)
+                            {
+                                CheckPointForNudge();
+                                if (shift)
+                                {
+                                    selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 0.1);
+                                }
+                                else
+                                {
+                                    if (Keyboard.IsKeyDown(Key.R))
+                                    {
+                                        bool ctrlDown = Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl);
+                                        KeyboardRotation rd = GetRotationDirection(Key.Right, ctrlDown);
+                                        OnKeyRotate(rd);
+                                    }
+                                    else
+                                    {
+                                        selectedObjectAdorner.Nudge(Adorner.NudgeDirection.Right, 1.0);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case Key.A:
+                        {
+                            if (ctrl)
+                            {
+                                SelectAll();
+                            }
+                        }
+                        break;
+
+                    case Key.C:
+                        {
+                            if (ctrl)
+                            {
+                                OnCopy(null);
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                MoveSelectionToCentre();
+                            }
+                        }
+                        break;
+
+                    case Key.E:
+                        {
+                            CheckEditSelection();
+                        }
+                        break;
+
+                    case Key.V:
+                        {
+                            if (ctrl)
+                            {
+                                OnPaste(null);
+                            }
+                        }
+                        break;
+
+                    case Key.F:
+                        {
+                            if (ctrl)
+                            {
+                                CheckPoint();
+                                FloorAllObjects();
+                                RegenerateDisplayList();
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                AlignSelectedObjects("Floor");
+                                RegenerateDisplayList();
+                            }
+                        }
+                        break;
+
+                    case Key.K:
+                        {
+                            OnCloneInPlace(null);
+                        }
+                        break;
+
+                    case Key.M:
+                        {
+                            CheckPoint();
+                            MoveToMarker(null);
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case Key.Delete:
+                        {
+                            OnCut(null);
+                        }
+                        break;
+
+                    case Key.Z:
+                        {
+                            if (ctrl)
+                            {
+                                Undo();
+                            }
+                            else
+                            {
+                                CheckPoint();
+                                MoveSelectionToZero();
+                            }
+                        }
+                        break;
+
+                    case Key.H:
+                        {
+                            showAdorners = false;
+                            RegenerateDisplayList();
+                        }
+                        break;
+
+                    case Key.Home:
+                        {
+                            HomeCamera();
+                        }
+                        break;
+
+                    case Key.Escape:
+                        {
+                            if (csgCancelation != null && !csgCancelation.IsCancellationRequested)
+                            {
+                                csgCancelation.Cancel();
+                            }
+                        }
+                        break;
+
+                    case Key.F5:
+                        {
+                            RotateCamera(-0.5, 0.0);
+                        }
+                        break;
+
+                    case Key.F6:
+                        {
+                            RotateCamera(0.5, 0.0);
+                        }
+                        break;
+
+                    case Key.F7:
+                        {
+                            RotateCamera(0.0, -0.5);
+                        }
+                        break;
+
+                    case Key.F8:
+                        {
+                            RotateCamera(0.0, 0.5);
+                        }
+                        break;
+
+                    case Key.S:
+                        {
+                            holdKey = "S";
+                        }
+                        break;
+
+                    case Key.L:
+                        {
+                            holdKey = "L";
+                        }
+                        break;
+                }
+            }
+        }
+
+        private void HandleHeldKey(Key key, bool shift, bool ctrl)
+        {
+            switch (holdKey)
+            {
+                case "S":
+                    {
+                        switch (key)
+                        {
+                            case Key.Up:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("StackBehind");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("StackAbove");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Down:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("StackFront");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("StackBelow");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Left:
+                                {
+                                    OnAlignment("StackLeft");
+                                    holdKey = "";
+                                }
+                                break;
+                            case Key.Right:
+                                {
+                                    OnAlignment("StackRight");
+                                    holdKey = "";
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+
+                case "L":
+                    {
+                        switch (key)
+                        {
+                            case Key.Up:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("Back");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("Top");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Down:
+                                {
+                                    if (ctrl)
+                                    {
+                                        OnAlignment("Front");
+                                    }
+                                    else
+                                    {
+                                        OnAlignment("Bottom");
+                                    }
+                                    holdKey = "";
+                                }
+                                break;
+
+                            case Key.Left:
+                                {
+                                    OnAlignment("Left");
+                                    holdKey = "";
+                                }
+                                break;
+                            case Key.Right:
+                                {
+                                    OnAlignment("Right");
+                                    holdKey = "";
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+
+                default:
+                    break;
+
+            }
+            
         }
 
         private void HandleKeyWhenEditingDisabled(Key key)
@@ -1312,7 +1443,7 @@ namespace Barnacle.ViewModels
                             }
                             break;
 
-                        case "StackY":
+                        case "StackAbove":
                             {
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - midX);
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.Lower.Y - bns.Upper.Y) - 0.001;
@@ -1356,7 +1487,7 @@ namespace Barnacle.ViewModels
                             }
                             break;
 
-                        case "StackZ":
+                        case "StackFront":
                             {
                                 dAbsX = ob.Position.X - (ob.AbsoluteBounds.MidPoint().X - midX);
                                 dAbsY = ob.Position.Y - (ob.AbsoluteBounds.MidPoint().Y - midY);
