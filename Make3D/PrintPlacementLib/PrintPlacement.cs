@@ -17,6 +17,8 @@ namespace PrintPlacementLib
         public double BedHeight { get { return bedHeight; } }
         public List<Component> components;
         private BedMap overallPlacement;
+        private int bedRows;
+        private int bedCols;
         public List<Component> Results;
 
         public PrintPlacement()
@@ -24,7 +26,7 @@ namespace PrintPlacementLib
             Clearance = 3;
             SetBedSize(200, 200);
             components = new List<Component>();
-            Results =  new List<Component>(); ;
+            Results = new List<Component>(); ;
         }
 
         public int Clearance { get; set; }
@@ -35,14 +37,27 @@ namespace PrintPlacementLib
             bedHeight = height;
             if (Clearance > 0)
             {
-                int rows = (int)(bedHeight / Clearance);
-                int cols = (int)(bedWidth / Clearance);
-                overallPlacement = new BedMap(rows, cols);
+                bedRows = (int)(bedHeight / Clearance);
+                bedCols = (int)(bedWidth / Clearance);
+                overallPlacement = new BedMap(bedRows, bedCols);
             }
         }
 
         public void Arrange()
         {
+            // clear the floor map
+            for (int r = 0; r < bedRows; r++)
+            {
+                for (int c = 0; c < bedCols; c++)
+                {
+                    overallPlacement.Set(r, c, false);
+                }
+            }
+
+            foreach (Component cm in components)
+            {
+                cm.SetMap();
+            }
         }
 
         public void AddComponent(Object3D ob, Point point1, Point point2)
@@ -50,18 +65,13 @@ namespace PrintPlacementLib
             Component comp = new Component();
             comp.Shape = ob;
             comp.LowBound = point1;
-            comp.LowBound = point2;
+            comp.HighBound = point2;
+            double w = point2.X - point1.X;
+            double h = point2.Y - point1.Y;
+            BedMap bm = new BedMap((int)Math.Ceiling(h), (int)Math.Ceiling(h));
+            comp.Map = bm;
             comp.OriginalPosition = ob.Position;
             components.Add(comp);
-        }
-
-        public class Component
-        {
-            public Object3D Shape { get; set; }
-            public Point LowBound { get; set; }
-            public Point HighBound { get; set; }
-            public Point3D Position { get; set; }
-            public Point3D OriginalPosition { get; set; }
         }
     }
 }

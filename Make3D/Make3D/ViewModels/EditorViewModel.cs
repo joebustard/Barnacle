@@ -13,7 +13,6 @@ using HoleLibrary;
 using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
-using PlacementLib;
 using PrintPlacementLib;
 using System;
 using System.Collections.Generic;
@@ -708,7 +707,9 @@ namespace Barnacle.ViewModels
                 HandleKeyWhenEditingDisabled(key);
             }
         }
+
         private String holdKey = "";
+
         private void HandleKeyWhenEditingIsEnabled(Key key, bool shift, bool ctrl)
         {
             if (holdKey != "")
@@ -1044,18 +1045,19 @@ namespace Barnacle.ViewModels
                                     holdKey = "";
                                 }
                                 break;
+
                             case Key.Right:
                                 {
                                     OnAlignment("StackRight");
                                     holdKey = "";
                                 }
                                 break;
+
                             default:
                                 break;
                         }
                     }
                     break;
-
 
                 case "L":
                     {
@@ -1095,12 +1097,14 @@ namespace Barnacle.ViewModels
                                     holdKey = "";
                                 }
                                 break;
+
                             case Key.Right:
                                 {
                                     OnAlignment("Right");
                                     holdKey = "";
                                 }
                                 break;
+
                             default:
                                 break;
                         }
@@ -1109,9 +1113,7 @@ namespace Barnacle.ViewModels
 
                 default:
                     break;
-
             }
-            
         }
 
         private void HandleKeyWhenEditingDisabled(Key key)
@@ -3846,7 +3848,7 @@ namespace Barnacle.ViewModels
             arr.SetBedSize(200, 200);
             arr.Arrange();
 
-            foreach (PrintPlacement.Component c in arr.Results)
+            foreach (PrintPlacementLib.Component c in arr.Results)
             {
                 Object3D o = c.Shape as Object3D;
                 double dx = c.Position.X - c.OriginalPosition.X;
@@ -3861,7 +3863,7 @@ namespace Barnacle.ViewModels
         private void SpiralArranger()
         {
             CheckPoint();
-            Arranger arr = new Arranger();
+            PlacementLib.Arranger arr = new PlacementLib.Arranger();
             foreach (Object3D ob in Document.Content)
             {
                 if (ob.Exportable)

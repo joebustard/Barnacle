@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BedMap.cs" />
+    <Compile Include="Component.cs" />
     <Compile Include="PrintPlacement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

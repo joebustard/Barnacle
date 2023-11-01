@@ -46,7 +46,7 @@ namespace MakerLib
             {
                 runLengthLimit = int.MaxValue;
             }
-            FetchImage();
+            ProcessImage();
         }
 
         private void EastEdges(WriteableBitmap wrb)
@@ -107,7 +107,7 @@ namespace MakerLib
             }
         }
 
-        private void FetchImage()
+        private void ProcessImage()
         {
             BitmapImage bitmap;
             DrawingVisual drawingVisual = new DrawingVisual();
