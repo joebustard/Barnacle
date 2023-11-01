@@ -23,6 +23,9 @@
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
                 <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+                <RowDefinition Height="25" />
+
                 <RowDefinition />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
@@ -36,11 +39,14 @@
                 <TextBox Margin="8,0,0,0" Text="{Binding PlaqueImagePath}" Width="150" ToolTip="{Binding PlaqueImagePathToolTip}" />
                 <Button Content="..." Click="BrowseImage_Click" ToolTip="Browse for image" Margin="8,0,0,0" />
             </StackPanel>
-
             <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <CheckBox VerticalAlignment="Center" Content="Limit RunLengths To" IsChecked="{Binding LimitRunLengths}" />
+                <TextBox VerticalAlignment="Center" Margin="8,0,0,0" Text="{Binding MaxRunLength}" />
+            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
             </StackPanel>
-            <Image Grid.Row="4" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding PlaqueImage}" />
+            <Image Grid.Row="6" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding PlaqueImage}" />
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"

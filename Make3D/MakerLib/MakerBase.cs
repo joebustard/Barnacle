@@ -12,6 +12,7 @@ namespace MakerLib
 {
     public class MakerBase
     {
+        private OctTree octTree;
         private Int32Collection tris;
         private Point3DCollection vertices;
 
@@ -52,14 +53,31 @@ namespace MakerLib
             Faces.Add(c2);
         }
 
-        public void MakeVSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
+        public int AddVerticeOctTree(double x, double y, double z)
+        {
+            int res = -1;
+            if (octTree != null)
+            {
+                Point3D v = new Point3D(x, y, z);
+                res = octTree.PointPresent(v);
+
+                if (res == -1)
+                {
+                    res = Vertices.Count;
+                    octTree.AddPoint(res, v);
+                }
+            }
+            return res;
+        }
+
+        public void MakeHSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
         {
             if (!useOctTree)
             {
                 int v0 = AddVertice(x1, y1, z1);
-                int v1 = AddVertice(x1, y2, z1);
-                int v2 = AddVertice(x2, y2, z2);
-                int v3 = AddVertice(x2, y1, z2);
+                int v1 = AddVertice(x1, y1, z2);
+                int v2 = AddVertice(x2, y1, z2);
+                int v3 = AddVertice(x2, y1, z1);
 
                 AddFace(v0, v1, v2);
                 AddFace(v0, v2, v3);
@@ -67,9 +85,9 @@ namespace MakerLib
             else
             {
                 int v0 = AddVerticeOctTree(x1, y1, z1);
-                int v1 = AddVerticeOctTree(x1, y2, z1);
-                int v2 = AddVerticeOctTree(x2, y2, z2);
-                int v3 = AddVerticeOctTree(x2, y1, z2);
+                int v1 = AddVerticeOctTree(x1, y1, z2);
+                int v2 = AddVerticeOctTree(x2, y1, z2);
+                int v3 = AddVerticeOctTree(x2, y1, z1);
 
                 AddFace(v0, v1, v2);
                 AddFace(v0, v2, v3);
@@ -100,14 +118,14 @@ namespace MakerLib
             }
         }
 
-        public void MakeHSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
+        public void MakeVSquareFace(double x1, double y1, double z1, double x2, double y2, double z2, bool useOctTree = true)
         {
             if (!useOctTree)
             {
                 int v0 = AddVertice(x1, y1, z1);
-                int v1 = AddVertice(x1, y1, z2);
-                int v2 = AddVertice(x2, y1, z2);
-                int v3 = AddVertice(x2, y1, z1);
+                int v1 = AddVertice(x1, y2, z1);
+                int v2 = AddVertice(x2, y2, z2);
+                int v3 = AddVertice(x2, y1, z2);
 
                 AddFace(v0, v1, v2);
                 AddFace(v0, v2, v3);
@@ -115,52 +133,13 @@ namespace MakerLib
             else
             {
                 int v0 = AddVerticeOctTree(x1, y1, z1);
-                int v1 = AddVerticeOctTree(x1, y1, z2);
-                int v2 = AddVerticeOctTree(x2, y1, z2);
-                int v3 = AddVerticeOctTree(x2, y1, z1);
+                int v1 = AddVerticeOctTree(x1, y2, z1);
+                int v2 = AddVerticeOctTree(x2, y2, z2);
+                int v3 = AddVerticeOctTree(x2, y1, z2);
 
                 AddFace(v0, v1, v2);
                 AddFace(v0, v2, v3);
             }
-        }
-
-        private int AddVerticeOctTree(Point3D v)
-        {
-            int res = -1;
-            res = octTree.PointPresent(v);
-
-            if (res == -1)
-            {
-                //Vertices.Add(new Point3D(v.X, v.Y, v.Z));
-                res = Vertices.Count;
-                octTree.AddPoint(res, v);
-            }
-            return res;
-        }
-
-        public int AddVerticeOctTree(double x, double y, double z)
-        {
-            int res = -1;
-            if (octTree != null)
-            {
-                Point3D v = new Point3D(x, y, z);
-                res = octTree.PointPresent(v);
-
-                if (res == -1)
-                {
-                    res = Vertices.Count;
-                    octTree.AddPoint(res, v);
-                }
-            }
-            return res;
-        }
-
-        protected Point CalcPoint(double theta, double r)
-        {
-            Point p = new Point();
-            p.X = r * Math.Cos(theta);
-            p.Y = r * Math.Sin(theta);
-            return p;
         }
 
         internal static double Distance3D(Point3D p1, Point3D p2)
@@ -396,14 +375,6 @@ namespace MakerLib
             }
         }
 
-        private OctTree octTree;
-
-        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
-        {
-            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
-            return octTree;
-        }
-
         protected int AddVertice(double x, double y, double z)
         {
             int res = -1;
@@ -480,6 +451,14 @@ namespace MakerLib
             }
         }
 
+        protected Point CalcPoint(double theta, double r)
+        {
+            Point p = new Point();
+            p.X = r * Math.Cos(theta);
+            p.Y = r * Math.Sin(theta);
+            return p;
+        }
+
         protected Point Centroid(Point[] crns)
         {
             double x = 0;
@@ -507,6 +486,60 @@ namespace MakerLib
             {
                 faces.Add(i);
             }
+        }
+
+        protected OctTree CreateOctree(Point3D minPoint, Point3D maxPoint)
+        {
+            octTree = new OctTree(Vertices, minPoint, maxPoint, 200);
+            return octTree;
+        }
+
+        protected double DegToRad(double deg)
+        {
+            return deg * Math.PI / 180;
+        }
+
+        protected void EdgeH(List<Point> points, double thickness, bool invert = false)
+        {
+            for (int i = 0; i < points.Count; i++)
+            {
+                int j = i + 1;
+                if (j >= points.Count)
+                {
+                    j = 0;
+                }
+                int c0 = AddVertice(points[i].X, points[i].Y, 0);
+                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
+                int c2 = AddVertice(points[j].X, points[j].Y, thickness);
+                int c3 = AddVertice(points[j].X, points[j].Y, 0);
+                if (invert)
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c1);
+
+                    Faces.Add(c0);
+                    Faces.Add(c3);
+                    Faces.Add(c2);
+                }
+                else
+                {
+                    Faces.Add(c0);
+                    Faces.Add(c1);
+                    Faces.Add(c2);
+
+                    Faces.Add(c0);
+                    Faces.Add(c2);
+                    Faces.Add(c3);
+                }
+            }
+        }
+
+        protected void ExtrudeH(List<Point> points, double z, bool invert)
+        {
+            EdgeH(points, z, invert);
+            TriangulateSurface(points.ToArray(), 0, true);
+            TriangulateSurface(points.ToArray(), z, false);
         }
 
         protected void FlipAxies(ref Point3D p1)
@@ -583,42 +616,6 @@ namespace MakerLib
             }
         }
 
-        protected void EdgeH(List<Point> points, double thickness, bool invert = false)
-        {
-            for (int i = 0; i < points.Count; i++)
-            {
-                int j = i + 1;
-                if (j >= points.Count)
-                {
-                    j = 0;
-                }
-                int c0 = AddVertice(points[i].X, points[i].Y, 0);
-                int c1 = AddVertice(points[i].X, points[i].Y, thickness);
-                int c2 = AddVertice(points[j].X, points[j].Y, thickness);
-                int c3 = AddVertice(points[j].X, points[j].Y, 0);
-                if (invert)
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c1);
-
-                    Faces.Add(c0);
-                    Faces.Add(c3);
-                    Faces.Add(c2);
-                }
-                else
-                {
-                    Faces.Add(c0);
-                    Faces.Add(c1);
-                    Faces.Add(c2);
-
-                    Faces.Add(c0);
-                    Faces.Add(c2);
-                    Faces.Add(c3);
-                }
-            }
-        }
-
         protected void TriangulatePerimiter(List<System.Drawing.PointF> points, double thickness)
         {
             TriangulationPolygon ply = new TriangulationPolygon();
@@ -677,16 +674,18 @@ namespace MakerLib
             }
         }
 
-        protected double DegToRad(double deg)
+        private int AddVerticeOctTree(Point3D v)
         {
-            return deg * Math.PI / 180;
-        }
+            int res = -1;
+            res = octTree.PointPresent(v);
 
-        protected void ExtrudeH(List<Point> points, double z, bool invert)
-        {
-            EdgeH(points, z, invert);
-            TriangulateSurface(points.ToArray(), 0, true);
-            TriangulateSurface(points.ToArray(), z, false);
+            if (res == -1)
+            {
+                //Vertices.Add(new Point3D(v.X, v.Y, v.Z));
+                res = Vertices.Count;
+                octTree.AddPoint(res, v);
+            }
+            return res;
         }
     }
 }

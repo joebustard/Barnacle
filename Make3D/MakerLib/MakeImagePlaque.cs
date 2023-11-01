@@ -1,6 +1,4 @@
-using Barnacle.Object3DLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
@@ -11,13 +9,20 @@ namespace MakerLib
 {
     public class ImagePlaqueMaker : MakerBase
     {
+        private int imageHeight;
+        private int imageWidth;
+        private bool limitRunLengths;
+        private int maxRunLength;
         private double plagueThickness;
         private string plaqueImagePath;
+        private int runLengthLimit;
 
-        public ImagePlaqueMaker(double plagueThickness, string plaqueImagePath)
+        public ImagePlaqueMaker(double plagueThickness, string plaqueImagePath, bool limitRunLengths, int maxRunLength)
         {
             this.plagueThickness = plagueThickness;
             this.plaqueImagePath = plaqueImagePath;
+            this.limitRunLengths = limitRunLengths;
+            this.maxRunLength = maxRunLength;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -26,11 +31,82 @@ namespace MakerLib
             faces.Clear();
             Vertices = pnts;
             Faces = faces;
-           
+            if (limitRunLengths)
+            {
+                if (maxRunLength > 1)
+                {
+                    runLengthLimit = maxRunLength;
+                }
+                else
+                {
+                    runLengthLimit = 1;
+                }
+            }
+            else
+            {
+                runLengthLimit = int.MaxValue;
+            }
             FetchImage();
         }
-        private int imageWidth;
-        private int imageHeight;
+
+        private void EastEdges(WriteableBitmap wrb)
+        {
+            int x = 0;
+            while (x < imageWidth)
+            {
+                int y = 0;
+                while (y < imageHeight)
+                {
+                    int runLength = 0;
+                    // find first black
+                    while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
+                    {
+                        y++;
+                    }
+                    if (y < imageHeight)
+                    {
+                        int start = y;
+                        if (x == imageWidth - 1)
+                        {
+                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
+                            {
+                                runLength++;
+                                if (runLength < runLengthLimit)
+                                {
+                                    y++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x + 1, y).R > 128 && runLength < runLengthLimit)
+                            {
+                                runLength++;
+                                if (runLength < runLengthLimit)
+                                {
+                                    y++;
+                                }
+                            }
+                        }
+                        if (runLength > 0)
+                        {
+                            double px = x + 1;
+                            double py = start;
+                            double ly = start + runLength;
+                            int v0 = AddVerticeOctTree(px, 0, py);
+                            int v1 = AddVerticeOctTree(px, 0, ly);
+                            int v2 = AddVerticeOctTree(px, plagueThickness, ly);
+                            int v3 = AddVerticeOctTree(px, plagueThickness, py);
+                            AddFace(v0, v2, v1);
+                            AddFace(v0, v3, v2);
+                        }
+                    }
+                    y++;
+                }
+                x++;
+            }
+        }
+
         private void FetchImage()
         {
             BitmapImage bitmap;
@@ -83,117 +159,13 @@ namespace MakerLib
             }
 
             WriteableBitmap wrb = new WriteableBitmap(bmp);
-
+            CreateOctree(new Point3D(-1, -0.1, -1), new Point3D(imageWidth + 1, plagueThickness + 0.1, imageHeight + 1));
             NorthEdges(wrb);
             SouthEdges(wrb);
             WestEdges(wrb);
             EastEdges(wrb);
             FrontAndBack(wrb);
         }
-        private void EastEdges(WriteableBitmap wrb)
-        {
-            int x = 0;
-            while (x < imageWidth)
-            {
-                int y = 0;
-                while (y < imageHeight)
-                {
-                    int runLength = 0;
-                    // find first black
-                    while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
-                    {
-                        y++;
-                    }
-                    if (y < imageHeight)
-                    {
-                        int start = y;
-                        if (x == imageWidth-1)
-                        {
-                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128)
-                            {
-                                runLength++;
-                                y++;
-                            }
-                        }
-                        else
-                        {
-                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x+1, y ).R > 128)
-                            {
-                                runLength++;
-                                y++;
-                            }
-                        }
-                        if (runLength > 0)
-                        {
-                            double px = x+1;
-                            double py = start;
-                            double ly = start + runLength;
-                            int v0 = AddVertice(px, 0, py);
-                            int v1 = AddVertice(px, 0, ly);
-                            int v2 = AddVertice(px, plagueThickness, ly);
-                            int v3 = AddVertice(px, plagueThickness, py);
-                            AddFace(v0, v2, v1);
-                            AddFace(v0, v3, v2);
-                        }
-                    }
-                    y++;
-                }
-                x++;
-            }
-        }
-        private void WestEdges(WriteableBitmap wrb)
-        {
-            int x = 0;
-            while (x < imageWidth)
-            {
-                int y = 0;
-                while (y < imageHeight)
-                {
-                    int runLength = 0;
-                    // find first black
-                    while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
-                    {
-                        y++;
-                    }
-                    if (y < imageHeight)
-                    {
-                        int start = y;
-                        if (x == 0)
-                        {
-                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128)
-                            {
-                                runLength++;
-                                y++;
-                            }
-                        }
-                        else
-                        {
-                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x - 1, y).R > 128)
-                            {
-                                runLength++;
-                                y++;
-                            }
-                        }
-                        if (runLength > 0)
-                        {
-                            double px = x;
-                            double py = start;
-                            double ly = start + runLength;
-                            int v0 = AddVertice(px, 0, py);
-                            int v1 = AddVertice(px, 0, ly);
-                            int v2 = AddVertice(px, plagueThickness, ly);
-                            int v3 = AddVertice(px, plagueThickness, py);
-                            AddFace(v0, v1, v2);
-                            AddFace(v0, v2, v3);
-                        }
-                    }
-                    y++;
-                }
-                x++;
-            }
-        }
-
-
 
         private void FrontAndBack(WriteableBitmap wrb)
         {
@@ -212,30 +184,33 @@ namespace MakerLib
                     if (x < imageWidth)
                     {
                         int start = x;
-                        
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128)
+
+                        while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
+                        {
+                            runLength++;
+                            if (runLength < runLengthLimit)
                             {
-                                runLength++;
                                 x++;
                             }
-                       
+                        }
+
                         if (runLength > 0)
                         {
                             double px = start;
                             double py = y;
                             double lx = start + runLength;
-                            double ly = y+1;
-                            int v0 = AddVertice(px, 0, py);
-                            int v1 = AddVertice(lx, 0, py);
-                            int v2 = AddVertice(lx, 0, ly);
-                            int v3 = AddVertice(px, 0, ly);
+                            double ly = y + 1;
+                            int v0 = AddVerticeOctTree(px, 0, py);
+                            int v1 = AddVerticeOctTree(lx, 0, py);
+                            int v2 = AddVerticeOctTree(lx, 0, ly);
+                            int v3 = AddVerticeOctTree(px, 0, ly);
                             AddFace(v0, v1, v2);
                             AddFace(v0, v2, v3);
 
-                            v0 = AddVertice(px, plagueThickness, py);
-                            v1 = AddVertice(lx, plagueThickness, py);
-                            v2 = AddVertice(lx, plagueThickness, ly);
-                            v3 = AddVertice(px, plagueThickness, ly);
+                            v0 = AddVerticeOctTree(px, plagueThickness, py);
+                            v1 = AddVerticeOctTree(lx, plagueThickness, py);
+                            v2 = AddVerticeOctTree(lx, plagueThickness, ly);
+                            v3 = AddVerticeOctTree(px, plagueThickness, ly);
                             AddFace(v0, v2, v1);
                             AddFace(v0, v3, v2);
                         }
@@ -249,10 +224,10 @@ namespace MakerLib
         private void NorthEdges(WriteableBitmap wrb)
         {
             int y = 0;
-            while ( y < imageHeight)
+            while (y < imageHeight)
             {
                 int x = 0;
-                while ( x <imageWidth )
+                while (x < imageWidth)
                 {
                     int runLength = 0;
                     // find first black
@@ -265,29 +240,35 @@ namespace MakerLib
                         int start = x;
                         if (y == 0)
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
-                                x++;
+                                if (runLength < runLengthLimit)
+                                {
+                                    x++;
+                                }
                             }
                         }
                         else
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x, y-1).R > 128)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x, y - 1).R > 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
-                                x++;
+                                if (runLength < runLengthLimit)
+                                {
+                                    x++;
+                                }
                             }
                         }
                         if (runLength > 0)
                         {
-                            double px = start ;
-                            double py = y ;
-                            double lx = start + runLength ;
-                            int v0 = AddVertice(px, 0, py);
-                            int v1 = AddVertice(lx, 0, py);
-                            int v2 = AddVertice(lx, plagueThickness, py);
-                            int v3 = AddVertice(px, plagueThickness, py);
+                            double px = start;
+                            double py = y;
+                            double lx = start + runLength;
+                            int v0 = AddVerticeOctTree(px, 0, py);
+                            int v1 = AddVerticeOctTree(lx, 0, py);
+                            int v2 = AddVerticeOctTree(lx, plagueThickness, py);
+                            int v3 = AddVerticeOctTree(px, plagueThickness, py);
                             AddFace(v0, v2, v1);
                             AddFace(v0, v3, v2);
                         }
@@ -315,9 +296,9 @@ namespace MakerLib
                     if (x < imageWidth)
                     {
                         int start = x;
-                        if (y == imageHeight-1)
+                        if (y == imageHeight - 1)
                         {
-                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128)
+                            while (x < imageWidth && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
                             {
                                 runLength++;
                                 x++;
@@ -334,12 +315,12 @@ namespace MakerLib
                         if (runLength > 0)
                         {
                             double px = start;
-                            double py = y+1;
+                            double py = y + 1;
                             double lx = start + runLength;
-                            int v0 = AddVertice(px, 0, py);
-                            int v1 = AddVertice(lx, 0, py);
-                            int v2 = AddVertice(lx, plagueThickness, py);
-                            int v3 = AddVertice(px, plagueThickness, py);
+                            int v0 = AddVerticeOctTree(px, 0, py);
+                            int v1 = AddVerticeOctTree(lx, 0, py);
+                            int v2 = AddVerticeOctTree(lx, plagueThickness, py);
+                            int v3 = AddVerticeOctTree(px, plagueThickness, py);
                             AddFace(v0, v1, v2);
                             AddFace(v0, v2, v3);
                         }
@@ -347,6 +328,64 @@ namespace MakerLib
                     x++;
                 }
                 y++;
+            }
+        }
+
+        private void WestEdges(WriteableBitmap wrb)
+        {
+            int x = 0;
+            while (x < imageWidth)
+            {
+                int y = 0;
+                while (y < imageHeight)
+                {
+                    int runLength = 0;
+                    // find first black
+                    while (y < imageHeight && wrb.GetPixel(x, y).R > 128)
+                    {
+                        y++;
+                    }
+                    if (y < imageHeight)
+                    {
+                        int start = y;
+                        if (x == 0)
+                        {
+                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && runLength < runLengthLimit)
+                            {
+                                runLength++;
+                                if (runLength < runLengthLimit)
+                                {
+                                    y++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            while (y < imageHeight && wrb.GetPixel(x, y).R < 128 && wrb.GetPixel(x - 1, y).R > 128 && runLength < runLengthLimit)
+                            {
+                                runLength++;
+                                if (runLength < runLengthLimit)
+                                {
+                                    y++;
+                                }
+                            }
+                        }
+                        if (runLength > 0)
+                        {
+                            double px = x;
+                            double py = start;
+                            double ly = start + runLength;
+                            int v0 = AddVerticeOctTree(px, 0, py);
+                            int v1 = AddVerticeOctTree(px, 0, ly);
+                            int v2 = AddVerticeOctTree(px, plagueThickness, ly);
+                            int v3 = AddVerticeOctTree(px, plagueThickness, py);
+                            AddFace(v0, v1, v2);
+                            AddFace(v0, v2, v3);
+                        }
+                    }
+                    y++;
+                }
+                x++;
             }
         }
     }

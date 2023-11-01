@@ -20,6 +20,37 @@ namespace Barnacle.Dialogs
         private const double minplagueThickness = 0.5;
         private const double maxplagueThickness = 100;
         private double plagueThickness;
+        private bool limitRunLengths;
+
+        public bool LimitRunLengths
+        {
+            get { return limitRunLengths; }
+            set
+            {
+                if (value != limitRunLengths)
+                {
+                    limitRunLengths = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
+
+        private int maxRunLength;
+
+        public int MaxRunLength
+        {
+            get { return maxRunLength; }
+            set
+            {
+                if (maxRunLength != value)
+                {
+                    maxRunLength = value;
+                    NotifyPropertyChanged();
+                    UpdateDisplay();
+                }
+            }
+        }
 
         public double PlagueThickness
         {
@@ -147,7 +178,7 @@ namespace Barnacle.Dialogs
             ClearShape();
             if (plagueThickness > 0 && !String.IsNullOrEmpty(plaqueImagePath))
             {
-                ImagePlaqueMaker maker = new ImagePlaqueMaker(plagueThickness, plaqueImagePath);
+                ImagePlaqueMaker maker = new ImagePlaqueMaker(plagueThickness, plaqueImagePath, limitRunLengths, maxRunLength);
                 maker.Generate(Vertices, Faces);
                 CentreVertices();
             }
@@ -160,6 +191,8 @@ namespace Barnacle.Dialogs
             PlagueThickness = EditorParameters.GetDouble("PlagueThickness", 5);
 
             PlaqueImagePath = EditorParameters.Get("PlaqueImagePath");
+            LimitRunLengths = EditorParameters.GetBoolean("LimitRunLengths", false);
+            MaxRunLength = EditorParameters.GetInt("MaxRunLength", 5);
         }
 
         private void SaveEditorParmeters()
@@ -168,6 +201,8 @@ namespace Barnacle.Dialogs
 
             EditorParameters.Set("PlagueThickness", PlagueThickness.ToString());
             EditorParameters.Set("PlaqueImagePath", PlaqueImagePath.ToString());
+            EditorParameters.Set("LimitRunLengths", LimitRunLengths.ToString());
+            EditorParameters.Set("MaxRunLength", MaxRunLength.ToString());
         }
 
         private void UpdateDisplay()
@@ -196,7 +231,8 @@ namespace Barnacle.Dialogs
             loaded = false;
             PlagueThickness = 5;
             PlaqueImagePath = "";
-
+            LimitRunLengths = false;
+            MaxRunLength = 5;
             loaded = true;
         }
 
@@ -228,6 +264,7 @@ namespace Barnacle.Dialogs
                 {
                     plaqueImage = value;
                     NotifyPropertyChanged();
+                    UpdateDisplay();
                 }
             }
         }
