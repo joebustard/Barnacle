@@ -12,17 +12,19 @@ namespace PrintPlacementLib
     public class PrintPlacement
     {
         private double bedWidth;
-        public double BedWidth { get { return bedWidth; } };
+        public double BedWidth { get { return bedWidth; } }
         private double bedHeight;
-        public double BedHeight { get { return bedHeight; } };
+        public double BedHeight { get { return bedHeight; } }
         public List<Component> components;
         private BedMap overallPlacement;
+        public List<Component> Results;
 
         public PrintPlacement()
         {
             Clearance = 3;
             SetBedSize(200, 200);
             components = new List<Component>();
+            Results =  new List<Component>(); ;
         }
 
         public int Clearance { get; set; }
