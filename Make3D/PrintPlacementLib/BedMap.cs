@@ -36,5 +36,24 @@ namespace PrintPlacementLib
             }
             return v;
         }
+
+        internal void Dump()
+        {
+            for (int r = 0; r < numRows; r++)
+            {
+                for (int c = 0; c < numCols; c++)
+                {
+                    if (map[r, c])
+                    {
+                        System.Diagnostics.Debug.Write("*");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.Write("'");
+                    }
+                }
+                System.Diagnostics.Debug.WriteLine("");
+            }
+        }
     }
 }

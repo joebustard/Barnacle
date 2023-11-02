@@ -60,16 +60,14 @@ namespace PrintPlacementLib
             }
         }
 
-        public void AddComponent(Object3D ob, Point point1, Point point2)
+        public void AddComponent(Object3D ob, Point3D point1, Point3D point2)
         {
             Component comp = new Component();
             comp.Shape = ob;
             comp.LowBound = point1;
             comp.HighBound = point2;
-            double w = point2.X - point1.X;
-            double h = point2.Y - point1.Y;
-            BedMap bm = new BedMap((int)Math.Ceiling(h), (int)Math.Ceiling(h));
-            comp.Map = bm;
+            comp.Clearance = Clearance;
+
             comp.OriginalPosition = ob.Position;
             components.Add(comp);
         }

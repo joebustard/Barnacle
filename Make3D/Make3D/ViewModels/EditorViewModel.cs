@@ -3840,8 +3840,8 @@ namespace Barnacle.ViewModels
                 if (ob.Exportable)
                 {
                     arr.AddComponent(ob,
-                                     new Point(ob.AbsoluteBounds.Lower.X, ob.AbsoluteBounds.Lower.Z),
-                                     new Point(ob.AbsoluteBounds.Upper.X, ob.AbsoluteBounds.Upper.Z));
+                                    ob.AbsoluteBounds.Lower,
+                                    ob.AbsoluteBounds.Upper);
                 }
             }
             arr.Clearance = 3;
