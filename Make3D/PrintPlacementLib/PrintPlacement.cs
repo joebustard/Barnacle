@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media.Media3D;
+using static PrintPlacementLib.BedSpiralor;
 
 namespace PrintPlacementLib
 {
@@ -54,9 +55,35 @@ namespace PrintPlacementLib
                 }
             }
 
+            // create the bed maps
             foreach (Component cm in components)
             {
                 cm.SetMap();
+            }
+
+            // sort so we have the densist object first
+            components = components.OrderByDescending(x => x.Density).ToList();
+
+            //Place each one
+            foreach (Component cm in components)
+            {
+                cm.SetTarget(bedWidth / 2, bedHeight / 2);
+                double bestScore = double.MaxValue;
+                BedSpiralor spiro = new BedSpiralor(bedRows, bedCols);
+                bool done = false;
+                MapPoint bestPos = new MapPoint(0, 0);
+                while (spiro.numberVisited < spiro.MaxVisited && !done)
+                {
+                    MapPoint mapPoint = spiro.GetNextPos();
+                    double testScore = cm.Score(mapPoint.Row, mapPoint.Column, bedRows, bedCols);
+                    if (testScore < bestScore)
+                    {
+                        bestPos = mapPoint;
+                        bestScore = testScore;
+                    }
+                }
+                cm.Position = new Point3D((bestPos.Column * Clearance) - (bedWidth / 2), 0, (bestPos.Row * Clearance) - (bedHeight / 2));
+                Results.Add(cm);
             }
         }
 

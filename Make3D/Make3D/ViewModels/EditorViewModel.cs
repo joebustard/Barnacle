@@ -3851,11 +3851,14 @@ namespace Barnacle.ViewModels
             foreach (PrintPlacementLib.Component c in arr.Results)
             {
                 Object3D o = c.Shape as Object3D;
-                double dx = c.Position.X - c.OriginalPosition.X;
-                double dy = c.Position.Y - c.OriginalPosition.Y;
-                o.Position = new Point3D(o.Position.X + dx - arr.BedWidth / 2, o.Position.Y, o.Position.Z + dy - arr.BedHeight / 2);
+
+                double px = c.Position.X;
+                double py = c.Position.Y;
+                double pz = c.Position.Z;
+
+                o.Position = new Point3D(px, py, pz);
             }
-            MoveAllToCentre();
+            //    MoveAllToCentre();
             RegenerateDisplayList();
             Document.Dirty = true;
         }

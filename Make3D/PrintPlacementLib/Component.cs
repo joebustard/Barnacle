@@ -22,27 +22,31 @@ namespace PrintPlacementLib
         public Point3D OriginalPosition { get; set; }
         public BedMap Map { get; set; }
         public int Clearance { get; internal set; }
+        public int Density { get; set; }
+        public int Columns;
+        public int Rows;
 
         internal void SetMap()
         {
+            Density = 0;
             if (Shape != null && Clearance > 0)
             {
-                int columns = (int)(Math.Ceiling((HighBound.X - LowBound.X) / Clearance));
-                int rows = (int)(Math.Ceiling((HighBound.Z - LowBound.Z) / Clearance));
-                if (columns > 0 && rows > 0)
+                Columns = (int)(Math.Ceiling((HighBound.X - LowBound.X) / Clearance));
+                Rows = (int)(Math.Ceiling((HighBound.Z - LowBound.Z) / Clearance));
+                if (Columns > 0 && Rows > 0)
                 {
                     double rayY = LowBound.Y - 1;
-                    Map = new BedMap(rows, columns);
+                    Map = new BedMap(Rows, Columns);
 
                     // create a visual that we can ray trace
                     MeshGeometry3D model = Shape.Mesh;
 
                     double resolution = 0.25;
-                    for (int row = 0; row < rows; row++)
+                    for (int row = 0; row < Rows; row++)
                     {
                         double z = (row * Clearance) + LowBound.Z;
 
-                        for (int col = 0; col < columns; col++)
+                        for (int col = 0; col < Columns; col++)
                         {
                             Map.Set(row, col, false);
                             double x = (col * Clearance) + LowBound.X;
@@ -63,6 +67,7 @@ namespace PrintPlacementLib
                                     if (RayHit(model, x1, z1, rayY))
                                     {
                                         Map.Set(row, col, true);
+                                        Density++;
                                         more = false;
                                     }
                                     z1 += resolution;
@@ -74,6 +79,33 @@ namespace PrintPlacementLib
                     Map.Dump();
                 }
             }
+        }
+
+        private double tx;
+        private double ty;
+
+        internal void SetTarget(double x, double y)
+        {
+            tx = x;
+            ty = y;
+        }
+
+        internal double Score(int row, int column, int maxRow, int maxCol)
+        {
+            double score = double.MaxValue;
+            // if row,col is hte low bound will the high bound be on the bed
+            if ((row + Rows < maxRow) &&
+                 (column + Columns < maxCol))
+            {
+                // convert the row and col back to a real position
+                Point orig = new Point(column * Clearance, row * Clearance);
+                Point p1 = new Point(orig.X + LowBound.X, orig.Y + LowBound.Z);
+                double d1 = Math.Sqrt((tx - p1.X) * (tx - p1.X) + (ty - p1.Y) * (ty - p1.Y));
+                Point p2 = new Point(orig.X + HighBound.X, orig.Y + HighBound.Z);
+                double d2 = Math.Sqrt((tx - p2.X) * (tx - p2.X) + (ty - p2.Y) * (ty - p2.Y));
+                score = Math.Max(d1, d2);
+            }
+            return score;
         }
 
         private bool RayHit(MeshGeometry3D model, double x, double z, double rayY)
