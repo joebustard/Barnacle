@@ -30,7 +30,8 @@ namespace PrintPlacementLib
             Results = new List<Component>(); ;
         }
 
-        public int Clearance { get; set; }
+        public double Clearance { get; set; }
+        private double workingCLearance;
 
         public void SetBedSize(double width, double height)
         {
@@ -38,10 +39,16 @@ namespace PrintPlacementLib
             bedHeight = height;
             if (Clearance > 0)
             {
-                bedRows = (int)(bedHeight / Clearance);
-                bedCols = (int)(bedWidth / Clearance);
+                workingCLearance = Clearance / 2.0;
+                bedRows = (int)(bedHeight / workingCLearance);
+                bedCols = (int)(bedWidth / workingCLearance);
                 overallPlacement = new BedMap(bedRows, bedCols);
             }
+        }
+
+        private void Log(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
         }
 
         public void Arrange()
@@ -67,6 +74,7 @@ namespace PrintPlacementLib
             //Place each one
             foreach (Component cm in components)
             {
+                Log($"SetTarget {bedWidth / 2}, {bedHeight / 2}");
                 cm.SetTarget(bedWidth / 2, bedHeight / 2);
                 double bestScore = double.MaxValue;
                 BedSpiralor spiro = new BedSpiralor(bedRows, bedCols);
@@ -75,15 +83,62 @@ namespace PrintPlacementLib
                 while (spiro.numberVisited < spiro.MaxVisited && !done)
                 {
                     MapPoint mapPoint = spiro.GetNextPos();
+                    //       Log($"spiro mapPoint r {mapPoint.Row} c {mapPoint.Column}");
                     double testScore = cm.Score(mapPoint.Row, mapPoint.Column, bedRows, bedCols);
+                    //       Log($"Test Score {testScore}");
                     if (testScore < bestScore)
                     {
-                        bestPos = mapPoint;
-                        bestScore = testScore;
+                        // test if we can actually
+                        bool add = true;
+                        for (int r = 0; r < cm.Rows && add; r++)
+                        {
+                            for (int c = 0; c < cm.Columns && add; c++)
+                            {
+                                if (cm.Map.Get(r, c))
+                                {
+                                    int tr = (r - cm.Rows / 2) + mapPoint.Row;
+                                    int tc = (c - cm.Columns / 2) + mapPoint.Column;
+                                    if (tr >= 0 && tr < bedRows && tc >= 0 && tc < bedCols)
+                                    {
+                                        if (overallPlacement.Get(tr, tc) == true)
+                                        {
+                                            add = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (add)
+                        {
+                            bestPos = mapPoint;
+                            bestScore = testScore;
+                            Log($"Test Score {testScore}");
+                            Log("^^^^ BETTER ^^^^^^");
+                        }
                     }
                 }
-                cm.Position = new Point3D((bestPos.Column * Clearance) - (bedWidth / 2), 0, (bestPos.Row * Clearance) - (bedHeight / 2));
+                cm.Position = new Point3D((bestPos.Column * workingCLearance) - (bedWidth / 2), 0, (bestPos.Row * workingCLearance) - (bedHeight / 2));
+                Log($"Position {cm.Position.X},{cm.Position.Y},{cm.Position.Z}");
                 Results.Add(cm);
+                cm.ExpandMap();
+                // cm.ExpandMap();
+                // mark the bed map with the object map to block that area out
+                for (int r = 0; r < cm.Rows; r++)
+                {
+                    for (int c = 0; c < cm.Columns; c++)
+                    {
+                        if (cm.Map.Get(r, c))
+                        {
+                            int tr = (r - cm.Rows / 2) + bestPos.Row;
+                            int tc = (c - cm.Columns / 2) + bestPos.Column;
+                            if (tr >= 0 && tr < bedRows && tc >= 0 && tc < bedCols)
+                            {
+                                overallPlacement.Set(tr, tc, true);
+                            }
+                        }
+                    }
+                }
+                //    overallPlacement.Dump();
             }
         }
 
@@ -93,7 +148,7 @@ namespace PrintPlacementLib
             comp.Shape = ob;
             comp.LowBound = point1;
             comp.HighBound = point2;
-            comp.Clearance = Clearance;
+            comp.Clearance = workingCLearance;
 
             comp.OriginalPosition = ob.Position;
             components.Add(comp);
