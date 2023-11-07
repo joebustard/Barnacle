@@ -43,6 +43,7 @@ namespace Barnacle.Views
                 BaseViewModel.Project.SharedProjectSettings.ExportScale = vm.ExportScale;
                 BaseViewModel.Project.SharedProjectSettings.AutoSaveScript = vm.AutoSaveScript;
                 BaseViewModel.Project.SharedProjectSettings.PlaceNewAtMarker = vm.PlaceNewAtMarker;
+
                 try
                 {
                     double x = Convert.ToDouble(vm.RotX);
@@ -62,6 +63,7 @@ namespace Barnacle.Views
                     Properties.Settings.Default.SlicerPath = vm.SlicerPath;
                     Properties.Settings.Default.SDCardLabel = vm.SDCardName;
                     Properties.Settings.Default.ConfirmNameAfterCSG = vm.ConfirmNameAfterCSG;
+                    Properties.Settings.Default.RepeatHoleFixes = vm.RepeatHoleFixes;
                     Properties.Settings.Default.Save();
                 }
                 catch (Exception)

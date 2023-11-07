@@ -105,16 +105,11 @@ namespace Barnacle.ViewModels
             printerPlate = new PrinterPlate();
             floorMarker = null;
             grid = new Grid3D();
-
             camera = new PolarCamera();
-
             onePercentZoom = camera.Distance / 100.0;
             LookToCenter();
-
             cameraMode = CameraModes.CameraMoveLookCenter;
-
             modelItems = new Model3DCollection();
-
             modelItems.Add(floor.FloorMesh);
             NotificationManager.Subscribe("Editor", "AutoFix", AutoFix);
             NotificationManager.Subscribe("Editor", "ZoomIn", ZoomIn);
@@ -136,7 +131,6 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "PasteAt", OnPasteAt);
             NotificationManager.Subscribe("Editor", "DoMultiPaste", OnMultiPaste);
             NotificationManager.Subscribe("Editor", "CircularPaste", OnCircularPaste);
-
             NotificationManager.Subscribe("Editor", "Export", OnExport);
             NotificationManager.Subscribe("Editor", "ExportParts", OnExportParts);
             NotificationManager.Subscribe("Editor", "Slice", OnSlice);
@@ -152,37 +146,27 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Flip", OnFlip);
             NotificationManager.Subscribe("Editor", "LoopSmooth", OnLoopSmooth);
             NotificationManager.Subscribe("Editor", "Reorigin", OnReorigin);
-
             NotificationManager.Subscribe("Editor", "Size", OnSize);
             NotificationManager.Subscribe("Editor", "Undo", OnUndo);
-
             NotificationManager.Subscribe("Editor", "BezierFuselage", OnFuselage);
-
             NotificationManager.Subscribe("Editor", "MeshEdit", OnMeshEdit);
             NotificationManager.Subscribe("Editor", "MeshHull", OnMeshHull);
-
             NotificationManager.Subscribe("Editor", "ShowFloor", OnShowFloor);
             NotificationManager.Subscribe("Editor", "ShowBuildPlate", OnShowBuildPlate);
             NotificationManager.Subscribe("Editor", "ShowFloorMarker", OnShowFloorMarker);
             NotificationManager.Subscribe("Editor", "ShowAxies", OnShowAxies);
             NotificationManager.Subscribe("Editor", "SelectObjectName", SelectObjectByName);
-
             NotificationManager.Subscribe("Editor", "Tool", OnTool);
-
             NotificationManager.Subscribe("Editor", "ManifoldTest", OnManifoldTest);
             NotificationManager.Subscribe("Editor", "RemoveDupVertices", OnRemoveDupVertices);
             NotificationManager.Subscribe("Editor", "UnrefVertices", OnRemoveUnrefVertices);
             NotificationManager.Subscribe("Editor", "Loading", LoadingNewFile);
-
             NotificationManager.Subscribe("Editor", "BuildPlate", BuildPlateChanged);
-
             NotificationManager.Subscribe("Editor", "ObjectXRotationChange", XRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectYRotationChange", YRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
-
             NotificationManager.Subscribe("Editor", "AddObjectToLibrary", OnAddObjectToLibrary);
             NotificationManager.Subscribe("Editor", "Mirror", OnMirror);
-
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -222,7 +206,6 @@ namespace Barnacle.ViewModels
                 if (confirmed)
                 {
                     Document.Content.Remove(ob);
-
                     Object3D it = ob.ConvertToMesh();
                     it.Remesh();
                     Document.Content.Add(it);
@@ -355,11 +338,37 @@ namespace Barnacle.ViewModels
                 if (ob != null)
                 {
                     CheckPoint();
-                    HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
-                    Tuple<int, int> res = hf.FindHoles();
+                    Tuple<int, int> res = Tuple.Create<int, int>(0, 0);
+                    int totalFixed = 0;
+                    int totalFound = -1;
+                    if (Properties.Settings.Default.RepeatHoleFixes)
+                    {
+                        int reps = 0;
+                        do
+                        {
+                            HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
+                            res = hf.FindHoles();
+                            if (totalFound == -1)
+                            {
+                                totalFound = res.Item1;
+                            }
+                            totalFixed += res.Item2;
+
+                            ob.Remesh();
+                            ob.CalcScale(false);
+                            GeometryModel3D gm2 = GetMesh(ob);
+                            reps++;
+                        } while (res.Item2 > 0 && reps < 10);
+                    }
+                    else
+                    {
+                        HoleFinder hf = new HoleFinder(ob.RelativeObjectVertices, ob.TriangleIndices);
+                        res = hf.FindHoles();
+                        totalFound = res.Item1;
+                        totalFixed += res.Item2;
+                    }
 
                     ob.Remesh();
-
                     ob.CalcScale(false);
                     allBounds += ob.AbsoluteBounds;
                     GeometryModel3D gm = GetMesh(ob);
@@ -368,7 +377,7 @@ namespace Barnacle.ViewModels
                     selectedObjectAdorner.Clear();
                     selectedObjectAdorner.AdornObject(ob);
                     RegenerateDisplayList();
-                    MessageBox.Show($"Found {res.Item1.ToString()} holes, Filled {res.Item2.ToString()}", "Information");
+                    MessageBox.Show($"Found {totalFound.ToString()} holes, Filled {totalFixed.ToString()}", "Information");
                 }
             }
             else
@@ -3845,7 +3854,7 @@ namespace Barnacle.ViewModels
                 }
             }
             arr.Clearance = 3;
-            arr.SetBedSize(200, 200);
+            arr.SetBedSize(printerPlate.Width - 10, printerPlate.Height - 10);
             arr.Arrange();
 
             foreach (PrintPlacementLib.Component c in arr.Results)
@@ -3858,7 +3867,8 @@ namespace Barnacle.ViewModels
 
                 o.Position = new Point3D(px, py, pz);
             }
-            //    MoveAllToCentre();
+            MoveAllToCentre();
+            FloorAllObjects();
             RegenerateDisplayList();
             Document.Dirty = true;
         }

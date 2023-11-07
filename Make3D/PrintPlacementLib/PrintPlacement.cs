@@ -1,10 +1,6 @@
 ﻿using Barnacle.Object3DLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Media.Media3D;
 using static PrintPlacementLib.BedSpiralor;
 
@@ -12,15 +8,14 @@ namespace PrintPlacementLib
 {
     public class PrintPlacement
     {
-        private double bedWidth;
-        public double BedWidth { get { return bedWidth; } }
-        private double bedHeight;
-        public double BedHeight { get { return bedHeight; } }
         public List<Component> components;
-        private BedMap overallPlacement;
-        private int bedRows;
-        private int bedCols;
         public List<Component> Results;
+        private int bedCols;
+        private double bedHeight;
+        private int bedRows;
+        private double bedWidth;
+        private BedMap overallPlacement;
+        private double workingCLearance;
 
         public PrintPlacement()
         {
@@ -30,25 +25,20 @@ namespace PrintPlacementLib
             Results = new List<Component>(); ;
         }
 
+        public double BedHeight { get { return bedHeight; } }
+        public double BedWidth { get { return bedWidth; } }
         public double Clearance { get; set; }
-        private double workingCLearance;
 
-        public void SetBedSize(double width, double height)
+        public void AddComponent(Object3D ob, Point3D point1, Point3D point2)
         {
-            bedWidth = width;
-            bedHeight = height;
-            if (Clearance > 0)
-            {
-                workingCLearance = Clearance / 2.0;
-                bedRows = (int)(bedHeight / workingCLearance);
-                bedCols = (int)(bedWidth / workingCLearance);
-                overallPlacement = new BedMap(bedRows, bedCols);
-            }
-        }
+            Component comp = new Component();
+            comp.Shape = ob;
+            comp.LowBound = point1;
+            comp.HighBound = point2;
+            comp.Clearance = workingCLearance;
 
-        private void Log(string s)
-        {
-            System.Diagnostics.Debug.WriteLine(s);
+            comp.OriginalPosition = ob.Position;
+            components.Add(comp);
         }
 
         public void Arrange()
@@ -70,22 +60,24 @@ namespace PrintPlacementLib
 
             // sort so we have the densist object first
             components = components.OrderByDescending(x => x.Density).ToList();
-
+            Bounds3D bedBounds = new Bounds3D();
+            bedBounds.Lower = new Point3D(bedCols / 2, 0, bedRows / 2);
+            bedBounds.Upper = new Point3D(bedCols / 2, 0, bedRows / 2);
             //Place each one
             foreach (Component cm in components)
             {
-                Log($"SetTarget {bedWidth / 2}, {bedHeight / 2}");
                 cm.SetTarget(bedWidth / 2, bedHeight / 2);
                 double bestScore = double.MaxValue;
                 BedSpiralor spiro = new BedSpiralor(bedRows, bedCols);
+
                 bool done = false;
                 MapPoint bestPos = new MapPoint(0, 0);
                 while (spiro.numberVisited < spiro.MaxVisited && !done)
                 {
                     MapPoint mapPoint = spiro.GetNextPos();
-                    //       Log($"spiro mapPoint r {mapPoint.Row} c {mapPoint.Column}");
-                    double testScore = cm.Score(mapPoint.Row, mapPoint.Column, bedRows, bedCols);
-                    //       Log($"Test Score {testScore}");
+
+                    double testScore = cm.Score(mapPoint.Row, mapPoint.Column, bedRows, bedCols, bedBounds);
+
                     if (testScore < bestScore)
                     {
                         // test if we can actually
@@ -112,16 +104,13 @@ namespace PrintPlacementLib
                         {
                             bestPos = mapPoint;
                             bestScore = testScore;
-                            Log($"Test Score {testScore}");
-                            Log("^^^^ BETTER ^^^^^^");
                         }
                     }
                 }
                 cm.Position = new Point3D((bestPos.Column * workingCLearance) - (bedWidth / 2), 0, (bestPos.Row * workingCLearance) - (bedHeight / 2));
-                Log($"Position {cm.Position.X},{cm.Position.Y},{cm.Position.Z}");
                 Results.Add(cm);
                 cm.ExpandMap();
-                // cm.ExpandMap();
+
                 // mark the bed map with the object map to block that area out
                 for (int r = 0; r < cm.Rows; r++)
                 {
@@ -134,24 +123,30 @@ namespace PrintPlacementLib
                             if (tr >= 0 && tr < bedRows && tc >= 0 && tc < bedCols)
                             {
                                 overallPlacement.Set(tr, tc, true);
+                                bedBounds.Adjust(new Point3D(tc, 0, tr));
                             }
                         }
                     }
                 }
-                //    overallPlacement.Dump();
             }
         }
 
-        public void AddComponent(Object3D ob, Point3D point1, Point3D point2)
+        public void SetBedSize(double width, double height)
         {
-            Component comp = new Component();
-            comp.Shape = ob;
-            comp.LowBound = point1;
-            comp.HighBound = point2;
-            comp.Clearance = workingCLearance;
+            bedWidth = width;
+            bedHeight = height;
+            if (Clearance > 0)
+            {
+                workingCLearance = Clearance / 2.0;
+                bedRows = (int)(bedHeight / workingCLearance);
+                bedCols = (int)(bedWidth / workingCLearance);
+                overallPlacement = new BedMap(bedRows, bedCols);
+            }
+        }
 
-            comp.OriginalPosition = ob.Position;
-            components.Add(comp);
+        private void Log(string s)
+        {
+            System.Diagnostics.Debug.WriteLine(s);
         }
     }
 }

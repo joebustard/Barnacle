@@ -62,6 +62,18 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private bool repeatHoleFixes;
+
+        public bool RepeatHoleFixes
+        {
+            get { return repeatHoleFixes; }
+            set
+            {
+                repeatHoleFixes = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private String sdCardName;
 
         public String SDCardName
@@ -112,6 +124,7 @@ namespace Barnacle.ViewModels
             SlicerPath = Properties.Settings.Default.SlicerPath;
             SDCardName = Properties.Settings.Default.SDCardLabel;
             ConfirmNameAfterCSG = Properties.Settings.Default.ConfirmNameAfterCSG;
+            RepeatHoleFixes = Properties.Settings.Default.RepeatHoleFixes;
             // SetAvailableColours();
             ObjectColour = ColourPicker.FindAvailableColour(DefaultObjectColour);
 

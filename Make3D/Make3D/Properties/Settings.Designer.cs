@@ -182,5 +182,17 @@ namespace Barnacle.Properties {
                 this["ConfirmNameAfterCSG"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool RepeatHoleFixes {
+            get {
+                return ((bool)(this["RepeatHoleFixes"]));
+            }
+            set {
+                this["RepeatHoleFixes"] = value;
+            }
+        }
     }
 }

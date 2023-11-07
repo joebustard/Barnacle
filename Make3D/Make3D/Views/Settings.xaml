@@ -49,6 +49,7 @@
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
                         <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
                         <RowDefinition Height="2*" />
                     </Grid.RowDefinitions>
                     <Grid Grid.Column="1"
@@ -125,6 +126,7 @@
                     </Grid>
                     <CheckBox Grid.Column="1" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="7" IsChecked="{Binding PlaceNewAtMarker}" Content="Place new items at marker." ToolTip="If set new objects are placed at the floor marker. If clear they are added to the right of any existing objects." />
                     <CheckBox Grid.Column="1" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="8" IsChecked="{Binding ConfirmNameAfterCSG}" Content="Prompt for Group object names" ToolTip="By default when new group objects are created by CSG they take the name of the root object. If checked, CSG operations will ask for the name of the new object." />
+                    <CheckBox Grid.Column="1" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Row="9" IsChecked="{Binding RepeatHoleFixes}" Content="Auto repeat hole fixing" ToolTip="Hole fixing is slow. Running it once may leave some holes that can still be fixed by running it again. If checked hole fixing runs repeatedly until no more holes can be fixed." />
                 </Grid>
             </TabItem>
             <TabItem Header="Import/Export">

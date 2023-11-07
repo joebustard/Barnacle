@@ -42,6 +42,7 @@ namespace VisualSolutionExplorer
         public bool VersionExport { get; set; }
         public string SlicerPath { get; set; }
         public string SDCardName { get; set; }
+        public bool RepeatHoleFix { get; set; }
 
         internal void Read(XmlNode nd)
         {

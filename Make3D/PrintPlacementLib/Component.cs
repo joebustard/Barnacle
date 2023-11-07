@@ -13,22 +13,84 @@ namespace PrintPlacementLib
 {
     public class Component
     {
-        private Point3D lastHitPoint;
-
-        public Object3D Shape { get; set; }
-        public Point3D LowBound { get; set; }
-        public Point3D HighBound { get; set; }
-        public Point3D Position { get; set; }
-        public Point3D OriginalPosition { get; set; }
-        public BedMap Map { get; set; }
-        public double Clearance { get; internal set; }
-        public int Density { get; set; }
         public int Columns;
         public int Rows;
-        private double lowOffX;
-        private double lowOffY;
         private double highOffX;
         private double highOffY;
+        private Point3D lastHitPoint;
+        private double lowOffX;
+        private double lowOffY;
+        private double tx;
+        private double ty;
+        public double Clearance { get; internal set; }
+        public int Density { get; set; }
+        public Point3D HighBound { get; set; }
+        public Point3D LowBound { get; set; }
+        public BedMap Map { get; set; }
+        public Point3D OriginalPosition { get; set; }
+        public Point3D Position { get; set; }
+        public Object3D Shape { get; set; }
+
+        internal void ExpandMap()
+        {
+            int newRows = Rows + 2;
+            int newColumns = Columns + 2;
+            BedMap bm = new BedMap(newRows, newColumns);
+            for (int r = 0; r < Rows; r++)
+            {
+                for (int c = 0; c < Columns; c++)
+                {
+                    if (Map.Get(r, c))
+                    {
+                        for (int rn = 0; rn < 3; rn++)
+                        {
+                            for (int cn = 0; cn < 3; cn++)
+                            {
+                                bm.Set(r + rn, c + cn, true);
+                            }
+                        }
+                    }
+                }
+            }
+            Rows = newRows;
+            Columns = newColumns;
+            Map = bm;
+        }
+
+        internal double Score(int row, int column, int maxRow, int maxCol, Bounds3D bedBounds)
+        {
+            double score = double.MaxValue;
+            // if row,col is hte low bound will the high bound be on the bed
+            if ((row + Rows < maxRow) &&
+                 (column + Columns < maxCol))
+            {
+                Bounds3D scoreBounds = new Bounds3D(bedBounds);
+                int lr = row - (int)(lowOffY / Clearance);
+                int lc = column - (int)(lowOffX / Clearance);
+                scoreBounds.Adjust(new Point3D(lc, 0, lr));
+
+                int ur = row - (int)(highOffY / Clearance);
+                int uc = column - (int)(highOffX / Clearance);
+                scoreBounds.Adjust(new Point3D(uc, 0, ur));
+                score = scoreBounds.Width * scoreBounds.Depth;
+
+                /*
+                // convert the row and col back to a real position
+                Point orig = new Point(column * Clearance, row * Clearance);
+
+                Point p1 = new Point(orig.X - lowOffX, orig.Y - lowOffY);
+                Point p2 = new Point(orig.X + highOffX, orig.Y + highOffY);
+
+                double d1 = Math.Sqrt((tx - p1.X) * (tx - p1.X) + (ty - p1.Y) * (ty - p1.Y));
+
+                double d2 = Math.Sqrt((tx - p2.X) * (tx - p2.X) + (ty - p2.Y) * (ty - p2.Y));
+                score = Math.Max(d1, d2);
+
+                score = Math.Sqrt((tx - orig.X) * (tx - orig.X) + (ty - orig.Y) * (ty - orig.Y));
+                 */
+            }
+            return score;
+        }
 
         internal void SetMap()
         {
@@ -60,7 +122,6 @@ namespace PrintPlacementLib
                             double x = (col * Clearance) + LowBound.X;
 
                             // x,y is the bottom corner of a cell of size Clearance x CLearance;
-
                             // go accross the cell in steps of resolution x resolution projecting a ray up wards
                             double x1 = x;
 
@@ -84,66 +145,16 @@ namespace PrintPlacementLib
                             }
                         }
                     }
-                    Map.Dump();
+                    // Map.Dump();
                     Density = Rows * Columns; // test
                 }
             }
         }
 
-        private double tx;
-        private double ty;
-
         internal void SetTarget(double x, double y)
         {
             tx = x;
             ty = y;
-        }
-
-        internal double Score(int row, int column, int maxRow, int maxCol)
-        {
-            double score = double.MaxValue;
-            // if row,col is hte low bound will the high bound be on the bed
-            if ((row + Rows < maxRow) &&
-                 (column + Columns < maxCol))
-            {
-                // convert the row and col back to a real position
-                Point orig = new Point(column * Clearance, row * Clearance);
-
-                Point p1 = new Point(orig.X - lowOffX, orig.Y - lowOffY);
-                double d1 = Math.Sqrt((tx - p1.X) * (tx - p1.X) + (ty - p1.Y) * (ty - p1.Y));
-                Point p2 = new Point(orig.X + highOffX, orig.Y + highOffY);
-                double d2 = Math.Sqrt((tx - p2.X) * (tx - p2.X) + (ty - p2.Y) * (ty - p2.Y));
-                score = Math.Max(d1, d2);
-
-                score = Math.Sqrt((tx - orig.X) * (tx - orig.X) + (ty - orig.Y) * (ty - orig.Y));
-            }
-            return score;
-        }
-
-        internal void ExpandMap()
-        {
-            int newRows = Rows + 2;
-            int newColumns = Columns + 2;
-            BedMap bm = new BedMap(newRows, newColumns);
-            for (int r = 0; r < Rows; r++)
-            {
-                for (int c = 0; c < Columns; c++)
-                {
-                    if (Map.Get(r, c))
-                    {
-                        for (int rn = 0; rn < 3; rn++)
-                        {
-                            for (int cn = 0; cn < 3; cn++)
-                            {
-                                bm.Set(r + rn, c + cn, true);
-                            }
-                        }
-                    }
-                }
-            }
-            Rows = newRows;
-            Columns = newColumns;
-            Map = bm;
         }
 
         private bool RayHit(MeshGeometry3D model, double x, double z, double rayY)
