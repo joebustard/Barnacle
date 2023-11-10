@@ -160,7 +160,6 @@ namespace Barnacle.Object3DLib
 
         public string PrimType { get => primType; set => primType = value; }
 
-
         public List<P3D> RelativeObjectVertices
         {
             get { return relativeObjectVertices; }
@@ -464,7 +463,6 @@ namespace Barnacle.Object3DLib
 
                 default:
                     {
-
                     }
                     break;
             }
@@ -512,7 +510,6 @@ namespace Barnacle.Object3DLib
             }
             else
             {
-
                 foreach (P3D p in this.relativeObjectVertices)
                 {
                     P3D p3d = new P3D();
@@ -543,7 +540,7 @@ namespace Barnacle.Object3DLib
                 EditorParameter np = new EditorParameter(ep.Name, ep.Value);
                 res.EditorParameters.Parameters.Add(np);
             }
-            
+
             res.position = new Point3D(this.position.X, this.position.Y, this.position.Z);
             res.Rotation = new Point3D(this.rotation.X, this.rotation.Y, this.rotation.Z);
             res.Remesh();
@@ -583,11 +580,9 @@ namespace Barnacle.Object3DLib
         {
             if (PrimType == "Mesh")
             {
-
                 List<P3D> tmp = new List<P3D>();
                 foreach (P3D v in relativeObjectVertices)
                 {
-
                     P3D pn = new P3D(-v.X, v.Y, v.Z);
                     tmp.Add(pn);
                 }
@@ -653,8 +648,6 @@ namespace Barnacle.Object3DLib
         {
             return true;
         }
-
-       
 
         public void MoveOriginToCentroid()
         {
@@ -905,6 +898,21 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        public void ScaleAspectByRatio(double targetL)
+        {
+            CalcScale(false);
+            if (Scale.Y > 0 && Scale.X > 0 && Scale.Z > 0)
+            {
+                double lw = Scale.X / Scale.Z;
+                double lh = Scale.X / Scale.Y;
+
+                double scaleX = targetL / Scale.X;
+                double scaleY = lh * Scale.Y;
+                double scaleZ = lw * Scale.X;
+                ScaleMesh(scaleX, scaleY, scaleZ);
+            }
+        }
+
         public void ScaleMesh(double sx, double sy, double sz)
         {
             List<P3D> tmp = new List<P3D>();
@@ -1021,8 +1029,6 @@ namespace Barnacle.Object3DLib
             }
             relativeObjectVertices = tmp;
         }
-
-     
 
         public virtual XmlElement Write(XmlDocument doc, XmlElement docNode)
         {
@@ -1192,8 +1198,6 @@ namespace Barnacle.Object3DLib
             absoluteBounds.Lower = l;
             absoluteBounds.Upper = u;
         }
-
-
 
         private Point3DCollection RotatePoints(Point3DCollection pnts, double r1, double r2, double r3)
         {

@@ -14,6 +14,7 @@ using ManifoldLib;
 using MeshDecimator;
 using Microsoft.Win32;
 using PrintPlacementLib;
+using SimpleSmoothLib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -2456,6 +2457,7 @@ namespace Barnacle.ViewModels
         private void LoopSmooth(Object3D ob)
         {
             CheckPoint();
+            /*
             LoopSmoother cms = new LoopSmoother();
             // Point3DCollection p3col = ob.RelativeObjectVertices;
             Point3DCollection p3col = new Point3DCollection();
@@ -2465,6 +2467,16 @@ namespace Barnacle.ViewModels
             cms.Smooth(ref p3col, ref icol);
             PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
             ob.TriangleIndices = icol;
+            */
+
+            Point3DCollection p3col = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
+            Int32Collection icol = ob.TriangleIndices;
+            SimpleSmoother sm = new SimpleSmoother(p3col, icol);
+            sm.Smooth(40, 0.05);
+            PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
+            ob.TriangleIndices = icol;
+
             ob.Remesh();
         }
 

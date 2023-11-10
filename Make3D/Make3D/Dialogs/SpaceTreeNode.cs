@@ -11,7 +11,7 @@ namespace Barnacle.Dialogs
             Black
         }
 
-        private const double tolerance = 1E-6;
+        private const double tolerance = 1E-4;
 
         public NodeColour Colour;
 

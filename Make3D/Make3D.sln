@@ -63,6 +63,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OctTreeLib", "OctTreeLib\Oc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrintPlacementLib", "PrintPlacementLib\PrintPlacementLib.csproj", "{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleSmoothLib", "SimpleSmoothLib\SimpleSmoothLib.csproj", "{BF2A8A31-2618-4A3C-A061-E8968F77586D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +173,10 @@ Global
 		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BF2A8A31-2618-4A3C-A061-E8968F77586D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BF2A8A31-2618-4A3C-A061-E8968F77586D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BF2A8A31-2618-4A3C-A061-E8968F77586D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BF2A8A31-2618-4A3C-A061-E8968F77586D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

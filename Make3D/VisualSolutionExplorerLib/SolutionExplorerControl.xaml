@@ -35,6 +35,10 @@
                     <Setter Property="Background" Value="Yellow" />
                     <Setter Property="FontSize" Value="12" />
                 </Trigger>
+                <Trigger Property="IsFocused" Value="False">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="FontSize" Value="10" />
+                </Trigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="NameTextBox" TargetType="{x:Type TextBox}">
@@ -49,6 +53,11 @@
                 <Trigger Property="IsFocused" Value="True">
                     <Setter Property="Background" Value="Yellow" />
                     <Setter Property="FontSize" Value="12" />
+                </Trigger>
+                <Trigger Property="IsFocused" Value="False">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="Foreground" Value="Black" />
                 </Trigger>
             </Style.Triggers>
         </Style>

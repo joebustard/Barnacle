@@ -1041,6 +1041,10 @@
       <Project>{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}</Project>
       <Name>PrintPlacementLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SimpleSmoothLib\SimpleSmoothLib.csproj">
+      <Project>{BF2A8A31-2618-4A3C-A061-E8968F77586D}</Project>
+      <Name>SimpleSmoothLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TemplateLib\TemplateLib.csproj">
       <Project>{a1e87ea7-c89a-4eba-8fb7-4e3fc8cfc521}</Project>
       <Name>TemplateLib</Name>

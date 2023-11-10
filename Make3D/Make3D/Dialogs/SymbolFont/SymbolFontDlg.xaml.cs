@@ -33,7 +33,6 @@ namespace Barnacle.Dialogs
             }
         }
 
- 
         private Visibility show3D;
 
         public Visibility Show3D
@@ -90,7 +89,6 @@ namespace Barnacle.Dialogs
             DataContext = this;
             ModelGroup = MyModelGroup;
             loaded = false;
-
         }
 
         public override bool ShowAxies
@@ -150,27 +148,8 @@ namespace Barnacle.Dialogs
             Close();
         }
 
-        private  void GenerateShape()
+        private void GenerateShape()
         {
-            /*
-                //ShowBusy = Visibility.Visible;
-                //Show3D = Visibility.Hidden;
-                ClearShape();
-                SymbolFontMaker maker = new SymbolFontMaker(symbolLength, symbolHeight, symbolWidth, symbolCode, symbolFont);
-                SymbolFontMaker.ResultDetails ret = await Task.Run(async () =>  await maker.GenerateAsync(Vertices,Faces));
-
-                Vertices.Clear();
-                Faces.Clear();
-                foreach( Point3D p in ret.pnts)
-                {
-                    Vertices.Add( new Point3D(p.X,p.Y,p.Z));
-                }
-                foreach( int i in ret.faces)
-                {
-                    int j = i;
-                    Faces.Add(j);
-                }
-                */
             if (symbolCode != oldSymbol || symbolFont != oldFont)
             {
                 ClearShape();
@@ -178,17 +157,19 @@ namespace Barnacle.Dialogs
                 oldSymbol = symbolCode;
                 oldFont = symbolFont;
                 maker.Generate(Vertices, Faces);
+
                 CentreVertices();
             }
         }
-        private string oldSymbol="";
-        private string oldFont="";
+
+        private string oldSymbol = "";
+        private string oldFont = "";
+
         private void LoadEditorParameters()
         {
             // load back the tool specific parameters
             SymbolFont = EditorParameters.Get("SymbolFont");
             SymbolCode = EditorParameters.Get("SymbolCode");
-            
         }
 
         private void SaveEditorParmeters()
@@ -200,11 +181,10 @@ namespace Barnacle.Dialogs
 
         private void UpdateDisplay()
         {
-            
             if (loaded)
             {
                 DateTime start = DateTime.Now;
-                
+
                 GenerateShape();
                 DateTime end = DateTime.Now;
                 TimeSpan ts = end - start;
@@ -228,10 +208,10 @@ namespace Barnacle.Dialogs
             Show3D = Visibility.Visible;
         }
 
-        private  void OnSymbolChanged(string symbol, string fontName)
+        private void OnSymbolChanged(string symbol, string fontName)
         {
             SymbolFont = fontName;
-            SymbolCode = symbol;                       
+            SymbolCode = symbol;
         }
 
         private void SetDefaults()

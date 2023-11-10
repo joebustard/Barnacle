@@ -6,6 +6,7 @@ Added
 	Round Grille Tool
 	Ctrl+S up|down|left|right shortcut keys for stacking
 	Ctrl+L up|down|left|right shortcut keys for alignment
+	Differnt Print Distribution object. Creates a more compact bed layout for printing 
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
@@ -13,8 +14,9 @@ Fixed
 
 Changed
 	Default slice Z Seam type to random
-	Make "Paste At" preserve the relative positions if there are multiple objects in the clip board
+	Make "Paste At" preserve the relative positions if there are multiple objects in the clipboard
 	Make "Paste" offer to replace object if a single one is selected as the target
+	Make Symbol use a simpler/faster algorithm and scale 
 
 v1.0.4
 ===========
