@@ -24,7 +24,12 @@ namespace ScriptLanguage
                 "pyramid",
                 "pyramid2",
                 "torus",
-                "cap", "polygon", "tube", "rightangle", "pointy"
+                "cap",
+                "polygon",
+                "tube",
+                "rightangle",
+                "pointy",
+                "octahedron"
             };
 
         private ExpressionNode typeExp;
@@ -129,7 +134,7 @@ namespace ScriptLanguage
                                 else
                                 {
                                     Log.Instance().AddEntry($"Make : solid shape {shape} not recognised");
-                                    Log.Instance().AddEntry("Make : valid shapes are : box, sphere, cylinder, roof, roundroof, cone, pyramid, pyramid2, torus, cap, polygon, tube, rightangle, pointy");
+                                    Log.Instance().AddEntry("Make : valid shapes are : box, sphere, cylinder, roof, roundroof, cone, pyramid, pyramid2, torus, cap, polygon, tube, rightangle, pointy, octahedron");
                                 }
                             }
                             else
