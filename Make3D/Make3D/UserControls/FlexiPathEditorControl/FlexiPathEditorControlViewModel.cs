@@ -22,8 +22,10 @@ namespace Barnacle.UserControls
     {
         private bool absolutePaths;
         private List<FlexiPath> allPaths;
-       // private BitmapImage backgroundImage;
+
+        // private BitmapImage backgroundImage;
         private BitmapSource backgroundImage;
+
         private bool canCNVDouble;
         private ObservableCollection<string> curveNames;
         private string defaultImagePath;
@@ -755,13 +757,11 @@ namespace Barnacle.UserControls
                     byte[] rawImage = new byte[rawStride * bmi.PixelHeight];
                     bmi.CopyPixels(rawImage, rawStride, 0);
                     BitmapSource bitmapSource = BitmapSource.Create(bmi.PixelWidth, bmi.PixelHeight,
-                    dpi.PixelsPerInchX/ dpi.DpiScaleX, dpi.PixelsPerInchY/dpi.DpiScaleY, pf, null, rawImage, rawStride);
-                    
+                    dpi.PixelsPerInchX / dpi.DpiScaleX, dpi.PixelsPerInchY / dpi.DpiScaleY, pf, null, rawImage, rawStride);
+
                     BackgroundImage = bitmapSource;
                 }
 
-
-               
                 imagePath = f;
                 NotifyPropertyChanged("BackgroundImage");
             }
@@ -1048,8 +1048,6 @@ namespace Barnacle.UserControls
                 nextHoleId++;
             }
         }
-
-
 
         internal void SetPolarGridCentre(Point fixedPolarGridCentre)
         {
@@ -1877,6 +1875,7 @@ namespace Barnacle.UserControls
                 if (curveNames[i] == name)
                 {
                     selectedFlexiPath = allPaths[i];
+                    PathText = selectedFlexiPath.ToPath(true);
                     selectedFlexiPathControlPoints = selectedFlexiPath.FlexiPoints;
                     selectedPoint = -1;
                     SelectionMode = SelectionModeType.SelectSegmentAtPoint;

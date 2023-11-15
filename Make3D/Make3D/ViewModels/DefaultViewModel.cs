@@ -1358,6 +1358,7 @@ namespace Barnacle.ViewModels
             EnabledToolIst(b, aircraftToolsToShow);
             EnabledToolIst(b, decorativeToolsToShow);
             EnabledToolIst(b, buildingToolsToShow);
+            EnabledToolIst(b, grilleToolsToShow);
         }
 
         private void EnabledToolIst(bool b, List<ToolDef> defs)
@@ -1823,6 +1824,7 @@ namespace Barnacle.ViewModels
             SetActive(s, vehicleToolsToShow);
             SetActive(s, aircraftToolsToShow);
             SetActive(s, decorativeToolsToShow);
+            SetActive(s, grilleToolsToShow);
         }
 
         private void SetStatusText1(object param)
