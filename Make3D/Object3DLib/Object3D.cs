@@ -332,6 +332,14 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
+                case "tetroid":
+                    {
+                        PrimitiveGenerator.GenerateTetroid(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.YellowGreen);
+                        built = true;
+                    }
+                    break;
+
                 case "roof":
                     {
                         PrimitiveGenerator.GenerateRoof(ref pnts, ref indices, ref normals);

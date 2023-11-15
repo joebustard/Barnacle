@@ -135,7 +135,14 @@
                 ToolTip="Add a pyramid with a triangular base">
                 <Image Source="/Barnacle;component/Images/Buttons/Pyramid2.png" />
             </Button>
-
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Tetroid"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a Tetroid">
+                <Image Source="/Barnacle;component/Images/Buttons/Tetroid.png" />
+            </Button>
             <Button
                 Command="{Binding AddCommand}"
                 CommandParameter="Tube"

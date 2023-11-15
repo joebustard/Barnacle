@@ -1254,6 +1254,7 @@
     <Resource Include="Images\Buttons\AddHole.png" />
     <Resource Include="Images\Buttons\RemoveHole.png" />
     <Resource Include="Images\Buttons\RemoveAllHoles.png" />
+    <Resource Include="Images\Buttons\Tetroid.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
