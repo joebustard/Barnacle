@@ -19,14 +19,13 @@ namespace Barnacle.ViewModels
     internal class DefaultViewModel : BaseViewModel, INotifyPropertyChanged
     {
         public List<ToolDef> aircraftToolsToShow;
+        public List<ToolDef> buildingToolsToShow;
         public List<ToolDef> decorativeToolsToShow;
+        public List<ToolDef> grilleToolsToShow;
         public List<ToolDef> loftedToolsToShow;
         public List<ToolDef> mechanicalToolsToShow;
         public List<ToolDef> parametricToolsToShow;
         public List<ToolDef> vehicleToolsToShow;
-        public List<ToolDef> buildingToolsToShow;
-        public List<ToolDef> grilleToolsToShow;
-
         private static string statusBlockText1;
         private static string statusBlockText2;
         private static string statusBlockText3;
@@ -36,13 +35,16 @@ namespace Barnacle.ViewModels
         private bool boldChecked;
         private BuildPlateManager buildPlateManager;
         private List<String> buildPlateNames;
+        private bool canSlice;
         private string caption;
         private bool centerTextAlignment;
         private string currentViewName;
         private bool doughnutEnabled;
+        private bool editingActive;
         private string fontSize;
         private bool fuselageEnabled;
         private bool irregularEnabled;
+        private bool isSelectedObjectAGroup;
         private bool italicChecked;
         private bool leftTextAlignment;
         private ImageSource libraryImageSource;
@@ -63,30 +65,12 @@ namespace Barnacle.ViewModels
         private bool stadiumEnabled;
         private SubViewManager subViewMan;
 
-        public RelayCommand AutoFixCommand { get; set; }
-        public RelayCommand MirrorCommand { get; private set; }
-
         private bool tankTrackEnabled;
         private Visibility toolPaletteVisible;
         private bool tubeEnabled;
         private bool twoShapeEnabled;
         private bool underLineChecked;
         private bool wingEnabled;
-        private bool editingActive;
-        private bool canSlice;
-
-        public bool CanSlice
-        {
-            get { return canSlice; }
-            set
-            {
-                if (canSlice != value)
-                {
-                    canSlice = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
 
         public DefaultViewModel()
         {
@@ -206,49 +190,8 @@ namespace Barnacle.ViewModels
             LoadPartLibrary();
         }
 
-        private void OnScreenShot(object obj)
-        {
-            NotificationManager.Notify("ScreenShot", null);
-        }
-
-        private void OnMirror(object obj)
-        {
-            string s = obj.ToString();
-            NotificationManager.Notify("Mirror", s);
-        }
-
-        private void GroupSelected(object param)
-        {
-            bool group = (bool)param;
-            IsSelectedObjectAGroup = group;
-        }
-
-        private void OnAutoFix(object obj)
-        {
-            NotificationManager.Notify("AutoFix", null);
-        }
-
-        private void OnFixHoles(object obj)
-        {
-            NotificationManager.Notify("FixHoles", null);
-        }
-
-        private void OnCloneInPlace(object obj)
-        {
-            NotificationManager.Notify("CloneInPlace", null);
-        }
-
-        private void SuspendEditing(object param)
-        {
-            bool b = Convert.ToBoolean(param);
-            EditingActive = !b;
-            EnableAllTools(editingActive);
-        }
-
         public ICommand AboutCommand { get; set; }
-
         public ICommand AddCommand { get; set; }
-
         public ICommand AddPageCommand { get; set; }
 
         public List<ToolDef> AircraftToolsToShow
@@ -268,7 +211,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand AlignCommand { get; set; }
-
+        public RelayCommand AutoFixCommand { get; set; }
         public ICommand BendCommand { get; set; }
 
         public bool BezierRingEnabled
@@ -282,22 +225,6 @@ namespace Barnacle.ViewModels
                 if (bezierRingEnabled != value)
                 {
                     bezierRingEnabled = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public bool EditingActive
-        {
-            get
-            {
-                return editingActive;
-            }
-            set
-            {
-                if (editingActive != value)
-                {
-                    editingActive = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -320,6 +247,22 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public List<ToolDef> BuildingToolsToShow
+        {
+            get
+            {
+                return buildingToolsToShow;
+            }
+            set
+            {
+                if (buildingToolsToShow != value)
+                {
+                    buildingToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public List<String> BuildPlateNames
         {
             get
@@ -331,6 +274,19 @@ namespace Barnacle.ViewModels
                 if (buildPlateNames != value)
                 {
                     buildPlateNames = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool CanSlice
+        {
+            get { return canSlice; }
+            set
+            {
+                if (canSlice != value)
+                {
+                    canSlice = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -369,10 +325,8 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand CircularPasteCommand { get; set; }
-
-        public ICommand CopyCommand { get; set; }
         public ICommand CloneInPlaceCommand { get; set; }
-
+        public ICommand CopyCommand { get; set; }
         public ICommand CutCommand { get; set; }
 
         public List<ToolDef> DecorativeToolsToShow
@@ -392,9 +346,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand DistributeCommand { get; set; }
-
         public ICommand DoNothingCommand { get; set; }
-
         public ICommand DoughnutCommand { get; set; }
 
         public bool DoughnutEnabled
@@ -415,13 +367,28 @@ namespace Barnacle.ViewModels
 
         public ICommand DupVertexCommand { get; set; }
 
+        public bool EditingActive
+        {
+            get
+            {
+                return editingActive;
+            }
+            set
+            {
+                if (editingActive != value)
+                {
+                    editingActive = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand ExitCommand { get; set; }
-
         public ICommand ExportCommand { get; set; }
-
         public ICommand ExportPartsCommand { get; set; }
-
+        public ICommand FixHolesCommand { get; set; }
         public ICommand FlipCommand { get; set; }
+        public ICommand FoldCommand { get; set; }
 
         public String FontSize
         {
@@ -458,10 +425,24 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public List<ToolDef> GrilleToolsToShow
+        {
+            get
+            {
+                return grilleToolsToShow;
+            }
+            set
+            {
+                if (grilleToolsToShow != value)
+                {
+                    grilleToolsToShow = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public ICommand GroupCommand { get; set; }
-
         public ICommand ImportCommand { get; set; }
-
         public ICommand InsertCommand { get; set; }
 
         public bool IrregularEnabled
@@ -475,6 +456,19 @@ namespace Barnacle.ViewModels
                 if (irregularEnabled != value)
                 {
                     irregularEnabled = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public bool IsSelectedObjectAGroup
+        {
+            get { return isSelectedObjectAGroup; }
+            set
+            {
+                if (value != isSelectedObjectAGroup)
+                {
+                    isSelectedObjectAGroup = value;
                     NotifyPropertyChanged();
                 }
             }
@@ -580,6 +574,9 @@ namespace Barnacle.ViewModels
             }
         }
 
+        public ICommand ManifoldCommand { get; set; }
+        public ICommand MarkerCommand { get; set; }
+
         public List<ToolDef> MechanicalToolsToShow
         {
             get
@@ -596,34 +593,14 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public ICommand ManifoldCommand { get; set; }
-        public ICommand FixHolesCommand { get; set; }
-
-        public ICommand MarkerCommand { get; set; }
-
         public ICommand MeshEditCommand { get; set; }
-
         public ICommand MeshHullCommand { get; set; }
-
         public ICommand MeshSmoothCommand { get; set; }
-
+        public RelayCommand MirrorCommand { get; private set; }
         public ICommand MultiPasteCommand { get; set; }
 
-        public bool IsSelectedObjectAGroup
-        {
-            get { return isSelectedObjectAGroup; }
-            set
-            {
-                if (value != isSelectedObjectAGroup)
-                {
-                    isSelectedObjectAGroup = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        private bool isSelectedObjectAGroup;
         public ICommand NewCommand { get; set; }
+
         public ICommand NewProjectCommand { get; set; }
 
         public ObservableCollection<string> ObjectNames
@@ -666,7 +643,6 @@ namespace Barnacle.ViewModels
         public ICommand PasteAtCommand { get; set; }
 
         public ICommand PasteCommand { get; set; }
-        public ICommand FoldCommand { get; set; }
 
         public ICommand PrintCommand { get; set; }
 
@@ -699,7 +675,7 @@ namespace Barnacle.ViewModels
         public ICommand RedoCommand { get; set; }
 
         public ICommand ReferenceCommand { get; set; }
-        public RelayCommand ScreenShotCommand { get; private set; }
+
         public ICommand ResetOriginCommand { get; set; }
 
         public bool RightTextAlignment
@@ -721,6 +697,8 @@ namespace Barnacle.ViewModels
         public ICommand SaveAsCommand { get; set; }
 
         public ICommand SaveCommand { get; set; }
+
+        public RelayCommand ScreenShotCommand { get; private set; }
 
         public ICommand SelectCommand { get; set; }
 
@@ -1101,38 +1079,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-        public List<ToolDef> BuildingToolsToShow
-        {
-            get
-            {
-                return buildingToolsToShow;
-            }
-            set
-            {
-                if (buildingToolsToShow != value)
-                {
-                    buildingToolsToShow = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
-        public List<ToolDef> GrilleToolsToShow
-        {
-            get
-            {
-                return grilleToolsToShow;
-            }
-            set
-            {
-                if (grilleToolsToShow != value)
-                {
-                    grilleToolsToShow = value;
-                    NotifyPropertyChanged();
-                }
-            }
-        }
-
         public ICommand ViewCommand { get; set; }
 
         public bool WingEnabled
@@ -1185,6 +1131,18 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void CheckIfCanSlice()
+        {
+            CanSlice = false;
+            if (Properties.Settings.Default.SlicerPath != null)
+            {
+                if (File.Exists(System.IO.Path.Combine(Properties.Settings.Default.SlicerPath, "cura.exe")))
+                {
+                    CanSlice = true;
+                }
+            }
+        }
+
         private void CreateAircraftToolMenu()
         {
             aircraftToolsToShow = new List<ToolDef>();
@@ -1199,6 +1157,21 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("AircraftToolsToShow");
         }
 
+        private void CreateBuildingMenu()
+        {
+            buildingToolsToShow = new List<ToolDef>();
+            buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a rectangular brick wall."));
+            buildingToolsToShow.Add(new ToolDef("Brick Tower", true, "BrickTower", "Create a circular tower from bricks."));
+            buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a rectangular stone wall."));
+            buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
+            buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a rectangular plank wall."));
+            buildingToolsToShow.Add(new ToolDef("Shaped Brick Wall", true, "ShapedBrickWall", "Create a brick wall defined by a path."));
+            buildingToolsToShow.Add(new ToolDef("Shaped Tiled Roof", true, "ShapedTiledRoof", "Create a tiled roof defined by a path."));
+            buildingToolsToShow.Add(new ToolDef("Roof Ridge", true, "RoofRidge", "Create a roof ridge."));
+            SortMenu(buildingToolsToShow);
+            NotifyPropertyChanged("BuildingToolsToShow");
+        }
+
         private void CreateDecorativeToolMenu()
         {
             decorativeToolsToShow = new List<ToolDef>();
@@ -1211,16 +1184,6 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a grayscale image."));
             SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
-        }
-
-        private void CreateMechanicalToolMenu()
-        {
-            mechanicalToolsToShow = new List<ToolDef>();
-            mechanicalToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
-
-            mechanicalToolsToShow.Add(new ToolDef("Construction Strip", true, "ConstructionStrip", "Create a strip with holes and round ends."));
-            SortMenu(mechanicalToolsToShow);
-            NotifyPropertyChanged("MechanicalToolsToShow");
         }
 
         private void CreateGrilleToolMenu()
@@ -1244,26 +1207,21 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("LoftedToolsToShow");
         }
 
-        private void CreateBuildingMenu()
+        private void CreateMechanicalToolMenu()
         {
-            buildingToolsToShow = new List<ToolDef>();
-            buildingToolsToShow.Add(new ToolDef("Brick Wall", true, "BrickWall", "Create a rectangular brick wall."));
-            buildingToolsToShow.Add(new ToolDef("Brick Tower", true, "BrickTower", "Create a circular tower from bricks."));
-            buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a rectangular stone wall."));
-            buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
-            buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a rectangular plank wall."));
-            buildingToolsToShow.Add(new ToolDef("Shaped Brick Wall", true, "ShapedBrickWall", "Create a brick wall defined by a path."));
-            buildingToolsToShow.Add(new ToolDef("Shaped Tiled Roof", true, "ShapedTiledRoof", "Create a tiled roof defined by a path."));
-            buildingToolsToShow.Add(new ToolDef("Roof Ridge", true, "RoofRidge", "Create a roof ridge."));
-            SortMenu(buildingToolsToShow);
-            NotifyPropertyChanged("BuildingToolsToShow");
+            mechanicalToolsToShow = new List<ToolDef>();
+            mechanicalToolsToShow.Add(new ToolDef("Spur Gear", true, "SpurGear", "Create a spur gear with a variable number of teeth."));
+
+            mechanicalToolsToShow.Add(new ToolDef("Construction Strip", true, "ConstructionStrip", "Create a strip with holes and round ends."));
+            SortMenu(mechanicalToolsToShow);
+            NotifyPropertyChanged("MechanicalToolsToShow");
         }
 
         private void CreateParametricMenu()
         {
             parametricToolsToShow = new List<ToolDef>();
             //parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
-            //parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
+            parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
@@ -1288,26 +1246,6 @@ namespace Barnacle.ViewModels
             parametricToolsToShow.Add(new ToolDef("Box", true, "Box", "Create a hollow box"));
             SortMenu(parametricToolsToShow);
             NotifyPropertyChanged("ParametricToolsToShow");
-        }
-
-        private void SortMenu(List<ToolDef> tools)
-        {
-            ToolDef tmp;
-            bool swapped = true;
-            while (swapped)
-            {
-                swapped = false;
-                for (int i = 0; i < tools.Count - 1; i++)
-                {
-                    if (String.Compare(tools[i].Name, tools[i + 1].Name) > 0)
-                    {
-                        tmp = tools[i];
-                        tools[i] = tools[i + 1];
-                        tools[i + 1] = tmp;
-                        swapped = true;
-                    }
-                }
-            }
         }
 
         private void CreateToolMenus()
@@ -1371,6 +1309,12 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private void GroupSelected(object param)
+        {
+            bool group = (bool)param;
+            IsSelectedObjectAGroup = group;
+        }
+
         private void LoadingNewFile(object param)
         {
         }
@@ -1429,18 +1373,6 @@ namespace Barnacle.ViewModels
             SelectedBuildPlateUpdated();
         }
 
-        private void CheckIfCanSlice()
-        {
-            CanSlice = false;
-            if (Properties.Settings.Default.SlicerPath != null)
-            {
-                if (File.Exists(System.IO.Path.Combine(Properties.Settings.Default.SlicerPath, "cura.exe")))
-                {
-                    CanSlice = true;
-                }
-            }
-        }
-
         private void ObjectNamesChanged(object param)
         {
             NotifyPropertyChanged("ObjectNames");
@@ -1466,19 +1398,24 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("Alignment", s);
         }
 
+        private void OnAutoFix(object obj)
+        {
+            NotificationManager.Notify("AutoFix", null);
+        }
+
         private void OnBend(object obj)
         {
             NotificationManager.Notify("Bend", obj);
         }
 
-        private void OnFold(object obj)
-        {
-            NotificationManager.Notify("Fold", obj);
-        }
-
         private void OnCircularPaste(object obj)
         {
             NotificationManager.Notify("CircularPaste", null);
+        }
+
+        private void OnCloneInPlace(object obj)
+        {
+            NotificationManager.Notify("CloneInPlace", null);
         }
 
         private void OnCopy(object obj)
@@ -1529,10 +1466,20 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("ExportParts", obj);
         }
 
+        private void OnFixHoles(object obj)
+        {
+            NotificationManager.Notify("FixHoles", null);
+        }
+
         private void OnFlip(object obj)
         {
             string s = obj.ToString();
             NotificationManager.Notify("Flip", s);
+        }
+
+        private void OnFold(object obj)
+        {
+            NotificationManager.Notify("Fold", obj);
         }
 
         private void OnFuselage(object obj)
@@ -1579,6 +1526,12 @@ namespace Barnacle.ViewModels
         private void OnMeshEdit(object obj)
         {
             NotificationManager.Notify("MeshEdit", null);
+        }
+
+        private void OnMirror(object obj)
+        {
+            string s = obj.ToString();
+            NotificationManager.Notify("Mirror", s);
         }
 
         private void OnMultiPaste(object obj)
@@ -1659,6 +1612,11 @@ namespace Barnacle.ViewModels
             NotificationManager.Notify("SaveAsFile", null);
             Caption = BaseViewModel.Document.Caption;
             //  UpdateRecentFiles(BaseViewModel.Document.FilePath);
+        }
+
+        private void OnScreenShot(object obj)
+        {
+            NotificationManager.Notify("ScreenShot", null);
         }
 
         private void OnSelect(object obj)
@@ -1864,6 +1822,33 @@ namespace Barnacle.ViewModels
         {
             bool b = Convert.ToBoolean(param);
             EnableAllTools(b);
+        }
+
+        private void SortMenu(List<ToolDef> tools)
+        {
+            ToolDef tmp;
+            bool swapped = true;
+            while (swapped)
+            {
+                swapped = false;
+                for (int i = 0; i < tools.Count - 1; i++)
+                {
+                    if (String.Compare(tools[i].Name, tools[i + 1].Name) > 0)
+                    {
+                        tmp = tools[i];
+                        tools[i] = tools[i + 1];
+                        tools[i + 1] = tmp;
+                        swapped = true;
+                    }
+                }
+            }
+        }
+
+        private void SuspendEditing(object param)
+        {
+            bool b = Convert.ToBoolean(param);
+            EditingActive = !b;
+            EnableAllTools(editingActive);
         }
 
         private void UpdateRecentFiles(string fileName)

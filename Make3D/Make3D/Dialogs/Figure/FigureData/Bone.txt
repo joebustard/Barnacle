@@ -1,7 +1,7 @@
-<Document NextId="4" Revision="2" Guid="9f0ef1cd-c191-4ac8-a860-771ba8e4baa8">
-  <groupobj Name="Bone_4" Description="roof" Colour="#FFE6E6FA" Primitive="groupunion" Exportable="True">
+<Document NextId="1" Revision="5" Guid="9f0ef1cd-c191-4ac8-a860-771ba8e4baa8">
+  <groupobj Name="Bone" Description="roof" Colour="#FF20B2AA" Primitive="groupunion" Exportable="True">
     <Position X="0" Y="0.462163656949997" Z="0" />
-    <Scale X="2.94599533081055" Y="1" Z="0.75475811958313" />
+    <Scale X="2.94600009918213" Y="1" Z="0.754760026931763" />
     <v X="-1.04276" Y="-0.50000" Z="0.37738" />
     <v X="-1.04278" Y="-0.49998" Z="0.37737" />
     <v X="-1.04278" Y="-0.49998" Z="-0.37737" />
