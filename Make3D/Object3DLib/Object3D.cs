@@ -332,9 +332,9 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
-                case "tetroid":
+                case "octahedron":
                     {
-                        PrimitiveGenerator.GenerateTetroid(ref pnts, ref indices, ref normals);
+                        PrimitiveGenerator.GenerateOctahedron(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.YellowGreen);
                         built = true;
                     }

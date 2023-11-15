@@ -137,10 +137,10 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
-                CommandParameter="Tetroid"
+                CommandParameter="Octahedron"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"
-                ToolTip="Add a Tetroid">
+                ToolTip="Add an Octahedron">
                 <Image Source="/Barnacle;component/Images/Buttons/Tetroid.png" />
             </Button>
             <Button

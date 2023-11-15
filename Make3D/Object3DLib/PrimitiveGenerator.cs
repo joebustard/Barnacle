@@ -4747,7 +4747,7 @@ namespace Barnacle.Object3DLib
             AddTriangle(indices, 2, 0, 1);
         }
 
-        public static void GenerateTetroid(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        public static void GenerateOctahedron(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();
             pnts.Add(new Point3D(0, -0.5, 0.5));

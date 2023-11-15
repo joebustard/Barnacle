@@ -6,7 +6,8 @@ Added
 	Round Grille Tool
 	Ctrl+S up|down|left|right shortcut keys for stacking
 	Ctrl+L up|down|left|right shortcut keys for alignment
-	Differnt Print Distribution object. Creates a more compact bed layout for printing 
+	Different Print Distribution object. Creates a more compact bed layout for printing 
+	An Octahedron primitive
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
