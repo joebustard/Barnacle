@@ -4747,6 +4747,30 @@ namespace Barnacle.Object3DLib
             AddTriangle(indices, 2, 0, 1);
         }
 
+        public static void GenerateOctahedron(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+        {
+            pnts = new Point3DCollection();
+            pnts.Add(new Point3D(0, -0.5, 0.5));
+            pnts.Add(new Point3D(0, 0.5, 0.5));
+            pnts.Add(new Point3D(0, 0.5, -0.5));
+            pnts.Add(new Point3D(0, -0.5, -0.5));
+            pnts.Add(new Point3D(0.5, 0, 0));
+            pnts.Add(new Point3D(-0.5, 0, 0));
+
+            indices = new Int32Collection();
+            AddTriangle(indices, 0, 4, 1);
+            AddTriangle(indices, 1, 4, 2);
+
+            AddTriangle(indices, 2, 4, 3);
+            AddTriangle(indices, 3, 4, 0);
+
+            AddTriangle(indices, 0, 1, 5);
+            AddTriangle(indices, 1, 2, 5);
+
+            AddTriangle(indices, 2, 3, 5);
+            AddTriangle(indices, 3, 0, 5);
+        }
+
         public static void GenerateCylinder(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
             pnts = new Point3DCollection();

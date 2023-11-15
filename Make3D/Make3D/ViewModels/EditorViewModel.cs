@@ -399,7 +399,7 @@ namespace Barnacle.ViewModels
                     o.Name = Document.DuplicateName(o.Name);
 
                     o.Remesh();
-                    o.MoveToFloor();
+                    //  o.MoveToFloor();
                     o.CalcScale(false);
                     allBounds += o.AbsoluteBounds;
                     GeometryModel3D gm = GetMesh(o);
@@ -932,9 +932,19 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
+                    case Key.X:
+                        {
+                            if (ctrl)
+
+                            {
+                                OnCut(null);
+                            }
+                        }
+                        break;
+
                     case Key.Delete:
                         {
-                            OnCut(null);
+                            OnDelete(null);
                         }
                         break;
 
@@ -2916,6 +2926,23 @@ namespace Barnacle.ViewModels
                 foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
                 {
                     ObjectClipboard.Add(o);
+                    Document.DeleteObject(o);
+                }
+                document.Dirty = true;
+                selectedObjectAdorner.Clear();
+                RegenerateDisplayList();
+                NotificationManager.Notify("ObjectNamesChanged", null);
+            }
+        }
+
+        private void OnDelete(object param)
+        {
+            if (selectedObjectAdorner != null)
+            {
+                CheckPoint();
+
+                foreach (Object3D o in selectedObjectAdorner.SelectedObjects)
+                {
                     Document.DeleteObject(o);
                 }
                 document.Dirty = true;

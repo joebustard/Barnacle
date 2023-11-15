@@ -788,7 +788,7 @@ namespace Barnacle.UserControls
         public double ToMMX(double x)
         {
             DpiScale sc = VisualTreeHelper.GetDpi(MainCanvas);
-            double res = (25.4 * x / sc.PixelsPerInchX)*sc.DpiScaleX;
+            double res = (25.4 * x / sc.PixelsPerInchX) * sc.DpiScaleX;
             return res;
         }
 
@@ -970,7 +970,9 @@ namespace Barnacle.UserControls
                 }
             }
         }
+
         public DpiScale ScreenDpi { get; set; }
+
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             if (DataContext != null)
@@ -1022,7 +1024,9 @@ namespace Barnacle.UserControls
                         {
                             vm.SetPath(initialPaths[i], i);
                         }
+                        vm.PointsDirty = true;
                         vm.SelectionMode = FlexiPathEditorControlViewModel.SelectionModeType.SelectSegmentAtPoint;
+                        vm.SelectedCurveName = "Outside";
                     }
                     SetSelectionModeBorderColours();
                     NotifyPathPointsChanged();
