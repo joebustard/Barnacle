@@ -1,3 +1,4 @@
+using Barnacle.Object3DLib;
 using System;
 using System.IO;
 using System.Windows;
@@ -16,13 +17,15 @@ namespace MakerLib
         private double plagueThickness;
         private string plaqueImagePath;
         private int runLengthLimit;
+        private double plaqueLength;
 
-        public ImagePlaqueMaker(double plagueThickness, string plaqueImagePath, bool limitRunLengths, int maxRunLength)
+        public ImagePlaqueMaker(double plagueThickness, string plaqueImagePath, bool limitRunLengths, int maxRunLength, double solidLength)
         {
             this.plagueThickness = plagueThickness;
             this.plaqueImagePath = plaqueImagePath;
             this.limitRunLengths = limitRunLengths;
             this.maxRunLength = maxRunLength;
+            this.plaqueLength = solidLength;
         }
 
         public void Generate(Point3DCollection pnts, Int32Collection faces)
@@ -47,6 +50,28 @@ namespace MakerLib
                 runLengthLimit = int.MaxValue;
             }
             ProcessImage();
+
+            // a quick function to calculate the scale of an object read in, into a unit sized object
+            // centered on 0,0,0
+            Point3D min = new Point3D(double.MaxValue, double.MaxValue, double.MaxValue);
+            Point3D max = new Point3D(double.MinValue, double.MinValue, double.MinValue);
+            PointUtils.MinMax(Vertices, ref min, ref max);
+
+            double sizeX = max.X - min.X;
+            double sizeY = max.Y - min.Y;
+            double sizeZ = max.Z - min.Z;
+
+            double scaleX = plaqueLength / sizeX;
+            double scaleY = scaleX;
+            if (scaleY * sizeY < 1)
+            {
+                scaleY = 1 / sizeY;
+            }
+            for (int i = 0; i < Vertices.Count; i++)
+            {
+                Point3D p = Vertices[i];
+                Vertices[i] = new Point3D(p.X * scaleX, p.Y * scaleY, p.Z * scaleX);
+            }
         }
 
         private void EastEdges(WriteableBitmap wrb)

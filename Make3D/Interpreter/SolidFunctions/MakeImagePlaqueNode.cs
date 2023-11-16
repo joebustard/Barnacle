@@ -67,7 +67,7 @@ namespace ScriptLanguage
 
                     obj.Position = new Point3D(0, 0, 0);
                     Point3DCollection tmp = new Point3DCollection();
-                    ImagePlaqueMaker maker = new ImagePlaqueMaker(valPlagueThickness, valPlaqueImagePath, false, 0);
+                    ImagePlaqueMaker maker = new ImagePlaqueMaker(valPlagueThickness, valPlaqueImagePath, false, 0, 25);
 
                     maker.Generate(tmp, obj.TriangleIndices);
                     PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);

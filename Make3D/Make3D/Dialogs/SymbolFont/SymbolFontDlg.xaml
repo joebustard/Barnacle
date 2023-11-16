@@ -5,7 +5,6 @@
         xmlns:gc="clr-namespace:Barnacle.UserControls"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
-       
 
         mc:Ignorable="d"
         Title="" Height="650" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
@@ -16,7 +15,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="10" />
-            <ColumnDefinition Width="450" />
+            <ColumnDefinition Width="430" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="1" Grid.Row="0">
@@ -53,10 +52,15 @@
              <gc:SymbolSelector Grid.Row="5" x:Name="SymbolSelection" />
             -->
             <gc:SymbolSelector Grid.Row="1" Grid.RowSpan="5" x:Name="SymbolSelection" />
+            <StackPanel Grid.Row="6" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Content="Length" FontSize="12" />
+                <TextBox Margin="8,0,0,0" VerticalAlignment="Center" Width="80" Text="{Binding SymbolLength}" />
+                <TextBox Margin="8,0,0,0" VerticalAlignment="Center"  Text="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+            </StackPanel>
         </Grid>
         <gc:SpinControl Grid.Row ="0" Grid.Column="2"  Visibility="{Binding ShowBusy}" Height="150" Width="150" />
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}" Visibility="{Binding Show3D}">
-            
+
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 

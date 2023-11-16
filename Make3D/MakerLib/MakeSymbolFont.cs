@@ -11,11 +11,13 @@ namespace MakerLib
     {
         private string symbolCode;
         private string symbolFontName;
+        private double length;
 
-        public SymbolFontMaker(string symbolCode, string fontName)
+        public SymbolFontMaker(string symbolCode, string fontName, double length)
         {
             this.symbolCode = symbolCode;
             this.symbolFontName = fontName;
+            this.length = length;
         }
 
         public struct ResultDetails
@@ -30,7 +32,7 @@ namespace MakerLib
             msu.Vertices = Vertices;
             if (!String.IsNullOrEmpty(symbolCode) && !String.IsNullOrEmpty(symbolFontName))
             {
-                await Task.Run(() => msu.GenerateSymbol(symbolCode, symbolFontName));
+                await Task.Run(() => msu.GenerateSymbol(symbolCode, symbolFontName, 25.0));
             }
             ResultDetails ret = new ResultDetails();
 
@@ -49,7 +51,7 @@ namespace MakerLib
             msu.Vertices = Vertices;
             if (!String.IsNullOrEmpty(symbolCode) && !String.IsNullOrEmpty(symbolFontName))
             {
-                msu.GenerateSymbol(symbolCode, symbolFontName);
+                msu.GenerateSymbol(symbolCode, symbolFontName, length);
             }
         }
     }

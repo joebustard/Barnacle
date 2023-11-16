@@ -877,44 +877,44 @@
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding AircraftToolsToShow}"
                                              Label="Aircraft"
-                                             x:Name="AircraftTools">
+                                             x:Name="AircraftTools" SmallImageSource="/Barnacle;component/Images/Buttons/Aircraft.png">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding BuildingToolsToShow}"
                                              Label="Buildings"
-                                             x:Name="BuildingsTools">
+                                             x:Name="BuildingsTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Buildings.png">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding DecorativeToolsToShow}"
                                              Label="Decorative"
-                                             x:Name="DecorativeTools">
+                                             x:Name="DecorativeTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Decorative.png">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding GrilleToolsToShow}"
                                              Label="Grille"
-                                             x:Name="GrilleTools">
+                                             x:Name="GrilleTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Grille.png">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding LoftedToolsToShow}"
                                              Label="Lofted"
-                                             x:Name="LoftTools">
+                                             x:Name="LoftTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Lofted.png">
                     </Custom:RibbonMenuButton>
 
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding MechanicalToolsToShow}"
                                              Label="Mechanical"
-                                             x:Name="MechanicalTools">
+                                             x:Name="MechanicalTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Mechanical.png">
                     </Custom:RibbonMenuButton>
 
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding ParametricToolsToShow}"
                                              Label="Parametric"
-                                             x:Name="ParametricTools">
+                                             x:Name="ParametricTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Parametric.png">
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
                                              ItemsSource="{Binding VehicleToolsToShow}"
                                              Label="Vehicles"
-                                             x:Name="VehicleTools">
+                                             x:Name="VehicleTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Vehicles.png">
                     </Custom:RibbonMenuButton>
                 </Custom:RibbonGroup>
                 <!--
