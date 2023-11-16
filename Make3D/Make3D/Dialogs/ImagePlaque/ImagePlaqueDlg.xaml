@@ -40,6 +40,10 @@
                 <Button Content="..." Click="BrowseImage_Click" ToolTip="Browse for image" Margin="8,0,0,0" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Label VerticalAlignment="Center" Width="100">Length</Label>
+                <TextBox VerticalAlignment="Center" Margin="8,0,0,0" Text="{Binding SolidLength}" />
+            </StackPanel>
+            <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <CheckBox VerticalAlignment="Center" Content="Limit RunLengths To" IsChecked="{Binding LimitRunLengths}" />
                 <TextBox VerticalAlignment="Center" Margin="8,0,0,0" Text="{Binding MaxRunLength}" />
             </StackPanel>

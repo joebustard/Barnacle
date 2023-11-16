@@ -13,7 +13,7 @@ namespace MakerLib
     {
         private const double thickness = 5;
 
-        public void GenerateSymbol(string v, string fontName)
+        public void GenerateSymbol(string v, string fontName, double length)
         {
             BitmapImage bitmap;
             DrawingVisual drawingVisual = new DrawingVisual();
@@ -64,7 +64,7 @@ namespace MakerLib
             double sizeY = max.Y - min.Y;
             double sizeZ = max.Z - min.Z;
 
-            double scaleX = 25.0 / sizeX;
+            double scaleX = length / sizeX;
             double scaleY = scaleX;
             if (scaleY * sizeY < 1)
             {

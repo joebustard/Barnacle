@@ -1255,6 +1255,14 @@
     <Resource Include="Images\Buttons\RemoveHole.png" />
     <Resource Include="Images\Buttons\RemoveAllHoles.png" />
     <Resource Include="Images\Buttons\Tetroid.png" />
+    <Resource Include="Images\Buttons\Aircraft.png" />
+    <Resource Include="Images\Buttons\Buildings.png" />
+    <Resource Include="Images\Buttons\Decorative.png" />
+    <Resource Include="Images\Buttons\Grille.png" />
+    <Resource Include="Images\Buttons\Lofted.png" />
+    <Resource Include="Images\Buttons\Mechanical.png" />
+    <Resource Include="Images\Buttons\Parametric.png" />
+    <Resource Include="Images\Buttons\Vehicles.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

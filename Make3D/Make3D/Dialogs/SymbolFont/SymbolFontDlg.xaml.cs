@@ -16,7 +16,7 @@ namespace Barnacle.Dialogs
         private string warningText;
         private bool loaded;
 
-        private const double minsymbolLength = 2;
+        private const double minsymbolLength = 5;
         private const double maxsymbolLength = 200;
         private double symbolLength;
         private string symbolFont;
@@ -29,6 +29,28 @@ namespace Barnacle.Dialogs
                 if (value != symbolFont)
                 {
                     symbolFont = value;
+                }
+            }
+        }
+
+        public double SymbolLength
+        {
+            get { return symbolLength; }
+            set
+            {
+                if (value != symbolLength)
+                {
+                    if (value >= minsymbolLength && value <= maxsymbolLength)
+                    {
+                        symbolLength = value;
+                        WarningText = "";
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                    else
+                    {
+                        WarningText = $"Symbol Length must be in the range {minsymbolLength} to {maxsymbolLength}";
+                    }
                 }
             }
         }
@@ -150,16 +172,13 @@ namespace Barnacle.Dialogs
 
         private void GenerateShape()
         {
-            if (symbolCode != oldSymbol || symbolFont != oldFont)
-            {
-                ClearShape();
-                SymbolFontMaker maker = new SymbolFontMaker(symbolCode, symbolFont);
-                oldSymbol = symbolCode;
-                oldFont = symbolFont;
-                maker.Generate(Vertices, Faces);
+            ClearShape();
+            SymbolFontMaker maker = new SymbolFontMaker(symbolCode, symbolFont, symbolLength);
+            oldSymbol = symbolCode;
+            oldFont = symbolFont;
+            maker.Generate(Vertices, Faces);
 
-                CentreVertices();
-            }
+            CentreVertices();
         }
 
         private string oldSymbol = "";
@@ -170,6 +189,7 @@ namespace Barnacle.Dialogs
             // load back the tool specific parameters
             SymbolFont = EditorParameters.Get("SymbolFont");
             SymbolCode = EditorParameters.Get("SymbolCode");
+            SymbolLength = EditorParameters.GetDouble("SymbolLength", 25);
         }
 
         private void SaveEditorParmeters()
@@ -177,6 +197,7 @@ namespace Barnacle.Dialogs
             // save the parameters for the tool
             EditorParameters.Set("SymbolCode", SymbolCode.ToString());
             EditorParameters.Set("SymbolFont", SymbolFont.ToString());
+            EditorParameters.Set("SymbolLength", SymbolLength.ToString());
         }
 
         private void UpdateDisplay()

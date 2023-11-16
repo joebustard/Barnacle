@@ -34,6 +34,7 @@ namespace ScriptLanguage
 
             string valSymbolCode = "";
             string valFontName = "";
+            double valLength = 25;
             if (EvalExpression(symbolCodeExp, ref valSymbolCode, "SymbolCode", "MakeSymbol") &&
                   EvalExpression(symbolFontExp, ref valFontName, "FontName", "MakeSymbol")
                )
@@ -48,7 +49,7 @@ namespace ScriptLanguage
 
                 obj.Position = new Point3D(0, 0, 0);
                 Point3DCollection tmp = new Point3DCollection();
-                SymbolFontMaker maker = new SymbolFontMaker(valSymbolCode, valFontName);
+                SymbolFontMaker maker = new SymbolFontMaker(valSymbolCode, valFontName, valLength);
 
                 maker.Generate(tmp, obj.TriangleIndices);
                 PointUtils.PointCollectionToP3D(tmp, obj.RelativeObjectVertices);
