@@ -358,7 +358,7 @@
                         <Custom:RibbonButton x:Name="TestGroup" Label="Test" Command="{Binding GroupCommand}" CommandParameter="Test" HorizontalAlignment="Stretch" VerticalAlignment="Top" SmallImageSource="/Barnacle;component/Images/Buttons/copy.png" />
                         -->
 
-                <Custom:RibbonGroup Name="PoisitionDataGroup"
+                <Custom:RibbonGroup Name="PositionDataGroup"
                                     Header="Position"
                                     LargeImageSource="/Barnacle;component/Images/Buttons/objects.png" IsEnabled="{Binding EditingActive}">
                     <Custom:RibbonMenuButton Label="Move"
@@ -503,6 +503,7 @@
                     <Custom:RibbonMenuButton Label="Distribution"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/Distribution.png"
                                              x:Name="Distibution">
+                        <!--
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
                                              CommandParameter="Spiral"
                                              HorizontalAlignment="Stretch"
@@ -511,12 +512,13 @@
                                              ToolTip="Distribute all items in a spiral footprint"
                                              VerticalAlignment="Top"
                                              x:Name="Spiral" />
+                        -->
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
-                                             CommandParameter="Optimum"
+                                             CommandParameter="Arrange"
                                              HorizontalAlignment="Stretch"
                                              Label="Optimum"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
-                                             ToolTip="Distribute all items in a compact footprint for printing"
+                                             ToolTip="Arrange all items in a compact footprint for printing"
                                              VerticalAlignment="Top"
                                              x:Name="Optimum" />
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
@@ -1032,7 +1034,7 @@
                                            x:Name="ShowBuildPlate" />
                     <Custom:RibbonCheckBox IsChecked="{Binding ShowBuildVolumeChecked}"
                                            Label="Build Volume"
-                                           x:Name="ShowBuildVolume" ToolTip="Shows the upper volume marker, but only if the build plate is visible too."/>
+                                           x:Name="ShowBuildVolume" ToolTip="Shows the upper volume marker, but only if the build plate is visible too." />
                     <ComboBox HorizontalAlignment="Stretch"
                               ItemsSource="{Binding BuildPlateNames}"
                               MinWidth="100"

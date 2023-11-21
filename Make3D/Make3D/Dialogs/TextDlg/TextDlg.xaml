@@ -39,7 +39,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="100">
-                Text
+                    Text
                 </Label>
                 <TextBox Margin="8,2,0,0"
                          Text="{Binding Text}"
@@ -49,21 +49,21 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="100">
-                Font
+                    Font
                 </Label>
                 <ComboBox ItemsSource="{Binding SystemFonts}"
                           Margin="8,2,0,0"
                           SelectedItem="{Binding SelectedFont}"
-                          Width="200" x:Name="FontCombo"/>
+                          Width="200" x:Name="FontCombo" />
             </StackPanel>
             <StackPanel Grid.Row="3"
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="100">
-                Font Size
+                    Text Length
                 </Label>
                 <TextBox Margin="8,2,0,0"
-                         Text="{Binding FontSizeText}"
+                         Text="{Binding TextLength}"
                          Width="50" />
             </StackPanel>
             <StackPanel Grid.Row="4"
@@ -81,7 +81,7 @@
                         Orientation="Horizontal">
                 <Label VerticalAlignment="Center"
                        Width="100">
-                Thickness
+                    Thickness
                 </Label>
                 <TextBox Margin="8,2,0,0"
                          Text="{Binding Thickness}"

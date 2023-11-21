@@ -17,7 +17,7 @@ namespace Barnacle.Dialogs
         private string dataPath;
         private bool fontBold;
         private bool fontItalic;
-        private double fontSize;
+        private double textLength;
         private bool loaded;
         private String selectedFont;
         private string text;
@@ -70,26 +70,26 @@ namespace Barnacle.Dialogs
             }
         }
 
-        public double FontSizeText
+        public double TextLength
         {
             get
             {
-                return fontSize;
+                return textLength;
             }
             set
             {
-                if (fontSize != value)
+                if (textLength != value)
                 {
-                    if (value >= 4)
+                    if (value >= 5)
                     {
-                        fontSize = value;
+                        textLength = value;
                         NotifyPropertyChanged();
                         UpdateDisplay();
                         WarningText = "";
                     }
                     else
                     {
-                        WarningText = "Minimum FontSize is 4";
+                        WarningText = "Minimum TextLength is 5";
                     }
                 }
             }
@@ -245,14 +245,19 @@ namespace Barnacle.Dialogs
             Close();
         }
 
+        // private double textLength = 150;
+
         private void GenerateShape(bool final = false)
         {
             ClearShape();
             if (text != null && text != "")
             {
-                TextMaker mk = new TextMaker(text, selectedFont, fontSize, thickness, final, fontBold, fontItalic);
+                ClearShape();
+
+                CentreVertices();
+                TextMaker mk = new TextMaker(text, selectedFont, textLength, thickness, final, fontBold, fontItalic);
                 string PathCode = mk.Generate(Vertices, Faces);
-                PathData = PathCode;
+                //   PathData = PathCode;
             }
             CentreVertices();
         }
@@ -263,8 +268,8 @@ namespace Barnacle.Dialogs
             {
                 Text = EditorParameters.Get("Text");
                 SelectedFont = EditorParameters.Get("FontName");
-                FontSizeText = EditorParameters.GetDouble("FontSize");
-                Thickness = EditorParameters.GetDouble("Thickness");
+                TextLength = EditorParameters.GetDouble("TextLength", 100);
+                Thickness = EditorParameters.GetDouble("Thickness", 5);
                 FontBold = EditorParameters.GetBoolean("Bold");
                 FontItalic = EditorParameters.GetBoolean("Italic");
             }
@@ -274,7 +279,7 @@ namespace Barnacle.Dialogs
         {
             EditorParameters.Set("Text", text);
             EditorParameters.Set("FontName", selectedFont);
-            EditorParameters.Set("FontSize", fontSize);
+            EditorParameters.Set("TextLength", textLength);
             EditorParameters.Set("Thickness", thickness.ToString());
             EditorParameters.Set("Bold", fontBold.ToString());
             EditorParameters.Set("Italic", fontItalic.ToString());
@@ -309,7 +314,7 @@ namespace Barnacle.Dialogs
             {
                 result = false;
             }
-            if (fontSize < 4.0)
+            if (textLength < 4.0)
             {
                 result = false;
             }
@@ -324,7 +329,7 @@ namespace Barnacle.Dialogs
         {
             LoadSystemFonts();
             SelectedFont = "Segoe UI";
-            FontSizeText = 24.0;
+            TextLength = 100.0;
             FontBold = false;
             FontItalic = false;
             Text = "Text";

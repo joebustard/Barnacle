@@ -6,12 +6,12 @@
         xmlns:ctrls="clr-namespace:Barnacle.UserControls"
         xmlns:local="clr-namespace:Barnacle.Dialogs"
         mc:Ignorable="d"
-        Title="" Height="450" Width="800" Loaded="Window_Loaded" 
+        Title="" Height="800" Width="800" Loaded="Window_Loaded"
         SizeChanged="BaseModellerDialog_SizeChanged"
 WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
-            <RowDefinition Height="1*" />
+            <RowDefinition Height="150" />
             <RowDefinition Height="1*" />
             <RowDefinition Height="25" />
         </Grid.RowDefinitions>
@@ -60,17 +60,17 @@ WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush 
                          VerticalAlignment="Center"
                          Width="30" />
                 </StackPanel>
-                <ctrls:AeroProfileDisplayer x:Name="ProfileDisplayer" Grid.Row="2" Grid.RowSpan="2" />
+                <ctrls:AeroProfileDisplayer x:Name="ProfileDisplayer" Grid.Row="2" Grid.RowSpan="2" MaxHeight="120" />
             </Grid>
         </Border>
         <Border Grid.Column="1"
-                Grid.ColumnSpan="2"
+                Grid.ColumnSpan="1"
                 Grid.Row="1"
                 Style="{StaticResource ControlBorder}">
 
             <ctrls:FlexiPathEditorControl x:Name="PathEditor" FixedEndPath="True" />
         </Border>
-        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
+        <Border Grid.Row ="0" Grid.Column="2"  Grid.RowSpan="2" Style="{StaticResource ControlBorder}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition />

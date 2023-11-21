@@ -91,11 +91,11 @@ namespace Barnacle.Models
         {
             if (text != null && text != "")
             {
-                TextMaker mk = new TextMaker(text, "Tahoma", 14, 0.2, true, false, false);
+                TextMaker mk = new TextMaker(text, "Tahoma", 60, 0.2, true, false, false);
                 Point3DCollection Vertices = new Point3DCollection();
                 Int32Collection Faces = new Int32Collection();
                 mk.Generate(Vertices, Faces);
-                Vector3D v = new Vector3D(-26, 0.1, 85);
+                Vector3D v = new Vector3D(-30, 0.1, 85);
                 for (int i = 0; i < Vertices.Count; i++)
                 {
                     Vertices[i] += v;
