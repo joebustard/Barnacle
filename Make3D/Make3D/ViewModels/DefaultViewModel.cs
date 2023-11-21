@@ -58,6 +58,7 @@ namespace Barnacle.ViewModels
         private bool settingsLoaded;
         private bool showAxiesChecked;
         private bool showBuildPlate;
+        private bool showBuildVolume;
         private bool showFloorChecked;
         private bool showFloorMarkerChecked;
         private bool snapMarginChecked;
@@ -723,6 +724,8 @@ namespace Barnacle.ViewModels
             }
         }
 
+
+
         public string SelectedObjectName
         {
             get
@@ -778,6 +781,27 @@ namespace Barnacle.ViewModels
                     NotifyPropertyChanged();
 
                     NotificationManager.Notify("ShowBuildPlate", showBuildPlate);
+                    if (settingsLoaded)
+                    {
+                        SaveShowSettings();
+                    }
+                }
+            }
+        }
+        public bool ShowBuildVolumeChecked
+        {
+            get
+            {
+                return showBuildVolume;
+            }
+            set
+            {
+                if (showBuildVolume != value)
+                {
+                    showBuildVolume = value;
+                    NotifyPropertyChanged();
+
+                    NotificationManager.Notify("BuildVolume", showBuildVolume);
                     if (settingsLoaded)
                     {
                         SaveShowSettings();
@@ -1360,6 +1384,7 @@ namespace Barnacle.ViewModels
         {
             Properties.Settings.Default.Reload();
             ShowBuildPlateChecked = Properties.Settings.Default.ShowBuildPlate;
+            ShowBuildVolumeChecked = Properties.Settings.Default.ShowBuildVolume;
             ShowFloorChecked = Properties.Settings.Default.ShowFloor;
             ShowFloorMarkerChecked = Properties.Settings.Default.ShowMarker;
             ShowAxiesChecked = Properties.Settings.Default.ShowAxis;
@@ -1368,6 +1393,7 @@ namespace Barnacle.ViewModels
 
             settingsLoaded = true;
             NotificationManager.Notify("ShowBuildPlate", showBuildPlate);
+            NotificationManager.Notify("BuildVolume", showBuildVolume);
             NotificationManager.Notify("ShowFloor", showFloorChecked);
             NotificationManager.Notify("ShowFloorMarker", showFloorMarkerChecked);
             NotificationManager.Notify("ShowAxies", showAxiesChecked);
@@ -1715,6 +1741,7 @@ namespace Barnacle.ViewModels
         private void SaveShowSettings()
         {
             Properties.Settings.Default.ShowBuildPlate = ShowBuildPlateChecked;
+            Properties.Settings.Default.ShowBuildVolume = ShowBuildVolumeChecked;
             Properties.Settings.Default.ShowFloor = ShowFloorChecked;
             Properties.Settings.Default.ShowMarker = ShowFloorMarkerChecked;
             Properties.Settings.Default.ShowAxis = ShowAxiesChecked;

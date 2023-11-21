@@ -11,6 +11,7 @@ namespace Barnacle.ViewModel.BuildPlates
             PrinterName = "Default";
             Width = 210;
             Height = 210;
+            Length = 210;
             BorderThickness = 5;
             BorderColour = Colors.CadetBlue;
         }
@@ -18,12 +19,14 @@ namespace Barnacle.ViewModel.BuildPlates
         public Color BorderColour { get; set; }
         public double BorderThickness { get; set; }
         public double Height { get; set; }
+        public double Length { get; set; }
         public String PrinterName { get; set; }
         public double Width { get; set; }
 
         internal virtual XmlElement Read(XmlDocument doc, XmlElement ele)
         {
             PrinterName = ele.GetAttribute("PrinterName");
+            Length = GetDouble(ele, "Length");
             Width = GetDouble(ele, "Width");
             Height = GetDouble(ele, "Height");
             BorderColour = Colors.Blue;
@@ -41,6 +44,7 @@ namespace Barnacle.ViewModel.BuildPlates
             XmlElement ele = doc.CreateElement("BuildPlate");
             docNode.AppendChild(ele);
             ele.SetAttribute("PrinterName", PrinterName);
+            ele.SetAttribute("Length", Length.ToString());
             ele.SetAttribute("Width", Width.ToString());
             ele.SetAttribute("Height", Height.ToString());
             ele.SetAttribute("Colour", BorderColour.ToString());

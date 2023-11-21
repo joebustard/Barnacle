@@ -1,9 +1,9 @@
 ﻿<PlateDefinitions>
-  <BuildPlate PrinterName="Ender 3" Width="210" Height="210" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="Elegoo Mars (68 X 120)" Width="68" Height="120" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="Elegoo Mars 2 Pro (82 x 130)" Width="82" Height="130" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="Photon X (120 x 192)" Width="120" Height="192" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="(70 x 120)" Width="70" Height="120" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="(70 x 130)" Width="70" Height="130" Colour="#FF5F9EA0" BorderThickness="5" />
-  <BuildPlate PrinterName="(70 x 135)" Width="70" Height="135" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="Ender 3" Length="210" Width="210" Height="250" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="Elegoo Mars (68 X 120)" Length="68" Width="120" Height="155" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="Elegoo Mars 2 Pro (82 x 130)" Length="82" Height="160" Width="130" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="Photon X (120 x 192)" Length="120" Width="192" Height="245" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="(70 x 120)" Length="70" Width="120" Height="160" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="(70 x 130)" Length="70" Width="130" Height="160" Colour="#FF5F9EA0" BorderThickness="5" />
+  <BuildPlate PrinterName="(70 x 135)" Length="70" Width="135" Height="160" Colour="#FF5F9EA0" BorderThickness="5" />
 </PlateDefinitions>

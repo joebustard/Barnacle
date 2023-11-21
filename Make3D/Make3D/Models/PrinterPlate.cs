@@ -8,18 +8,19 @@ namespace Barnacle.Models
         private Color borderColour;
         private double borderThickness;
         private Model3DGroup group;
-
         private double height;
-
         private double width;
-
+        private double length;
+        private bool showVolume;
         public PrinterPlate()
         {
             Width = 210;
             Height = 210;
+            Length = 210;
             BorderThickness = 8;
-            BorderColour = Colors.SandyBrown;
+            BorderColour = Colors.CadetBlue;
             group = new Model3DGroup();
+            showVolume = true;
             DefineModel(group);
         }
 
@@ -79,6 +80,21 @@ namespace Barnacle.Models
             }
         }
 
+        public double Length
+        {
+            get
+            {
+                return length;
+            }
+            set
+            {
+                if (value != length)
+                {
+                    length = value;
+                    DefineModel(group);
+                }
+            }
+        }
         public double Width
         {
             get
@@ -94,50 +110,100 @@ namespace Barnacle.Models
                 }
             }
         }
-
+        public bool ShowVolume
+        {
+            get { return showVolume; }
+            set
+            {
+                if (showVolume != value)
+                {
+                    showVolume = value;
+                    DefineModel(group);
+                }
+            }
+        }
         private void DefineModel(Model3DGroup group)
         {
             if (group != null)
             {
                 group.Children.Clear();
                 const double thickness = 0.2;
-                double length = Height;
+
                 // left cube.
                 MeshGeometry3D lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
                 Transform3DGroup lgroup = new Transform3DGroup();
-                lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, length));
+                lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
                 lmesh.ApplyTransformation(lgroup);
-                lmesh.ApplyTransformation(new TranslateTransform3D(-Width / 2, 0, 0));
+                lmesh.ApplyTransformation(new TranslateTransform3D(-length / 2, 0, 0));
                 Material lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
                 GeometryModel3D lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
 
                 lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
                 lgroup = new Transform3DGroup();
-                lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, length));
+                lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
                 lmesh.ApplyTransformation(lgroup);
-                lmesh.ApplyTransformation(new TranslateTransform3D(Width / 2, 0, 0));
+                lmesh.ApplyTransformation(new TranslateTransform3D(length / 2, 0, 0));
                 lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
                 lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
 
                 lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
                 lgroup = new Transform3DGroup();
-                lgroup.Children.Add(new ScaleTransform3D(Width, thickness, BorderThickness));
+                lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
                 lmesh.ApplyTransformation(lgroup);
-                lmesh.ApplyTransformation(new TranslateTransform3D(0, 0, -Height / 2));
+                lmesh.ApplyTransformation(new TranslateTransform3D(0, 0, -width / 2));
                 lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
                 lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
 
                 lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
                 lgroup = new Transform3DGroup();
-                lgroup.Children.Add(new ScaleTransform3D(Width, thickness, BorderThickness));
+                lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
                 lmesh.ApplyTransformation(lgroup);
-                lmesh.ApplyTransformation(new TranslateTransform3D(0, 0, Height / 2));
+                lmesh.ApplyTransformation(new TranslateTransform3D(0, 0, width / 2));
                 lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
                 lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
+
+                if (showVolume)
+                {
+                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lgroup = new Transform3DGroup();
+                    lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
+                    lmesh.ApplyTransformation(lgroup);
+                    lmesh.ApplyTransformation(new TranslateTransform3D(-length / 2, height, 0));
+                    lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
+                    lmodel = new GeometryModel3D(lmesh, lmaterial);
+                    group.Children.Add(lmodel);
+
+                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lgroup = new Transform3DGroup();
+                    lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
+                    lmesh.ApplyTransformation(lgroup);
+                    lmesh.ApplyTransformation(new TranslateTransform3D(length / 2, height, 0));
+                    lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
+                    lmodel = new GeometryModel3D(lmesh, lmaterial);
+                    group.Children.Add(lmodel);
+
+                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lgroup = new Transform3DGroup();
+                    lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
+                    lmesh.ApplyTransformation(lgroup);
+                    lmesh.ApplyTransformation(new TranslateTransform3D(0, height, -width / 2));
+                    lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
+                    lmodel = new GeometryModel3D(lmesh, lmaterial);
+                    group.Children.Add(lmodel);
+
+                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lgroup = new Transform3DGroup();
+                    lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
+                    lmesh.ApplyTransformation(lgroup);
+                    lmesh.ApplyTransformation(new TranslateTransform3D(0, height, width / 2));
+                    lmaterial = new DiffuseMaterial(new SolidColorBrush(BorderColour));
+                    lmodel = new GeometryModel3D(lmesh, lmaterial);
+                    group.Children.Add(lmodel);
+                }
             }
         }
     }

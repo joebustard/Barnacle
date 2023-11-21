@@ -163,6 +163,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "UnrefVertices", OnRemoveUnrefVertices);
             NotificationManager.Subscribe("Editor", "Loading", LoadingNewFile);
             NotificationManager.Subscribe("Editor", "BuildPlate", BuildPlateChanged);
+            NotificationManager.Subscribe("Editor", "BuildVolume", BuildVolumeChanged);
             NotificationManager.Subscribe("Editor", "ObjectXRotationChange", XRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectYRotationChange", YRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
@@ -176,11 +177,22 @@ namespace Barnacle.ViewModels
             showAxies = true;
             showFloor = true;
             showAdorners = true;
+            
             showFloorMarker = true;
             showBuildPlate = true;
             isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void BuildVolumeChanged(object param)
+        {
+            bool b = (bool)param;
+            if (printerPlate != null)
+            {
+                printerPlate.ShowVolume = b;
+                RegenerateDisplayList();
+            }
         }
 
         private void OnMirror(object param)
@@ -1783,6 +1795,7 @@ namespace Barnacle.ViewModels
         {
             BuildPlate bp = param as BuildPlate;
             printerPlate.BorderColour = bp.BorderColour;
+            printerPlate.Length = bp.Length;
             printerPlate.Width = bp.Width;
             printerPlate.Height = bp.Height;
             printerPlate.BorderThickness = bp.BorderThickness;
@@ -4753,7 +4766,7 @@ namespace Barnacle.ViewModels
 
         private void ZoomOut(object param)
         {
-            if (zoomPercent > 0)
+            if (zoomPercent > -50)
             {
                 Zoom(-1);
             }

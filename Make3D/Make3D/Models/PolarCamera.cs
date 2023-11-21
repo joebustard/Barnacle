@@ -30,7 +30,7 @@ namespace Barnacle.Models
 
         public PolarCamera()
         {
-            homeDistance = 300;
+            homeDistance = 400;
             fieldOfView = 45;
             polarOrigin = new Point3D(0, 0, 0);
             Init();

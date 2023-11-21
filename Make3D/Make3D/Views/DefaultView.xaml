@@ -1030,6 +1030,9 @@
                     <Custom:RibbonCheckBox IsChecked="{Binding ShowBuildPlateChecked}"
                                            Label="Build Plate"
                                            x:Name="ShowBuildPlate" />
+                    <Custom:RibbonCheckBox IsChecked="{Binding ShowBuildVolumeChecked}"
+                                           Label="Build Volume"
+                                           x:Name="ShowBuildVolume" ToolTip="Shows the upper volume marker, but only if the build plate is visible too."/>
                     <ComboBox HorizontalAlignment="Stretch"
                               ItemsSource="{Binding BuildPlateNames}"
                               MinWidth="100"
