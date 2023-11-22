@@ -514,9 +514,9 @@
                                              x:Name="Spiral" />
                         -->
                         <Custom:RibbonButton Command="{Binding DistributeCommand}"
-                                             CommandParameter="Arrange"
+                                             CommandParameter="Optimum"
                                              HorizontalAlignment="Stretch"
-                                             Label="Optimum"
+                                             Label="Arrange"
                                              SmallImageSource="/Barnacle;component/Images/Buttons/copy.png"
                                              ToolTip="Arrange all items in a compact footprint for printing"
                                              VerticalAlignment="Top"

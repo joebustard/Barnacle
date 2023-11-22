@@ -2983,7 +2983,7 @@ namespace Barnacle.ViewModels
             {
                 if (selectedObjectAdorner != null && selectedObjectAdorner.SelectedObjects.Count < 3)
                 {
-                    MessageBox.Show("At least 3 selected objects are need for even distribution");
+                    MessageBox.Show("At least 3 selected objects are needed for even distribution");
                 }
                 else
                 {
@@ -3895,29 +3895,32 @@ namespace Barnacle.ViewModels
         private void OptimumArranger()
         {
             CheckPoint();
-            PrintPlacement arr = new PrintPlacement();
-            foreach (Object3D ob in Document.Content)
+            if (Document.Content.Count > 1)
             {
-                if (ob.Exportable)
+                PrintPlacement arr = new PrintPlacement();
+                foreach (Object3D ob in Document.Content)
                 {
-                    arr.AddComponent(ob,
-                                    ob.AbsoluteBounds.Lower,
-                                    ob.AbsoluteBounds.Upper);
+                    if (ob.Exportable)
+                    {
+                        arr.AddComponent(ob,
+                                        ob.AbsoluteBounds.Lower,
+                                        ob.AbsoluteBounds.Upper);
+                    }
                 }
-            }
-            arr.Clearance = 3;
-            arr.SetBedSize(printerPlate.Width - 10, printerPlate.Height - 10);
-            arr.Arrange();
+                arr.Clearance = 3;
+                arr.SetBedSize(printerPlate.Width - 10, printerPlate.Height - 10);
+                arr.Arrange();
 
-            foreach (PrintPlacementLib.Component c in arr.Results)
-            {
-                Object3D o = c.Shape as Object3D;
+                foreach (PrintPlacementLib.Component c in arr.Results)
+                {
+                    Object3D o = c.Shape as Object3D;
 
-                double px = c.Position.X;
-                double py = c.Position.Y;
-                double pz = c.Position.Z;
+                    double px = c.Position.X;
+                    double py = c.Position.Y;
+                    double pz = c.Position.Z;
 
-                o.Position = new Point3D(px, py, pz);
+                    o.Position = new Point3D(px, py, pz);
+                }
             }
             MoveAllToCentre();
             FloorAllObjects();

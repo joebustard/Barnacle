@@ -52,7 +52,7 @@ namespace MakerLib
 
             Typeface typeface = new Typeface(new System.Windows.Media.FontFamily(fontName), fstyle, fw, FontStretches.Normal);
             FormattedText ft = new FormattedText(text, CultureInfo.InvariantCulture, FlowDirection.LeftToRight,
-                                   typeface, 200, System.Windows.Media.Brushes.Black);
+                                   typeface, 300, System.Windows.Media.Brushes.Black);
             // ft.SetFontStretch(FontStretches.Normal);
 
             System.Windows.Size sz = new System.Windows.Size(ft.Width, ft.Height);
@@ -82,7 +82,7 @@ namespace MakerLib
 
             WriteableBitmap wrb = new WriteableBitmap(bmp);
             CreateOctree(new Point3D(-1, -0.1, -1), new Point3D(imageWidth + 1, 2 * textThickness, imageHeight + 1));
-            NorthGaps(wrb);
+            
             NorthEdges(wrb);
             SouthEdges(wrb);
             WestEdges(wrb);
@@ -209,8 +209,8 @@ namespace MakerLib
                             }
                             else
                             {
-                                AddFace(v0, v5, v2);
-                                AddFace(v0, v3, v5);
+                               // AddFace(v0, v5, v2);
+                               // AddFace(v0, v3, v5);
                             }
                             wrb.SetPixel(x, y - 1, System.Windows.Media.Color.FromArgb(255, 60, 60, 60));
                         }
