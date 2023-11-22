@@ -149,6 +149,24 @@ namespace Barnacle.ViewModels
             }
         }
 
+        private string objectType;
+
+        public String ObjectType
+        {
+            get
+            {
+                return objectType;
+            }
+            set
+            {
+                if (objectType != value)
+                {
+                    objectType = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public String Description
         {
             get
@@ -679,6 +697,7 @@ namespace Barnacle.ViewModels
                 exportable = false;
                 description = "";
                 ControlsEnabled = false;
+                ObjectType = "";
             }
             else
             {
@@ -688,6 +707,21 @@ namespace Barnacle.ViewModels
                 exportable = selectedObject.Exportable;
                 description = selectedObject.Description;
                 ControlsEnabled = true;
+                if (selectedObject is Group3D)
+                {
+                    ObjectType = "Group";
+                }
+                else
+                {
+                    if (selectedObject.EditorParameters.ToolName != "")
+                    {
+                        ObjectType = selectedObject.EditorParameters.ToolName;
+                    }
+                    else
+                    {
+                        ObjectType = "Object3D";
+                    }
+                }
             }
             NotifyPropertyChanged("PositionX");
             NotifyPropertyChanged("PositionY");

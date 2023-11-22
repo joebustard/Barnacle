@@ -54,6 +54,7 @@
             <RowDefinition Height="18" />
             <RowDefinition Height="22" />
             <RowDefinition Height="18" />
+            <RowDefinition Height="18" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30*" />
@@ -491,6 +492,12 @@
         </Grid>
         <TextBox
             Grid.Row="26"
+            Grid.ColumnSpan="3"
+            VerticalAlignment="Stretch"
+            IsReadOnly="True"
+            Text="{Binding ObjectType}" />
+        <TextBox
+            Grid.Row="27"
             Grid.ColumnSpan="3"
             VerticalAlignment="Stretch"
             AcceptsReturn="True"

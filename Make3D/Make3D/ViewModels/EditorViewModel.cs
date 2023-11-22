@@ -177,7 +177,7 @@ namespace Barnacle.ViewModels
             showAxies = true;
             showFloor = true;
             showAdorners = true;
-            
+
             showFloorMarker = true;
             showBuildPlate = true;
             isEditingEnabled = true;
@@ -714,6 +714,23 @@ namespace Barnacle.ViewModels
             selectedItems.Clear();
             Overlay.Children.Clear();
             RegenerateDisplayList();
+            NotificationManager.Notify("ObjectSelected", null);
+            NotificationManager.Notify("GroupSelected", false);
+        }
+
+        internal void RemoveSelections(bool regen = false)
+        {
+            if (selectedObjectAdorner != null)
+            {
+                selectedObjectAdorner.Clear();
+            }
+
+            selectedItems.Clear();
+            Overlay.Children.Clear();
+            if (regen)
+            {
+                RegenerateDisplayList();
+            }
             NotificationManager.Notify("ObjectSelected", null);
             NotificationManager.Notify("GroupSelected", false);
         }
@@ -3214,6 +3231,7 @@ namespace Barnacle.ViewModels
                     }
                     SelectObject(ob);
                 }
+
                 RegenerateDisplayList();
                 SetSelectionColours();
                 NotificationManager.Notify("ObjectNamesChanged", null);
@@ -3924,7 +3942,9 @@ namespace Barnacle.ViewModels
             }
             MoveAllToCentre();
             FloorAllObjects();
+            RemoveSelections();
             RegenerateDisplayList();
+
             Document.Dirty = true;
         }
 
@@ -4618,6 +4638,7 @@ namespace Barnacle.ViewModels
                             document.Content.Remove(ob);
                             document.Dirty = true;
                             NotificationManager.Notify("ObjectNamesChanged", null);
+                            RemoveSelections();
                             RegenerateDisplayList();
                         }
                         break;
@@ -4661,6 +4682,7 @@ namespace Barnacle.ViewModels
                             document.Content.Remove(ob);
                             document.Dirty = true;
                             NotificationManager.Notify("ObjectNamesChanged", null);
+                            RemoveSelections();
                             RegenerateDisplayList();
                         }
                         break;
@@ -4705,6 +4727,7 @@ namespace Barnacle.ViewModels
                             document.Content.Remove(ob);
                             document.Dirty = true;
                             NotificationManager.Notify("ObjectNamesChanged", null);
+                            RemoveSelections();
                             RegenerateDisplayList();
                         }
                         break;
