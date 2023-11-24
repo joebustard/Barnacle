@@ -40,7 +40,7 @@
             <Setter Property="IsEnabled"
                     Value="{Binding IsActive}" />
             <Setter Property="ImageSource"
-                    Value="/images/buttons/new_file.png" />
+                    Value="{Binding ToolImage}" />
         </Style>
     </UserControl.Resources>
     <Grid ScrollViewer.CanContentScroll="True">
@@ -179,31 +179,31 @@
                     <Custom:RibbonMenuButton  HorizontalAlignment="Stretch"
                                          Label="Paste"
                                          SmallImageSource="/Barnacle;component/Images/Buttons/paste.png">
-                        <Custom:RibbonButton Command="{Binding PasteCommand}"
+                        <Custom:RibbonMenuItem Command="{Binding PasteCommand}"
                                          HorizontalAlignment="Stretch"
-                                         Label="Paste"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/paste.png"
+                                         Header="Paste"
+                                         ImageSource="/Barnacle;component/Images/Buttons/paste.png"
                                          ToolTip="Paste at the right of the existing bounds"
                                          VerticalAlignment="Top"
                                          x:Name="PasteButton" />
-                        <Custom:RibbonButton Command="{Binding PasteAtCommand}"
+                        <Custom:RibbonMenuItem Command="{Binding PasteAtCommand}"
                                          HorizontalAlignment="Stretch"
-                                         Label="Paste At"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/pasteat.png"
+                                         Header="Paste At"
+                                         ImageSource="/Barnacle;component/Images/Buttons/pasteat.png"
                                          ToolTip="Paste at the floor marker if its present"
                                          VerticalAlignment="Top"
                                          x:Name="PasteAtButton" />
 
-                        <Custom:RibbonButton Command="{Binding MultiPasteCommand}"
+                        <Custom:RibbonMenuItem Command="{Binding MultiPasteCommand}"
                                          HorizontalAlignment="Stretch"
-                                         Label="Multi Paste"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/pastemulti.png"
+                                         Header="Multi Paste"
+                                         ImageSource="/Barnacle;component/Images/Buttons/pastemulti.png"
                                          VerticalAlignment="Top"
                                          x:Name="PasteMultiButton" />
-                        <Custom:RibbonButton Command="{Binding CircularPasteCommand}"
+                        <Custom:RibbonMenuItem Command="{Binding CircularPasteCommand}"
                                          HorizontalAlignment="Stretch"
-                                         Label="Circular Paste"
-                                         SmallImageSource="/Barnacle;component/Images/Buttons/pastecircle.png"
+                                         Header="Circular Paste"
+                                         ImageSource="/Barnacle;component/Images/Buttons/pastecircle.png"
                                          VerticalAlignment="Top"
                                          x:Name="PasteCircularButton" />
                     </Custom:RibbonMenuButton>
@@ -246,6 +246,7 @@
 
                                          ToolTip="Select First"
                                          VerticalAlignment="Top"
+
                                          x:Name="SelectFirstButton" IsEnabled="{Binding EditingActive}">
                         </Custom:RibbonMenuItem>
                         <Custom:RibbonMenuItem Command="{Binding SelectCommand}"
@@ -472,7 +473,7 @@
                                              CommandParameter="StackLeft"
                                              HorizontalAlignment="Stretch"
                                              Header="Left"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/StackLeft.png"
                                              ToolTip="Align objects so they are all centered and stacked To the left of the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="StackLeftAlignment" />
@@ -480,7 +481,7 @@
                                              CommandParameter="StackRight"
                                              HorizontalAlignment="Stretch"
                                              Header="Right"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/StackRight.png"
                                              ToolTip="Align objects so they are all centered and stacked To the right of the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="StackRightAlignment" />
@@ -488,7 +489,7 @@
                                              CommandParameter="StackAbove"
                                              HorizontalAlignment="Stretch"
                                              Header="Above"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/StackAbove.png"
                                              ToolTip="Align objects so they are all centered and stacked above the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="StackVAlignment" />
@@ -496,7 +497,7 @@
                                              CommandParameter="StackBottom"
                                              HorizontalAlignment="Stretch"
                                              Header="Below"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/StackBelow.png"
                                              ToolTip="Align objects so they are all centered and stacked below the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="StackBelowAlignment" />
@@ -504,7 +505,7 @@
                                              CommandParameter="StackFront"
                                              HorizontalAlignment="Stretch"
                                              Header="In Front"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/StackFront.png"
                                              ToolTip="Align objects so they are all centered and stacked To the front of the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="StackZAlignment" />
@@ -512,7 +513,7 @@
                                              CommandParameter="StackBehind"
                                              HorizontalAlignment="Stretch"
                                              Header="Behind"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/StackBack.png"
                                              ToolTip="Align objects so they are all centered and stacked to the rear of the first selected."
                                              VerticalAlignment="Top"
                                              x:Name="StackBehindAlignment" />
@@ -534,7 +535,7 @@
                                              CommandParameter="Optimum"
                                              HorizontalAlignment="Stretch"
                                              Header="Arrange"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/Arrange.png"
                                              ToolTip="Arrange all items in a compact footprint for printing"
                                              VerticalAlignment="Top"
                                              x:Name="Optimum" />
@@ -542,7 +543,7 @@
                                              CommandParameter="Horizontal"
                                              HorizontalAlignment="Stretch"
                                              Header="Horizontal Selection (X)"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/DistributeH.png"
                                              ToolTip="Distribute selection evenly between the left most and right most"
                                              VerticalAlignment="Top"
                                              x:Name="HEvenAlignment" />
@@ -550,7 +551,7 @@
                                              CommandParameter="Vertical"
                                              HorizontalAlignment="Stretch"
                                              Header="Vertical Selection (Y)"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/DistributeV.png"
                                              ToolTip="Distribute selection evenly between the highest and lowest"
                                              VerticalAlignment="Top"
                                              x:Name="VEvenAlignment" />
@@ -558,7 +559,7 @@
                                              CommandParameter="Distal"
                                              HorizontalAlignment="Stretch"
                                              Header="Distal Selection (Z)"
-                                             ImageSource="/Barnacle;component/Images/Buttons/copy.png"
+                                             ImageSource="/Barnacle;component/Images/Buttons/DistributeD.png"
                                              ToolTip="Distribute selection evenly between the back most and front most"
                                              VerticalAlignment="Top"
                                              x:Name="DEvenAlignment" />

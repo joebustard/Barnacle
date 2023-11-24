@@ -724,8 +724,6 @@ namespace Barnacle.ViewModels
             }
         }
 
-
-
         public string SelectedObjectName
         {
             get
@@ -788,6 +786,7 @@ namespace Barnacle.ViewModels
                 }
             }
         }
+
         public bool ShowBuildVolumeChecked
         {
             get

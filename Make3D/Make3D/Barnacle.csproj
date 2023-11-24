@@ -1263,6 +1263,19 @@
     <Resource Include="Images\Buttons\Mechanical.png" />
     <Resource Include="Images\Buttons\Parametric.png" />
     <Resource Include="Images\Buttons\Vehicles.png" />
+    <Resource Include="Images\Buttons\StackAbove.png" />
+    <Resource Include="Images\Buttons\StackBack.png" />
+    <Resource Include="Images\Buttons\StackBelow.png" />
+    <Resource Include="Images\Buttons\StackFront.png" />
+    <Resource Include="Images\Buttons\StackLeft.png" />
+    <Resource Include="Images\Buttons\StackRight.png" />
+    <Resource Include="Images\Buttons\Arrange.png" />
+    <Resource Include="Images\Buttons\DistributeD.Png" />
+    <Resource Include="Images\Buttons\DistributeH.Png" />
+    <Resource Include="Images\Buttons\DistributeV.Png" />
+    <Resource Include="Images\Buttons\BezierFuselage.png" />
+    <Resource Include="Images\Buttons\ProfileFuselage.png" />
+    <Resource Include="Images\Buttons\Wing.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>
