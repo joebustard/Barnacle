@@ -37,8 +37,9 @@ namespace PrintPlacementLib
             return v;
         }
 
-        internal void Dump()
+        internal void Dump(string name)
         {
+            System.Diagnostics.Debug.WriteLine(name);
             for (int r = 0; r < numRows; r++)
             {
                 for (int c = 0; c < numCols; c++)

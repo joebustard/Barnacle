@@ -105,12 +105,10 @@ namespace Barnacle.Views
             bool vis = (bool)param;
             if (vis)
             {
-                // SolutionPanel.Visibility = Visibility.Visible;
                 EnableEditorControls(true);
             }
             else
             {
-                //SolutionPanel.Visibility = Visibility.Collapsed;
                 EnableEditorControls(false);
             }
         }
@@ -240,9 +238,7 @@ namespace Barnacle.Views
                     {
                         BaseViewModel.RecentlyUsedManager.UpdateRecentFiles(dlg.ProjectPath);
                         SolutionExplorer.ProjectChanged(BaseViewModel.Project);
-                        String initialFile = BaseViewModel.Project.FirstFile;
-                        BaseViewModel.Document.Load(initialFile);
-
+                        LoadFileLastOpenedInProject();
                         NotificationManager.Notify("Refresh", null);
                         undoer.ClearUndoFiles();
                     }

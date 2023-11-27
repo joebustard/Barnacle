@@ -133,11 +133,17 @@ namespace TemplateLib
             solutionDoc.XmlResolver = null;
             XmlElement root = solutionDoc.CreateElement("Project");
             root.SetAttribute("ProjectName", projName);
+            root.SetAttribute("Open", "\\"+projName+"\\"+def.InitialFile);
+            root.SetAttribute("Created", DateTime.Now.ToString());
             solutionDoc.AppendChild(root);
             foreach (ProjectTemplateFolder fld in def.Folders)
             {
                 fld.CreateSolutionEntry(solutionDoc, root);
             }
+            XmlElement desEle = solutionDoc.CreateElement("Description");
+            desEle.InnerText = def.Description;
+            root.AppendChild(desEle);
+
             SolutionPath = System.IO.Path.Combine(pth, projName + ".bmf");
             solutionDoc.Save(SolutionPath);
         }

@@ -323,6 +323,7 @@
     <Compile Include="Dialogs\WireFrame\WireFrameSegment.cs" />
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\CohenSutherland.cs" />
+    <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
@@ -1276,6 +1277,18 @@
     <Resource Include="Images\Buttons\BezierFuselage.png" />
     <Resource Include="Images\Buttons\ProfileFuselage.png" />
     <Resource Include="Images\Buttons\Wing.png" />
+    <Resource Include="Images\Buttons\CanvasWing.png" />
+    <Resource Include="Images\Buttons\Propeller.png" />
+    <Resource Include="Images\Buttons\ShapedWing.png" />
+    <Resource Include="Images\Buttons\TurboFan.png" />
+    <Resource Include="Images\Buttons\RectGrille.png" />
+    <Resource Include="Images\Buttons\RoundGrille.png" />
+    <Resource Include="Images\Buttons\Symbol.png" />
+    <Resource Include="Images\Buttons\Squirkle.png" />
+    <Resource Include="Images\Buttons\Bicorn.png" />
+    <Resource Include="Images\Buttons\Trickle.png" />
+    <Resource Include="Images\Buttons\ImagePlaque.png" />
+    <Resource Include="Images\Buttons\Pill.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

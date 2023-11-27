@@ -1172,10 +1172,10 @@ namespace Barnacle.ViewModels
             aircraftToolsToShow.Add(new ToolDef("Bezier Fuselage", true, "BezierFuselage", "Create a fuselage from bezier profiles."));
             aircraftToolsToShow.Add(new ToolDef("Profile Fuselage", true, "ProfileFuselage", "Create a fuselage from  externally prepared top, bottom and spar images."));
             aircraftToolsToShow.Add(new ToolDef("Wing", true, "Wing", "Create a wing from a database of airfoil profiles."));
-            aircraftToolsToShow.Add(new ToolDef("Canvas Wing", true, "CanvasWing", "Create a wing that looks like canvas streteched over struts from a database of airfoil profiles."));
+            aircraftToolsToShow.Add(new ToolDef("Canvas Wing", true, "CanvasWing", "Create a wing that looks like canvas stretched over struts from a database of airfoil profiles."));
             aircraftToolsToShow.Add(new ToolDef("Propeller", true, "Propeller", "Create a propeller."));
             aircraftToolsToShow.Add(new ToolDef("Turbo Fan", true, "TurboFan", "Create a turbofan."));
-            aircraftToolsToShow.Add(new ToolDef("Shaped Wing", true, "ShapedWing", "Create a wing from a drawn outline using a profile a database of airfoil profiles."));
+            aircraftToolsToShow.Add(new ToolDef("Shaped Wing", true, "ShapedWing", "Create a wing from a drawn outline using a profile and a database of airfoil profiles."));
             SortMenu(aircraftToolsToShow);
             NotifyPropertyChanged("AircraftToolsToShow");
         }
@@ -1188,8 +1188,8 @@ namespace Barnacle.ViewModels
             buildingToolsToShow.Add(new ToolDef("Stone Wall", true, "StoneWall", "Create a rectangular stone wall."));
             buildingToolsToShow.Add(new ToolDef("Tiled Roof", true, "TiledRoof", "Create a tiled roof."));
             buildingToolsToShow.Add(new ToolDef("Plank Wall", true, "PlankWall", "Create a rectangular plank wall."));
-            buildingToolsToShow.Add(new ToolDef("Shaped Brick Wall", true, "ShapedBrickWall", "Create a brick wall defined by a path."));
-            buildingToolsToShow.Add(new ToolDef("Shaped Tiled Roof", true, "ShapedTiledRoof", "Create a tiled roof defined by a path."));
+            buildingToolsToShow.Add(new ToolDef("Shaped Brick Wall", true, "ShapedBrickWall", "Create a brick wall from a drawn outline."));
+            buildingToolsToShow.Add(new ToolDef("Shaped Tiled Roof", true, "ShapedTiledRoof", "Create a tiled roof from a drawn outline."));
             buildingToolsToShow.Add(new ToolDef("Roof Ridge", true, "RoofRidge", "Create a roof ridge."));
             SortMenu(buildingToolsToShow);
             NotifyPropertyChanged("BuildingToolsToShow");
@@ -1199,12 +1199,12 @@ namespace Barnacle.ViewModels
         {
             decorativeToolsToShow = new List<ToolDef>();
             decorativeToolsToShow.Add(new ToolDef("Bicorn", true, "Bicorn", "Create a bicorn shape."));
-            decorativeToolsToShow.Add(new ToolDef("Squirkle", true, "Squirkle", "Create a squirkle shape."));
+            decorativeToolsToShow.Add(new ToolDef("Squirkle", true, "Squirkle", "Create a squirkle shape i.e. rectangle with one or more rounded corners."));
             decorativeToolsToShow.Add(new ToolDef("Trickle", true, "Trickle", "Create a trickle shape."));
             decorativeToolsToShow.Add(new ToolDef("Symbol", true, "Symbol", "Create an object from a symbol in a font."));
             decorativeToolsToShow.Add(new ToolDef("Text", true, "Text", "Create Text."));
             decorativeToolsToShow.Add(new ToolDef("Pill", true, "Pill", "Create Pill."));
-            decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a grayscale image."));
+            decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a black and white image."));
             SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
         }
@@ -1224,8 +1224,7 @@ namespace Barnacle.ViewModels
             loftedToolsToShow.Add(new ToolDef("Vase", true, "VaseLoft", "Create an object by vase lofting."));
             loftedToolsToShow.Add(new ToolDef("Two Shape", true, "TwoShape", "Loft a solid by connecting a top and bottom shape together."));
             loftedToolsToShow.Add(new ToolDef("Ring", true, "BezierRing", "Create a ring using bezier curves."));
-            loftedToolsToShow.Add(new ToolDef("Path", true, "PathLoft", "Dra an open flexipath which is lofted to a given height and thickness"));
-            //  loftedToolsToShow.Add(new ToolDef("Scribble", true, "Scribble", "Draw a polyline which is lofted upwards."));
+            loftedToolsToShow.Add(new ToolDef("Path", true, "PathLoft", "Draw a path which is lofted to a given height and thickness"));
             SortMenu(loftedToolsToShow);
             NotifyPropertyChanged("LoftedToolsToShow");
         }
@@ -1244,11 +1243,11 @@ namespace Barnacle.ViewModels
         {
             parametricToolsToShow = new List<ToolDef>();
             //parametricToolsToShow.Add(new ToolDef("Bezier Surface", true, "BezierSurface", "Create a surface using control points."));
-            parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
+            //parametricToolsToShow.Add(new ToolDef("Figure", true, "Figure", "Create a basic figure."));
             parametricToolsToShow.Add(new ToolDef("Reuleaux Polygon", true, "Reuleaux", "Create a Reuleaux polygon."));
             parametricToolsToShow.Add(new ToolDef("Parabolic Dish", true, "ParabolicDish", "Create a parabolic dish."));
             parametricToolsToShow.Add(new ToolDef("Parallelogram", true, "Parallelogram", "Create a parallelogram."));
-            parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly overlayed on an external image."));
+            parametricToolsToShow.Add(new ToolDef("Platelet", true, "Platelet", "Create an object from a polygon optionaly with holes."));
             parametricToolsToShow.Add(new ToolDef("Dual", true, "Dual", "Create an object from two polygons."));
             parametricToolsToShow.Add(new ToolDef("Squared Stadium", true, "SquaredStadium", "Create a stadium or sausage with one end a variable radius and the other square."));
 

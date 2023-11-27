@@ -361,11 +361,8 @@ namespace Barnacle.Models
             string ext = System.IO.Path.GetExtension(fileName).ToLower();
             if (ext == ".txt")
             {
-                DateTime st = DateTime.Now;
+                
                 Write(fileName);
-                DateTime end = DateTime.Now;
-                TimeSpan ts = end - st;
-                System.Diagnostics.Debug.WriteLine("txt = " + ts.TotalMilliseconds);
                 FilePath = fileName;
                 FileName = System.IO.Path.GetFileName(fileName);
                 Caption = FileName;
