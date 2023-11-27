@@ -2513,7 +2513,7 @@ namespace Barnacle.ViewModels
             PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
             Int32Collection icol = ob.TriangleIndices;
             SimpleSmoother sm = new SimpleSmoother(p3col, icol);
-            sm.Smooth(40, 0.05);
+            sm.Smooth(10, 0.3);
             PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
             ob.TriangleIndices = icol;
 

@@ -13,18 +13,44 @@ namespace SimpleSmoothLib
         private VertexAverage[] averagePoints;
         private Point3DCollection vertices;
         private Int32Collection faces;
+        public Int32Collection[] Neighbours;
 
         public SimpleSmoother(Point3DCollection v, Int32Collection f)
         {
             vertices = v;
             faces = f;
             averagePoints = new VertexAverage[vertices.Count];
+            Neighbours = new Int32Collection[vertices.Count];
+            for (int i = 0; i < vertices.Count; i++)
+            {
+                Neighbours[i] = new Int32Collection();
+            }
+
+            for (int findex = 0; findex < faces.Count; findex += 3)
+            {
+                if (findex + 2 < faces.Count)
+                {
+                    int a = faces[findex];
+                    int b = faces[findex + 1];
+                    int c = faces[findex + 2];
+                    CheckAdd(a, b, c);
+                    CheckAdd(b, a, c);
+                    CheckAdd(c, b, a);
+                }
+            }
+        }
+
+        private void CheckAdd(int a, int b, int c)
+        {
+            if (!Neighbours[a].Contains(b)) Neighbours[a].Add(b);
+            if (!Neighbours[a].Contains(c)) Neighbours[a].Add(c);
         }
 
         public void Smooth(int iterations, double mu)
         {
             for (int iter = 0; iter < iterations; iter++)
             {
+                double mu2 = mu;
                 for (int pass = 0; pass < 2; pass++)
                 {
                     averagePoints = new VertexAverage[vertices.Count];
@@ -33,30 +59,20 @@ namespace SimpleSmoothLib
                         averagePoints[i] = new VertexAverage();
                     }
 
-                    for (int findex = 0; findex < faces.Count; findex += 3)
+                    for (int i = 0; i < vertices.Count; i++)
                     {
-                        if (findex + 2 < faces.Count)
+                        foreach (int n in Neighbours[i])
                         {
-                            int a = faces[findex];
-                            int b = faces[findex + 1];
-                            int c = faces[findex + 2];
-                            averagePoints[a].Add(vertices[b]);
-                            averagePoints[a].Add(vertices[c]);
-
-                            averagePoints[b].Add(vertices[a]);
-                            averagePoints[b].Add(vertices[c]);
-
-                            averagePoints[c].Add(vertices[a]);
-                            averagePoints[c].Add(vertices[b]);
+                            averagePoints[i].Add(vertices[n]);
                         }
                     }
 
                     for (int i = 0; i < vertices.Count; i++)
                     {
-                        vertices[i] = Move(i, mu);
+                        vertices[i] = Move(i, mu2);
                     }
 
-                    mu = -mu;
+                    mu2 = -mu - 0.01;
                 }
             }
         }
