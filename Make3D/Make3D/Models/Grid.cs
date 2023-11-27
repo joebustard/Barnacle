@@ -5,7 +5,7 @@ using System.Windows.Media.Media3D;
 
 namespace Barnacle.Models
 {
-    public class Grid3D
+    public partial class Grid3D
     {
         private double length = 210;
 
@@ -45,7 +45,8 @@ namespace Barnacle.Models
         private void DefineModel(Model3DGroup group)
         {
             group.Children.Clear();
-            DefineText("Barnacle", group);
+            //DefineText("Barnacle", group);
+            DefineText( group);
             for (double x = -length; x <= length; x += 1)
             {
                 MeshGeometry3D xmesh = MakeCubeMesh(0, 0, 0, 1);
@@ -86,20 +87,53 @@ namespace Barnacle.Models
                 group.Children.Add(xmodel);
             }
         }
+        private void DefineText( Model3DGroup group)
+        {
+            Point3DCollection Vertices = new Point3DCollection();
+            Int32Collection Faces = new Int32Collection();
 
+            for ( int i = 0; i < tpnts.GetLength(0); i+= 3)
+            {
+                Vertices.Add(new Point3D(tpnts[i], tpnts[i + 1], tpnts[i + 2]+95));
+            }
+            for ( int i = 0; i <fnums.GetLength(0); i ++)
+            {
+                Faces.Add(fnums[i]);
+            }
+
+            GeometryModel3D gm = GetModel(Vertices, Faces);
+            group.Children.Add(gm);
+        }
         private void DefineText(string text, Model3DGroup group)
         {
             if (text != null && text != "")
             {
-                TextMaker mk = new TextMaker(text, "Tahoma", 60, 0.2, true, false, false);
+                TextMaker mk = new TextMaker(text, "Tahoma", 70, 0.2, true, false, false);
                 Point3DCollection Vertices = new Point3DCollection();
                 Int32Collection Faces = new Int32Collection();
                 mk.Generate(Vertices, Faces);
-                Vector3D v = new Vector3D(-30, 0.1, 85);
+                Vector3D v = new Vector3D(-35, 0.1, 80);
                 for (int i = 0; i < Vertices.Count; i++)
                 {
                     Vertices[i] += v;
                 }
+                /*
+                string tmp = @"
+                Point3DCollection BarnacleTextVertices = new Point3DCollection();
+                Int32Collection BarnacleTextFaces = new Int32Collection();
+                ";
+                for(int i = 0; i < Vertices.Count; i++)
+                {
+                    tmp += $"BarnacleTextVertices.Add(new Point3D({Vertices[i].X},{Vertices[i].Y},{Vertices[i].Z});\r\n";
+                }
+
+                for (int i = 0; i < Faces.Count; i++)
+                {
+                    tmp += $"BarnacleTextFaces.Add({Faces[i]});\r\n";
+                }
+                
+                System.IO.File.WriteAllText("c:\\tmp\\btext.txt", tmp);
+                */
                 GeometryModel3D gm = GetModel(Vertices, Faces);
                 group.Children.Add(gm);
             }

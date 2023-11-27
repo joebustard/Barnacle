@@ -18,6 +18,9 @@
     <UserControl.Resources>
         <Style TargetType="Custom:RibbonMenuItem"
                x:Key="ToolMenuItemStyle">
+            <Setter Property="FontSize"
+                    Value="18">
+            </Setter>
             <Setter Property="Header"
                     Value="{Binding Name}">
             </Setter>
@@ -30,6 +33,9 @@
         </Style>
         <Style TargetType="Custom:RibbonMenuItem"
                x:Key="ToolMenuItemStyleWithIcon">
+            <Setter Property="FontSize"
+                    Value="18">
+            </Setter>
             <Setter Property="Header"
                     Value="{Binding Name}">
             </Setter>
@@ -41,6 +47,8 @@
                     Value="{Binding IsActive}" />
             <Setter Property="ImageSource"
                     Value="{Binding ToolImage}" />
+            <Setter Property="ToolTip"
+                    Value="{Binding ToolTip}" />
         </Style>
     </UserControl.Resources>
     <Grid ScrollViewer.CanContentScroll="True">
@@ -904,12 +912,12 @@
                                              Label="Buildings"
                                              x:Name="BuildingsTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Buildings.png">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding DecorativeToolsToShow}"
                                              Label="Decorative"
                                              x:Name="DecorativeTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Decorative.png">
                     </Custom:RibbonMenuButton>
-                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyle}"
+                    <Custom:RibbonMenuButton ItemContainerStyle="{StaticResource ToolMenuItemStyleWithIcon}"
                                              ItemsSource="{Binding GrilleToolsToShow}"
                                              Label="Grille"
                                              x:Name="GrilleTools"  SmallImageSource="/Barnacle;component/Images/Buttons/Grille.png">

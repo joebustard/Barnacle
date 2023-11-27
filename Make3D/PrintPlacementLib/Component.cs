@@ -30,7 +30,7 @@ namespace PrintPlacementLib
         public Point3D OriginalPosition { get; set; }
         public Point3D Position { get; set; }
         public Object3D Shape { get; set; }
-
+        public List<Rect> FaceBounds { get; set; }
         internal void ExpandMap()
         {
             int newRows = Rows + 2;
@@ -56,7 +56,47 @@ namespace PrintPlacementLib
             Columns = newColumns;
             Map = bm;
         }
+        public void CalcFaceBounds()
+        {
+           FaceBounds = new List<Rect>();
+            for (int i = 0; i < Shape.TriangleIndices.Count; i += 3)
+            {
+                Point low = new Point(int.MaxValue, int.MaxValue);
+                Point high = new Point(int.MinValue, int.MinValue);
+                double X = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i]].X;
+                double Y = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i]].Y;
+                double Z = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i]].Z;
+                low.X = Math.Min(low.X, X);
+                low.Y = Math.Min(low.Y, Z);
 
+                high.X = Math.Max(high.X, X);
+                high.Y = Math.Max(high.Y, Z);
+
+                X = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i + 1]].X;
+                Y = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i + 1]].Y;
+                Z = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i + 1]].Z;
+                low.X = Math.Min(low.X, X);
+                low.Y = Math.Min(low.Y, Z);
+
+                high.X = Math.Max(high.X, X);
+                high.Y = Math.Max(high.Y, Z);
+
+                X = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i + 2]].X;
+                Y = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i + 2]].Y;
+                Z = Shape.AbsoluteObjectVertices[Shape.TriangleIndices[i + 2]].Z;
+                low.X = Math.Min(low.X, X);
+                low.Y = Math.Min(low.Y, Z);
+
+                high.X = Math.Max(high.X, X);
+                high.Y = Math.Max(high.Y, Z);
+                low.X -= 0.1;
+                low.Y -= 0.1;
+                high.X += 0.1;
+                high.Y += 0.1;
+                Rect bnd = new Rect(low, high);
+                FaceBounds.Add(bnd);
+            }
+        }
         internal double Score(int row, int column, int maxRow, int maxCol, Bounds3D bedBounds)
         {
             double score = double.MaxValue;
@@ -64,6 +104,7 @@ namespace PrintPlacementLib
             if ((row + Rows < maxRow) &&
                  (column + Columns < maxCol))
             {
+            /*
                 Bounds3D scoreBounds = new Bounds3D(bedBounds);
                 int lr = row - (int)(lowOffY / Clearance);
                 int lc = column - (int)(lowOffX / Clearance);
@@ -73,8 +114,8 @@ namespace PrintPlacementLib
                 int uc = column - (int)(highOffX / Clearance);
                 scoreBounds.Adjust(new Point3D(uc, 0, ur));
                 score = scoreBounds.Width * scoreBounds.Depth;
-
-                /*
+                */
+                
                 // convert the row and col back to a real position
                 Point orig = new Point(column * Clearance, row * Clearance);
 
@@ -86,14 +127,15 @@ namespace PrintPlacementLib
                 double d2 = Math.Sqrt((tx - p2.X) * (tx - p2.X) + (ty - p2.Y) * (ty - p2.Y));
                 score = Math.Max(d1, d2);
 
-                score = Math.Sqrt((tx - orig.X) * (tx - orig.X) + (ty - orig.Y) * (ty - orig.Y));
-                 */
+              //  score = Math.Sqrt((tx - orig.X) * (tx - orig.X) + (ty - orig.Y) * (ty - orig.Y));
+                
             }
             return score;
         }
 
         internal void SetMap()
         {
+            CalcFaceBounds();
             lowOffX = OriginalPosition.X - LowBound.X;
             lowOffY = OriginalPosition.Z - LowBound.Z;
             highOffX = HighBound.X - OriginalPosition.X;
@@ -101,8 +143,11 @@ namespace PrintPlacementLib
             Density = 0;
             if (Shape != null && Clearance > 0)
             {
-                Columns = (int)(Math.Ceiling((HighBound.X - LowBound.X) / Clearance));
-                Rows = (int)(Math.Ceiling((HighBound.Z - LowBound.Z) / Clearance));
+                //Columns = (int)(Math.Ceiling((HighBound.X - LowBound.X) / Clearance));
+                //Rows = (int)(Math.Ceiling((HighBound.Z - LowBound.Z) / Clearance));
+
+                Columns = (int)(Math.Ceiling(Shape.AbsoluteBounds.Width / Clearance));
+                Rows = (int)(Math.Ceiling((Shape.AbsoluteBounds.Depth) / Clearance));
                 if (Columns > 0 && Rows > 0)
                 {
                     double rayY = LowBound.Y - 1;
@@ -145,7 +190,7 @@ namespace PrintPlacementLib
                             }
                         }
                     }
-                    // Map.Dump();
+                    // Map.Dump( Shape.Name);
                     Density = Rows * Columns; // test
                 }
             }
@@ -164,19 +209,25 @@ namespace PrintPlacementLib
             double t = 0;
             Vector3D position = new Vector3D(x, rayY, z);
             Vector3D upwards = new Vector3D(0, 1, 0);
+            int faceNum = 0;
             while (faceIndex < model.TriangleIndices.Count && res == false)
             {
-                int f0 = model.TriangleIndices[faceIndex];
-                int f1 = model.TriangleIndices[faceIndex + 1];
-                int f2 = model.TriangleIndices[faceIndex + 2];
-                Vector3D v0 = new Vector3D(model.Positions[f0].X, model.Positions[f0].Y, model.Positions[f0].Z);
-                Vector3D v1 = new Vector3D(model.Positions[f1].X, model.Positions[f1].Y, model.Positions[f1].Z);
-                Vector3D v2 = new Vector3D(model.Positions[f2].X, model.Positions[f2].Y, model.Positions[f2].Z);
-                if (Utils.RayTriangleIntersect(position, upwards, v0, v1, v2, out t))
+                Rect r = FaceBounds[faceNum];
+                if (x >= r.Left && x < r.Right && z <= r.Bottom && z >= r.Top)
                 {
-                    res = true;
+                    int f0 = model.TriangleIndices[faceIndex];
+                    int f1 = model.TriangleIndices[faceIndex + 1];
+                    int f2 = model.TriangleIndices[faceIndex + 2];
+                    Vector3D v0 = new Vector3D(model.Positions[f0].X, model.Positions[f0].Y, model.Positions[f0].Z);
+                    Vector3D v1 = new Vector3D(model.Positions[f1].X, model.Positions[f1].Y, model.Positions[f1].Z);
+                    Vector3D v2 = new Vector3D(model.Positions[f2].X, model.Positions[f2].Y, model.Positions[f2].Z);
+                    if (Utils.RayTriangleIntersect(position, upwards, v0, v1, v2, out t))
+                    {
+                        res = true;
+                    }
                 }
                 faceIndex += 3;
+                faceNum++;
             }
             return res;
         }

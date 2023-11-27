@@ -8,6 +8,7 @@ namespace TemplateLib
     {
         internal String Name { get; set; }
         internal String Description { get; set; }
+        internal String InitialFile { get; set; }
         internal List<ProjectTemplateFolder> folders;
 
         internal List<ProjectTemplateFolder> Folders
@@ -40,6 +41,7 @@ namespace TemplateLib
         {
             Name = String.Empty;
             Description = String.Empty;
+            InitialFile = String.Empty;
             Folders = new List<ProjectTemplateFolder>();
             substitutions = new List<TemplateSubstitution>();
         }
@@ -58,6 +60,11 @@ namespace TemplateLib
             if (des != null)
             {
                 Description = des.InnerText.Trim();
+            }
+            XmlNode inif = nd.SelectSingleNode("InitialFile");
+            if (inif != null)
+            {
+                InitialFile = inif.InnerText.Trim();
             }
             XmlNodeList flds = ele.SelectNodes("Folder");
             foreach (XmlNode fl in flds)

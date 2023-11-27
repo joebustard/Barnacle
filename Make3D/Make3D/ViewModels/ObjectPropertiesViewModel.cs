@@ -719,7 +719,7 @@ namespace Barnacle.ViewModels
                     }
                     else
                     {
-                        ObjectType = "Object3D";
+                        ObjectType = "Primitive";
                     }
                 }
             }

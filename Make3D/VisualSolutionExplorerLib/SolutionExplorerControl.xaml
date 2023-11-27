@@ -33,11 +33,13 @@
 
                 <Trigger Property="IsFocused" Value="True">
                     <Setter Property="Background" Value="Yellow" />
-                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Foreground" Value="Black" />
                 </Trigger>
                 <Trigger Property="IsFocused" Value="False">
                     <Setter Property="Background" Value="White" />
-                    <Setter Property="FontSize" Value="10" />
+                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="Foreground" Value="DarkBlue" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -52,12 +54,13 @@
                 </DataTrigger>
                 <Trigger Property="IsFocused" Value="True">
                     <Setter Property="Background" Value="Yellow" />
-                    <Setter Property="FontSize" Value="12" />
+                    <Setter Property="FontSize" Value="14" />
+                    <Setter Property="Foreground" Value="Black" />
                 </Trigger>
                 <Trigger Property="IsFocused" Value="False">
                     <Setter Property="Background" Value="White" />
                     <Setter Property="FontSize" Value="12" />
-                    <Setter Property="Foreground" Value="Black" />
+                    <Setter Property="Foreground" Value="DarkBlue" />
                 </Trigger>
             </Style.Triggers>
         </Style>

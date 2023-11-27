@@ -347,6 +347,11 @@ namespace VisualSolutionExplorer
             SharedProjectSettings.Write(solutionDoc, root);
             root.SetAttribute("Created", creationDate.ToString());
             solutionDoc.AppendChild(root);
+
+            XmlElement desEle = solutionDoc.CreateElement("Description");
+            desEle.InnerText = Description;
+            root.AppendChild(desEle);
+
             // The first project folder is a dummy one
             // Save its contents rather than it
             if (ProjectFolders != null && ProjectFolders.Count > 0)

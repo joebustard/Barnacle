@@ -6,10 +6,11 @@ Added
 	Round Grille Tool
 	Ctrl+S up|down|left|right shortcut keys for stacking
 	Ctrl+L up|down|left|right shortcut keys for alignment
-	Different Print Distribution object. Creates a more compact bed layout for printing 
+	Different Print Distribution method. Creates a more compact bed layout for printing 
 	An Octahedron primitive
 	Ctrl-X for cut
-
+	Initial file to open added to templates
+	Show object type (i.e. primitive, group etc) in object properties window
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
 	Somehow lost ability to rename file in solution. Fixed.
@@ -19,7 +20,8 @@ Changed
 	Make "Paste At" preserve the relative positions if there are multiple objects in the clipboard
 	Make "Paste" offer to replace object if a single one is selected as the target
 	Make Symbol use a simpler/faster algorithm and scale 
-	Delete key now does delete not cut
+	Delete key now does delete, not cut
+	Deleted the commands folder from the templates.
 
 v1.0.4
 ===========

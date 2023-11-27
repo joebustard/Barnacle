@@ -2,7 +2,7 @@
   <!--   Basic Template -->
   <ProjectDefinition Name="Basic">
     <Description>
-      Creates a basic folder structure with a single empty model file called untitled.txt.
+      A basic folder structure with a single empty model file called untitled.txt.
       You can add as many more models as you like.
       The folders are
       /export,  A place to save any STL files exported from the project
@@ -10,8 +10,8 @@
       /docs,    A place to store documentation such as design notes and build instructions
       /images,  A place to save any image files that will be used to create the model
       /scripts, A place to save any limpet scripts
-      /commands, A place for command files or batch files to help with the workflow
       These folders are simply placeholders.
+
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
       <File Name="Untitled.txt" Source="templates/blankmodel1_35.txt" />
@@ -20,20 +20,20 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-      <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
-    </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
     </Folder>
+    <InitialFile>
+      Untitled.txt
+    </InitialFile>
   </ProjectDefinition>
 
   <!--  Tank Model Template -->
   <ProjectDefinition Name="Tank Model">
     <Description>
-      Creates a  folder structure with empty 1/35 scale models for a typical tank model kit.
+      A folder structure with empty 1/35 scale models for a typical tank model kit.
       These are empty but are a good starting point for your tank project.
       The folders are
       /assemblies, A place to store sub assembly models
@@ -43,7 +43,7 @@
       /docs,       A place to store documentation such as design notes and build instructions
       /images,     A place to save any image files that will be used to create the model
       /scripts,    A place to save any limpet scripts.
-      /commands,   A place for command files or batch files to help with the workflow
+
     </Description>
 
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -81,12 +81,12 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-      <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
-    </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
       <File Name="GlobalDefinitions.txt" Source="templates/Tank/TankGlobals.txt" />
     </Folder>
+    <InitialFile>
+      Hull.txt
+    </InitialFile>
   </ProjectDefinition>
 
   <!--  Armoured Car Model Template -->
@@ -103,7 +103,6 @@
       /docs,       A place to store documentation such as design notes and build instructions
       /images,     A place to save any image files that will be used to create the model
       /scripts,    A place to save any limpet scripts
-      /commands,   A place for command files or batch files to help with the workflow
     </Description>
 
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -133,11 +132,11 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-      <File Name="ZipProject.cmd" Source="templates/ZipProject.cmd" />
-    </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
+    <InitialFile>
+      Body.txt
+    </InitialFile>
   </ProjectDefinition>
 
   <!--  Aircraft Model Template -->
@@ -153,7 +152,6 @@
       /images,       A place to save any image files that will be used to create the model
       /images/ribs,  A place to save rib images to create the fuselage
       /scripts,      A place to save any limpet scripts
-      /commands,     A place for command files or batch files to help with the workflow
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True"  AddSubs="True" AddFiles="True">
       <File Name="Fuselage.txt" Source="templates/blankmodel1_35.txt" />
@@ -182,11 +180,11 @@
     </Folder>
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True"  TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-      <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
-    </Folder>
     <Folder Name="Scripts" Run="True" Edit="True" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt">
     </Folder>
+    <InitialFile>
+      Fuselage.txt
+    </InitialFile>
   </ProjectDefinition>
 
   <!--   Model Building Template -->
@@ -201,7 +199,6 @@
       /docs,    A place to store documentation such as design notes and build instructions
       /images,  A place to save any image files that will be used to create the model
       /scripts, A place to save any limpet scripts
-      /commands, A place for command files or batch files to help with the workflow
       These folders are simply placeholders.
     </Description>
     <Folder Name="." Explorer="True" Clean="False" Export="True" AddSubs="True" AddFiles="True">
@@ -220,13 +217,13 @@
     <Folder Name="Images" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" />
     <Folder Name="Export" Explorer="True" Clean="True" Export="False" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="." />
     <Folder Name="Printer" Explorer="True" Clean="True" Export="True" AddSubs="False" AddFiles="False" AutoLoad="True" TimeDependency="Export" />
-    <Folder Name="Commands" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="cmd">
-      <File Name="ZipProject.cmd" Source="templates/Commands/ZipProject.cmd" />
-    </Folder>
     <Folder Name="Scripts" Explorer="True" Clean="False" Export="False" AddSubs="True" AddFiles="True" AutoLoad="True" Extension="lmp" Template="LimpetTemplate.txt" Run="True" Edit="True">
     </Folder>
     <Folder Name="Docs" Explorer="True" Export="False" AddSubs="True" AddFiles="True">
       <File Name="BillOfMaterials.xlsx" Source="templates/BillOfMaterials.xlsx" />
     </Folder>
+    <InitialFile>
+      FrontWall.txt
+    </InitialFile>
   </ProjectDefinition>
 </Defs>
