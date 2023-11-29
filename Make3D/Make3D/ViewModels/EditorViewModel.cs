@@ -2508,7 +2508,7 @@ namespace Barnacle.ViewModels
             PointUtils.PointCollectionToP3D(p3col, ob.RelativeObjectVertices);
             ob.TriangleIndices = icol;
             */
-
+            CheckPoint();
             Point3DCollection p3col = new Point3DCollection();
             PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
             Int32Collection icol = ob.TriangleIndices;
@@ -2518,6 +2518,7 @@ namespace Barnacle.ViewModels
             ob.TriangleIndices = icol;
 
             ob.Remesh();
+            Document.Dirty = true;
         }
 
         private async Task<bool> MakeGroup3D(string s)
