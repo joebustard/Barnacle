@@ -126,6 +126,7 @@ namespace Barnacle.ViewModels
             FoldCommand = new RelayCommand(OnFold);
             SettingsCommand = new RelayCommand(OnSettings);
             TextAlignmentCommand = new RelayCommand(OnTextAlignment);
+            MeshCutCommand = new RelayCommand(OnCutPlane);
             ToolCommand = new RelayCommand(OnTool);
 
             TwoShapeCommand = new RelayCommand(OnTwoShape);
@@ -189,6 +190,28 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnCutPlane(object obj)
+        {
+            string s = obj.ToString();
+            switch (s)
+            {
+                case "H":
+                    CutHorizontalPlane();
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        private void CutHorizontalPlane()
+        {
+            CutHorizontalPlaneDlg dlg = new CutHorizontalPlaneDlg();
+            if (dlg.ShowDialog() == true)
+            {
+            }
         }
 
         public ICommand AboutCommand { get; set; }
@@ -1009,7 +1032,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand TextAlignmentCommand { get; set; }
-
+        public ICommand MeshCutCommand { get; set; }
         public ICommand ToolCommand { get; set; }
 
         public Visibility ToolPaletteVisible

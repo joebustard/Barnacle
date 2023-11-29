@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
+    <Compile Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>
@@ -324,6 +325,7 @@
     <Compile Include="Models\Axies.cs" />
     <Compile Include="Models\CohenSutherland.cs" />
     <Compile Include="Models\GridData.cs" />
+    <Compile Include="Models\HorizontalPlane.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
@@ -504,6 +506,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
