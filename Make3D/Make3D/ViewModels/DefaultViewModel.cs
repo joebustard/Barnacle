@@ -194,24 +194,7 @@ namespace Barnacle.ViewModels
 
         private void OnCutPlane(object obj)
         {
-            string s = obj.ToString();
-            switch (s)
-            {
-                case "H":
-                    CutHorizontalPlane();
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        private void CutHorizontalPlane()
-        {
-            CutHorizontalPlaneDlg dlg = new CutHorizontalPlaneDlg();
-            if (dlg.ShowDialog() == true)
-            {
-            }
+            NotificationManager.Notify("CutPlane", obj);
         }
 
         public ICommand AboutCommand { get; set; }

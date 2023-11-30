@@ -32,30 +32,25 @@
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
                                 <Label VerticalAlignment="Center" Width="100">PlaneLevel</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding PlaneLevel}" Width="150" ToolTip="{Binding PlaneLevelToolTip}"/>
+                 <TextBox Margin="8,0,0,0" Text="{Binding PlaneLevel}" Width="150" ToolTip="{Binding PlaneLevelToolTip}" />
 
                 <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                
+                <Button x:Name="CutButton" Content="Cut" Width="80" Click="CutButton_Click" />
+                <Button x:Name="UncutButton" Margin="80,0,0,0" Content="UnCut" Width="80" Click="UncutButton_Click" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -115,4 +110,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

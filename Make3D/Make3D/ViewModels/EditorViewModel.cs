@@ -169,6 +169,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
             NotificationManager.Subscribe("Editor", "AddObjectToLibrary", OnAddObjectToLibrary);
             NotificationManager.Subscribe("Editor", "Mirror", OnMirror);
+            NotificationManager.Subscribe("Editor", "CutPlane", OnCutPlane);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -1410,6 +1411,49 @@ namespace Barnacle.ViewModels
             PointUtils.PointCollectionToP3D(checker.Points, ob.RelativeObjectVertices);
             ob.TriangleIndices = checker.Indices;
             ob.Remesh();
+        }
+
+        private void OnCutPlane(object obj)
+        {
+            bool warning = true;
+            if (selectedObjectAdorner != null)
+            {
+                if (selectedObjectAdorner.NumberOfSelectedObjects() == 1)
+                {
+                    warning = false;
+                    CheckPoint();
+                    Object3D ob = selectedObjectAdorner.SelectedObjects[0];
+                    string s = obj.ToString();
+                    switch (s)
+                    {
+                        case "H":
+
+                            CutHorizontalPlane(ob);
+
+                            break;
+
+                        default:
+                            break;
+                    }
+                }
+            }
+            if (warning)
+            {
+                MessageBox.Show("Requires a single object to be selected", "Warning");
+            }
+        }
+
+        private void CutHorizontalPlane(Object3D ob)
+        {
+            CutHorizontalPlaneDlg dlg = new CutHorizontalPlaneDlg();
+            Point3DCollection p3col = new Point3DCollection();
+            PointUtils.P3DToPointCollection(ob.RelativeObjectVertices, p3col);
+            dlg.OriginalVertices = p3col;
+            dlg.OriginalFaces = ob.TriangleIndices;
+
+            if (dlg.ShowDialog() == true)
+            {
+            }
         }
 
         private void AlignSelectedObjects(string s)

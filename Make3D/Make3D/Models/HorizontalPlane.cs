@@ -16,8 +16,10 @@ namespace Barnacle.Models
         private Int32Collection planeTriangleIndices;
 
         private Point3DCollection points;
+        private double width;
+        private double depth;
 
-        public HorizontalPlane(double planeLevel)
+        public HorizontalPlane(double planeLevel, double width, double depth)
         {
             points = new Point3DCollection(20);
             SetLocation(planeLevel);
@@ -25,6 +27,8 @@ namespace Barnacle.Models
        14, 15, 16, 17, 19, 17, 18, 19 };
 
             faces = new Int32Collection(indices);
+            this.width = width;
+            this.depth = depth;
             planeMesh = CreateMesh();
         }
 
@@ -128,8 +132,8 @@ namespace Barnacle.Models
 
         public void SetLocation(double v)
         {
-            double x = 210.0; // floor width / 2
-            double z = 210.0; // floor length / 2
+            double x = width / 2; // floor width / 2
+            double z = depth / 2; // floor length / 2
             double thick = -.1; // give the floor some depth so it's not a 2 dimensional plane
 
             points = new Point3DCollection(20);
