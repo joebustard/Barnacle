@@ -1453,6 +1453,14 @@ namespace Barnacle.ViewModels
 
             if (dlg.ShowDialog() == true)
             {
+                PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
+                ob.TriangleIndices.Clear();
+                foreach( int i in dlg.Faces)
+                {
+                    ob.TriangleIndices.Add(i);
+                    
+                }
+                ob.Remesh();
             }
         }
 

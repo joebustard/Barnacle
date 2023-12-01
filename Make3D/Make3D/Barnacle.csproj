@@ -122,6 +122,8 @@
     <Compile Include="Dialogs\ConstructionStrip\ConstructionStripDlg.xaml.cs" />
     <Compile Include="Dialogs\CurvedFunnel\CurvedFunnelDlg.xaml.cs" />
     <Compile Include="Dialogs\CutHPlane\CutHorizontalPlaneDlg.xaml.cs" />
+    <Compile Include="Dialogs\CutHPlane\EdgeProcessor.cs" />
+    <Compile Include="Dialogs\CutHPlane\EdgeRecord.cs" />
     <Compile Include="Dialogs\DecimatorSettings.xaml.cs">
       <DependentUpon>DecimatorSettings.xaml</DependentUpon>
     </Compile>

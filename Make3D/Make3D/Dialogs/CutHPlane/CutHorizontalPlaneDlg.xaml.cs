@@ -1,6 +1,8 @@
 using Barnacle.Models;
 using Barnacle.Object3DLib;
+using PolygonTriangulationLib;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
@@ -59,7 +61,7 @@ namespace Barnacle.Dialogs
         {
             get
             {
-                return $"PlaneLevel must be in the range {minplaneLevel} to {maxplaneLevel}";
+                return $"Plane Level must be in the range {minplaneLevel} to {maxplaneLevel}";
             }
         }
 
@@ -232,12 +234,12 @@ namespace Barnacle.Dialogs
         {
             bounds = new Bounds3D();
             bounds.Zero();
-            Vertices.Clear();
+            ClearShape();
             if (OriginalVertices != null)
             {
                 foreach (Point3D p in OriginalVertices)
                 {
-                    Vertices.Add(new Point3D(p.X, p.Y, p.Z));
+                    AddVertice(new Point3D(p.X, p.Y, p.Z));
                     bounds.Adjust(p);
                 }
             }
@@ -252,9 +254,12 @@ namespace Barnacle.Dialogs
             CentreVertices();
         }
 
+
         private void CutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
+            EdgeProcessor edgeProc = new EdgeProcessor();
+
             Int32Collection newFaces = new Int32Collection();
             for (int i = 0; i < Faces.Count; i += 3)
             {
@@ -300,6 +305,7 @@ namespace Barnacle.Dialogs
                                 newFaces.Add(a);
                                 newFaces.Add(b);
                                 newFaces.Add(c);
+                                edgeProc.Add(b, c);
                             }
                             else if (bUp)
                             {
@@ -307,6 +313,7 @@ namespace Barnacle.Dialogs
                                 newFaces.Add(b);
                                 newFaces.Add(c);
                                 newFaces.Add(a);
+                                edgeProc.Add(c, a);
                             }
                             else if (cUp)
                             {
@@ -314,19 +321,59 @@ namespace Barnacle.Dialogs
                                 newFaces.Add(c);
                                 newFaces.Add(a);
                                 newFaces.Add(b);
+                                edgeProc.Add(a, b);
                             }
                         }
                         break;
 
                     case 2:
                         {
-                            //all three points of trinagle are on or below the cut plane
+                            // two points are above the cut plane
+                            if (aUp && bUp)
+                            {
+                                int dp = CrossingPoint(b, c);
+                                int ep = CrossingPoint(a, c);
+                                newFaces.Add(a);
+                                newFaces.Add(b);
+                                newFaces.Add(dp);
+
+                                newFaces.Add(a);
+                                newFaces.Add(dp);
+                                newFaces.Add(ep);
+                                edgeProc.Add(dp, ep);
+                            }
+                            else if (bUp && cUp)
+                            {
+                                int dp = CrossingPoint(c, a);
+                                int ep = CrossingPoint(a, b);
+                                newFaces.Add(b);
+                                newFaces.Add(c);
+                                newFaces.Add(dp);
+
+                                newFaces.Add(b);
+                                newFaces.Add(dp);
+                                newFaces.Add(ep);
+                                edgeProc.Add(dp, ep);
+                            }
+                            else if (cUp && aUp)
+                            {
+                                int dp = CrossingPoint(a, b);
+                                int ep = CrossingPoint(b, c);
+                                newFaces.Add(a);
+                                newFaces.Add(dp);
+                                newFaces.Add(c);
+
+                                newFaces.Add(c);
+                                newFaces.Add(dp);
+                                newFaces.Add(ep);
+                                edgeProc.Add(dp, ep);
+                            }
                         }
                         break;
 
                     case 3:
                         {
-                            //all three points of trinagle are above the cut plane
+                            //all three points of triangle are above the cut plane
                             // entire triangle should be taken as is
                             newFaces.Add(a);
                             newFaces.Add(b);
@@ -335,12 +382,62 @@ namespace Barnacle.Dialogs
                         break;
                 }
             }
+            bool moreLoops = true;
+            while (moreLoops)
+            {
+                moreLoops = false;
+                List<EdgeRecord> loop = edgeProc.MakeLoop();
+                if (loop.Count > 3)
+                {
+                    TriangulationPolygon ply = new TriangulationPolygon();
+                    List<System.Drawing.PointF> pf = new List<System.Drawing.PointF>();
+                    foreach (EdgeRecord er in loop)
+                    {
+                        Point3D p = Vertices[er.Start];
+                        pf.Add(new System.Drawing.PointF((float)p.X, (float)p.Z));
+                    }
+                    ply.Points = pf.ToArray();
+                    List<Triangle> tris = ply.Triangulate();
+                    foreach (Triangle t in tris)
+                    {
+                        int c0 = AddVertice(t.Points[0].X, planeLevel, t.Points[0].Y);
+                        int c1 = AddVertice(t.Points[1].X, planeLevel, t.Points[1].Y);
+                        int c2 = AddVertice(t.Points[2].X, planeLevel, t.Points[2].Y);
+                        newFaces.Add(c0);
+                        newFaces.Add(c1);
+                        newFaces.Add(c2);
+                    }
+                }
+                if ( loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
+                {
+                    moreLoops = true;
+                }
+
+            }
             Faces.Clear();
             foreach (int j in newFaces)
             {
                 Faces.Add(j);
             }
+
             UpdateDisplay();
+        }
+
+        private int CrossingPoint(int a, int b)
+        {
+            double t;
+            double x0 = Vertices[a].X;
+            double y0 = Vertices[a].Y;
+            double z0 = Vertices[a].Z;
+            double x1 = Vertices[b].X;
+            double y1 = Vertices[b].Y;
+            double z1 = Vertices[b].Z;
+            t = (planeLevel - y0) / (y1 - y0);
+
+            double x = x0 + t * (x1 - x0);
+            double z = z0 + t * (z1 - z0);
+            int res = AddVertice(x, planeLevel, z);
+            return res;
         }
 
         private void MakeTri1(int a, ref int b, ref int c)

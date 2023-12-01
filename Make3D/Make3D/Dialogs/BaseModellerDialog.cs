@@ -863,7 +863,7 @@ namespace Barnacle.Dialogs
             }
             return res;
         }
-
+        
         protected int AddVertice(Point3D v)
         {
             int res = -1;
