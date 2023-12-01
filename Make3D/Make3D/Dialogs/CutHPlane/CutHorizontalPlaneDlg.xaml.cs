@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -30,6 +31,46 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
             planeLevel = 5;
+        }
+
+        protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    lastHitModel = null;
+
+                    oldMousePos = e.GetPosition(vp);
+                    HitTest(vp, oldMousePos);
+                }
+            }
+        }
+
+        protected override void Viewport_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            Viewport3D vp = sender as Viewport3D;
+            if (vp != null)
+            {
+                if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    Point pn = e.GetPosition(vp);
+                    double dx = pn.X - oldMousePos.X;
+                    double dy = pn.Y - oldMousePos.Y;
+                    if (plane.Matches(lastHitModel))
+                    {
+                        PlaneLevel -= dy;
+                    }
+                    else
+                    {
+                        Camera.Move(dx, -dy);
+                        UpdateCameraPos();
+                    }
+                    oldMousePos = pn;
+                    e.Handled = true;
+                }
+            }
         }
 
         public double PlaneLevel
@@ -254,7 +295,6 @@ namespace Barnacle.Dialogs
             CentreVertices();
         }
 
-
         private void CutButton_Click(object sender, RoutedEventArgs e)
         {
             RestoreOriginal();
@@ -408,11 +448,10 @@ namespace Barnacle.Dialogs
                         newFaces.Add(c2);
                     }
                 }
-                if ( loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
+                if (loop.Count != 0 && edgeProc.EdgeRecords.Count > 0)
                 {
                     moreLoops = true;
                 }
-
             }
             Faces.Clear();
             foreach (int j in newFaces)
