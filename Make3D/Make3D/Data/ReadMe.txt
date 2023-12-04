@@ -9,8 +9,10 @@ Added
 	Different Print Distribution method. Creates a more compact bed layout for printing 
 	An Octahedron primitive
 	Ctrl-X for cut
-	Initial file to open added to templates
+	Name of initial file to open added to templates
 	Show object type (i.e. primitive, group etc) in object properties window
+	Cut all faces and vertices of object below a moveable horizontal plane
+
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
 	Somehow lost ability to rename file in solution. Fixed.

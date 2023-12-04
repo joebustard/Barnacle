@@ -58,6 +58,7 @@
         </Grid>
         <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
             <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
+            MouseUp="Viewport_MouseUp"
               MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
 
                 <Viewport3D.Camera>

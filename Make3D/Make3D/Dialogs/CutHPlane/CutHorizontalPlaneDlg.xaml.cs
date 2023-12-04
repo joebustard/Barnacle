@@ -22,7 +22,8 @@ namespace Barnacle.Dialogs
         private HorizontalPlane plane;
         private double planeLevel;
         private string warningText;
-
+        private bool planeSelected;
+        private DpiScale dpi;
         public CutHorizontalPlaneDlg()
         {
             InitializeComponent();
@@ -31,8 +32,15 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
             planeLevel = 5;
+            planeSelected = false;
+            dpi = VisualTreeHelper.GetDpi(this);
         }
 
+
+        private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            planeSelected = true;
+        }
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -44,6 +52,15 @@ namespace Barnacle.Dialogs
 
                     oldMousePos = e.GetPosition(vp);
                     HitTest(vp, oldMousePos);
+                    if (plane.Matches(lastHitModel))
+                    {
+                        planeSelected = true;
+                    }
+
+                    if (floor.Matches(lastHitModel) || grid.Matches(lastHitModel))
+                    {
+                        planeSelected = false;
+                    }
                 }
             }
         }
@@ -58,9 +75,18 @@ namespace Barnacle.Dialogs
                     Point pn = e.GetPosition(vp);
                     double dx = pn.X - oldMousePos.X;
                     double dy = pn.Y - oldMousePos.Y;
-                    if (plane.Matches(lastHitModel))
+                    if (planeSelected)
                     {
-                        PlaneLevel -= dy;
+                     double ny = PlaneLevel - (dy / dpi.PixelsPerInchY * 25.4);
+                        if ( ny < 0)
+                        {
+                            ny =0;
+                        }
+                        else if (ny > bounds.Height)
+                        {
+                            ny = Height;
+                        }
+                        PlaneLevel = ny;
                     }
                     else
                     {
@@ -166,7 +192,6 @@ namespace Barnacle.Dialogs
 
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
-            //  SaveEditorParmeters();
             DialogResult = true;
             Close();
         }
@@ -206,22 +231,9 @@ namespace Barnacle.Dialogs
 
         private void GenerateShape()
         {
-            //    ClearShape();
-            //       CutHorizontalPlaneMaker maker = new CutHorizontalPlaneMaker(
-            //           planeLevel
-            //           );
-            //       maker.Generate(Vertices, Faces);
-            // CentreVertices();
+
         }
 
-        /*
-                private void LoadEditorParameters()
-                {
-                    // load back the tool specific parameters
-
-                    PlaneLevel = EditorParameters.GetDouble("PlaneLevel", 0);
-                }
-                */
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
         {
@@ -229,14 +241,6 @@ namespace Barnacle.Dialogs
             UpdateDisplay();
         }
 
-        /*
-        private void SaveEditorParmeters()
-        {
-            // save the parameters for the tool
-
-            EditorParameters.Set("PlaneLevel", PlaneLevel.ToString());
-        }
-        */
 
         private void SetDefaults()
         {
@@ -260,7 +264,6 @@ namespace Barnacle.Dialogs
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
-            //    LoadEditorParameters();
 
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
@@ -276,22 +279,27 @@ namespace Barnacle.Dialogs
             bounds = new Bounds3D();
             bounds.Zero();
             ClearShape();
-            if (OriginalVertices != null)
-            {
-                foreach (Point3D p in OriginalVertices)
-                {
-                    AddVertice(new Point3D(p.X, p.Y, p.Z));
-                    bounds.Adjust(p);
-                }
-            }
-            Faces.Clear();
             if (OriginalFaces != null)
             {
                 foreach (int i in OriginalFaces)
                 {
-                    Faces.Add(i);
+                    Point3D p = OriginalVertices[i];
+                    bounds.Adjust(p);
+                    int k = AddVertice(p);
+                    Faces.Add(k);
                 }
             }
+            /*
+            if (OriginalVertices != null)
+            {
+                foreach (Point3D p in OriginalVertices)
+                {
+                    
+                    bounds.Adjust(p);
+                }
+            }
+           */
+          
             CentreVertices();
         }
 
@@ -453,10 +461,16 @@ namespace Barnacle.Dialogs
                     moreLoops = true;
                 }
             }
-            Faces.Clear();
+            
+            Point3DCollection allPoints = Vertices;
+            Vertices = new Point3DCollection();
+            ClearShape();
+            
+
             foreach (int j in newFaces)
             {
-                Faces.Add(j);
+                int v = AddVertice(allPoints[j]);
+                Faces.Add(v);
             }
 
             UpdateDisplay();

@@ -354,9 +354,9 @@
                                              SmallImageSource="/Barnacle;component/Images/Buttons/export.png"
                                              x:Name="Slice" IsEnabled="{Binding EditingActive}">
 
-                        <Custom:RibbonMenuItem x:Name="SliceProject" Header="Project" Command="{Binding SliceCommand}" CommandParameter="SliceProject" HorizontalAlignment="Stretch" VerticalAlignment="Top" ImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export all files to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
+                        <Custom:RibbonMenuItem x:Name="SliceProject" Header="Project" Command="{Binding SliceCommand}" CommandParameter="SliceProject" HorizontalAlignment="Stretch" VerticalAlignment="Top" ImageSource="/Barnacle;component/Images/Buttons/SliceProject.png" ToolTip="Export all files to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
 
-                        <Custom:RibbonMenuItem x:Name="SliceOneModel" Header="Model" Command="{Binding SliceCommand}" CommandParameter="SliceModel" HorizontalAlignment="Stretch" VerticalAlignment="Top" ImageSource="/Barnacle;component/Images/Buttons/cut.png" ToolTip="Export current file to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
+                        <Custom:RibbonMenuItem x:Name="SliceOneModel" Header="Model" Command="{Binding SliceCommand}" CommandParameter="SliceModel" HorizontalAlignment="Stretch" VerticalAlignment="Top" ImageSource="/Barnacle;component/Images/Buttons/SliceModel.png" ToolTip="Export current file to stl, slice with CuraEngine" IsEnabled="{Binding CanSlice}" />
 
                         <Custom:RibbonSeparator />
                     </Custom:RibbonMenuButton>

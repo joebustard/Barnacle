@@ -57,7 +57,15 @@ namespace Barnacle.Object3DLib
         // Its vertices are absolute, i.e. have been translated
         // and rotated etc.
         private MeshGeometry3D surfaceMesh;
-
+        private Transform3DGroup rotTransformation;
+        public Transform3DGroup RotationTransformation
+        {
+            get { return rotTransformation; }
+            set
+            {
+                rotTransformation = value;
+            }
+        }
         private Int32Collection triangleIndices;
 
         public Object3D()
@@ -81,6 +89,7 @@ namespace Barnacle.Object3DLib
                 XmlType = "obj";
                 Name = "";
                 Description = "";
+                rotTransformation = null;
             }
             catch (Exception ex)
             {
@@ -882,6 +891,41 @@ namespace Barnacle.Object3DLib
             }
         }
 
+        /*
+        public void CreateTransformation()
+        {
+            transforms = new Transform3DGroup();
+            aar1 = new AxisAngleRotation3D(new Vector3D(1, 0, 0), 0);
+            rt1 = new RotateTransform3D(aar1);
+            aar2 = new AxisAngleRotation3D(new Vector3D(0, 1, 0), 0);
+            rt2 = new RotateTransform3D(aar2);
+            aar3 = new AxisAngleRotation3D(new Vector3D(0, 0, 1), 0);
+            rt3 = new RotateTransform3D(aar3);
+            transforms.Children.Add(rt1);
+            transforms.Children.Add(rt2);
+            transforms.Children.Add(rt3);
+            rotTransformation = transforms;
+        }
+        private Transform3DGroup transforms;
+        private RotateTransform3D rt1;
+        private RotateTransform3D rt2;
+        private RotateTransform3D rt3;
+        private AxisAngleRotation3D aar1;
+        private AxisAngleRotation3D aar2;
+        private AxisAngleRotation3D aar3;
+        public void RotateByTransform(Point3D RotateBy)
+        {
+            double r1 = DegreesToRad(RotateBy.X);
+            double r2 = DegreesToRad(RotateBy.Y);
+            double r3 = DegreesToRad(RotateBy.Z);
+            if (relativeObjectVertices != null)
+            {
+                aar1.Angle += RotateBy.X ;
+                aar2.Angle += RotateBy.Y ;
+                aar3.Angle += RotateBy.Z ;
+            }
+        }
+        */
         public void RotateRad(Point3D Rotation)
         {
             if (relativeObjectVertices != null)
@@ -893,6 +937,7 @@ namespace Barnacle.Object3DLib
                 relativeObjectVertices = RotatePoints(relativeObjectVertices, r1, r2, r3);
             }
         }
+        
 
         public void RotateRad2(Point3D Rotation)
         {

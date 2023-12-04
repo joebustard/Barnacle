@@ -170,6 +170,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "AddObjectToLibrary", OnAddObjectToLibrary);
             NotificationManager.Subscribe("Editor", "Mirror", OnMirror);
             NotificationManager.Subscribe("Editor", "CutPlane", OnCutPlane);
+            NotificationManager.Subscribe("Editor", "UpdateModels", OnUpdateModels);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -186,6 +187,12 @@ namespace Barnacle.ViewModels
             RegenerateDisplayList();
         }
 
+        private void OnUpdateModels(object param)
+        {
+            NotifyPropertyChanged("ModelItems");
+        }
+
+        
         private void BuildVolumeChanged(object param)
         {
             bool b = (bool)param;
@@ -1350,7 +1357,7 @@ namespace Barnacle.ViewModels
         {
             GeometryModel3D gm = new GeometryModel3D();
             gm.Geometry = obj.Mesh;
-
+            gm.Transform = obj.RotationTransformation;
             DiffuseMaterial mt = new DiffuseMaterial();
             mt.Color = obj.Color;
             mt.Brush = new SolidColorBrush(obj.Color);
@@ -1460,6 +1467,7 @@ namespace Barnacle.ViewModels
                     ob.TriangleIndices.Add(i);
                     
                 }
+             //   RemoveDuplicateVertices(ob);
                 ob.Remesh();
             }
         }
