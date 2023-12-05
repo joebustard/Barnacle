@@ -1211,6 +1211,7 @@ namespace Barnacle.ViewModels
             decorativeToolsToShow.Add(new ToolDef("Text", true, "Text", "Create Text."));
             decorativeToolsToShow.Add(new ToolDef("Pill", true, "Pill", "Create Pill."));
             decorativeToolsToShow.Add(new ToolDef("Image Plaque", true, "ImagePlaque", "Create a plaque from a black and white image."));
+            decorativeToolsToShow.Add(new ToolDef("Clay", true, "ClaySculpt", "Sculpt a simple organic shape in clay."));
             SortMenu(decorativeToolsToShow);
             NotifyPropertyChanged("DecorativeToolsToShow");
         }

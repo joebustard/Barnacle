@@ -107,8 +107,9 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir $(TargetDir)templates
-copy /Y $(SolutionDir)DlgMaker\templates\*.* $(TargetDir)templates
+    <PostBuildEvent>echo $(TargetDir)templates
+mkdir "$(TargetDir)templates"
+copy /Y "$(SolutionDir)DlgMaker\templates\*.*"  "$(TargetDir)templates"
 exit 0</PostBuildEvent>
   </PropertyGroup>
 </Project>

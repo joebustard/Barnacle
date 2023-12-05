@@ -988,6 +988,8 @@
                                              ToolTip="Cut all faces below a horizontal plane."
                                              VerticalAlignment="Top"
                                              x:Name="MeshCutHButton" />
+
+                        
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
                         <Custom:RibbonMenuItem Command="{Binding SizeCommand}"

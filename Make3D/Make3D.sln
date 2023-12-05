@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.34112.143
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33529.622
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -189,7 +189,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8DDF64C0-825D-432D-936A-3F663E028B34} = {323F3CC6-E104-45FD-A151-3F9F4AFE3310}
-		{115C80BA-044E-46CC-8E08-A74053D818F4} = {323F3CC6-E104-45FD-A151-3F9F4AFE3310}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9DC34FB4-3688-4F70-9473-343F51F6D500}

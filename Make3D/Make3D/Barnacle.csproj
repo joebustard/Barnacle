@@ -116,6 +116,7 @@
     <Compile Include="Dialogs\BusyControl.xaml.cs">
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\ClaySculpt\ClaySculptDlg.xaml.cs" />
     <Compile Include="Dialogs\ConfirmObjectName\ConfirmObjectNameDlg.xaml.cs">
       <DependentUpon>ConfirmObjectNameDlg.xaml</DependentUpon>
     </Compile>
@@ -498,6 +499,10 @@
     <Page Include="Dialogs\BusyControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ClaySculpt\ClaySculptDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\ConfirmObjectName\ConfirmObjectNameDlg.xaml">
       <SubType>Designer</SubType>
@@ -1049,6 +1054,10 @@
     <ProjectReference Include="..\PrintPlacementLib\PrintPlacementLib.csproj">
       <Project>{816C26CE-4F6B-4F3B-A72D-B570BF8D692F}</Project>
       <Name>PrintPlacementLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\sdflib\sdflib.csproj">
+      <Project>{115c80ba-044e-46cc-8e08-a74053d818f4}</Project>
+      <Name>sdflib</Name>
     </ProjectReference>
     <ProjectReference Include="..\SimpleSmoothLib\SimpleSmoothLib.csproj">
       <Project>{BF2A8A31-2618-4A3C-A061-E8968F77586D}</Project>

@@ -47,6 +47,10 @@ namespace Barnacle.Models
                     res = new CanvasWingDlg();
                     break;
 
+                case "ClaySculpt":
+                    res = new ClaySculptDlg();
+                    break;
+
                 case "CurvedFunnel":
                     res = new CurvedFunnelDlg();
                     break;

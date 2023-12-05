@@ -17,11 +17,11 @@ namespace DlgMaker
 ";
 
         private static string ctrCombo = @"                <Label VerticalAlignment=""Center"" Width=""100""><pName></Label>
-                 <ComboBox Margin=""8,0,0,0"" SelectedItem=""{Binding <pName>}"" Items=""{Binding <pName>Items}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
+                 <ComboBox Margin=""8,0,0,0"" SelectedItem=""{Binding <pName>}"" ItemsSource=""{Binding <pName>Items}"" Width=""150"" ToolTip=""{Binding <pName>ToolTip}""/>
 ";
 
         private static string ldrb = @"
-           <pName>= EditorParameters.GetBool(""<pName>"",<pinitial>);
+           <pName>= EditorParameters.GetBoolean(""<pName>"",<pinitial>);
 
 ";
 
