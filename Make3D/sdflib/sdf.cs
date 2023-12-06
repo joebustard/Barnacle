@@ -46,14 +46,14 @@ namespace sdflib
             double yd = y - Math.Floor(y);
             double zd = z - Math.Floor(z);
             double c000 = Get((int)x, (int)y, (int)z);
-            double c110 = Get((int)x+1, (int)y, (int)z);
-            double c010 = Get((int)x, (int)y+1, (int)z);
-            double c100 = Get((int)x + 1, (int)y+1, (int)z);
-            double c001 = Get((int)x, (int)y, (int)z+1);
+            double c110 = Get((int)x + 1, (int)y, (int)z);
+            double c010 = Get((int)x, (int)y + 1, (int)z);
+            double c100 = Get((int)x + 1, (int)y + 1, (int)z);
+            double c001 = Get((int)x, (int)y, (int)z + 1);
             double c111 = Get((int)x + 1, (int)y, (int)z + 1);
             double c011 = Get((int)x, (int)y + 1, (int)z + 1);
             double c101 = Get((int)x + 1, (int)y + 1, (int)z + 1);
-            double c00 = c000 * ( 1 -xd)+ c100 * xd;
+            double c00 = c000 * (1 - xd) + c100 * xd;
             double c01 = c001 * (1 - xd) + c101 * xd;
             double c10 = c010 * (1 - xd) + c110 * xd;
             double c11 = c011 * (1 - xd) + c111 * xd;
@@ -105,13 +105,24 @@ namespace sdflib
             int ny = 0;
             int nz = 0;
             sdf.GetDimensions(ref nx, ref ny, ref nz);
-            for (int ix = 0; ix < nx && (x + ix) < columns; ix++)
+            int lx = -nx / 2;
+            int hx = nx / 2;
+            int ly = -ny / 2;
+            int hy = ny / 2;
+            int lz = -nz / 2;
+            int hz = nz / 2;
+            for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
             {
-                for (int iy = 0; iy < ny && (y + iy) < rows; iy++)
+                for (int iy = ly; iy < hy && (y + iy) < rows; iy++)
                 {
-                    for (int iz = 0; iz < nz && (z + iz) < planes; iz++)
+                    for (int iz = lz; iz < hz && (z + iz) < planes; iz++)
                     {
-                        distances[y + iy, x + ix, z + iz] = Math.Min(distances[y + iy, x + ix, z + iz], sdf.Get(iy, ix, iz));
+                        if ((y + iy >= 0 && y + iy < rows) &&
+                            (x + ix >= 0 && x + ix < columns) &&
+                            (z + iz >= 0 && z + iz < planes))
+                        {
+                            distances[y + iy, x + ix, z + iz] = Math.Min(distances[y + iy, x + ix, z + iz], sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                        }
                     }
                 }
             }

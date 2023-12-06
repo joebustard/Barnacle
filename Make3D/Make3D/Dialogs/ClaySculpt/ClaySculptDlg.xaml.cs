@@ -34,6 +34,7 @@ namespace Barnacle.Dialogs
         private double toolsSize;
         private double toolStrength;
         private string warningText;
+
         public ClaySculptDlg()
         {
             InitializeComponent();
@@ -93,11 +94,9 @@ namespace Barnacle.Dialogs
             {
                 if (toolInverse != value)
                 {
-
                     toolInverse = value;
                     NotifyPropertyChanged();
                     UpdateDisplay();
-
                 }
             }
         }
@@ -123,6 +122,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public ObservableCollection<String> ToolShapeItems
         {
             get { return toolShapeItems; }
@@ -141,6 +141,7 @@ namespace Barnacle.Dialogs
         {
             get { return "ToolShape Text"; }
         }
+
         public double ToolsSize
         {
             get
@@ -160,6 +161,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String ToolsSizeToolTip
         {
             get
@@ -167,6 +169,7 @@ namespace Barnacle.Dialogs
                 return $"ToolsSize must be in the range {mintoolsSize} to {maxtoolsSize}";
             }
         }
+
         public double ToolStrength
         {
             get
@@ -186,6 +189,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         public String ToolStrengthToolTip
         {
             get
@@ -193,6 +197,7 @@ namespace Barnacle.Dialogs
                 return $"ToolStrength must be in the range {mintoolStrength} to {maxtoolStrength}";
             }
         }
+
         public string WarningText
         {
             get
@@ -241,10 +246,9 @@ namespace Barnacle.Dialogs
 
                 clayModel = GetModel();
                 ModelGroup.Children.Add(clayModel);
-
-
             }
         }
+
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -266,6 +270,16 @@ namespace Barnacle.Dialogs
                         claySelected = false;
                     }
                 }
+                else
+                    if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    oldMousePos = e.GetPosition(vp);
+                    HitTest(vp, oldMousePos);
+                    if (lastHitModel == clayModel)
+                    {
+                        claySelected = true;
+                    }
+                }
             }
         }
 
@@ -274,20 +288,27 @@ namespace Barnacle.Dialogs
             Viewport3D vp = sender as Viewport3D;
             if (vp != null)
             {
+                Point pn = e.GetPosition(vp);
+                double dx = pn.X - oldMousePos.X;
+                double dy = pn.Y - oldMousePos.Y;
                 if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
-                    Point pn = e.GetPosition(vp);
-                    double dx = pn.X - oldMousePos.X;
-                    double dy = pn.Y - oldMousePos.Y;
                     if (claySelected)
                     {
-
                     }
                     else
                     {
                         Camera.Move(dx, -dy);
                         UpdateCameraPos();
                     }
+                    oldMousePos = pn;
+                    e.Handled = true;
+                }
+                else
+                if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                {
+                    Camera.Move(dx, -dy);
+                    UpdateCameraPos();
                     oldMousePos = pn;
                     e.Handled = true;
                 }
@@ -302,7 +323,9 @@ namespace Barnacle.Dialogs
             List<Triangle> triangles = new List<Triangle>();
 
             double dd = 1;
-
+            double cx = maxX / 2;
+            double cy = maxY / 2;
+            double cz = maxZ / 2;
             for (double x = 0; x < maxX - 1; x += dd)
             {
                 for (double y = 0; y < maxY - 1; y += dd)
@@ -323,7 +346,6 @@ namespace Barnacle.Dialogs
 
                             for (int i = 0; i < 8; i++)
                             {
-
                                 gc.val[i] = sdf.GetAt(gc.p[i].x, gc.p[i].y, gc.p[i].z);
                             }
                             triangles.Clear();
@@ -332,19 +354,22 @@ namespace Barnacle.Dialogs
 
                             foreach (Triangle t in triangles)
                             {
-                                int p0 = AddVertice(t.p[0].x, -(t.p[0].y), t.p[0].z);
-                                int p1 = AddVertice(t.p[1].x, -(t.p[1].y), t.p[1].z);
-                                int p2 = AddVertice(t.p[2].x, -(t.p[2].y), t.p[2].z);
+                                int p0 = AddVertice(t.p[0].x - cx, t.p[0].y - cy, t.p[0].z - cz);
+                                int p1 = AddVertice(t.p[1].x - cx, t.p[1].y - cy, t.p[1].z - cz);
+                                int p2 = AddVertice(t.p[2].x - cx, t.p[2].y - cy, t.p[2].z - cz);
 
                                 Faces.Add(p0);
-                                Faces.Add(p2);
+                                //  Faces.Add(p2);
+                                // Faces.Add(p1);
+
                                 Faces.Add(p1);
+                                Faces.Add(p2);
                             }
                         }
                     }
                 }
             }
-            CentreVertices();
+            //  CentreVertices();
         }
 
         private void LoadEditorParameters()
@@ -353,16 +378,11 @@ namespace Barnacle.Dialogs
 
             ToolShape = EditorParameters.Get("ToolShape");
 
-
             ToolsSize = EditorParameters.GetDouble("ToolsSize", 30);
-
 
             ToolStrength = EditorParameters.GetDouble("ToolStrength", 5);
 
-
             ToolInverse = EditorParameters.GetBoolean("ToolInverse", false);
-
-
         }
 
         private void ResetDefaults(object sender, RoutedEventArgs e)
@@ -402,7 +422,6 @@ namespace Barnacle.Dialogs
             {
                 double dx = x - cx;
 
-
                 for (int y = 0; y < h; y++)
                 {
                     double dy = y - cy;
@@ -416,6 +435,7 @@ namespace Barnacle.Dialogs
                 }
             }
         }
+
         private void UpdateDisplay()
         {
             if (loaded)
@@ -429,14 +449,16 @@ namespace Barnacle.Dialogs
         {
             if (claySelected)
             {
-                if (lastHitPoint != null)
+                if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
-                    sdf.Union(tool, (int)(lastHitPoint.X)+maxX/2, maxY / 2 - (int)(lastHitPoint.Y)  , (int)(lastHitPoint.Z) + maxZ / 2);
+                    sdf.Union(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2);
+                    // sdf.Union(tool, maxX / 2 + 1, maxY / 2 + 1, maxZ / 2 + 1);
                     UpdateDisplay();
                 }
                 claySelected = false;
             }
         }
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             WarningText = "";
