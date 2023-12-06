@@ -32,6 +32,39 @@ namespace sdflib
             return res;
         }
 
+        /// <summary>
+        ///  interpolating version of get
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns></returns>
+        public double GetAt(double x, double y, double z)
+        {
+            double res = Double.NaN;
+            double xd = x - Math.Floor(x);
+            double yd = y - Math.Floor(y);
+            double zd = z - Math.Floor(z);
+            double c000 = Get((int)x, (int)y, (int)z);
+            double c110 = Get((int)x+1, (int)y, (int)z);
+            double c010 = Get((int)x, (int)y+1, (int)z);
+            double c100 = Get((int)x + 1, (int)y+1, (int)z);
+            double c001 = Get((int)x, (int)y, (int)z+1);
+            double c111 = Get((int)x + 1, (int)y, (int)z + 1);
+            double c011 = Get((int)x, (int)y + 1, (int)z + 1);
+            double c101 = Get((int)x + 1, (int)y + 1, (int)z + 1);
+            double c00 = c000 * ( 1 -xd)+ c100 * xd;
+            double c01 = c001 * (1 - xd) + c101 * xd;
+            double c10 = c010 * (1 - xd) + c110 * xd;
+            double c11 = c011 * (1 - xd) + c111 * xd;
+
+            double c0 = c00 * (1 - yd) + c10 * yd;
+            double c1 = c01 * (1 - yd) + c11 * yd;
+
+            res = c0 * (1 - zd) + c1 * zd;
+            return res;
+        }
+
         public void Set(int x, int y, int z, double v)
         {
             distances[y, x, z] = v;

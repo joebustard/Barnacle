@@ -1,11 +1,17 @@
-<local:BaseModellerDialog x:Class="Barnacle.Dialogs.ClaySculptDlg"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Barnacle.Dialogs"
-        mc:Ignorable="d"
-        Title="" Height="450" Width="800" Loaded="Window_Loaded" WindowStartupLocation="CenterOwner" Background="{StaticResource WindowBackBrush }">
+<local:BaseModellerDialog
+    x:Class="Barnacle.Dialogs.ClaySculptDlg"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Barnacle.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title=""
+    Width="800"
+    Height="450"
+    Background="{StaticResource WindowBackBrush}"
+    Loaded="Window_Loaded"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
     <Grid VerticalAlignment="Stretch">
         <Grid.RowDefinitions>
             <RowDefinition Height="1*" />
@@ -16,7 +22,7 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
         </Grid.ColumnDefinitions>
-        <Grid Grid.Column="1" Grid.Row="0">
+        <Grid Grid.Row="0" Grid.Column="1">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="25" />
@@ -31,65 +37,91 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">ToolShape</Label>
-                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding ToolShape}" ItemsSource="{Binding ToolShapeItems}" Width="150" ToolTip="{Binding ToolShapeToolTip}"/>
+                <Label Width="100" VerticalAlignment="Center">ToolShape</Label>
+                <ComboBox
+                    Width="150"
+                    Margin="8,0,0,0"
+                    ItemsSource="{Binding ToolShapeItems}"
+                    SelectedItem="{Binding ToolShape}"
+                    ToolTip="{Binding ToolShapeToolTip}" />
 
-                <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
+                <Button
+                    Margin="8,0,0,0"
+                    Click="ResetDefaults"
+                    Content="Reset"
+                    ToolTip="Restore parameters to their defaults" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">ToolsSize</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ToolsSize}" Width="150" ToolTip="{Binding ToolsSizeToolTip}"/>
+                <Label Width="100" VerticalAlignment="Center">ToolsSize</Label>
+                <TextBox
+                    Width="150"
+                    Margin="8,0,0,0"
+                    Text="{Binding ToolsSize}"
+                    ToolTip="{Binding ToolsSizeToolTip}" />
 
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">ToolStrength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ToolStrength}" Width="150" ToolTip="{Binding ToolStrengthToolTip}"/>
+                <Label Width="100" VerticalAlignment="Center">ToolStrength</Label>
+                <TextBox
+                    Width="150"
+                    Margin="8,0,0,0"
+                    Text="{Binding ToolStrength}"
+                    ToolTip="{Binding ToolStrengthToolTip}" />
 
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                <CheckBox IsChecked="{Binding ToolInverse}" Width="150" ToolTip="{Binding ToolInverseToolTip}"/>
+                <CheckBox
+                    Width="150"
+                    IsChecked="{Binding ToolInverse}"
+                    ToolTip="{Binding ToolInverseToolTip}" />
 
 
             </StackPanel>
-            <StackPanel Grid.Row="5" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="6" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="7" Orientation="Horizontal">
-                
-            </StackPanel>
-            <StackPanel Grid.Row="8" Orientation="Horizontal">
-                
-            </StackPanel>
+            <StackPanel Grid.Row="5" Orientation="Horizontal" />
+            <StackPanel Grid.Row="6" Orientation="Horizontal" />
+            <StackPanel Grid.Row="7" Orientation="Horizontal" />
+            <StackPanel Grid.Row="8" Orientation="Horizontal" />
             <StackPanel Grid.Row="9" Orientation="Horizontal">
-                <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
+                <Label
+                    VerticalAlignment="Center"
+                    Content="{Binding WarningText}"
+                    FontSize="18"
+                    Foreground="{StaticResource WarningColour}" />
             </StackPanel>
         </Grid>
-        <Border Grid.Row ="0" Grid.Column="2" Style="{StaticResource ControlBorder}">
-            <Viewport3D Name="viewport3D1"   MouseMove="Viewport_MouseMove"
-              MouseDown="Viewport_MouseDown" MouseWheel="Viewport_MouseWheel">
+        <Border
+            Grid.Row="0"
+            Grid.Column="2"
+            Style="{StaticResource ControlBorder}">
+            <Viewport3D
+                Name="viewport3D1"
+                MouseDown="Viewport_MouseDown"
+                MouseMove="Viewport_MouseMove"
+                MouseUp="Viewport_MouseUp"
+                MouseWheel="Viewport_MouseWheel">
 
                 <Viewport3D.Camera>
-                    <PerspectiveCamera x:Name = "camMain" Position = "{Binding CameraPosition}" LookDirection = "{Binding LookDirection}">
-                    </PerspectiveCamera>
+                    <PerspectiveCamera
+                        x:Name="camMain"
+                        LookDirection="{Binding LookDirection}"
+                        Position="{Binding CameraPosition}" />
                 </Viewport3D.Camera>
 
                 <ModelVisual3D>
                     <ModelVisual3D.Content>
                         <Model3DGroup>
                             <AmbientLight Color="#FF808080" />
-                            <DirectionalLight x:Name = "dirLightMain" Direction = "-1,-1,-1" Color="White">
-                            </DirectionalLight>
+                            <DirectionalLight
+                                x:Name="dirLightMain"
+                                Direction="-1,-1,-1"
+                                Color="White" />
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
 
-                <ModelVisual3D x:Name = "MyModel">
+                <ModelVisual3D x:Name="MyModel">
                     <ModelVisual3D.Content>
-                        <Model3DGroup x:Name="MyModelGroup">
-                        </Model3DGroup>
+                        <Model3DGroup x:Name="MyModelGroup" />
                     </ModelVisual3D.Content>
                 </ModelVisual3D>
             </Viewport3D>
@@ -100,25 +132,45 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
         </Grid>
-        <Grid Grid.Column="1" Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            <CheckBox VerticalAlignment="Center" Content="Floor" Grid.Column="0" IsChecked="{Binding ShowFloor}" />
-            <CheckBox VerticalAlignment="Center" Content="Axies" Grid.Column="1" IsChecked="{Binding ShowAxies}" />
-            <Button Content="Home" Grid.Column="2" Click="Home_Click" />
+            <CheckBox
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Content="Floor"
+                IsChecked="{Binding ShowFloor}" />
+            <CheckBox
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Content="Axies"
+                IsChecked="{Binding ShowAxies}" />
+            <Button
+                Grid.Column="2"
+                Click="Home_Click"
+                Content="Home" />
         </Grid>
 
-        <Grid Grid.Column="2" Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="80" />
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="Cancel" Click="Cancel_Click" Margin="2,2,2,2" />
-            <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
+            <Button
+                Grid.Column="1"
+                Margin="2,2,2,2"
+                Click="Cancel_Click"
+                Content="Cancel" />
+            <Button
+                Grid.Column="2"
+                Margin="2,2,2,2"
+                Click="Ok_Click"
+                Content="Ok"
+                IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

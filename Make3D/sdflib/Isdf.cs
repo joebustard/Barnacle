@@ -17,6 +17,7 @@ namespace sdflib
         void Set(int x, int y, int z, double v);
 
         double Get(int x, int y, int z);
+        double GetAt(double x, double y, double z);
 
         // union another sdf into this one at the offset
         void Union(Isdf sdf, int x, int y, int z);
