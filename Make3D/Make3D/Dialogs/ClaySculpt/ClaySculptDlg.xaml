@@ -58,7 +58,6 @@
                     Margin="8,0,0,0"
                     Text="{Binding ToolsSize}"
                     ToolTip="{Binding ToolsSizeToolTip}" />
-
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
                 <Label Width="100" VerticalAlignment="Center">ToolStrength</Label>
@@ -67,15 +66,18 @@
                     Margin="8,0,0,0"
                     Text="{Binding ToolStrength}"
                     ToolTip="{Binding ToolStrengthToolTip}" />
-
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
                 <CheckBox
-                    Width="150"
+ VerticalAlignment="Center"                    Width="100"
                     IsChecked="{Binding ToolInverse}"
-                    ToolTip="{Binding ToolInverseToolTip}" Content="Inverse"/>
+                    ToolTip="{Binding ToolInverseToolTip}" Content="Inverse" />
 
-
+                <CheckBox Margin="8,0,0,0"
+                    Width="100"
+                          VerticalAlignment="Center"
+                    IsChecked="{Binding Symetric}"
+                    ToolTip="{Binding SymetricToolTip}" Content="Symetric" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal" />
             <StackPanel Grid.Row="6" Orientation="Horizontal" />
