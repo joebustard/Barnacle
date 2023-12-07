@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs
@@ -33,6 +34,7 @@ namespace Barnacle.Dialogs
         private ObservableCollection<String> toolShapeItems;
         private double toolsSize;
         private double toolStrength;
+        
         private string warningText;
 
         public ClaySculptDlg()
@@ -40,6 +42,7 @@ namespace Barnacle.Dialogs
             InitializeComponent();
             ToolName = "ClaySculpt";
             DataContext = this;
+            meshColour = Colors.Brown;
             ModelGroup = MyModelGroup;
             loaded = false;
             sdf = new Sdf();
@@ -48,6 +51,7 @@ namespace Barnacle.Dialogs
             tool = new Sdf();
             tool.SetDimension(11, 11, 11);
             SetSphere(tool, 5, 5, 5, 4);
+            op = 0;
         }
 
         public override bool ShowAxies
@@ -95,8 +99,16 @@ namespace Barnacle.Dialogs
                 if (toolInverse != value)
                 {
                     toolInverse = value;
+                    if ( toolInverse)
+                    {
+                        op = 1;
+                    }
+                    else
+                    {
+                        op = 0;
+                    }
                     NotifyPropertyChanged();
-                    UpdateDisplay();
+                   // UpdateDisplay();
                 }
             }
         }
@@ -183,8 +195,13 @@ namespace Barnacle.Dialogs
                     if (value >= mintoolStrength && value <= maxtoolStrength)
                     {
                         toolStrength = value;
+                        strength = toolStrength / 10.0;
+                        if ( tool != null)
+                        {
+                            SetSphere(tool, 5, 5, 5, 4 * strength);
+                        }
                         NotifyPropertyChanged();
-                        UpdateDisplay();
+                        
                     }
                 }
             }
@@ -274,11 +291,7 @@ namespace Barnacle.Dialogs
                     if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     oldMousePos = e.GetPosition(vp);
-                    HitTest(vp, oldMousePos);
-                    if (lastHitModel == clayModel)
-                    {
-                        claySelected = true;
-                    }
+                    
                 }
             }
         }
@@ -289,14 +302,19 @@ namespace Barnacle.Dialogs
             if (vp != null)
             {
                 Point pn = e.GetPosition(vp);
+                HitTest(vp, pn);
                 double dx = pn.X - oldMousePos.X;
                 double dy = pn.Y - oldMousePos.Y;
                 if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     if (claySelected)
                     {
+                        if (lastHitPoint != null)
+                        {
+                            sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                        }
                     }
-                    else
+                      else     
                     {
                         Camera.Move(dx, -dy);
                         UpdateCameraPos();
@@ -412,7 +430,7 @@ namespace Barnacle.Dialogs
             loaded = true;
         }
 
-        private void SetSphere(Isdf sdf, int cx, int cy, int cz, int radius)
+        private void SetSphere(Isdf sdf, int cx, int cy, int cz, double radius)
         {
             int l = 0;
             int h = 0;
@@ -444,14 +462,15 @@ namespace Barnacle.Dialogs
                 Redisplay();
             }
         }
-
+        private int op;
+        private double strength;
         private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (claySelected)
             {
                 if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
-                    sdf.Union(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2);
+                    sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2,op, strength);
                     // sdf.Union(tool, maxX / 2 + 1, maxY / 2 + 1, maxZ / 2 + 1);
                     UpdateDisplay();
                 }
@@ -463,7 +482,7 @@ namespace Barnacle.Dialogs
         {
             WarningText = "";
             LoadEditorParameters();
-
+            meshColour = Colors.Chocolate;
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             loaded = true;

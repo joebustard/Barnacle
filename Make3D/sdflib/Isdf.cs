@@ -20,9 +20,6 @@ namespace sdflib
         double GetAt(double x, double y, double z);
 
         // union another sdf into this one at the offset
-        void Union(Isdf sdf, int x, int y, int z);
-
-        // difference another sdf into this one at the offset
-        void Difference(Isdf sdf, int x, int y, int z);
+        void Perform(Isdf sdf, int x, int y, int z, int op, double strength);
     }
 }

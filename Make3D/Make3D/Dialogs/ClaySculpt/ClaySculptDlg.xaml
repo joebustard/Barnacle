@@ -73,7 +73,7 @@
                 <CheckBox
                     Width="150"
                     IsChecked="{Binding ToolInverse}"
-                    ToolTip="{Binding ToolInverseToolTip}" />
+                    ToolTip="{Binding ToolInverseToolTip}" Content="Inverse"/>
 
 
             </StackPanel>

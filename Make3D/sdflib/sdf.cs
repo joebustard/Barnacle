@@ -99,7 +99,7 @@ namespace sdflib
             return res;
         }
 
-        public void Union(Isdf sdf, int x, int y, int z)
+        public void Perform(Isdf sdf, int x, int y, int z, int opType, double strength)
         {
             int nx = 0;
             int ny = 0;
@@ -121,29 +121,20 @@ namespace sdflib
                             (x + ix >= 0 && x + ix < columns) &&
                             (z + iz >= 0 && z + iz < planes))
                         {
-                            distances[y + iy, x + ix, z + iz] = Math.Min(distances[y + iy, x + ix, z + iz], sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                            if (opType == 0)
+                            {
+                                distances[y + iy, x + ix, z + iz] = Math.Min(distances[y + iy, x + ix, z + iz],  sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                            }
+                            else
+                            {
+                                distances[y + iy, x + ix, z + iz] = Math.Max(distances[y + iy, x + ix, z + iz], - sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                            }
                         }
                     }
                 }
             }
         }
 
-        public void Difference(Isdf sdf, int x, int y, int z)
-        {
-            int nx = 0;
-            int ny = 0;
-            int nz = 0;
-            sdf.GetDimensions(ref nx, ref ny, ref nz);
-            for (int ix = 0; ix < nx && (x + ix) < columns; ix++)
-            {
-                for (int iy = 0; iy < ny && (y + iy) < rows; iy++)
-                {
-                    for (int iz = 0; iz < nz && (z + iz) < planes; iz++)
-                    {
-                        distances[y + iy, x + ix, z + iz] = Math.Max(-distances[y + iy, x + ix, z + iz], sdf.Get(iy, ix, iz));
-                    }
-                }
-            }
-        }
+        
     }
 }
