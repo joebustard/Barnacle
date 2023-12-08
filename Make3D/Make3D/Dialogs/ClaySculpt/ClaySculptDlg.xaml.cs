@@ -23,6 +23,7 @@ namespace Barnacle.Dialogs
         private const double mintoolStrength = 1;
         private GeometryModel3D clayModel;
         private bool claySelected;
+        private bool symetric;
         private bool loaded;
         private int maxX ;
         private int maxY ;
@@ -36,7 +37,28 @@ namespace Barnacle.Dialogs
         private ObservableCollection<String> toolShapeItems;
         private double toolsSize;
         private double toolStrength;
-        
+
+        public bool Symetric
+        {
+            get { return symetric; }
+            set
+            {
+                if (symetric = value)
+                {
+                    symetric = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public string SymetricToolTip
+        {
+            get
+            {
+                return "When a change is made to one side of the model, apply it to the other side automaticaly";
+            }
+        }
+
         private string warningText;
 
         public ClaySculptDlg()
@@ -69,7 +91,13 @@ namespace Barnacle.Dialogs
             tool.SetDimension(11, 11, 11);
             SetSphere(tool, 5, 5, 5, 4);
             op = 0;
+
+            symetric = true;
             ShowFloor = false;
+            ToolShapeItems = new ObservableCollection<string>();
+            ToolShapeItems.Add("Inflate");
+            ToolShapeItems.Add("Smooth");
+
         }
 
         public override bool ShowAxies
@@ -117,7 +145,7 @@ namespace Barnacle.Dialogs
                 if (toolInverse != value)
                 {
                     toolInverse = value;
-                    if ( toolInverse)
+                    if (toolInverse)
                     {
                         op = 1;
                     }
@@ -126,7 +154,7 @@ namespace Barnacle.Dialogs
                         op = 0;
                     }
                     NotifyPropertyChanged();
-                   // UpdateDisplay();
+                    // UpdateDisplay();
                 }
             }
         }
@@ -214,12 +242,11 @@ namespace Barnacle.Dialogs
                     {
                         toolStrength = value;
                         strength = toolStrength / 10.0;
-                        if ( tool != null)
+                        if (tool != null)
                         {
                             SetSphere(tool, 5, 5, 5, 4 * strength);
                         }
                         NotifyPropertyChanged();
-                        
                     }
                 }
             }
@@ -309,7 +336,6 @@ namespace Barnacle.Dialogs
                     if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     oldMousePos = e.GetPosition(vp);
-                    
                 }
             }
         }
@@ -327,12 +353,37 @@ namespace Barnacle.Dialogs
                 {
                     if (claySelected)
                     {
-                        if (lastHitPoint != null)
+                        if (dx < 1 || dx < 1)
                         {
-                            sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                            if (lastHitPoint != null)
+                            {
+                                sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                if (symetric)
+                                {
+                                    sdf.Perform(tool, (int)(-lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (double t = 0; t <= 1; t += 0.1)
+
+                            {
+                                double px = oldMousePos.X + t * dx;
+                                double py = oldMousePos.Y + t * dy;
+                                HitTest(vp, new Point(px, py));
+                                if (lastHitPoint != null)
+                                {
+                                    sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                    if (symetric)
+                                    {
+                                        sdf.Perform(tool, (int)(-lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                    }
+                                }
+                            }
                         }
                     }
-                      else     
+                    else
                     {
                         Camera.Move(dx, -dy);
                         UpdateCameraPos();
@@ -358,7 +409,7 @@ namespace Barnacle.Dialogs
             GridCell gc = new GridCell();
             List<Triangle> triangles = new List<Triangle>();
 
-            double dd = 1;
+            double dd = 0.5;
             double cx = maxX / 2;
             double cy = maxY / 2;
             double cz = maxZ / 2;
@@ -480,15 +531,21 @@ namespace Barnacle.Dialogs
                 Redisplay();
             }
         }
+
         private int op;
         private double strength;
+
         private void Viewport_MouseUp(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (claySelected)
             {
                 if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
-                    sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2,op, strength);
+                    sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                    if (symetric)
+                    {
+                        sdf.Perform(tool, (int)(-lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                    }
                     // sdf.Union(tool, maxX / 2 + 1, maxY / 2 + 1, maxZ / 2 + 1);
                     UpdateDisplay();
                 }
@@ -503,6 +560,7 @@ namespace Barnacle.Dialogs
             meshColour = Colors.Chocolate;
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
+            ToolShape = ToolShapeItems[0];
             loaded = true;
             UpdateDisplay();
         }
