@@ -24,9 +24,11 @@ namespace Barnacle.Dialogs
         private GeometryModel3D clayModel;
         private bool claySelected;
         private bool loaded;
-        private int maxX = 132;
-        private int maxY = 132;
-        private int maxZ = 132;
+        private int maxX ;
+        private int maxY ;
+        private int maxZ ;
+        private int numbersectors;
+        private SectorModel[,,] sectorModels;
         private Isdf sdf;
         private Isdf tool;
         private bool toolInverse;
@@ -45,6 +47,21 @@ namespace Barnacle.Dialogs
             meshColour = Colors.Brown;
             ModelGroup = MyModelGroup;
             loaded = false;
+            numbersectors = 10;
+            sectorModels = new SectorModel[numbersectors, numbersectors, numbersectors];
+            for ( int i = 0; i < numbersectors; i ++)
+            {
+                for (int j = 0; j < numbersectors; j++)
+                {
+                    for (int k = 0; k < numbersectors; k++)
+                    {
+                        sectorModels[i, j, k] = new SectorModel();
+                    }
+                }
+            }
+            maxX = numbersectors * 16;
+            maxY = numbersectors * 16;
+            maxZ = numbersectors * 16;
             sdf = new Sdf();
             sdf.SetDimension(maxX, maxY, maxZ);
             SetSphere(sdf, maxX / 2, maxY / 2, maxZ / 2, maxX / 8);
@@ -52,6 +69,7 @@ namespace Barnacle.Dialogs
             tool.SetDimension(11, 11, 11);
             SetSphere(tool, 5, 5, 5, 4);
             op = 0;
+            ShowFloor = false;
         }
 
         public override bool ShowAxies
