@@ -25,9 +25,9 @@ namespace Barnacle.Dialogs
         private bool claySelected;
         private bool symetric;
         private bool loaded;
-        private int maxX ;
-        private int maxY ;
-        private int maxZ ;
+        private int maxX;
+        private int maxY;
+        private int maxZ;
         private int numbersectors;
         private SectorModel[,,] sectorModels;
         private Isdf sdf;
@@ -60,7 +60,7 @@ namespace Barnacle.Dialogs
         }
 
         private string warningText;
-
+        private const int cellsPerSector = 16;
         public ClaySculptDlg()
         {
             InitializeComponent();
@@ -71,7 +71,7 @@ namespace Barnacle.Dialogs
             loaded = false;
             numbersectors = 10;
             sectorModels = new SectorModel[numbersectors, numbersectors, numbersectors];
-            for ( int i = 0; i < numbersectors; i ++)
+            for (int i = 0; i < numbersectors; i++)
             {
                 for (int j = 0; j < numbersectors; j++)
                 {
@@ -81,9 +81,12 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
-            maxX = numbersectors * 16;
-            maxY = numbersectors * 16;
-            maxZ = numbersectors * 16;
+            maxX = numbersectors * cellsPerSector;
+            maxY = numbersectors * cellsPerSector;
+            maxZ = numbersectors * cellsPerSector;
+            cx = maxX / 2;
+            cy = maxY / 2;
+            cz = maxZ / 2;
             sdf = new Sdf();
             sdf.SetDimension(maxX, maxY, maxZ);
             SetSphere(sdf, maxX / 2, maxY / 2, maxZ / 2, maxX / 8);
@@ -97,7 +100,7 @@ namespace Barnacle.Dialogs
             ToolShapeItems = new ObservableCollection<string>();
             ToolShapeItems.Add("Inflate");
             ToolShapeItems.Add("Smooth");
-
+            ToolShape = ToolShapeItems[0];
         }
 
         public override bool ShowAxies
@@ -145,14 +148,7 @@ namespace Barnacle.Dialogs
                 if (toolInverse != value)
                 {
                     toolInverse = value;
-                    if (toolInverse)
-                    {
-                        op = 1;
-                    }
-                    else
-                    {
-                        op = 0;
-                    }
+                    SetOpcode();
                     NotifyPropertyChanged();
                     // UpdateDisplay();
                 }
@@ -175,9 +171,29 @@ namespace Barnacle.Dialogs
                 if (toolShape != value)
                 {
                     toolShape = value;
+                    SetOpcode();
                     NotifyPropertyChanged();
                     UpdateDisplay();
                 }
+            }
+        }
+
+        private void SetOpcode()
+        {
+            if (toolShape == "Inflate")
+            {
+                if (toolInverse)
+                {
+                    op = 1;
+                }
+                else
+                {
+                    op = 0;
+                }
+            }
+            else if (toolShape == "Smooth")
+            {
+                op = 2;
             }
         }
 
@@ -305,9 +321,17 @@ namespace Barnacle.Dialogs
                         ModelGroup.Children.Add(m);
                     }
                 }
-
-                clayModel = GetModel();
-                ModelGroup.Children.Add(clayModel);
+                for (int scol = 0; scol < numbersectors; scol++)
+                {
+                    for (int srow = 0; srow < numbersectors; srow++)
+                    {
+                        for (int splane = 0; splane < numbersectors; splane++)
+                        {
+                            clayModel = sectorModels[scol, srow, splane].GetModel();
+                            ModelGroup.Children.Add(clayModel);
+                        }
+                    }
+                }
             }
         }
 
@@ -322,18 +346,25 @@ namespace Barnacle.Dialogs
 
                     oldMousePos = e.GetPosition(vp);
                     HitTest(vp, oldMousePos);
-                    if (lastHitModel == clayModel)
+                    claySelected = false;
+                    for (int i = 0; i < numbersectors && claySelected == false; i++)
                     {
-                        claySelected = true;
+                        for (int j = 0; j < numbersectors && claySelected == false; j++)
+                        {
+                            for (int k = 0; k < numbersectors && claySelected == false; k++)
+                            {
+                                if (lastHitModel == sectorModels[i, j, k].HitModel)
+                                {
+                                    claySelected = true;
+                                }
+                            }
+                        }
                     }
 
-                    if (floor.Matches(lastHitModel) || grid.Matches(lastHitModel))
-                    {
-                        claySelected = false;
-                    }
+
+
                 }
-                else
-                    if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
+                else if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     oldMousePos = e.GetPosition(vp);
                 }
@@ -353,31 +384,39 @@ namespace Barnacle.Dialogs
                 {
                     if (claySelected)
                     {
-                        if (dx < 1 || dx < 1)
+                        if (dx < 1 && dy < 1)
                         {
                             if (lastHitPoint != null)
                             {
-                                sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
+                                DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                                 if (symetric)
                                 {
-                                    sdf.Perform(tool, (int)(-lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                    sdf.Perform(tool, (int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
+                                    DirtySector((int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                                 }
                             }
                         }
                         else
                         {
-                            for (double t = 0; t <= 1; t += 0.1)
-
+                            double dist = Math.Sqrt(dx * dx + dy * dy);
+                            if (dist > 0)
                             {
-                                double px = oldMousePos.X + t * dx;
-                                double py = oldMousePos.Y + t * dy;
-                                HitTest(vp, new Point(px, py));
-                                if (lastHitPoint != null)
+                                for (double t = 0; t <= 1; t += 1 / dist)
+
                                 {
-                                    sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
-                                    if (symetric)
+                                    double px = oldMousePos.X + t * dx;
+                                    double py = oldMousePos.Y + t * dy;
+                                    HitTest(vp, new Point(px, py));
+                                    if (lastHitPoint != null)
                                     {
-                                        sdf.Perform(tool, (int)(-lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                                        sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
+                                        DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
+                                        if (symetric)
+                                        {
+                                            sdf.Perform(tool, (int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
+                                            DirtySector((int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
+                                        }
                                     }
                                 }
                             }
@@ -402,6 +441,37 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void DirtySector(int v1, int v2, int v3, bool neighbours = true)
+        {
+            if (v1 >= 0 && v1 < maxX && v2 >= 0 && v2 < maxY && v3 >= 0 && v3 < maxZ)
+            {
+                int c = v1 / cellsPerSector;
+                int r = v2 / cellsPerSector;
+                int p = v3 / cellsPerSector;
+                sectorModels[c, r, p].Dirty = true;
+                if (neighbours)
+                {
+                    for (int i = -2; i <= 2; i++)
+                    {
+                        for (int j = -2; j <= 2; j++)
+                        {
+                            for (int k = -2; k <= 2; k++)
+                            {
+                                if (i != 0 || j != 0 || k != 0) DirtySector(v1 + i, v2 + j, v3 + k, false);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                bool skipp = true;
+            }
+        }
+
+        private double cx;
+        private double cy;
+        private double cz;
         private void GenerateShape()
         {
             ClearShape();
@@ -410,11 +480,72 @@ namespace Barnacle.Dialogs
             List<Triangle> triangles = new List<Triangle>();
 
             double dd = 0.5;
-            double cx = maxX / 2;
-            double cy = maxY / 2;
-            double cz = maxZ / 2;
+
+
+            for (int scol = 0; scol < numbersectors; scol++)
+            {
+                for (int srow = 0; srow < numbersectors; srow++)
+                {
+                    for (int splane = 0; splane < numbersectors; splane++)
+                    {
+                        if (sectorModels[scol, srow, splane].Dirty)
+                        {
+                            sectorModels[scol, srow, splane].Dirty = false;
+                            sectorModels[scol, srow, splane].ClearShape();
+                            for (double ix = 0; ix <= cellsPerSector - dd; ix += dd)
+                            {
+                                double x = (scol * cellsPerSector) + ix;
+                                for (double iy = 0; iy <= cellsPerSector - dd; iy += dd)
+                                {
+                                    double y = (srow * cellsPerSector) + iy;
+                                    for (double iz = 0; iz <= cellsPerSector - dd; iz += dd)
+                                    {
+                                        double z = (splane * cellsPerSector) + iz;
+
+                                        if (x + dd < maxX - 1 && y + dd < maxY - 1 && z + dd < maxZ - 1)
+                                        {
+                                            gc.p[0] = new XYZ(x, y, z);
+
+                                            gc.p[1] = new XYZ(x + dd, y, z);
+                                            gc.p[2] = new XYZ(x + dd, y, z + dd);
+                                            gc.p[3] = new XYZ(x, y, z + dd);
+                                            gc.p[4] = new XYZ(x, y + dd, z);
+                                            gc.p[5] = new XYZ(x + dd, y + dd, z);
+                                            gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
+                                            gc.p[7] = new XYZ(x, y + dd, z + dd);
+
+                                            for (int i = 0; i < 8; i++)
+                                            {
+                                                gc.val[i] = sdf.GetAt(gc.p[i].x, gc.p[i].y, gc.p[i].z);
+                                            }
+                                            triangles.Clear();
+
+                                            cm.Polygonise(gc, 0, triangles);
+
+                                            foreach (Triangle t in triangles)
+                                            {
+                                                int p0 = sectorModels[scol, srow, splane].AddVertice(t.p[0].x - cx, t.p[0].y - cy, t.p[0].z - cz);
+                                                int p1 = sectorModels[scol, srow, splane].AddVertice(t.p[1].x - cx, t.p[1].y - cy, t.p[1].z - cz);
+                                                int p2 = sectorModels[scol, srow, splane].AddVertice(t.p[2].x - cx, t.p[2].y - cy, t.p[2].z - cz);
+
+                                                sectorModels[scol, srow, splane].Faces.Add(p0);
+                                                sectorModels[scol, srow, splane].Faces.Add(p1);
+                                                sectorModels[scol, srow, splane].Faces.Add(p2);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+            }
+            /*
             for (double x = 0; x < maxX - 1; x += dd)
             {
+
                 for (double y = 0; y < maxY - 1; y += dd)
                 {
                     for (double z = 0; z < maxZ - 1; z += dd)
@@ -456,6 +587,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
+            */
             //  CentreVertices();
         }
 
@@ -541,10 +673,12 @@ namespace Barnacle.Dialogs
             {
                 if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
-                    sdf.Perform(tool, (int)(lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                    sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
+                    DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                     if (symetric)
                     {
-                        sdf.Perform(tool, (int)(-lastHitPoint.X) + maxX / 2, maxY / 2 + (int)(lastHitPoint.Y), (int)(lastHitPoint.Z) + maxZ / 2, op, strength);
+                        sdf.Perform(tool, (int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
+                        DirtySector((int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                     }
                     // sdf.Union(tool, maxX / 2 + 1, maxY / 2 + 1, maxZ / 2 + 1);
                     UpdateDisplay();

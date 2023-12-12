@@ -125,28 +125,70 @@ namespace sdflib
             int hy = ny / 2;
             int lz = -nz / 2;
             int hz = nz / 2;
-            for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
+            switch (opType)
             {
-                for (int iy = ly; iy < hy && (y + iy) < rows; iy++)
-                {
-                    for (int iz = lz; iz < hz && (z + iz) < planes; iz++)
+                case 0:
+                case 1:
                     {
-                        if ((y + iy >= 0 && y + iy < rows) &&
-                            (x + ix >= 0 && x + ix < columns) &&
-                            (z + iz >= 0 && z + iz < planes))
+                        for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
                         {
-                            if (opType == 0)
+                            for (int iy = ly; iy < hy && (y + iy) < rows; iy++)
                             {
-                                distances[y + iy, x + ix, z + iz] = Math.Min(distances[y + iy, x + ix, z + iz], sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
-                            }
-                            else
-                            {
-                                distances[y + iy, x + ix, z + iz] = Math.Max(distances[y + iy, x + ix, z + iz], -sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                                for (int iz = lz; iz < hz && (z + iz) < planes; iz++)
+                                {
+                                    if ((y + iy >= 0 && y + iy < rows) &&
+                                        (x + ix >= 0 && x + ix < columns) &&
+                                        (z + iz >= 0 && z + iz < planes))
+                                    {
+
+                                        if (opType == 0)
+                                        {
+                                            
+                                            distances[y + iy, x + ix, z + iz] = sdf_smin(distances[y + iy, x + ix, z + iz], sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                                        }
+                                        else
+                                        {
+                                            distances[y + iy, x + ix, z + iz] = Math.Max(distances[y + iy, x + ix, z + iz], -sdf.Get(iy + ny / 2, ix + nx / 2, iz + nz / 2));
+                                        }
+                                    }
+                                }
                             }
                         }
+
                     }
-                }
+                    break;
+                case 2:
+                    {
+
+
+                        double maxD = Math.Sqrt(lx * lx + ly * ly + lz * lz);
+                        for (int ix = lx; ix < hx && (x + ix) < columns; ix++)
+                        {
+                            for (int iy = ly; iy < hy && (y + iy) < rows; iy++)
+                            {
+                                for (int iz = lz; iz < hz && (z + iz) < planes; iz++)
+                                {
+                                    if ((y + iy >= 0 && y + iy < rows) &&
+                                        (x + ix >= 0 && x + ix < columns) &&
+                                        (z + iz >= 0 && z + iz < planes))
+                                    {
+                                        double toold = Math.Sqrt(ix * ix + iy * iy + iz * iz);
+                                        double r = 1-(toold / maxD);
+                                        //distances[y + iy, x + ix, z + iz] = distances[y + iy, x + ix, z + iz] * r; ;
+                                    }
+                                }
+                            }
+
+
+                        }
+                    }
+                    break;
             }
+        }
+        double sdf_smin(double a, double b, double k = 32)
+        {
+            double res = Math.Exp(-k * a) + Math.Exp(-k * b);
+            return -Math.Log(Math.Max(0.0001, res)) / k;
         }
     }
 }
