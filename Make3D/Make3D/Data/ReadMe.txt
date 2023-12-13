@@ -9,6 +9,7 @@ Added
 	Different Print Distribution method. Creates a more compact bed layout for printing 
 	An Octahedron primitive
 	Ctrl-X for cut
+	Ctrl-O to switch to object properties panel
 	Name of initial file to open added to templates
 	Show object type (i.e. primitive, group etc) in object properties window
 	Cut all faces and vertices of object below a moveable horizontal plane

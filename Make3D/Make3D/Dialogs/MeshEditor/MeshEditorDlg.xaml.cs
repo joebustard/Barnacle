@@ -490,40 +490,7 @@ namespace Barnacle.Dialogs
             if (editingPoints.Count == 0)
             {
                 double radius = 30;
-                //GenerateCube(ref editingPoints, ref editingFaceIndices, 50);
                 GenerateSphere(editingPoints, editingFaceIndices, new Point3D(0, radius, 0), radius, 20, 20);
-                /*
-                editingPoints.Add(new Point3D(1, 2, 0));
-                editingPoints.Add(new Point3D(3, 2, 0));
-                editingPoints.Add(new Point3D(2, 4, 0));
-
-                editingPoints.Add(new Point3D(2, 0, 0));
-                editingPoints.Add(new Point3D(4, 4, 0));
-                editingPoints.Add(new Point3D(0, 4, 0));
-
-                // center,
-                editingFaceIndices.Add(0);
-                editingFaceIndices.Add(1);
-                editingFaceIndices.Add(2);
-
-                // bottom,
-                editingFaceIndices.Add(3);
-                editingFaceIndices.Add(1);
-                editingFaceIndices.Add(0);
-
-                // right,
-                editingFaceIndices.Add(1);
-                editingFaceIndices.Add(4);
-                editingFaceIndices.Add(2);
-
-                // left,
-                editingFaceIndices.Add(0);
-                editingFaceIndices.Add(2);
-                editingFaceIndices.Add(5);
-                CreateInitialMesh();
-                mesh.Faces[0].Selected = true;
-                mesh.DiagnosticSplitSelectedFaces();
-                */
             }
             CreateInitialMesh();
 
