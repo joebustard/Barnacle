@@ -40,7 +40,13 @@ namespace Barnacle.Views
             NotificationManager.Subscribe("ScriptEditorClosed", ScriptEditorClosed);
             NotificationManager.Subscribe("SolutionPanel", ChangeSolutionPanelVisibility);
             NotificationManager.Subscribe("ObjectSelected", SelectedObjectChanged);
+            NotificationManager.Subscribe("SwitchToObjectProperties", SwitchToObjectProperties);
             vm = DataContext as DefaultViewModel;
+        }
+
+        private void SwitchToObjectProperties(object param)
+        {
+            SolutionPanel.SelectedIndex = 2;
         }
 
         private void SelectedObjectChanged(object param)

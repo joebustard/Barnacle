@@ -192,7 +192,6 @@ namespace Barnacle.ViewModels
             NotifyPropertyChanged("ModelItems");
         }
 
-        
         private void BuildVolumeChanged(object param)
         {
             bool b = (bool)param;
@@ -929,6 +928,12 @@ namespace Barnacle.ViewModels
                         }
                         break;
 
+                    case Key.O:
+                        {
+                            SwitchToObjectProperties();
+                        }
+                        break;
+
                     case Key.V:
                         {
                             if (ctrl)
@@ -1058,6 +1063,11 @@ namespace Barnacle.ViewModels
                         break;
                 }
             }
+        }
+
+        private void SwitchToObjectProperties()
+        {
+            NotificationManager.Notify("SwitchToObjectProperties", null);
         }
 
         private void HandleHeldKey(Key key, bool shift, bool ctrl)
@@ -1462,12 +1472,11 @@ namespace Barnacle.ViewModels
             {
                 PointUtils.PointCollectionToP3D(dlg.Vertices, ob.RelativeObjectVertices);
                 ob.TriangleIndices.Clear();
-                foreach( int i in dlg.Faces)
+                foreach (int i in dlg.Faces)
                 {
                     ob.TriangleIndices.Add(i);
-                    
                 }
-             //   RemoveDuplicateVertices(ob);
+                //   RemoveDuplicateVertices(ob);
                 ob.Remesh();
             }
         }
