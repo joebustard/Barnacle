@@ -73,7 +73,38 @@ namespace Plankton
             // We don't know anything else about them yet
             for (int i = 0; i < faces.Count / 3; i++)
             {
-                this.Faces.Add(new PlanktonFace());
+                int j = i * 3;
+                PlanktonHalfedge he0 = new PlanktonHalfedge();
+                he0.StartVertex = faces[j];
+
+                int heInd0 = Halfedges.Count;
+                this.Halfedges.Add(he0);
+                this.Vertices[he0.StartVertex].OutgoingHalfedge = heInd0;
+
+                PlanktonHalfedge he1 = new PlanktonHalfedge();
+                he1.StartVertex = faces[j + 1];
+                int heInd1 = Halfedges.Count;
+                this.Halfedges.Add(he1);
+                this.Vertices[he1.StartVertex].OutgoingHalfedge = heInd1;
+
+                PlanktonHalfedge he2 = new PlanktonHalfedge();
+                he2.StartVertex = faces[j + 2];
+                int heInd2 = Halfedges.Count;
+                this.Halfedges.Add(he2);
+                this.Vertices[he2.StartVertex].OutgoingHalfedge = heInd2;
+
+                he0.NextHalfedge = heInd1;
+                he1.NextHalfedge = heInd2;
+                he2.NextHalfedge = heInd0;
+
+                he0.PrevHalfedge = heInd2;
+                he1.PrevHalfedge = heInd0;
+                he2.PrevHalfedge = heInd1;
+
+                PlanktonFace f = new PlanktonFace();
+                f.FirstHalfedge = heInd0;
+
+                this.Faces.Add(f);
             }
         }
 
