@@ -1044,6 +1044,10 @@
       <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>
       <Name>PlacementLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Plankton\Plankton.csproj">
+      <Project>{BDD288F7-C2E2-4C2A-B083-E4D4D21F528F}</Project>
+      <Name>Plankton</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PolygonLibrary\PolygonLibrary.csproj">
       <Project>{61ee0e20-98e3-430f-be43-cb1f19e829a5}</Project>
       <Name>PolygonLibrary</Name>
