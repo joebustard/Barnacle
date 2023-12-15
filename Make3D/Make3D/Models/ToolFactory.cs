@@ -48,8 +48,8 @@ namespace Barnacle.Models
                     break;
 
                 case "ClaySculpt":
-                    //res = new ClaySculptDlg();
-                    res = new MeshEditorDlg();
+                    res = new ClaySculptDlg();
+                    //   res = new MeshEditorDlg();
                     break;
 
                 case "CurvedFunnel":

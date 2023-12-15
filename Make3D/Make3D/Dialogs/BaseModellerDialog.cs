@@ -22,6 +22,9 @@ namespace Barnacle.Dialogs
         protected Grid3D grid;
         protected GeometryModel3D lastHitModel;
         protected Point3D lastHitPoint;
+        protected int lastHitV0;
+        protected int lastHitV1;
+        protected int lastHitV2;
         protected System.Windows.Media.Color meshColour;
         protected Point oldMousePos;
         protected bool showAxies;
@@ -388,7 +391,10 @@ namespace Barnacle.Dialogs
                 if (rayMeshResult != null)
                 {
                     GeometryModel3D hitgeo = rayMeshResult.ModelHit as GeometryModel3D;
-                 //   if (lastHitModel == null)
+                    lastHitV0 = rayMeshResult.VertexIndex1;
+                    lastHitV1 = rayMeshResult.VertexIndex2;
+                    lastHitV2 = rayMeshResult.VertexIndex3;
+                    //   if (lastHitModel == null)
                     {
                         lastHitModel = hitgeo;
                         lastHitPoint = rayMeshResult.PointHit;
@@ -863,7 +869,7 @@ namespace Barnacle.Dialogs
             }
             return res;
         }
-        
+
         protected int AddVertice(Point3D v)
         {
             int res = -1;

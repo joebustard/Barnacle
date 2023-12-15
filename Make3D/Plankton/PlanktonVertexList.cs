@@ -12,7 +12,7 @@ namespace Plankton
     {
         private readonly PlanktonMesh _mesh;
         private List<PlanktonVertex> _list;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PlanktonVertexList"/> class.
         /// Should be called from the mesh constructor.
@@ -23,7 +23,7 @@ namespace Plankton
             this._list = new List<PlanktonVertex>();
             this._mesh = owner;
         }
-        
+
         /// <summary>
         /// Gets the number of vertices.
         /// </summary>
@@ -34,10 +34,13 @@ namespace Plankton
                 return this._list.Count;
             }
         }
-        
+
         #region methods
+
         #region vertex access
+
         #region adding
+
         /// <summary>
         /// Adds a new vertex to the end of the Vertex list.
         /// </summary>
@@ -56,11 +59,11 @@ namespace Plankton
         /// <param name="vertex">Vertex to add.</param>
         /// <returns>The index of the newly added vertex.</returns>
         internal int Add(PlanktonXYZ vertex)
-        {            
-            this._list.Add(new PlanktonVertex(vertex.X,vertex.Y,vertex.Z));
+        {
+            this._list.Add(new PlanktonVertex(vertex.X, vertex.Y, vertex.Z));
             return this.Count - 1;
         }
-        
+
         /// <summary>
         /// Adds a new vertex to the end of the Vertex list.
         /// </summary>
@@ -72,7 +75,7 @@ namespace Plankton
         {
             return this.Add(new PlanktonVertex(x, y, z));
         }
-        
+
         /// <summary>
         /// Adds a new vertex to the end of the Vertex list.
         /// </summary>
@@ -84,7 +87,8 @@ namespace Plankton
         {
             return this.Add(new PlanktonVertex(x, y, z));
         }
-        #endregion
+
+        #endregion adding
 
         /// <summary>
         /// Adds a series of new vertices to the end of the vertex list.
@@ -95,7 +99,7 @@ namespace Plankton
         {
             return vertices.Select(v => this.Add(v)).ToArray();
         }
-        
+
         /// <summary>
         /// Returns the <see cref="PlanktonVertex"/> at the given index.
         /// </summary>
@@ -115,7 +119,7 @@ namespace Plankton
                 this._list[index] = value;
             }
         }
-        
+
         /// <summary>
         /// <para>Sets or adds a vertex to the Vertex List.</para>
         /// <para>If [index] is less than [Count], the existing vertex at [index] will be modified.</para>
@@ -141,10 +145,10 @@ namespace Plankton
                 this.Add(x, y, z);
             }
             else { return false; }
-            
+
             return true;
         }
-        
+
         /// <summary>
         /// <para>Sets or adds a vertex to the Vertex List.</para>
         /// <para>If [index] is less than [Count], the existing vertex at [index] will be modified.</para>
@@ -170,18 +174,19 @@ namespace Plankton
                 this.Add(x, y, z);
             }
             else { return false; }
-            
+
             return true;
         }
-        #endregion
-        
+
+        #endregion vertex access
+
         /// <summary>
         /// Helper method to remove dead vertices from the list, re-index and compact.
         /// </summary>
         internal int CompactHelper()
         {
             int marker = 0; // Location where the current vertex should be moved to
-            
+
             // Run through all the vertices
             for (int iter = 0; iter < _list.Count; iter++)
             {
@@ -192,7 +197,7 @@ namespace Plankton
                     {
                         // Room to shuffle. Copy current vertex to marked slot.
                         _list[marker] = _list[iter];
-                        
+
                         // Update all halfedges which start here
                         int first = _list[marker].OutgoingHalfedge;
                         foreach (int h in _mesh.Halfedges.GetVertexCirculator(first))
@@ -203,10 +208,10 @@ namespace Plankton
                     marker++; // That spot's filled. Advance the marker.
                 }
             }
-            
+
             // Trim list down to new size
             if (marker < _list.Count) { _list.RemoveRange(marker, _list.Count - marker); }
-            
+
             return _list.Count - marker;
         }
 
@@ -218,8 +223,9 @@ namespace Plankton
         {
             return this.CompactHelper();
         }
-        
+
         #region traversals
+
         /// <summary>
         /// Traverses the halfedge indices which originate from a vertex.
         /// </summary>
@@ -241,7 +247,7 @@ namespace Plankton
             }
             while (he_current != he_first);
         }
-        
+
         /// <summary>
         /// Traverses the halfedge indices which originate from a vertex.
         /// </summary>
@@ -270,9 +276,11 @@ namespace Plankton
             }
             while (h != first);
         }
-        #endregion
+
+        #endregion traversals
 
         #region adjacency queries
+
         /// <summary>
         /// Gets the halfedges which originate from a vertex.
         /// </summary>
@@ -295,7 +303,7 @@ namespace Plankton
             return _mesh.Halfedges.GetVertexCirculator(this[v].OutgoingHalfedge)
                 .Select(h => _mesh.Halfedges.GetPairHalfedge(h)).ToArray();
         }
-        
+
         /// <summary>
         /// Gets vertex neighbours (a.k.a. 1-ring).
         /// </summary>
@@ -308,7 +316,7 @@ namespace Plankton
             return _mesh.Halfedges.GetVertexCirculator(this[v].OutgoingHalfedge)
                 .Select(h => hs[hs.GetPairHalfedge(h)].StartVertex).ToArray();
         }
-        
+
         /// <summary>
         /// Gets faces incident to a vertex.
         /// </summary>
@@ -318,7 +326,7 @@ namespace Plankton
         public int[] GetVertexFaces(int v)
         {
             return _mesh.Halfedges.GetVertexCirculator(this[v].OutgoingHalfedge)
-                .Select(h => _mesh.Halfedges[h].AdjacentFace).ToArray();
+                .Select(h => _mesh.Halfedges[h].Twin).ToArray();
         }
 
         /// <summary>
@@ -330,7 +338,8 @@ namespace Plankton
         {
             return _mesh.Halfedges.GetPairHalfedge(this[v].OutgoingHalfedge);
         }
-        #endregion
+
+        #endregion adjacency queries
 
         /// <summary>
         /// Gets the number of naked edges incident to this vertex.
@@ -343,7 +352,7 @@ namespace Plankton
             var hs = _mesh.Halfedges;
             foreach (int i in _mesh.Halfedges.GetVertexCirculator(this[v].OutgoingHalfedge))
             {
-                if (hs[i].AdjacentFace == -1 || hs[hs.GetPairHalfedge(i)].AdjacentFace == -1)
+                if (hs[i].Twin == -1 || hs[hs.GetPairHalfedge(i)].Twin == -1)
                     nakedCount++;
             }
             return nakedCount;
@@ -369,7 +378,7 @@ namespace Plankton
         public bool IsBoundary(int index)
         {
             int h = this[index].OutgoingHalfedge;
-            return (h < -1 || _mesh.Halfedges[h].AdjacentFace == -1);
+            return (h < -1 || _mesh.Halfedges[h].Twin == -1);
         }
 
         /// <summary>
@@ -385,17 +394,17 @@ namespace Plankton
             var ring = this.GetVertexNeighbours(index);
             int n = ring.Length;
 
-            for (int i = 0; i < n-1; i++)
+            for (int i = 0; i < n - 1; i++)
             {
                 normal += PlanktonXYZ.CrossProduct(
-                    this[ring[i]].ToXYZ() - vertex, 
-                    this[ring[i+1]].ToXYZ() - vertex);
+                    this[ring[i]].ToXYZ() - vertex,
+                    this[ring[i + 1]].ToXYZ() - vertex);
             }
 
             if (this.IsBoundary(index) == false)
             {
                 normal += PlanktonXYZ.CrossProduct(
-                    this[n-1].ToXYZ() - vertex,
+                    this[n - 1].ToXYZ() - vertex,
                     this[0].ToXYZ() - vertex);
             }
 
@@ -425,6 +434,7 @@ namespace Plankton
         }
 
         #region Euler operators
+
         /// <summary>
         /// <para>Merges two vertices by collapsing the pair of halfedges between them.</para>
         /// <seealso cref="PlanktonHalfedgeList.CollapseEdge"/>
@@ -437,7 +447,6 @@ namespace Plankton
         public int MergeVertices(int halfedge)
         {
             return _mesh.Halfedges.CollapseEdge(halfedge);
-
         }
 
         /// <summary>
@@ -465,7 +474,7 @@ namespace Plankton
                 if (h == first) { break; }
                 hs[h].StartVertex = v_new;
                 // If new vertex has no outgoing yet and current he is naked...
-                if (this[v_new].OutgoingHalfedge == -1 && hs[h].AdjacentFace == -1)
+                if (this[v_new].OutgoingHalfedge == -1 && hs[h].Twin == -1)
                     this[v_new].OutgoingHalfedge = h;
                 // Also check whether existing vert's he is now incident to new one
                 if (h == this[v_old].OutgoingHalfedge) { reset_v_old = true; }
@@ -474,9 +483,9 @@ namespace Plankton
             if (this[v_new].OutgoingHalfedge == -1) { this[v_new].OutgoingHalfedge = second; }
 
             // Add the new pair of halfedges from old vertex to new
-            int h_new = hs.AddPair(v_old, v_new, hs[second].AdjacentFace);
+            int h_new = hs.AddPair(v_old, v_new, hs[second].Twin);
             int h_new_pair = hs.GetPairHalfedge(h_new);
-            hs[h_new_pair].AdjacentFace = hs[first].AdjacentFace;
+            hs[h_new_pair].Twin = hs[first].Twin;
 
             // Link new pair into mesh
             hs.MakeConsecutive(hs[first].PrevHalfedge, h_new_pair);
@@ -490,7 +499,7 @@ namespace Plankton
                 this[v_old].OutgoingHalfedge = h_new;
                 foreach (int h in hs.GetVertexCirculator(h_new))
                 {
-                    if (hs[h].AdjacentFace == -1) { this[v_old].OutgoingHalfedge = h; }
+                    if (hs[h].Twin == -1) { this[v_old].OutgoingHalfedge = h; }
                 }
             }
 
@@ -525,7 +534,7 @@ namespace Plankton
             }
 
             // Store face to keep and set its first halfedge
-            int faceIndex = _mesh.Halfedges[halfedgeIndex].AdjacentFace;
+            int faceIndex = _mesh.Halfedges[halfedgeIndex].Twin;
             int firstHalfedge = _mesh.Halfedges[halfedgeIndex].NextHalfedge;
             _mesh.Faces[faceIndex].FirstHalfedge = firstHalfedge;
 
@@ -533,14 +542,14 @@ namespace Plankton
             _mesh.Halfedges.RemovePairHelper(vertexHalfedges[0]);
             for (int i = 1; i < vertexHalfedges.Length; i++)
             {
-                _mesh.Faces[_mesh.Halfedges[vertexHalfedges[i]].AdjacentFace] = PlanktonFace.Unset;
+                _mesh.Faces[_mesh.Halfedges[vertexHalfedges[i]].Twin] = PlanktonFace.Unset;
                 _mesh.Halfedges.RemovePairHelper(vertexHalfedges[i]);
             }
 
             // Set adjacent face for all halfedges in hole
             foreach (int h in _mesh.Halfedges.GetFaceCirculator(firstHalfedge))
             {
-                _mesh.Halfedges[h].AdjacentFace = faceIndex;
+                _mesh.Halfedges[h].Twin = faceIndex;
             }
 
             // Mark center vertex for deletion
@@ -548,7 +557,8 @@ namespace Plankton
 
             return _mesh.Faces[faceIndex].FirstHalfedge;
         }
-        #endregion
+
+        #endregion Euler operators
 
         /// <summary>
         /// Truncates a vertex by creating a face with vertices on each of the outgoing halfedges.
@@ -558,10 +568,10 @@ namespace Plankton
         public int TruncateVertex(int v)
         {
             var hs = this.GetHalfedges(v);
-        
+
             // set h_new and move original vertex
             int h_new = hs[0];
-        
+
             // circulate outgoing halfedges (clockwise, skip first)
             for (int i = 1; i < hs.Length; i++)
             {
@@ -573,11 +583,13 @@ namespace Plankton
             // split face to create new truncated face
             int splitH = this._mesh.Faces.SplitFace(hs[0], h_new);
 
-            return this._mesh.Halfedges[this._mesh.Halfedges.GetPairHalfedge(splitH)].AdjacentFace;
+            return this._mesh.Halfedges[this._mesh.Halfedges.GetPairHalfedge(splitH)].Twin;
         }
-        #endregion
-        
+
+        #endregion methods
+
         #region IEnumerable implementation
+
         /// <summary>
         /// Gets an enumerator that yields all faces in this collection.
         /// </summary>
@@ -586,10 +598,12 @@ namespace Plankton
         {
             return this._list.GetEnumerator();
         }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
-        #endregion
+
+        #endregion IEnumerable implementation
     }
 }

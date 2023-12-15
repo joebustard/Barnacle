@@ -48,14 +48,14 @@ namespace Plankton
                 this.Halfedges.Add(new PlanktonHalfedge()
                 {
                     StartVertex = h.StartVertex,
-                    AdjacentFace = h.AdjacentFace,
+                    Twin = h.Twin,
                     NextHalfedge = h.NextHalfedge,
                     PrevHalfedge = h.PrevHalfedge,
                 });
             }
         }
 
-        public PlanktonMesh(Point3DCollection verts, Int32Collection faces)
+        public PlanktonMesh(Point3DCollection verts, Int32Collection sourceFaces)
         {
             // create the right number of vertices and set their coordinates
             // We don't know their half edges yet
@@ -71,24 +71,26 @@ namespace Plankton
             }
             // create the right number of faces.
             // We don't know anything else about them yet
-            for (int i = 0; i < faces.Count / 3; i++)
+            for (int i = 0; i < sourceFaces.Count / 3; i++)
             {
                 int j = i * 3;
                 PlanktonHalfedge he0 = new PlanktonHalfedge();
-                he0.StartVertex = faces[j];
-
+                he0.StartVertex = sourceFaces[j];
+                he0.Face = this.Faces.Count;
                 int heInd0 = Halfedges.Count;
                 this.Halfedges.Add(he0);
                 this.Vertices[he0.StartVertex].OutgoingHalfedge = heInd0;
 
                 PlanktonHalfedge he1 = new PlanktonHalfedge();
-                he1.StartVertex = faces[j + 1];
+                he1.StartVertex = sourceFaces[j + 1];
+                he1.Face = this.Faces.Count;
                 int heInd1 = Halfedges.Count;
                 this.Halfedges.Add(he1);
                 this.Vertices[he1.StartVertex].OutgoingHalfedge = heInd1;
 
                 PlanktonHalfedge he2 = new PlanktonHalfedge();
-                he2.StartVertex = faces[j + 2];
+                he2.StartVertex = sourceFaces[j + 2];
+                he2.Face = this.Faces.Count;
                 int heInd2 = Halfedges.Count;
                 this.Halfedges.Add(he2);
                 this.Vertices[he2.StartVertex].OutgoingHalfedge = heInd2;
@@ -105,6 +107,31 @@ namespace Plankton
                 f.FirstHalfedge = heInd0;
 
                 this.Faces.Add(f);
+            }
+
+            // crude halfedge twinner
+            for (int i = 0; i < this.Halfedges.Count - 1; i++)
+            {
+                if (this.Halfedges[i].Twin == -1)
+                {
+                    int s0 = this.Halfedges[i].StartVertex;
+                    int e0 = this.Halfedges[this.Halfedges[i].NextHalfedge].StartVertex;
+                    bool more = true;
+                    for (int j = i + 1; j < this.Halfedges.Count && more; j++)
+                    {
+                        if (this.Halfedges[j].Twin == -1)
+                        {
+                            int s1 = this.Halfedges[j].StartVertex;
+                            int e1 = this.Halfedges[this.Halfedges[j].NextHalfedge].StartVertex;
+                            if (s0 == e1 && e0 == s1)
+                            {
+                                this.Halfedges[i].Twin = j;
+                                this.Halfedges[j].Twin = i;
+                                more = false;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -229,7 +256,7 @@ namespace Plankton
                 int[] FaceHalfedges = P.Faces.GetHalfedges(i);
                 for (int j = 0; j < FaceHalfedges.Length; j++)
                 {
-                    if (P.Halfedges[P.Halfedges.GetPairHalfedge(FaceHalfedges[j])].AdjacentFace != -1)
+                    if (P.Halfedges[P.Halfedges.GetPairHalfedge(FaceHalfedges[j])].Twin != -1)
                     {
                         // D.Vertices[i].OutgoingHalfedge = FaceHalfedges[j];
                         D.Vertices[D.Vertices.Count - 1].OutgoingHalfedge = P.Halfedges.GetPairHalfedge(FaceHalfedges[j]);
@@ -257,19 +284,19 @@ namespace Plankton
 
             for (int i = 0; i < P.Halfedges.Count; i++)
             {
-                if ((P.Halfedges[i].AdjacentFace != -1) & (P.Halfedges[P.Halfedges.GetPairHalfedge(i)].AdjacentFace != -1))
+                if ((P.Halfedges[i].Twin != -1) & (P.Halfedges[P.Halfedges.GetPairHalfedge(i)].Twin != -1))
                 {
                     PlanktonHalfedge DualHE = PlanktonHalfedge.Unset;
                     PlanktonHalfedge PrimalHE = P.Halfedges[i];
                     //DualHE.StartVertex = PrimalHE.AdjacentFace;
-                    DualHE.StartVertex = P.Halfedges[P.Halfedges.GetPairHalfedge(i)].AdjacentFace;
+                    DualHE.StartVertex = P.Halfedges[P.Halfedges.GetPairHalfedge(i)].Twin;
 
                     if (P.Vertices.NakedEdgeCount(PrimalHE.StartVertex) == 0)
                     {
                         //DualHE.AdjacentFace = P.Halfedges[P.PairHalfedge(i)].StartVertex;
-                        DualHE.AdjacentFace = PrimalHE.StartVertex;
+                        DualHE.Twin = PrimalHE.StartVertex;
                     }
-                    else { DualHE.AdjacentFace = -1; }
+                    else { DualHE.Twin = -1; }
 
                     //This will currently fail with open meshes...
                     //one option could be to build the dual with all halfedges, but mark some as dead
@@ -294,7 +321,7 @@ namespace Plankton
         {
             for (int i = 0; i < this.Halfedges.Count; i++)
             {
-                if (this.Halfedges[i].AdjacentFace < 0)
+                if (this.Halfedges[i].Twin < 0)
                 {
                     return false;
                 }
@@ -356,7 +383,26 @@ namespace Plankton
             this.Halfedges.CompactHelper();
         }
 
-        //dihedral angle for an edge
+        public void ToSoup(Point3DCollection vertices, Int32Collection faces)
+        {
+            foreach (PlanktonVertex pv in this.Vertices)
+            {
+                vertices.Add(new Point3D((double)pv.X, (double)pv.Y, (double)pv.Z));
+            }
+
+            foreach (PlanktonFace pf in this.Faces)
+            {
+                int edge = pf.FirstHalfedge;
+                int startEdge = edge;
+                do
+                {
+                    faces.Add(this.Halfedges[edge].StartVertex);
+                    edge = this.Halfedges[edge].NextHalfedge;
+                } while (edge != startEdge);
+            }
+        }
+
+        //dihedral angle for an edgepf in this.
         //
 
         //skeletonize - build a new mesh with 4 faces for each original edge

@@ -143,9 +143,9 @@ namespace Plankton
                         if (vertex.OutgoingHalfedge == iter) { vertex.OutgoingHalfedge = marker; }
 
                         // Update adjacent face, if necessary
-                        if (_list[marker].AdjacentFace > -1)
+                        if (_list[marker].Twin > -1)
                         {
-                            var face = _mesh.Faces[_list[marker].AdjacentFace];
+                            var face = _mesh.Faces[_list[marker].Twin];
                             if (face.FirstHalfedge == iter) { face.FirstHalfedge = marker; }
                         }
 
@@ -302,7 +302,7 @@ namespace Plankton
             int pair = this.GetPairHalfedge(index);
 
             // Check for a face on both sides
-            return (this[index].AdjacentFace == -1 || this[pair].AdjacentFace == -1);
+            return (this[index].Twin == -1 || this[pair].Twin == -1);
         }
 
         /// <summary>
@@ -371,7 +371,7 @@ namespace Plankton
         public bool FlipEdge(int index)
         {
             // Don't allow if halfedge is on a boundary
-            if (this[index].AdjacentFace < 0 || this[GetPairHalfedge(index)].AdjacentFace < 0)
+            if (this[index].Twin < 0 || this[GetPairHalfedge(index)].Twin < 0)
                 return false;
             
             // Make a note of some useful halfedges, along with 'index' itself
@@ -400,18 +400,18 @@ namespace Plankton
             if (_mesh.Vertices[v].OutgoingHalfedge == pair)
                 _mesh.Vertices[v].OutgoingHalfedge = next;
             // for each face, check if need to update start he
-            int f = this[index].AdjacentFace;
+            int f = this[index].Twin;
             if (_mesh.Faces[f].FirstHalfedge == next)
                 _mesh.Faces[f].FirstHalfedge = index;
-            f = this[pair].AdjacentFace;
+            f = this[pair].Twin;
             if (_mesh.Faces[f].FirstHalfedge == pair_next)
                 _mesh.Faces[f].FirstHalfedge = pair;
             // update 2 start verts
             this[index].StartVertex = EndVertex(pair_next);
             this[pair].StartVertex = EndVertex(next);
             // 2 adjacentfaces
-            this[next].AdjacentFace = this[pair].AdjacentFace;
-            this[pair_next].AdjacentFace = this[index].AdjacentFace;
+            this[next].Twin = this[pair].Twin;
+            this[pair_next].Twin = this[index].Twin;
             
             return true;
         }
@@ -430,9 +430,9 @@ namespace Plankton
             int new_vertex_index = _mesh.Vertices.Add(_mesh.Vertices[end_vertex].ToXYZ()); // use XYZ to copy            
 
             // Add a new halfedge pair
-            int new_halfedge1 = this.AddPair(new_vertex_index, this.EndVertex(index), this[index].AdjacentFace);
+            int new_halfedge1 = this.AddPair(new_vertex_index, this.EndVertex(index), this[index].Twin);
             int new_halfedge2 = this.GetPairHalfedge(new_halfedge1);
-            this[new_halfedge2].AdjacentFace = this[pair].AdjacentFace;
+            this[new_halfedge2].Twin = this[pair].Twin;
 
             // Link new pair into mesh
             this.MakeConsecutive(new_halfedge1, this[index].NextHalfedge);
@@ -488,16 +488,16 @@ namespace Plankton
             int pair = this.GetPairHalfedge(index);
             int v_keep = this[index].StartVertex;
             int v_kill = this[pair].StartVertex;
-            int f = this[index].AdjacentFace;
-            int f_pair = this[pair].AdjacentFace;
+            int f = this[index].Twin;
+            int f_pair = this[pair].Twin;
 
             // Don't allow the creation of non-manifold vertices
             // This would happen if the edge is internal (face on both sides) and
             // both incident vertices lie on a boundary
             if (f > -1 && f_pair > -1)
             {
-                if (this[_mesh.Vertices[v_keep].OutgoingHalfedge].AdjacentFace < 0 && 
-                    this[_mesh.Vertices[v_kill].OutgoingHalfedge].AdjacentFace < 0)
+                if (this[_mesh.Vertices[v_keep].OutgoingHalfedge].Twin < 0 && 
+                    this[_mesh.Vertices[v_kill].OutgoingHalfedge].Twin < 0)
                 {
                     return -1;
                 }
@@ -533,7 +533,7 @@ namespace Plankton
 
             // Set outgoing halfedge
             int v_kill_outgoing = _mesh.Vertices[v_kill].OutgoingHalfedge;
-            if (this[v_kill_outgoing].AdjacentFace < 0 && v_kill_outgoing != pair)
+            if (this[v_kill_outgoing].Twin < 0 && v_kill_outgoing != pair)
                 _mesh.Vertices[v_keep].OutgoingHalfedge = v_kill_outgoing;
             else if (_mesh.Vertices[v_keep].OutgoingHalfedge == index)
                 _mesh.Vertices[v_keep].OutgoingHalfedge = h_rtn; // Next around vertex

@@ -1,5 +1,6 @@
 using asdflibrary;
 using MakerLib;
+using Plankton;
 using sdflib;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,7 @@ namespace Barnacle.Dialogs
         private ObservableCollection<String> toolShapeItems;
         private double toolsSize;
         private double toolStrength;
+        private PlanktonMesh pmesh;
 
         public bool Symetric
         {
@@ -61,6 +63,7 @@ namespace Barnacle.Dialogs
 
         private string warningText;
         private const int cellsPerSector = 16;
+
         public ClaySculptDlg()
         {
             InitializeComponent();
@@ -69,6 +72,9 @@ namespace Barnacle.Dialogs
             meshColour = Colors.Brown;
             ModelGroup = MyModelGroup;
             loaded = false;
+            pmesh = new PlanktonMesh();
+
+            /*
             numbersectors = 10;
             sectorModels = new SectorModel[numbersectors, numbersectors, numbersectors];
             for (int i = 0; i < numbersectors; i++)
@@ -95,6 +101,7 @@ namespace Barnacle.Dialogs
             SetSphere(tool, 5, 5, 5, 4);
             op = 0;
 
+            */
             symetric = true;
             ShowFloor = false;
             ToolShapeItems = new ObservableCollection<string>();
@@ -260,7 +267,7 @@ namespace Barnacle.Dialogs
                         strength = toolStrength / 10.0;
                         if (tool != null)
                         {
-                            SetSphere(tool, 5, 5, 5, 4 * strength);
+                            //        SetSphere(tool, 5, 5, 5, 4 * strength);
                         }
                         NotifyPropertyChanged();
                     }
@@ -321,6 +328,9 @@ namespace Barnacle.Dialogs
                         ModelGroup.Children.Add(m);
                     }
                 }
+                clayModel = GetModel();
+                ModelGroup.Children.Add(clayModel);
+                /*
                 for (int scol = 0; scol < numbersectors; scol++)
                 {
                     for (int srow = 0; srow < numbersectors; srow++)
@@ -332,6 +342,7 @@ namespace Barnacle.Dialogs
                         }
                     }
                 }
+                */
             }
         }
 
@@ -346,7 +357,13 @@ namespace Barnacle.Dialogs
 
                     oldMousePos = e.GetPosition(vp);
                     HitTest(vp, oldMousePos);
+
                     claySelected = false;
+                    if (lastHitModel == clayModel)
+                    {
+                        claySelected = true;
+                    }
+                    /*
                     for (int i = 0; i < numbersectors && claySelected == false; i++)
                     {
                         for (int j = 0; j < numbersectors && claySelected == false; j++)
@@ -360,9 +377,7 @@ namespace Barnacle.Dialogs
                             }
                         }
                     }
-
-
-
+                    */
                 }
                 else if (e.RightButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
@@ -382,6 +397,16 @@ namespace Barnacle.Dialogs
                 double dy = pn.Y - oldMousePos.Y;
                 if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
+                    if (claySelected)
+                    {
+                        if (dx < 1 && dy < 1)
+                        {
+                            if (lastHitPoint != null)
+                            {
+                            }
+                        }
+                    }
+                    /*
                     if (claySelected)
                     {
                         if (dx < 1 && dy < 1)
@@ -427,6 +452,7 @@ namespace Barnacle.Dialogs
                         Camera.Move(dx, -dy);
                         UpdateCameraPos();
                     }
+                    */
                     oldMousePos = pn;
                     e.Handled = true;
                 }
@@ -472,15 +498,20 @@ namespace Barnacle.Dialogs
         private double cx;
         private double cy;
         private double cz;
+
         private void GenerateShape()
         {
             ClearShape();
+            if (pmesh != null)
+            {
+                pmesh.ToSoup(Vertices, Faces);
+            }
+            /*
             CubeMarcher cm = new CubeMarcher();
             GridCell gc = new GridCell();
             List<Triangle> triangles = new List<Triangle>();
 
             double dd = 0.5;
-
 
             for (int scol = 0; scol < numbersectors; scol++)
             {
@@ -538,14 +569,12 @@ namespace Barnacle.Dialogs
                             }
                         }
                     }
-
                 }
-
             }
+            */
             /*
             for (double x = 0; x < maxX - 1; x += dd)
             {
-
                 for (double y = 0; y < maxY - 1; y += dd)
                 {
                     for (double z = 0; z < maxZ - 1; z += dd)
@@ -673,6 +702,7 @@ namespace Barnacle.Dialogs
             {
                 if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
+                    /*
                     sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
                     DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                     if (symetric)
@@ -682,6 +712,7 @@ namespace Barnacle.Dialogs
                     }
                     // sdf.Union(tool, maxX / 2 + 1, maxY / 2 + 1, maxZ / 2 + 1);
                     UpdateDisplay();
+                    */
                 }
                 claySelected = false;
             }
@@ -695,6 +726,11 @@ namespace Barnacle.Dialogs
             UpdateCameraPos();
             MyModelGroup.Children.Clear();
             ToolShape = ToolShapeItems[0];
+            Point3DCollection cubeVertices = new Point3DCollection();
+            Int32Collection cubeFaces = new Int32Collection();
+            GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 25, 60, 60);
+            pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
+
             loaded = true;
             UpdateDisplay();
         }
