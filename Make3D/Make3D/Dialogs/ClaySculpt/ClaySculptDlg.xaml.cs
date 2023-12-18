@@ -1,4 +1,5 @@
 using asdflibrary;
+using Barnacle.Dialogs.ClaySculpt;
 using MakerLib;
 using Plankton;
 using sdflib;
@@ -73,7 +74,7 @@ namespace Barnacle.Dialogs
             ModelGroup = MyModelGroup;
             loaded = false;
             pmesh = new PlanktonMesh();
-
+            currentTool = new SculptingTool();
             /*
             numbersectors = 10;
             sectorModels = new SectorModel[numbersectors, numbersectors, numbersectors];
@@ -346,6 +347,9 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private ToolSelectionContent toolSelectionContent;
+        private SculptingTool currentTool;
+
         protected override void Viewport_MouseDown(object sender, System.Windows.Input.MouseEventArgs e)
         {
             Viewport3D vp = sender as Viewport3D;
@@ -354,7 +358,7 @@ namespace Barnacle.Dialogs
                 if (e.LeftButton == System.Windows.Input.MouseButtonState.Pressed && e.Handled == false)
                 {
                     lastHitModel = null;
-
+                    ClearToolSelection();
                     oldMousePos = e.GetPosition(vp);
                     HitTest(vp, oldMousePos);
 
@@ -362,6 +366,7 @@ namespace Barnacle.Dialogs
                     if (lastHitModel == clayModel)
                     {
                         claySelected = true;
+                        SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
                     }
                     /*
                     for (int i = 0; i < numbersectors && claySelected == false; i++)
@@ -383,6 +388,27 @@ namespace Barnacle.Dialogs
                 {
                     oldMousePos = e.GetPosition(vp);
                 }
+            }
+        }
+
+        private void SelectFaceVertices(int v0, int v1, int v2, Point3D lastHitPoint, double radius)
+        {
+            toolSelectionContent.InitialFaceSelection(v0);
+            toolSelectionContent.InitialFaceSelection(v1);
+            toolSelectionContent.InitialFaceSelection(v2);
+            toolSelectionContent.SelectedInRange(lastHitPoint, radius);
+        }
+
+        private void ClearToolSelection()
+        {
+            if (toolSelectionContent != null)
+
+            {
+                toolSelectionContent.Clear();
+            }
+            else
+            {
+                toolSelectionContent = new ToolSelectionContent(pmesh);
             }
         }
 

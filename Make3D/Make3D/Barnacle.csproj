@@ -117,7 +117,10 @@
       <DependentUpon>BusyControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ClaySculpt\ClaySculptDlg.xaml.cs" />
+    <Compile Include="Dialogs\ClaySculpt\FaceStatus.cs" />
+    <Compile Include="Dialogs\ClaySculpt\SculptingTool.cs" />
     <Compile Include="Dialogs\ClaySculpt\SectorModel.cs" />
+    <Compile Include="Dialogs\ClaySculpt\ToolSelectionContent.cs" />
     <Compile Include="Dialogs\ConfirmObjectName\ConfirmObjectNameDlg.xaml.cs">
       <DependentUpon>ConfirmObjectNameDlg.xaml</DependentUpon>
     </Compile>
