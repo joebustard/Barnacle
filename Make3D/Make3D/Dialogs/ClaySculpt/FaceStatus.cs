@@ -10,6 +10,7 @@ namespace Barnacle.Dialogs.ClaySculpt
     {
         public int VerticesInTool { get; set; }
         public int[] FaceVertices { get; set; }
+        public int FaceId;
 
         public FaceStatus()
         {

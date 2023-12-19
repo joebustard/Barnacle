@@ -74,6 +74,26 @@ namespace Barnacle.Dialogs.ClaySculpt
                 }
 
                 DumpSelectedVertices();
+
+                Int32Collection searchFaces = new Int32Collection();
+                foreach (int vid in SelectedVertices)
+                {
+                    // find all the faces that this point belongs too
+                    PlanktonVertex vx = pmesh.Vertices[vid];
+                    int origin = vx.OutgoingHalfedge;
+                    int startHe = origin;
+                    do
+                    {
+                        PlanktonHalfedge he = pmesh.Halfedges[startHe];
+                        if (!searchFaces.Contains(he.Face))
+                        {
+                            searchFaces.Add(he.Face);
+                        }
+
+                        startHe = he.Twin;
+                        startHe = pmesh.Halfedges[startHe].NextHalfedge;
+                    } while (startHe != origin);
+                }
             }
         }
 
