@@ -42,6 +42,7 @@ namespace Barnacle.Dialogs.ClaySculpt
 
         internal void SelectedInRange(Point3D centre, double radius)
         {
+            System.Diagnostics.Debug.WriteLine($"Tool at {centre.X},{centre.Y},{centre.Z}, radius={radius}");
             if (SearchVertexQueue != null)
             {
                 while (SearchVertexQueue.Count > 0)
@@ -71,6 +72,20 @@ namespace Barnacle.Dialogs.ClaySculpt
                         }
                     }
                 }
+
+                DumpSelectedVertices();
+            }
+        }
+
+        private void DumpSelectedVertices()
+        {
+            System.Diagnostics.Debug.WriteLine("SelectedVertices");
+            foreach (int v in SelectedVertices)
+            {
+                System.Diagnostics.Debug.Write($"{v}=");
+                System.Diagnostics.Debug.Write($"{pmesh.Vertices[v].X},");
+                System.Diagnostics.Debug.Write($"{pmesh.Vertices[v].Y},");
+                System.Diagnostics.Debug.WriteLine($"{pmesh.Vertices[v].Z}");
             }
         }
 
