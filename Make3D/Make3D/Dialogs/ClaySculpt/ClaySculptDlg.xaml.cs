@@ -156,7 +156,11 @@ namespace Barnacle.Dialogs
                 if (toolInverse != value)
                 {
                     toolInverse = value;
-                    SetOpcode();
+                    if (currentTool != null)
+                    {
+                        currentTool.Inverse = toolInverse;
+                    }
+                    //SetOpcode();
                     NotifyPropertyChanged();
                     // UpdateDisplay();
                 }
@@ -391,11 +395,16 @@ namespace Barnacle.Dialogs
             }
         }
 
+        private void ToolProcess()
+        {
+            currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
+        }
+
         private void SelectFaceVertices(int v0, int v1, int v2, Point3D lastHitPoint, double radius)
         {
-            toolSelectionContent.InitialFaceSelection(v0);
-            toolSelectionContent.InitialFaceSelection(v1);
-            toolSelectionContent.InitialFaceSelection(v2);
+            toolSelectionContent.InitialVertexSelection(v0);
+            toolSelectionContent.InitialVertexSelection(v1);
+            toolSelectionContent.InitialVertexSelection(v2);
             toolSelectionContent.SelectedInRange(lastHitPoint, radius);
         }
 
@@ -726,6 +735,8 @@ namespace Barnacle.Dialogs
         {
             if (claySelected)
             {
+                ToolProcess();
+                UpdateDisplay();
                 if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
                     /*

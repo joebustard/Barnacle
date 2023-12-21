@@ -35,12 +35,6 @@ namespace Plankton
             }
         }
 
-        #region methods
-
-        #region vertex access
-
-        #region adding
-
         /// <summary>
         /// Adds a new vertex to the end of the Vertex list.
         /// </summary>
@@ -87,8 +81,6 @@ namespace Plankton
         {
             return this.Add(new PlanktonVertex(x, y, z));
         }
-
-        #endregion adding
 
         /// <summary>
         /// Adds a series of new vertices to the end of the vertex list.
@@ -178,8 +170,6 @@ namespace Plankton
             return true;
         }
 
-        #endregion vertex access
-
         /// <summary>
         /// Helper method to remove dead vertices from the list, re-index and compact.
         /// </summary>
@@ -223,8 +213,6 @@ namespace Plankton
         {
             return this.CompactHelper();
         }
-
-        #region traversals
 
         /// <summary>
         /// Traverses the halfedge indices which originate from a vertex.
@@ -276,10 +264,6 @@ namespace Plankton
             }
             while (h != first);
         }
-
-        #endregion traversals
-
-        #region adjacency queries
 
         /// <summary>
         /// Gets the halfedges which originate from a vertex.
@@ -339,8 +323,6 @@ namespace Plankton
             return _mesh.Halfedges.GetPairHalfedge(this[v].OutgoingHalfedge);
         }
 
-        #endregion adjacency queries
-
         /// <summary>
         /// Gets the number of naked edges incident to this vertex.
         /// </summary>
@@ -393,7 +375,7 @@ namespace Plankton
 
             var ring = this.GetVertexNeighbours(index);
             int n = ring.Length;
-
+            System.Diagnostics.Debug.WriteLine($"Ring size {n}");
             for (int i = 0; i < n - 1; i++)
             {
                 normal += PlanktonXYZ.CrossProduct(
@@ -403,12 +385,19 @@ namespace Plankton
 
             if (this.IsBoundary(index) == false)
             {
+                /*
+                System.Diagnostics.Debug.WriteLine($"Not Bounadry");
                 normal += PlanktonXYZ.CrossProduct(
                     this[n - 1].ToXYZ() - vertex,
                     this[0].ToXYZ() - vertex);
+                    */
+            }
+            if (normal.Length > 0.0)
+            {
+                return normal * (-1.0f / normal.Length); // return unit vector
             }
 
-            return normal * (-1.0f / normal.Length); // return unit vector
+            return normal;
         }
 
         /// <summary>
@@ -432,8 +421,6 @@ namespace Plankton
         {
             return Enumerable.Range(0, this.Count).Select(i => this[i].ToXYZ()).ToArray();
         }
-
-        #region Euler operators
 
         /// <summary>
         /// <para>Merges two vertices by collapsing the pair of halfedges between them.</para>
@@ -558,8 +545,6 @@ namespace Plankton
             return _mesh.Faces[faceIndex].FirstHalfedge;
         }
 
-        #endregion Euler operators
-
         /// <summary>
         /// Truncates a vertex by creating a face with vertices on each of the outgoing halfedges.
         /// </summary>
@@ -586,10 +571,6 @@ namespace Plankton
             return this._mesh.Halfedges[this._mesh.Halfedges.GetPairHalfedge(splitH)].Twin;
         }
 
-        #endregion methods
-
-        #region IEnumerable implementation
-
         /// <summary>
         /// Gets an enumerator that yields all faces in this collection.
         /// </summary>
@@ -603,7 +584,5 @@ namespace Plankton
         {
             return this.GetEnumerator();
         }
-
-        #endregion IEnumerable implementation
     }
 }
