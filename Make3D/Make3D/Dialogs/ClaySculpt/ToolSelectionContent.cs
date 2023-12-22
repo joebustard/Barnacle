@@ -47,7 +47,7 @@ namespace Barnacle.Dialogs.ClaySculpt
 
         internal void InitialVertexSelection(int v0)
         {
-            if (v0 >= 0 && v0 < pmesh.Vertices.Count)
+            if (v0 >= 0 && v0 < pmesh.Vertices.Count && !SelectedVertices.Contains(v0))
             {
                 SearchVertexQueue.Add(v0);
             }

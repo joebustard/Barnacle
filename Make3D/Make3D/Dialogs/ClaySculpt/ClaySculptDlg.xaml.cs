@@ -438,22 +438,9 @@ namespace Barnacle.Dialogs
                         {
                             if (lastHitPoint != null)
                             {
-                            }
-                        }
-                    }
-                    /*
-                    if (claySelected)
-                    {
-                        if (dx < 1 && dy < 1)
-                        {
-                            if (lastHitPoint != null)
-                            {
-                                sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
-                                DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
+                                SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
                                 if (symetric)
                                 {
-                                    sdf.Perform(tool, (int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
-                                    DirtySector((int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                                 }
                             }
                         }
@@ -462,7 +449,12 @@ namespace Barnacle.Dialogs
                             double dist = Math.Sqrt(dx * dx + dy * dy);
                             if (dist > 0)
                             {
-                                for (double t = 0; t <= 1; t += 1 / dist)
+                                double diff = 1 / dist;
+                                if (diff < 0.1)
+                                {
+                                    diff = 0.1;
+                                }
+                                for (double t = 0; t <= 1; t += diff)
 
                                 {
                                     double px = oldMousePos.X + t * dx;
@@ -470,12 +462,9 @@ namespace Barnacle.Dialogs
                                     HitTest(vp, new Point(px, py));
                                     if (lastHitPoint != null)
                                     {
-                                        sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
-                                        DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
+                                        SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
                                         if (symetric)
                                         {
-                                            sdf.Perform(tool, (int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
-                                            DirtySector((int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
                                         }
                                     }
                                 }
@@ -487,7 +476,7 @@ namespace Barnacle.Dialogs
                         Camera.Move(dx, -dy);
                         UpdateCameraPos();
                     }
-                    */
+
                     oldMousePos = pn;
                     e.Handled = true;
                 }
@@ -765,7 +754,7 @@ namespace Barnacle.Dialogs
             ToolShape = ToolShapeItems[0];
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();
-            GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 25, 60, 60);
+            GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 120, 120);
             pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
 
             loaded = true;

@@ -10,8 +10,8 @@ namespace Barnacle.Dialogs.ClaySculpt
 
         public SculptingTool()
         {
-            Radius = 5;
-            Scaler = 0.5;
+            Radius = 10;
+            Scaler = 1;
             Inverse = false;
         }
 
@@ -32,7 +32,7 @@ namespace Barnacle.Dialogs.ClaySculpt
         public bool ApplyTool(ToolSelectionContent content, Point3D centre)
         {
             bool res = true;
-            //  content.SubdivideSelectedFaces();
+            // content.SubdivideSelectedFaces();
             foreach (int vid in content.SelectedVertices)
             {
                 PlanktonVertex xyz = content.GetVertex(vid);
