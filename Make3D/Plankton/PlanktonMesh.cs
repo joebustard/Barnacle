@@ -15,8 +15,6 @@ namespace Plankton
         private PlanktonHalfEdgeList _halfedges;
         private PlanktonFaceList _faces;
 
-        #region "constructors"
-
         /// <summary>
         /// Initializes a new (empty) instance of the <see cref="PlanktonMesh"/> class.
         /// </summary>
@@ -135,10 +133,6 @@ namespace Plankton
             }
         }
 
-        #endregion "constructors"
-
-        #region "properties"
-
         /// <summary>
         /// Gets access to the <see cref="PlanktonVertexList"/> collection in this mesh.
         /// </summary>
@@ -163,9 +157,10 @@ namespace Plankton
             get { return _faces ?? (_faces = new PlanktonFaceList(this)); }
         }
 
-        #endregion "properties"
-
-        #region "general methods"
+        public PlanktonXYZ GetVertexNormal(int index)
+        {
+            return this.Vertices.GetNormal(index);
+        }
 
         /// <summary>
         /// Calculate the volume of the mesh
@@ -407,6 +402,9 @@ namespace Plankton
 
         //skeletonize - build a new mesh with 4 faces for each original edge
 
-        #endregion "general methods"
+        public int TriangleSplit(int faceId)
+        {
+            return this.Halfedges.TriangleSplitEdge(this.Faces[faceId].FirstHalfedge);
+        }
     }
 }

@@ -7,13 +7,10 @@ namespace Plankton
     /// </summary>
     public struct PlanktonXYZ
     {
-        #region members
         internal float _x;
         internal float _y;
         internal float _z;
-        #endregion
 
-        #region constructors
         /// <summary>
         /// Constructs a new vector from 3 single precision numbers.
         /// </summary>
@@ -26,9 +23,7 @@ namespace Plankton
             _y = y;
             _z = z;
         }
-        #endregion
 
-        #region static properties
         /// <summary>
         /// Gets the value of the vector with components 0,0,0.
         /// </summary>
@@ -36,7 +31,7 @@ namespace Plankton
         {
             get { return new PlanktonXYZ(); }
         }
-        
+
         /// <summary>
         /// Gets the value of the vector with components 1,0,0.
         /// </summary>
@@ -44,7 +39,7 @@ namespace Plankton
         {
             get { return new PlanktonXYZ(1f, 0f, 0f); }
         }
-        
+
         /// <summary>
         /// Gets the value of the vector with components 0,1,0.
         /// </summary>
@@ -52,7 +47,7 @@ namespace Plankton
         {
             get { return new PlanktonXYZ(0f, 1f, 0f); }
         }
-        
+
         /// <summary>
         /// Gets the value of the vector with components 0,0,1.
         /// </summary>
@@ -60,24 +55,26 @@ namespace Plankton
         {
             get { return new PlanktonXYZ(0f, 0f, 1f); }
         }
-        #endregion static properties
 
-        #region properties
         /// <summary>
         /// Gets or sets the X (first) component of this vector.
         /// </summary>
         public float X { get { return _x; } set { _x = value; } }
-        
+
+        public static float DotProduct(PlanktonXYZ a, PlanktonXYZ b)
+        {
+            return ((a._x * b._x) + (a._y * b._y) + (a._z * b._z));
+        }
+
         /// <summary>
         /// Gets or sets the Y (second) component of this vector.
         /// </summary>
         public float Y { get { return _y; } set { _y = value; } }
-        
+
         /// <summary>
         /// Gets or sets the Z (third) component of this vector.
         /// </summary>
         public float Z { get { return _z; } set { _z = value; } }
-        #endregion
 
         /// <summary>
         /// Computes a hash number that represents the current vector.
@@ -139,7 +136,7 @@ namespace Plankton
 
         /// <summary>
         /// Get the length of a vector
-        /// </summary>        
+        /// </summary>
         /// <returns>The length</returns>
         public float Length
         {
@@ -192,6 +189,16 @@ namespace Plankton
         {
             return this == vector;
         }
+
+        public void Normalize()
+        {
+            float l = Length;
+            if (l > 0.0)
+            {
+                _x /= l;
+                _y /= l;
+                _z /= l;
+            }
+        }
     }
 }
-

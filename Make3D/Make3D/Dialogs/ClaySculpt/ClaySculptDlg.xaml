@@ -117,6 +117,10 @@
                                 x:Name="dirLightMain"
                                 Direction="-1,-1,-1"
                                 Color="White" />
+                            <DirectionalLight
+                                x:Name="dirLightMain2"
+                                Direction="1,1,1"
+                                Color="White" />
                         </Model3DGroup>
                     </ModelVisual3D.Content>
                 </ModelVisual3D>

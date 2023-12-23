@@ -31,17 +31,42 @@ namespace Barnacle.Dialogs.ClaySculpt
             SearchVertexQueue.Clear();
         }
 
-        internal void InitialFaceSelection(int v0)
+        internal PlanktonVertex GetVertex(int vid)
         {
-            PlanktonVertex pv0 = null;
-            if (v0 >= 0 && v0 < pmesh.Vertices.Count)
+            PlanktonVertex vx = pmesh.Vertices[vid];
+
+            return vx;
+        }
+
+        internal PlanktonXYZ GetVertexNormal(int vid)
+        {
+            PlanktonXYZ vx = pmesh.GetVertexNormal(vid);
+
+            return vx;
+        }
+
+        internal void InitialVertexSelection(int v0)
+        {
+            if (v0 >= 0 && v0 < pmesh.Vertices.Count && !SelectedVertices.Contains(v0))
             {
                 SearchVertexQueue.Add(v0);
             }
         }
 
+        internal void MoveVertex(PlanktonXYZ offset, int vid)
+        {
+            pmesh.Vertices[vid].X += offset.X;
+            pmesh.Vertices[vid].Y += offset.Y;
+            pmesh.Vertices[vid].Z += offset.Z;
+        }
+
+        private Point3D hitCentre;
+        private double searchRadius;
+
         internal void SelectedInRange(Point3D centre, double radius)
         {
+            hitCentre = centre;
+            searchRadius = radius;
             System.Diagnostics.Debug.WriteLine($"Tool at {centre.X},{centre.Y},{centre.Z}, radius={radius}");
             if (SearchVertexQueue != null)
             {
@@ -94,6 +119,7 @@ namespace Barnacle.Dialogs.ClaySculpt
                         startHe = pmesh.Halfedges[startHe].NextHalfedge;
                     } while (startHe != origin);
                 }
+
                 DumpSearchFaces(searchFaces);
             }
         }
@@ -102,6 +128,59 @@ namespace Barnacle.Dialogs.ClaySculpt
         {
             System.Diagnostics.Debug.WriteLine("SearchFaces");
             foreach( int f in fces )
+
+                DumpFaceList(searchFaces);
+
+                // for each of the search faces
+                foreach (int sf in searchFaces)
+                {
+                    FaceStatus stat = new FaceStatus();
+                    stat.FaceId = sf;
+                    // how many of this face's points are in range of the tool
+                    // stat.VerticesInTool = CountPointsOfFace(sf, SelectedVertices);
+                    FaceStates.Add(stat);
+                }
+            }
+        }
+
+        public void SubdivideSelectedFaces()
+        {
+            foreach (FaceStatus f in FaceStates)
+            {
+                int newHalfEdge = pmesh.TriangleSplit(f.FaceId);
+                int vid = pmesh.Halfedges[newHalfEdge].StartVertex;
+                PlanktonVertex vx = pmesh.Vertices[vid];
+                if (Distance(hitCentre, vx) < searchRadius)
+                {
+                    if (!SelectedVertices.Contains(vid))
+                    {
+                        SelectedVertices.Add(vid);
+                    }
+                }
+                int twin = pmesh.Halfedges[newHalfEdge].Twin;
+                vid = pmesh.Halfedges[twin].StartVertex;
+                vx = pmesh.Vertices[vid];
+                if (Distance(hitCentre, vx) < searchRadius)
+                {
+                    if (!SelectedVertices.Contains(vid))
+                    {
+                        SelectedVertices.Add(vid);
+                    }
+                }
+            }
+        }
+
+        private int CountPointsOfFace(int faceId, Int32Collection verticeList)
+        {
+            int res = 0;
+            return res;
+        }
+
+        private void DumpFaceList(Int32Collection faces)
+        {
+            System.Diagnostics.Debug.WriteLine("Faces");
+            foreach (int f in faces)
+
             {
                 System.Diagnostics.Debug.Write($"{f},");
             }
@@ -120,7 +199,7 @@ namespace Barnacle.Dialogs.ClaySculpt
             }
         }
 
-        private double Distance(Point3D c, PlanktonVertex vx)
+        public double Distance(Point3D c, PlanktonVertex vx)
         {
             double res = Math.Sqrt(
                 (c.X - (double)vx.X) * (c.X - (double)vx.X) +

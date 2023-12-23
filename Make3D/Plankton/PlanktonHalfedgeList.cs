@@ -12,7 +12,7 @@ namespace Plankton
     {
         private readonly PlanktonMesh _mesh;
         private List<PlanktonHalfedge> _list;
-        
+
         /// <summary>
         /// Initializes a new instance of the <see cref="PlanktonHalfedgeList"/> class.
         /// Should be called from the mesh constructor.
@@ -23,7 +23,7 @@ namespace Plankton
             this._list = new List<PlanktonHalfedge>();
             this._mesh = owner;
         }
-        
+
         /// <summary>
         /// Gets the number of halfedges.
         /// </summary>
@@ -34,9 +34,11 @@ namespace Plankton
                 return this._list.Count;
             }
         }
-        
+
         #region methods
+
         #region halfedge access
+
         /// <summary>
         /// Adds a new halfedge to the end of the Halfedge list.
         /// </summary>
@@ -48,7 +50,7 @@ namespace Plankton
             this._list.Add(halfedge);
             return this.Count - 1;
         }
-        
+
         /// <summary>
         /// Add a pair of halfedges to the mesh.
         /// </summary>
@@ -74,11 +76,11 @@ namespace Plankton
         internal void RemovePairHelper(int index)
         {
             int pair = this.GetPairHalfedge(index);
-            
+
             // Reconnect adjacent halfedges
             this.MakeConsecutive(this[pair].PrevHalfedge, this[index].NextHalfedge);
             this.MakeConsecutive(this[index].PrevHalfedge, this[pair].NextHalfedge);
-            
+
             // Update vertices' outgoing halfedges, if necessary. If last halfedge then
             // make vertex unused (outgoing == -1), otherwise set to next around vertex.
             var v1 = _mesh.Vertices[this[index].StartVertex];
@@ -93,7 +95,7 @@ namespace Plankton
                 if (this[index].NextHalfedge == pair) { v2.OutgoingHalfedge = -1; }
                 else { v2.OutgoingHalfedge = this[index].NextHalfedge; }
             }
-            
+
             // Mark halfedges for deletion
             this[index] = PlanktonHalfedge.Unset;
             this[pair] = PlanktonHalfedge.Unset;
@@ -118,7 +120,8 @@ namespace Plankton
                 this._list[index] = value;
             }
         }
-        #endregion
+
+        #endregion halfedge access
 
         /// <summary>
         /// Helper method to remove dead halfedges from the list, re-index and compact.
@@ -166,6 +169,7 @@ namespace Plankton
         }
 
         #region traversals
+
         /// <summary>
         /// Traverses clockwise around the starting vertex of a halfedge.
         /// </summary>
@@ -216,9 +220,11 @@ namespace Plankton
             }
             while (h != halfedgeIndex);
         }
-        #endregion
+
+        #endregion traversals
 
         #region public helpers
+
         /// <summary>
         /// Gets the halfedge index between two vertices.
         /// </summary>
@@ -271,18 +277,18 @@ namespace Plankton
             I = this[index].StartVertex;
             J = this[this.GetPairHalfedge(index)].StartVertex;
 
-            return new int[]{ I, J };
+            return new int[] { I, J };
         }
 
         /// <summary>
         /// Gets the halfedge a given number of 'next's around a face from a starting halfedge
-        /// </summary>        
+        /// </summary>
         /// <param name="startHalfEdge">The halfedge to start from</param>
         /// <param name="around">How many steps around the face. 0 returns the start_he</param>
         /// <returns>The resulting halfedge</returns>
         [Obsolete("GetNextHalfedge(int,int) is deprecated, please use" +
             "GetFaceCirculator(int).ElementAt(int) instead (LINQ).")]
-        public int GetNextHalfEdge(int startHalfEdge,  int around)
+        public int GetNextHalfEdge(int startHalfEdge, int around)
         {
             int he_around = startHalfEdge;
             for (int i = 0; i < around; i++)
@@ -315,21 +321,25 @@ namespace Plankton
         {
             return this[GetPairHalfedge(halfedgeIndex)].StartVertex;
         }
-        #endregion
+
+        #endregion public helpers
 
         #region internal helpers
+
         internal void MakeConsecutive(int prev, int next)
         {
             this[prev].NextHalfedge = next;
             this[next].PrevHalfedge = prev;
         }
-        #endregion
+
+        #endregion internal helpers
 
         #region Geometry
+
         public double[] GetLengths()
         /// <summary>
         /// Measure the lengths of all the halfedges
-        /// </summary>       
+        /// </summary>
         /// <returns>An array of lengths for all halfedges, or -1 for dead ones</returns>
         {
             double[] Lengths = new double[this.Count];
@@ -345,22 +355,23 @@ namespace Plankton
         public double GetLength(int index)
         /// <summary>
         /// Measure the length of a single halfedge
-        /// </summary>       
+        /// </summary>
         /// <returns>The length of the halfedge, or -1 if unused</returns>
         {
             double EdgeLength = -1;
             if (this[index].IsUnused == false)
             {
-                PlanktonXYZ Start = _mesh.Vertices[this[index].StartVertex].ToXYZ();              
+                PlanktonXYZ Start = _mesh.Vertices[this[index].StartVertex].ToXYZ();
                 PlanktonXYZ End = _mesh.Vertices[this.EndVertex(index)].ToXYZ();
                 EdgeLength = (End - Start).Length;
             }
             return EdgeLength;
         }
 
-        #endregion
+        #endregion Geometry
 
         #region Euler operators
+
         /// <summary>
         /// Performs an edge flip. This works by shifting the start/end vertices of the edge
         /// anticlockwise around their faces (by one vertex) and as such can be applied to any
@@ -373,7 +384,7 @@ namespace Plankton
             // Don't allow if halfedge is on a boundary
             if (this[index].Twin < 0 || this[GetPairHalfedge(index)].Twin < 0)
                 return false;
-            
+
             // Make a note of some useful halfedges, along with 'index' itself
             int pair = this.GetPairHalfedge(index);
             int next = this[index].NextHalfedge;
@@ -382,7 +393,7 @@ namespace Plankton
             // Also don't allow if the edge that would be created by flipping already exists in the mesh
             if (FindHalfedge(EndVertex(pair_next), EndVertex(next)) != -1)
                 return false;
-            
+
             // to flip an edge
             // 6 nexts
             // 6 prevs
@@ -412,7 +423,7 @@ namespace Plankton
             // 2 adjacentfaces
             this[next].Twin = this[pair].Twin;
             this[pair_next].Twin = this[index].Twin;
-            
+
             return true;
         }
 
@@ -427,7 +438,7 @@ namespace Plankton
 
             // Create a copy of the existing vertex (user can move it afterwards if needs be)
             int end_vertex = this[pair].StartVertex;
-            int new_vertex_index = _mesh.Vertices.Add(_mesh.Vertices[end_vertex].ToXYZ()); // use XYZ to copy            
+            int new_vertex_index = _mesh.Vertices.Add(_mesh.Vertices[end_vertex].ToXYZ()); // use XYZ to copy
 
             // Add a new halfedge pair
             int new_halfedge1 = this.AddPair(new_vertex_index, this.EndVertex(index), this[index].Twin);
@@ -446,7 +457,7 @@ namespace Plankton
             // Change the start of the pair of the input halfedge to the new vertex
             this[pair].StartVertex = new_vertex_index;
 
-            // Update end vertex's outgoing halfedge, if necessary 
+            // Update end vertex's outgoing halfedge, if necessary
             if (_mesh.Vertices[end_vertex].OutgoingHalfedge == pair)
             {
                 _mesh.Vertices[end_vertex].OutgoingHalfedge = new_halfedge2;
@@ -458,7 +469,7 @@ namespace Plankton
         /// <summary>
         /// Split 2 adjacent triangles into 4 by inserting a new vertex along the edge
         /// </summary>
-        /// <param name="index">The index of the halfedge to split. Must be between 2 triangles.</param>        
+        /// <param name="index">The index of the halfedge to split. Must be between 2 triangles.</param>
         /// <returns>The index of the halfedge going from the new vertex to the end of the input halfedge, or -1 on failure</returns>
         public int TriangleSplitEdge(int index)
         {
@@ -466,7 +477,7 @@ namespace Plankton
             // (I guess we could include a parameter for where along the edge to split)
             int new_halfedge = this.SplitEdge(index);
             int point_on_edge = this[new_halfedge].StartVertex;
-             
+
             _mesh.Vertices[point_on_edge].X = 0.5F * (_mesh.Vertices[this[index].StartVertex].X + _mesh.Vertices[this.EndVertex(new_halfedge)].X);
             _mesh.Vertices[point_on_edge].Y = 0.5F * (_mesh.Vertices[this[index].StartVertex].Y + _mesh.Vertices[this.EndVertex(new_halfedge)].Y);
             _mesh.Vertices[point_on_edge].Z = 0.5F * (_mesh.Vertices[this[index].StartVertex].Z + _mesh.Vertices[this.EndVertex(new_halfedge)].Z);
@@ -480,7 +491,7 @@ namespace Plankton
         /// <summary>
         /// Collapse an edge by combining 2 vertices
         /// </summary>
-        /// <param name="index">The index of a halfedge in the edge to collapse. The end vertex will be removed</param>        
+        /// <param name="index">The index of a halfedge in the edge to collapse. The end vertex will be removed</param>
         /// <returns>The successor to <paramref name="index"/> around its vertex, or -1 on failure.</returns>
         public int CollapseEdge(int index)
         {
@@ -496,13 +507,13 @@ namespace Plankton
             // both incident vertices lie on a boundary
             if (f > -1 && f_pair > -1)
             {
-                if (this[_mesh.Vertices[v_keep].OutgoingHalfedge].Twin < 0 && 
+                if (this[_mesh.Vertices[v_keep].OutgoingHalfedge].Twin < 0 &&
                     this[_mesh.Vertices[v_kill].OutgoingHalfedge].Twin < 0)
                 {
                     return -1;
                 }
             }
-            
+
             // Avoid creating a non-manifold edge...
             // If the edge is internal, then its ends must not have more than 2 neighbours in common.
             // If the edge is a boundary edge (or has one 3+ sided face), then its ends must not
@@ -516,7 +527,7 @@ namespace Plankton
             {
                 return -1;
             }
-            
+
             // Save a couple of halfedges for later
             int next = this[index].NextHalfedge;
             int pair_prev = this[pair].PrevHalfedge;
@@ -552,7 +563,7 @@ namespace Plankton
                 fs[f].FirstHalfedge = next;
             if (f_pair != -1 && fs[f_pair].FirstHalfedge == pair)
                 fs[f_pair].FirstHalfedge = h_rtn;
-            
+
             // If either adjacent face was triangular it will now only have two sides. If so,
             // try to merge faces into whatever is on the RIGHT of the associated halfedge.
             if (f > -1 && this.GetFaceCirculator(next).Count() < 3)
@@ -566,10 +577,13 @@ namespace Plankton
 
             return h_rtn;
         }
-        #endregion
-        #endregion
-        
+
+        #endregion Euler operators
+
+        #endregion methods
+
         #region IEnumerable implementation
+
         /// <summary>
         /// Gets an enumerator that yields all halfedges in this collection.
         /// </summary>
@@ -578,10 +592,12 @@ namespace Plankton
         {
             return this._list.GetEnumerator();
         }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
         }
-        #endregion
+
+        #endregion IEnumerable implementation
     }
 }
