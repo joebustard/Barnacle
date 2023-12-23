@@ -94,7 +94,18 @@ namespace Barnacle.Dialogs.ClaySculpt
                         startHe = pmesh.Halfedges[startHe].NextHalfedge;
                     } while (startHe != origin);
                 }
+                DumpSearchFaces(searchFaces);
             }
+        }
+
+        private void DumpSearchFaces(Int32Collection fces)
+        {
+            System.Diagnostics.Debug.WriteLine("SearchFaces");
+            foreach( int f in fces )
+            {
+                System.Diagnostics.Debug.Write($"{f},");
+            }
+            System.Diagnostics.Debug.WriteLine("");
         }
 
         private void DumpSelectedVertices()
