@@ -121,16 +121,6 @@ namespace Barnacle.Dialogs.ClaySculpt
                 }
 
                 DumpSearchFaces(searchFaces);
-            }
-        }
-
-        private void DumpSearchFaces(Int32Collection fces)
-        {
-            System.Diagnostics.Debug.WriteLine("SearchFaces");
-            foreach( int f in fces )
-
-                DumpFaceList(searchFaces);
-
                 // for each of the search faces
                 foreach (int sf in searchFaces)
                 {
@@ -142,6 +132,18 @@ namespace Barnacle.Dialogs.ClaySculpt
                 }
             }
         }
+
+        private void DumpSearchFaces(Int32Collection fces)
+        {
+            System.Diagnostics.Debug.WriteLine("SearchFaces");
+            foreach (int f in fces)
+            {
+                System.Diagnostics.Debug.Write($"{f},");
+            }
+            System.Diagnostics.Debug.WriteLine("Search");
+        }
+
+
 
         public void SubdivideSelectedFaces()
         {
@@ -209,5 +211,7 @@ namespace Barnacle.Dialogs.ClaySculpt
 
             return res;
         }
-    }
+    } 
 }
+
+
