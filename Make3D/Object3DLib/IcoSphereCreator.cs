@@ -15,7 +15,7 @@ namespace Barnacle.Object3DLib
 
         private Point3DCollection Vertices;
 
-        public void Create(int recursionLevel, ref Point3DCollection vertices, ref Int32Collection triangles)
+        public void Create(int recursionLevel, ref Point3DCollection vertices, ref Int32Collection triangles, double scale = 1.0)
         {
             Vertices = new Point3DCollection();
             Indices = new Int32Collection();
@@ -103,7 +103,7 @@ namespace Barnacle.Object3DLib
             // sphere is generated with radius 1, we want radius .5 so diameter is 1
             foreach (Point3D p in Vertices)
             {
-                Point3D np = new Point3D(p.X / 2, p.Y / 2, p.Z / 2);
+                Point3D np = new Point3D(scale * (p.X / 2), scale * (p.Y / 2), scale * (p.Z / 2));
                 vertices.Add(np);
             }
             triangles = Indices;

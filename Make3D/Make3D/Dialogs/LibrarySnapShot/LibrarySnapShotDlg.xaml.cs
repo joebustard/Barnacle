@@ -172,8 +172,15 @@ namespace Barnacle.Dialogs
         {
             snapShotTimer.Stop();
             ImageCapture.ScreenCaptureElement(viewport3D1, PartPath + System.IO.Path.DirectorySeparatorChar + PartName + ".png", true);
-            DialogResult = true;
-            Close();
+            try
+            {
+                DialogResult = true;
+                Close();
+            }
+            catch
+            {
+
+            }
         }
 
         private bool DescriptionIsValid()

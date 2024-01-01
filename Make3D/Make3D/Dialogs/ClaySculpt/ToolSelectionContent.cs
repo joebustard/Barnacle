@@ -86,13 +86,15 @@ namespace Barnacle.Dialogs.ClaySculpt
                             do
                             {
                                 PlanktonHalfedge he = pmesh.Halfedges[startHe];
-                                while (he.NextHalfedge != startHe)
-                                {
-                                    SearchVertexQueue.Add(he.StartVertex);
-                                    he = pmesh.Halfedges[he.NextHalfedge];
-                                }
+                                SearchVertexQueue.Add(he.StartVertex);
                                 he = pmesh.Halfedges[he.NextHalfedge];
-                                startHe = he.Twin;
+                                SearchVertexQueue.Add(he.StartVertex);
+                                he = pmesh.Halfedges[he.NextHalfedge];
+                                SearchVertexQueue.Add(he.StartVertex);
+                                he = pmesh.Halfedges[he.NextHalfedge];
+                                he = pmesh.Halfedges[he.Twin];
+
+                                startHe = he.NextHalfedge;
                             } while (startHe != origin);
                         }
                     }
@@ -100,36 +102,9 @@ namespace Barnacle.Dialogs.ClaySculpt
 
                 DumpSelectedVertices();
 
-                Int32Collection searchFaces = new Int32Collection();
-                foreach (int vid in SelectedVertices)
-                {
-                    // find all the faces that this point belongs too
-                    PlanktonVertex vx = pmesh.Vertices[vid];
-                    int origin = vx.OutgoingHalfedge;
-                    int startHe = origin;
-                    do
-                    {
-                        PlanktonHalfedge he = pmesh.Halfedges[startHe];
-                        if (!searchFaces.Contains(he.Face))
-                        {
-                            searchFaces.Add(he.Face);
-                        }
 
-                        startHe = he.Twin;
-                        startHe = pmesh.Halfedges[startHe].NextHalfedge;
-                    } while (startHe != origin);
-                }
 
-                DumpSearchFaces(searchFaces);
-                // for each of the search faces
-                foreach (int sf in searchFaces)
-                {
-                    FaceStatus stat = new FaceStatus();
-                    stat.FaceId = sf;
-                    // how many of this face's points are in range of the tool
-                    // stat.VerticesInTool = CountPointsOfFace(sf, SelectedVertices);
-                    FaceStates.Add(stat);
-                }
+
             }
         }
 
@@ -147,34 +122,71 @@ namespace Barnacle.Dialogs.ClaySculpt
 
         public void SubdivideSelectedFaces()
         {
-            foreach (FaceStatus f in FaceStates)
+            foreach (int vindex in SelectedVertices)
             {
-                int newHalfEdge = pmesh.TriangleSplit(f.FaceId);
-                int vid = pmesh.Halfedges[newHalfEdge].StartVertex;
-                PlanktonVertex vx = pmesh.Vertices[vid];
-                if (Distance(hitCentre, vx) < searchRadius)
+                // get a list of the halfedges from this point
+                
+                List<int> el = GetListOfEdgesFromPoint(vindex);
+               //List<int> el= pmesh.Halfedges.GetVertexCirculator(firstHalfEdge).ToList();
+
+                foreach (int outbound in el)
                 {
-                    if (!SelectedVertices.Contains(vid))
-                    {
-                        SelectedVertices.Add(vid);
-                    }
+                    int face = pmesh.Halfedges[outbound].Face;
+                    
+                    // el is a list of the first edges, the next edge on from each of these is
+                    // the face opposite the point
+                    // int oppositeEdge = pmesh.Halfedges[outbound].NextHalfedge;
+                    //int lastEdge = pmesh.Halfedges[oppositeEdge].NextHalfedge;
+                    // pmesh.Halfedges.SplitEdge(oppositeEdge);
+                   
                 }
-                int twin = pmesh.Halfedges[newHalfEdge].Twin;
-                vid = pmesh.Halfedges[twin].StartVertex;
-                vx = pmesh.Vertices[vid];
-                if (Distance(hitCentre, vx) < searchRadius)
-                {
-                    if (!SelectedVertices.Contains(vid))
-                    {
-                        SelectedVertices.Add(vid);
-                    }
-                }
+                break; // just do one for now
             }
+        }
+
+        public List<int> GetListOfEdgesFromPoint(int vindex)
+        {
+            List<int> res = new List<int>();
+            int firstHalfEdge = pmesh.Vertices[vindex].OutgoingHalfedge;
+            int cur = firstHalfEdge;
+            int count = 0;
+            do
+            {
+                if ( !res.Contains(cur))
+                {
+                    res.Add(cur);
+                }
+                cur = pmesh.Halfedges[cur].NextHalfedge;
+                cur = pmesh.Halfedges[cur].NextHalfedge;
+                cur = pmesh.Halfedges[cur].Twin;
+                count++;
+            } while (count < 1000 && cur != firstHalfEdge);
+            return res;
         }
 
         private int CountPointsOfFace(int faceId, Int32Collection verticeList)
         {
             int res = 0;
+            PlanktonFace face = pmesh.Faces[faceId];
+            int startHe = face.FirstHalfedge;
+
+            PlanktonHalfedge he = pmesh.Halfedges[startHe];
+            if (verticeList.Contains(he.StartVertex))
+            {
+                res++;
+            }
+            he = pmesh.Halfedges[he.NextHalfedge];
+
+            if (verticeList.Contains(he.StartVertex))
+            {
+                res++;
+            }
+            he = pmesh.Halfedges[he.NextHalfedge];
+
+            if (verticeList.Contains(he.StartVertex))
+            {
+                res++;
+            }
             return res;
         }
 
@@ -211,7 +223,7 @@ namespace Barnacle.Dialogs.ClaySculpt
 
             return res;
         }
-    } 
+    }
 }
 
 

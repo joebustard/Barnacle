@@ -8,7 +8,7 @@ namespace Barnacle.Dialogs.WireFrame
     {
         private Point3D endPoint;
         private GeometryModel3D model;
-
+        private Color colour;
         private Point3D startPoint;
         private double thickness;
         private Int32Collection tris;
@@ -20,13 +20,15 @@ namespace Barnacle.Dialogs.WireFrame
             startPoint = new Point3D(0, 0, 0);
             endPoint = new Point3D(0, 0, 0);
             thickness = 1;
+            colour = Colors.Black;
         }
 
-        public WireFrameSegment(Point3D position1, Point3D position2, double v)
+        public WireFrameSegment(Point3D position1, Point3D position2, double v, Color color)
         {
             this.startPoint = position1;
             this.endPoint = position2;
             this.thickness = v;
+            colour = color;
             vertices = new Point3DCollection();
             tris = new Int32Collection();
             UpdateModel();
@@ -176,8 +178,8 @@ namespace Barnacle.Dialogs.WireFrame
                     model = new GeometryModel3D();
 
                     model.Geometry = faces;
-                    model.BackMaterial = CreateMaterial(Brushes.Black);
-                    model.Material = CreateMaterial(Brushes.Black);
+                    model.BackMaterial = CreateMaterial(new SolidColorBrush(colour));
+                    model.Material = CreateMaterial(new SolidColorBrush(colour));
                 }
             }
         }

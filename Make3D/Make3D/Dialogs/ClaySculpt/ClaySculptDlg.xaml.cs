@@ -1,5 +1,8 @@
 using asdflibrary;
 using Barnacle.Dialogs.ClaySculpt;
+using Barnacle.Dialogs.WireFrame;
+using Barnacle.Models;
+using Barnacle.Object3DLib;
 using MakerLib;
 using Plankton;
 using sdflib;
@@ -40,7 +43,8 @@ namespace Barnacle.Dialogs
         private double toolsSize;
         private double toolStrength;
         private PlanktonMesh pmesh;
-
+        private List<GeometryModel3D> markers;
+        private List<GeometryModel3D> wireframes;
         public bool Symetric
         {
             get { return symetric; }
@@ -75,6 +79,8 @@ namespace Barnacle.Dialogs
             loaded = false;
             pmesh = new PlanktonMesh();
             currentTool = new SculptingTool();
+            markers = new List<GeometryModel3D>();
+            wireframes = new List<GeometryModel3D>();
             /*
             numbersectors = 10;
             sectorModels = new SectorModel[numbersectors, numbersectors, numbersectors];
@@ -335,6 +341,17 @@ namespace Barnacle.Dialogs
                 }
                 clayModel = GetModel();
                 ModelGroup.Children.Add(clayModel);
+                foreach (GeometryModel3D gm in markers)
+                {
+                    ModelGroup.Children.Add(gm);
+                }
+                foreach (GeometryModel3D gm in wireframes)
+                {
+                    if (gm != null)
+                    {
+                        ModelGroup.Children.Add(gm);
+                    }
+                }
                 /*
                 for (int scol = 0; scol < numbersectors; scol++)
                 {
@@ -350,7 +367,23 @@ namespace Barnacle.Dialogs
                 */
             }
         }
+        private void CreateMarker(PlanktonVertex p, Color cl)
+        {
+            MeshGeometry3D mesh = MeshUtils.MakeCubeMesh(p.X, p.Y, p.Z, 2);
+            GeometryModel3D gm = new GeometryModel3D();
+            gm.Geometry = mesh;
 
+            DiffuseMaterial mt = new DiffuseMaterial();
+            mt.Color = meshColour;
+            mt.Brush = new SolidColorBrush(cl);
+            gm.Material = mt;
+            DiffuseMaterial mtb = new DiffuseMaterial();
+            mtb.Color = cl;
+            mtb.Brush = new SolidColorBrush(cl);
+            gm.BackMaterial = mtb;
+
+            markers.Add(gm);
+        }
         private ToolSelectionContent toolSelectionContent;
         private SculptingTool currentTool;
 
@@ -370,6 +403,8 @@ namespace Barnacle.Dialogs
                     if (lastHitModel == clayModel)
                     {
                         claySelected = true;
+                        markers.Clear();
+                        wireframes.Clear();
                         SelectFaceVertices(lastHitV0, lastHitV1, lastHitV2, lastHitPoint, currentTool.Radius);
                     }
                     /*
@@ -397,7 +432,50 @@ namespace Barnacle.Dialogs
 
         private void ToolProcess()
         {
-            currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
+            List<int> oppositeEdges = new List<int>();
+            List<int> allEdges = new List<int>(); 
+            foreach (int i in toolSelectionContent.SelectedVertices)
+            {
+                List<int> edges = toolSelectionContent.GetListOfEdgesFromPoint(i);
+                
+                foreach (int v in edges)
+                {
+                    allEdges.Add(v);
+                    
+                    CreateWireframeForEdge(v, Colors.Blue);
+                    PlanktonHalfedge he = pmesh.Halfedges[v];
+                    int next = he.NextHalfedge;
+                    PlanktonHalfedge nexthe = pmesh.Halfedges[next];
+                    if (!allEdges.Contains(next) && !oppositeEdges.Contains(next) && !oppositeEdges.Contains(nexthe.Twin) )
+                    {
+                        oppositeEdges.Add(next);
+                    }
+                   
+                }
+
+                
+            }
+            foreach (int v in oppositeEdges)
+            {
+                CreateWireframeForEdge(v, Colors.Pink);
+               
+            }
+            // currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
+        }
+
+        private void CreateWireframeForEdge(int v, Color cl)
+        {
+            PlanktonHalfedge he = pmesh.Halfedges[v];
+            int s = he.StartVertex;
+            he = pmesh.Halfedges[he.NextHalfedge];
+            int e = he.StartVertex;
+            PlanktonVertex ve = pmesh.Vertices[s];
+            Point3D position1 = new Point3D(ve.X, ve.Y, ve.Z);
+
+            ve = pmesh.Vertices[e];
+            Point3D position2 = new Point3D(ve.X, ve.Y, ve.Z);
+            WireFrameSegment wf = new WireFrameSegment(position1, position2, 1, cl);
+            wireframes.Add(wf.Model);
         }
 
         private void SelectFaceVertices(int v0, int v1, int v2, Point3D lastHitPoint, double radius)
@@ -406,6 +484,10 @@ namespace Barnacle.Dialogs
             toolSelectionContent.InitialVertexSelection(v1);
             toolSelectionContent.InitialVertexSelection(v2);
             toolSelectionContent.SelectedInRange(lastHitPoint, radius);
+            foreach (int v in toolSelectionContent.SelectedVertices)
+            {
+                CreateMarker(pmesh.Vertices[v], Colors.Red);
+            }
         }
 
         private void ClearToolSelection()
@@ -754,7 +836,11 @@ namespace Barnacle.Dialogs
             ToolShape = ToolShapeItems[0];
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();
-            GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 120, 120);
+          //  GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 5, 5);
+
+            IcoSphereCreator ico = new IcoSphereCreator();
+            ico.Create(2, ref cubeVertices, ref cubeFaces,100);
+
             pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
 
             loaded = true;

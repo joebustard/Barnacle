@@ -1,6 +1,7 @@
 ﻿using Barnacle.Dialogs.WireFrame;
 using System;
 using System.Collections.Generic;
+using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
 namespace Barnacle.Dialogs.BezierSurface
@@ -84,17 +85,17 @@ namespace Barnacle.Dialogs.BezierSurface
             {
                 for (int c = 0; c < patchColumns - 1; c++)
                 {
-                    WireFrameSegment seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r, c + 1].Position, 0.1);
+                    WireFrameSegment seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r, c + 1].Position, 0.1,Colors.Black);
                     wireFrames.Add(seg);
-                    seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r + 1, c].Position, 0.1);
+                    seg = new WireFrameSegment(allcontrolPoints[r, c].Position, allcontrolPoints[r + 1, c].Position, 0.1, Colors.Black);
                     wireFrames.Add(seg);
                 }
-                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[r, patchColumns - 1].Position, allcontrolPoints[r + 1, patchColumns - 1].Position, 0.1);
+                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[r, patchColumns - 1].Position, allcontrolPoints[r + 1, patchColumns - 1].Position, 0.1, Colors.Black);
                 wireFrames.Add(seg2);
             }
             for (int c = 0; c < patchColumns - 1; c++)
             {
-                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[patchRows - 1, c].Position, allcontrolPoints[patchRows - 1, c + 1].Position, 0.1);
+                WireFrameSegment seg2 = new WireFrameSegment(allcontrolPoints[patchRows - 1, c].Position, allcontrolPoints[patchRows - 1, c + 1].Position, 0.1, Colors.Black);
                 wireFrames.Add(seg2);
             }
         }

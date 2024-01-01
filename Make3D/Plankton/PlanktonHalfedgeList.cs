@@ -189,7 +189,9 @@ namespace Plankton
             do
             {
                 yield return h;
+                int twin = this[h].Twin;
                 h = this[this.GetPairHalfedge(h)].NextHalfedge;
+               // h = this[twin].NextHalfedge;
                 if (h < 0) { throw new InvalidOperationException("Unset index, cannot continue."); }
                 if (count++ > 999) { throw new InvalidOperationException("Runaway vertex circulator"); }
             }

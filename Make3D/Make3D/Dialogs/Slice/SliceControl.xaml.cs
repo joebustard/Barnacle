@@ -36,10 +36,22 @@ namespace Barnacle.Dialogs.Slice
 
         private String selectedPrinter;
         private String selectedUserProfile;
-
+        private DispatcherTimer timer;
         public SliceControl()
         {
             InitializeComponent();
+            timer = new DispatcherTimer(new TimeSpan(0, 0, 20),DispatcherPriority.Normal,TimerTick,Dispatcher.CurrentDispatcher);
+
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            timer.Stop();
+            if ( canSlice)
+            {
+                CheckIfSDCopyShouldBeEnabled();
+            }
+            timer.Start();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -269,6 +281,7 @@ namespace Barnacle.Dialogs.Slice
 
         private void CloseClicked(object sender, RoutedEventArgs e)
         {
+            timer.Stop();
             Properties.Settings.Default.SlicerPrinter = SelectedPrinter;
 
             Properties.Settings.Default.SlicerProfileName = SelectedUserProfile;

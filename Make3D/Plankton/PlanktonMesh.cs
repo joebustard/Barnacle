@@ -108,14 +108,14 @@ namespace Plankton
             }
 
             // crude halfedge twinner
-            for (int i = 0; i < this.Halfedges.Count - 1; i++)
+            for (int i = 0; i < this.Halfedges.Count; i++)
             {
                 if (this.Halfedges[i].Twin == -1)
                 {
                     int s0 = this.Halfedges[i].StartVertex;
                     int e0 = this.Halfedges[this.Halfedges[i].NextHalfedge].StartVertex;
                     bool more = true;
-                    for (int j = i + 1; j < this.Halfedges.Count && more; j++)
+                    for (int j = 0; j < this.Halfedges.Count && more; j++)
                     {
                         if (this.Halfedges[j].Twin == -1)
                         {
@@ -131,7 +131,14 @@ namespace Plankton
                     }
                 }
             }
-        }
+            for (int i = 0; i < this.Halfedges.Count - 1; i++)
+            {
+                if (this.Halfedges[i].Twin == -1)
+                {
+                    bool broke = true;
+                }
+            }
+            }
 
         /// <summary>
         /// Gets access to the <see cref="PlanktonVertexList"/> collection in this mesh.
@@ -353,17 +360,7 @@ namespace Plankton
             return tMesh;
         }
 
-        /* Hide for the time being to avoid confusion...
-        public void RefreshVertexNormals()
-        {
-        }
-        public void RefreshFaceNormals()
-        {
-        }
-        public void RefreshEdgeNormals()
-        {
-        }
-        */
+      
 
         /// <summary>
         /// Removes any unreferenced objects from arrays, reindexes as needed and shrinks arrays to minimum required size.
@@ -397,13 +394,11 @@ namespace Plankton
             }
         }
 
-        //dihedral angle for an edgepf in this.
-        //
-
-        //skeletonize - build a new mesh with 4 faces for each original edge
+       
 
         public int TriangleSplit(int faceId)
         {
+//            return -1;
             return this.Halfedges.TriangleSplitEdge(this.Faces[faceId].FirstHalfedge);
         }
     }
