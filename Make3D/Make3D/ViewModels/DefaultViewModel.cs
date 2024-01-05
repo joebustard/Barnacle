@@ -139,6 +139,7 @@ namespace Barnacle.ViewModels
             MeshSmoothCommand = new RelayCommand(OnLoopSmooth);
             ResetOriginCommand = new RelayCommand(OnReorigin);
             ViewCommand = new RelayCommand(OnView);
+            MeshSubdivideCommand = new RelayCommand(OnMeshSubdivide);
             AboutCommand = new RelayCommand(OnAbout);
             showFloorChecked = false;
 
@@ -190,6 +191,16 @@ namespace Barnacle.ViewModels
 
             LoadShowSettings();
             LoadPartLibrary();
+        }
+
+        private void OnMeshSubdivide(object obj)
+        {
+            NotificationManager.Notify("MeshSubdivide", obj);
+        }
+
+        private object RelayCommand(object onMeshSubdivide)
+        {
+            throw new NotImplementedException();
         }
 
         private void OnCutPlane(object obj)
@@ -1109,6 +1120,7 @@ namespace Barnacle.ViewModels
         }
 
         public ICommand ViewCommand { get; set; }
+        public ICommand MeshSubdivideCommand { get; set; }
 
         public bool WingEnabled
         {

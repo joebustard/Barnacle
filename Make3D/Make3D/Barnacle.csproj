@@ -333,6 +333,7 @@
     <Compile Include="Models\CohenSutherland.cs" />
     <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\HorizontalPlane.cs" />
+    <Compile Include="Models\MeshSubdivider.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />

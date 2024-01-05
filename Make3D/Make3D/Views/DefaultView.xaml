@@ -989,7 +989,15 @@
                                              VerticalAlignment="Top"
                                              x:Name="MeshCutHButton" />
 
-                        
+                        <Custom:RibbonMenuItem Command="{Binding MeshSubdivideCommand}"
+
+                                             HorizontalAlignment="Stretch"
+                                             IsEnabled="{Binding MeshEditEnabled}"
+                                             Header="Subdivide"
+                                             ImageSource="/Barnacle;component/Images/Buttons/smooth.png"
+                                             ToolTip="Subdivide all triangles into four smaller ones."
+                                             VerticalAlignment="Top"
+                                             x:Name="MeshSubdivideButton" />
                     </Custom:RibbonMenuButton>
                     <Custom:RibbonMenuButton Label="Fix">
                         <Custom:RibbonMenuItem Command="{Binding SizeCommand}"

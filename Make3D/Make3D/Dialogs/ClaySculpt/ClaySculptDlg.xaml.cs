@@ -45,6 +45,7 @@ namespace Barnacle.Dialogs
         private PlanktonMesh pmesh;
         private List<GeometryModel3D> markers;
         private List<GeometryModel3D> wireframes;
+
         public bool Symetric
         {
             get { return symetric; }
@@ -367,6 +368,7 @@ namespace Barnacle.Dialogs
                 */
             }
         }
+
         private void CreateMarker(PlanktonVertex p, Color cl)
         {
             MeshGeometry3D mesh = MeshUtils.MakeCubeMesh(p.X, p.Y, p.Z, 2);
@@ -384,6 +386,7 @@ namespace Barnacle.Dialogs
 
             markers.Add(gm);
         }
+
         private ToolSelectionContent toolSelectionContent;
         private SculptingTool currentTool;
 
@@ -432,16 +435,17 @@ namespace Barnacle.Dialogs
 
         private void ToolProcess()
         {
+            /*
             List<int> oppositeEdges = new List<int>();
-            List<int> allEdges = new List<int>(); 
+            List<int> allEdges = new List<int>();
             foreach (int i in toolSelectionContent.SelectedVertices)
             {
                 List<int> edges = toolSelectionContent.GetListOfEdgesFromPoint(i);
-                
+
                 foreach (int v in edges)
                 {
                     allEdges.Add(v);
-                    
+
                     CreateWireframeForEdge(v, Colors.Blue);
                     PlanktonHalfedge he = pmesh.Halfedges[v];
                     int next = he.NextHalfedge;
@@ -450,17 +454,14 @@ namespace Barnacle.Dialogs
                     {
                         oppositeEdges.Add(next);
                     }
-                   
                 }
-
-                
             }
             foreach (int v in oppositeEdges)
             {
                 CreateWireframeForEdge(v, Colors.Pink);
-               
             }
-            // currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
+            */
+            currentTool.ApplyTool(toolSelectionContent, lastHitPoint);
         }
 
         private void CreateWireframeForEdge(int v, Color cl)
@@ -836,10 +837,10 @@ namespace Barnacle.Dialogs
             ToolShape = ToolShapeItems[0];
             Point3DCollection cubeVertices = new Point3DCollection();
             Int32Collection cubeFaces = new Int32Collection();
-          //  GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 5, 5);
+            //  GenerateSphere(cubeVertices, cubeFaces, new Point3D(0, 0, 0), 50, 5, 5);
 
             IcoSphereCreator ico = new IcoSphereCreator();
-            ico.Create(2, ref cubeVertices, ref cubeFaces,100);
+            ico.Create(4, ref cubeVertices, ref cubeFaces, 100);
 
             pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
 

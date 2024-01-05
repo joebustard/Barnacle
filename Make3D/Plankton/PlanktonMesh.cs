@@ -138,7 +138,7 @@ namespace Plankton
                     bool broke = true;
                 }
             }
-            }
+        }
 
         /// <summary>
         /// Gets access to the <see cref="PlanktonVertexList"/> collection in this mesh.
@@ -360,8 +360,6 @@ namespace Plankton
             return tMesh;
         }
 
-      
-
         /// <summary>
         /// Removes any unreferenced objects from arrays, reindexes as needed and shrinks arrays to minimum required size.
         /// </summary>
@@ -385,20 +383,19 @@ namespace Plankton
             foreach (PlanktonFace pf in this.Faces)
             {
                 int edge = pf.FirstHalfedge;
-                int startEdge = edge;
-                do
-                {
-                    faces.Add(this.Halfedges[edge].StartVertex);
-                    edge = this.Halfedges[edge].NextHalfedge;
-                } while (edge != startEdge);
+                faces.Add(this.Halfedges[edge].StartVertex);
+
+                edge = this.Halfedges[edge].NextHalfedge;
+                faces.Add(this.Halfedges[edge].StartVertex);
+
+                edge = this.Halfedges[edge].NextHalfedge;
+                faces.Add(this.Halfedges[edge].StartVertex);
             }
         }
 
-       
-
         public int TriangleSplit(int faceId)
         {
-//            return -1;
+            //            return -1;
             return this.Halfedges.TriangleSplitEdge(this.Faces[faceId].FirstHalfedge);
         }
     }

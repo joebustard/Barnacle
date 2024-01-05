@@ -191,7 +191,7 @@ namespace Plankton
                 yield return h;
                 int twin = this[h].Twin;
                 h = this[this.GetPairHalfedge(h)].NextHalfedge;
-               // h = this[twin].NextHalfedge;
+                // h = this[twin].NextHalfedge;
                 if (h < 0) { throw new InvalidOperationException("Unset index, cannot continue."); }
                 if (count++ > 999) { throw new InvalidOperationException("Runaway vertex circulator"); }
             }
@@ -257,14 +257,10 @@ namespace Plankton
             {
                 throw new ArgumentOutOfRangeException();
             }
+            int res = this[halfedgeIndex].Twin;
+            return res;
 
-            return halfedgeIndex % 2 == 0 ? halfedgeIndex + 1 : halfedgeIndex - 1;
-        }
-
-        [Obsolete("PairHalfedge is deprecated, pease use GetPairHalfedge instead.")]
-        public int PairHalfedge(int halfedgeIndex)
-        {
-            return this.GetPairHalfedge(halfedgeIndex);
+            // return halfedgeIndex % 2 == 0 ? halfedgeIndex + 1 : halfedgeIndex - 1;
         }
 
         /// <summary>

@@ -171,6 +171,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "Mirror", OnMirror);
             NotificationManager.Subscribe("Editor", "CutPlane", OnCutPlane);
             NotificationManager.Subscribe("Editor", "UpdateModels", OnUpdateModels);
+            NotificationManager.Subscribe("Editor", "MeshSubdivide", OnMeshSubdivide);
             ReportCameraPosition();
             selectedItems = new List<Object3D>();
             allBounds = new Bounds3D();
@@ -185,6 +186,27 @@ namespace Barnacle.ViewModels
             isEditingEnabled = true;
             CheckForScriptResults();
             RegenerateDisplayList();
+        }
+
+        private void OnMeshSubdivide(object param)
+        {
+            if (selectedItems == null || selectedItems.Count != 1)
+            {
+                MessageBox.Show("Mesh subdivision operation requires a single selected object");
+            }
+            else
+            {
+                SubdivideObject(selectedItems[0]);
+            }
+        }
+
+        private void SubdivideObject(Object3D object3D)
+        {
+            Point3DCollection tmp = new Point3DCollection();
+            PointUtils.P3DToPointCollection(object3D.RelativeObjectVertices, tmp);
+            MeshSubdivider subdiv = new MeshSubdivider(tmp, object3D.TriangleIndices);
+            subdiv.Subdivide(tmp, object3D.TriangleIndices);
+            PointUtils.PointCollectionToP3D(tmp, object3D.RelativeObjectVertices);
         }
 
         private void OnUpdateModels(object param)
