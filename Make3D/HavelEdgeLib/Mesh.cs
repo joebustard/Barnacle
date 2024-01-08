@@ -23,9 +23,6 @@ namespace HalfEdgeLib
             HalfEdges = new List<HalfEdge>();
         }
 
-
-
-
         public Mesh(Point3DCollection verts, Int32Collection sourceFaces)
         {
             Vertices = new List<Vertex>();
@@ -99,8 +96,8 @@ namespace HalfEdgeLib
                     }
                 }
             }
-            
         }
+
         private bool AllTwins()
         {
             bool broke = false;
@@ -114,10 +111,12 @@ namespace HalfEdgeLib
             }
             return !broke;
         }
+
         public void Log(string s)
         {
             System.Diagnostics.Debug.WriteLine(s);
         }
+
         public void DumpStats()
         {
             Log("==========");
@@ -129,11 +128,12 @@ namespace HalfEdgeLib
             {
                 Log($"Number of HalfEdges is inconsistent");
             }
-            if ( !AllTwins())
+            if (!AllTwins())
             {
                 Log($"Not all half edges are twinned");
             }
         }
+
         public void DumpHalfEdges()
         {
             Log("Half Edges");
@@ -143,28 +143,99 @@ namespace HalfEdgeLib
                 Log($"{i:D6} : {HalfEdges[i].StartVertex:D6}, {HalfEdges[i].Face:D6}, {HalfEdges[i].Next:D6}, {HalfEdges[i].Previous:D6}");
             }
         }
+
         public void DumpVertices()
         {
             Log("Vertices");
             for (int i = 0; i < Vertices.Count; i++)
             {
-                Log($"{i:D6} : {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  he:{Vertices[i].OutgoingHalfEdge}");
+                int NumVEdges = GetHalfEdgesFromVertex(i).Count;
+                Log($"{i:D6} : {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  he:{Vertices[i].OutgoingHalfEdge:D6} nn:{NumVEdges:D6}");
             }
         }
+
+        private List<int> GetHalfEdgesFromVertex(int v)
+        {
+            List<int> res = new List<int>();
+            if (v >= 0 && v < Vertices.Count())
+            {
+                int startEdge = Vertices[v].OutgoingHalfEdge;
+                res.Add(startEdge);
+                int edge = startEdge;
+
+                edge = HalfEdges[edge].Twin;
+                edge = HalfEdges[edge].Next;
+                bool more = true;
+                while (edge != startEdge && more)
+                {
+                    if (!res.Contains(edge))
+                    {
+                        res.Add(edge);
+                        edge = HalfEdges[edge].Twin;
+                        edge = HalfEdges[edge].Next;
+                    }
+                    else
+                    {
+                        more = false;
+                        Log("Edges from Vertex are inconsistent");
+                    }
+                }
+            }
+            return res;
+        }
+
         public void Dump()
         {
             DumpStats();
             DumpVertices();
             DumpHalfEdges();
+            DumpFaces();
+        }
+
+        private void DumpFaces()
+        {
+            Log("Faces");
+            for (int i = 0; i < Faces.Count; i++)
+            {
+                List<int> verts = GetFaceVertices(i);
+                string s = $"{i:D6} : ";
+                foreach (int v in verts)
+                {
+                    s += $"{v:D6}, ";
+                }
+                Log(s);
+            }
+        }
+
+        private List<int> GetFaceVertices(int f)
+        {
+            List<int> res = new List<int>();
+            if (f >= 0 && f < Faces.Count())
+            {
+                int startEdge = Faces[f].FirstEdge;
+                res.Add(HalfEdges[startEdge].StartVertex);
+                int edge = startEdge;
+                edge = HalfEdges[edge].Next;
+                bool more = true;
+                while (edge != startEdge && more)
+                {
+                    if (!res.Contains(HalfEdges[edge].StartVertex))
+                    {
+                        res.Add(HalfEdges[edge].StartVertex);
+                        edge = HalfEdges[edge].Next;
+                    }
+                    else
+                    {
+                        more = false;
+                        Log("Edges from Face are inconsistent");
+                    }
+                }
+            }
+            return res;
         }
 
         public void ToSoup(Point3DCollection vertices, Int32Collection faces)
         {
-            foreach (Vertex pv in this.Vertices)
-            {
-                vertices.Add(new Point3D((double)pv.X, (double)pv.Y, (double)pv.Z));
-            }
-
             foreach (Face pf in this.Faces)
             {
                 int edge = pf.FirstEdge;
