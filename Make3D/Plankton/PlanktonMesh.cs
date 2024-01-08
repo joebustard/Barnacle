@@ -117,7 +117,7 @@ namespace Plankton
                     bool more = true;
                     for (int j = 0; j < this.Halfedges.Count && more; j++)
                     {
-                        if (this.Halfedges[j].Twin == -1)
+                        if (this.Halfedges[j].Twin == -1 && i != j)
                         {
                             int s1 = this.Halfedges[j].StartVertex;
                             int e1 = this.Halfedges[this.Halfedges[j].NextHalfedge].StartVertex;

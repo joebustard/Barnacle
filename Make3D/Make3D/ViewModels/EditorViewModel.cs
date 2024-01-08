@@ -207,6 +207,12 @@ namespace Barnacle.ViewModels
             MeshSubdivider subdiv = new MeshSubdivider(tmp, object3D.TriangleIndices);
             subdiv.Subdivide(tmp, object3D.TriangleIndices);
             PointUtils.PointCollectionToP3D(tmp, object3D.RelativeObjectVertices);
+            object3D.Remesh();
+
+            object3D.CalcScale(false);
+            allBounds += object3D.AbsoluteBounds;
+            GeometryModel3D gm = GetMesh(object3D);
+            RegenerateDisplayList();
         }
 
         private void OnUpdateModels(object param)

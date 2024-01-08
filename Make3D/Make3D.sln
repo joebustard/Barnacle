@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.34112.143
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33529.622
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Barnacle", "Make3D\Barnacle.csproj", "{2F327EA0-F3C2-455E-A057-CE718CFD4E5D}"
 EndProject
@@ -68,6 +68,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sdflib", "sdflib\sdflib.csproj", "{115C80BA-044E-46CC-8E08-A74053D818F4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plankton", "Plankton\Plankton.csproj", "{BDD288F7-C2E2-4C2A-B083-E4D4D21F528F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HalflEdgeLib", "HavelEdgeLib\HalflEdgeLib.csproj", "{53873424-ED88-44E2-AEDD-C5D6E657C246}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -189,6 +191,10 @@ Global
 		{BDD288F7-C2E2-4C2A-B083-E4D4D21F528F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDD288F7-C2E2-4C2A-B083-E4D4D21F528F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDD288F7-C2E2-4C2A-B083-E4D4D21F528F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53873424-ED88-44E2-AEDD-C5D6E657C246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53873424-ED88-44E2-AEDD-C5D6E657C246}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53873424-ED88-44E2-AEDD-C5D6E657C246}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53873424-ED88-44E2-AEDD-C5D6E657C246}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

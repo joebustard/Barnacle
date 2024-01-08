@@ -1008,6 +1008,10 @@
       <Project>{8D134779-2F91-45C5-A145-3EB4BE6644A9}</Project>
       <Name>FixLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\HavelEdgeLib\HalflEdgeLib.csproj">
+      <Project>{53873424-ED88-44E2-AEDD-C5D6E657C246}</Project>
+      <Name>HalflEdgeLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HoleLibrary\HoleLibrary.csproj">
       <Project>{918B2B56-31AF-4294-BF15-0D4F4CD0675F}</Project>
       <Name>HoleLibrary</Name>
