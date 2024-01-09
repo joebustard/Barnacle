@@ -161,31 +161,35 @@ namespace HalfEdgeLib
             {
                 int startEdge = Vertices[v].OutgoingHalfEdge;
                 res.Add(startEdge);
-                int edge = startEdge;
-
-                edge = HalfEdges[edge].Twin;
-                edge = HalfEdges[edge].Next;
-                bool more = true;
-                while (edge != startEdge && more)
+                if (startEdge != -1)
                 {
-                    if (!res.Contains(edge))
+                    int edge = startEdge;
+
+                    edge = HalfEdges[edge].Twin;
+                    edge = HalfEdges[edge].Next;
+                    bool more = true;
+                    while (edge != startEdge && more)
                     {
-                        res.Add(edge);
-                        edge = HalfEdges[edge].Twin;
-                        edge = HalfEdges[edge].Next;
-                    }
-                    else
-                    {
-                        more = false;
-                        Log("Edges from Vertex are inconsistent");
+                        if (!res.Contains(edge))
+                        {
+                            res.Add(edge);
+                            edge = HalfEdges[edge].Twin;
+                            edge = HalfEdges[edge].Next;
+                        }
+                        else
+                        {
+                            more = false;
+                            Log("Edges from Vertex are inconsistent");
+                        }
                     }
                 }
             }
             return res;
         }
 
-        public void Dump()
+        public void Dump(string v)
         {
+            Log(v);
             DumpStats();
             DumpVertices();
             DumpHalfEdges();
@@ -246,6 +250,54 @@ namespace HalfEdgeLib
 
                 edge = this.HalfEdges[edge].Next;
                 faces.Add(this.HalfEdges[edge].StartVertex);
+            }
+        }
+
+        public void SplitAllEdges()
+        {
+            List<int> neoVertices = new List<int>();
+            List<int> neoHalfEdges = new List<int>();
+
+            List<int> edgesToSplit = new List<int>();
+
+            // get the edges that we will split
+            // Doesn't matter what order they are in but we only include one of a pair
+            Log("Edges to split");
+            for (int edge = 0; edge < HalfEdges.Count; edge++)
+            {
+                int twin = HalfEdges[edge].Twin;
+                if (!edgesToSplit.Contains(edge) && !edgesToSplit.Contains(twin))
+                {
+                    edgesToSplit.Add(edge);
+                    Log($"{edge}");
+                }
+            }
+
+            // create a new vertex at the mid point of the halfedge
+            int s = 0;
+            int e = 0;
+            foreach (int edge in edgesToSplit)
+            {
+                GetEdgeVertices(edge, out s, out e);
+
+                double mx = (Vertices[s].X + Vertices[e].X) / 2.0;
+                double my = (Vertices[s].Y + Vertices[e].Y) / 2.0;
+                double mz = (Vertices[s].Z + Vertices[e].Z) / 2.0;
+                neoVertices.Add(Vertices.Count);
+                Vertex ver = new Vertex(mx,my,mz,-1);
+                Vertices.Add(ver);
+            }
+        }
+
+        private void GetEdgeVertices(int edge, out int s, out int e)
+        {
+            s = -1;
+            e = -1;
+            if ( edge >= 0 && edge < HalfEdges.Count)
+            {
+                s = HalfEdges[edge].StartVertex;
+                edge = HalfEdges[edge].Twin;
+                e = HalfEdges[edge].StartVertex;
             }
         }
     }

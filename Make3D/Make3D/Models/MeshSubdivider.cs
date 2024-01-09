@@ -20,16 +20,17 @@ namespace Barnacle.Models
 
             //pMesh = new PlanktonMesh(tmp, triangleIndices);
             pMesh = new Mesh(tmp, triangleIndices);
-            pMesh.Dump();
+            pMesh.Dump("Before");
         }
 
         public void Subdivide(Point3DCollection v, Int32Collection tri)
         {
             v.Clear();
             tri.Clear();
+            /*
             int edgeCount = pMesh.HalfEdgeCount;
             List<int> faces = new List<int>();
-            /*
+            
                         foreach (PlanktonFace f in pMesh.Faces)
                         {
                             faces.Add(f.FirstHalfedge);
@@ -39,12 +40,16 @@ namespace Barnacle.Models
                             pMesh.Halfedges.TriangleSplitEdge(i);
                         }
                         */
-/*
-            for ( int i =0; i <edgeCount; i ++)
-            {
-                pMesh.Halfedges.SplitEdge(i);
-            }
-            */
+            /*
+                        for ( int i =0; i <edgeCount; i ++)
+                        {
+                            pMesh.Halfedges.SplitEdge(i);
+                        }
+                        */
+            pMesh.SplitAllEdges();
+
+            pMesh.Dump("After");
+
             if (pMesh != null)
             {
                 pMesh.ToSoup(v, tri);
