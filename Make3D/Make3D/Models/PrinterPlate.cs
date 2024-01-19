@@ -130,7 +130,7 @@ namespace Barnacle.Models
                 const double thickness = 0.2;
 
                 // left cube.
-                MeshGeometry3D lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                MeshGeometry3D lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                 Transform3DGroup lgroup = new Transform3DGroup();
                 lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
                 lmesh.ApplyTransformation(lgroup);
@@ -139,7 +139,7 @@ namespace Barnacle.Models
                 GeometryModel3D lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
 
-                lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                 lgroup = new Transform3DGroup();
                 lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
                 lmesh.ApplyTransformation(lgroup);
@@ -148,7 +148,7 @@ namespace Barnacle.Models
                 lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
 
-                lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                 lgroup = new Transform3DGroup();
                 lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
                 lmesh.ApplyTransformation(lgroup);
@@ -157,7 +157,7 @@ namespace Barnacle.Models
                 lmodel = new GeometryModel3D(lmesh, lmaterial);
                 group.Children.Add(lmodel);
 
-                lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                 lgroup = new Transform3DGroup();
                 lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
                 lmesh.ApplyTransformation(lgroup);
@@ -168,7 +168,7 @@ namespace Barnacle.Models
 
                 if (showVolume)
                 {
-                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                     lgroup = new Transform3DGroup();
                     lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
                     lmesh.ApplyTransformation(lgroup);
@@ -177,7 +177,7 @@ namespace Barnacle.Models
                     lmodel = new GeometryModel3D(lmesh, lmaterial);
                     group.Children.Add(lmodel);
 
-                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                     lgroup = new Transform3DGroup();
                     lgroup.Children.Add(new ScaleTransform3D(BorderThickness, thickness, width));
                     lmesh.ApplyTransformation(lgroup);
@@ -186,7 +186,7 @@ namespace Barnacle.Models
                     lmodel = new GeometryModel3D(lmesh, lmaterial);
                     group.Children.Add(lmodel);
 
-                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                     lgroup = new Transform3DGroup();
                     lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
                     lmesh.ApplyTransformation(lgroup);
@@ -195,7 +195,7 @@ namespace Barnacle.Models
                     lmodel = new GeometryModel3D(lmesh, lmaterial);
                     group.Children.Add(lmodel);
 
-                    lmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+                    lmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
                     lgroup = new Transform3DGroup();
                     lgroup.Children.Add(new ScaleTransform3D(length, thickness, BorderThickness));
                     lmesh.ApplyTransformation(lgroup);

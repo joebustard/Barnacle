@@ -27,7 +27,7 @@ namespace Barnacle.Models
         private void DefineModel(Model3DGroup group)
         {
             // Origin cube.
-            MeshGeometry3D mesh = MeshUtils.MakeCubeMesh(0, 0, 0, 0.1);
+            MeshGeometry3D mesh = MeshUtils.MakeBorder(0, 0, 0, 0.1);
             Material material = new DiffuseMaterial(Brushes.Yellow);
             GeometryModel3D model = new GeometryModel3D(mesh, material);
             group.Children.Add(model);
@@ -36,7 +36,7 @@ namespace Barnacle.Models
             double length = Size;
 
             // X axis.
-            MeshGeometry3D xmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+            MeshGeometry3D xmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
             xmesh.ApplyTransformation(new ScaleTransform3D(length, thickness, thickness));
             xmesh.ApplyTransformation(new TranslateTransform3D(length / 2, 0, 0));
             Material xmaterial = new DiffuseMaterial(Brushes.Red);
@@ -44,7 +44,7 @@ namespace Barnacle.Models
             group.Children.Add(xmodel);
 
             // Y axis cube.
-            MeshGeometry3D ymesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+            MeshGeometry3D ymesh = MeshUtils.MakeBorder(0, 0, 0, 1);
             ymesh.ApplyTransformation(new ScaleTransform3D(thickness, length, thickness));
             ymesh.ApplyTransformation(new TranslateTransform3D(0, length / 2, 0));
             Material ymaterial = new DiffuseMaterial(Brushes.Green);
@@ -52,7 +52,7 @@ namespace Barnacle.Models
             group.Children.Add(ymodel);
 
             // Z axis cube.
-            MeshGeometry3D zmesh = MeshUtils.MakeCubeMesh(0, 0, 0, 1);
+            MeshGeometry3D zmesh = MeshUtils.MakeBorder(0, 0, 0, 1);
             Transform3DGroup zgroup = new Transform3DGroup();
             zgroup.Children.Add(new ScaleTransform3D(thickness, thickness, length));
             zgroup.Children.Add(new TranslateTransform3D(0, 0, length / 2));

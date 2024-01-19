@@ -371,7 +371,7 @@ namespace Barnacle.Dialogs
 
         private void CreateMarker(PlanktonVertex p, Color cl)
         {
-            MeshGeometry3D mesh = MeshUtils.MakeCubeMesh(p.X, p.Y, p.Z, 2);
+            MeshGeometry3D mesh = MeshUtils.MakeBorder(p.X, p.Y, p.Z, 2);
             GeometryModel3D gm = new GeometryModel3D();
             gm.Geometry = mesh;
 

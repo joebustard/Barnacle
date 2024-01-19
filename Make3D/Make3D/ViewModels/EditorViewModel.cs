@@ -96,6 +96,7 @@ namespace Barnacle.ViewModels
         private bool showFloorMarker;
 
         private int totalFaces;
+        private int totalVertices;
 
         private double zoomPercent = 100;
 
@@ -591,10 +592,13 @@ namespace Barnacle.ViewModels
         public void CountFaces()
         {
             totalFaces = 0;
+            totalVertices = 0;
             foreach (Object3D ob in Document.Content)
             {
                 totalFaces += ob.TotalFaces;
+                totalVertices += ob.RelativeObjectVertices.Count;
             }
+            
         }
 
         /// <summary>
@@ -712,9 +716,11 @@ namespace Barnacle.ViewModels
                     }
                 }
                 totalFaces = 0;
+                totalVertices = 0;
                 foreach (Object3D ob in Document.Content)
                 {
                     totalFaces += ob.TotalFaces;
+                    totalVertices += ob.RelativeObjectVertices.Count;
 
                     GeometryModel3D gm = GetMesh(ob);
                     modelItems.Add(gm);
@@ -4135,11 +4141,11 @@ namespace Barnacle.ViewModels
             double gb = mb / 1024;
             if (gb > 1.0)
             {
-                s = $"Faces {totalFaces} Vertices {totalFaces * 3}, Mem {gb.ToString("F3")}Gb";
+                s = $"Faces {totalFaces} Vertices {totalVertices}, Mem {gb.ToString("F3")}Gb";
             }
             else
             {
-                s = $"Faces {totalFaces} Vertices {totalFaces * 3}, Mem {mb.ToString("F3", CultureInfo.InvariantCulture)}Mb";
+                s = $"Faces {totalFaces} Vertices {totalVertices}, Mem {mb.ToString("F3", CultureInfo.InvariantCulture)}Mb";
             }
             NotificationManager.Notify("SetStatusText3", s);
         }

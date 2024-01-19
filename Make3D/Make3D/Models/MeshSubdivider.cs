@@ -1,4 +1,5 @@
 ﻿using HalfEdgeLib;
+using LoggerLib;
 using Plankton;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Barnacle.Models
 
         public MeshSubdivider(Point3DCollection tmp, Int32Collection triangleIndices)
         {
-
+            Logger.LogDateTime("Starting Mesh Subdivision");
             //pMesh = new PlanktonMesh(tmp, triangleIndices);
             pMesh = new Mesh(tmp, triangleIndices);
             pMesh.Dump("Before");
@@ -48,7 +49,7 @@ namespace Barnacle.Models
                         */
             pMesh.SplitAllEdges();
 
-            pMesh.Dump("After");
+            
 
             if (pMesh != null)
             {

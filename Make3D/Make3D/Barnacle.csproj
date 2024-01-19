@@ -1028,6 +1028,10 @@
       <Project>{8248f033-5de9-46e4-bf7c-0b108f120577}</Project>
       <Name>LineLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LoggerLib\LoggerLib.csproj">
+      <Project>{5C3B73AF-9055-4E73-BE4A-30B4EE4A3C41}</Project>
+      <Name>LoggerLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MakerLib\MakerLib.csproj">
       <Project>{83ac0da3-1ee8-4fe1-96e4-c9adcd88f44e}</Project>
       <Name>MakerLib</Name>
