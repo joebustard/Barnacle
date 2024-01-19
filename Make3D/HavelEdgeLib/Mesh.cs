@@ -113,11 +113,6 @@ namespace HalfEdgeLib
             return !broke;
         }
 
-        public void Log(string s)
-        {
-            System.Diagnostics.Debug.WriteLine(s);
-        }
-
         public void DumpStats()
         {
             Logger.LogLine("==========");
@@ -138,10 +133,10 @@ namespace HalfEdgeLib
         public void DumpHalfEdges()
         {
             Logger.LogLine("Half Edges");
-            Logger.LogLine("index    Start   Face   Next   Previous  Twin");
+            Logger.LogLine("index     Next   Previous  Twin    Start   Face   ");
             for (int i = 0; i < HalfEdges.Count; i++)
             {
-                Logger.LogLine($"{i:D6} : {HalfEdges[i].StartVertex:D6}, {HalfEdges[i].Face:D6}, {HalfEdges[i].Next:D6}, {HalfEdges[i].Previous:D6},{HalfEdges[i].Twin:D6}");
+                Logger.LogLine($"{i:D6} :{HalfEdges[i].Next:D6}, {HalfEdges[i].Previous:D6},{HalfEdges[i].Twin:D6}, {HalfEdges[i].StartVertex:D6}, {HalfEdges[i].Face:D6} {CheckHalfLinks(i)} {CheckTwins(i)}");
             }
         }
 
@@ -151,8 +146,15 @@ namespace HalfEdgeLib
             for (int i = 0; i < Vertices.Count; i++)
             {
                 int NumVEdges = GetHalfEdgesFromVertex(i).Count;
-                Logger.LogLine($"{i:D6} : {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  he:{Vertices[i].OutgoingHalfEdge:D6} nn:{NumVEdges:D6}");
+                Logger.Log($"{i:D6} :");
+                LogVertex(i);
+                Logger.LogLine($" he:{Vertices[i].OutgoingHalfEdge:D6} nn:{NumVEdges:D6}");
             }
+        }
+
+        private void LogVertex(int i)
+        {
+            Logger.Log($" {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  ");
         }
 
         private List<int> GetHalfEdgesFromVertex(int v)
@@ -203,7 +205,7 @@ namespace HalfEdgeLib
             for (int i = 0; i < Faces.Count; i++)
             {
                 List<int> verts = GetFaceVertices(i);
-                string s = $"{i:D6} : ";
+                string s = $"{i:D6} verts : ";
                 foreach (int v in verts)
                 {
                     s += $"{v:D6}, ";
@@ -238,7 +240,8 @@ namespace HalfEdgeLib
             }
             return res;
         }
-        public void AddFacePoint(int e,Int32Collection faces)
+
+        public void AddFacePoint(int e, Int32Collection faces)
         {
             if (e < 0 || e >= HalfEdges.Count())
             {
@@ -253,6 +256,7 @@ namespace HalfEdgeLib
                 faces.Add(this.HalfEdges[e].StartVertex);
             }
         }
+
         public void ToSoup(Point3DCollection vertices, Int32Collection faces)
         {
             Logger.LogLine("ToSoup");
@@ -262,13 +266,26 @@ namespace HalfEdgeLib
             }
             foreach (Face pf in this.Faces)
             {
-                int edge = pf.FirstEdge;                              
+                int edge = pf.FirstEdge;
                 AddFacePoint(edge, faces);
                 edge = this.HalfEdges[edge].Next;
                 AddFacePoint(edge, faces);
                 edge = this.HalfEdges[edge].Next;
                 AddFacePoint(edge, faces);
             }
+        }
+
+        private string CheckHalfLinks(int i)
+        {
+            string res = "";
+            int n = HalfEdges[i].Next;
+            n = HalfEdges[n].Next;
+            n = HalfEdges[n].Next;
+            if (i != n)
+            {
+                res = " broke";
+            }
+            return res;
         }
 
         public void SplitAllEdges()
@@ -291,18 +308,24 @@ namespace HalfEdgeLib
                 }
             }
 
+            int count = 0;
             int midPointIndex = 0;
             foreach (int edge in edgesToSplit)
             {
                 midPointIndex = SplitSingleEdge(edge);
+                Dump($"After Splitting {edge}");
                 neoVertices.Add(midPointIndex);
-                
+                count++;
+                if (count == 3)
+                {
+                    break;
+                }
             }
             Dump("After splitting");
         }
 
         /// <summary>
-        /// Splits the given halfedge ( and twin), effectively converting two 
+        /// Splits the given halfedge ( and twin), effectively converting two
         /// triangles into 4
         /// </summary>
         /// <param name="edge"></param>
@@ -312,11 +335,10 @@ namespace HalfEdgeLib
             Logger.LogLine($"Splitting halfedge {edge}");
             // note existing edge ids
 
-            
             int e0 = edge;
             int e1 = HalfEdges[e0].Next;
             int e2 = HalfEdges[e1].Next;
-           
+
             int t0 = HalfEdges[edge].Twin;
             int t1 = HalfEdges[t0].Next;
             int t2 = HalfEdges[t1].Next;
@@ -327,23 +349,23 @@ namespace HalfEdgeLib
             int v2 = HalfEdges[e2].StartVertex;
             int v3 = HalfEdges[t2].StartVertex;
             Logger.LogLine($"existing  halfedge ring  {e0},{e1},{e2} vertex ids  {v0},{v1},{v2}");
-            
-            
-            Logger.LogLine($"existing  halfedge twin ring  {t0},{t1},{t2} twin vertex ids  {v1},{v0},{v3}");            
+
+            Logger.LogLine($"existing  halfedge twin ring  {t0},{t1},{t2} twin vertex ids  {v1},{v0},{v3}");
 
             // note original faces
             int fe0 = HalfEdges[e0].Face;
             int ft0 = HalfEdges[t0].Face;
             Logger.LogLine($"existing  faces faces  {fe0},{ft0}");
 
-
-
             // create a new vertex at the mid point of the halfedge
             int vertexStart = 0;
             int vertexEnd = 0;
             GetEdgeVertices(edge, out vertexStart, out vertexEnd);
-            Logger.LogLine($"edge to split runs from vertex  {vertexStart},{vertexEnd}");
-
+            Logger.Log($"edge to split runs from vertex  {vertexStart},{vertexEnd} thats ");
+            LogVertex(vertexStart);
+            Logger.Log(" to ");
+            LogVertex(vertexEnd);
+            Logger.LogLine("");
             double mx = (Vertices[vertexStart].X + Vertices[vertexEnd].X) / 2.0;
             double my = (Vertices[vertexStart].Y + Vertices[vertexEnd].Y) / 2.0;
             double mz = (Vertices[vertexStart].Z + Vertices[vertexEnd].Z) / 2.0;
@@ -356,10 +378,12 @@ namespace HalfEdgeLib
             int ne0 = AddHalfEdge(v4);
             int ne1 = AddHalfEdge(v4);
             int ne2 = AddHalfEdge(v2);
+            Logger.LogLine($"Left side ne0={ne0},ne1={ne1},ne2={ne2}");
 
             int nt0 = AddHalfEdge(v4);
             int nt1 = AddHalfEdge(v3);
             int nt2 = AddHalfEdge(v4);
+            Logger.LogLine($"right side nt0={nt0},nt1={nt1},nt2={nt2}");
 
             LinkEdges(e0, ne0, e2);
             LinkEdges(ne1, e1, ne2);
@@ -386,7 +410,6 @@ namespace HalfEdgeLib
             HalfEdges[ne1].Face = fc;
             HalfEdges[ne2].Face = fc;
             HalfEdges[e1].Face = fc;
-            
 
             Face ft1 = new Face(nt0);
             fc = Faces.Count;
@@ -396,13 +419,25 @@ namespace HalfEdgeLib
             HalfEdges[t1].Face = fc;
 
             // attach the new mid point to one of the new half edges
-            // connect new mid point to first halfedge
+
             ver.OutgoingHalfEdge = ne0;
 
             return v4;
         }
 
-        private void TwinUp(int i, int j )
+        private string CheckTwins(int i)
+        {
+            string res = "";
+            // if i has a twin, then the twins twin must be i
+            int twin = HalfEdges[i].Twin;
+            if (HalfEdges[twin].Twin != i)
+            {
+                res = " twin mismatch";
+            }
+            return res;
+        }
+
+        private void TwinUp(int i, int j)
         {
             HalfEdges[i].Twin = j;
             HalfEdges[j].Twin = i;
