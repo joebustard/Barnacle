@@ -80,7 +80,6 @@ namespace FixLib
 
             if (res == -1)
             {
-                //Vertices.Add(new Point3D(v.X, v.Y, v.Z));
                 res = Vertices.Count;
                 octTree.AddPoint(res, v);
             }

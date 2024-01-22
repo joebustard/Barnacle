@@ -598,7 +598,6 @@ namespace Barnacle.ViewModels
                 totalFaces += ob.TotalFaces;
                 totalVertices += ob.RelativeObjectVertices.Count;
             }
-            
         }
 
         /// <summary>
@@ -1700,7 +1699,7 @@ namespace Barnacle.ViewModels
 
         private void BendObjectInHalf(Object3D ob, string ori, bool fold = false)
         {
-            double smallObjectsLimit = 1000;
+            double smallObjectsLimit = 100;
             double bendAngle = 10 * Math.PI / 180.0;
             if (ob != null)
             {

@@ -1,9 +1,6 @@
 ﻿using LoggerLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 
@@ -11,11 +8,9 @@ namespace HalfEdgeLib
 {
     public class Mesh
     {
-        public List<Vertex> Vertices;
         public List<Face> Faces;
         public List<HalfEdge> HalfEdges;
-
-        public int HalfEdgeCount { get { return HalfEdges.Count; } }
+        public List<Vertex> Vertices;
 
         public Mesh()
         {
@@ -99,18 +94,41 @@ namespace HalfEdgeLib
             }
         }
 
-        private bool AllTwins()
+        public int HalfEdgeCount { get { return HalfEdges.Count; } }
+
+        public void AddFacePoint(int e, Int32Collection faces)
         {
-            bool broke = false;
+            if (e < 0 || e >= HalfEdges.Count())
+            {
+                Logger.LogLine($"Edge {e} is not valid");
+            }
+            else if (this.HalfEdges[e].StartVertex < 0 || this.HalfEdges[e].StartVertex >= Vertices.Count)
+            {
+                Logger.LogLine($"Vertex {this.HalfEdges[e].StartVertex} is not valid");
+            }
+            else
+            {
+                faces.Add(this.HalfEdges[e].StartVertex);
+            }
+        }
+
+        public void Dump(string v)
+        {
+            Logger.LogLine(v);
+            DumpStats();
+            DumpVertices();
+            DumpHalfEdges();
+            DumpFaces();
+        }
+
+        public void DumpHalfEdges()
+        {
+            Logger.LogLine("Half Edges");
+            Logger.LogLine("index     Next   Previous  Twin    Start   Face   ");
             for (int i = 0; i < HalfEdges.Count; i++)
             {
-                if (HalfEdges[i].Twin == -1)
-                {
-                    broke = true;
-                    break;
-                }
+                Logger.LogLine($"{i:D6} :{HalfEdges[i].Next:D6}, {HalfEdges[i].Previous:D6},{HalfEdges[i].Twin:D6}, {HalfEdges[i].StartVertex:D6}, {HalfEdges[i].Face:D6} {CheckHalfLinks(i)} {CheckTwins(i)}");
             }
-            return !broke;
         }
 
         public void DumpStats()
@@ -130,16 +148,6 @@ namespace HalfEdgeLib
             }
         }
 
-        public void DumpHalfEdges()
-        {
-            Logger.LogLine("Half Edges");
-            Logger.LogLine("index     Next   Previous  Twin    Start   Face   ");
-            for (int i = 0; i < HalfEdges.Count; i++)
-            {
-                Logger.LogLine($"{i:D6} :{HalfEdges[i].Next:D6}, {HalfEdges[i].Previous:D6},{HalfEdges[i].Twin:D6}, {HalfEdges[i].StartVertex:D6}, {HalfEdges[i].Face:D6} {CheckHalfLinks(i)} {CheckTwins(i)}");
-            }
-        }
-
         public void DumpVertices()
         {
             Logger.LogLine("Vertices");
@@ -152,9 +160,170 @@ namespace HalfEdgeLib
             }
         }
 
-        private void LogVertex(int i)
+        public void SplitAllEdges()
         {
-            Logger.Log($" {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  ");
+            List<int> neoVertices = new List<int>();
+            List<int> neoHalfEdges = new List<int>();
+
+            List<int> edgesToSplit = new List<int>();
+
+            // get the edges that we will split
+            // Doesn't matter what order they are in but we only include one of a pair
+            //Logger.LogLine("Edges to split");
+            for (int edge = 0; edge < HalfEdges.Count; edge++)
+            {
+                int twin = HalfEdges[edge].Twin;
+                if (!edgesToSplit.Contains(edge) && !edgesToSplit.Contains(twin))
+                {
+                    edgesToSplit.Add(edge);
+                    //    Logger.LogLine($"{edge}");
+                }
+            }
+
+            int midPointIndex = 0;
+            foreach (int edge in edgesToSplit)
+            {
+                midPointIndex = SplitSingleEdge(edge);
+                //   Dump($"After Splitting {edge}");
+                neoVertices.Add(midPointIndex);
+            }
+        }
+
+        public void ToSoup(Point3DCollection vertices, Int32Collection faces)
+        {
+            foreach (Vertex v in Vertices)
+            {
+                vertices.Add(new Point3D(v.X, v.Y, v.Z));
+            }
+            foreach (Face pf in this.Faces)
+            {
+                int edge = pf.FirstEdge;
+                if (edge != -1)
+                {
+                    AddFacePoint(edge, faces);
+                    edge = this.HalfEdges[edge].Next;
+                    AddFacePoint(edge, faces);
+                    edge = this.HalfEdges[edge].Next;
+                    AddFacePoint(edge, faces);
+                }
+            }
+        }
+
+        private int AddHalfEdge(int v)
+        {
+            int res = HalfEdges.Count;
+            HalfEdge he = new HalfEdge();
+            HalfEdges.Add(he);
+            he.StartVertex = v;
+            return res;
+        }
+
+        private bool AllTwins()
+        {
+            bool broke = false;
+            for (int i = 0; i < HalfEdges.Count; i++)
+            {
+                if (HalfEdges[i].Twin == -1)
+                {
+                    broke = true;
+                    break;
+                }
+            }
+            return !broke;
+        }
+
+        private string CheckHalfLinks(int i)
+        {
+            string res = "";
+            int n = HalfEdges[i].Next;
+            n = HalfEdges[n].Next;
+            n = HalfEdges[n].Next;
+            if (i != n)
+            {
+                res = " broke";
+            }
+            return res;
+        }
+
+        private string CheckTwins(int i)
+        {
+            string res = "";
+            // if i has a twin, then the twins twin must be i
+            int twin = HalfEdges[i].Twin;
+            if (HalfEdges[twin].Twin != i)
+            {
+                res = " twin mismatch";
+            }
+            return res;
+        }
+
+        private void CreateFace(int e1, int e2, int e3)
+        {
+            Face fe1 = new Face(e1);
+            int fc = Faces.Count;
+            Faces.Add(fe1);
+            HalfEdges[e1].Face = fc;
+            HalfEdges[e2].Face = fc;
+            HalfEdges[e3].Face = fc;
+            Logger.LogLine($"new face {fc}: Edges {e1}, {e2}, {e3}");
+        }
+
+        private void DumpFaces()
+        {
+            Logger.LogLine("Faces");
+            for (int i = 0; i < Faces.Count; i++)
+            {
+                if (Faces[i].FirstEdge != -1)
+                {
+                    List<int> verts = GetFaceVertices(i);
+                    string s = $"{i:D6} verts : ";
+                    foreach (int v in verts)
+                    {
+                        s += $"{v:D6}, ";
+                    }
+
+                    Logger.LogLine(s);
+                }
+            }
+        }
+
+        private void GetEdgeVertices(int edge, out int s, out int e)
+        {
+            s = -1;
+            e = -1;
+            if (edge >= 0 && edge < HalfEdges.Count)
+            {
+                s = HalfEdges[edge].StartVertex;
+                edge = HalfEdges[edge].Twin;
+                e = HalfEdges[edge].StartVertex;
+            }
+        }
+
+        private List<int> GetFaceVertices(int f)
+        {
+            List<int> res = new List<int>();
+            if (f >= 0 && f < Faces.Count())
+            {
+                int startEdge = Faces[f].FirstEdge;
+                res.Add(HalfEdges[startEdge].StartVertex);
+                int edge = startEdge;
+                edge = HalfEdges[edge].Next;
+                bool more = true;
+                while (edge != startEdge && more)
+                {
+                    if (!res.Contains(HalfEdges[edge].StartVertex))
+                    {
+                        res.Add(HalfEdges[edge].StartVertex);
+                        edge = HalfEdges[edge].Next;
+                    }
+                    else
+                    {
+                        more = false;
+                        Logger.LogLine("Edges from Face are inconsistent");
+                    }
+                }
+            }
+            return res;
         }
 
         private List<int> GetHalfEdgesFromVertex(int v)
@@ -190,140 +359,42 @@ namespace HalfEdgeLib
             return res;
         }
 
-        public void Dump(string v)
+        private void LinkEdges(int e0, int e1, int e2)
         {
-            Logger.LogLine(v);
-            DumpStats();
-            DumpVertices();
-            DumpHalfEdges();
-            DumpFaces();
+            HalfEdges[e0].Next = e1;
+            HalfEdges[e1].Next = e2;
+            HalfEdges[e2].Next = e0;
+            HalfEdges[e2].Previous = e1;
+            HalfEdges[e1].Previous = e0;
+            HalfEdges[e0].Previous = e2;
         }
 
-        private void DumpFaces()
+        private void LogVertex(int i)
         {
-            Logger.LogLine("Faces");
-            for (int i = 0; i < Faces.Count; i++)
-            {
-                List<int> verts = GetFaceVertices(i);
-                string s = $"{i:D6} verts : ";
-                foreach (int v in verts)
-                {
-                    s += $"{v:D6}, ";
-                }
-                Logger.LogLine(s);
-            }
+            Logger.Log($" {Vertices[i].X}, {Vertices[i].Y}, {Vertices[i].Z},  ");
         }
 
-        private List<int> GetFaceVertices(int f)
+        private void Reface()
         {
-            List<int> res = new List<int>();
-            if (f >= 0 && f < Faces.Count())
+            Int32Collection used = new Int32Collection();
+            Faces.Clear();
+            for (int i = 0; i < HalfEdges.Count; i++)
             {
-                int startEdge = Faces[f].FirstEdge;
-                res.Add(HalfEdges[startEdge].StartVertex);
-                int edge = startEdge;
-                edge = HalfEdges[edge].Next;
-                bool more = true;
-                while (edge != startEdge && more)
+                if (!used.Contains(i))
                 {
-                    if (!res.Contains(HalfEdges[edge].StartVertex))
-                    {
-                        res.Add(HalfEdges[edge].StartVertex);
-                        edge = HalfEdges[edge].Next;
-                    }
-                    else
-                    {
-                        more = false;
-                        Logger.LogLine("Edges from Face are inconsistent");
-                    }
+                    used.Add(i);
+                    Face fc = new Face(i);
+                    int faceN = Faces.Count;
+                    HalfEdges[i].Face = faceN;
+                    Faces.Add(fc);
+                    int n = HalfEdges[i].Next;
+                    HalfEdges[n].Face = faceN;
+                    used.Add(n);
+                    n = HalfEdges[n].Next;
+                    HalfEdges[n].Face = faceN;
+                    used.Add(n);
                 }
             }
-            return res;
-        }
-
-        public void AddFacePoint(int e, Int32Collection faces)
-        {
-            if (e < 0 || e >= HalfEdges.Count())
-            {
-                Logger.LogLine($"Edge {e} is not valid");
-            }
-            else if (this.HalfEdges[e].StartVertex < 0 || this.HalfEdges[e].StartVertex >= Vertices.Count)
-            {
-                Logger.LogLine($"Vertex {this.HalfEdges[e].StartVertex} is not valid");
-            }
-            else
-            {
-                faces.Add(this.HalfEdges[e].StartVertex);
-            }
-        }
-
-        public void ToSoup(Point3DCollection vertices, Int32Collection faces)
-        {
-            Logger.LogLine("ToSoup");
-            foreach (Vertex v in Vertices)
-            {
-                vertices.Add(new Point3D(v.X, v.Y, v.Z));
-            }
-            foreach (Face pf in this.Faces)
-            {
-                int edge = pf.FirstEdge;
-                AddFacePoint(edge, faces);
-                edge = this.HalfEdges[edge].Next;
-                AddFacePoint(edge, faces);
-                edge = this.HalfEdges[edge].Next;
-                AddFacePoint(edge, faces);
-            }
-        }
-
-        private string CheckHalfLinks(int i)
-        {
-            string res = "";
-            int n = HalfEdges[i].Next;
-            n = HalfEdges[n].Next;
-            n = HalfEdges[n].Next;
-            if (i != n)
-            {
-                res = " broke";
-            }
-            return res;
-        }
-
-        public void SplitAllEdges()
-        {
-            List<int> neoVertices = new List<int>();
-            List<int> neoHalfEdges = new List<int>();
-
-            List<int> edgesToSplit = new List<int>();
-
-            // get the edges that we will split
-            // Doesn't matter what order they are in but we only include one of a pair
-            Logger.LogLine("Edges to split");
-            for (int edge = 0; edge < HalfEdges.Count; edge++)
-            {
-                int twin = HalfEdges[edge].Twin;
-                if (!edgesToSplit.Contains(edge) && !edgesToSplit.Contains(twin))
-                {
-                    edgesToSplit.Add(edge);
-                    Logger.LogLine($"{edge}");
-                }
-            }
-
-            int count = 0;
-            int midPointIndex = 0;
-            foreach (int edge in edgesToSplit)
-            {
-                midPointIndex = SplitSingleEdge(edge);
-                Dump($"After Splitting {edge}");
-                neoVertices.Add(midPointIndex);
-                count++;
-                if (count == 3)
-                {
-                   // break;
-                }
-            }
-            Dump("After splitting");
-            Reface();
-            Dump("After refacing");
         }
 
         /// <summary>
@@ -335,8 +406,8 @@ namespace HalfEdgeLib
         private int SplitSingleEdge(int edge)
         {
             Logger.LogLine($"Splitting halfedge {edge}");
-            // note existing edge ids
 
+            // note existing edge ids
             int e0 = edge;
             int e1 = HalfEdges[e0].Next;
             int e2 = HalfEdges[e1].Next;
@@ -397,33 +468,14 @@ namespace HalfEdgeLib
             TwinUp(t0, ne1);
             TwinUp(ne0, ne2);
 
-            HalfEdges[e0].Face = fe0;
-            HalfEdges[ne0].Face = fe0;
-            HalfEdges[e2].Face = fe0;
-            Logger.LogLine($"Old left face edges {e0},{ne0},{e2}");
+            // mark exsing faces as dead
+            Faces[fe0].FirstEdge = -1;
+            Faces[ft0].FirstEdge = -1;
 
-            HalfEdges[t0].Face = ft0;
-            HalfEdges[nt2].Face = ft0;
-            HalfEdges[t2].Face = ft0;
-            Logger.LogLine($"Old right face edges {t0},{nt2},{t2}");
-            //   if (edge != 2)
-            {
-                // add two new faces, the old ones are ok
-                Face fe1 = new Face(ne1);
-                int fc = Faces.Count;
-                Faces.Add(fe1);
-                HalfEdges[ne1].Face = fc;
-                HalfEdges[ne2].Face = fc;
-                HalfEdges[e1].Face = fc;
-                Logger.LogLine($"new face {fc}: Edges {ne1}, {ne2}, {e1}");
-            }
-            Face ft1 = new Face(nt0);
-            int fc2 = Faces.Count;
-            Faces.Add(ft1);
-            HalfEdges[nt0].Face = fc2;
-            HalfEdges[nt1].Face = fc2;
-            HalfEdges[t1].Face = fc2;
-            Logger.LogLine($"new face {fc2}: Edges {nt0}, {nt1}, {t1}");
+            CreateFace(e0, ne0, e2);
+            CreateFace(t0, nt2, t2);
+            CreateFace(ne1, ne2, e1);
+            CreateFace(nt0, nt1, t1);
 
             // attach the new mid point to one of the new half edges
 
@@ -432,75 +484,10 @@ namespace HalfEdgeLib
             return v4;
         }
 
-        private string CheckTwins(int i)
-        {
-            string res = "";
-            // if i has a twin, then the twins twin must be i
-            int twin = HalfEdges[i].Twin;
-            if (HalfEdges[twin].Twin != i)
-            {
-                res = " twin mismatch";
-            }
-            return res;
-        }
-
         private void TwinUp(int i, int j)
         {
             HalfEdges[i].Twin = j;
             HalfEdges[j].Twin = i;
-        }
-
-        private void LinkEdges(int e0, int e1, int e2)
-        {
-            HalfEdges[e0].Next = e1;
-            HalfEdges[e1].Next = e2;
-            HalfEdges[e2].Next = e0;
-            HalfEdges[e2].Previous = e1;
-            HalfEdges[e1].Previous = e0;
-            HalfEdges[e0].Previous = e2;
-        }
-
-        private int AddHalfEdge(int v)
-        {
-            int res = HalfEdges.Count;
-            HalfEdge he = new HalfEdge();
-            HalfEdges.Add(he);
-            he.StartVertex = v;
-            return res;
-        }
-
-        private void GetEdgeVertices(int edge, out int s, out int e)
-        {
-            s = -1;
-            e = -1;
-            if (edge >= 0 && edge < HalfEdges.Count)
-            {
-                s = HalfEdges[edge].StartVertex;
-                edge = HalfEdges[edge].Twin;
-                e = HalfEdges[edge].StartVertex;
-            }
-        }
-        private void Reface()
-        {
-            Int32Collection used = new Int32Collection();
-            Faces.Clear();
-            for (int i = 0; i < HalfEdges.Count; i++)
-            {
-                if (!used.Contains(i))
-                {
-                    used.Add(i);
-                    Face fc = new Face(i);
-                    int faceN = Faces.Count;
-                    HalfEdges[i].Face = faceN;
-                    Faces.Add(fc);
-                    int n = HalfEdges[i].Next;
-                    HalfEdges[n].Face = faceN;
-                    used.Add(n);
-                    n = HalfEdges[n].Next;
-                    HalfEdges[n].Face = faceN;
-                    used.Add(n);
-                }
-            }
         }
     }
 }
