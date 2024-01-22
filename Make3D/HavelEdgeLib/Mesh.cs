@@ -318,10 +318,12 @@ namespace HalfEdgeLib
                 count++;
                 if (count == 3)
                 {
-                    break;
+                   // break;
                 }
             }
             Dump("After splitting");
+            Reface();
+            Dump("After refacing");
         }
 
         /// <summary>
@@ -398,25 +400,30 @@ namespace HalfEdgeLib
             HalfEdges[e0].Face = fe0;
             HalfEdges[ne0].Face = fe0;
             HalfEdges[e2].Face = fe0;
+            Logger.LogLine($"Old left face edges {e0},{ne0},{e2}");
 
             HalfEdges[t0].Face = ft0;
             HalfEdges[nt2].Face = ft0;
             HalfEdges[t2].Face = ft0;
-
-            // add two new faces, the old ones are ok
-            Face fe1 = new Face(ne1);
-            int fc = Faces.Count;
-            Faces.Add(fe1);
-            HalfEdges[ne1].Face = fc;
-            HalfEdges[ne2].Face = fc;
-            HalfEdges[e1].Face = fc;
-
+            Logger.LogLine($"Old right face edges {t0},{nt2},{t2}");
+            //   if (edge != 2)
+            {
+                // add two new faces, the old ones are ok
+                Face fe1 = new Face(ne1);
+                int fc = Faces.Count;
+                Faces.Add(fe1);
+                HalfEdges[ne1].Face = fc;
+                HalfEdges[ne2].Face = fc;
+                HalfEdges[e1].Face = fc;
+                Logger.LogLine($"new face {fc}: Edges {ne1}, {ne2}, {e1}");
+            }
             Face ft1 = new Face(nt0);
-            fc = Faces.Count;
+            int fc2 = Faces.Count;
             Faces.Add(ft1);
-            HalfEdges[nt0].Face = fc;
-            HalfEdges[nt1].Face = fc;
-            HalfEdges[t1].Face = fc;
+            HalfEdges[nt0].Face = fc2;
+            HalfEdges[nt1].Face = fc2;
+            HalfEdges[t1].Face = fc2;
+            Logger.LogLine($"new face {fc2}: Edges {nt0}, {nt1}, {t1}");
 
             // attach the new mid point to one of the new half edges
 
@@ -471,6 +478,28 @@ namespace HalfEdgeLib
                 s = HalfEdges[edge].StartVertex;
                 edge = HalfEdges[edge].Twin;
                 e = HalfEdges[edge].StartVertex;
+            }
+        }
+        private void Reface()
+        {
+            Int32Collection used = new Int32Collection();
+            Faces.Clear();
+            for (int i = 0; i < HalfEdges.Count; i++)
+            {
+                if (!used.Contains(i))
+                {
+                    used.Add(i);
+                    Face fc = new Face(i);
+                    int faceN = Faces.Count;
+                    HalfEdges[i].Face = faceN;
+                    Faces.Add(fc);
+                    int n = HalfEdges[i].Next;
+                    HalfEdges[n].Face = faceN;
+                    used.Add(n);
+                    n = HalfEdges[n].Next;
+                    HalfEdges[n].Face = faceN;
+                    used.Add(n);
+                }
             }
         }
     }
