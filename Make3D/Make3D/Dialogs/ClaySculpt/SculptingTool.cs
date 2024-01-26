@@ -1,4 +1,5 @@
-﻿using Plankton;
+﻿using HalfEdgeLib;
+using Plankton;
 using System;
 using System.Windows.Media.Media3D;
 
@@ -32,18 +33,20 @@ namespace Barnacle.Dialogs.ClaySculpt
         public bool ApplyTool(ToolSelectionContent content, Point3D centre)
         {
             bool res = true;
-            // content.SubdivideSelectedFaces();
+            content.SubdivideSelectedFaces();
             foreach (int vid in content.SelectedVertices)
             {
-                PlanktonVertex xyz = content.GetVertex(vid);
-                PlanktonXYZ pxyz = new PlanktonXYZ(xyz.X, xyz.Y, xyz.Z);
+                //PlanktonVertex xyz = content.GetVertex(vid);
+                Vertex xyz = content.GetVertex(vid);
+                Vector3D pxyz = new Vector3D(xyz.X, xyz.Y, xyz.Z);
 
-                PlanktonXYZ normal = content.GetVertexNormal(vid);
+                // PlanktonXYZ normal = content.GetVertexNormal(vid);
+                Vector3D normal = content.GetVertexNormal(vid);
                 System.Diagnostics.Debug.WriteLine($" x={xyz.X},y={xyz.Y},z={xyz.Z}");
                 System.Diagnostics.Debug.WriteLine($" nx={normal.X},ny={normal.Y},nz={normal.Z}");
                 pxyz.Normalize();
 
-                double dot = (double)PlanktonXYZ.DotProduct(pxyz, normal);
+                double dot = Vector3D.DotProduct(pxyz, normal);
                 float sign = Math.Sign(dot);
                 if (Inverse)
                 {

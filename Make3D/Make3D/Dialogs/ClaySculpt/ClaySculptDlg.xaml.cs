@@ -3,6 +3,7 @@ using Barnacle.Dialogs.ClaySculpt;
 using Barnacle.Dialogs.WireFrame;
 using Barnacle.Models;
 using Barnacle.Object3DLib;
+using HalfEdgeLib;
 using MakerLib;
 using Plankton;
 using sdflib;
@@ -42,7 +43,10 @@ namespace Barnacle.Dialogs
         private ObservableCollection<String> toolShapeItems;
         private double toolsSize;
         private double toolStrength;
-        private PlanktonMesh pmesh;
+
+        //private PlanktonMesh pmesh;
+        private Mesh pmesh;
+
         private List<GeometryModel3D> markers;
         private List<GeometryModel3D> wireframes;
 
@@ -78,7 +82,8 @@ namespace Barnacle.Dialogs
             meshColour = Colors.Brown;
             ModelGroup = MyModelGroup;
             loaded = false;
-            pmesh = new PlanktonMesh();
+            // pmesh = new PlanktonMesh();
+            pmesh = new Mesh();
             currentTool = new SculptingTool();
             markers = new List<GeometryModel3D>();
             wireframes = new List<GeometryModel3D>();
@@ -369,7 +374,8 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private void CreateMarker(PlanktonVertex p, Color cl)
+        //  private void CreateMarker(PlanktonVertex p, Color cl)
+        private void CreateMarker(Vertex p, Color cl)
         {
             MeshGeometry3D mesh = MeshUtils.MakeBorder(p.X, p.Y, p.Z, 2);
             GeometryModel3D gm = new GeometryModel3D();
@@ -466,11 +472,13 @@ namespace Barnacle.Dialogs
 
         private void CreateWireframeForEdge(int v, Color cl)
         {
-            PlanktonHalfedge he = pmesh.Halfedges[v];
+            //PlanktonHalfedge he = pmesh.Halfedges[v];
+            HalfEdge he = pmesh.HalfEdges[v];
             int s = he.StartVertex;
-            he = pmesh.Halfedges[he.NextHalfedge];
+            he = pmesh.HalfEdges[he.Next];
             int e = he.StartVertex;
-            PlanktonVertex ve = pmesh.Vertices[s];
+            //  PlanktonVertex ve = pmesh.Vertices[s];
+            Vertex ve = pmesh.Vertices[s];
             Point3D position1 = new Point3D(ve.X, ve.Y, ve.Z);
 
             ve = pmesh.Vertices[e];
@@ -613,117 +621,7 @@ namespace Barnacle.Dialogs
             {
                 pmesh.ToSoup(Vertices, Faces);
             }
-            /*
-            CubeMarcher cm = new CubeMarcher();
-            GridCell gc = new GridCell();
-            List<Triangle> triangles = new List<Triangle>();
 
-            double dd = 0.5;
-
-            for (int scol = 0; scol < numbersectors; scol++)
-            {
-                for (int srow = 0; srow < numbersectors; srow++)
-                {
-                    for (int splane = 0; splane < numbersectors; splane++)
-                    {
-                        if (sectorModels[scol, srow, splane].Dirty)
-                        {
-                            sectorModels[scol, srow, splane].Dirty = false;
-                            sectorModels[scol, srow, splane].ClearShape();
-                            for (double ix = 0; ix <= cellsPerSector - dd; ix += dd)
-                            {
-                                double x = (scol * cellsPerSector) + ix;
-                                for (double iy = 0; iy <= cellsPerSector - dd; iy += dd)
-                                {
-                                    double y = (srow * cellsPerSector) + iy;
-                                    for (double iz = 0; iz <= cellsPerSector - dd; iz += dd)
-                                    {
-                                        double z = (splane * cellsPerSector) + iz;
-
-                                        if (x + dd < maxX - 1 && y + dd < maxY - 1 && z + dd < maxZ - 1)
-                                        {
-                                            gc.p[0] = new XYZ(x, y, z);
-
-                                            gc.p[1] = new XYZ(x + dd, y, z);
-                                            gc.p[2] = new XYZ(x + dd, y, z + dd);
-                                            gc.p[3] = new XYZ(x, y, z + dd);
-                                            gc.p[4] = new XYZ(x, y + dd, z);
-                                            gc.p[5] = new XYZ(x + dd, y + dd, z);
-                                            gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
-                                            gc.p[7] = new XYZ(x, y + dd, z + dd);
-
-                                            for (int i = 0; i < 8; i++)
-                                            {
-                                                gc.val[i] = sdf.GetAt(gc.p[i].x, gc.p[i].y, gc.p[i].z);
-                                            }
-                                            triangles.Clear();
-
-                                            cm.Polygonise(gc, 0, triangles);
-
-                                            foreach (Triangle t in triangles)
-                                            {
-                                                int p0 = sectorModels[scol, srow, splane].AddVertice(t.p[0].x - cx, t.p[0].y - cy, t.p[0].z - cz);
-                                                int p1 = sectorModels[scol, srow, splane].AddVertice(t.p[1].x - cx, t.p[1].y - cy, t.p[1].z - cz);
-                                                int p2 = sectorModels[scol, srow, splane].AddVertice(t.p[2].x - cx, t.p[2].y - cy, t.p[2].z - cz);
-
-                                                sectorModels[scol, srow, splane].Faces.Add(p0);
-                                                sectorModels[scol, srow, splane].Faces.Add(p1);
-                                                sectorModels[scol, srow, splane].Faces.Add(p2);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            */
-            /*
-            for (double x = 0; x < maxX - 1; x += dd)
-            {
-                for (double y = 0; y < maxY - 1; y += dd)
-                {
-                    for (double z = 0; z < maxZ - 1; z += dd)
-                    {
-                        if (x + dd < maxX - 1 && y + dd < maxY - 1 && z + dd < maxZ - 1)
-                        {
-                            gc.p[0] = new XYZ(x, y, z);
-
-                            gc.p[1] = new XYZ(x + dd, y, z);
-                            gc.p[2] = new XYZ(x + dd, y, z + dd);
-                            gc.p[3] = new XYZ(x, y, z + dd);
-                            gc.p[4] = new XYZ(x, y + dd, z);
-                            gc.p[5] = new XYZ(x + dd, y + dd, z);
-                            gc.p[6] = new XYZ(x + dd, y + dd, z + dd);
-                            gc.p[7] = new XYZ(x, y + dd, z + dd);
-
-                            for (int i = 0; i < 8; i++)
-                            {
-                                gc.val[i] = sdf.GetAt(gc.p[i].x, gc.p[i].y, gc.p[i].z);
-                            }
-                            triangles.Clear();
-
-                            cm.Polygonise(gc, 0, triangles);
-
-                            foreach (Triangle t in triangles)
-                            {
-                                int p0 = AddVertice(t.p[0].x - cx, t.p[0].y - cy, t.p[0].z - cz);
-                                int p1 = AddVertice(t.p[1].x - cx, t.p[1].y - cy, t.p[1].z - cz);
-                                int p2 = AddVertice(t.p[2].x - cx, t.p[2].y - cy, t.p[2].z - cz);
-
-                                Faces.Add(p0);
-                                //  Faces.Add(p2);
-                                // Faces.Add(p1);
-
-                                Faces.Add(p1);
-                                Faces.Add(p2);
-                            }
-                        }
-                    }
-                }
-            }
-            */
             //  CentreVertices();
         }
 
@@ -767,30 +665,6 @@ namespace Barnacle.Dialogs
             loaded = true;
         }
 
-        private void SetSphere(Isdf sdf, int cx, int cy, int cz, double radius)
-        {
-            int l = 0;
-            int h = 0;
-            int w = 0;
-            sdf.GetDimensions(ref l, ref h, ref w);
-            for (int x = 0; x < l; x++)
-            {
-                double dx = x - cx;
-
-                for (int y = 0; y < h; y++)
-                {
-                    double dy = y - cy;
-                    for (int z = 0; z < w; z++)
-                    {
-                        double dz = z - cz;
-                        double v = (dx * dx) + (dy * dy) + (dz * dz);
-                        double d = Math.Sqrt(v) - (double)radius;
-                        sdf.Set(x, y, z, d);
-                    }
-                }
-            }
-        }
-
         private void UpdateDisplay()
         {
             if (loaded)
@@ -811,17 +685,6 @@ namespace Barnacle.Dialogs
                 UpdateDisplay();
                 if (lastHitPoint != null && e.LeftButton == System.Windows.Input.MouseButtonState.Released)
                 {
-                    /*
-                    sdf.Perform(tool, (int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
-                    DirtySector((int)(lastHitPoint.X + cx), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
-                    if (symetric)
-                    {
-                        sdf.Perform(tool, (int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz), op, strength);
-                        DirtySector((int)(cx - lastHitPoint.X), (int)(lastHitPoint.Y + cy), (int)(lastHitPoint.Z + cz));
-                    }
-                    // sdf.Union(tool, maxX / 2 + 1, maxY / 2 + 1, maxZ / 2 + 1);
-                    UpdateDisplay();
-                    */
                 }
                 claySelected = false;
             }
@@ -842,8 +705,9 @@ namespace Barnacle.Dialogs
             IcoSphereCreator ico = new IcoSphereCreator();
             ico.Create(4, ref cubeVertices, ref cubeFaces, 100);
 
-            pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
+            //  pmesh = new PlanktonMesh(cubeVertices, cubeFaces);
 
+            pmesh = new Mesh(cubeVertices, cubeFaces);
             loaded = true;
             UpdateDisplay();
         }
