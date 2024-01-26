@@ -124,12 +124,26 @@ namespace Barnacle.Dialogs.ClaySculpt
 
         public void SubdivideSelectedFaces()
         {
+            List<int> edgesToSplit = new List<int>();
             foreach (int vindex in SelectedVertices)
             {
                 // get a list of the halfedges from this point
 
                 List<int> el = GetListOfEdgesFromPoint(vindex);
+                foreach (int e in el)
+                {
+                    if (EdgeSqrLength(e) > 0.1 && !edgesToSplit.Contains(e) && !edgesToSplit.Contains(pmesh.HalfEdges[e].Twin))
+                    {
+                        edgesToSplit.Add(e);
+                    }
+                }
             }
+            pmesh.SplitTheseEdges(edgesToSplit);
+        }
+
+        private double EdgeSqrLength(int edge)
+        {
+            return pmesh.GetSqrLength(edge);
         }
 
         public List<int> GetListOfEdgesFromPoint(int vindex)

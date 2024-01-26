@@ -42,8 +42,8 @@ namespace Barnacle.Dialogs.ClaySculpt
 
                 // PlanktonXYZ normal = content.GetVertexNormal(vid);
                 Vector3D normal = content.GetVertexNormal(vid);
-                System.Diagnostics.Debug.WriteLine($" x={xyz.X},y={xyz.Y},z={xyz.Z}");
-                System.Diagnostics.Debug.WriteLine($" nx={normal.X},ny={normal.Y},nz={normal.Z}");
+                //   System.Diagnostics.Debug.WriteLine($" x={xyz.X},y={xyz.Y},z={xyz.Z}");
+                //   System.Diagnostics.Debug.WriteLine($" nx={normal.X},ny={normal.Y},nz={normal.Z}");
                 pxyz.Normalize();
 
                 double dot = Vector3D.DotProduct(pxyz, normal);
@@ -52,13 +52,13 @@ namespace Barnacle.Dialogs.ClaySculpt
                 {
                     sign = -sign;
                 }
-                System.Diagnostics.Debug.WriteLine($"dot={dot}");
+                //        System.Diagnostics.Debug.WriteLine($"dot={dot}");
                 double d = content.Distance(centre, xyz);
                 float force = sign * (float)Force(d);
                 normal.X *= force;
                 normal.Y *= force;
                 normal.Z *= force;
-                System.Diagnostics.Debug.WriteLine($" offx={normal.X},offy={normal.Y},offz={normal.Z}");
+                //       System.Diagnostics.Debug.WriteLine($" offx={normal.X},offy={normal.Y},offz={normal.Z}");
                 content.MoveVertex(normal, vid);
             }
             return res;

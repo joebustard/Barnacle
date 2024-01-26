@@ -140,6 +140,16 @@ namespace HalfEdgeLib
             return res;
         }
 
+        public double GetSqrLength(int edge)
+        {
+            int s = HalfEdges[edge].StartVertex;
+            int e = HalfEdges[HalfEdges[edge].Next].StartVertex;
+            double res = (Vertices[s].X - Vertices[e].X) * (Vertices[s].X - Vertices[e].X);
+            res += (Vertices[s].Y - Vertices[e].Y) * (Vertices[s].Y - Vertices[e].Y);
+            res += (Vertices[s].Z - Vertices[e].Z) * (Vertices[s].Z - Vertices[e].Z);
+            return res;
+        }
+
         public int HalfEdgeCount { get { return HalfEdges.Count; } }
 
         public void AddFacePoint(int e, Int32Collection faces)
@@ -249,6 +259,70 @@ namespace HalfEdgeLib
                 if (!edgesToFlip.Contains(edge) && !edgesToFlip.Contains(twin))
                 {
                     GetEdgeVertices(edge, out s, out e);
+                    if (s > lastOldVertex && e <= lastOldVertex)
+                    {
+                        edgesToFlip.Add(edge);
+                    }
+                }
+            }
+            /*
+            int count = -1;
+            foreach (int edge in edgesToFlip)
+            {
+                FlipTriangle(edge);
+                count++;
+                if (count == 1)
+                {
+                    //      break;
+                }
+            }
+            */
+        }
+
+        /// <summary>
+        ///  Sbbdivide a list of edges
+        /// </summary>
+        public void SplitTheseEdges(List<int> source)
+        {
+            List<int> neoVertices = new List<int>();
+            List<int> neoHalfEdges = new List<int>();
+
+            List<int> edgesToSplit = new List<int>();
+
+            // get the edges that we will split
+            // Doesn't matter what order they are in but we only include one of a pair
+            //Logger.LogLine("Edges to split");
+            foreach (int edge in source)
+            {
+                int twin = HalfEdges[edge].Twin;
+                if (!edgesToSplit.Contains(edge) && !edgesToSplit.Contains(twin))
+                {
+                    edgesToSplit.Add(edge);
+                }
+            }
+
+            int lastOldVertex = Vertices.Count - 1;
+            int midPointIndex = 0;
+            List<int> allNewEdges = new List<int>();
+            List<int> oneNewEdges = new List<int>();
+            foreach (int edge in edgesToSplit)
+            {
+                midPointIndex = SplitSingleEdge(edge, oneNewEdges);
+
+                neoVertices.Add(midPointIndex);
+                allNewEdges.AddRange(oneNewEdges);
+            }
+            /*
+            int s = -1;
+            int e = -1;
+
+            List<int> edgesToFlip = new List<int>();
+            foreach (int edge in allNewEdges)
+            {
+                int twin = HalfEdges[edge].Twin;
+                if (!edgesToFlip.Contains(edge) && !edgesToFlip.Contains(twin))
+                {
+                    GetEdgeVertices(edge, out s, out e);
                     if (s <= lastOldVertex && e > lastOldVertex)
                     {
                         edgesToFlip.Add(edge);
@@ -263,9 +337,10 @@ namespace HalfEdgeLib
                 count++;
                 if (count == 1)
                 {
-                    break;
+                    //          break;
                 }
             }
+            */
         }
 
         /// <summary>
@@ -405,7 +480,7 @@ namespace HalfEdgeLib
         /// <param name="edge"></param>
         /// <param name="s"></param>
         /// <param name="e"></param>
-        private void GetEdgeVertices(int edge, out int s, out int e)
+        public void GetEdgeVertices(int edge, out int s, out int e)
         {
             s = -1;
             e = -1;
@@ -646,6 +721,7 @@ namespace HalfEdgeLib
 
         public void FlipTriangle(int e0)
         {
+            Logger.LogLine($"Flip {e0}");
             // gather data
             int e1 = HalfEdges[e0].Next;
             int e2 = HalfEdges[e1].Next;
@@ -674,24 +750,27 @@ namespace HalfEdgeLib
             //            Logger.LogLine($" Outside twins e1t={e1t}, e2t = {e2t}, t1t={t1t}, t2t={t2t}");
 
             // now swap things around
-            HalfEdges[e0].StartVertex = v2;
-            HalfEdges[e1].StartVertex = v3;
-            HalfEdges[e2].StartVertex = v1;
+            HalfEdges[e0].StartVertex = v3;
+            HalfEdges[e1].StartVertex = v2;
+            HalfEdges[e2].StartVertex = v0;
             //           Logger.LogLine($" After Flip {v2},{v3},{v1}");
-            HalfEdges[t0].StartVertex = v3;
-            HalfEdges[t1].StartVertex = v2;
-            HalfEdges[t2].StartVertex = v0;
+            HalfEdges[t0].StartVertex = v2;
+            HalfEdges[t1].StartVertex = v3;
+            HalfEdges[t2].StartVertex = v1;
             //            Logger.LogLine($" After Flip {v3},{v2},{v0}");
 
-            TwinUp(e1, t2t);
-            TwinUp(e2, e1t);
-            TwinUp(t1, e2t);
-            TwinUp(t2, t1t);
+            TwinUp(e1, e2t);
+            TwinUp(e2, t1t);
+            TwinUp(t1, t2t);
+            TwinUp(t2, e1t);
 
-            Vertices[v0].OutgoingHalfEdge = t2;
-            Vertices[v1].OutgoingHalfEdge = e2;
-            Vertices[v2].OutgoingHalfEdge = e0;
-            Vertices[v3].OutgoingHalfEdge = t0;
+            Vertices[v0].OutgoingHalfEdge = e2;
+            Vertices[v1].OutgoingHalfEdge = t2;
+            Vertices[v2].OutgoingHalfEdge = e1;
+            Vertices[v3].OutgoingHalfEdge = t1;
+
+            Faces[face0].FirstEdge = e0;
+            Faces[face1].FirstEdge = t0;
         }
     }
 }
