@@ -4,6 +4,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Barnacle.Models;
 
 namespace Barnacle
 {
@@ -15,6 +16,7 @@ namespace Barnacle
         public MainWindow()
         {
             InitializeComponent();
+           this.RestoreSizeAndLocation();
             PrepareUndo();
         }
 
@@ -57,6 +59,11 @@ namespace Barnacle
             }
 
             InfoWindow.Instance().Owner = this;
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            this.SaveSizeAndLocation();
         }
     }
 }

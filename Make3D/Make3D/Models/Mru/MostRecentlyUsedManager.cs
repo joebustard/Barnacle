@@ -13,7 +13,7 @@ namespace Barnacle.Models.Mru
         {
             recentFilesList = new List<MruEntry>();
             Name = "Mru";
-            NumberToRemember = 20;
+            NumberToRemember = 120;
             LoadMru();
         }
 
@@ -30,7 +30,7 @@ namespace Barnacle.Models.Mru
             }
             set
             {
-                if (value > 0 && value < 100)
+                if (value > 0 && value < 200)
                 {
                     numberToRemember = value;
                 }
@@ -77,8 +77,7 @@ namespace Barnacle.Models.Mru
                 {
                     recentFilesList.RemoveAt(recentFilesList.Count - 1);
                 }
-                SaveMru();
-                // CollectionViewSource.GetDefaultView(RecentFilesList).Refresh();
+                SaveMru();                
             }
             else
             {
