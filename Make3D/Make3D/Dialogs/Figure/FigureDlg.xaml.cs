@@ -1023,7 +1023,7 @@ namespace Barnacle.Dialogs
         {
             if (adorner != null)
             {
-                adorner.MouseUp();
+                adorner.MouseUp(e);
                 if (adorner.SelectedObjects.Count > 0)
                 {
                     JointMarker mk = adorner.SelectedObjects[0] as JointMarker;

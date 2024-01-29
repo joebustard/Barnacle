@@ -99,7 +99,7 @@ namespace Barnacle.Models.Adorners
             return handled;
         }
 
-        internal override void MouseUp()
+        internal override void MouseUp(MouseButtonEventArgs e)
         {
             selectedSphere = false;
         }
@@ -221,20 +221,21 @@ namespace Barnacle.Models.Adorners
                 RotateSingleObject(positionChange, zAxis);
                 foreach (Object3D obj in SelectedObjects)
                 {
-                   RotateSingleObject(positionChange, obj);
+                    RotateSingleObject(positionChange, obj);
                     // RotateByTransformation(positionChange, obj);
                     NotificationManager.Notify("PositionUpdated", obj);
                 }
                 NotificationManager.Notify("DocDirty", null);
             }
         }
-/*
-        private void RotateByTransformation(Point3D positionChange, Object3D obj)
-        {
-            obj.RotateByTransform(positionChange);
-            NotificationManager.Notify("UpdateModels", obj);
-        }
 
-        */
+        /*
+                private void RotateByTransformation(Point3D positionChange, Object3D obj)
+                {
+                    obj.RotateByTransform(positionChange);
+                    NotificationManager.Notify("UpdateModels", obj);
+                }
+
+                */
     }
 }

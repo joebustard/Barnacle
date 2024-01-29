@@ -294,7 +294,7 @@ namespace Barnacle.Models.Adorners
             }
         }
 
-        internal override void MouseUp()
+        internal override void MouseUp(MouseButtonEventArgs e)
         {
             selectedThumb = null;
             boxSelected = false;

@@ -1320,7 +1320,7 @@ namespace Barnacle.ViewModels
         {
             if (isEditingEnabled && selectedObjectAdorner != null)
             {
-                selectedObjectAdorner.MouseUp();
+                selectedObjectAdorner.MouseUp(e);
             }
             ReportCameraPosition();
         }
@@ -1350,7 +1350,7 @@ namespace Barnacle.ViewModels
                 }
                 if (!handled)
                 {
-                    handled = CheckIfContentSelected(geo, append, size, control);
+                    handled = CheckIfContentSelected(geo, append, size, control, hitPos);
                     if (handled)
                     {
                         SetSelectionColours();
@@ -1965,7 +1965,7 @@ namespace Barnacle.ViewModels
             ScriptResults = null;
         }
 
-        private bool CheckIfContentSelected(GeometryModel3D geo, bool append, bool sizer, bool control)
+        private bool CheckIfContentSelected(GeometryModel3D geo, bool append, bool sizer, bool control, Point3D hitPos)
         {
             bool handled = false;
             if (!append)
@@ -1988,7 +1988,7 @@ namespace Barnacle.ViewModels
                 {
                     CameraLookObject = selectedItems[0].Position;
                     RemoveObjectAdorner();
-                    GenerateSelectionBox(selectedItems[0], sizer, control);
+                    CreateSelectionAdorner(selectedItems[0], sizer, control, hitPos);
                     NotificationManager.Notify("ObjectSelected", selectedItems[0]);
                     if (selectedItems.Count == 1)
                     {
@@ -2318,10 +2318,11 @@ namespace Barnacle.ViewModels
             }
         }
 
-        private void GenerateSelectionBox(Object3D object3D, bool sizer, bool control)
+        private void CreateSelectionAdorner(Object3D object3D, bool leftMouseButton, bool control, Point3D hitPos)
         {
-            if (sizer)
+            if (leftMouseButton)
             {
+                // ctrl and left button means skew
                 if (control)
                 {
                     selectedObjectAdorner = new SkewAdorner(camera);
@@ -2330,12 +2331,21 @@ namespace Barnacle.ViewModels
                 }
                 else
                 {
+                    // left button on its own means size
                     MakeSizeAdorner();
                 }
             }
             else
             {
-                selectedObjectAdorner = new RotationAdorner(camera);
+                if (control)
+                {
+                    selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos);
+                }
+                else
+                {
+                    // right button on its own means rotation
+                    selectedObjectAdorner = new RotationAdorner(camera);
+                }
             }
             selectedObjectAdorner.AdornObject(object3D);
 

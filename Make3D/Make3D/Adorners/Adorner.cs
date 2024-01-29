@@ -77,7 +77,11 @@ namespace Barnacle.Models.Adorners
             return handled;
         }
 
-        internal virtual void MouseUp()
+        internal virtual void MouseUp(MouseButtonEventArgs e)
+        {
+        }
+
+        internal virtual void Mousedown(MouseButtonEventArgs e)
         {
         }
 

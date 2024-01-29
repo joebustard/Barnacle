@@ -253,9 +253,9 @@ namespace HalfEdgeLib
             int e = -1;
 
             List<int> edgesToFlip = new List<int>();
-           
-                foreach (int edge in allNewEdges)
-                {
+
+            foreach (int edge in allNewEdges)
+            {
                 int twin = HalfEdges[edge].Twin;
                 if (!edgesToFlip.Contains(edge) && !edgesToFlip.Contains(twin))
                 {
@@ -738,40 +738,63 @@ namespace HalfEdgeLib
             int v1 = HalfEdges[e1].StartVertex;
             int v2 = HalfEdges[e2].StartVertex;
             int v3 = HalfEdges[t2].StartVertex;
-            //            Logger.LogLine($" Flip edges {e0},{e1},{e2}");
-            //            Logger.LogLine($" vertices {v0},{v1},{v2}");
-            //Logger.LogLine($" Flip twin edges {t0},{t1},{t2}");
-            //            Logger.LogLine($" vertices {v1},{v0},{v3}");
+            if (!HalfEdgeExists(v2, v3))
+            {
+                //            Logger.LogLine($" Flip edges {e0},{e1},{e2}");
+                //            Logger.LogLine($" vertices {v0},{v1},{v2}");
+                //Logger.LogLine($" Flip twin edges {t0},{t1},{t2}");
+                //            Logger.LogLine($" vertices {v1},{v0},{v3}");
 
-            // all ready have e0 and t0 twins, gather the rest
-            int e1t = HalfEdges[e1].Twin;
-            int e2t = HalfEdges[e2].Twin;
-            int t1t = HalfEdges[t1].Twin;
-            int t2t = HalfEdges[t2].Twin;
-            //            Logger.LogLine($" Outside twins e1t={e1t}, e2t = {e2t}, t1t={t1t}, t2t={t2t}");
+                // all ready have e0 and t0 twins, gather the rest
+                int e1t = HalfEdges[e1].Twin;
+                int e2t = HalfEdges[e2].Twin;
+                int t1t = HalfEdges[t1].Twin;
+                int t2t = HalfEdges[t2].Twin;
+                //            Logger.LogLine($" Outside twins e1t={e1t}, e2t = {e2t}, t1t={t1t}, t2t={t2t}");
 
-            // now swap things around
-            HalfEdges[e0].StartVertex = v3;
-            HalfEdges[e1].StartVertex = v2;
-            HalfEdges[e2].StartVertex = v0;
-            //           Logger.LogLine($" After Flip {v2},{v3},{v1}");
-            HalfEdges[t0].StartVertex = v2;
-            HalfEdges[t1].StartVertex = v3;
-            HalfEdges[t2].StartVertex = v1;
-            //            Logger.LogLine($" After Flip {v3},{v2},{v0}");
+                // now swap things around
+                HalfEdges[e0].StartVertex = v3;
+                HalfEdges[e1].StartVertex = v2;
+                HalfEdges[e2].StartVertex = v0;
+                //           Logger.LogLine($" After Flip {v2},{v3},{v1}");
+                HalfEdges[t0].StartVertex = v2;
+                HalfEdges[t1].StartVertex = v3;
+                HalfEdges[t2].StartVertex = v1;
+                //            Logger.LogLine($" After Flip {v3},{v2},{v0}");
 
-            TwinUp(e1, e2t);
-            TwinUp(e2, t1t);
-            TwinUp(t1, t2t);
-            TwinUp(t2, e1t);
+                TwinUp(e1, e2t);
+                TwinUp(e2, t1t);
+                TwinUp(t1, t2t);
+                TwinUp(t2, e1t);
 
-            Vertices[v0].OutgoingHalfEdge = e2;
-            Vertices[v1].OutgoingHalfEdge = t2;
-            Vertices[v2].OutgoingHalfEdge = e1;
-            Vertices[v3].OutgoingHalfEdge = t1;
+                Vertices[v0].OutgoingHalfEdge = e2;
+                Vertices[v1].OutgoingHalfEdge = t2;
+                Vertices[v2].OutgoingHalfEdge = e1;
+                Vertices[v3].OutgoingHalfEdge = t1;
 
-            Faces[face0].FirstEdge = e0;
-            Faces[face1].FirstEdge = t0;
+                Faces[face0].FirstEdge = e0;
+                Faces[face1].FirstEdge = t0;
+            }
+            else
+            {
+                Logger.LogLine("Would cause duplicate edge");
+            }
+        }
+
+        private bool HalfEdgeExists(int v0, int v1)
+        {
+            bool res = false;
+            List<int> outgoing = GetHalfEdgesFromVertex(v0);
+            foreach (int he in outgoing)
+            {
+                int n = HalfEdges[HalfEdges[he].Next].StartVertex;
+                if (n == 1)
+                {
+                    res = true;
+                    break;
+                }
+            }
+            return res;
         }
     }
 }
