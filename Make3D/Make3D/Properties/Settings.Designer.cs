@@ -206,5 +206,17 @@ namespace Barnacle.Properties {
                 this["ShowBuildVolume"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string WindowXml {
+            get {
+                return ((string)(this["WindowXml"]));
+            }
+            set {
+                this["WindowXml"] = value;
+            }
+        }
     }
 }

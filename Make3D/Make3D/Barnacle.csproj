@@ -337,6 +337,7 @@
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
+    <Compile Include="Models\WindowState\WindowState.cs" />
     <Compile Include="Models\ZipUtils.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\FuselageModel.cs" />
     <Compile Include="Dialogs\RibbedFuselage\Models\ImageDetailsModel.cs" />

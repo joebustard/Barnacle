@@ -253,8 +253,9 @@ namespace HalfEdgeLib
             int e = -1;
 
             List<int> edgesToFlip = new List<int>();
-            foreach (int edge in allNewEdges)
-            {
+           
+                foreach (int edge in allNewEdges)
+                {
                 int twin = HalfEdges[edge].Twin;
                 if (!edgesToFlip.Contains(edge) && !edgesToFlip.Contains(twin))
                 {
