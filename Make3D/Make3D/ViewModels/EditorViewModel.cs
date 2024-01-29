@@ -1351,10 +1351,7 @@ namespace Barnacle.ViewModels
                 if (!handled)
                 {
                     handled = CheckIfContentSelected(geo, append, size, control, hitPos);
-                    if (handled)
-                    {
-                        SetSelectionColours();
-                    }
+                   
                 }
                 if (!handled)
                 {
@@ -2029,6 +2026,10 @@ namespace Barnacle.ViewModels
                     }
                 }
             }
+            if (handled)
+            {
+                SetSelectionColours();
+            }
             return handled;
         }
 
@@ -2339,7 +2340,18 @@ namespace Barnacle.ViewModels
             {
                 if (control)
                 {
-                    selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos);
+                    // do we already have an existing dimensionadorner, if so
+                    // assume we are changing the second point
+                    if (selectedObjectAdorner != null && selectedObjectAdorner is DimensionAdorner)
+                    {
+                        (selectedObjectAdorner as DimensionAdorner).SecondPoint(hitPos);
+                    }
+                    else
+                    {
+                        selectedObjectAdorner = new DimensionAdorner(camera, document.Content, hitPos);
+                        selectedObjectAdorner.ViewPort = ViewPort;
+                        selectedObjectAdorner.Overlay = Overlay;
+                    }
                 }
                 else
                 {

@@ -28,7 +28,7 @@ namespace Barnacle.Dialogs
             if (instance == null)
             {
                 instance = new InfoWindow();
-                instance.Owner = Application.Current.MainWindow;
+
             }
             else
             {
@@ -37,7 +37,24 @@ namespace Barnacle.Dialogs
                     instance = new InfoWindow();
                 }
             }
+            instance.Owner = Application.Current.MainWindow;
+            instance.Topmost = true;
+            MoveToCenterOfOwner();
             return instance;
+        }
+
+        private static void MoveToCenterOfOwner()
+        {
+            if (instance != null && instance.Owner != null)
+            {
+                if (instance.Owner.WindowState != WindowState.Minimized)
+                {
+                    double w = instance.Owner.ActualWidth;
+                    double h = instance.Owner.ActualHeight;
+                    instance.Top = (h - instance.ActualHeight)/2;
+                    instance.Left = (w - instance.ActualWidth) / 2;
+                }
+            }
         }
 
         public static void Refresh(System.Windows.UIElement uiElement)
@@ -72,12 +89,14 @@ namespace Barnacle.Dialogs
 
         public void ShowText(String s)
         {
+            MoveToCenterOfOwner();
             instance.InfoLabel.Content = s;
             Refresh(instance.InfoLabel);
         }
 
         public void UpdateText(String s)
         {
+            MoveToCenterOfOwner();
             instance.InfoLabel.Content = s;
         }
     }

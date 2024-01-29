@@ -335,6 +335,7 @@
     <Compile Include="Models\GridData.cs" />
     <Compile Include="Models\HorizontalPlane.cs" />
     <Compile Include="Models\MeshSubdivider.cs" />
+    <Compile Include="Models\Point3DExtensions.cs" />
     <Compile Include="Models\PrinterPlate.cs" />
     <Compile Include="Models\SDCard\SDCardUtils.cs" />
     <Compile Include="Models\VectorUtils.cs" />
@@ -1057,10 +1058,6 @@
     <ProjectReference Include="..\PlacementLib\PlacementLib.csproj">
       <Project>{A2146721-BF86-45A3-9A95-5F1FD0E311DA}</Project>
       <Name>PlacementLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Plankton\Plankton.csproj">
-      <Project>{BDD288F7-C2E2-4C2A-B083-E4D4D21F528F}</Project>
-      <Name>Plankton</Name>
     </ProjectReference>
     <ProjectReference Include="..\PolygonLibrary\PolygonLibrary.csproj">
       <Project>{61ee0e20-98e3-430f-be43-cb1f19e829a5}</Project>

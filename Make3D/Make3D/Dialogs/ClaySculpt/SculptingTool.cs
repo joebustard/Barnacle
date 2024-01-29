@@ -1,5 +1,5 @@
 ﻿using HalfEdgeLib;
-using Plankton;
+
 using System;
 using System.Windows.Media.Media3D;
 

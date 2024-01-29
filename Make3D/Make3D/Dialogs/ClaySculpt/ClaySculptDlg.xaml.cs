@@ -5,7 +5,7 @@ using Barnacle.Models;
 using Barnacle.Object3DLib;
 using HalfEdgeLib;
 using MakerLib;
-using Plankton;
+
 using sdflib;
 using System;
 using System.Collections.Generic;
