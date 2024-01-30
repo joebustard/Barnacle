@@ -115,7 +115,7 @@ namespace Barnacle.Models.Adorners
             selectedThumb = null;
         }
 
-        internal override bool Select(GeometryModel3D geo)
+        internal override bool SelectExistingAdornment(GeometryModel3D geo)
         {
             bool handled = false;
 

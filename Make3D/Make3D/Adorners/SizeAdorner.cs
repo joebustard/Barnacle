@@ -343,7 +343,7 @@ namespace Barnacle.Models.Adorners
             }
         }
 
-        internal override bool Select(GeometryModel3D geo)
+        internal override bool SelectExistingAdornment(GeometryModel3D geo)
         {
             bool handled = false;
 

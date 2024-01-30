@@ -104,7 +104,7 @@ namespace Barnacle.Models.Adorners
             selectedSphere = false;
         }
 
-        internal override bool Select(GeometryModel3D geo)
+        internal override bool SelectExistingAdornment(GeometryModel3D geo)
         {
             bool handled = false;
             if (sphere != null)

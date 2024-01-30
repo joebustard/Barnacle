@@ -986,7 +986,7 @@ namespace Barnacle.Dialogs
                 // was it the adorner
                 if (adorner != null)
                 {
-                    handled = adorner.Select(lastHitModel);
+                    handled = adorner.SelectExistingAdornment(lastHitModel);
                 }
 
                 if (!handled)

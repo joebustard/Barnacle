@@ -94,7 +94,7 @@ namespace Barnacle.Models.Adorners
             return SelectedObjects.Count;
         }
 
-        internal virtual bool Select(GeometryModel3D geo)
+        internal virtual bool SelectExistingAdornment(GeometryModel3D geo)
         {
             bool handled = false;
 

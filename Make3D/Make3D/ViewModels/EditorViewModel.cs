@@ -1346,12 +1346,11 @@ namespace Barnacle.ViewModels
 
                 if (selectedObjectAdorner != null)
                 {
-                    handled = selectedObjectAdorner.Select(geo);
+                    handled = selectedObjectAdorner.SelectExistingAdornment(geo);
                 }
                 if (!handled)
                 {
                     handled = CheckIfContentSelected(geo, append, size, control, hitPos);
-                   
                 }
                 if (!handled)
                 {
@@ -1361,6 +1360,7 @@ namespace Barnacle.ViewModels
                         {
                             selectedObjectAdorner.Clear();
                             Overlay.Children.Clear();
+                            selectedObjectAdorner = null;
                             NotificationManager.Notify("ObjectSelected", null);
                             NotificationManager.Notify("GroupSelected", false);
                         }
@@ -2012,6 +2012,7 @@ namespace Barnacle.ViewModels
                         {
                             // remove the currnt visible elements of the adorner
                             RemoveObjectAdorner();
+
                             // append the the object to the existing list of
                             selectedObjectAdorner.AdornObject(ob);
                             PassOnGroupStatus(ob);
