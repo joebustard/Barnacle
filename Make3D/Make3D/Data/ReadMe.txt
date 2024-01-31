@@ -13,6 +13,8 @@ Added
 	Name of initial file to open added to templates
 	Show object type (i.e. primitive, group etc) in object properties window
 	Cut all faces and vertices of object below a moveable horizontal plane
+	Subdivide
+	Basic dimensioning Ctrl +right click on two seperate object points to display the distacnce between them
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
