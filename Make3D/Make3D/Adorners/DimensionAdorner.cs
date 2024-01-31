@@ -16,6 +16,8 @@ namespace Barnacle.Models.Adorners
         private Point3D labelPos;
         private Color startColour;
         private Point3D startPoint;
+        private TextBox label;
+        private Line line;
 
         public DimensionAdorner(PolarCamera camera, List<Object3D> objects, Point3D hitPos)
         {
@@ -30,9 +32,38 @@ namespace Barnacle.Models.Adorners
             startColour = Colors.CornflowerBlue;
             endColour = Colors.GreenYellow;
             CreateMarker(startPoint, 2, startColour);
+            label = null;
+            line = null;
+            NotificationManager.Subscribe("DimensionAdorner", "CameraMoved", OnCameraMoved);
         }
 
         internal PolarCamera Camera { get; set; }
+
+        private void OnCameraMoved(object param)
+        {
+            PositionLabel();
+            if (line != null)
+            {
+                Point point1 = CameraUtils.Convert3DPoint(startPoint, ViewPort);
+                Point point2 = CameraUtils.Convert3DPoint(endPoint, ViewPort);
+                line.X1 = point1.X;
+                line.Y1 = point1.Y;
+                line.X2 = point2.X;
+                line.Y2 = point2.Y;
+            }
+        }
+
+        private void PositionLabel()
+        {
+            Point point = CameraUtils.Convert3DPoint(labelPos, ViewPort);
+
+            Canvas.SetLeft(label, point.X);
+            Canvas.SetTop(label, point.Y);
+            if (!Overlay.Children.Contains(label))
+            {
+                Overlay.Children.Add(label);
+            }
+        }
 
         public override void AdornObject(Object3D obj)
         {
@@ -60,40 +91,40 @@ namespace Barnacle.Models.Adorners
         private void AddLabel(Point3D lp, string v2)
         {
             labelPos = lp;
-            TextBox l = new TextBox();
-            l.Text = v2;
-            l.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
-            l.FontWeight = FontWeights.Bold;
-            l.FontSize = 18;
-            l.MinWidth = 200;
-            l.Height = 60;
-            l.HorizontalAlignment = HorizontalAlignment.Center;
+            label = new TextBox();
+            label.Text = v2;
+            label.Background = new SolidColorBrush(Color.FromArgb(64, 255, 255, 255));
+            label.FontWeight = FontWeights.Bold;
+            label.FontSize = 18;
+            label.MinWidth = 200;
+            label.Height = 60;
+            label.HorizontalAlignment = HorizontalAlignment.Center;
 
             Point point = CameraUtils.Convert3DPoint(labelPos, ViewPort);
 
-            Canvas.SetLeft(l, point.X);
-            Canvas.SetTop(l, point.Y);
-            if (!Overlay.Children.Contains(l))
+            Canvas.SetLeft(label, point.X);
+            Canvas.SetTop(label, point.Y);
+            if (!Overlay.Children.Contains(label))
             {
-                Overlay.Children.Add(l);
+                Overlay.Children.Add(label);
             }
         }
 
         private void AddLine(Point3D startPoint, Point3D endPoint)
         {
-            Line l = new Line();
+            line = new Line();
             Point point1 = CameraUtils.Convert3DPoint(startPoint, ViewPort);
             Point point2 = CameraUtils.Convert3DPoint(endPoint, ViewPort);
-            l.X1 = point1.X;
-            l.Y1 = point1.Y;
-            l.X2 = point2.X;
-            l.Y2 = point2.Y;
-            l.StrokeThickness = 4;
-            l.Stroke = Brushes.Black;
-            l.Fill = Brushes.Black;
-            if (!Overlay.Children.Contains(l))
+            line.X1 = point1.X;
+            line.Y1 = point1.Y;
+            line.X2 = point2.X;
+            line.Y2 = point2.Y;
+            line.StrokeThickness = 4;
+            line.Stroke = Brushes.Black;
+            line.Fill = Brushes.Black;
+            if (!Overlay.Children.Contains(line))
             {
-                Overlay.Children.Add(l);
+                Overlay.Children.Add(line);
             }
         }
 
