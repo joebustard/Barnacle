@@ -88,11 +88,11 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
-                CommandParameter="Torus"
+                CommandParameter="Trispike"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"
-                ToolTip="Add a torus object">
-                <Image Source="/Barnacle;component/Images/Buttons/Torus.png" />
+                ToolTip="Add a tri-spike object">
+                <Image Source="/Barnacle;component/Images/Buttons/Trispike.png" />
             </Button>
             <Button
                 Command="{Binding AddCommand}"
@@ -150,6 +150,14 @@
                 Style="{StaticResource ImageButton}"
                 ToolTip="Add a tube object">
                 <Image Source="/Barnacle;component/Images/Buttons/Tube.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="Torus"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a torus object">
+                <Image Source="/Barnacle;component/Images/Buttons/Torus.png" />
             </Button>
             <Button
                 Command="{Binding AddCommand}"

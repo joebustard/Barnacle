@@ -12,7 +12,7 @@ namespace Barnacle.Dialogs.ClaySculpt
         public SculptingTool()
         {
             Radius = 10;
-            Scaler = 1;
+            Scaler = 10;
             Inverse = false;
         }
 

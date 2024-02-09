@@ -57,7 +57,9 @@ namespace Barnacle.Object3DLib
         // Its vertices are absolute, i.e. have been translated
         // and rotated etc.
         private MeshGeometry3D surfaceMesh;
+
         private Transform3DGroup rotTransformation;
+
         public Transform3DGroup RotationTransformation
         {
             get { return rotTransformation; }
@@ -66,6 +68,7 @@ namespace Barnacle.Object3DLib
                 rotTransformation = value;
             }
         }
+
         private Int32Collection triangleIndices;
 
         public Object3D()
@@ -321,6 +324,14 @@ namespace Barnacle.Object3DLib
                     {
                         PrimitiveGenerator.GenerateCube(ref pnts, ref indices, ref normals);
                         AddPrimitiveToObject(pnts, indices, normals, Colors.Pink);
+                        built = true;
+                    }
+                    break;
+
+                case "trispike":
+                    {
+                        PrimitiveGenerator.GenerateTriSpike(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.CadetBlue);
                         built = true;
                     }
                     break;
@@ -926,6 +937,7 @@ namespace Barnacle.Object3DLib
             }
         }
         */
+
         public void RotateRad(Point3D Rotation)
         {
             if (relativeObjectVertices != null)
@@ -937,7 +949,6 @@ namespace Barnacle.Object3DLib
                 relativeObjectVertices = RotatePoints(relativeObjectVertices, r1, r2, r3);
             }
         }
-        
 
         public void RotateRad2(Point3D Rotation)
         {
