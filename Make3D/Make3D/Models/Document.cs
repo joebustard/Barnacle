@@ -361,7 +361,6 @@ namespace Barnacle.Models
             string ext = System.IO.Path.GetExtension(fileName).ToLower();
             if (ext == ".txt")
             {
-                
                 Write(fileName);
                 FilePath = fileName;
                 FileName = System.IO.Path.GetFileName(fileName);
@@ -874,7 +873,7 @@ namespace Barnacle.Models
             }
         }
 
-        internal void ImportStl(string fileName, bool swapYZ)
+        public void ImportStl(string fileName, bool swapYZ)
         {
             STLExporter exp = new STLExporter();
 
