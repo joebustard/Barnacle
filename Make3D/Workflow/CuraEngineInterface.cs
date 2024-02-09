@@ -14,7 +14,7 @@ namespace Workflow
         @"
 set fld=%~dp0
 set CURAPATH=$CPATH
-set CURA_ENGINE_SEARCH_PATH=%CURAPATH%\resources;%CURAPATH%\resources\definitions;%CURAPATH%\resources\extruders
+set CURA_ENGINE_SEARCH_PATH=%CURAPATH%\share\cura\resources;%CURAPATH%\share\cura\resources\definitions;%CURAPATH%\share\cura\resources\extruders
 cd ""%CURAPATH%""
 set path = ""%CURAPATH%"";%CURA_ENGINE_SEARCH_PATH%;%Path%
 curaengine.exe slice -v ^
@@ -147,19 +147,49 @@ exit 0
                 // We need a slicer profile.
                 // The profile is based on the ones upplied with Cura BUT
                 // it doesn't use Cura's ones directly
-                SlicerProfile defpro = new SlicerProfile();
+                SlicerProfile userSettings = new SlicerProfile();
+                SlicerProfile defaultSettings = null;
                 if (userProfile != "" && userProfile.ToLower() != "none")
                 {
                     string folder = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
                     folder += "\\Barnacle\\PrinterProfiles\\";
                     userProfile = folder + userProfile + ".profile";
-                    defpro.LoadOverrides(userProfile);
-                    defpro.SaveAsXml(folder + "\\test.xaml");
+
+                    userSettings.LoadOverrides(userProfile);
+                    userSettings.SaveAsXml(folder + "\\test.xaml");
+                    string appFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data");
+                    string defProfile = System.IO.Path.Combine(appFolder, "DefaultPrinter.profile");
+                    if (File.Exists(defProfile))
+                    {
+                        defaultSettings = new SlicerProfile();
+                        defaultSettings.LoadOverrides(defProfile);
+                    }
+
                 }
+
+
                 string settingoverrides = "";
-                foreach (SettingOverride ov in defpro.Overrides)
+                foreach (SettingOverride ov in userSettings.Overrides)
                 {
-                    settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                    bool add = true;
+                    if (defaultSettings != null)
+                    {
+                        foreach (SettingOverride df in defaultSettings.Overrides)
+                        {
+                            if (df.Key == ov.Key)
+                            {
+                                if ( df.Value == ov.Value)
+                                {
+                                    add = false;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    if (add)
+                    {
+                        settingoverrides += $"-s {ov.Key}=\"{ov.Value}\" ^\n";
+                    }
                 }
                 settingoverrides = settingoverrides.Substring(0, settingoverrides.Length - 1);
 
@@ -170,8 +200,8 @@ exit 0
                 }
                 WriteSliceFileCmd(tmpCmdFile,
                                     slicerPath,
-                                  slicerPath + @"\resources\definitions\" + printer,
-                                  slicerPath + @"\resources\extruders\" + extruder,
+                                  slicerPath + @"\share\cura\resources\definitions\" + printer,
+                                  slicerPath + @"\share\cura\resources\extruders\" + extruder,
                                   settingoverrides,
                                   startG,
                                   endG,
@@ -183,19 +213,19 @@ exit 0
 
                 if (File.Exists(tmpCmdFile))
                 {
-                   File.Delete(tmpCmdFile);
+                    File.Delete(tmpCmdFile);
                 }
 
                 if (File.Exists(tmpFile))
                 {
                     File.Delete(tmpFile);
                 }
-                if ( File.Exists(logPath))
+                if (res.Result && File.Exists(logPath))
                 {
                     string[] logLines = File.ReadAllLines(logPath);
                     int i = logLines.GetLength(0);
-                  
-                    if ( logLines[i-1].Trim().ToLower().StartsWith("filament"))
+
+                    if (logLines[i - 1].Trim().ToLower().StartsWith("filament"))
                     {
                         string[] words = logLines[i - 1].Split(':');
                         words[1] = words[1].Trim();

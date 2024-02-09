@@ -1177,7 +1177,7 @@ namespace Barnacle.ViewModels
             CanSlice = false;
             if (Properties.Settings.Default.SlicerPath != null)
             {
-                if (File.Exists(System.IO.Path.Combine(Properties.Settings.Default.SlicerPath, "cura.exe")))
+                if (File.Exists(System.IO.Path.Combine(Properties.Settings.Default.SlicerPath, "curaengine.exe")))
                 {
                     CanSlice = true;
                 }
