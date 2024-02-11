@@ -13,10 +13,67 @@ namespace CSPrimitiveMaker
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private String primName;
+        private string source =
+@"
+using System;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+
+namespace Barnacle.Object3DLib
+{
+    public partial class PrimitiveGenerator
+    {
+      public static void Generate!PRIM!(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
+      {
+        double [] v =
+        {
+!POINTS!
+        };
+
+        int [] f =
+        {
+!FACES!
+        };
+
+        for ( int i = 0 ; i < v.GetLength(0); i += 3)
+        {
+            pnts.Add(new Point3D( v[i],v[i+1],v[i+2]));
+        }
+        for ( int j = 0; j < f.GetLength(0); j ++)
+        {
+            indices.Add(f[j]);
+        }
+
+    }
+    }
+}
+";
+
         private String stlPath;
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            DataContext = this;
+            STLPath = "";
+            PrimName = "PRIM";
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+        public String PrimName
+        {
+            get { return primName; }
+            set
+            {
+                if (value != primName)
+                {
+                    primName = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
         public String STLPath
         {
             get { return stlPath; }
@@ -29,15 +86,6 @@ namespace CSPrimitiveMaker
                 }
             }
         }
-
-        public MainWindow()
-        {
-            InitializeComponent();
-
-            DataContext = this;
-            STLPath = "";
-        }
-
         public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             if (PropertyChanged != null)
@@ -53,6 +101,11 @@ namespace CSPrimitiveMaker
             {
                 STLPath = dlg.FileName;
             }
+        }
+
+        private void ExitButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void ExportButton_Click(object sender, RoutedEventArgs e)
@@ -87,55 +140,26 @@ namespace CSPrimitiveMaker
                 }
             }
         }
-
-        private string source =
-@"
-public static void GeneratePRIM(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
-{
-double [] v =
-{
-!POINTS!
-};
-int [] f =
-{
-!FACES!
-};
-
-for ( int i = 0 ; i < v.GetLength(0); i += 3)
-{
-    pnts.Add(new Point3D( v[i],v[i+1],v[i+2]));
-}
-for ( int j = 0; j < f.GetLength(0); j ++)
-{
-indices.Add(f[j]);
-}
-}
-";
-
         private void ExportCSharpe(Object3D ob)
         {
             String target = System.IO.Path.ChangeExtension(stlPath, ".cs");
             string v = "";
             foreach (P3D p in ob.RelativeObjectVertices)
             {
-                v += $"{p.X.ToString("F3")},{p.Y.ToString("F3")},{p.Z.ToString("F3")},\n";
+                v += $"\t\t\t{p.X.ToString("F3")},{p.Y.ToString("F3")},{p.Z.ToString("F3")},\n";
             }
             string f = "";
 
             for (int i = 0; i < ob.TriangleIndices.Count; i += 3)
             {
-                f += $"{ob.TriangleIndices[i]},{ob.TriangleIndices[i + 1]},{ob.TriangleIndices[i + 2]},\n";
+                f += $"\t\t\t{ob.TriangleIndices[i]},{ob.TriangleIndices[i + 1]},{ob.TriangleIndices[i + 2]},\n";
             }
             string s = source;
             s = s.Replace("!POINTS!", v);
             s = s.Replace("!FACES!", f);
+            s = s.Replace("!PRIM!", primName);
             System.IO.File.WriteAllText(target, s);
             MessageBox.Show("Wrote to " + target);
-        }
-
-        private void ExitButton_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
         }
     }
 }

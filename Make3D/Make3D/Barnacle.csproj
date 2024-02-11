@@ -1325,6 +1325,8 @@
     <Resource Include="Images\Buttons\SliceModel.png" />
     <Resource Include="Images\Buttons\SliceProject.png" />
     <Resource Include="Images\Buttons\trispike.png" />
+    <Resource Include="Images\Buttons\IBar.png" />
+    <Resource Include="Images\Buttons\XBar.png" />
     <Content Include="templates\TemplateData.def">
       <SubType>Designer</SubType>
     </Content>

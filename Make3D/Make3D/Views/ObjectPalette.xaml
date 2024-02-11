@@ -129,6 +129,23 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="IBar"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add an ibar object">
+                <Image Source="/Barnacle;component/Images/Buttons/IBar.png" />
+            </Button>
+
+            <Button
+                Command="{Binding AddCommand}"
+                CommandParameter="XBar"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add an xbar object">
+                <Image Source="/Barnacle;component/Images/Buttons/XBar.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Pyramid2"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"

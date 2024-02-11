@@ -448,6 +448,21 @@ namespace Barnacle.Object3DLib
                     }
                     break;
 
+                case "ibar":
+                {
+                        PrimitiveGenerator.GenerateIBar(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.Purple);
+                        built = true;
+                    }
+                    break;
+
+                case "xbar":
+                    {
+                        PrimitiveGenerator.GenerateXBar(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.IndianRed);
+                        built = true;
+                    }
+                    break;
                 case "pentagoncell":
                     {
                         PrimitiveGenerator.GenerateCell(5, ref pnts, ref indices, ref normals);

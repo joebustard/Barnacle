@@ -4,7 +4,7 @@ using System.Windows.Media.Media3D;
 
 namespace Barnacle.Object3DLib
 {
-    public class PrimitiveGenerator
+    public partial class PrimitiveGenerator
     {
         public static void Generate(ref Point3DCollection pnts, ref Int32Collection indices, ref Vector3DCollection normals)
         {
