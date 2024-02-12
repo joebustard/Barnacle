@@ -49,8 +49,6 @@ namespace Barnacle.Object3DLib
                 Reference.TimeStamp = tm;
 
                 // read in the definition of the object from the source file, not this file
-
-                // read in the definition of the object from the source file, not this file
                 XmlElement src = FindExternalModel(Name, Reference.Path);
                 if (src == null)
                 {

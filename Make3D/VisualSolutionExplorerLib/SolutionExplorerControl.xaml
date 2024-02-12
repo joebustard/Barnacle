@@ -220,15 +220,33 @@
                             </TextBlock.InputBindings>
                             <TextBlock.ContextMenu>
                                 <ContextMenu ItemsSource="{Binding ContextMenu.ContextMenuActions}">
-                                    <ContextMenu.ItemTemplate>
-                                        <DataTemplate DataType="MenuItem">
+                                    <ContextMenu.Resources>
+                                        <HierarchicalDataTemplate DataType="{x:Type local:ContextMenuSeparator}">
+                                            <Separator />
+                                        </HierarchicalDataTemplate>
+                                        <HierarchicalDataTemplate DataType="{x:Type local:ContextMenuAction}">
                                             <MenuItem
                                                 Command="{Binding MenuCommand}"
                                                 CommandTarget="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
                                                 Header="{Binding HeaderText}"
                                                 ToolTip="{Binding ToolTip}" />
-                                        </DataTemplate>
+                                        </HierarchicalDataTemplate>
+                                    </ContextMenu.Resources>
+                                    <!--
+                                    <ContextMenu.ItemTemplate>
+                                        <HierarchicalDataTemplate DataType="MenuItem">
+                                            <MenuItem
+                                                Command="{Binding MenuCommand}"
+                                                CommandTarget="{Binding Path=PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}}}"
+                                                Header="{Binding HeaderText}"
+                                                ToolTip="{Binding ToolTip}" />
+                                        </HierarchicalDataTemplate>
+
+                                        <HierarchicalDataTemplate DataType="Separator">
+                                            <Separator />
+                                        </HierarchicalDataTemplate>
                                     </ContextMenu.ItemTemplate>
+                                    -->
                                 </ContextMenu>
                             </TextBlock.ContextMenu>
                         </TextBlock>

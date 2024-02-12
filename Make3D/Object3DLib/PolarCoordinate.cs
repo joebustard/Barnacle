@@ -7,7 +7,6 @@ namespace Barnacle.Object3DLib
     {
         private const double TwoPI = Math.PI * 2.0;
         private double phi;
-
         private double theta;
 
         public PolarCoordinate(double t, double p, double r)
@@ -18,7 +17,6 @@ namespace Barnacle.Object3DLib
         }
 
         public double Phi
-
         {
             get
             {

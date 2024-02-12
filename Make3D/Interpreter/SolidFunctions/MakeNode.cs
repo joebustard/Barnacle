@@ -11,7 +11,7 @@ namespace ScriptLanguage
         private static string[] rotatedPrimitives =
       {
             "roof","cone","pyramid","roundroof","cap","polygon","rightangle","pointy"
-        };
+      };
 
         private static string[] shapenames =
                {
@@ -29,8 +29,17 @@ namespace ScriptLanguage
                 "tube",
                 "rightangle",
                 "pointy",
-                "octahedron"
-            };
+                "octahedron",
+                "trispike",
+                "ibar",
+                "xbar",
+                "buttontop",
+                "pentagoncell",
+                "trianglecell",
+                "boxcell",
+                "hexagoncell",
+                "octagoncell"
+        };
 
         private ExpressionNode typeExp;
         private ExpressionNode xExp;
@@ -83,7 +92,6 @@ namespace ScriptLanguage
                                         if (rotatedPrimitives[i] == shape)
                                         {
                                             isSwapper = true;
-
                                             break;
                                         }
                                     }
@@ -106,11 +114,8 @@ namespace ScriptLanguage
                                         Object3D obj = new Object3D();
 
                                         obj.Name = "Solid";
-
                                         obj.Scale = new Scale3D(20, 20, 20);
-
                                         obj.Position = new Point3D(x, y, z);
-
                                         obj.BuildPrimitive(shape);
                                         obj.PrimType = "Mesh";
                                         if (!isSwapper)
@@ -120,7 +125,6 @@ namespace ScriptLanguage
                                         else
                                         {
                                             obj.ScaleMesh(sx, sz, sy);
-
                                             obj.SwapYZAxies();
                                         }
 
@@ -134,7 +138,11 @@ namespace ScriptLanguage
                                 else
                                 {
                                     Log.Instance().AddEntry($"Make : solid shape {shape} not recognised");
-                                    Log.Instance().AddEntry("Make : valid shapes are : box, sphere, cylinder, roof, roundroof, cone, pyramid, pyramid2, torus, cap, polygon, tube, rightangle, pointy, octahedron");
+                                    Log.Instance().AddEntry("Make : valid shapes are : ");
+                                    foreach (string s in shapenames)
+                                    {
+                                        Log.Instance().AddEntry(s);
+                                    }
                                 }
                             }
                             else

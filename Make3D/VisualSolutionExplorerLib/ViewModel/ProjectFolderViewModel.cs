@@ -202,11 +202,11 @@ namespace VisualSolutionExplorer
         public override void StopAllEditing()
         {
             IsEditing = false;
-          
-           foreach (TreeViewItemViewModel it in Children)
-           {
+
+            foreach (TreeViewItemViewModel it in Children)
+            {
                 it.StopAllEditing();
-           }
+            }
         }
 
         public void NotifySolutionChanged(string e, string p1, string p2)
@@ -218,6 +218,12 @@ namespace VisualSolutionExplorer
             }
             else
             if (e == "DeleteFile")
+            {
+                _folder.DeleteFile(p1);
+                LoadChildren();
+            }
+            else
+            if (e == "DeleteLibraryFile")
             {
                 _folder.DeleteFile(p1);
                 LoadChildren();

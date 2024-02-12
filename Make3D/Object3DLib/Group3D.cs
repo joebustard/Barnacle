@@ -213,10 +213,7 @@ namespace Barnacle.Object3DLib
             leftObject.RelativeToAbsolute();
             rightObject.RelativeToAbsolute();
 
-            Logger.Log($"Left Solid {leftObject.AbsoluteObjectVertices.Count} pnts\r\n============\r\n");
             leftSolid = new Solid(leftObject.AbsoluteObjectVertices, leftObject.TriangleIndices, false);
-
-            Logger.Log($"Right Solid {rightObject.AbsoluteObjectVertices.Count} pnts\r\n============\r\n");
             rightSolid = new Solid(rightObject.AbsoluteObjectVertices, rightObject.TriangleIndices, false);
 
             modeller = new BooleanModeller(leftSolid, rightSolid);
@@ -753,63 +750,5 @@ namespace Barnacle.Object3DLib
             }
             return null;
         }
-
-        /*
-        private TestCSGLib.Solid SolidFromPoints(Point3DCollection pnts, Int32Collection triangleIndices)
-        {
-            TestCSGLib.Solid res = new TestCSGLib.Solid();
-            if (res.Polygons == null)
-            {
-                res.Polygons = new List<Polygon>();
-            }
-            for (int i = 0; i < triangleIndices.Count; i += 3)
-            {
-                TestCSGLib.Vertex[] verts = new TestCSGLib.Vertex[3];
-                int j = triangleIndices[i];
-                int k = triangleIndices[i + 1];
-                int l = triangleIndices[i + 2];
-                verts[0] = new TestCSGLib.Vertex(new TestCSGLib.Vector3D(pnts[j].X, pnts[j].Y, pnts[j].Z), new Vector2D(0, 0));
-                verts[1] = new TestCSGLib.Vertex(new TestCSGLib.Vector3D(pnts[k].X, pnts[k].Y, pnts[k].Z), new Vector2D(0, 0));
-                verts[2] = new TestCSGLib.Vertex(new TestCSGLib.Vector3D(pnts[l].X, pnts[l].Y, pnts[l].Z), new Vector2D(0, 0));
-                Polygon pl = new Polygon(verts);
-                res.Polygons.Add(pl);
-            }
-            return res;
-        }
-
-        private void SolidToAbsolute(TestCSGLib.Solid sl3, Point3DCollection av, Int32Collection tri)
-        {
-            av.Clear();
-            tri.Clear();
-            absoluteBounds = new Bounds3D();
-            foreach (TestCSGLib.Polygon pl in sl3.Polygons)
-            {
-                if (pl.Vertices.Count == 3)
-                {
-                    int i0 = AddVertex(av, pl.Vertices[0].Pos.X, pl.Vertices[0].Pos.Y, pl.Vertices[0].Pos.Z);
-                    int i1 = AddVertex(av, pl.Vertices[1].Pos.X, pl.Vertices[1].Pos.Y, pl.Vertices[1].Pos.Z);
-                    int i2 = AddVertex(av, pl.Vertices[2].Pos.X, pl.Vertices[2].Pos.Y, pl.Vertices[2].Pos.Z);
-                    tri.Add(i0);
-                    tri.Add(i1);
-                    tri.Add(i2);
-                }
-                else
-                {
-                    int i0 = AddVertex(av, pl.Vertices[0].Pos.X, pl.Vertices[0].Pos.Y, pl.Vertices[0].Pos.Z);
-                    int i1 = AddVertex(av, pl.Vertices[1].Pos.X, pl.Vertices[1].Pos.Y, pl.Vertices[1].Pos.Z);
-                    int i2 = AddVertex(av, pl.Vertices[2].Pos.X, pl.Vertices[2].Pos.Y, pl.Vertices[2].Pos.Z);
-                    int i3 = AddVertex(av, pl.Vertices[3].Pos.X, pl.Vertices[3].Pos.Y, pl.Vertices[3].Pos.Z);
-
-                    tri.Add(i0);
-                    tri.Add(i1);
-                    tri.Add(i2);
-
-                    tri.Add(i0);
-                    tri.Add(i2);
-                    tri.Add(i3);
-                }
-            }
-        }
-        */
     }
 }

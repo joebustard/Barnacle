@@ -21,6 +21,7 @@ namespace VisualSolutionExplorer
             contextMenu.OnRenameFile = RenameFile;
             contextMenu.OnRemoveFile = RemoveFile;
             contextMenu.OnDeleteFile = DeleteFile;
+            contextMenu.OnDeleteLibraryFile = DeleteLibraryFile;
             contextMenu.OnCopyFile = CopyFile;
             contextMenu.OnEditFile = EditFile;
             contextMenu.OnRunFile = RunFile;
@@ -105,10 +106,12 @@ namespace VisualSolutionExplorer
                 return icon;
             }
         }
+
         public override void StopAllEditing()
         {
-            IsEditing = false;         
+            IsEditing = false;
         }
+
         public IconType IconToShow
         {
             get
@@ -170,6 +173,15 @@ namespace VisualSolutionExplorer
             {
                 // can't remove yourself, have to ask the containing folder to do it
                 NotifySolutionChanged("DeleteFile", _projectFile.FilePath, "Y");
+            }
+        }
+
+        private void DeleteLibraryFile()
+        {
+            if (MessageBox.Show("Permanently delete library file:" + _projectFile.FileName, "Confirm", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                // can't remove yourself, have to ask the containing folder to do it
+                NotifySolutionChanged("DeleteLibraryFile", _projectFile.FilePath, "Y");
             }
         }
 

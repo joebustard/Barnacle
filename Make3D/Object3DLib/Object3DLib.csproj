@@ -60,7 +60,7 @@
     <Compile Include="PolarCoordinate.cs" />
     <Compile Include="PrimitiveGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReferenceGrpoup3D.cs" />
+    <Compile Include="ReferenceGroup3D.cs" />
     <Compile Include="ReferenceObject3D.cs" />
     <Compile Include="Scale3D.cs" />
   </ItemGroup>

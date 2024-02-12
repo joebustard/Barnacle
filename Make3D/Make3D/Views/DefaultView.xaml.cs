@@ -775,6 +775,27 @@ namespace Barnacle.Views
                     }
                     break;
 
+                case "DeleteLibraryFile":
+                    {
+                        string p = BaseViewModel.PartLibraryProject.BaseFolder;
+                        p = System.IO.Path.GetDirectoryName(p);
+                        String fName = p + parameter1;
+                        try
+                        {
+                            if (File.Exists(fName))
+                            {
+                                File.Delete(fName);
+                            }
+                            BaseViewModel.PartLibraryProject.Save();
+                            LibraryExplorer.ProjectChanged(BaseViewModel.PartLibraryProject, false);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                    break;
+
                 case "DragFile":
                     {
                         String fName = System.IO.Path.GetFileName(parameter1);

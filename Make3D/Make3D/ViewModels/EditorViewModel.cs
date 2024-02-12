@@ -169,6 +169,7 @@ namespace Barnacle.ViewModels
             NotificationManager.Subscribe("Editor", "ObjectYRotationChange", YRotationChanged);
             NotificationManager.Subscribe("Editor", "ObjectZRotationChange", ZRotationChanged);
             NotificationManager.Subscribe("Editor", "AddObjectToLibrary", OnAddObjectToLibrary);
+
             NotificationManager.Subscribe("Editor", "Mirror", OnMirror);
             NotificationManager.Subscribe("Editor", "CutPlane", OnCutPlane);
             NotificationManager.Subscribe("Editor", "UpdateModels", OnUpdateModels);

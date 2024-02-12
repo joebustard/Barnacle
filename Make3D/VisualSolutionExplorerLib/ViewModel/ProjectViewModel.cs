@@ -8,27 +8,11 @@ namespace VisualSolutionExplorer
 {
     public class ProjectViewModel : INotifyPropertyChanged
     {
-        public  string ProjectFilePath;
+        public string ProjectFilePath;
         private ObservableCollection<ProjectFolderViewModel> folders;
-        private System.Windows.Visibility refreshVisibility;
         private System.Windows.Visibility insertLibraryVisibility;
         private bool libraryAdd;
-
-        public bool LibraryAdd
-        {
-            get { return libraryAdd; }
-            set
-            {
-                if (value != libraryAdd)
-                {
-                    libraryAdd = value;
-                    if (Project != null)
-                    {
-                        Project.LibraryAdd = libraryAdd;
-                    }
-                }
-            }
-        }
+        private System.Windows.Visibility refreshVisibility;
 
         public ProjectViewModel()
         {
@@ -65,10 +49,6 @@ namespace VisualSolutionExplorer
             }
         }
 
-        public Project Project { get; set; }
-
-        public ICommand RefreshTree { get; set; }
-        
         public System.Windows.Visibility InsertLibraryVisibility
         {
             get
@@ -84,6 +64,27 @@ namespace VisualSolutionExplorer
                 }
             }
         }
+
+        public bool LibraryAdd
+        {
+            get { return libraryAdd; }
+            set
+            {
+                if (value != libraryAdd)
+                {
+                    libraryAdd = value;
+                    if (Project != null)
+                    {
+                        Project.LibraryAdd = libraryAdd;
+                    }
+                }
+            }
+        }
+
+        public Project Project { get; set; }
+
+        public ICommand RefreshTree { get; set; }
+
         public System.Windows.Visibility RefreshVisibility
         {
             get
@@ -154,6 +155,14 @@ namespace VisualSolutionExplorer
             pfm.RemoveFileFromFolder(fileViewModel.ProjectFile);
         }
 
+        internal void StopAllEditing()
+        {
+            foreach (ProjectFolderViewModel pfm in folders)
+            {
+                pfm.StopAllEditing();
+            }
+        }
+
         protected void NotifyPropertyChanged(string propertyName)
         {
             if (this.PropertyChanged != null)
@@ -186,14 +195,6 @@ namespace VisualSolutionExplorer
                 pfm.Sort();
             }
             NotifyPropertyChanged("Folders");
-        }
-
-        internal void StopAllEditing()
-        {
-            foreach (ProjectFolderViewModel pfm in folders)
-            {
-                pfm.StopAllEditing();
-            }
         }
     }
 }

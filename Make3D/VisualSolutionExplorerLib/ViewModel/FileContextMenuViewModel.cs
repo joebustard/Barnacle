@@ -14,7 +14,10 @@ namespace VisualSolutionExplorer
             if (isReadOnly)
             {
                 ICommand insertFile = new RelayCommand(HandleInsertFile);
-                contextMenuActions.Add(new ContextMenuAction("Insert", insertFile, "Insert the file"));
+                contextMenuActions.Add(new ContextMenuAction("Insert", insertFile, "Insert a copy of this library object to the current project file"));
+
+                ICommand deleteFile = new RelayCommand(HandleDeleteLibraryFile);
+                contextMenuActions.Add(new ContextMenuAction("Delete", deleteFile, "Delete the object from the library"));
             }
             else
             {
@@ -52,6 +55,8 @@ namespace VisualSolutionExplorer
 
         public delegate void DeleteFile();
 
+        public delegate void DeleteLibraryFile();
+
         public delegate void EditFile();
 
         public delegate void InsertFile();
@@ -82,6 +87,7 @@ namespace VisualSolutionExplorer
 
         public DeleteFile OnCopyFile { get; set; }
         public DeleteFile OnDeleteFile { get; set; }
+        public DeleteLibraryFile OnDeleteLibraryFile { get; set; }
         public EditFile OnEditFile { get; set; }
         public InsertFile OnInsertFile { get; set; }
         public RemoveFile OnRemoveFile { get; set; }
@@ -107,6 +113,14 @@ namespace VisualSolutionExplorer
             if (OnDeleteFile != null)
             {
                 OnDeleteFile();
+            }
+        }
+
+        private void HandleDeleteLibraryFile(object obj)
+        {
+            if (OnDeleteLibraryFile != null)
+            {
+                OnDeleteLibraryFile();
             }
         }
 
