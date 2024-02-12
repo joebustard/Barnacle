@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Bounds3D.cs" />
     <Compile Include="ExternalReference.cs" />
+    <Compile Include="ExtraPrimitives\ButtonTop.cs" />
     <Compile Include="ExtraPrimitives\IBar.cs" />
     <Compile Include="ExtraPrimitives\XBar.cs" />
     <Compile Include="Group3D.cs" />

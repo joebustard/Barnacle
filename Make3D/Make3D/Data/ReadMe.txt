@@ -7,7 +7,8 @@ Added
 	Ctrl+S up|down|left|right shortcut keys for stacking
 	Ctrl+L up|down|left|right shortcut keys for alignment
 	Different Print Distribution method. Creates a more compact bed layout for printing 
-	An Octahedron primitive
+	An Octahedron primitive, spiky triangle primitive
+	IBeam and XBeam primitives
 	Ctrl-X for cut
 	Ctrl-O to switch to object properties panel
 	Name of initial file to open added to templates
@@ -15,6 +16,7 @@ Added
 	Cut all faces and vertices of object below a moveable horizontal plane
 	Subdivide
 	Basic dimensioning Ctrl +right click on two seperate object points to display the distacnce between them
+	Detect if named smartcard is inserted while the slicing window is open
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
@@ -27,6 +29,7 @@ Changed
 	Make Symbol use a simpler/faster algorithm and scale 
 	Delete key now does delete, not cut
 	Deleted the commands folder from the templates.
+	Switch from CuraEngine 4 to CuraEngine 5 for integrated slicing
 
 v1.0.4
 ===========

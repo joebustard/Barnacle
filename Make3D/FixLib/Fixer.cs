@@ -62,11 +62,27 @@ namespace FixLib
             Point3D maxPnt = new Point3D(double.MinValue, double.MinValue, double.MinValue);
             MinMax(points, ref minPnt, ref maxPnt);
 
+            // oddly truncating vertice resolution may result in some faces ending up 
+            // with illegal  indices where two points of a triangle are the same
+            // Throw these awy
+            Int32Collection filtered = new Int32Collection();
+            for (int i = 0; i < indices.Count; i += 3)
+            {
+                if (indices[i] != indices[i + 1] &&
+                     indices[i + 1] != indices[i + 2] &&
+                     indices[i + 2] != indices[i])
+                {
+                    filtered.Add(indices[i]);
+                    filtered.Add(indices[i + 1]);
+                    filtered.Add(indices[i + 2]);
+                }
+            }
+
             octTree = new OctTree(Vertices, minPnt, maxPnt, 200);
 
-            for (int i = 0; i < indices.Count; i++)
+            for (int i = 0; i < filtered.Count; i++)
             {
-                int f0 = indices[i];
+                int f0 = filtered[i];
                 Point3D p = points[f0];
                 int nf0 = AddVertice(p);
                 Faces.Add(nf0);

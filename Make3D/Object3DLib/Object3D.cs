@@ -463,6 +463,14 @@ namespace Barnacle.Object3DLib
                         built = true;
                     }
                     break;
+                case "buttontop":
+                    {
+                        PrimitiveGenerator.GenerateButtonTop(ref pnts, ref indices, ref normals);
+                        AddPrimitiveToObject(pnts, indices, normals, Colors.CornflowerBlue);
+                        built = true;
+                    }
+                    break;
+
                 case "pentagoncell":
                     {
                         PrimitiveGenerator.GenerateCell(5, ref pnts, ref indices, ref normals);

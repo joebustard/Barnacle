@@ -162,6 +162,14 @@
             </Button>
             <Button
                 Command="{Binding AddCommand}"
+                CommandParameter="ButtonTop"
+                IsEnabled="{Binding EditingActive}"
+                Style="{StaticResource ImageButton}"
+                ToolTip="Add a button top">
+                <Image Source="/Barnacle;component/Images/Buttons/ButtonTop.png" />
+            </Button>
+            <Button
+                Command="{Binding AddCommand}"
                 CommandParameter="Tube"
                 IsEnabled="{Binding EditingActive}"
                 Style="{StaticResource ImageButton}"
