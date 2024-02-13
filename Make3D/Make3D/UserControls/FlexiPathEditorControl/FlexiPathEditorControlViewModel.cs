@@ -130,6 +130,7 @@ namespace Barnacle.UserControls
             presets = new Dictionary<string, Preset>();
             PresetNames = new List<string>();
             ToolName = "";
+            IncludeCommonPresets = true;
             LoadPresets();
         }
 
@@ -1299,7 +1300,9 @@ namespace Barnacle.UserControls
             }
         }
 
-        private void LoadPresets()
+        public bool IncludeCommonPresets { get; internal set; }
+
+        public void LoadPresets()
         {
             // can have two sets of presets
             // one in the installed data and the other user defined.
@@ -1307,12 +1310,17 @@ namespace Barnacle.UserControls
             {
                 presets.Clear();
                 PresetNames.Clear();
-                string dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
-                LoadPresetFile(dataPath, false);
+                string dataPath = "";
+                // some paths will want to show all presets
+                // some will only want to show presets of their own
+                if (IncludeCommonPresets)
+                {
+                    dataPath = AppDomain.CurrentDomain.BaseDirectory + "data\\PresetPaths.txt";
+                    LoadPresetFile(dataPath, false);
 
-                dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
-                LoadPresetFile(dataPath, true);
-
+                    dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\PresetPaths.txt";
+                    LoadPresetFile(dataPath, true);
+                }
                 dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.ApplicationData) + "\\Barnacle\\" + ToolName + "PresetPaths.txt";
                 LoadPresetFile(dataPath, true);
 

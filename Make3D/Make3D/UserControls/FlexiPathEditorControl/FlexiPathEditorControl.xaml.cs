@@ -54,6 +54,7 @@ namespace Barnacle.UserControls
 
         public bool SupportsHoles { get; internal set; }
         public bool HasPresets { get; internal set; }
+        public bool IncludeCommonPresets { get; internal set; }
 
         public Point FixedPathMidPoint
         {
@@ -107,6 +108,7 @@ namespace Barnacle.UserControls
             fixedPathEndPoint = new Point(0, 90);
             fixedPolarGridCentre = new Point(0, 50);
             initialPaths = new List<string>();
+            IncludeCommonPresets = true;
         }
 
         public delegate void FlexiPathChanged(List<System.Windows.Point> points);
@@ -982,6 +984,8 @@ namespace Barnacle.UserControls
                 {
                     vm.PropertyChanged += Vm_PropertyChanged;
                     vm.SetFixedEnds(fixedPathStartPoint, fixedPathMidPoint, fixedPathEndPoint);
+                    vm.IncludeCommonPresets = IncludeCommonPresets;
+                    vm.LoadPresets();
                     vm.FixedPolarGridCentre = fixedPolarGridCentre;
                     vm.FixedEndPath = fixedEndPath;
                     vm.OpenEndedPath = openEndedPath;

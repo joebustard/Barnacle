@@ -7,7 +7,7 @@ Added
 	Ctrl+S up|down|left|right shortcut keys for stacking
 	Ctrl+L up|down|left|right shortcut keys for alignment
 	Different Print Distribution method. Creates a more compact bed layout for printing 
-	An Octahedron primitive, spiky triangle primitive
+	An Octahedron primitive and spiky triangle primitive
 	IBeam and XBeam primitives
 	Ctrl-X for cut
 	Ctrl-O to switch to object properties panel
@@ -15,21 +15,24 @@ Added
 	Show object type (i.e. primitive, group etc) in object properties window
 	Cut all faces and vertices of object below a moveable horizontal plane
 	Subdivide
-	Basic dimensioning Ctrl +right click on two seperate object points to display the distacnce between them
-	Detect if named smartcard is inserted while the slicing window is open
+	Basic dimensioning Ctrl +right click on two seperate object points to display the distance between them
+	Detect if a named smartcard is inserted while the slicing window is open and enable the copy to sd card button
+	Delete part from the parts library
 
 Fixed
 	Prevent preset names being loaded twice in flexipathcontrol 
 	Somehow lost ability to rename file in solution. Fixed.
+	Stop shaped Wing using general platelet preset path strings
 
 Changed
-	Default slice Z Seam type to random
 	Make "Paste At" preserve the relative positions if there are multiple objects in the clipboard
 	Make "Paste" offer to replace object if a single one is selected as the target
 	Make Symbol use a simpler/faster algorithm and scale 
 	Delete key now does delete, not cut
 	Deleted the commands folder from the templates.
 	Switch from CuraEngine 4 to CuraEngine 5 for integrated slicing
+    Default slice Z Seam type to random
+	Allow Vase loft to use preset path strings
 
 v1.0.4
 ===========

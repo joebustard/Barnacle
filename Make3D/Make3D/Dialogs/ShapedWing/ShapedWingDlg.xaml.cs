@@ -41,8 +41,10 @@ namespace Barnacle.Dialogs
             numDivisions = 80;
             PathEditor.OnFlexiPathChanged += PathPointsChanged;
             PathEditor.DefaultImagePath = DefaultImagePath;
+            PathEditor.FixedEndPath = true;
             PathEditor.ToolName = ToolName;
             PathEditor.HasPresets = true;
+            PathEditor.IncludeCommonPresets = false;
             PathEditor.SupportsHoles = false;
             airFoilPath = AppDomain.CurrentDomain.BaseDirectory + "data\\Airfoils.xml";
             airFoilDoc = new XmlDocument();
