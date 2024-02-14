@@ -13,45 +13,37 @@ namespace Barnacle.Dialogs
     /// </summary>
     public partial class MorphableModelDlg : BaseModellerDialog, INotifyPropertyChanged
     {
-        private string warningText;
+        private const double maxmodelHeight = 200;
+        private const double maxmodelLength = 200;
+        private const double maxmodelWidth = 200;
+        private const double maxwarpFactor = 1;
+        private const double minmodelHeight = 1;
+        private const double minmodelLength = 1;
+        private const double minmodelWidth = 1;
+        private const double minwarpFactor = 0;
         private bool loaded;
         private MorphableModelMaker maker;
-
-        private const double minmodelLength = 1;
-        private const double maxmodelLength = 200;
-        private double modelLength;
-
-        public double ModelLength
-        {
-            get
-            {
-                return modelLength;
-            }
-            set
-            {
-                if (modelLength != value)
-                {
-                    if (value >= minmodelLength && value <= maxmodelLength)
-                    {
-                        modelLength = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String ModelLengthToolTip
-        {
-            get
-            {
-                return $"ModelLength must be in the range {minmodelLength} to {maxmodelLength}";
-            }
-        }
-
-        private const double minmodelHeight = 1;
-        private const double maxmodelHeight = 200;
         private double modelHeight;
+        private double modelLength;
+        private double modelWidth;
+        private string shape1;
+        private ObservableCollection<String> shape1Items;
+        private string shape2;
+        private ObservableCollection<String> shape2Items;
+        private string warningText;
+        private double warpFactor;
+
+        public MorphableModelDlg()
+        {
+            InitializeComponent();
+            shape1Items = CreateShapeList();
+            shape2Items = CreateShapeList();
+            maker = new MorphableModelMaker(shape1, shape2);
+            ToolName = "MorphableModel";
+            DataContext = this;
+            ModelGroup = MyModelGroup;
+            loaded = false;
+        }
 
         public double ModelHeight
         {
@@ -81,10 +73,33 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private const double minmodelWidth = 1;
-        private const double maxmodelWidth = 200;
-        private double modelWidth;
+        public double ModelLength
+        {
+            get
+            {
+                return modelLength;
+            }
+            set
+            {
+                if (modelLength != value)
+                {
+                    if (value >= minmodelLength && value <= maxmodelLength)
+                    {
+                        modelLength = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
 
+        public String ModelLengthToolTip
+        {
+            get
+            {
+                return $"ModelLength must be in the range {minmodelLength} to {maxmodelLength}";
+            }
+        }
         public double ModelWidth
         {
             get
@@ -112,41 +127,6 @@ namespace Barnacle.Dialogs
                 return $"ModelWidth must be in the range {minmodelWidth} to {maxmodelWidth}";
             }
         }
-
-        private const double minwarpFactor = 0;
-        private const double maxwarpFactor = 1;
-        private double warpFactor;
-
-        public double WarpFactor
-        {
-            get
-            {
-                return warpFactor;
-            }
-            set
-            {
-                if (warpFactor != value)
-                {
-                    if (value >= minwarpFactor && value <= maxwarpFactor)
-                    {
-                        warpFactor = value;
-                        NotifyPropertyChanged();
-                        UpdateDisplay();
-                    }
-                }
-            }
-        }
-
-        public String WarpFactorToolTip
-        {
-            get
-            {
-                return $"WarpFactor must be in the range {minwarpFactor} to {maxwarpFactor}";
-            }
-        }
-
-        private string shape1;
-
         public string Shape1
         {
             get { return shape1; }
@@ -164,8 +144,6 @@ namespace Barnacle.Dialogs
                 }
             }
         }
-
-        private ObservableCollection<String> shape1Items;
 
         public ObservableCollection<String> Shape1Items
         {
@@ -186,8 +164,6 @@ namespace Barnacle.Dialogs
             get { return "Shape1 Text"; }
         }
 
-        private string shape2;
-
         public string Shape2
         {
             get { return shape2; }
@@ -206,8 +182,6 @@ namespace Barnacle.Dialogs
             }
         }
 
-        private ObservableCollection<String> shape2Items;
-
         public ObservableCollection<String> Shape2Items
         {
             get { return shape2Items; }
@@ -225,37 +199,6 @@ namespace Barnacle.Dialogs
         public String shape2ToolTip
         {
             get { return "Shape2 Text"; }
-        }
-
-        public MorphableModelDlg()
-        {
-            InitializeComponent();
-            shape1Items = CreateShapeList();
-            shape2Items = CreateShapeList();
-            maker = new MorphableModelMaker(shape1, shape2);
-            ToolName = "MorphableModel";
-            DataContext = this;
-            ModelGroup = MyModelGroup;
-            loaded = false;
-        }
-
-        private ObservableCollection<string> CreateShapeList()
-        {
-            ObservableCollection<string> res = new ObservableCollection<string>();
-
-            res.Add("Cube");
-            res.Add("Sphere");
-            res.Add("Pyramid");
-
-            res.Add("Cone");
-            res.Add("Cylinder");
-            res.Add("Octahedron");
-
-            res.Add("Pyramid2");
-            res.Add("Roof");
-            res.Add("RoundRoof");
-            res.Add("Sphere");
-            return res;
         }
 
         public override bool ShowAxies
@@ -308,6 +251,33 @@ namespace Barnacle.Dialogs
             }
         }
 
+        public double WarpFactor
+        {
+            get
+            {
+                return warpFactor;
+            }
+            set
+            {
+                if (warpFactor != value)
+                {
+                    if (value >= minwarpFactor && value <= maxwarpFactor)
+                    {
+                        warpFactor = value;
+                        NotifyPropertyChanged();
+                        UpdateDisplay();
+                    }
+                }
+            }
+        }
+
+        public String WarpFactorToolTip
+        {
+            get
+            {
+                return $"WarpFactor must be in the range {minwarpFactor} to {maxwarpFactor}";
+            }
+        }
         protected override void Ok_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorParmeters();
@@ -315,12 +285,30 @@ namespace Barnacle.Dialogs
             Close();
         }
 
+        private ObservableCollection<string> CreateShapeList()
+        {
+            ObservableCollection<string> res = new ObservableCollection<string>();
+
+            res.Add("Cube");
+            res.Add("Sphere");
+            res.Add("Pyramid");
+
+            res.Add("Cone");
+            res.Add("Cylinder");
+            res.Add("Octahedron");
+
+            res.Add("Pyramid2");
+            res.Add("Roof");
+            res.Add("RoundRoof");
+            res.Add("Sphere");
+            return res;
+        }
         private void GenerateShape()
         {
             ClearShape();
 
             maker.Generate(warpFactor, Vertices, Faces);
-
+            ScaleVertices( modelLength, modelHeight, modelWidth);
             CentreVertices();
         }
 
@@ -328,17 +316,23 @@ namespace Barnacle.Dialogs
         {
             // load back the tool specific parameters
 
-            ModelLength = EditorParameters.GetDouble("ModelLength", 1);
+            ModelLength = EditorParameters.GetDouble("ModelLength", 10);
 
-            ModelHeight = EditorParameters.GetDouble("ModelHeight", 1);
+            ModelHeight = EditorParameters.GetDouble("ModelHeight", 10);
 
-            ModelWidth = EditorParameters.GetDouble("ModelWidth", 1);
+            ModelWidth = EditorParameters.GetDouble("ModelWidth", 10);
 
             WarpFactor = EditorParameters.GetDouble("WarpFactor", 0.5);
 
             Shape1 = EditorParameters.Get("Shape1");
 
             Shape2 = EditorParameters.Get("Shape2");
+        }
+
+        private void ResetDefaults(object sender, RoutedEventArgs e)
+        {
+            SetDefaults();
+            UpdateDisplay();
         }
 
         private void SaveEditorParmeters()
@@ -351,6 +345,19 @@ namespace Barnacle.Dialogs
             EditorParameters.Set("WarpFactor", WarpFactor.ToString());
             EditorParameters.Set("Shape1", Shape1.ToString());
             EditorParameters.Set("Shape2", Shape2.ToString());
+        }
+
+        private void SetDefaults()
+        {
+            loaded = false;
+            ModelLength = 10;
+            ModelHeight = 10;
+            ModelWidth = 10;
+            WarpFactor = 0.5;
+            Shape1 = "Cube";
+            Shape2 = "Sphere";
+
+            loaded = true;
         }
 
         private void UpdateDisplay()
@@ -371,25 +378,6 @@ namespace Barnacle.Dialogs
             MyModelGroup.Children.Clear();
             loaded = true;
 
-            UpdateDisplay();
-        }
-
-        private void SetDefaults()
-        {
-            loaded = false;
-            ModelLength = 1;
-            ModelHeight = 1;
-            ModelWidth = 1;
-            WarpFactor = 0.5;
-            Shape1 = "Cube";
-            Shape2 = "Sphere";
-
-            loaded = true;
-        }
-
-        private void ResetDefaults(object sender, RoutedEventArgs e)
-        {
-            SetDefaults();
             UpdateDisplay();
         }
     }

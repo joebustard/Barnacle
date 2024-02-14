@@ -63,7 +63,15 @@ namespace Barnacle.Dialogs
             bounds = new Bounds3D();
             spaceTreeRoot = null;
         }
+        protected void ScaleVertices(double x,double y,double z)
+        {
 
+            for ( int i =0; i < Vertices.Count; i ++)
+            {
+                Point3D p = Vertices[i];
+                Vertices[i] = new Point3D(p.X * x, p.Y * y, p.Z * z);
+            }
+        }
         public event PropertyChangedEventHandler PropertyChanged;
 
         public Bounds3D Bounds

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barnacle.Object3DLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -125,6 +126,7 @@ namespace MakerLib.MorphableModel
 
         public void Generate(double warpfactor, Point3DCollection vertices, Int32Collection faces)
         {
+          //  warpfactor = 0;
             Vertices = vertices;
             Faces = faces;
             vertices.Clear();
@@ -144,27 +146,64 @@ namespace MakerLib.MorphableModel
                     {
                         double ph2 = phi + resolution;
                         double d1 = MorphedDistance(theta, phi, warpfactor);
-                        double d2 = MorphedDistance(theta, phi + ph2, warpfactor);
+                        double d2 = MorphedDistance(theta, ph2, warpfactor);
                         double d3 = MorphedDistance(t2, phi, warpfactor);
-                        double d4 = MorphedDistance(t2, phi + ph2, warpfactor);
+                        double d4 = MorphedDistance(t2, ph2, warpfactor);
+                        PolarCoordinate pc1 = new PolarCoordinate(DegToRad(theta), DegToRad(phi), d1);
+                        PolarCoordinate pc2 = new PolarCoordinate(DegToRad(theta), DegToRad(ph2), d2);
+                        PolarCoordinate pc3 = new PolarCoordinate(DegToRad(t2), DegToRad(phi), d3);
+                        PolarCoordinate pc4 = new PolarCoordinate(DegToRad(t2), DegToRad(ph2), d4);
+                        Point3D p1 = pc1.GetPoint3D();
+                        Point3D p2 = pc2.GetPoint3D();
+                        Point3D p3 = pc3.GetPoint3D();
+                        Point3D p4 = pc4.GetPoint3D();
+                        if ( phi < 0)
+                        {
+                            p1.X *= -1.0;
+                            p2.X *= -1.0;
+                            p3.X *= -1.0;
+                            p4.X *= -1.0;
 
-                        Point3D p1 = ConvertPolarTo3D(theta, phi, d1);
-                        Point3D p2 = ConvertPolarTo3D(theta, phi + ph2, d2);
-                        Point3D p3 = ConvertPolarTo3D(t2, phi, d3);
-                        Point3D p4 = ConvertPolarTo3D(t2, phi + ph2, d4);
-                        int v1 = AddVerticeOctTree(p1);
-                        int v2 = AddVerticeOctTree(p2);
-                        int v3 = AddVerticeOctTree(p3);
-                        int v4 = AddVerticeOctTree(p4);
-                        AddFace(v1, v2, v3);
-                        AddFace(v3, v2, v4);
+                            p1.Y *= -1.0;
+                            p2.Y *= -1.0;
+                            p3.Y *= -1.0;
+                            p4.Y *= -1.0;
+
+                            p1.Z *= -1.0;
+                            p2.Z *= -1.0;
+                            p3.Z *= -1.0;
+                            p4.Z *= -1.0;
+                            int v1 = AddVerticeOctTree(p1);
+                            int v2 = AddVerticeOctTree(p2);
+                            int v3 = AddVerticeOctTree(p3);
+                            int v4 = AddVerticeOctTree(p4);
+                            AddFace(v1, v3, v2);
+                            AddFace(v3, v4, v2);
+                        }
+                        else
+                        {
+                            int v1 = AddVerticeOctTree(p1);
+                            int v2 = AddVerticeOctTree(p2);
+                            int v3 = AddVerticeOctTree(p3);
+                            int v4 = AddVerticeOctTree(p4);
+                            AddFace(v1, v3, v2);
+                            AddFace(v3, v4, v2);
+                        }
+                        
                     }
+//                    break;
                 }
             }
         }
 
         private Point3D ConvertPolarTo3D(double theta, double phi, double t)
         {
+            theta = ((theta * Math.PI) / 180) - Math.PI;
+            phi  = (phi * Math.PI) / 180;
+            if ( phi <0)
+            {
+                phi += 2 * Math.PI;
+            }
             double x = t * Math.Sin(phi) * Math.Cos(theta);
             double z = t * Math.Sin(phi) * Math.Sin(theta);
             double y = t * Math.Cos(phi);
