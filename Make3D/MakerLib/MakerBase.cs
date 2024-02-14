@@ -53,6 +53,22 @@ namespace MakerLib
             Faces.Add(c2);
         }
 
+        public int AddVerticeOctTree(Point3D v)
+        {
+            int res = -1;
+            if (octTree != null)
+            {
+                res = octTree.PointPresent(v);
+
+                if (res == -1)
+                {
+                    res = Vertices.Count;
+                    octTree.AddPoint(res, v);
+                }
+            }
+            return res;
+        }
+
         public int AddVerticeOctTree(double x, double y, double z)
         {
             int res = -1;
@@ -672,20 +688,6 @@ namespace MakerLib
                     Faces.Add(c2);
                 }
             }
-        }
-
-        private int AddVerticeOctTree(Point3D v)
-        {
-            int res = -1;
-            res = octTree.PointPresent(v);
-
-            if (res == -1)
-            {
-                //Vertices.Add(new Point3D(v.X, v.Y, v.Z));
-                res = Vertices.Count;
-                octTree.AddPoint(res, v);
-            }
-            return res;
         }
     }
 }

@@ -73,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerLib", "LoggerLib\Logg
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSPrimitiveMaker", "CSPrimitiveMaker\CSPrimitiveMaker.csproj", "{CCF3FC58-3E07-4CED-AE3B-AAC8E0A38B31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateMorphablePrimitives", "CreateMorphablePrimitives\CreateMorphablePrimitives.csproj", "{B06EB596-0396-490F-979B-16D8F06C9CCE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +203,10 @@ Global
 		{CCF3FC58-3E07-4CED-AE3B-AAC8E0A38B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCF3FC58-3E07-4CED-AE3B-AAC8E0A38B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCF3FC58-3E07-4CED-AE3B-AAC8E0A38B31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B06EB596-0396-490F-979B-16D8F06C9CCE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B06EB596-0396-490F-979B-16D8F06C9CCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B06EB596-0396-490F-979B-16D8F06C9CCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B06EB596-0396-490F-979B-16D8F06C9CCE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

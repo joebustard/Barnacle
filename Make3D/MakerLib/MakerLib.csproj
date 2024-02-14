@@ -83,6 +83,16 @@
     <Compile Include="MakeTiledRoof.cs" />
     <Compile Include="MakeTrickle.cs" />
     <Compile Include="MakeWagonWheel.cs" />
+    <Compile Include="MorphableModel\MorphablePair.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableCone.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableCube.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableCylinder.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableOctahedron.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphablePyramid.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphablePyramid2.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableRoof.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableRoundRoof.cs" />
+    <Compile Include="MorphableModel\Primitives\MorphableSphere.cs" />
     <Compile Include="PGramMaker.cs" />
     <Compile Include="PolyMaker.cs" />
     <Compile Include="SquaredStadiumMaker.cs" />

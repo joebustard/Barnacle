@@ -214,6 +214,7 @@ namespace Barnacle.Dialogs
                     }
                 }
             }
+            CentreVertices();
         }
 
         private double GetDist(bool fin, float fid, bool tin, float ftop)

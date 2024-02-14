@@ -68,6 +68,10 @@ namespace Barnacle.Models
                     res = new ImagePlaqueDlg();
                     break;
 
+                case "Morphable":
+                    res = new MorphableModelDlg();
+                    break;
+
                 case "ParabolicDish":
                     res = new ParabolicDishDlg();
                     break;

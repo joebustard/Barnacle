@@ -137,6 +137,7 @@
     <Compile Include="Dialogs\LibrarySnapShot\LibrarySnapShotDlg.xaml.cs">
       <DependentUpon>LibrarySnapShotDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\MorphableModel\MorphableModelDlg.xaml.cs" />
     <Compile Include="Dialogs\MultiImport.xaml.cs">
       <DependentUpon>MultiImport.xaml</DependentUpon>
     </Compile>
@@ -539,6 +540,10 @@
     <Page Include="Dialogs\LibrarySnapShot\LibrarySnapShotDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\MorphableModel\MorphableModelDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\MultiImport.xaml">
       <SubType>Designer</SubType>
