@@ -31,41 +31,35 @@
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="1" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">ModelLength</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ModelLength}" Width="150" ToolTip="{Binding ModelLengthToolTip}"/>
+                <Label VerticalAlignment="Center" Width="100">ModelLength</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding ModelLength}" Width="150" ToolTip="{Binding ModelLengthToolTip}" />
 
                 <Button Margin="8,0,0,0" Content="Reset" ToolTip="Restore parameters to their defaults" Click="ResetDefaults" />
             </StackPanel>
             <StackPanel Grid.Row="2" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">ModelHeight</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ModelHeight}" Width="150" ToolTip="{Binding ModelHeightToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">ModelHeight</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding ModelHeight}" Width="150" ToolTip="{Binding ModelHeightToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="3" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">ModelWidth</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding ModelWidth}" Width="150" ToolTip="{Binding ModelWidthToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">ModelWidth</Label>
+                <TextBox Margin="8,0,0,0" Text="{Binding ModelWidth}" Width="150" ToolTip="{Binding ModelWidthToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="4" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">WarpFactor</Label>
-                 <TextBox Margin="8,0,0,0" Text="{Binding WarpFactor}" Width="150" ToolTip="{Binding WarpFactorToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">WarpFactor</Label>
+                <!--            <TextBox Margin="8,0,0,0" Text="{Binding WarpFactor}" Width="150" ToolTip="{Binding WarpFactorToolTip}" /> -->
+                <Slider  Margin="8,0,0,0"  Width="150" Value="{Binding WarpFactor}"  ToolTip="{Binding WarpFactorToolTip}" Minimum="0" Maximum="1" SmallChange="0.01" LargeChange="0.1" />
             </StackPanel>
             <StackPanel Grid.Row="5" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">Shape1</Label>
-                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape1}" ItemsSource="{Binding Shape1Items}" Width="150" ToolTip="{Binding Shape1ToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Shape1</Label>
+                <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape1}" ItemsSource="{Binding Shape1Items}" Width="150" ToolTip="{Binding Shape1ToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="6" Orientation="Horizontal">
-                                <Label VerticalAlignment="Center" Width="100">Shape2</Label>
-                 <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape2}" ItemsSource="{Binding Shape2Items}" Width="150" ToolTip="{Binding Shape2ToolTip}"/>
-
+                <Label VerticalAlignment="Center" Width="100">Shape2</Label>
+                <ComboBox Margin="8,0,0,0" SelectedItem="{Binding Shape2}" ItemsSource="{Binding Shape2Items}" Width="150" ToolTip="{Binding Shape2ToolTip}" />
             </StackPanel>
             <StackPanel Grid.Row="7" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="8" Orientation="Horizontal">
-                
             </StackPanel>
             <StackPanel Grid.Row="9" Orientation="Horizontal">
                 <Label VerticalAlignment="Center" Content="{Binding WarningText}" FontSize="18" Foreground="{StaticResource WarningColour}" />
@@ -125,4 +119,4 @@
             <Button Grid.Column="2" Content="Ok" Click="Ok_Click"  Margin="2,2,2,2" IsDefault="True" />
         </Grid>
     </Grid>
-</local:BaseModellerDialog> 
+</local:BaseModellerDialog>

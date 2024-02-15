@@ -34,7 +34,7 @@ namespace MakerLib.MorphableModel
 }
 ";
 
-        private static double resDegrees = 2;
+        private static double resDegrees = 10;
 
         private static double FindInterceptionDistance(Object3D model, Vector3D origin, Vector3D dir)
         {
@@ -61,7 +61,20 @@ namespace MakerLib.MorphableModel
 
         private static void Main(string[] args)
         {
+            System.Diagnostics.Debug.WriteLine("Tests");
+
+            Vector3D td = GetDirectionVector(0, -90);
+            td = GetDirectionVector(0, -45);
+            td = GetDirectionVector(0, 45);
+            td = GetDirectionVector(0, 90);
+
+            td = GetDirectionVector(90, -90);
+            td = GetDirectionVector(90, -45);
+            td = GetDirectionVector(90, 0);
+            td = GetDirectionVector(90, 45);
+
             MakeMorphableShape("Cube");
+            /*
             MakeMorphableShape("Cone");
             MakeMorphableShape("Cylinder");
             MakeMorphableShape("Octahedron");
@@ -70,6 +83,7 @@ namespace MakerLib.MorphableModel
             MakeMorphableShape("Roof");
             MakeMorphableShape("RoundRoof");
             MakeMorphableSphere("Sphere");
+            */
         }
 
         private static void MakeMorphableShape(string v)
@@ -78,16 +92,15 @@ namespace MakerLib.MorphableModel
             ob.BuildPrimitive(v);
             Vector3D origin = new Vector3D(0, 0, 0);
             string outline = "\t\t\t";
-            for (double theta = 0; theta < 360; theta += resDegrees)
+            for (double theta = 0; theta <= 360; theta += resDegrees)
             {
-                for (double phi = -90; phi < 90; phi += resDegrees)
+                for (double phi = -90; phi <= 90; phi += resDegrees)
                 {
-                    double x = Math.Cos(Rad(theta)) * Math.Cos(Rad(phi));
-                    double z = Math.Sin(Rad(theta)) * Math.Cos(Rad(phi));
-                    double y = Math.Sin(Rad(phi));
-                    Vector3D dir = new Vector3D(x, y, z);
+                    Vector3D dir = GetDirectionVector(theta, phi);
+
                     double dist = FindInterceptionDistance(ob, origin, dir);
-                    outline += dist.ToString("F6") + ", ";
+                    System.Diagnostics.Debug.WriteLine($"theta={theta}, phi = {phi}, dir = {dir.X},{dir.Y},{dir.Z}, dist={dist}");
+                    outline += dist.ToString("F8") + ", ";
                 }
                 outline += "\r\n\t\t\t";
             }
@@ -98,6 +111,22 @@ namespace MakerLib.MorphableModel
             File.WriteAllText("c:\\tmp\\Morphable" + v + ".cs", b);
         }
 
+        private static Vector3D GetDirectionVector(double azimuth, double elevation)
+        {
+            //   PolarCoordinate pcol = new PolarCoordinate(Rad(v1), Rad(v2), 1.0);
+            //   Point3D pn = pcol.GetPoint3D();
+            // Vector3D dir = new Vector3D(pn.X, pn.Y, pn.Z);
+
+            double x = Math.Cos(Rad(elevation)) * Math.Cos(Rad(azimuth));
+            double z = Math.Cos(Rad(elevation)) * Math.Sin(Rad(azimuth));
+            double y = Math.Sin(Rad(elevation));
+
+            Vector3D dir = new Vector3D(x, y, z);
+            dir.Normalize();
+            System.Diagnostics.Debug.WriteLine($"theta={azimuth}, phi = {elevation}, dir = {dir.X},{dir.Y},{dir.Z}");
+            return dir;
+        }
+
         private static void MakeMorphableSphere(string v)
         {
             Object3D ob = new Object3D();
@@ -106,7 +135,7 @@ namespace MakerLib.MorphableModel
             string outline = "\t\t\t";
             for (double theta = 0; theta < 360; theta += resDegrees)
             {
-                for (double phi = -90; phi < 90; phi += resDegrees)
+                for (double phi = -90; phi <= 90; phi += resDegrees)
                 {
                     double dist = 0.5;
                     outline += dist.ToString("F1") + ", ";

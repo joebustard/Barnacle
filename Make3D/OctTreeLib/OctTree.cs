@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Media;
@@ -79,14 +78,11 @@ namespace OctTreeLib
         private bool Equals(Point3D p, double x, double y, double z)
         {
             return equals(p.X, x) && equals(p.Y, y) && equals(p.Z, z);
-
         }
-
-
 
         public static bool equals(double v1, double v2)
         {
-            if (Math.Abs(v1 - v2) < 0.000001)
+            if (Math.Abs(v1 - v2) < 0.00000001)
             {
                 return true;
             }
@@ -95,6 +91,5 @@ namespace OctTreeLib
                 return false;
             }
         }
-
     }
 }

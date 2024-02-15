@@ -117,24 +117,47 @@ namespace MakerLib.MorphableModel
             return res;
         }
 
+        private double GetDistance(double theta, double phi, double[] distances)
+        {
+            double res = -1;
+            if (distances != null)
+            {
+                if (theta >= 0 && theta < 360 && phi >= -90 && phi <= 90)
+                {
+                    int index = GetOffset(theta, phi);
+                    res = distances[index];
+                }
+            }
+            return res;
+        }
+
         private int GetOffset(double theta, double phi)
         {
-            int row = (int)theta / 2;
-            int col = ((int)phi / 2) + 45;
-            return (row * 90) + col;
+            int columnWidth = (int)(180 / resolution) + 1;
+            int row = (int)(theta / resolution);
+            int col = (int)(phi / resolution) + (int)(90 / resolution);
+            return (row * columnWidth) + col;
         }
+
+        private double resolution = 10.0;
 
         public void Generate(double warpfactor, Point3DCollection vertices, Int32Collection faces)
         {
-          //  warpfactor = 0;
             Vertices = vertices;
             Faces = faces;
             vertices.Clear();
             faces.Clear();
             CreateOctree(new Point3D(-1, -1, -1), new Point3D(1, 1, 1));
-            if (distances1 != null && distances2 != null)
+            if (distances1 != null && distances2 == null)
             {
-                double resolution = 2.0;
+                GenerateSingle(distances1);
+            }
+            else if (distances1 == null && distances2 != null)
+            {
+                GenerateSingle(distances2);
+            }
+            else if (distances1 != null && distances2 != null)
+            {
                 for (double theta = 0; theta < 360; theta += resolution)
                 {
                     double t2 = theta + resolution;
@@ -149,15 +172,17 @@ namespace MakerLib.MorphableModel
                         double d2 = MorphedDistance(theta, ph2, warpfactor);
                         double d3 = MorphedDistance(t2, phi, warpfactor);
                         double d4 = MorphedDistance(t2, ph2, warpfactor);
+
                         PolarCoordinate pc1 = new PolarCoordinate(DegToRad(theta), DegToRad(phi), d1);
                         PolarCoordinate pc2 = new PolarCoordinate(DegToRad(theta), DegToRad(ph2), d2);
                         PolarCoordinate pc3 = new PolarCoordinate(DegToRad(t2), DegToRad(phi), d3);
                         PolarCoordinate pc4 = new PolarCoordinate(DegToRad(t2), DegToRad(ph2), d4);
+
                         Point3D p1 = pc1.GetPoint3D();
                         Point3D p2 = pc2.GetPoint3D();
                         Point3D p3 = pc3.GetPoint3D();
                         Point3D p4 = pc4.GetPoint3D();
-                        if ( phi < 0)
+                        if (phi < 0)
                         {
                             p1.X *= -1.0;
                             p2.X *= -1.0;
@@ -189,18 +214,78 @@ namespace MakerLib.MorphableModel
                             AddFace(v1, v3, v2);
                             AddFace(v3, v4, v2);
                         }
-                        
                     }
-//                    break;
+                    //                    break;
                 }
+            }
+        }
+
+        private void GenerateSingle(double[] distances)
+        {
+            for (double theta = 0; theta < 360; theta += resolution)
+            {
+                double t2 = theta + resolution;
+                if (t2 >= 360)
+                {
+                    t2 = 0;
+                }
+                for (double phi = -90; phi < 90; phi += resolution)
+                {
+                    double ph2 = phi + resolution;
+                    double d1 = GetDistance(theta, phi, distances);
+                    double d2 = GetDistance(theta, ph2, distances);
+                    double d3 = GetDistance(t2, phi, distances);
+                    double d4 = GetDistance(t2, ph2, distances);
+                    PolarCoordinate pc1 = new PolarCoordinate(DegToRad(theta), DegToRad(phi), d1);
+                    PolarCoordinate pc2 = new PolarCoordinate(DegToRad(theta), DegToRad(ph2), d2);
+                    PolarCoordinate pc3 = new PolarCoordinate(DegToRad(t2), DegToRad(phi), d3);
+                    PolarCoordinate pc4 = new PolarCoordinate(DegToRad(t2), DegToRad(ph2), d4);
+                    Point3D p1 = pc1.GetPoint3D();
+                    Point3D p2 = pc2.GetPoint3D();
+                    Point3D p3 = pc3.GetPoint3D();
+                    Point3D p4 = pc4.GetPoint3D();
+                    if (phi < 0)
+                    {
+                        p1.X *= -1.0;
+                        p2.X *= -1.0;
+                        p3.X *= -1.0;
+                        p4.X *= -1.0;
+
+                        p1.Y *= -1.0;
+                        p2.Y *= -1.0;
+                        p3.Y *= -1.0;
+                        p4.Y *= -1.0;
+
+                        p1.Z *= -1.0;
+                        p2.Z *= -1.0;
+                        p3.Z *= -1.0;
+                        p4.Z *= -1.0;
+                        int v1 = AddVerticeOctTree(p1);
+                        int v2 = AddVerticeOctTree(p2);
+                        int v3 = AddVerticeOctTree(p3);
+                        int v4 = AddVerticeOctTree(p4);
+                        AddFace(v1, v3, v2);
+                        AddFace(v3, v4, v2);
+                    }
+                    else
+                    {
+                        int v1 = AddVerticeOctTree(p1);
+                        int v2 = AddVerticeOctTree(p2);
+                        int v3 = AddVerticeOctTree(p3);
+                        int v4 = AddVerticeOctTree(p4);
+                        AddFace(v1, v3, v2);
+                        AddFace(v3, v4, v2);
+                    }
+                }
+                //                    break;
             }
         }
 
         private Point3D ConvertPolarTo3D(double theta, double phi, double t)
         {
             theta = ((theta * Math.PI) / 180) - Math.PI;
-            phi  = (phi * Math.PI) / 180;
-            if ( phi <0)
+            phi = (phi * Math.PI) / 180;
+            if (phi < 0)
             {
                 phi += 2 * Math.PI;
             }

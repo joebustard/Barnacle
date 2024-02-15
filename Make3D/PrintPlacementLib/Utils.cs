@@ -63,6 +63,8 @@ namespace PrintPlacementLib
             C = Vector3D.CrossProduct(edge2, vp2);
             if (Vector3D.DotProduct(N, C) < 0) return false; // P is on the right side;
 
+            // convert t to a distance
+            t = (Math.Sqrt((t * dir.X) * (t * dir.X) + (t * dir.Y) * (t * dir.Y) + (t * dir.Z) * (t * dir.Z)));
             return true; // this ray hits the triangle
         }
     }
