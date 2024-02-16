@@ -9,7 +9,7 @@ namespace PrintPlacementLib
 {
     public class Utils
     {
-        private const double kEpsilon = 0.00000001F;
+        private const double kEpsilon = 0.000000001F;
 
         public static bool RayTriangleIntersect(Vector3D orig, Vector3D dir,
                                                  Vector3D v0, Vector3D v1, Vector3D v2,

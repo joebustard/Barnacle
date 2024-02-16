@@ -21,10 +21,10 @@ namespace MakerLib.MorphableModel
 {
     public partial class MorphablePrimitivesGenerator
     {
-        public static double [] Generate!PRIM!()
+        public static double [,] Generate!PRIM!()
         {
             // resolution !RES! degrees
-            double [] distances =
+            double [,] distances =
             {
 !VALS!
             };
@@ -34,7 +34,7 @@ namespace MakerLib.MorphableModel
 }
 ";
 
-        private static double resDegrees = 10;
+        private static double resDegrees = 1;
 
         private static double FindInterceptionDistance(Object3D model, Vector3D origin, Vector3D dir)
         {
@@ -63,8 +63,8 @@ namespace MakerLib.MorphableModel
         {
             System.Diagnostics.Debug.WriteLine("Tests");
 
-            Vector3D td = GetDirectionVector(0, -90);
-            td = GetDirectionVector(0, -45);
+            Vector3D td = GetDirectionVector(0, -45);
+            td = GetDirectionVector(1, -45);
             td = GetDirectionVector(0, 45);
             td = GetDirectionVector(0, 90);
 
@@ -74,7 +74,7 @@ namespace MakerLib.MorphableModel
             td = GetDirectionVector(90, 45);
 
             MakeMorphableShape("Cube");
-            /*
+
             MakeMorphableShape("Cone");
             MakeMorphableShape("Cylinder");
             MakeMorphableShape("Octahedron");
@@ -83,7 +83,6 @@ namespace MakerLib.MorphableModel
             MakeMorphableShape("Roof");
             MakeMorphableShape("RoundRoof");
             MakeMorphableSphere("Sphere");
-            */
         }
 
         private static void MakeMorphableShape(string v)
@@ -94,15 +93,16 @@ namespace MakerLib.MorphableModel
             string outline = "\t\t\t";
             for (double theta = 0; theta <= 360; theta += resDegrees)
             {
+                outline += "{ ";
                 for (double phi = -90; phi <= 90; phi += resDegrees)
                 {
                     Vector3D dir = GetDirectionVector(theta, phi);
 
                     double dist = FindInterceptionDistance(ob, origin, dir);
-                    System.Diagnostics.Debug.WriteLine($"theta={theta}, phi = {phi}, dir = {dir.X},{dir.Y},{dir.Z}, dist={dist}");
+                    //   System.Diagnostics.Debug.WriteLine($"theta={theta}, phi = {phi}, dir = {dir.X},{dir.Y},{dir.Z}, dist={dist}");
                     outline += dist.ToString("F8") + ", ";
                 }
-                outline += "\r\n\t\t\t";
+                outline += " },\r\n\t\t\t";
             }
             string b = body;
             b = b.Replace("!RES!", resDegrees.ToString("F1"));
@@ -123,7 +123,7 @@ namespace MakerLib.MorphableModel
 
             Vector3D dir = new Vector3D(x, y, z);
             dir.Normalize();
-            System.Diagnostics.Debug.WriteLine($"theta={azimuth}, phi = {elevation}, dir = {dir.X},{dir.Y},{dir.Z}");
+            //  System.Diagnostics.Debug.WriteLine($"theta={azimuth}, phi = {elevation}, dir = {dir.X},{dir.Y},{dir.Z}");
             return dir;
         }
 
@@ -135,12 +135,13 @@ namespace MakerLib.MorphableModel
             string outline = "\t\t\t";
             for (double theta = 0; theta < 360; theta += resDegrees)
             {
+                outline += "{ ";
                 for (double phi = -90; phi <= 90; phi += resDegrees)
                 {
                     double dist = 0.5;
                     outline += dist.ToString("F1") + ", ";
                 }
-                outline += "\r\n\t\t\t";
+                outline += " },\r\n\t\t\t";
             }
             string b = body;
             b = b.Replace("!VALS!", outline);

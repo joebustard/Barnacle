@@ -13,8 +13,8 @@ namespace MakerLib.MorphableModel
     {
         private string name1;
         private string name2;
-        private double[] distances1;
-        private double[] distances2;
+        private double[,] distances1;
+        private double[,] distances2;
 
         public MorphableModelMaker(string n1, string n2)
         {
@@ -35,7 +35,7 @@ namespace MakerLib.MorphableModel
             }
         }
 
-        private double[] GetDistances(string n)
+        private double[,] GetDistances(string n)
         {
             switch (n.ToLower())
             {
@@ -108,24 +108,22 @@ namespace MakerLib.MorphableModel
             {
                 if (theta >= 0 && theta < 360 && phi >= -90 && phi < 90)
                 {
-                    int index = GetOffset(theta, phi);
-                    double d1 = distances1[index];
-                    double d2 = distances2[index];
+                    double d1 = distances1[(int)theta, (int)(phi + 90)];
+                    double d2 = distances2[(int)theta, (int)(phi + 90)];
                     res = d1 + t * (d2 - d1);
                 }
             }
             return res;
         }
 
-        private double GetDistance(double theta, double phi, double[] distances)
+        private double GetDistance(double theta, double phi, double[,] distances)
         {
             double res = -1;
             if (distances != null)
             {
                 if (theta >= 0 && theta < 360 && phi >= -90 && phi <= 90)
                 {
-                    int index = GetOffset(theta, phi);
-                    res = distances[index];
+                    res = distances[(int)theta, (int)phi + 90];
                 }
             }
             return res;
@@ -139,7 +137,7 @@ namespace MakerLib.MorphableModel
             return (row * columnWidth) + col;
         }
 
-        private double resolution = 10.0;
+        private double resolution = 1;
 
         public void Generate(double warpfactor, Point3DCollection vertices, Int32Collection faces)
         {
@@ -220,7 +218,7 @@ namespace MakerLib.MorphableModel
             }
         }
 
-        private void GenerateSingle(double[] distances)
+        private void GenerateSingle(double[,] distances)
         {
             for (double theta = 0; theta < 360; theta += resolution)
             {
