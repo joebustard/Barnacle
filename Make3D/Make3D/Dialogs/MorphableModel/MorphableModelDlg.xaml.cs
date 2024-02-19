@@ -300,7 +300,7 @@ namespace Barnacle.Dialogs
             res.Add("Pyramid2");
             res.Add("Roof");
             res.Add("RoundRoof");
-            res.Add("Sphere");
+
             return res;
         }
         private void GenerateShape()
@@ -316,15 +316,19 @@ namespace Barnacle.Dialogs
         {
             // load back the tool specific parameters
 
-            ModelLength = EditorParameters.GetDouble("ModelLength", 10);
+            ModelLength = EditorParameters.GetDouble("ModelLength", 100);
 
-            ModelHeight = EditorParameters.GetDouble("ModelHeight", 10);
+            ModelHeight = EditorParameters.GetDouble("ModelHeight", 100);
 
-            ModelWidth = EditorParameters.GetDouble("ModelWidth", 10);
+            ModelWidth = EditorParameters.GetDouble("ModelWidth", 100);
 
             WarpFactor = EditorParameters.GetDouble("WarpFactor", 0.5);
 
             Shape1 = EditorParameters.Get("Shape1");
+            if ( Shape1 == "")
+            {
+                Shape1 = "Cube";
+            }
 
             Shape2 = EditorParameters.Get("Shape2");
         }
@@ -350,9 +354,9 @@ namespace Barnacle.Dialogs
         private void SetDefaults()
         {
             loaded = false;
-            ModelLength = 10;
-            ModelHeight = 10;
-            ModelWidth = 10;
+            ModelLength = 100;
+            ModelHeight = 100;
+            ModelWidth = 100;
             WarpFactor = 0.5;
             Shape1 = "Cube";
             Shape2 = "Sphere";

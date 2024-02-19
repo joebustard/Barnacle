@@ -1,6 +1,7 @@
 ﻿using Barnacle.Object3DLib;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,17 +10,18 @@ using System.Windows.Media.Media3D;
 
 namespace MakerLib.MorphableModel
 {
-    public class MorphableModelMaker : MakerBase
+    public partial class MorphableModelMaker : MakerBase
     {
         private string name1;
         private string name2;
         private double[,] distances1;
         private double[,] distances2;
-
+        private Vector3D[,] dirVectors;
         public MorphableModelMaker(string n1, string n2)
         {
             Shape1 = n1;
             Shape2 = n2;
+            dirVectors = DirectionVectors();
         }
 
         public string Shape1
@@ -101,30 +103,29 @@ namespace MakerLib.MorphableModel
             }
         }
 
-        private double MorphedDistance(double theta, double phi, double t)
+        private double MorphedDistance(int row, int col, double t)
         {
             double res = -1;
             if (distances1 != null && distances2 != null)
             {
-                if (theta >= 0 && theta < 360 && phi >= -90 && phi < 90)
+                if (row >= 0 && row < distances1.GetLength(0) && col >= 0 && col < distances1.GetLength(1))
                 {
-                    double d1 = distances1[(int)theta, (int)(phi + 90)];
-                    double d2 = distances2[(int)theta, (int)(phi + 90)];
+                    double d1 = distances1[row, (col)];
+                    double d2 = distances2[row, (col)];
                     res = d1 + t * (d2 - d1);
                 }
             }
             return res;
         }
 
-        private double GetDistance(double theta, double phi, double[,] distances)
+        private double GetDistance(double row, double col, double[,] distances)
         {
             double res = -1;
             if (distances != null)
             {
-                if (theta >= 0 && theta < 360 && phi >= -90 && phi <= 90)
-                {
-                    res = distances[(int)theta, (int)phi + 90];
-                }
+
+                res = distances[(int)row, (int)col];
+
             }
             return res;
         }
@@ -156,92 +157,108 @@ namespace MakerLib.MorphableModel
             }
             else if (distances1 != null && distances2 != null)
             {
-                for (double theta = 0; theta < 360; theta += resolution)
+                int rows = distances1.GetLength(0);
+                int cols = distances1.GetLength(1);
+                double dTheta = 360.0 / rows;
+                double dPhi = 180.0 / cols;
+                for (int i = 0; i < rows; i++)
                 {
-                    double t2 = theta + resolution;
+                    double theta = dTheta * (double)i;
+                    double t2 = theta + dTheta;
+
                     if (t2 >= 360)
                     {
                         t2 = 0;
                     }
-                    for (double phi = -90; phi < 90; phi += resolution)
+                    int k = i + 1;
+                    if (k == rows)
                     {
-                        double ph2 = phi + resolution;
-                        double d1 = MorphedDistance(theta, phi, warpfactor);
-                        double d2 = MorphedDistance(theta, ph2, warpfactor);
-                        double d3 = MorphedDistance(t2, phi, warpfactor);
-                        double d4 = MorphedDistance(t2, ph2, warpfactor);
+                        k = 0;
+                    }
+                    for (int j = 0; j < cols - 1; j++)
+                    {
+                        double phi = (dPhi * (double)j) - 90.0;
+                        double ph2 = phi + dPhi;
+                        double d1 = MorphedDistance(i, j, warpfactor);
+                        double d2 = MorphedDistance(i, j + 1, warpfactor);
+                        double d3 = MorphedDistance(k, j, warpfactor);
+                        double d4 = MorphedDistance(k, j + 1, warpfactor);
+                        /*
+                        Point3D p1 = ConvertPolarTo3D(theta, phi, d1);
+                        Point3D p2 = ConvertPolarTo3D(theta, ph2, d2);
+                        Point3D p3 = ConvertPolarTo3D(t2, phi, d3);
+                        Point3D p4 = ConvertPolarTo3D(t2, ph2, d4);
+                        */
 
-                        PolarCoordinate pc1 = new PolarCoordinate(DegToRad(theta), DegToRad(phi), d1);
-                        PolarCoordinate pc2 = new PolarCoordinate(DegToRad(theta), DegToRad(ph2), d2);
-                        PolarCoordinate pc3 = new PolarCoordinate(DegToRad(t2), DegToRad(phi), d3);
-                        PolarCoordinate pc4 = new PolarCoordinate(DegToRad(t2), DegToRad(ph2), d4);
+                        Point3D p1 = ConvertVectorTo3D(i, j, d1);
+                        Point3D p2 = ConvertVectorTo3D(i, j + 1, d2);
+                        Point3D p3 = ConvertVectorTo3D(k, j, d3);
+                        Point3D p4 = ConvertVectorTo3D(k, j + 1, d4);
 
-                        Point3D p1 = pc1.GetPoint3D();
-                        Point3D p2 = pc2.GetPoint3D();
-                        Point3D p3 = pc3.GetPoint3D();
-                        Point3D p4 = pc4.GetPoint3D();
-                        if (phi < 0)
-                        {
-                            p1.X *= -1.0;
-                            p2.X *= -1.0;
-                            p3.X *= -1.0;
-                            p4.X *= -1.0;
+                        int v1 = AddVerticeOctTree(p1);
+                        int v2 = AddVerticeOctTree(p2);
+                        int v3 = AddVerticeOctTree(p3);
+                        int v4 = AddVerticeOctTree(p4);
+                        AddFace(v1, v2, v3);
+                        AddFace(v3, v2, v4);
 
-                            p1.Y *= -1.0;
-                            p2.Y *= -1.0;
-                            p3.Y *= -1.0;
-                            p4.Y *= -1.0;
-
-                            p1.Z *= -1.0;
-                            p2.Z *= -1.0;
-                            p3.Z *= -1.0;
-                            p4.Z *= -1.0;
-                            int v1 = AddVerticeOctTree(p1);
-                            int v2 = AddVerticeOctTree(p2);
-                            int v3 = AddVerticeOctTree(p3);
-                            int v4 = AddVerticeOctTree(p4);
-                            AddFace(v1, v3, v2);
-                            AddFace(v3, v4, v2);
-                        }
-                        else
-                        {
-                            int v1 = AddVerticeOctTree(p1);
-                            int v2 = AddVerticeOctTree(p2);
-                            int v3 = AddVerticeOctTree(p3);
-                            int v4 = AddVerticeOctTree(p4);
-                            AddFace(v1, v3, v2);
-                            AddFace(v3, v4, v2);
-                        }
                     }
                     //                    break;
                 }
             }
         }
 
+        private Point3D ConvertVectorTo3D(int i, int j, double d)
+        {
+            Vector3D v = dirVectors[i, j];
+            return new Point3D(
+            v.X * d,
+            v.Y * d,
+            v.Z * d
+            ); ;
+        }
+
         private void GenerateSingle(double[,] distances)
         {
-            for (double theta = 0; theta < 360; theta += resolution)
+            int rows = distances.GetLength(0);
+            int cols = distances.GetLength(1);
+            double dTheta = 360.0 / rows;
+            double dPhi = 180.0 / cols;
+            for (int i = 0; i < rows; i++)
             {
-                double t2 = theta + resolution;
+                double theta = dTheta * (double)i;
+                double t2 = theta + dTheta;
                 if (t2 >= 360)
                 {
                     t2 = 0;
                 }
-                for (double phi = -90; phi < 90; phi += resolution)
+                int k = i + 1;
+                if (k == rows)
                 {
-                    double ph2 = phi + resolution;
-                    double d1 = GetDistance(theta, phi, distances);
-                    double d2 = GetDistance(theta, ph2, distances);
-                    double d3 = GetDistance(t2, phi, distances);
-                    double d4 = GetDistance(t2, ph2, distances);
-                    PolarCoordinate pc1 = new PolarCoordinate(DegToRad(theta), DegToRad(phi), d1);
-                    PolarCoordinate pc2 = new PolarCoordinate(DegToRad(theta), DegToRad(ph2), d2);
-                    PolarCoordinate pc3 = new PolarCoordinate(DegToRad(t2), DegToRad(phi), d3);
-                    PolarCoordinate pc4 = new PolarCoordinate(DegToRad(t2), DegToRad(ph2), d4);
-                    Point3D p1 = pc1.GetPoint3D();
-                    Point3D p2 = pc2.GetPoint3D();
-                    Point3D p3 = pc3.GetPoint3D();
-                    Point3D p4 = pc4.GetPoint3D();
+                    k = 0;
+                }
+                for (int j = 0; j < cols - 1; j++)
+                {
+                    double phi = (dPhi * (double)j) - 90.0;
+                    double ph2 = phi + dPhi;
+
+                    double d1 = GetDistance(i, j, distances);
+                    double d2 = GetDistance(i, j + 1, distances);
+                    double d3 = GetDistance(k, j, distances);
+                    double d4 = GetDistance(k, j + 1, distances);
+                    /*
+                    Point3D p1 = ConvertPolarTo3D(theta, phi, d1);
+                    Point3D p2 = ConvertPolarTo3D(theta, ph2, d2);
+                    Point3D p3 = ConvertPolarTo3D(t2, phi, d3);
+                    Point3D p4 = ConvertPolarTo3D(t2, ph2, d4);
+                    */
+
+                    Point3D p1 = ConvertVectorTo3D(i, j, d1);
+                    Point3D p2 = ConvertVectorTo3D(i, j + 1, d2);
+                    Point3D p3 = ConvertVectorTo3D(k, j, d3);
+                    Point3D p4 = ConvertVectorTo3D(k, j + 1, d4);
+                    //   File.AppendAllText("C:\\tmp\\asdisplayed.txt", $"t={theta},phi={phi}, P ={p1.X},{p1.Y},{p1.Z}\r\n");
+                    /*
                     if (phi < 0)
                     {
                         p1.X *= -1.0;
@@ -266,30 +283,34 @@ namespace MakerLib.MorphableModel
                         AddFace(v3, v4, v2);
                     }
                     else
+                    */
                     {
                         int v1 = AddVerticeOctTree(p1);
                         int v2 = AddVerticeOctTree(p2);
                         int v3 = AddVerticeOctTree(p3);
                         int v4 = AddVerticeOctTree(p4);
-                        AddFace(v1, v3, v2);
-                        AddFace(v3, v4, v2);
+                        AddFace(v1, v2, v3);
+                        AddFace(v3, v2, v4);
                     }
                 }
                 //                    break;
             }
         }
 
-        private Point3D ConvertPolarTo3D(double theta, double phi, double t)
+
+
+        private Point3D ConvertPolarTo3D(double azimuth, double elevation, double distance)
         {
-            theta = ((theta * Math.PI) / 180) - Math.PI;
-            phi = (phi * Math.PI) / 180;
-            if (phi < 0)
-            {
-                phi += 2 * Math.PI;
-            }
-            double x = t * Math.Sin(phi) * Math.Cos(theta);
-            double z = t * Math.Sin(phi) * Math.Sin(theta);
-            double y = t * Math.Cos(phi);
+            azimuth = DegToRad(azimuth);
+            elevation = DegToRad(elevation);
+            double x = distance * Math.Cos(elevation) * Math.Cos(azimuth);
+            double z = distance * Math.Cos(elevation) * Math.Sin(azimuth);
+            double y = distance * Math.Sin(elevation);
+            /*
+                        double x = Math.Cos(Rad(elevation)) * Math.Cos(Rad(azimuth));
+                        double z = Math.Cos(Rad(elevation)) * Math.Sin(Rad(azimuth));
+                        double y = Math.Sin(Rad(elevation));
+                        */
             return new Point3D(x, y, z);
         }
     }

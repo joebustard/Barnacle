@@ -34,7 +34,28 @@ namespace MakerLib.MorphableModel
 }
 ";
 
-        private static double resDegrees = 1;
+        private static string vectorbody =
+            @"using System;
+using System.Windows.Media;
+using System.Windows.Media.Media3D;
+
+namespace MakerLib.MorphableModel
+{
+    public partial class MorphableModelMaker : MakerBase
+    {
+    public  Vector3D [,] vectors;
+        public static Vector3D [,] DirectionVectors()
+        {
+            // resolution !RES! degrees
+            vectors = new Vector3D[!ROWS!,!COLS!];
+!VALS!
+           return vectors;
+        }
+    }
+}
+";
+
+        private static double resDegrees = 2;
 
         private static double FindInterceptionDistance(Object3D model, Vector3D origin, Vector3D dir)
         {
@@ -49,6 +70,7 @@ namespace MakerLib.MorphableModel
                 Vector3D v0 = new Vector3D(model.RelativeObjectVertices[f0].X, model.RelativeObjectVertices[f0].Y, model.RelativeObjectVertices[f0].Z);
                 Vector3D v1 = new Vector3D(model.RelativeObjectVertices[f1].X, model.RelativeObjectVertices[f1].Y, model.RelativeObjectVertices[f1].Z);
                 Vector3D v2 = new Vector3D(model.RelativeObjectVertices[f2].X, model.RelativeObjectVertices[f2].Y, model.RelativeObjectVertices[f2].Z);
+                
                 if (Utils.RayTriangleIntersect(origin, dir, v0, v1, v2, out distance))
                 {
                     res = true;
@@ -61,18 +83,7 @@ namespace MakerLib.MorphableModel
 
         private static void Main(string[] args)
         {
-            System.Diagnostics.Debug.WriteLine("Tests");
-
-            Vector3D td = GetDirectionVector(0, -45);
-            td = GetDirectionVector(1, -45);
-            td = GetDirectionVector(0, 45);
-            td = GetDirectionVector(0, 90);
-
-            td = GetDirectionVector(90, -90);
-            td = GetDirectionVector(90, -45);
-            td = GetDirectionVector(90, 0);
-            td = GetDirectionVector(90, 45);
-
+            MakeVectorTable();    
             MakeMorphableShape("Cube");
 
             MakeMorphableShape("Cone");
@@ -80,22 +91,55 @@ namespace MakerLib.MorphableModel
             MakeMorphableShape("Octahedron");
             MakeMorphableShape("Pyramid");
             MakeMorphableShape("Pyramid2");
-            MakeMorphableShape("Roof");
-            MakeMorphableShape("RoundRoof");
+            MakeMorphableShape("Roof",true);
+            MakeMorphableShape("RoundRoof",true);
             MakeMorphableSphere("Sphere");
+            
         }
 
-        private static void MakeMorphableShape(string v)
+        private static void MakeVectorTable()
+        {
+            Vector3D origin = new Vector3D(0, 0, 0);
+            string outline = "\t\t\t";
+            int rows = 0;
+            int cols = 0;
+            for (double theta = 0; theta < 360; theta += resDegrees)
+            {
+                cols = 0;
+                for (double phi = -90; phi < 90; phi += resDegrees)
+                {
+                    Vector3D dir = GetDirectionVector(theta, phi);                  
+                    outline += $" vectors[{rows},{cols}] = new Vector3D({dir.X},{dir.Y},{dir.Z});\r\n";
+                    cols++;
+                }
+                outline += "\r\n\t\t\t";
+                rows++;
+            }
+            string b = vectorbody;
+            b = b.Replace("!RES!", resDegrees.ToString("F1"));
+            b = b.Replace("!ROWS!", rows.ToString());
+            b = b.Replace("!COLS!", cols.ToString());
+            b = b.Replace("!VALS!", outline);
+
+            File.WriteAllText("c:\\tmp\\DirVectors.cs", b);
+        }
+
+        private static void MakeMorphableShape(string v, bool rotate=false)
         {
             Object3D ob = new Object3D();
             ob.BuildPrimitive(v);
+            if ( rotate)
+            {
+                ob.Rotate(new Point3D(-90,0,0));
+            }
             Vector3D origin = new Vector3D(0, 0, 0);
             string outline = "\t\t\t";
-            for (double theta = 0; theta <= 360; theta += resDegrees)
+            for (double theta = 0; theta < 360; theta += resDegrees)
             {
                 outline += "{ ";
-                for (double phi = -90; phi <= 90; phi += resDegrees)
+                for (double phi = -90; phi < 90; phi += resDegrees)
                 {
+                   
                     Vector3D dir = GetDirectionVector(theta, phi);
 
                     double dist = FindInterceptionDistance(ob, origin, dir);
@@ -113,9 +157,7 @@ namespace MakerLib.MorphableModel
 
         private static Vector3D GetDirectionVector(double azimuth, double elevation)
         {
-            //   PolarCoordinate pcol = new PolarCoordinate(Rad(v1), Rad(v2), 1.0);
-            //   Point3D pn = pcol.GetPoint3D();
-            // Vector3D dir = new Vector3D(pn.X, pn.Y, pn.Z);
+           
 
             double x = Math.Cos(Rad(elevation)) * Math.Cos(Rad(azimuth));
             double z = Math.Cos(Rad(elevation)) * Math.Sin(Rad(azimuth));
@@ -123,7 +165,7 @@ namespace MakerLib.MorphableModel
 
             Vector3D dir = new Vector3D(x, y, z);
             dir.Normalize();
-            //  System.Diagnostics.Debug.WriteLine($"theta={azimuth}, phi = {elevation}, dir = {dir.X},{dir.Y},{dir.Z}");
+           
             return dir;
         }
 
@@ -136,7 +178,7 @@ namespace MakerLib.MorphableModel
             for (double theta = 0; theta < 360; theta += resDegrees)
             {
                 outline += "{ ";
-                for (double phi = -90; phi <= 90; phi += resDegrees)
+                for (double phi = -90; phi < 90; phi += resDegrees)
                 {
                     double dist = 0.5;
                     outline += dist.ToString("F1") + ", ";

@@ -65,6 +65,7 @@ namespace PrintPlacementLib
 
             // convert t to a distance
             t = (Math.Sqrt((t * dir.X) * (t * dir.X) + (t * dir.Y) * (t * dir.Y) + (t * dir.Z) * (t * dir.Z)));
+            //System.Diagnostics.Debug.WriteLine($" P ={P.X},{P.Y},{P.Z}" );
             return true; // this ray hits the triangle
         }
     }

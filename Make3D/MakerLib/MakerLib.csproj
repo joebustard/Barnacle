@@ -83,6 +83,7 @@
     <Compile Include="MakeTiledRoof.cs" />
     <Compile Include="MakeTrickle.cs" />
     <Compile Include="MakeWagonWheel.cs" />
+    <Compile Include="MorphableModel\DirVectors.cs" />
     <Compile Include="MorphableModel\MorphablePair.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableCone.cs" />
     <Compile Include="MorphableModel\Primitives\MorphableCube.cs" />
